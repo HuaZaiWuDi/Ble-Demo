@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NetLib</string>
+    <string name="applicationInfo">Version information:%1$s \nVersion number:%2$s\nNew version size:%3$s M</string>
+
+</resources>

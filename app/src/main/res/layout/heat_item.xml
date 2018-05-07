@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/d_150"
+    android:background="@color/colorWhite">
+
+    <ImageView
+        android:id="@+id/img_food"
+        android:layout_width="@dimen/d_100"
+        android:layout_height="@dimen/d_100"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/d_50"
+        android:layout_marginRight="@dimen/d_20"
+        android:src="@drawable/energy_green_bg"/>
+
+    <TextView
+        android:id="@+id/tv_foodName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/img_food"
+        android:text="麦片"/>
+
+
+    <TextView
+        android:id="@+id/tv_foodWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:text="70.0g"
+        android:textColor="@color/textHeatColor"/>
+
+
+    <TextView
+        android:id="@+id/tv_kcal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/d_20"
+        android:text="620千卡"/>
+
+</RelativeLayout>

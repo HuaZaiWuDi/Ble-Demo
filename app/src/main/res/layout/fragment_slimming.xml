@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tl="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/red">
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+
+
+    <com.flyco.tablayout.SlidingTabLayout
+        android:id="@+id/mSlidingTabLayout"
+        android:layout_width="900px"
+        android:layout_height="150px"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/d_100"
+        android:background="@mipmap/tab_title"
+        android:paddingBottom="@dimen/d_20"
+        app:tl_indicator_anim_enable="true"
+        app:tl_indicator_bounce_enable="false"
+        app:tl_indicator_color="@color/white"
+        app:tl_indicator_gravity="TOP"
+        app:tl_indicator_height="130px"
+        app:tl_indicator_margin_bottom="@dimen/d_20"
+        app:tl_indicator_style="BLOCK"
+        app:tl_indicator_width_equal_title="true"
+        app:tl_tab_space_equal="true"
+        app:tl_textSelectColor="@color/colorTheme"
+        app:tl_textUnselectColor="@color/white"
+        />
+
+
+</RelativeLayout>

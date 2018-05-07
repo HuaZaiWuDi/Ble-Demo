@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="lab.dxythch.com.commonproject.ui.main.MainActivity">
+
+
+    <com.vondear.rxtools.view.UnScrollableViewPager
+        android:id="@+id/mUnScrollableViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/mCommonTabLayout">
+
+
+    </com.vondear.rxtools.view.UnScrollableViewPager>
+
+
+    <com.flyco.tablayout.CommonTabLayout
+        android:id="@+id/mCommonTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_150"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:padding="@dimen/d_10"
+        app:tl_iconHeight="@dimen/d_60"
+        app:tl_iconWidth="@dimen/d_60"
+        app:tl_textBold="SELECT"
+        app:tl_textSelectColor="@color/colorTheme"
+        app:tl_textUnselectColor="@color/colorTabText"/>
+
+
+</RelativeLayout>

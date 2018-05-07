@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/prent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FCFAFA"
+    android:orientation="vertical"
+    tools:context=".ui.main.slimming.heat.AddFoodActivity">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_250"
+        android:background="@drawable/shape_bg_statu_bar"
+        android:paddingTop="66px">
+
+
+        <ImageView
+            android:layout_width="@dimen/d_200"
+            android:layout_height="match_parent"
+            android:padding="@dimen/d_50"
+            android:src="@mipmap/back_icon"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/d_40"
+            android:textColor="@color/white"
+            android:textSize="@dimen/d_70"
+            tools:text="添加早餐"/>
+
+
+        <TextView
+            android:layout_width="@dimen/d_200"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:paddingBottom="@dimen/d_10"
+            android:paddingRight="@dimen/d_30"
+            android:textColor="@color/white"
+            android:textSize="@dimen/d_70"
+            tools:text="完成"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/d_30"
+        android:paddingRight="@dimen/d_30">
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_100"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/d_40"
+            android:layout_marginTop="@dimen/d_40"
+            android:background="@drawable/round_indicator_bg"
+            android:drawableRight="@mipmap/search"
+            android:hint="请输入食物名字"
+            android:paddingLeft="@dimen/d_100"
+            android:paddingRight="@dimen/d_30"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>
