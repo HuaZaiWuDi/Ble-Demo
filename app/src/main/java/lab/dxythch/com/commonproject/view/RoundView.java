@@ -19,7 +19,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 /**
  * 项目名称：Ali_Sophix
  * 类描述：
- * 创建人：oden
+ * 创建人：Jack
  * 创建时间：2017/12/25
  */
 public class RoundView extends View {

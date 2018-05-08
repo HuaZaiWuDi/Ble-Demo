@@ -10,6 +10,7 @@
         android:id="@+id/img_food"
         android:layout_width="@dimen/d_350"
         android:layout_height="match_parent"
+        android:background="@color/colorTheme"
         android:padding="@dimen/d_50"/>
 
 
@@ -18,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/d_50"
         android:layout_toRightOf="@+id/img_food"
         android:textColor="@color/textColor"
         android:textSize="@dimen/d_55"
@@ -28,7 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/img_food"
+        android:layout_marginRight="@dimen/d_150"
+        android:layout_toLeftOf="@+id/tv_foodKcal"
         android:textColor="@color/textColor"
         android:textSize="@dimen/d_55"
         tools:text="250.0克"/>
@@ -37,8 +40,9 @@
         android:id="@+id/tv_foodKcal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/img_food"
+        android:layout_marginRight="@dimen/d_50"
         android:textColor="@color/colorTheme"
         android:textSize="@dimen/d_55"
         tools:text="116千卡"/>

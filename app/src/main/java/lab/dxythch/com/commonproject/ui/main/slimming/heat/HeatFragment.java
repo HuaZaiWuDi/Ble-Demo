@@ -4,9 +4,11 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.fragment.FragmentLazy;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
@@ -24,6 +26,12 @@ public class HeatFragment extends FragmentLazy {
     @ViewById
     SmoothRefreshLayout refresh;
 
+
+    @Click
+    void menu_add() {
+        RxActivityUtils.skipActivity(mActivity, AddFoodActivity.class);
+    }
+
     public boolean isComplete = false;
 
 
@@ -32,10 +40,14 @@ public class HeatFragment extends FragmentLazy {
     }
 
 
-    @Override
     @AfterViews
-    public void initData() {
+    void initView() {
         initRevycler();
+    }
+
+    @Override
+    public void initData() {
+
     }
 
     private void initRevycler() {

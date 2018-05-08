@@ -8,15 +8,23 @@
                 tools:context="lab.dxythch.com.commonproject.ui.main.MainActivity">
 
 
-    <com.vondear.rxtools.view.UnScrollableViewPager
-        android:id="@+id/mUnScrollableViewPager"
+    <!--<com.vondear.rxtools.view.UnScrollableViewPager-->
+    <!--android:id="@+id/mUnScrollableViewPager"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_above="@+id/mCommonTabLayout">-->
+
+
+    <!--</com.vondear.rxtools.view.UnScrollableViewPager>-->
+
+
+    <FrameLayout
+        android:id="@+id/mFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/mCommonTabLayout">
 
-
-    </com.vondear.rxtools.view.UnScrollableViewPager>
-
+    </FrameLayout>
 
     <com.flyco.tablayout.CommonTabLayout
         android:id="@+id/mCommonTabLayout"

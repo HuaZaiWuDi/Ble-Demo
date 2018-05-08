@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tl="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/red">
@@ -16,26 +16,82 @@
     </android.support.v4.view.ViewPager>
 
 
-    <com.flyco.tablayout.SlidingTabLayout
-        android:id="@+id/mSlidingTabLayout"
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/status_bar_margin"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<net.lucode.hackware.magicindicator.MagicIndicator-->
+    <!--android:id="@+id/magic_indicator3"-->
+    <!--android:layout_width="290dp"-->
+    <!--android:layout_height="47dp"-->
+    <!--android:layout_gravity="center_horizontal"/>-->
+
+    <!--</LinearLayout>-->
+
+
+    <LinearLayout
         android:layout_width="900px"
-        android:layout_height="150px"
+        android:layout_height="@dimen/d_150"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/d_100"
-        android:background="@mipmap/tab_title"
-        android:paddingBottom="@dimen/d_20"
-        app:tl_indicator_anim_enable="true"
-        app:tl_indicator_bounce_enable="false"
-        app:tl_indicator_color="@color/white"
-        app:tl_indicator_gravity="TOP"
-        app:tl_indicator_height="130px"
-        app:tl_indicator_margin_bottom="@dimen/d_20"
-        app:tl_indicator_style="BLOCK"
-        app:tl_indicator_width_equal_title="true"
-        app:tl_tab_space_equal="true"
-        app:tl_textSelectColor="@color/colorTheme"
-        app:tl_textUnselectColor="@color/white"
-        />
+        android:background="@mipmap/title_tab"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/d_20">
+
+        <TextView
+            android:id="@+id/tv_heat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/d_5"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg"
+            android:gravity="center"
+            android:text="@string/heat"
+            android:textColor="@color/colorTheme"/>
+
+        <TextView
+            android:id="@+id/tv_weight"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/d_5"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/weight"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tv_sports"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/d_5"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/sports"
+            android:textColor="@color/white"/>
+
+
+    </LinearLayout>
+
+
+    <!--<com.flyco.tablayout.SlidingTabLayout-->
+    <!--android:id="@+id/mSlidingTabLayout"-->
+    <!--android:layout_width="900px"-->
+    <!--android:layout_height="150px"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="@dimen/d_100"-->
+    <!--android:background="@mipmap/tab_title"-->
+    <!--app:tl_indicator_anim_enable="true"-->
+    <!--app:tl_indicator_bounce_enable="false"-->
+    <!--app:tl_indicator_color="@color/white"-->
+    <!--app:tl_indicator_height="@dimen/d_150"-->
+    <!--app:tl_indicator_style="BLOCK"-->
+    <!--app:tl_indicator_width_equal_title="true"-->
+    <!--app:tl_tab_space_equal="true"-->
+    <!--app:tl_textSelectColor="@color/colorTheme"-->
+    <!--app:tl_textUnselectColor="@color/white"-->
+    <!--/>-->
 
 
 </RelativeLayout>

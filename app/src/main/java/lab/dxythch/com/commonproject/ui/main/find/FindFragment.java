@@ -18,8 +18,12 @@ public class FindFragment extends FragmentLazy {
     }
 
     @Override
-    @AfterViews
     public void initData() {
+
+    }
+
+    @AfterViews
+    void initView() {
 
     }
 }

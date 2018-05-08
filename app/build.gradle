@@ -57,4 +57,6 @@ dependencies {
     //万能的下刷新与上啦加载
     compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.0'
 
+//    //tab滑动
+//    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
 }

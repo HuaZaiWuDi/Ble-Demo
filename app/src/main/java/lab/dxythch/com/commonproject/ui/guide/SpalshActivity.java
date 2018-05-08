@@ -33,4 +33,6 @@ public class SpalshActivity extends AppCompatActivity {
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
     }
+
+
 }

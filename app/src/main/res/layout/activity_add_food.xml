@@ -11,7 +11,6 @@
     tools:context=".ui.main.slimming.heat.AddFoodActivity">
 
     <RelativeLayout
-
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_250"
         android:background="@drawable/shape_bg_statu_bar"
@@ -68,7 +67,8 @@
             android:drawableRight="@mipmap/search"
             android:hint="请输入食物名字"
             android:paddingLeft="@dimen/d_100"
-            android:paddingRight="@dimen/d_30"/>
+            android:paddingRight="@dimen/d_30"
+            android:textColorHint="#CCCCCC"/>
 
     </RelativeLayout>
 

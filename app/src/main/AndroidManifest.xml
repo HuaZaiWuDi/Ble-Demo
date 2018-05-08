@@ -31,6 +31,8 @@
         </activity>
         <activity android:name=".ui.main.slimming.heat.AddFoodActivity">
         </activity>
+        <activity android:name=".ui.main.slimming.heat.SearchFoodActivity">
+        </activity>
     </application>
 
 </manifest>

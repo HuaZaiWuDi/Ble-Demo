@@ -23,4 +23,9 @@ public class SportsFragment extends FragmentLazy {
     public void initData() {
 
     }
+
+    @AfterViews
+    void initView() {
+    }
+
 }
