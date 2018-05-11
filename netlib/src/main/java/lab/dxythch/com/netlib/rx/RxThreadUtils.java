@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers;
  * 创建人：oden
  * 创建时间：2018/4/17
  */
-public class RxUtils {
+public class RxThreadUtils {
 
 
     /**

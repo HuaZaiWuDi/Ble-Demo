@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,12 +13,14 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/head_bg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/energy_green_bg_down"
             android:orientation="vertical">
 
             <lab.dxythch.com.commonproject.view.DateChoose
+                android:id="@+id/mDateChoose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -44,7 +47,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@+id/view_progress"
+                    android:layout_toLeftOf="@+id/mRoundView"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -56,6 +59,7 @@
                         android:textSize="@dimen/d_40"/>
 
                     <TextView
+                        android:id="@+id/tv_intake"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/d_10"
@@ -68,7 +72,7 @@
 
 
                 <lab.dxythch.com.commonproject.view.RoundView
-                    android:id="@+id/view_progress"
+                    android:id="@+id/mRoundView"
                     android:layout_width="@dimen/d_450"
                     android:layout_height="@dimen/d_450"
                     android:layout_centerInParent="true"/>
@@ -76,7 +80,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toLeftOf="@+id/view_progress"
+                    android:layout_toRightOf="@+id/mRoundView"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -88,6 +92,7 @@
                         android:textSize="@dimen/d_40"/>
 
                     <TextView
+                        android:id="@+id/tv_consume"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/d_10"
@@ -108,27 +113,25 @@
         <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:sr_empty_layout="@layout/layout_no_data">
 
-            <android.support.v7.widget.RecyclerView
+            <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
                 android:id="@+id/mRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </android.support.v7.widget.RecyclerView>
-
+                android:layout_height="wrap_content"/>
 
         </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/menu_add"
+    <lab.dxythch.com.commonproject.view.CircleMenuView
+        android:id="@+id/menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="@dimen/d_40"
         android:src="@mipmap/add_green_normal_icon"/>
+
+
 </RelativeLayout>

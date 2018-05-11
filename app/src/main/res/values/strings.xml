@@ -23,11 +23,44 @@
     <string name="consume">消耗</string>
     <string name="Ingestion">摄入</string>
 
+    <string name="inputFoodName">请输入食物名字</string>
+
+    <string name="cancel">取消</string>
+    <string name="ok">完成</string>
+
+
+    <string name="unit_g">克</string>
+    <string name="unit_kg">千克</string>
 
     <string name="Year">年</string>
     <string name="Month">月</string>
     <string name="Day">日</string>
 
+    <string name="delete">删除</string>
+
+    <string name="unit_heat">/100.0克</string>
+    <string name="unit_kcal">千卡</string>
+    <string name="unit_kcal2">单位：千卡</string>
+
+    <string name="inputRightFoodName">请输入正确的食物名字</string>
+
+    <string name="addBreakfast">添加早餐</string>
+    <string name="addLunch">添加午餐</string>
+    <string name="addDinner">添加晚餐</string>
+    <string name="addMidnight">添加宵夜</string>
+    <string name="addSnack">添加加餐</string>
+
+    <string name="breakfast">早餐</string>
+    <string name="lunch">午餐</string>
+    <string name="dinner">晚餐</string>
+    <string name="midnight">宵夜</string>
+    <string name="snack">加餐</string>
+    <string name="ingestioned">已摄入:</string>
+
+    <string name="clearHistoryData">清空历史数据</string>
+
+    <string name="can_eatHeat">还可以吃</string>
+    <string name="EatMore">多吃了</string>
 
     <string-array name="tab_text">
         <item>@string/nav_lose_weight</item>
@@ -40,6 +73,14 @@
         <item>@string/heat</item>
         <item>@string/weight</item>
         <item>@string/sports</item>
+    </string-array>
+
+    <string-array name="add_food">
+        <item>@string/addBreakfast</item>
+        <item>@string/addLunch</item>
+        <item>@string/addDinner</item>
+        <item>@string/addMidnight</item>
+        <item>@string/addSnack</item>
     </string-array>
 
 </resources>

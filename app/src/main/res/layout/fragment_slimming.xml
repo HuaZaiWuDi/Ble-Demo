@@ -5,15 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/red">
+    android:background="@color/white">
 
 
-    <android.support.v4.view.ViewPager
+    <com.vondear.rxtools.view.UnScrollableViewPager
         android:id="@+id/mViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </android.support.v4.view.ViewPager>
+    </com.vondear.rxtools.view.UnScrollableViewPager>
 
 
     <!--<LinearLayout-->
@@ -32,9 +32,11 @@
 
 
     <LinearLayout
-        android:layout_width="900px"
-        android:layout_height="@dimen/d_150"
+        android:layout_width="match_parent"
+        android:layout_height="120px"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="160px"
+        android:layout_marginRight="160px"
         android:layout_marginTop="@dimen/d_100"
         android:background="@mipmap/title_tab"
         android:orientation="horizontal"
@@ -44,7 +46,6 @@
             android:id="@+id/tv_heat"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/d_5"
             android:layout_weight="1"
             android:background="@drawable/button_bg"
             android:gravity="center"
@@ -55,7 +56,6 @@
             android:id="@+id/tv_weight"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/d_5"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/weight"
@@ -65,7 +65,6 @@
             android:id="@+id/tv_sports"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/d_5"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/sports"
@@ -73,25 +72,6 @@
 
 
     </LinearLayout>
-
-
-    <!--<com.flyco.tablayout.SlidingTabLayout-->
-    <!--android:id="@+id/mSlidingTabLayout"-->
-    <!--android:layout_width="900px"-->
-    <!--android:layout_height="150px"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--android:layout_marginTop="@dimen/d_100"-->
-    <!--android:background="@mipmap/tab_title"-->
-    <!--app:tl_indicator_anim_enable="true"-->
-    <!--app:tl_indicator_bounce_enable="false"-->
-    <!--app:tl_indicator_color="@color/white"-->
-    <!--app:tl_indicator_height="@dimen/d_150"-->
-    <!--app:tl_indicator_style="BLOCK"-->
-    <!--app:tl_indicator_width_equal_title="true"-->
-    <!--app:tl_tab_space_equal="true"-->
-    <!--app:tl_textSelectColor="@color/colorTheme"-->
-    <!--app:tl_textUnselectColor="@color/white"-->
-    <!--/>-->
 
 
 </RelativeLayout>

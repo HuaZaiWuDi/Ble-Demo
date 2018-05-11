@@ -1,15 +1,23 @@
 package lab.dxythch.com.commonproject.view;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.vondear.rxtools.dateUtils.RxFormat;
+
+import java.util.Calendar;
 
 import lab.dxythch.com.commonproject.R;
 
@@ -23,11 +31,13 @@ public class DateChoose extends RelativeLayout {
     ImageView mTvNext;
     TextView mTvDate;
     LinearLayout mLlDateContainer;
+    AlertDialog.Builder Builder;
 
-
+    private Calendar calendar;
     private int month;
     private int year;
-    private boolean showYearOnly;
+    private int day;
+    private boolean isToday;
     private Context mContext;
 
     public DateChoose(Context context) {
@@ -37,136 +47,114 @@ public class DateChoose extends RelativeLayout {
     public DateChoose(Context context, AttributeSet attrs) {
         super(context, attrs);
         View inflate = LayoutInflater.from(context).inflate(R.layout.widget_date_choose, this, true);
-//        ButterKnife.bind(inflate, this);
         mContext = context;
-        mTvLast = findViewById(R.id.iv_last);
-        mTvNext = findViewById(R.id.iv_next);
-        mTvDate = findViewById(R.id.tv_date);
+        mTvLast = inflate.findViewById(R.id.iv_last);
+        mTvNext = inflate.findViewById(R.id.iv_next);
+        mTvDate = inflate.findViewById(R.id.tv_date);
         mLlDateContainer = findViewById(R.id.ll_date_container);
 
-        initDate();
+
+        mLlDateContainer.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCalendar();
+            }
+        });
+
+        mTvLast.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                calendar.add(Calendar.DATE, -1);
+                notidyDate();
+            }
+        });
+
+        mTvNext.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, +1);
+                notidyDate();
+            }
+        });
+
+        calendar = Calendar.getInstance();
+
+        notidyDate();
 
     }
 
 
-    private void initDate() {
-        String date = RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date);
-        String[] split = date.split("-");
-        year = Integer.valueOf(split[0]);
-        month = Integer.valueOf(split[1]);
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void showCalendar() {
 
-    }
+        Builder = new AlertDialog.Builder(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_calendar, null);
+        final CalendarView mCalendarView = view.findViewById(R.id.mCalendarView);
+        mCalendarView.setDate(calendar.getTimeInMillis(), true, true);
+        mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                calendar.set(year, month, dayOfMonth);
+//                notidyDate();
+            }
+        });
 
-    /**
-     * 设置初始化日期
-     */
-    public void setInitDate(int year, int month) {
-        this.year = year;
-        this.month = month;
-        setDate();
-    }
+        TextView reToday = view.findViewById(R.id.reToday);
 
-    public void setInitDate(String year, String month) {
-        this.year = Integer.valueOf(year);
-        this.month = Integer.valueOf(month);
-        if (this.month < 10) {
-            String m = "";
-            m = "0" + this.month;
+        reToday.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCalendarView.setDate(System.currentTimeMillis(), true, true);
+                calendar.setTimeInMillis(System.currentTimeMillis());
+//                notidyDate();
+            }
+        });
 
-            mTvDate.setText(showYearOnly ? year + mContext.getString(R.string.Year) : year + mContext.getString(R.string.Year) + m + mContext.getString(R.string.Month));
-        } else {
-            mTvDate.setText(showYearOnly ? year + mContext.getString(R.string.Year) : year + mContext.getString(R.string.Year) + this.month + mContext.getString(R.string.Month));
-        }
-    }
+        Builder.setView(view);
+//        Builder.create().setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialog) {
+//
+//            }
+//        });
 
-    /**
-     * 只显示年
-     *
-     * @param showYearOnly
-     */
-    public void showYearOnly(boolean showYearOnly) {
-        this.showYearOnly = showYearOnly;
-        if (month < 10) {
-            String m = "";
-            m = "0" + month;
-
-            mTvDate.setText(showYearOnly ? year + mContext.getString(R.string.Year) : year + mContext.getString(R.string.Year) + m + mContext.getString(R.string.Month));
-        } else {
-            mTvDate.setText(showYearOnly ? year + mContext.getString(R.string.Year) : year + mContext.getString(R.string.Year) + month + mContext.getString(R.string.Month));
-        }
-    }
-
-    public void onClick(View view) {
-        switch (view.getId()) {
-            /**
-             * 点击上一个月
-             */
-            case R.id.iv_last:
-                if (showYearOnly) {
-                    year -= 1;
-                } else {
-                    month -= 1;
-                }
-
-                if (month == 0) {
-                    month = 12;
-                    year -= 1;
-                }
-                setDate();
-//                onDateChangeListener.onDateChangeListener(year,month);
-
-//                onDateChangeListener.onDateChangeListener(year,month);
-                break;
-            /**
-             * 点击下一个月
-             */
-            case R.id.iv_next:
-
-                if (showYearOnly) {
-                    year += 1;
-                } else {
-                    month += 1;
-                }
-
-                if (month == 13) {
-                    month = 1;
-                    year += 1;
-                }
-                setDate();
-//                onDateChangeListener.onDateChangeListener(year,month);
-                break;
-
-            case R.id.ll_date_container:
-
-                break;
-
-        }
-
+        Builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                notidyDate();
+            }
+        });
+        Builder.show();
     }
 
 
-    private void setDate() {
-        if (month < 10) {
-            String m = "";
-            m = "0" + month;
+    private void notidyDate() {
+        String date = RxFormat.setFormatDate(calendar.getTimeInMillis(), RxFormat.Date_Month_Day);
+        mTvDate.setText(date);
 
-            mTvDate.setText(showYearOnly ? year + mContext.getString(R.string.Year) : year + mContext.getString(R.string.Year) + m + mContext.getString(R.string.Month));
-        } else {
-            mTvDate.setText(showYearOnly ? year + mContext.getString(R.string.Year) : year + mContext.getString(R.string.Year) + month + mContext.getString(R.string.Month));
-        }
         if (onDateChangeListener != null) {
-            onDateChangeListener.onDateChangeListener(year, month);
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH) + 1;
+            day = calendar.get(Calendar.DAY_OF_MONTH);
+            onDateChangeListener.onDateChangeListener(year, month, day, calendar.getTimeInMillis());
         }
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Builder.create().dismiss();
+    }
+
 
     private OnDateChangeListener onDateChangeListener;
 
     public interface OnDateChangeListener {
-        void onDateChangeListener(int year, int month);
+        void onDateChangeListener(int year, int month, int day, long millis);
     }
 
     public void setOnDateChangeListener(OnDateChangeListener onDateChangeListener) {
         this.onDateChangeListener = onDateChangeListener;
-//        setDate();
     }
 }

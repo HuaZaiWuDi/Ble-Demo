@@ -121,7 +121,7 @@ public class RxDataUtils {
 
         if (month <= 0 || day <= 0) {
             return "猴年马月座";
-        }else if (month>12||day>31){
+        } else if (month > 12 || day > 31) {
             return "猴年马月座";
         }
 
@@ -142,7 +142,7 @@ public class RxDataUtils {
      * @return 130****0000
      */
     public static String hideMobilePhone4(String mobile_phone) {
-        if (mobile_phone.length()!=11) {
+        if (mobile_phone.length() != 11) {
             return "手机号码不正确";
         }
         return mobile_phone.substring(0, 3) + "****" + mobile_phone.substring(7, 11);
@@ -156,7 +156,7 @@ public class RxDataUtils {
      * @return 3749 **** **** 330
      */
     public static String formatCard(String cardNo) {
-        if (cardNo.length()<8) {
+        if (cardNo.length() < 8) {
             return "银行卡号有误";
         }
         String card = "";
@@ -172,7 +172,7 @@ public class RxDataUtils {
      * @return
      */
     public static String formatCardEnd4(String cardNo) {
-        if (cardNo.length()<8) {
+        if (cardNo.length() < 8) {
             return "银行卡号有误";
         }
         String card = "";

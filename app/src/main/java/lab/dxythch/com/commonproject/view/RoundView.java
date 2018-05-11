@@ -16,6 +16,8 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 /**
  * 项目名称：Ali_Sophix
  * 类描述：
@@ -45,10 +47,8 @@ public class RoundView extends View {
     private int sweepAngle3 = 0;
     private int dafultColor = Color.parseColor("#DDDDDD");
     private int progressColor = Color.parseColor("#FFFFFF");
-    private int currentNum = 9527;//中间的文字
+    private int currentNum = 0;//中间的文字
     private int[] linesColor = {Color.parseColor("#F4479D"), Color.parseColor("#43B7FD"), Color.parseColor("#F5CC36")};
-    private float smallCircleX;//进度的X位置
-    private float smallCircleY;//进度的Y位置
 
 
     public RoundView(Context context) {
@@ -64,10 +64,13 @@ public class RoundView extends View {
         init();
     }
 
-    public RoundView setCentreText(int currentNum, String hitText) {
+    public RoundView setCentreText(int currentNum, String hitText, String unitText) {
+        RxLogUtils.d("中间值：" + currentNum);
         this.currentNum = currentNum;
         this.hitText = hitText;
-        numberAnimation(currentNum);
+        this.unitText = unitText;
+        postInvalidate();
+        numberAnimation(this.currentNum);
         return this;
     }
 
@@ -87,6 +90,8 @@ public class RoundView extends View {
 
 
     public RoundView setSweepAngle(@IntRange(from = 0, to = 360) int sweepAngles) {
+        if (sweepAngles > 360) sweepAngles = 360;
+        if (sweepAngles < 0) sweepAngles = 0;
         sweepAngle1 = sweepAngles;
 //        sweepAngle2 = sweepAngles[1];
 //        sweepAngle3 = sweepAngles[2];
@@ -179,13 +184,12 @@ public class RoundView extends View {
 
         canvas.drawText(currentNum + "", -paint_4.measureText(currentNum + "") / 2, dp2px(10), paint_4);
 
-        float v = paint_4.measureText(currentNum + "");
-
+//        float v = paint_4.measureText(currentNum + "");
 
         paint_4.setTextSize(radius / 6);
         Rect r = new Rect();
 
-        canvas.drawText(unitText, -paint_4.measureText(hitText + "") / 2, r.height() + dp2px(27), paint_4);
+        canvas.drawText(unitText, -paint_4.measureText(unitText + "") / 2, r.height() + dp2px(37), paint_4);
         canvas.drawText(hitText, -paint_4.measureText(hitText + "") / 2, r.height() - dp2px(37), paint_4);
         canvas.restore();
     }
@@ -247,7 +251,6 @@ public class RoundView extends View {
 
         paint2.setColor(progressColor);
 
-
         canvas.drawArc(rectf, startAngle1, sweepAngle3, false, paint2);
 
         //画圆点
@@ -268,10 +271,10 @@ public class RoundView extends View {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if (hasWindowFocus) {
-            startAnimation(ValueAnimator.INFINITE, 360);
-            numberAnimation(currentNum);
-        }
+//        if (hasWindowFocus) {
+//            startAnimation(ValueAnimator.INFINITE, 360);
+//            numberAnimation(currentNum);
+//        }
     }
 
 
@@ -282,26 +285,25 @@ public class RoundView extends View {
         if (cgAnima1 == null) {
             cgAnima1 = ValueAnimator.ofInt(0, endAnge);
             cgAnima1.setInterpolator(new AccelerateDecelerateInterpolator());
-            cgAnima1.setDuration(2000);
+            cgAnima1.setDuration(1000);
             cgAnima1.setRepeatCount(repeatCount);
             cgAnima1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    sweepAngle1 = (int) cgAnima1.getAnimatedValue();
-
+                    sweepAngle3 = (int) cgAnima1.getAnimatedValue();
                     postInvalidate();
                 }
             });
+        } else {
+            cgAnima1.setIntValues(0, endAnge);
         }
         cgAnima1.start();
-
     }
-
 
     public void numberAnimation(final int num) {
         if (cgAnima2 == null) {
             cgAnima2 = ValueAnimator.ofInt(0, num);
-            cgAnima2.setDuration(2000);
+            cgAnima2.setDuration(1000);
             cgAnima2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -309,9 +311,9 @@ public class RoundView extends View {
                     postInvalidate();
                 }
             });
-        }
+        } else
+            cgAnima2.setIntValues(0, num);
         cgAnima2.start();
-
     }
 
     public void stopAnimation() {
@@ -326,7 +328,6 @@ public class RoundView extends View {
     @Override
     protected void onDetachedFromWindow() {
         stopAnimation();
-
         super.onDetachedFromWindow();
     }
 

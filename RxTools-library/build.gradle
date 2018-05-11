@@ -64,6 +64,7 @@ dependencies {
     implementation files('src/main/libs/zxing.jar')
     //压缩与加密
     implementation files('src/main/libs/zip4j_1.3.2.jar')
-
+    //侧滑删除Recycler
+    compile 'com.yanzhenjie:recyclerview-swipe:1.1.4'
 
 }

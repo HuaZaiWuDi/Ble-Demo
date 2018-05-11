@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="500px"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <ImageView
+        tools:src="@mipmap/add_green_normal_icon"
+        android:id="@+id/menu_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="@dimen/d_40"/>
+
+
+    <ImageView
+        android:id="@+id/menu_breakfast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/menu_add"
+        android:layout_marginTop="10px"
+        android:layout_toStartOf="@+id/menu_add"
+        android:src="@mipmap/breakfast_icon"/>
+
+    <ImageView
+        android:id="@+id/menu_lunch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="200px"
+        android:layout_marginTop="@dimen/d_40"
+        android:src="@mipmap/lunch_icon"/>
+
+
+    <ImageView
+        android:id="@+id/menu_dinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/d_100"
+        android:layout_marginTop="180px"
+        android:layout_toLeftOf="@+id/menu_breakfast"
+        android:src="@mipmap/dinner_icon"/>
+
+    <ImageView
+        android:id="@+id/menu_midnight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="200px"
+        android:layout_marginTop="320px"
+        android:src="@mipmap/midnight_snack_icon"/>
+
+    <ImageView
+        android:id="@+id/menu_snack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/menu_add"
+        android:layout_marginBottom="30px"
+        android:src="@mipmap/snack_icon"/>
+
+
+</RelativeLayout>

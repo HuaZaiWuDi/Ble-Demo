@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d_150"
+    android:layout_height="@dimen/d_200"
     android:background="@color/colorWhite">
 
     <ImageView
@@ -16,11 +16,14 @@
 
     <TextView
         android:id="@+id/tv_foodName"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/d_300"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/img_food"
-        android:text="麦片"/>
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="麦片"
+        android:textColor="@color/textColor"/>
 
 
     <TextView
@@ -39,7 +42,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/d_20"
-        android:text="620千卡"/>
+        android:layout_marginRight="@dimen/d_80"
+        android:text="620千卡"
+        android:textColor="@color/textHeatColor"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_1"
+        android:background="@color/lineColor"/>
 
 </RelativeLayout>

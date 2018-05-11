@@ -20,7 +20,7 @@ import retrofit2.HttpException;
  */
 public class RxHttpException {
 
-    public  String handleResponseError(Throwable t) {
+    public String handleResponseError(Throwable t) {
         //这里不光是只能打印错误,还可以根据不同的错误作出不同的逻辑处理
         String msg = "未知错误";
         if (t instanceof UnknownHostException) {

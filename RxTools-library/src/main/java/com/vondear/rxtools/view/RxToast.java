@@ -49,6 +49,9 @@ public class RxToast {
 
     private static Toast currentToast;
 
+
+
+
     //*******************************************普通 使用ApplicationContext 方法*********************
     /**
      * Toast 替代方法 ：立即显示无需等待

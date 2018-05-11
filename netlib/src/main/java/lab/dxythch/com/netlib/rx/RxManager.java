@@ -4,14 +4,11 @@ package lab.dxythch.com.netlib.rx;
 import android.app.Application;
 import android.util.Log;
 
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import lab.dxythch.com.netlib.utils.RxNetUtils;
 
 /**
  * 项目名称：BleCar
@@ -76,7 +73,7 @@ public class RxManager {
     public <T> void dofunSubscribe(Observable<T> observable, RxNetSubscriber<T> subscriber) {
         observable
 //                .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
-                .timeout(2, TimeUnit.SECONDS)   //两秒超时重新发送
+//                .timeout(2, TimeUnit.SECONDS)   //两秒超时重新发送
                 .retry(2)  //重试两次
                 .doOnError(new Consumer<Throwable>() {
                     @Override
@@ -84,25 +81,17 @@ public class RxManager {
                         Log.d(TAG, "doOnError: " + throwable.getMessage());
                     }
                 })
-                .compose(RxUtils.<T>rxThreadHelper())
+                .compose(RxThreadUtils.<T>rxThreadHelper())
                 .subscribe(subscriber);
     }
 
 
-    public <String> void doNetSubscribe(final Observable<String> observable, final RxNetSubscriber<String> subscriber) {
-        if (!RxNetUtils.isAvailable(application)) {
-            subscriber.onError(new Throwable("网络异常"));
-            return;
-        } else {
-            //TODO 添加缓存效果
-
-        }
-        observable
-                .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
-                .timeout(2, TimeUnit.SECONDS)   //两秒超时重新发送
-                .retry(2)  //重试两次
-                .compose(RxUtils.<String>rxThreadHelper())
-                .subscribe(subscriber);
+    public <String> Observable<String> doNetSubscribe(final Observable<String> observable) {
+        return observable
+//                .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
+//                .timeout(2, TimeUnit.SECONDS)   //两秒超时重新发送
+//                .retry(2)  //重试两次
+                .compose(RxThreadUtils.<String>rxThreadHelper());
     }
 
 }

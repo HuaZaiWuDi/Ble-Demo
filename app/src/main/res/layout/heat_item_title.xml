@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50"
+        android:background="@color/bg_color"/>
 
     <RelativeLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_100">
+        android:layout_height="@dimen/d_120"
+        android:layout_below="@+id/view">
 
 
         <ImageView
@@ -26,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/img"
+            android:textColor="@color/textColor"
             tools:text="早餐"/>
 
 
@@ -35,7 +43,8 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/d_10"
             android:layout_toLeftOf="@+id/tv_kcal"
-            tools:text="已摄入:"/>
+            android:text="@string/ingestioned"
+            android:textColor="@color/textHeatColor"/>
 
 
         <TextView
@@ -44,20 +53,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_30"
             android:text="620千卡"
             android:textColor="@color/colorTheme"/>
 
+
+
+
     </RelativeLayout>
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_title">
-
-    </android.support.v7.widget.RecyclerView>
 
 
 </RelativeLayout>

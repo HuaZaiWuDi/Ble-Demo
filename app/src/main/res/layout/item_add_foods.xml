@@ -3,26 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d_350">
+    android:layout_height="@dimen/d_250">
 
 
     <ImageView
         android:id="@+id/img_food"
-        android:layout_width="@dimen/d_350"
-        android:layout_height="match_parent"
-        android:background="@color/colorTheme"
+        android:layout_width="@dimen/d_250"
+        android:layout_height="@dimen/d_250"
+        android:layout_centerVertical="true"
         android:padding="@dimen/d_50"/>
-
 
     <TextView
         android:id="@+id/tv_food"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/d_300"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/d_50"
         android:layout_toRightOf="@+id/img_food"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/textColor"
-        android:textSize="@dimen/d_55"
+        android:textSize="@dimen/d_40"
         tools:text="瘦肉粥"/>
 
     <TextView
@@ -30,10 +31,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/d_150"
-        android:layout_toLeftOf="@+id/tv_foodKcal"
-        android:textColor="@color/textColor"
-        android:textSize="@dimen/d_55"
+        android:layout_marginLeft="600px"
+        android:textColor="@color/textHeatColor"
+        android:textSize="@dimen/d_40"
         tools:text="250.0克"/>
 
     <TextView
@@ -44,8 +44,12 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/d_50"
         android:textColor="@color/colorTheme"
-        android:textSize="@dimen/d_55"
+        android:textSize="@dimen/d_40"
         tools:text="116千卡"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_1"
+        android:background="@color/lineColor"/>
 
 </RelativeLayout>

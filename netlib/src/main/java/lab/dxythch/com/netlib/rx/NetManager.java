@@ -1,11 +1,20 @@
 package lab.dxythch.com.netlib.rx;
 
 
+import android.util.Log;
+
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
+import lab.dxythch.com.netlib.BuildConfig;
 import lab.dxythch.com.netlib.net.ServiceAPI;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -41,14 +50,45 @@ public class NetManager {
 
     /**
      * 返回原始的值
+     *
      * @param service
      * @param <S>
      * @return
      */
     public <S> S createString(Class<S> service) {
+
+        Interceptor NetInterceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                request.header("Content-Type: application/json");
+                request.header("Accept: application/json");
+                return chain.proceed(request);
+            }
+        };
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (BuildConfig.DEBUG) {
+            //日志显示级别
+            HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BASIC;
+            //新建log拦截器
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    Log.w("【NetManager】", message);
+                }
+            });
+            loggingInterceptor.setLevel(level);
+            //OkHttp进行添加拦截器loggingInterceptor
+            builder.addInterceptor(loggingInterceptor);
+        }
+        builder.addInterceptor(NetInterceptor);
+
+
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(builder.build())
                 .baseUrl(getBaseUrl(service))
                 .build();
         return retrofit.create(service);
@@ -56,6 +96,7 @@ public class NetManager {
 
     /**
      * URL不一致时调用
+     *
      * @param service
      * @param <S>
      * @return

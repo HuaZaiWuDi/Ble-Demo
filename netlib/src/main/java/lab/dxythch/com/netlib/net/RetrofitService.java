@@ -2,67 +2,51 @@ package lab.dxythch.com.netlib.net;
 
 
 import io.reactivex.Observable;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import okhttp3.RequestBody;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
  * 项目名称：Bracelet
  * 类描述：
- * 创建人：oden
+ * 创建人：Jack
  * 创建时间：2017/5/24
  */
 public interface RetrofitService {
     String BASE_URL = ServiceAPI.BASE_URL;
 
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_gainUserId.action")
-    Observable<String> gainUserId(@Field("merchantNo") String merchantNo, @Field("systemTime") String systemTime, @Field("mapType") String mapType
-            , @Field("longitude") String longitude, @Field("latitude") String latitude);
+    ///////////////////////////////////////////////////////////////////////////
+    // 瘦身（热量）
+    ///////////////////////////////////////////////////////////////////////////
+
+    //    @FormUrlEncoded
+//    @Headers({"Content-Type: application/json", "Accept: application/json"})//需要添加头
+    @POST("/slim/getSlimHistoryInfo")
+    Observable<String> getHeatHistory(@Body RequestBody body);
 
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_gainAppConfig.action")
-    Observable<String> gainAppConfig(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                     @Field("systemTime") String systemTime, @Field("appVersionNo") String appVersionNo,
-                                     @Field("mapType") String mapType, @Field("longitude") String longitude,
-                                     @Field("latitude") String latitude);
+    @POST("/slim/getFoodInfo")
+    Observable<String> getFoodInfo(@Body RequestBody body);
 
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_bindDevice.action")
-    Observable<String> bindDevice(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                  @Field("systemTime") String systemTime, @Field("deviceSN") String deviceSN);
+    @POST("/slim/searchFoodInfo")
+    Observable<String> searchFoodInfo(@Body RequestBody body);
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_refreshHistory.action")
-    Observable<String> refreshHistory(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                      @Field("systemTime") String systemTime, @Field("deviceSN") String deviceSN,
-                                      @Field("historyData") String historyData);
+    @POST("/slim/getKeyWord")
+    Observable<String> getKeyWord(@Body RequestBody body);
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_gainFirmwareConfig.action")
-    Observable<String> gainFirmwareConfig(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                          @Field("systemTime") String systemTime, @Field("deviceSN") String deviceSN,
-                                          @Field("firmwareVersionNo") String firmwareVersionNo);
+    @POST("/slim/addHeatInfo")
+    Observable<String> addHeatInfo(@Body RequestBody body);
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_gainUserInfo.action")
-    Observable<String> gainUserInfo(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                    @Field("systemTime") String systemTime);
+    @POST("/slim/removeHeatInfo")
+    Observable<String> removeHeatInfo(@Body RequestBody body);
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_updateUserInfo.action")
-    Observable<String> updateUserInfo(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                      @Field("systemTime") String systemTime, @Field("userName") String userName,
-                                      @Field("phoneNumber") String phoneNumber, @Field("email") String email,
-                                      @Field("weChatNo") String weChatNo, @Field("qqNo") String qqNo);
 
-    @FormUrlEncoded
-    @POST("CRMShop/skapp_updateFamilyUserInfo.action")
-    Observable<String> updateFamilyUserInfo(@Field("merchantNo") String merchantNo, @Field("userId") String userId,
-                                            @Field("systemTime") String systemTime, @Field("familyUser") String familyUser,
-                                            @Field("familyType") String familyType, @Field("familyAction") String familyAction);
+    @POST("/slim/getWeightInfo")
+    Observable<String> getWeightInfo(@Body RequestBody body);
+
+    @POST("/slim/getWeightList")
+    Observable<String> getWeightList(@Body RequestBody body);
 
 }

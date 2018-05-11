@@ -2,19 +2,21 @@ package lab.dxythch.com.commonproject.ui.main.slimming;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
 import com.vondear.rxtools.fragment.FragmentLazy;
+import com.vondear.rxtools.view.UnScrollableViewPager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
 import lab.dxythch.com.commonproject.R;
+import lab.dxythch.com.commonproject.tools.Key;
 import lab.dxythch.com.commonproject.ui.main.slimming.heat.HeatFragment;
 import lab.dxythch.com.commonproject.ui.main.slimming.sports.SportsFragment;
 import lab.dxythch.com.commonproject.ui.main.slimming.weight.WeightFragment;
@@ -32,7 +34,7 @@ public class SlimmingFragment extends FragmentLazy {
     //    @ViewById
 //    MagicIndicator magicIndicator;
     @ViewById
-    ViewPager mViewPager;
+    UnScrollableViewPager mViewPager;
 
     @ViewById
     TextView tv_heat;
@@ -41,27 +43,35 @@ public class SlimmingFragment extends FragmentLazy {
     @ViewById
     TextView tv_sports;
 
+    private boolean isComplete = false;
+    private int position = 0;
 
     @Click
     void tv_heat() {
-        initTitle(0);
+        position = 0;
+        initTitle(position);
         mViewPager.setCurrentItem(0);
     }
 
     @Click
     void tv_weight() {
-        initTitle(1);
+        position = 1;
+        initTitle(position);
         mViewPager.setCurrentItem(1);
     }
 
     @Click
     void tv_sports() {
-        initTitle(2);
+        position = 2;
+        initTitle(position);
         mViewPager.setCurrentItem(2);
     }
 
-
-    private int titleIndex = 0;
+    @Receiver(actions = Key.ACTION_SWITCH_THEME)
+    void switchTheme(@Receiver.Extra(Key.EXTRA_SWITCH_THEME) boolean isComplete) {
+        this.isComplete = isComplete;
+        initTitle(position);
+    }
 
 
     private ArrayList<Fragment> mFragments = new ArrayList<>();
@@ -99,33 +109,32 @@ public class SlimmingFragment extends FragmentLazy {
             }
         });
 
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                initTitle(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+//        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                initTitle(position);
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
     }
 
     private void initTitle(int index) {
         tv_heat.setBackgroundResource(index == 0 ? R.mipmap.button_bg : 0);
-        tv_heat.setTextColor(getResources().getColor(index == 0 ? R.color.colorTheme : R.color.white));
+        tv_heat.setTextColor(getResources().getColor(index == 0 ? isComplete ? R.color.colorRed : R.color.colorTheme : R.color.white));
         tv_weight.setBackgroundResource(index == 1 ? R.mipmap.button_bg : 0);
-        tv_weight.setTextColor(getResources().getColor(index == 1 ? R.color.colorTheme : R.color.white));
+        tv_weight.setTextColor(getResources().getColor(index == 1 ? isComplete ? R.color.colorRed : R.color.colorTheme : R.color.white));
         tv_sports.setBackgroundResource(index == 2 ? R.mipmap.button_bg : 0);
-        tv_sports.setTextColor(getResources().getColor(index == 2 ? R.color.colorTheme : R.color.white));
+        tv_sports.setTextColor(getResources().getColor(index == 2 ? isComplete ? R.color.colorRed : R.color.colorTheme : R.color.white));
 
     }
-
 
 }

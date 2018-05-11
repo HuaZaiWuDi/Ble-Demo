@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color"
+    android:orientation="vertical"
+    tools:context=".ui.main.slimming.heat.SearchHistoryActivity">
+
+    <RelativeLayout
+        android:id="@+id/layoutTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_250"
+        android:background="@drawable/shape_bg_statu_bar"
+        android:paddingTop="66px">
+
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/mSearchView"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/d_20"
+            android:layout_marginLeft="@dimen/d_60"
+            android:layout_marginRight="@dimen/d_200"
+            android:background="@mipmap/search_black_bg"
+            android:focusable="false"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            app:closeIcon="@mipmap/btn_close"
+            app:divider="@mipmap/cursor_green_line"
+            app:queryHint="@string/inputFoodName"
+            app:searchIcon="@mipmap/search_white_icon"/>
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/d_40"
+            android:layout_marginRight="@dimen/d_40"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:textSize="@dimen/d_55"/>
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutTitle"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_150">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/d_30"
+                android:drawableLeft="@mipmap/lately_icon"
+                android:drawablePadding="@dimen/d_20"
+                android:text="最近搜索"
+                android:textColor="@color/textColor"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/d_20">
+
+            <lab.dxythch.com.commonproject.view.DynamicTagFlowLayout
+                android:id="@+id/tagFlowLayout_lately"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_500"
+                android:layout_marginTop="8dp"/>
+
+
+            <TextView
+                android:id="@+id/tv_delete"
+                android:layout_width="@dimen/d_500"
+                android:layout_height="@dimen/d_120"
+                android:layout_gravity="center_horizontal"
+                android:background="@mipmap/delete_button"
+                android:drawableLeft="@mipmap/delete_icon"
+                android:drawablePadding="@dimen/d_20"
+                android:gravity="center_vertical"
+                android:paddingLeft="120px"
+                android:text="@string/clearHistoryData"/>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_150">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/d_30"
+                android:drawableLeft="@mipmap/hot_icon"
+                android:drawablePadding="@dimen/d_20"
+                android:text="热门搜索"
+                android:textColor="@color/textColor"/>
+
+        </LinearLayout>
+
+        <lab.dxythch.com.commonproject.view.DynamicTagFlowLayout
+            android:id="@+id/tagFlowLayout_hot"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_500"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutTitle"
+        android:background="@color/white"
+        android:visibility="gone"
+        >
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</RelativeLayout>
