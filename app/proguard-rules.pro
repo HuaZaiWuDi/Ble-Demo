@@ -22,3 +22,7 @@
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
 -keep class android.support.**{*;}
+
+
+#云康宝
+-keep public class com.kitnew.ble.QNCalc {*;}

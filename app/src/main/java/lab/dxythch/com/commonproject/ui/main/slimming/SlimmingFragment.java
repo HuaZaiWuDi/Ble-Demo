@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.widget.TextView;
 
-import com.vondear.rxtools.fragment.FragmentLazy;
 import com.vondear.rxtools.view.UnScrollableViewPager;
 
 import org.androidannotations.annotations.AfterViews;
@@ -16,6 +15,7 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 
 import lab.dxythch.com.commonproject.R;
+import lab.dxythch.com.commonproject.base.BaseFragment;
 import lab.dxythch.com.commonproject.tools.Key;
 import lab.dxythch.com.commonproject.ui.main.slimming.heat.HeatFragment;
 import lab.dxythch.com.commonproject.ui.main.slimming.sports.SportsFragment;
@@ -25,7 +25,7 @@ import lab.dxythch.com.commonproject.ui.main.slimming.weight.WeightFragment;
  * Created by jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_slimming)
-public class SlimmingFragment extends FragmentLazy {
+public class SlimmingFragment extends BaseFragment {
 
     public static SlimmingFragment getInstance() {
         return new SlimmingFragment_();
@@ -83,7 +83,7 @@ public class SlimmingFragment extends FragmentLazy {
     }
 
     @AfterViews
-    void initView() {
+    public void initView() {
         initTitleTab();
     }
 

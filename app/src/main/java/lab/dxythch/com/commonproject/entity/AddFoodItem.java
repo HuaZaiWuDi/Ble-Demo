@@ -31,13 +31,14 @@ public class AddFoodItem {
     private List<intakeList> intakeList;
 
 
-    public static class intakeList implements Serializable{
+    public static class intakeList implements Serializable {
         private String foodId;
         private String foodName;
         private int foodCount;
         private String foodUnit;
         private String weight;
         private String weightType;
+        private String gid;
 
         public void setFoodId(String foodId) {
             this.foodId = foodId;
@@ -63,6 +64,9 @@ public class AddFoodItem {
             this.weightType = weightType;
         }
 
+        public void setGid(String gid) {
+            this.gid = gid;
+        }
 
         @Override
         public String toString() {
@@ -73,6 +77,7 @@ public class AddFoodItem {
                     ", foodUnit='" + foodUnit + '\'' +
                     ", weight='" + weight + '\'' +
                     ", weightType='" + weightType + '\'' +
+                    ", gid='" + gid + '\'' +
                     '}';
         }
     }

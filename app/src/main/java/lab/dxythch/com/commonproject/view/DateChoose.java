@@ -2,7 +2,6 @@ package lab.dxythch.com.commonproject.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -64,7 +63,6 @@ public class DateChoose extends RelativeLayout {
         mTvLast.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 calendar.add(Calendar.DATE, -1);
                 notidyDate();
             }
@@ -90,13 +88,19 @@ public class DateChoose extends RelativeLayout {
 
         Builder = new AlertDialog.Builder(mContext);
         View view = View.inflate(mContext, R.layout.dialog_calendar, null);
+
+        Builder.setView(view);
+
+        final AlertDialog show = Builder.show();
+
         final CalendarView mCalendarView = view.findViewById(R.id.mCalendarView);
         mCalendarView.setDate(calendar.getTimeInMillis(), true, true);
         mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 calendar.set(year, month, dayOfMonth);
-//                notidyDate();
+                notidyDate();
+                show.dismiss();
             }
         });
 
@@ -107,25 +111,10 @@ public class DateChoose extends RelativeLayout {
             public void onClick(View v) {
                 mCalendarView.setDate(System.currentTimeMillis(), true, true);
                 calendar.setTimeInMillis(System.currentTimeMillis());
-//                notidyDate();
-            }
-        });
-
-        Builder.setView(view);
-//        Builder.create().setOnDismissListener(new DialogInterface.OnDismissListener() {
-//            @Override
-//            public void onDismiss(DialogInterface dialog) {
-//
-//            }
-//        });
-
-        Builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
                 notidyDate();
+                show.dismiss();
             }
         });
-        Builder.show();
     }
 
 

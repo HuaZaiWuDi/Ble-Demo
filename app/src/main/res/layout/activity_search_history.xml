@@ -132,16 +132,25 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/mRecyclerView"
+
+    <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+        android:id="@+id/mSmoothRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layoutTitle"
-        android:background="@color/white"
         android:visibility="gone"
-        >
+        app:sr_empty_layout="@layout/layout_search_no_data">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+    </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
 
 
 </RelativeLayout>

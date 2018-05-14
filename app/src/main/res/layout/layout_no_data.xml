@@ -19,7 +19,7 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:maxLines="2"
-        android:text="还没添加任何食物现在添加吧"
+        android:text="@string/no_data"
         android:textColor="@color/textHeatColor"/>
 
 </RelativeLayout>

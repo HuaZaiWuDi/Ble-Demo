@@ -1,6 +1,5 @@
 package lab.dxythch.com.commonproject.ui.main.slimming.heat;
 
-import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,15 +35,18 @@ import lab.dxythch.com.commonproject.R;
 import lab.dxythch.com.commonproject.base.BaseActivity;
 import lab.dxythch.com.commonproject.entity.AddFoodItem;
 import lab.dxythch.com.commonproject.entity.HotKeyItem;
+import lab.dxythch.com.commonproject.entity.ListBean;
 import lab.dxythch.com.commonproject.entity.SearchListItem;
 import lab.dxythch.com.commonproject.entity.sql.SearchWordTab;
 import lab.dxythch.com.commonproject.utils.StatusBarUtils;
+import lab.dxythch.com.commonproject.view.AddOrUpdateFoodDialog;
 import lab.dxythch.com.commonproject.view.DynamicTagFlowLayout;
 import lab.dxythch.com.netlib.net.RetrofitService;
 import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
 import lab.dxythch.com.netlib.utils.RxBus;
+import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import okhttp3.RequestBody;
 
 
@@ -66,6 +67,8 @@ public class SearchHistoryActivity extends BaseActivity {
     LinearLayout layoutHistory;
     @ViewById
     RecyclerView mRecyclerView;
+    @ViewById
+    SmoothRefreshLayout mSmoothRefreshLayout;
 
     @Click
     void tv_cancel() {
@@ -96,10 +99,11 @@ public class SearchHistoryActivity extends BaseActivity {
 
 
     private void initRecyclerView() {
+        mSmoothRefreshLayout.setEnableOverScroll(false);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        searchListAdapter = new BaseQuickAdapter<SearchListItem.ListBean, BaseViewHolder>(R.layout.item_search) {
+        searchListAdapter = new BaseQuickAdapter<ListBean, BaseViewHolder>(R.layout.item_search) {
             @Override
-            protected void convert(BaseViewHolder helper, SearchListItem.ListBean item) {
+            protected void convert(BaseViewHolder helper, ListBean item) {
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView view = helper.getView(R.id.tv_foodInfo);
                 RxTextUtils.getBuilder("")
@@ -111,8 +115,8 @@ public class SearchHistoryActivity extends BaseActivity {
         searchListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                mRecyclerView.setVisibility(View.GONE);
-                SearchListItem.ListBean listBean = (SearchListItem.ListBean) adapter.getData().get(position);
+                mSmoothRefreshLayout.setVisibility(View.GONE);
+                ListBean listBean = (ListBean) adapter.getData().get(position);
                 String foodName = listBean.getFoodName();
                 if (!SearchWordTab.isExist(foodName)) {
                     SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), foodName);
@@ -150,58 +154,16 @@ public class SearchHistoryActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private void showAddFoodDialog(final SearchListItem.ListBean item) {
-        View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
-
-        final AlertDialog dialog = new AlertDialog.Builder(mContext)
-                .setView(view)
-                .show();
-
-        ImageView img_food = view.findViewById(R.id.img_food);
-        TextView tv_foodName = view.findViewById(R.id.tv_foodName);
-        TextView tv_foodInfo = view.findViewById(R.id.tv_info);
-        TextView tv_heat = view.findViewById(R.id.tv_heat);
-        final EditText et_food_g = view.findViewById(R.id.et_food_g);
-        TextView tv_unit = view.findViewById(R.id.tv_unit);
-        TextView cancel = view.findViewById(R.id.cancel);
-        TextView ok = view.findViewById(R.id.ok);
-
-        loadCricle(item.getFoodImg(), img_food);
-        tv_foodName.setText(item.getFoodName());
-        tv_foodInfo.setText(item.getDescription());
-        tv_unit.setText(item.getUnit());
-
-        et_food_g.setText(item.getUnitCount() + "");
-
-        RxTextUtils.getBuilder("")
-                .append(item.getHeat() + getString(R.string.unit_kcal)).setForegroundColor(getResources().getColor(R.color.colorTheme))
-                .append(getString(R.string.unit_heat))
-                .into(tv_heat);
-
-        cancel.setOnClickListener(new View.OnClickListener() {
+    private void showAddFoodDialog(final ListBean item) {
+        new AddOrUpdateFoodDialog(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                item.setUnitCount(Integer.parseInt(et_food_g.getText().toString()));
-                AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
-                intakeList.setFoodId(item.getGid());
-                intakeList.setFoodName(item.getFoodName());
-                intakeList.setFoodCount(item.getUnitCount());
-                intakeList.setFoodUnit(item.getUnit());
-                //暂时不用传
-                intakeList.setWeight("");
-                intakeList.setWeightType("");
-
-                dialog.dismiss();
-                RxBus.getInstance().post(intakeList);
+            public void complete(AddFoodItem.intakeList item) {
+                RxBus.getInstance().post(item);
                 onBackPressed();
             }
         });
+
+
     }
 
 
@@ -245,7 +207,7 @@ public class SearchHistoryActivity extends BaseActivity {
                 //TODO 处理Text的。防止输入特殊文字
                 if (!RxDataUtils.isNullString(newText) && newText.length() <= 20)
                     initSearchData(newText);
-                else mRecyclerView.setVisibility(View.GONE);
+                else mSmoothRefreshLayout.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -277,9 +239,14 @@ public class SearchHistoryActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         SearchListItem item = new Gson().fromJson(s, SearchListItem.class);
-                        List<SearchListItem.ListBean> beans = item.getList();
-                        mRecyclerView.setVisibility(View.VISIBLE);
+                        List<ListBean> beans = item.getList();
+                        mSmoothRefreshLayout.setVisibility(View.VISIBLE);
                         searchListAdapter.setNewData(beans);
+                        if (beans.size() == 0) {
+                            mSmoothRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
+                        } else {
+                            mSmoothRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
+                        }
                     }
 
                     @Override

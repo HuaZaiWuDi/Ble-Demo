@@ -1,6 +1,8 @@
-package lab.dxythch.com.commonproject.entity;
+package lab.dxythch.com.commonproject.entity.section;
 
 import com.chad.library.adapter.base.entity.SectionEntity;
+
+import lab.dxythch.com.commonproject.entity.FoodListBean;
 
 /**
  * Created by jk on 2018/5/10.

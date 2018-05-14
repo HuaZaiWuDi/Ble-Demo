@@ -41,10 +41,12 @@
 
         <activity
             android:name=".ui.main.MainActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
             >
         </activity>
         <activity
             android:name=".ui.guide.SpalshActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -52,17 +54,23 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.slimming.heat.AddFoodActivity_">
+        <activity
+            android:name=".ui.main.slimming.heat.AddFoodActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale">
         </activity>
-        <activity android:name=".ui.main.slimming.heat.SearchHistoryActivity_">
+        <activity
+            android:name=".ui.main.slimming.heat.SearchHistoryActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale">
         </activity>
-        <activity android:name=".ui.main.slimming.heat.SearchFoodActivity">
+        <activity
+            android:name=".ui.main.slimming.weight.WeightDataActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale">
         </activity>
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent" />
+            android:theme="@android:style/Theme.Translucent"/>
 
     </application>
 

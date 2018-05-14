@@ -64,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/tv_complete"
             android:visibility="gone"
+            tools:visibility="visible"
             >
 
             <ImageView
@@ -78,12 +79,12 @@
                 android:id="@+id/tv_mark"
                 android:layout_width="@dimen/d_40"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21px"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/d_10"
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/d_30"
-                tools:text="99"/>
+                tools:text="9"/>
 
         </RelativeLayout>
 

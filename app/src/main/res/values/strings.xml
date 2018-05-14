@@ -43,7 +43,10 @@
     <string name="unit_kcal2">单位：千卡</string>
 
     <string name="inputRightFoodName">请输入正确的食物名字</string>
+    <string name="weightNoZero">重量不能为0</string>
 
+    <string name="no_data">还没添加任何食物现在添加吧</string>
+    <string name="no_search_data">没有搜索到食物</string>
     <string name="addBreakfast">添加早餐</string>
     <string name="addLunch">添加午餐</string>
     <string name="addDinner">添加晚餐</string>
@@ -61,6 +64,13 @@
 
     <string name="can_eatHeat">还可以吃</string>
     <string name="EatMore">多吃了</string>
+
+    <string name="weigh_info">身体信息</string>
+
+    <string name="currentWeight">当前体重</string>
+    <string name="targetWeight">理想体重</string>
+
+    <string name="weight_data">体重数据</string>
 
     <string-array name="tab_text">
         <item>@string/nav_lose_weight</item>
@@ -82,5 +92,24 @@
         <item>@string/addMidnight</item>
         <item>@string/addSnack</item>
     </string-array>
+
+
+    <string-array name="weight_title">
+        <item>身体年龄</item>
+        <item>体脂率</item>
+        <item>基础代谢</item>
+        <item>体型</item>
+        <item>去脂体重</item>
+        <item>体重</item>
+        <item>骨骼肌率</item>
+        <item>肌肉</item>
+        <item>蛋白质</item>
+        <item>水份</item>
+        <item>皮下脂肪率</item>
+        <item>骨量</item>
+        <item>内脏脂肪等级</item>
+        <item>BMI</item>
+    </string-array>
+
 
 </resources>

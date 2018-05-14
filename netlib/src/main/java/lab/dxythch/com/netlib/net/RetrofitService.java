@@ -43,10 +43,27 @@ public interface RetrofitService {
     Observable<String> removeHeatInfo(@Body RequestBody body);
 
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 体重
+    ///////////////////////////////////////////////////////////////////////////
+
     @POST("/slim/getWeightInfo")
     Observable<String> getWeightInfo(@Body RequestBody body);
 
     @POST("/slim/getWeightList")
     Observable<String> getWeightList(@Body RequestBody body);
+
+    @POST("/slim/addWeightInfo")
+    Observable<String> addWeightInfo(@Body RequestBody body);
+
+    @POST("/slim/getAthleticsInfo")
+    Observable<String> getAthleticsInfo(@Body RequestBody body);
+
+    @POST("/slim/getAthleticsList")
+    Observable<String> getAthleticsList(@Body RequestBody body);
+
+    @POST("/slim/addAthleticsInfo")
+    Observable<String> addAthleticsInfo(@Body RequestBody body);
+
 
 }

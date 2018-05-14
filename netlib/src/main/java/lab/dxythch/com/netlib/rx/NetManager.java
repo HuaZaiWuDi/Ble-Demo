@@ -70,7 +70,7 @@ public class NetManager {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         if (BuildConfig.DEBUG) {
             //日志显示级别
-            HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BASIC;
+            HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
             //新建log拦截器
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                 @Override

@@ -2,7 +2,7 @@ package lab.dxythch.com.commonproject.ui.main.slimming.heat;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -10,23 +10,21 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.fragment.FragmentLazy;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
-import com.yanzhenjie.recyclerview.swipe.touch.OnItemStateChangedListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -44,11 +42,15 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.dxythch.com.commonproject.R;
+import lab.dxythch.com.commonproject.base.BaseFragment;
+import lab.dxythch.com.commonproject.entity.AddFoodItem;
 import lab.dxythch.com.commonproject.entity.FoodHistoryItem;
 import lab.dxythch.com.commonproject.entity.FoodListBean;
-import lab.dxythch.com.commonproject.entity.HeatFoodSection;
+import lab.dxythch.com.commonproject.entity.ListBean;
+import lab.dxythch.com.commonproject.entity.section.HeatFoodSection;
 import lab.dxythch.com.commonproject.prefs.Prefs_;
 import lab.dxythch.com.commonproject.tools.Key;
+import lab.dxythch.com.commonproject.view.AddOrUpdateFoodDialog;
 import lab.dxythch.com.commonproject.view.CircleMenuView;
 import lab.dxythch.com.commonproject.view.DateChoose;
 import lab.dxythch.com.commonproject.view.RoundView;
@@ -64,7 +66,7 @@ import okhttp3.RequestBody;
  * Created by jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_heat)
-public class HeatFragment extends FragmentLazy {
+public class HeatFragment extends BaseFragment {
 
     @ViewById
     SwipeMenuRecyclerView mRecyclerView;
@@ -88,7 +90,6 @@ public class HeatFragment extends FragmentLazy {
     @Pref
     Prefs_ mPrefs;
 
-    private QMUITipDialog tipDialog;
     private int[] foodTypeRes_green = {R.mipmap.breakfast_green_icon, R.mipmap.lunch_green_icon,
             R.mipmap.dinner_green_icon, R.mipmap.midnight_snack_green_icon, R.mipmap.snack_green_icon};
     private int[] foodTypeRes_red = {R.mipmap.breakfast_red_icon, R.mipmap.lunch_red_icon,
@@ -105,7 +106,7 @@ public class HeatFragment extends FragmentLazy {
 
 
     @AfterViews
-    void initView() {
+    public void initView() {
         initDialog();
         initDate();
         initRecycler();
@@ -263,8 +264,8 @@ public class HeatFragment extends FragmentLazy {
 //        mPrefs.UserId().put(foodHistoryItem.getUserId());
 
         int ableIntake = foodHistoryItem.getAbleIntake() + foodHistoryItem.getIntake();
-        mRoundView.setCentreText(foodHistoryItem.getAbleIntake(), getString(isComplete ? R.string.EatMore : R.string.can_eatHeat), getString(R.string.unit_kcal2));
-        int angle = foodHistoryItem.getIntake() / ableIntake * 360;
+        mRoundView.setCentreText(foodHistoryItem.getAbleIntake(), getString(R.string.can_eatHeat), getString(R.string.unit_kcal2));
+        int angle = (int) ((float) foodHistoryItem.getIntake() / (float) ableIntake * 360);
 
         mRoundView.setSweepAngle(angle);
         switchTheme();
@@ -367,23 +368,23 @@ public class HeatFragment extends FragmentLazy {
             }
         };
 
-        // 创建菜单：
-        SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
-            @Override
-            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
-                if (viewType != 0) return;//是headLayout不添加
-                SwipeMenuItem deleteItem = new SwipeMenuItem(mActivity);
-                deleteItem.setBackgroundColor(getResources().getColor(R.color.color_material_Red_600));
-                deleteItem.setText(R.string.delete);
-                deleteItem.setTextColor(getResources().getColor(R.color.white));
-                deleteItem.setTextSize(20);
-                deleteItem.setHeight(LinearLayout.MarginLayoutParams.MATCH_PARENT);
-                deleteItem.setWidth(200);
-                // 各种文字和图标属性设置。
-                rightMenu.addMenuItem(deleteItem); // 在Item左侧添加一个菜单。
-            }
-        };
-        mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
+//        // 创建菜单：
+//        SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
+//            @Override
+//            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
+//                if (viewType != 0) return;//是headLayout不添加
+//                SwipeMenuItem deleteItem = new SwipeMenuItem(mActivity);
+//                deleteItem.setBackgroundColor(getResources().getColor(R.color.color_material_Red_600));
+//                deleteItem.setText(R.string.delete);
+//                deleteItem.setTextColor(getResources().getColor(R.color.white));
+//                deleteItem.setTextSize(20);
+//                deleteItem.setHeight(LinearLayout.MarginLayoutParams.MATCH_PARENT);
+//                deleteItem.setWidth(200);
+//                // 各种文字和图标属性设置。
+//                rightMenu.addMenuItem(deleteItem); // 在Item左侧添加一个菜单。
+//            }
+//        };
+//        mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
 
         // 菜单点击监听。
         mRecyclerView.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
@@ -398,16 +399,84 @@ public class HeatFragment extends FragmentLazy {
                 menuBridge.closeMenu();
             }
         });
-
-//        mRecyclerView.setItemViewSwipeEnabled(true);
-        mRecyclerView.setAdapter(sectionQuickAdapter);
-        mRecyclerView.setOnItemStateChangedListener(new OnItemStateChangedListener() {
+        sectionQuickAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                RxLogUtils.d("tiaomudianji ");
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                ListBean bean = new ListBean();
+                final FoodListBean foodListBean = mBeans.get(position).t;
+                bean.setFoodImg(foodListBean.getFoodImg());
+                bean.setFoodName(foodListBean.getFoodName());
+                bean.setUnit(foodListBean.getFoodUnit());
+                bean.setUnitCount(foodListBean.getFoodCount());
+                bean.setTypeId(foodListBean.getFoodId());
+                bean.setGid(foodListBean.getGid());
+                new AddOrUpdateFoodDialog(mActivity, false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+                    @Override
+                    public void complete(AddFoodItem.intakeList item) {
+                        updateFood(foodListBean, item);
+                    }
+                });
             }
         });
+
+        sectionQuickAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                showDeleteDialog(position);
+                return true;
+            }
+        });
+
+        mRecyclerView.setAdapter(sectionQuickAdapter);
     }
+
+    private void showDeleteDialog(int position) {
+//        QMUIDialogAction action = new QMUIDialogAction(mActivity, "删除", new QMUIDialogAction.ActionListener() {
+//            @Override
+//            public void onClick(QMUIDialog dialog, int index) {
+//
+//            }
+//        });
+
+        QMUIDialog dialog = new QMUIDialog.MessageDialogBuilder(mActivity)
+                .setTitle("是否删除")
+                .addAction(R.string.delete, new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                }).show();
+
+    }
+
+    private void updateFood(FoodListBean foodListBean, AddFoodItem.intakeList item) {
+        String userId = mPrefs.UserId().getOr("testuser");
+        RxLogUtils.d("用户ID" + userId);
+        AddFoodItem foodItem = new AddFoodItem();
+        foodItem.setUserId(userId);
+        foodItem.setAddDate(date);
+        foodItem.setEatType(foodListBean.getEatType());
+        ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();
+        lists.add(item);
+        foodItem.setIntakeLists(lists);
+        String s = new Gson().toJson(foodItem);
+
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        notifyData(date);
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
 
     //重新请求
     private void removeItem(List<HeatFoodSection> beans, int position) {

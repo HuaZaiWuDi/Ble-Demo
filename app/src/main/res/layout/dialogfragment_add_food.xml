@@ -65,6 +65,7 @@
                 android:background="#F2F2F2"
                 android:gravity="center"
                 android:inputType="number"
+                android:maxLength="4"
                 android:maxLines="1"
                 android:text="0"
                 android:textColor="@color/colorTheme"
