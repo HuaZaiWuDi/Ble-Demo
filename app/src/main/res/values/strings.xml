@@ -18,7 +18,8 @@
     <string name="heat">热量</string>
     <string name="weight">体重</string>
     <string name="sports">运动</string>
-
+    <string name="heatRate">心率</string>
+    <string name="sportsTime">时长</string>
 
     <string name="consume">消耗</string>
     <string name="Ingestion">摄入</string>
@@ -66,6 +67,7 @@
     <string name="EatMore">多吃了</string>
 
     <string name="weigh_info">身体信息</string>
+    <string name="details">查看详情</string>
 
     <string name="currentWeight">当前体重</string>
     <string name="targetWeight">理想体重</string>
@@ -90,7 +92,8 @@
     <string name="level">级</string>
 
     <string name="disConnected">未连接</string>
-    <string name="connected">已蓝牙</string>
+    <string name="connected">已连接</string>
+    <string name="unBind">未绑定</string>
 
 
     <string-array name="tab_text">
@@ -132,5 +135,12 @@
         <item>BMI</item>
     </string-array>
 
+
+    <string-array name="sports_title">
+        <item>运动时长</item>
+        <item>消耗热量</item>
+        <item>平均心率</item>
+        <item>最高心率</item>
+    </string-array>
 
 </resources>

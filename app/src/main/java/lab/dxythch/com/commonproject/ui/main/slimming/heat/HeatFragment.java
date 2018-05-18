@@ -58,7 +58,8 @@ import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
 import lab.dxythch.com.netlib.utils.RxBus;
-import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.config.Constants;
 import okhttp3.RequestBody;
 
 /**
@@ -305,9 +306,9 @@ public class HeatFragment extends BaseFragment {
             }
         }
         if (mBeans.size() > 0) {
-            refresh.setState(SmoothRefreshLayout.STATE_CONTENT);
+            refresh.setState(Constants.STATE_CONTENT);
         } else {
-            refresh.setState(SmoothRefreshLayout.STATE_EMPTY);
+            refresh.setState(Constants.STATE_EMPTY);
         }
         sectionQuickAdapter.setNewData(mBeans);
     }
@@ -340,8 +341,7 @@ public class HeatFragment extends BaseFragment {
 
         refresh.setEnableOverScroll(true);
         refresh.setEnablePullToRefresh(false);
-        refresh.setEnableScrollToBottomAutoLoadMore(false);
-        refresh.setState(SmoothRefreshLayout.STATE_EMPTY);
+        refresh.setState(Constants.STATE_EMPTY);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 
         sectionQuickAdapter = new BaseSectionQuickAdapter<HeatFoodSection, BaseViewHolder>(R.layout.heat_item, R.layout.heat_item_title, mBeans) {

@@ -33,21 +33,22 @@
                 android:text="@string/disConnected"
                 android:textColor="@color/white"/>
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/mLineChart"
+
+            <me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout
+                android:id="@+id/mRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/tv_connectDevice">
-
-            </com.github.mikephil.charting.charts.LineChart>
+                android:layout_marginTop="270px">
 
 
-            <View
-                android:layout_width="@dimen/d_1"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/tv_connectDevice"
-                android:layout_centerHorizontal="true"
-                android:background="@color/white"/>
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/mLineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </com.github.mikephil.charting.charts.LineChart>
+
+            </me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout>
 
 
             <TextView
@@ -57,10 +58,10 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/d_100"
-                android:background="@mipmap/prompt_bg"
+                android:background="@drawable/prompt_bg"
                 android:paddingLeft="@dimen/d_50"
                 android:paddingRight="@dimen/d_50"
-                android:paddingTop="@dimen/d_20"
+                android:paddingTop="@dimen/d_25"
                 android:text="@string/bindDevice"
                 android:textColor="@color/textColor"
                 android:textSize="@dimen/d_40"
@@ -207,13 +208,14 @@
                     tools:text="身体指标"/>
 
                 <TextView
+
                     android:id="@+id/tv_weight_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/d_30"
-                    android:drawableLeft="@mipmap/time_icon"
+                    android:drawableLeft="@mipmap/time_icon_green"
                     android:drawablePadding="@dimen/d_10"
                     android:text="2018-05-09"
                     android:textColor="@color/textHeatColor"

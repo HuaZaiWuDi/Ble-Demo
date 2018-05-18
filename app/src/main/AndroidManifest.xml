@@ -83,7 +83,7 @@
             android:exported="true">
         </service>
 
-        <!--轻牛SDK-->
+        <!-- 轻牛SDK -->
         <service
             android:name="com.qingniu.qnble.scanner.BleScanService"
             android:enabled="true"
@@ -95,7 +95,8 @@
             android:exported="true">
         </service>
 
-
+        <activity android:name=".ui.main.slimming.sports.SportsDetailsActivity">
+        </activity>
     </application>
 
 </manifest>

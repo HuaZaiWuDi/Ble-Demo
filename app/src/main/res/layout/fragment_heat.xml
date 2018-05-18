@@ -101,18 +101,19 @@
         </LinearLayout>
 
 
-        <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+        <me.dkzwm.widget.srl.SmoothRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:sr_empty_layout="@layout/layout_no_data">
+            app:sr_emptyLayout="@layout/layout_no_data">
 
             <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
                 android:id="@+id/mRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-        </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+        </me.dkzwm.widget.srl.SmoothRefreshLayout>
+
 
     </LinearLayout>
 

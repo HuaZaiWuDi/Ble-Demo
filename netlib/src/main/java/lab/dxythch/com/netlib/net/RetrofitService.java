@@ -53,6 +53,12 @@ public interface RetrofitService {
     @POST("slim/addWeightInfo")
     Observable<String> addWeightInfo(@Body RequestBody body);
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 运动
+    ///////////////////////////////////////////////////////////////////////////
+
+
     @POST("slim/getAthleticsInfo")
     Observable<String> getAthleticsInfo(@Body RequestBody body);
 

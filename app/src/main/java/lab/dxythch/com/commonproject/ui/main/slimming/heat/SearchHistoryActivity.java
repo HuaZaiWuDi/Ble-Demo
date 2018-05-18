@@ -46,7 +46,8 @@ import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
 import lab.dxythch.com.netlib.utils.RxBus;
-import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.config.Constants;
 import okhttp3.RequestBody;
 
 
@@ -243,9 +244,9 @@ public class SearchHistoryActivity extends BaseActivity {
                         mSmoothRefreshLayout.setVisibility(View.VISIBLE);
                         searchListAdapter.setNewData(beans);
                         if (beans.size() == 0) {
-                            mSmoothRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
+                            mSmoothRefreshLayout.setState(Constants.STATE_EMPTY, true);
                         } else {
-                            mSmoothRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
+                            mSmoothRefreshLayout.setState(Constants.STATE_CONTENT, true);
                         }
                     }
 

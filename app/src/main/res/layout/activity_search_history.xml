@@ -133,13 +133,15 @@
     </LinearLayout>
 
 
-    <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    <me.dkzwm.widget.srl.SmoothRefreshLayout
         android:id="@+id/mSmoothRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layoutTitle"
         android:visibility="gone"
-        app:sr_empty_layout="@layout/layout_search_no_data">
+        app:sr_emptyLayout="@layout/layout_search_no_data"
+        >
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/mRecyclerView"
@@ -150,7 +152,7 @@
 
         </android.support.v7.widget.RecyclerView>
 
-    </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+    </me.dkzwm.widget.srl.SmoothRefreshLayout>
 
 
 </RelativeLayout>

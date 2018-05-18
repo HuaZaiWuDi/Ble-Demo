@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,8 +19,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -69,6 +66,10 @@ import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
 import lab.dxythch.com.netlib.utils.RxBus;
+import me.dkzwm.widget.srl.RefreshingListenerAdapter;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.extra.header.MaterialHeader;
+import me.dkzwm.widget.srl.utils.PixelUtl;
 import okhttp3.RequestBody;
 
 /**
@@ -97,6 +98,9 @@ public class WeightFragment extends BaseFragment {
     TextView tv_connectTip;
     @ViewById
     LinearLayout dialog_not_connect;
+    @ViewById
+    SmoothRefreshLayout mRefresh;
+
 
     @Bean
     QNBleTools mQNBleTools;
@@ -116,7 +120,6 @@ public class WeightFragment extends BaseFragment {
         }
     }
 
-
     @Click
     void icon_weight() {
         RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class);
@@ -125,11 +128,15 @@ public class WeightFragment extends BaseFragment {
     @AfterViews
     public void initView() {
         initRecyclerView();
-
+        initRxBus();
+        initChart();
+        initHRefresh();
+        initWeightInfo();
+        initQNBle();
     }
 
     private List<WeightInfoItem> weightLists = new ArrayList<>();
-    private List<String> days = new ArrayList<>();
+
     private ArrayList<Entry> yVals = new ArrayList<Entry>();
     private BaseQuickAdapter adapter;
 
@@ -137,11 +144,28 @@ public class WeightFragment extends BaseFragment {
 
     @Override
     public void initData() {
-        initWeightInfo();
         getWeightData();
-        initChart();
-        initQNBle();
-        initRxBus();
+    }
+
+    private void initHRefresh() {
+        MaterialHeader header = new MaterialHeader(mActivity);
+        header.setColorSchemeColors(new int[]{Color.parseColor("#00C5CC"), Color.parseColor("#62DFBA")});
+        header.setPadding(PixelUtl.dp2px(mActivity, 25), 0, PixelUtl.dp2px(mActivity, 25), 0);
+        mRefresh.setHeaderView(header);
+
+        mRefresh.setDisableLoadMore(true);
+        mRefresh.setDisableLoadMore(true);
+        mRefresh.setEnableOverScroll(false);
+        mRefresh.setNestedScrollingEnabled(false);
+        mRefresh.setEnablePinContentView(true);
+        mRefresh.setEnablePinRefreshViewWhileLoading(true);
+
+        mRefresh.setOnRefreshListener(new RefreshingListenerAdapter() {
+            @Override
+            public void onRefreshBegin(boolean isRefresh) {
+                mRefresh.refreshComplete(5000);
+            }
+        });
 
     }
 
@@ -308,6 +332,7 @@ public class WeightFragment extends BaseFragment {
         tv_connectTip.setVisibility(View.VISIBLE);
         switch (QN_bleState) {
             case 0://打开蓝牙
+
                 RxTextUtils.getBuilder(getString(R.string.connectBle))
                         .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
@@ -319,6 +344,8 @@ public class WeightFragment extends BaseFragment {
                 });
                 break;
             case 1://绑定设备
+                tv_connectDevice.setText(R.string.unBind);
+                tv_connectDevice.setCompoundDrawables(getResources().getDrawable(R.mipmap.unbound_icon), null, null, null);
                 RxTextUtils.getBuilder(getString(R.string.bindDevice))
                         .append(getString(R.string.goBind)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
@@ -357,11 +384,6 @@ public class WeightFragment extends BaseFragment {
 
     //初始化图表
     private void initChart() {
-        String[] XLabels = new String[13];
-        for (int i = 0; i < 13; i++) {
-            XLabels[i] = "X" + i;
-        }
-
         // no description text
         mLineChart.getDescription().setEnabled(false);
         mLineChart.setTouchEnabled(true);//可以点击
@@ -383,59 +405,12 @@ public class WeightFragment extends BaseFragment {
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
 
-        mLineChart.setOnChartGestureListener(new OnChartGestureListener() {
-            @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-                RxLogUtils.d("手势开始");
-            }
-
-            @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-                RxLogUtils.d("手势结束");
-            }
-
-            @Override
-            public void onChartLongPressed(MotionEvent me) {
-                RxLogUtils.d("长按");
-            }
-
-            @Override
-            public void onChartDoubleTapped(MotionEvent me) {
-                RxLogUtils.d("双击");
-            }
-
-            @Override
-            public void onChartSingleTapped(MotionEvent me) {
-                RxLogUtils.d("单击");
-            }
-
-            @Override
-            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-                RxLogUtils.d("快滑");
-            }
-
-            @Override
-            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-                RxLogUtils.d("缩放");
-            }
-
-            @Override
-            public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                RxLogUtils.d("位移：----dx:" + dX + "-------dy:" + dY);
-//                if () {
-//                }
-
-            }
-        });
-
-
     }
 
 
-    private void setData(ArrayList<Entry> yVals, List<String> days) {
+    private void setData(ArrayList<Entry> yVals, List<String> xVals) {
         // 阴影线
         ArrayList<Entry> yVals_2 = new ArrayList<Entry>();
-
 
         for (int i = 0; i < yVals.size() + 3; i++) {
             yVals_2.add(new Entry(i, 42));
@@ -451,9 +426,8 @@ public class WeightFragment extends BaseFragment {
         x.setAxisLineColor(Color.WHITE);
         x.setDrawAxisLine(true);
         x.setDrawLabels(true);
-        x.setValueFormatter(new MyXFormatter(days));
-//        x.setGranularity(1f);// //设置最小间隔，防止当放大时出现重复标签
-//        //设置为true当一个页面显示条目过多，X轴值隔一个显示一个
+        x.setValueFormatter(new MyXFormatter(xVals));
+
 
         YAxis y = mLineChart.getAxisLeft();
         y.setDrawLimitLinesBehindData(true);
@@ -464,8 +438,8 @@ public class WeightFragment extends BaseFragment {
         y.setAxisLineColor(Color.WHITE);
 //        y.setGranularity(2f);// //设置最小间隔，防止当放大时出现重复标签
         y.setDrawAxisLine(false);
-        y.setAxisMaximum(200f);
-        y.setAxisMinimum(-50f);
+        y.setAxisMaximum(150f);
+        y.setAxisMinimum(20f);
 
         //提示线，
         LimitLine ll = new LimitLine(42, "标准");//线条颜色宽度等
@@ -478,7 +452,6 @@ public class WeightFragment extends BaseFragment {
         //加入到 mXAxis 或 mYAxis
         y.addLimitLine(ll);
 
-
         // create a dataset and give it a type
         LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
 
@@ -487,7 +460,6 @@ public class WeightFragment extends BaseFragment {
         set1.setLineWidth(3f);
 
         set1.setDrawCircles(false);//是否显示节点圆心
-
 
         set1.setColor(Color.WHITE);
         set1.setDrawVerticalHighlightIndicator(false);
@@ -508,6 +480,7 @@ public class WeightFragment extends BaseFragment {
         LineData data = new LineData(set1);
         data.setValueTextSize(9f);
         data.setDrawValues(false);
+
 
         // set data
         mLineChart.setData(data);
@@ -591,10 +564,11 @@ public class WeightFragment extends BaseFragment {
     }
 
     private void syncChart(final List<WeightDataBean.WeightListBean.ListBean> list) {
+        List<String> days = new ArrayList<>();
         synWeightData(list.get(list.size() - 1));
 
         for (int i = 0; i < list.size(); i++) {
-            yVals.add(new Entry(i + 3, (float) list.get(i).getWeight()));
+            yVals.add(new Entry(i, (float) list.get(i).getWeight()));
             days.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "dd"));
         }
 
@@ -604,7 +578,7 @@ public class WeightFragment extends BaseFragment {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 RxLogUtils.e("---->", e.getX() + "  " + e.getY());
-                synWeightData(list.get((int) e.getX() - 3));
+                synWeightData(list.get((int) e.getX()));
             }
 
             @Override
@@ -612,11 +586,12 @@ public class WeightFragment extends BaseFragment {
 
             }
         });
-
     }
 
 
     private void synWeightData(WeightDataBean.WeightListBean.ListBean bean) {
+
+        if (bean == null) return;
 
         weightLists.get(0).setData_left(bean.getBodyAge() + getString(R.string.bodyAge));
         weightLists.get(0).setData_right(bean.getBodyFat() + "%");
