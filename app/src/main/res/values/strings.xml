@@ -71,6 +71,27 @@
     <string name="targetWeight">理想体重</string>
 
     <string name="weight_data">体重数据</string>
+    <string name="btn_leave">离开</string>
+    <string name="btn_continue">继续领取</string>
+
+    <string name="receivedCount">%1$s领取的体重数据（%2$d）</string>
+
+
+    <string name="bindDevice">还未绑定设备，</string>
+    <string name="goBind">去绑定</string>
+
+    <string name="connectBle">你还未链接设备，请打开手机</string>
+    <string name="phoneBle">手机蓝牙</string>
+
+    <string name="newWeight">你有新的体重数据，</string>
+    <string name="waitReceive">等待领取</string>
+
+    <string name="bodyAge">岁</string>
+    <string name="level">级</string>
+
+    <string name="disConnected">未连接</string>
+    <string name="connected">已蓝牙</string>
+
 
     <string-array name="tab_text">
         <item>@string/nav_lose_weight</item>

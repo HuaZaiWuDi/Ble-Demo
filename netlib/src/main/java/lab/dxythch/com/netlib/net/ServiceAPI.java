@@ -8,6 +8,7 @@ package lab.dxythch.com.netlib.net;
  */
 public class ServiceAPI {
 
+    //    public static final String BASE_URL = "http://10.10.11.208:16100/mix/";
     public static final String BASE_URL = "http://10.10.11.192:16102";
 
 }

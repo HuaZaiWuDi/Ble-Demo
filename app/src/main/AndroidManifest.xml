@@ -3,6 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="lab.dxythch.com.commonproject">
 
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_LOGS"
@@ -17,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--屏幕适配-->
+        <!-- 屏幕适配 -->
         <meta-data
             android:name="design_width"
             android:value="1080"/>
@@ -38,15 +40,15 @@
                 android:resource="@xml/file_path"/>
         </provider>
 
-
         <activity
             android:name=".ui.main.MainActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            >
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.guide.SpalshActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:screenOrientation="portrait"
             android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -56,21 +58,43 @@
         </activity>
         <activity
             android:name=".ui.main.slimming.heat.AddFoodActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale">
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.main.slimming.heat.SearchHistoryActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale">
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale">
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:screenOrientation="portrait">
         </activity>
-
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent"/>
+
+        <service
+            android:name=".service.QNService_"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
+        <!--轻牛SDK-->
+        <service
+            android:name="com.qingniu.qnble.scanner.BleScanService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name="com.qingniu.scale.ble.ScaleBleService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
 
     </application>
 

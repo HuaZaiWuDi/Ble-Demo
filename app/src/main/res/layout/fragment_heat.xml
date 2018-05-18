@@ -15,7 +15,7 @@
         <LinearLayout
             android:id="@+id/head_bg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="850px"
             android:background="@drawable/energy_green_bg_down"
             android:orientation="vertical">
 
@@ -24,8 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="100dp">
-
+                android:layout_marginTop="220px">
 
             </lab.dxythch.com.commonproject.view.DateChoose>
 
@@ -35,14 +34,6 @@
                 android:layout_height="500px"
                 android:gravity="center"
                 android:orientation="horizontal">
-
-                <!--<com.smartclothing.wefit.view.custom.CountDownProgress-->
-                <!--android:id="@+id/countDownProgress"-->
-                <!--android:layout_width="227dp"-->
-                <!--android:layout_height="280dp"-->
-                <!--android:padding="20dp"-->
-                <!--app:default_circle_stroke_width="5dp"-->
-                <!--app:small_circle_radius="8dp"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"

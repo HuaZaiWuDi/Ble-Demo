@@ -20,4 +20,6 @@
         <item name="android:listDivider">@drawable/divider_bg</item>
     </style>
 
+
+
 </resources>

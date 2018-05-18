@@ -16,6 +16,7 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class RxNetSubscriber<T> implements Observer<T> {
 
+
     String TAG = "【RxNetSubscriber】";
 
     @Override

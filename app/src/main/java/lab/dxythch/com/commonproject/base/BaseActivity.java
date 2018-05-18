@@ -59,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord("正在加载")
                 .create();
+//        tipDialog.setCanceledOnTouchOutside(true);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {

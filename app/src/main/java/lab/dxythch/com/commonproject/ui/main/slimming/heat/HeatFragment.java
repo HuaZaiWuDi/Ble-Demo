@@ -34,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
@@ -162,8 +161,8 @@ public class HeatFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         RxBus.getInstance().unSubscribe(this);
+        super.onDestroy();
     }
 
     @Override
@@ -396,7 +395,7 @@ public class HeatFragment extends BaseFragment {
                 deleteData(section.t.getGid());
 
 //                menu.setVisibility(View.GONE);
-                menuBridge.closeMenu();
+//                menuBridge.closeMenu();
             }
         });
         sectionQuickAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -410,6 +409,7 @@ public class HeatFragment extends BaseFragment {
                 bean.setUnitCount(foodListBean.getFoodCount());
                 bean.setTypeId(foodListBean.getFoodId());
                 bean.setGid(foodListBean.getGid());
+                bean.setFoodId(foodListBean.getFoodId());
                 new AddOrUpdateFoodDialog(mActivity, false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
                     @Override
                     public void complete(AddFoodItem.intakeList item) {
@@ -430,20 +430,22 @@ public class HeatFragment extends BaseFragment {
         mRecyclerView.setAdapter(sectionQuickAdapter);
     }
 
-    private void showDeleteDialog(int position) {
-//        QMUIDialogAction action = new QMUIDialogAction(mActivity, "删除", new QMUIDialogAction.ActionListener() {
-//            @Override
-//            public void onClick(QMUIDialog dialog, int index) {
-//
-//            }
-//        });
-
+    private void showDeleteDialog(final int position) {
         QMUIDialog dialog = new QMUIDialog.MessageDialogBuilder(mActivity)
-                .setTitle("是否删除")
+                .setTitle("提示")
+                .setMessage("是否删除")
+                .addAction(R.string.cancel, new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
                 .addAction(R.string.delete, new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
                         dialog.dismiss();
+                        HeatFoodSection section = mBeans.get(position);
+                        deleteData(section.t.getGid());
                     }
                 }).show();
 
@@ -476,31 +478,4 @@ public class HeatFragment extends BaseFragment {
                     }
                 });
     }
-
-
-    //重新请求
-    private void removeItem(List<HeatFoodSection> beans, int position) {
-        String header = beans.get(position).header;
-        int count = 0;
-        for (HeatFoodSection heat : beans) {
-            if (header.equals(heat.header)) {
-                count++;
-            }
-        }
-        if (count <= 2) {
-            Iterator<HeatFoodSection> iter = beans.iterator();
-            while (iter.hasNext()) {
-                HeatFoodSection s = iter.next();
-                if (header.equals(s.header)) {
-                    iter.remove();
-                }
-            }
-            sectionQuickAdapter.notifyItemRangeRemoved(position - 1, 2);
-        } else {
-            beans.remove(position);
-            sectionQuickAdapter.notifyItemRemoved(position);
-        }
-
-    }
-
 }

@@ -13,6 +13,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        // 取消掉系统对.9图片的检查
+        aaptOptions.cruncherEnabled = false
+        aaptOptions.useNewCruncher = false
     }
     buildTypes {
         release {
@@ -64,5 +67,7 @@ dependencies {
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
     //方法超限处理
     implementation 'com.android.support:multidex:1.0.3'
-    implementation files('libs/qn-ble-api-3.11.1.jar')
+    //MPAndroidChart图表控件
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation files('libs/qnsdk-0.1.0.jar')
 }

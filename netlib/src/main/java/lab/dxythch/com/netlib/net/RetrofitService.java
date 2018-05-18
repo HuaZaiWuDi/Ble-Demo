@@ -20,26 +20,23 @@ public interface RetrofitService {
     // 瘦身（热量）
     ///////////////////////////////////////////////////////////////////////////
 
-    //    @FormUrlEncoded
-//    @Headers({"Content-Type: application/json", "Accept: application/json"})//需要添加头
-    @POST("/slim/getSlimHistoryInfo")
+    @POST("slim/getSlimHistoryInfo")
     Observable<String> getHeatHistory(@Body RequestBody body);
 
-
-    @POST("/slim/getFoodInfo")
+    @POST("slim/getFoodInfo")
     Observable<String> getFoodInfo(@Body RequestBody body);
 
 
-    @POST("/slim/searchFoodInfo")
+    @POST("slim/searchFoodInfo")
     Observable<String> searchFoodInfo(@Body RequestBody body);
 
-    @POST("/slim/getKeyWord")
+    @POST("slim/getKeyWord")
     Observable<String> getKeyWord(@Body RequestBody body);
 
-    @POST("/slim/addHeatInfo")
+    @POST("slim/addHeatInfo")
     Observable<String> addHeatInfo(@Body RequestBody body);
 
-    @POST("/slim/removeHeatInfo")
+    @POST("slim/removeHeatInfo")
     Observable<String> removeHeatInfo(@Body RequestBody body);
 
 
@@ -47,22 +44,22 @@ public interface RetrofitService {
     // 体重
     ///////////////////////////////////////////////////////////////////////////
 
-    @POST("/slim/getWeightInfo")
+    @POST("slim/getWeightInfo")
     Observable<String> getWeightInfo(@Body RequestBody body);
 
-    @POST("/slim/getWeightList")
+    @POST("slim/getWeightList")
     Observable<String> getWeightList(@Body RequestBody body);
 
-    @POST("/slim/addWeightInfo")
+    @POST("slim/addWeightInfo")
     Observable<String> addWeightInfo(@Body RequestBody body);
 
-    @POST("/slim/getAthleticsInfo")
+    @POST("slim/getAthleticsInfo")
     Observable<String> getAthleticsInfo(@Body RequestBody body);
 
-    @POST("/slim/getAthleticsList")
+    @POST("slim/getAthleticsList")
     Observable<String> getAthleticsList(@Body RequestBody body);
 
-    @POST("/slim/addAthleticsInfo")
+    @POST("slim/addAthleticsInfo")
     Observable<String> addAthleticsInfo(@Body RequestBody body);
 
 

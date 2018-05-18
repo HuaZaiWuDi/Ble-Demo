@@ -109,9 +109,9 @@ public class RoundView extends View {
 
     private void init() {
 
-        sweepAngle1 = 270;
-        sweepAngle2 = 270;
-        sweepAngle3 = 270;
+//        sweepAngle1 = -90;
+//        sweepAngle2 = -90;
+//        sweepAngle3 = -90;
 
         lineWidth = dp2px(1);
         ProgressWidth = dp2px(3);
@@ -139,12 +139,12 @@ public class RoundView extends View {
         if (wMode == MeasureSpec.EXACTLY) {
             mWidth = wSize;
         } else {
-            mWidth = dp2px(300);
+            mWidth = dp2px(450);
         }
         if (hMode == MeasureSpec.EXACTLY) {
             mHeight = hSize;
         } else {
-            mHeight = dp2px(200);
+            mHeight = dp2px(450);
         }
         setMeasuredDimension(mWidth, mHeight);
     }
@@ -157,7 +157,7 @@ public class RoundView extends View {
         //绘制背景
 //        canvas.drawColor(BackgroundColor);
 
-        radius = (int) (mWidth * 0.45); //不要在构造方法里初始化，那时还没测量宽高
+        radius = (int) (mWidth * 0.40); //不要在构造方法里初始化，那时还没测量宽高
         canvas.save();
         canvas.translate(mWidth / 2, (mHeight) / 2);
 //        //画最里面的圈

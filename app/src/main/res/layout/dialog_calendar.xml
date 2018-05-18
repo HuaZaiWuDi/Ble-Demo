@@ -8,21 +8,25 @@
     <CalendarView
         android:id="@+id/mCalendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:focusedMonthDateColor="@color/colorTheme"
+        android:selectedWeekBackgroundColor="@color/colorTheme"
+        android:unfocusedMonthDateColor="@color/colorTheme"
+        android:weekNumberColor="@color/colorTheme"
+        android:weekSeparatorLineColor="@color/colorTheme">
 
     </CalendarView>
 
     <TextView
-        android:layout_marginBottom="@dimen/d_30"
         android:id="@+id/reToday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/mCalendarView"
         android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/d_30"
         android:background="@mipmap/delete_button"
         android:gravity="center"
         android:text="回到今天"
         android:textColor="@color/colorTheme"/>
-
 
 </RelativeLayout>

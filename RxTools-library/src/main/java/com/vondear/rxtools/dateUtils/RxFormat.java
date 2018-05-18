@@ -3,6 +3,7 @@ package com.vondear.rxtools.dateUtils;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -27,12 +28,18 @@ public class RxFormat {
 
 
     public static String setFormatDate(long value, String format) {
-
         return new SimpleDateFormat(format, Locale.getDefault()).format(value);
     }
 
-    public static String setFormatNum(long value, String format) {
+    public static String setFormatDate(Date date, String format) {
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
+    }
 
+    public static String setFormatDate(Calendar calendar, String format) {
+        return new SimpleDateFormat(format, Locale.getDefault()).format(calendar.getTime());
+    }
+
+    public static String setFormatNum(long value, String format) {
         return new DecimalFormat(format).format(value);
     }
 

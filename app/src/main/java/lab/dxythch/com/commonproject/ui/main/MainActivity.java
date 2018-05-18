@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -44,7 +45,10 @@ public class MainActivity extends BaseActivity {
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
+
+        RxLogUtils.d("时间戳：" + System.currentTimeMillis());
     }
+
 
     private void initMyViewPager() {
         mFragments.clear();

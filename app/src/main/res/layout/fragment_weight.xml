@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,172 +7,241 @@
     android:background="@color/bg_color"
     android:orientation="vertical">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@mipmap/weight_upper_bg_iphone6_above">
-
-
-    </LinearLayout>
-
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:src="@mipmap/weight_lower_bg_iphone6_below">
-    </ImageView>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_200"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/icon_weight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/d_120"
-                android:src="@mipmap/weight_icon"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/d_50"
-                android:layout_toRightOf="@+id/icon_weight"
-                android:gravity="left|center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/currentWeight"
-                    android:textColor="@color/textColor"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="--KG"
-                    android:textColor="@color/colorTheme"
-                    android:textSize="@dimen/d_70"/>
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="@dimen/d_1"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/d_50"
-            android:layout_marginTop="@dimen/d_50"
-            android:background="@color/lineColor"/>
-
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/icon_weight_target"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/d_120"
-                android:src="@mipmap/target_icon"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/d_50"
-                android:layout_toRightOf="@+id/icon_weight_target"
-                android:gravity="left|center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/targetWeight"
-                    android:textColor="@color/textColor"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:textColor="@color/colorTheme"
-                    android:textSize="@dimen/d_70"
-                    android:text="54.0KG"/>
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_50"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/bg_color"
         android:orientation="vertical">
 
+
         <RelativeLayout
+            android:id="@+id/head"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_100"
-            android:padding="@dimen/d_20">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:drawableLeft="@mipmap/body_massage_icon"
-                android:drawablePadding="@dimen/d_10"
-                android:text="@string/weigh_info"
-                android:textColor="@color/textColor"
-                tools:text="身体指标"/>
+            android:layout_height="850px"
+            android:background="@mipmap/weight_upper_bg_iphone6_above"
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_connectDevice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/d_30"
-                android:drawableLeft="@mipmap/time_icon"
-                android:drawablePadding="@dimen/d_10"
-                android:text="2018-05-09"
-                android:textColor="@color/textHeatColor"/>
+                android:layout_marginRight="@dimen/d_100"
+                android:layout_marginTop="230px"
+                android:drawableLeft="@mipmap/connect_icon"
+                android:drawablePadding="@dimen/d_20"
+                android:text="@string/disConnected"
+                android:textColor="@color/white"/>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/mLineChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tv_connectDevice">
+
+            </com.github.mikephil.charting.charts.LineChart>
+
+
+            <View
+                android:layout_width="@dimen/d_1"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tv_connectDevice"
+                android:layout_centerHorizontal="true"
+                android:background="@color/white"/>
+
+
+            <TextView
+                android:id="@+id/tv_connectTip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/d_100"
+                android:background="@mipmap/prompt_bg"
+                android:paddingLeft="@dimen/d_50"
+                android:paddingRight="@dimen/d_50"
+                android:paddingTop="@dimen/d_20"
+                android:text="@string/bindDevice"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/d_40"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
 
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/mRecyclerView"
+
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@mipmap/weight_lower_bg_iphone6_below">
+        </ImageView>
 
-        </android.support.v7.widget.RecyclerView>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_200"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/icon_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/d_120"
+                    android:src="@mipmap/weight_icon"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/d_50"
+                    android:layout_toRightOf="@+id/icon_weight"
+                    android:gravity="left|center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="@string/currentWeight"
+                        android:textColor="@color/textColor"/>
+
+                    <TextView
+                        android:id="@+id/tv_currentWeight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="--kg"
+                        android:textColor="@color/colorTheme"
+                        android:textSize="@dimen/d_70"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="@dimen/d_1"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/d_50"
+                android:layout_marginTop="@dimen/d_50"
+                android:background="@color/lineColor"/>
+
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/icon_weight_target"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/d_120"
+                    android:src="@mipmap/target_icon"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/d_50"
+                    android:layout_toRightOf="@+id/icon_weight_target"
+                    android:gravity="left|center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="@string/targetWeight"
+                        android:textColor="@color/textColor"/>
+
+                    <TextView
+                        android:id="@+id/tv_idealWeight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="--kg"
+                        android:textColor="@color/colorTheme"
+                        android:textSize="@dimen/d_70"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_50"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_100"
+                android:padding="@dimen/d_20">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:drawableLeft="@mipmap/body_massage_icon"
+                    android:drawablePadding="@dimen/d_10"
+                    android:text="@string/weigh_info"
+                    android:textColor="@color/textColor"
+                    tools:text="身体指标"/>
+
+                <TextView
+                    android:id="@+id/tv_weight_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/d_30"
+                    android:drawableLeft="@mipmap/time_icon"
+                    android:drawablePadding="@dimen/d_10"
+                    android:text="2018-05-09"
+                    android:textColor="@color/textHeatColor"
+                    android:textSize="@dimen/d_35"/>
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/mRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
 
-</LinearLayout>
+    <include
+        android:id="@+id/dialog_not_connect"
+        layout="@layout/dialog_not_connect"
+        android:layout_width="@dimen/d_500"
+        android:layout_height="@dimen/d_400"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>

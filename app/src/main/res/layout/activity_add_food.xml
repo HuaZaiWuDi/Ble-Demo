@@ -80,7 +80,7 @@
                 android:layout_width="@dimen/d_40"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_15"
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/d_30"

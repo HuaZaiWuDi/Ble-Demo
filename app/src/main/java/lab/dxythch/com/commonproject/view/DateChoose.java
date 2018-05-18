@@ -36,7 +36,7 @@ public class DateChoose extends RelativeLayout {
     private int month;
     private int year;
     private int day;
-    private boolean isToday;
+    private boolean isToday = true;
     private Context mContext;
 
     public DateChoose(Context context) {
@@ -63,6 +63,8 @@ public class DateChoose extends RelativeLayout {
         mTvLast.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                isToday = false;
+                nextIsEnable(isToday);
                 calendar.add(Calendar.DATE, -1);
                 notidyDate();
             }
@@ -73,15 +75,24 @@ public class DateChoose extends RelativeLayout {
             public void onClick(View v) {
                 calendar.add(Calendar.DATE, +1);
                 notidyDate();
+                isToday = isToday();
+
+                nextIsEnable(isToday);
+
             }
         });
 
         calendar = Calendar.getInstance();
 
         notidyDate();
-
+        nextIsEnable(isToday);
     }
 
+
+    private void nextIsEnable(boolean isToday) {
+        mTvNext.setEnabled(!isToday);
+        mTvNext.setAlpha(isToday ? 0.5f : 1f);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void showCalendar() {
@@ -94,11 +105,14 @@ public class DateChoose extends RelativeLayout {
         final AlertDialog show = Builder.show();
 
         final CalendarView mCalendarView = view.findViewById(R.id.mCalendarView);
+        mCalendarView.setMaxDate(System.currentTimeMillis());
         mCalendarView.setDate(calendar.getTimeInMillis(), true, true);
         mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 calendar.set(year, month, dayOfMonth);
+                isToday = isToday();
+                nextIsEnable(isToday);
                 notidyDate();
                 show.dismiss();
             }
@@ -109,12 +123,22 @@ public class DateChoose extends RelativeLayout {
         reToday.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                isToday = true;
+                nextIsEnable(isToday);
+
                 mCalendarView.setDate(System.currentTimeMillis(), true, true);
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 notidyDate();
                 show.dismiss();
             }
         });
+    }
+
+    private boolean isToday() {
+        String date1 = RxFormat.setFormatDate(calendar.getTimeInMillis(), RxFormat.Date_Month_Day);
+        String date2 = RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_Month_Day);
+
+        return date1.equals(date2);
     }
 
 
@@ -133,7 +157,6 @@ public class DateChoose extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        Builder.create().dismiss();
     }
 
 
