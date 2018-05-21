@@ -18,6 +18,7 @@ public class Key {
     public static final String BUNDLE_WEIGHT_HISTORY = "BUNDLE_WEIGHT_HISTORY";
 
 
+    public static final String BUNDLE_SPORTS_INFO = "BUNDLE_SPORTS_INFO";
 
 
     ///////////////////////////////////////////////////////////////////////////

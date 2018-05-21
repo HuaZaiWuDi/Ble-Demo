@@ -25,11 +25,10 @@ public interface Prefs {
     @DefaultInt(60)
     int weight();
 
-    @DefaultString("male")
-    String sex();
+    @DefaultInt(0)
+    int sex();
 
     @DefaultLong(0)
     long birthDayMillis();
-
 
 }

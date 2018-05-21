@@ -56,12 +56,12 @@ import lab.dxythch.com.commonproject.base.MyAPP;
 import lab.dxythch.com.commonproject.ble.QNBleTools;
 import lab.dxythch.com.commonproject.entity.WeightDataBean;
 import lab.dxythch.com.commonproject.entity.WeightInfoItem;
+import lab.dxythch.com.commonproject.netserivce.RetrofitService;
 import lab.dxythch.com.commonproject.prefs.Prefs_;
 import lab.dxythch.com.commonproject.rxbus.WeightIsUpdate;
 import lab.dxythch.com.commonproject.tools.Key;
 import lab.dxythch.com.commonproject.utils.MyXFormatter;
 import lab.dxythch.com.commonproject.view.MyMarkerView;
-import lab.dxythch.com.netlib.net.RetrofitService;
 import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
@@ -346,7 +346,7 @@ public class WeightFragment extends BaseFragment {
             case 1://绑定设备
                 tv_connectDevice.setText(R.string.unBind);
                 tv_connectDevice.setCompoundDrawables(getResources().getDrawable(R.mipmap.unbound_icon), null, null, null);
-                RxTextUtils.getBuilder(getString(R.string.bindDevice))
+                RxTextUtils.getBuilder(getString(R.string.unbindDevice))
                         .append(getString(R.string.goBind)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
                 tv_connectTip.setOnClickListener(new View.OnClickListener() {
@@ -528,7 +528,7 @@ public class WeightFragment extends BaseFragment {
         }
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getWeightList(body))
+        RxManager.getInstance().doNetSubscribe(dxyService.getWeightList(1, 10))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -569,7 +569,7 @@ public class WeightFragment extends BaseFragment {
 
         for (int i = 0; i < list.size(); i++) {
             yVals.add(new Entry(i, (float) list.get(i).getWeight()));
-            days.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "dd"));
+            days.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "MM/dd"));
         }
 
         setData(yVals, days);

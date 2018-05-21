@@ -6,6 +6,7 @@ import android.util.Log;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
 import com.activeandroid.app.Application;
+import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listen.QNResultCallback;
@@ -32,7 +33,10 @@ public class MyAPP extends Application {
         initDB();
         MultiDex.install(this);
         initQN();
+        BleTools.initBLE(this);
+
     }
+
 
     private void initQN() {
         QNapi = QNBleApi.getInstance(this);

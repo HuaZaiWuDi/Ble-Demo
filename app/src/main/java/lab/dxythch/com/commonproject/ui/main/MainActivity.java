@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.activity.RxActivityUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -19,6 +19,7 @@ import java.util.List;
 import lab.dxythch.com.commonproject.R;
 import lab.dxythch.com.commonproject.base.BaseActivity;
 import lab.dxythch.com.commonproject.entity.BottomTabItem;
+import lab.dxythch.com.commonproject.ui.login.LoginActivity_;
 import lab.dxythch.com.commonproject.ui.main.find.FindFragment;
 import lab.dxythch.com.commonproject.ui.main.mine.MineFragment;
 import lab.dxythch.com.commonproject.ui.main.slimming.SlimmingFragment;
@@ -30,8 +31,6 @@ public class MainActivity extends BaseActivity {
 
     @ViewById
     CommonTabLayout mCommonTabLayout;
-//    @ViewById
-//    UnScrollableViewPager mUnScrollableViewPager;
 
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
@@ -39,14 +38,11 @@ public class MainActivity extends BaseActivity {
     @Override
     @AfterViews
     public void initView() {
-//        RxBarUtils.hideStatusBar(this);
         StatusBarUtils.from(this).setTransparentStatusbar(true).process();
 
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
-
-        RxLogUtils.d("时间戳：" + System.currentTimeMillis());
     }
 
 
@@ -56,18 +52,6 @@ public class MainActivity extends BaseActivity {
         mFragments.add(FindFragment.getInstance());
         mFragments.add(StoreFragment.getInstance());
         mFragments.add(MineFragment.getInstance());
-
-//        mUnScrollableViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-//            @Override
-//            public Fragment getItem(int position) {
-//                return mFragments.get(position);
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return mFragments.size();
-//            }
-//        });
     }
 
     private void initBottomTab() {
@@ -86,8 +70,10 @@ public class MainActivity extends BaseActivity {
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-//                mUnScrollableViewPager.setCurrentItem(position);
                 switchFragment(mFragments.get(position));
+                if (position == 3) {
+                    RxActivityUtils.skipActivity(mContext, LoginActivity_.class);
+                }
             }
 
             @Override

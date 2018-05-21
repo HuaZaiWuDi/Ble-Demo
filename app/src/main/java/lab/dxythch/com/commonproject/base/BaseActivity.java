@@ -2,12 +2,14 @@ package lab.dxythch.com.commonproject.base;
 
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -21,6 +23,7 @@ import com.zhy.autolayout.AutoRelativeLayout;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.dxythch.com.commonproject.R;
+import lab.dxythch.com.commonproject.utils.StatusBarUtils;
 
 /**
  * Created by 华 on 2017/5/2.
@@ -35,9 +38,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //设置为横屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //输入框被遮挡问题
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        //屏幕沉浸
+        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         mContext = this;
         RxActivityUtils.addActivity(this);
-
 
         initDialog();
     }
@@ -59,7 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord("正在加载")
                 .create();
-//        tipDialog.setCanceledOnTouchOutside(true);
+        tipDialog.setCanceledOnTouchOutside(false);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {
@@ -78,6 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         tipDialog.dismiss();
         tipDialog = null;
+        RxActivityUtils.removeActivity(this);
         super.onDestroy();
         mContext = null;
     }

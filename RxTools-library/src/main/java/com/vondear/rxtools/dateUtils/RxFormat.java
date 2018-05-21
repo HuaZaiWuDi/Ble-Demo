@@ -64,7 +64,7 @@ public class RxFormat {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return new Date();
     }
 
     public static Number setParseNumber(String value, String format) {
@@ -73,7 +73,7 @@ public class RxFormat {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return null;
+        return 0;
     }
 
 }

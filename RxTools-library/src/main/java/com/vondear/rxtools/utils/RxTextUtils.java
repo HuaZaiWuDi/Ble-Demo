@@ -115,6 +115,7 @@ public class RxTextUtils {
             mBuilder = new SpannableStringBuilder();
         }
 
+
         /**
          * 设置标识
          *
@@ -438,13 +439,19 @@ public class RxTextUtils {
             }
         }
 
+        public SpannableStringBuilder setLength(int start, int end) {
+//            if (text != null) {
+//                text = text.subSequence(start, end);
+//            }
+            mBuilder.append(this.text);
+            setSpan(start, end);
+            return mBuilder;
+        }
+
         /**
          * 设置样式
          */
-        private void setSpan() {
-            int start = mBuilder.length();
-            mBuilder.append(this.text);
-            int end = mBuilder.length();
+        private void setSpan(int start, int end) {
             if (foregroundColor != defaultValue) {
                 mBuilder.setSpan(new ForegroundColorSpan(foregroundColor), start, end, flag);
                 foregroundColor = defaultValue;
@@ -542,7 +549,18 @@ public class RxTextUtils {
             }
             flag = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
         }
+
+        /**
+         * 设置样式
+         */
+        private void setSpan() {
+            int start = mBuilder.length();
+            mBuilder.append(this.text);
+            int end = mBuilder.length();
+            setSpan(start, end);
+        }
     }
+
 
     /*-----------------------------------------案例-----------------------------------------------------------*/
 

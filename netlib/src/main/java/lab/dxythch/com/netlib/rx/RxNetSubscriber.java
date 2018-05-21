@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import lab.dxythch.com.netlib.utils.RxHttpException;
 
 /**
  * 项目名称：MyProject

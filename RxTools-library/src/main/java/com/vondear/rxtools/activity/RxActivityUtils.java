@@ -34,6 +34,13 @@ public class RxActivityUtils {
         activityStack.add(activity);
     }
 
+
+    public static void removeActivity(Activity activity) {
+        if (activityStack != null && activity != null) {
+            activityStack.remove(activity);
+        }
+    }
+
     /**
      * 获取当前的Activity（堆栈中最后一个压入的)
      */
@@ -47,8 +54,8 @@ public class RxActivityUtils {
      */
     public static void finishActivity() {
         Activity activity = activityStack.lastElement();
-
     }
+
 
     /**
      * 结束指定的Activity
@@ -62,6 +69,7 @@ public class RxActivityUtils {
             activity = null;
         }
     }
+
 
     /**
      * 结束指定类名的Activity

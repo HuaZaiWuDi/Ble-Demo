@@ -1,6 +1,7 @@
 package lab.dxythch.com.commonproject.ui.main.slimming.sports;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -26,8 +28,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +39,10 @@ import lab.dxythch.com.commonproject.R;
 import lab.dxythch.com.commonproject.base.BaseFragment;
 import lab.dxythch.com.commonproject.entity.SportsListBean;
 import lab.dxythch.com.commonproject.entity.WeightInfoItem;
+import lab.dxythch.com.commonproject.netserivce.RetrofitService;
+import lab.dxythch.com.commonproject.tools.Key;
 import lab.dxythch.com.commonproject.utils.MyXFormatter;
 import lab.dxythch.com.commonproject.view.MyMarkerView;
-import lab.dxythch.com.netlib.net.RetrofitService;
 import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
@@ -49,7 +50,6 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.utils.PixelUtl;
-import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/5/7.
@@ -73,12 +73,15 @@ public class SportsFragment extends BaseFragment {
 
     @Click
     void tv_details() {
-
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Key.BUNDLE_SPORTS_INFO, bean);
+        RxActivityUtils.skipActivity(mActivity, SportsDetailsActivity_.class, bundle);
     }
 
     private BaseQuickAdapter adapter;
     private List<QNScaleData> QNDatas = new ArrayList<>();
     private List<WeightInfoItem> weightLists = new ArrayList<>();
+    private SportsListBean.ListBean bean;
 
     @Override
     public void initData() {
@@ -135,15 +138,8 @@ public class SportsFragment extends BaseFragment {
 
 
     private void getSportsData() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("userId", "testuser");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsList(body))
+        RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsList(1, 10))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -198,12 +194,12 @@ public class SportsFragment extends BaseFragment {
 
             }
         });
-
     }
 
     private void synWeightData(SportsListBean.ListBean bean) {
 
         if (bean == null) return;
+        this.bean = bean;
 
         int min = bean.getDuration() / 60;
 

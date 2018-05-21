@@ -2,13 +2,14 @@ package lab.dxythch.com.netlib.rx;
 
 
 import android.app.Application;
-import android.util.Log;
+
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import lab.dxythch.com.netlib.utils.RxThreadUtils;
 
 /**
  * 项目名称：BleCar
@@ -55,42 +56,18 @@ public class RxManager {
                 .subscribe(subscriber);
     }
 
-    public <T> void doSubscribeT(Observable<HttpResultT<T>> observable, RxNetSubscriber<T> subscriber) {
-        Observable<T> map = observable
-                .map(new Function<HttpResultT<T>, T>() {
-                    @Override
-                    public T apply(HttpResultT<T> t) throws Exception {
-                        if (!t.isStatus()) {
-//                            L.d("运行异常");
-                        }
-                        return t.getData();
-                    }
-                });
-        dofunSubscribe(map, subscriber);
-    }
 
-
-    public <T> void dofunSubscribe(Observable<T> observable, RxNetSubscriber<T> subscriber) {
-        observable
-//                .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
-//                .timeout(2, TimeUnit.SECONDS)   //两秒超时重新发送
-                .retry(2)  //重试两次
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.d(TAG, "doOnError: " + throwable.getMessage());
-                    }
-                })
-                .compose(RxThreadUtils.<T>rxThreadHelper())
-                .subscribe(subscriber);
-    }
-
-
-    public <String> Observable<String> doNetSubscribe(final Observable<String> observable) {
+    public <T> Observable<T> dofunSubscribe(Observable<T> observable) {
         return observable
-//                .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
-//                .timeout(2, TimeUnit.SECONDS)   //两秒超时重新发送
-//                .retry(2)  //重试两次
+                .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
+                .timeout(1, TimeUnit.SECONDS)   //两秒超时重新发送
+                .retry(2)  //重试两次
+                .compose(RxThreadUtils.<T>rxThreadHelper());
+    }
+
+
+    public <String> Observable<String> doNetSubscribe( Observable<String> observable) {
+        return observable
                 .compose(RxThreadUtils.<String>rxThreadHelper());
     }
 

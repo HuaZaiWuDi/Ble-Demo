@@ -95,7 +95,15 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".ui.main.slimming.sports.SportsDetailsActivity">
+        <activity
+            android:name=".ui.main.slimming.sports.SportsDetailsActivity_"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".ui.login.LoginActivity_">
+        </activity>
+        <activity android:name=".ui.login.UserInfoActivity_">
+        </activity>
+        <activity android:name=".ui.login.AddDeviceActivity_">
         </activity>
     </application>
 

@@ -22,7 +22,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -38,10 +37,10 @@ import lab.dxythch.com.commonproject.entity.HotKeyItem;
 import lab.dxythch.com.commonproject.entity.ListBean;
 import lab.dxythch.com.commonproject.entity.SearchListItem;
 import lab.dxythch.com.commonproject.entity.sql.SearchWordTab;
+import lab.dxythch.com.commonproject.netserivce.RetrofitService;
 import lab.dxythch.com.commonproject.utils.StatusBarUtils;
 import lab.dxythch.com.commonproject.view.AddOrUpdateFoodDialog;
 import lab.dxythch.com.commonproject.view.DynamicTagFlowLayout;
-import lab.dxythch.com.netlib.net.RetrofitService;
 import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
@@ -225,17 +224,8 @@ public class SearchHistoryActivity extends BaseActivity {
 
 
     private void initSearchData(String key) {
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            jsonObject.put("foodName", key);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.searchFoodInfo(body))
+        RxManager.getInstance().doNetSubscribe(dxyService.searchFoodInfo(key))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

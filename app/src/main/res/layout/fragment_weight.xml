@@ -62,7 +62,7 @@
                 android:paddingLeft="@dimen/d_50"
                 android:paddingRight="@dimen/d_50"
                 android:paddingTop="@dimen/d_25"
-                android:text="@string/bindDevice"
+                android:text="@string/unbindDevice"
                 android:textColor="@color/textColor"
                 android:textSize="@dimen/d_40"
                 android:visibility="gone"

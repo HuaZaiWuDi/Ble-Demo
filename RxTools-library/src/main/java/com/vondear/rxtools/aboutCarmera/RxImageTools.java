@@ -371,7 +371,7 @@ public class RxImageTools {
     }
 
     //给图片上色
-    protected Drawable tintDrawableWithColor(Context context, @DrawableRes int drawableRes, @ColorRes int colorRes) {
+    public static Drawable tintDrawableWithColor(Context context, @DrawableRes int drawableRes, @ColorRes int colorRes) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableRes);
         DrawableCompat.setTint(drawable, ContextCompat.getColor(context, colorRes));
         return drawable;

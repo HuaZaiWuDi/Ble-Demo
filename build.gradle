@@ -39,9 +39,6 @@ allprojects {
 
 }
 
-ext {
-    smartrefreshVersion = '1.0.5.1'
-}
 
 
 task clean(type: Delete) {

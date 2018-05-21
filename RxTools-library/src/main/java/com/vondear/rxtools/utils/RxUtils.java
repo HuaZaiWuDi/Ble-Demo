@@ -63,13 +63,13 @@ public class RxUtils {
      * @param interval 倒计时的间隔时间
      * @param hint     倒计时完毕时显示的文字
      */
-    public static void countDown(final TextView textView, long waitTime, long interval, final String hint) {
+    public static void countDown(final TextView textView, int waitTime, int interval, final String hint) {
         textView.setEnabled(false);
-        android.os.CountDownTimer timer = new android.os.CountDownTimer(waitTime, interval) {
+        android.os.CountDownTimer timer = new android.os.CountDownTimer(waitTime * 1000, interval * 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                textView.setText("剩下 " + (millisUntilFinished / 1000) + " S");
+                textView.setText((millisUntilFinished / 1000) + " s");
             }
 
             @Override

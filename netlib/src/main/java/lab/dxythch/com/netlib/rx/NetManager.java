@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import lab.dxythch.com.netlib.BuildConfig;
-import lab.dxythch.com.netlib.net.ServiceAPI;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,13 +29,6 @@ public class NetManager {
     private static NetManager netManager = null;
     private static Retrofit retrofit = null;
 
-    private NetManager() {
-        retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl(ServiceAPI.BASE_URL)
-                .build();
-    }
 
     public synchronized static NetManager getInstance() {
         if (netManager == null) {
@@ -60,12 +53,35 @@ public class NetManager {
         Interceptor NetInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                request.header("Content-Type: application/json");
-                request.header("Accept: application/json");
+                Request request = chain.request().newBuilder()
+                        .header("userId", "testuser").build();
                 return chain.proceed(request);
             }
         };
+
+        //添加全局请求体
+        Interceptor publicParamInterceptor = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request oldRequest = chain.request();
+
+                // 添加新的参数
+                HttpUrl.Builder authorizedUrlBuilder = oldRequest.url()
+                        .newBuilder()
+                        .scheme(oldRequest.url().scheme())
+                        .host(oldRequest.url().host())
+                        .setQueryParameter("userId", "testuser");
+
+                // 新的请求
+                Request newRequest = oldRequest.newBuilder()
+                        .method(oldRequest.method(), oldRequest.body())
+                        .url(authorizedUrlBuilder.build())
+                        .build();
+
+                return chain.proceed(newRequest);
+            }
+        };
+
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         if (BuildConfig.DEBUG) {
@@ -83,7 +99,7 @@ public class NetManager {
             builder.addInterceptor(loggingInterceptor);
         }
         builder.addInterceptor(NetInterceptor);
-
+//        builder.addInterceptor(publicParamInterceptor);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())

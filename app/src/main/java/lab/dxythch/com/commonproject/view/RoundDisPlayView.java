@@ -215,6 +215,8 @@ public class RoundDisPlayView extends View {
         RectF rectf = new RectF(-radius, -radius, radius, radius);
         canvas.drawArc(rectf, 0, 360, false, paint1);
 
+
+
         //最里面的进度
         paint2.setStyle(Paint.Style.STROKE);
         paint2.setStrokeWidth(ProgressWidth);
@@ -222,6 +224,7 @@ public class RoundDisPlayView extends View {
         paint2.setColor(linesColor[2]);
 
         canvas.drawArc(rectf, startAngle1, sweepAngle3, false, paint2);
+
         canvas.restore();
     }
 
@@ -265,7 +268,6 @@ public class RoundDisPlayView extends View {
         }
         cgAnima3.start();
         cgAnima1.start();
-
     }
 
 
