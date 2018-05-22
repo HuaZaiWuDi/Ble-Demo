@@ -28,8 +28,8 @@ import java.util.Locale;
 
 /**
  * @author ondear
- *         time  : 16/11/13
- *         desc  : 定位相关工具类
+ * time  : 16/11/13
+ * desc  : 定位相关工具类
  */
 public class RxLocationUtils {
 

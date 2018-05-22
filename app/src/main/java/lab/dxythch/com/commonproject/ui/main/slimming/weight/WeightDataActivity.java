@@ -230,7 +230,8 @@ public class WeightDataActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         finish();
-                        listReceives.clear();
+                        if (listReceives != null)
+                            listReceives.clear();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

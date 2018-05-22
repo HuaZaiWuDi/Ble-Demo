@@ -26,3 +26,11 @@
 
 #云康宝
 -keep public class com.kitnew.ble.QNCalc {*;}
+
+
+#AgentWeb
+-keep class com.just.agentweb.** {
+    *;
+}
+-dontwarn com.just.agentweb.**
+-keepclassmembers class com.just.agentweb.sample.common.AndroidInterface{ *; }

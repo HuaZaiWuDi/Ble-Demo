@@ -1,5 +1,7 @@
 package lab.dxythch.com.commonproject.ui.main.slimming.sports;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothGatt;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +10,9 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.clj.fastble.callback.BleScanAndConnectCallback;
+import com.clj.fastble.data.BleDevice;
+import com.clj.fastble.exception.BleException;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -18,6 +23,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
+import com.smartclothing.blelibrary.BleTools;
+import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -27,6 +34,7 @@ import com.yolanda.health.qnblesdk.out.QNScaleData;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
@@ -78,6 +86,16 @@ public class SportsFragment extends BaseFragment {
         RxActivityUtils.skipActivity(mActivity, SportsDetailsActivity_.class, bundle);
     }
 
+    //监听系统蓝牙开启
+    @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
+    void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
+        if (state == BluetoothAdapter.STATE_OFF) {
+        } else if (state == BluetoothAdapter.STATE_ON) {
+
+        }
+    }
+
+
     private BaseQuickAdapter adapter;
     private List<QNScaleData> QNDatas = new ArrayList<>();
     private List<WeightInfoItem> weightLists = new ArrayList<>();
@@ -87,6 +105,54 @@ public class SportsFragment extends BaseFragment {
     public void initData() {
         setData(null, null, null);
         getSportsData();
+        initBle();
+    }
+
+    private void initBle() {
+        checkLocation(new Consumer<Permission>() {
+            @Override
+            public void accept(Permission permission) throws Exception {
+                if (permission.granted) {
+                    BleTools.getInstance().configScan();
+                    BleTools.getBleManager().scanAndConnect(new BleScanAndConnectCallback() {
+                        @Override
+                        public void onScanFinished(BleDevice scanResult) {
+
+                        }
+
+                        @Override
+                        public void onStartConnect() {
+
+                        }
+
+                        @Override
+                        public void onConnectFail(BleDevice bleDevice, BleException exception) {
+
+                        }
+
+                        @Override
+                        public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
+
+                        }
+
+                        @Override
+                        public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
+
+                        }
+
+                        @Override
+                        public void onScanStarted(boolean success) {
+
+                        }
+
+                        @Override
+                        public void onScanning(BleDevice bleDevice) {
+
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @AfterViews

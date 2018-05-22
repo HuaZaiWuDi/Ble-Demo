@@ -85,4 +85,9 @@ dependencies {
     compile('cn.qqtheme.framework:WheelPicker:latest.release') {
         exclude group: 'com.android.support'
     }
+
+    compile('com.just.agentweb:agentweb:4.0.2') {
+        exclude group: 'com.android.support'
+    } // (必选)
+
 }

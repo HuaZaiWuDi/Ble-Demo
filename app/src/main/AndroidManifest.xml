@@ -40,9 +40,22 @@
                 android:resource="@xml/file_path"/>
         </provider>
 
+        <!-- 轻牛SDK -->
+        <service
+            android:name="com.qingniu.qnble.scanner.BleScanService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name="com.qingniu.scale.ble.ScaleBleService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
         <activity
             android:name=".ui.main.MainActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
         <activity
@@ -83,17 +96,6 @@
             android:exported="true">
         </service>
 
-        <!-- 轻牛SDK -->
-        <service
-            android:name="com.qingniu.qnble.scanner.BleScanService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-        <service
-            android:name="com.qingniu.scale.ble.ScaleBleService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
 
         <activity
             android:name=".ui.main.slimming.sports.SportsDetailsActivity_"

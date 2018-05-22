@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_250"
+        android:layout_height="@dimen/barHeight"
         android:background="@drawable/shape_bg_statu_bar"
         android:paddingBottom="@dimen/d_30"
         android:paddingTop="90px">
@@ -31,6 +31,8 @@
                 android:src="@mipmap/back_icon"/>
 
         </LinearLayout>
+
+
 
 
         <TextView
@@ -123,7 +125,6 @@
         android:id="@+id/mRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
     </android.support.v7.widget.RecyclerView>
 

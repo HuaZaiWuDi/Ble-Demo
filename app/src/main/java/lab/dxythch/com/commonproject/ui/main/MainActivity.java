@@ -12,6 +12,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +20,24 @@ import java.util.List;
 import lab.dxythch.com.commonproject.R;
 import lab.dxythch.com.commonproject.base.BaseActivity;
 import lab.dxythch.com.commonproject.entity.BottomTabItem;
+import lab.dxythch.com.commonproject.prefs.Prefs_;
+import lab.dxythch.com.commonproject.ui.login.AddDeviceActivity_;
 import lab.dxythch.com.commonproject.ui.login.LoginActivity_;
 import lab.dxythch.com.commonproject.ui.main.find.FindFragment;
 import lab.dxythch.com.commonproject.ui.main.mine.MineFragment;
 import lab.dxythch.com.commonproject.ui.main.slimming.SlimmingFragment;
 import lab.dxythch.com.commonproject.ui.main.store.StoreFragment;
 import lab.dxythch.com.commonproject.utils.StatusBarUtils;
+import lab.dxythch.com.netlib.rx.NetManager;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
 
     @ViewById
     CommonTabLayout mCommonTabLayout;
+
+    @Pref
+    Prefs_ mPrefs;
 
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
@@ -43,6 +50,8 @@ public class MainActivity extends BaseActivity {
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
+
+        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
     }
 
 
@@ -73,6 +82,8 @@ public class MainActivity extends BaseActivity {
                 switchFragment(mFragments.get(position));
                 if (position == 3) {
                     RxActivityUtils.skipActivity(mContext, LoginActivity_.class);
+                } else if (position == 1) {
+                    RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class);
                 }
             }
 

@@ -200,7 +200,6 @@ public class HeatFragment extends BaseFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-//                        removeItem(mBeans, position);
                         notifyData(date);
                     }
 

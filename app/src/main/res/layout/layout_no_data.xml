@@ -13,6 +13,7 @@
         android:src="@drawable/no_massage_pic"/>
 
     <TextView
+        android:id="@+id/tv_tip"
         android:layout_width="@dimen/d_300"
         android:layout_height="wrap_content"
         android:layout_below="@+id/img_no_data"

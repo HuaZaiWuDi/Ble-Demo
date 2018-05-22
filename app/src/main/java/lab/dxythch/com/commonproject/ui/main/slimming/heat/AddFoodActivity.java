@@ -134,6 +134,7 @@ public class AddFoodActivity extends BaseActivity {
                 loadCricle(item.getFoodImg(), (ImageView) helper.getView(R.id.img_food));
             }
         };
+
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -141,7 +142,8 @@ public class AddFoodActivity extends BaseActivity {
             }
         });
 
-        mRecyclerView.setAdapter(adapter);
+        adapter.bindToRecyclerView(mRecyclerView);
+        adapter.setEmptyView(R.layout.layout_no_data);
     }
 
     private void showAddFoodDialog(final ListBean item) {

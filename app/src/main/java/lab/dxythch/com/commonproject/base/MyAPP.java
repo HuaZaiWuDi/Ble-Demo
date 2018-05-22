@@ -8,6 +8,7 @@ import com.activeandroid.Configuration;
 import com.activeandroid.app.Application;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
+import com.vondear.rxtools.model.cache.ACache;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listen.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
@@ -23,6 +24,7 @@ public class MyAPP extends Application {
 
     private String BUGly_id = "11c87579c7";
     public static QNBleApi QNapi;
+    private static ACache aCache;
 
     @Override
     public void onCreate() {
@@ -34,7 +36,15 @@ public class MyAPP extends Application {
         MultiDex.install(this);
         initQN();
         BleTools.initBLE(this);
+        initCache();
+    }
 
+    private void initCache() {
+        aCache = ACache.get(this);
+    }
+
+    public static ACache getACache() {
+        return aCache;
     }
 
 

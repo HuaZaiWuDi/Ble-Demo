@@ -6,6 +6,7 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="status_bar_margin">45dp</dimen>
 
+    <dimen name="barHeight">200px</dimen>
 
     <dimen name="d_1">1px</dimen>
     <dimen name="d_2">2px</dimen>

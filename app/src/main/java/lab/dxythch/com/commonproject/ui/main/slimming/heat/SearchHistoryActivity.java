@@ -45,8 +45,6 @@ import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
 import lab.dxythch.com.netlib.rx.RxNetSubscriber;
 import lab.dxythch.com.netlib.utils.RxBus;
-import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.config.Constants;
 import okhttp3.RequestBody;
 
 
@@ -67,8 +65,6 @@ public class SearchHistoryActivity extends BaseActivity {
     LinearLayout layoutHistory;
     @ViewById
     RecyclerView mRecyclerView;
-    @ViewById
-    SmoothRefreshLayout mSmoothRefreshLayout;
 
     @Click
     void tv_cancel() {
@@ -99,7 +95,6 @@ public class SearchHistoryActivity extends BaseActivity {
 
 
     private void initRecyclerView() {
-        mSmoothRefreshLayout.setEnableOverScroll(false);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         searchListAdapter = new BaseQuickAdapter<ListBean, BaseViewHolder>(R.layout.item_search) {
             @Override
@@ -112,10 +107,11 @@ public class SearchHistoryActivity extends BaseActivity {
                         .into(view);
             }
         };
+
         searchListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                mSmoothRefreshLayout.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.GONE);
                 ListBean listBean = (ListBean) adapter.getData().get(position);
                 String foodName = listBean.getFoodName();
                 if (!SearchWordTab.isExist(foodName)) {
@@ -127,7 +123,8 @@ public class SearchHistoryActivity extends BaseActivity {
                 showAddFoodDialog(listBean);
             }
         });
-        mRecyclerView.setAdapter(searchListAdapter);
+        searchListAdapter.bindToRecyclerView(mRecyclerView);
+        searchListAdapter.setEmptyView(R.layout.layout_no_data);
     }
 
     private void init() {
@@ -207,7 +204,7 @@ public class SearchHistoryActivity extends BaseActivity {
                 //TODO 处理Text的。防止输入特殊文字
                 if (!RxDataUtils.isNullString(newText) && newText.length() <= 20)
                     initSearchData(newText);
-                else mSmoothRefreshLayout.setVisibility(View.GONE);
+                else mRecyclerView.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -224,6 +221,7 @@ public class SearchHistoryActivity extends BaseActivity {
 
 
     private void initSearchData(String key) {
+        mRecyclerView.setVisibility(View.VISIBLE);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.searchFoodInfo(key))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -231,13 +229,7 @@ public class SearchHistoryActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         SearchListItem item = new Gson().fromJson(s, SearchListItem.class);
                         List<ListBean> beans = item.getList();
-                        mSmoothRefreshLayout.setVisibility(View.VISIBLE);
                         searchListAdapter.setNewData(beans);
-                        if (beans.size() == 0) {
-                            mSmoothRefreshLayout.setState(Constants.STATE_EMPTY, true);
-                        } else {
-                            mSmoothRefreshLayout.setState(Constants.STATE_CONTENT, true);
-                        }
                     }
 
                     @Override

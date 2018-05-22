@@ -1,6 +1,7 @@
 package lab.dxythch.com.commonproject.base;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -11,16 +12,19 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.dxythch.com.commonproject.R;
 import lab.dxythch.com.commonproject.utils.StatusBarUtils;
@@ -34,6 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Context mContext;
 
     public QMUITipDialog tipDialog;
+    private Disposable subscribe;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,17 +55,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         initDialog();
     }
 
-    protected void goBack() {
-        LinearLayout back = findViewById(R.id.back);
-        if (back != null) {
-            back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
+    public void checkLocation(Consumer<Permission> consumer) {
+        subscribe = new RxPermissions(this)
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(consumer);
     }
+
+    public void checkStorage(Consumer<Permission> consumer) {
+        subscribe = new RxPermissions(this)
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(consumer);
+    }
+
 
     private void initDialog() {
         tipDialog = new QMUITipDialog.Builder(this)
@@ -79,11 +85,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .into(img);
     }
 
-
     public abstract void initView();
 
     @Override
     protected void onDestroy() {
+        if (subscribe != null) subscribe.dispose();
+        subscribe = null;
         tipDialog.dismiss();
         tipDialog = null;
         RxActivityUtils.removeActivity(this);

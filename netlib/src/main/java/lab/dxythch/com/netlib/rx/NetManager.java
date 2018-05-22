@@ -28,7 +28,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class NetManager {
     private static NetManager netManager = null;
     private static Retrofit retrofit = null;
-
+    private String userId;
+    private String token;
 
     public synchronized static NetManager getInstance() {
         if (netManager == null) {
@@ -39,6 +40,12 @@ public class NetManager {
 
     public <S> S create(Class<S> service) {
         return retrofit.create(service);
+    }
+
+
+    public void setUserIdToken(String userId, String token) {
+        this.userId = userId;
+        this.token = token;
     }
 
     /**
@@ -53,9 +60,13 @@ public class NetManager {
         Interceptor NetInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request().newBuilder()
-                        .header("userId", "testuser").build();
-                return chain.proceed(request);
+                if (userId != null && token != null) {
+                    Request request = chain.request().newBuilder()
+                            .header("userId", userId)
+                            .header("token", token).build();
+                    return chain.proceed(request);
+                }
+                return chain.proceed(chain.request());
             }
         };
 
@@ -70,7 +81,8 @@ public class NetManager {
                         .newBuilder()
                         .scheme(oldRequest.url().scheme())
                         .host(oldRequest.url().host())
-                        .setQueryParameter("userId", "testuser");
+                        .setQueryParameter("userId", "testuser")
+                        .setQueryParameter("token", "testuser");
 
                 // 新的请求
                 Request newRequest = oldRequest.newBuilder()

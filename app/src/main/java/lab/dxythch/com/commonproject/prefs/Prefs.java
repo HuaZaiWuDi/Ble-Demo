@@ -15,6 +15,11 @@ public interface Prefs {
     @DefaultString("")
     String UserId();
 
+    @DefaultString("")
+    String token();
+
+    @DefaultString("")
+    String phone();
 
     @DefaultString("")
     String QN_mac();
