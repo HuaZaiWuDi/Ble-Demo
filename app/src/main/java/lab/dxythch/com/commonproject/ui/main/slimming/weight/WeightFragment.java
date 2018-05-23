@@ -2,9 +2,11 @@ package lab.dxythch.com.commonproject.ui.main.slimming.weight;
 
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,13 +14,11 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -41,8 +41,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +58,8 @@ import lab.dxythch.com.commonproject.netserivce.RetrofitService;
 import lab.dxythch.com.commonproject.prefs.Prefs_;
 import lab.dxythch.com.commonproject.rxbus.WeightIsUpdate;
 import lab.dxythch.com.commonproject.tools.Key;
-import lab.dxythch.com.commonproject.utils.MyXFormatter;
+import lab.dxythch.com.commonproject.ui.login.AddDeviceActivity_;
+import lab.dxythch.com.commonproject.utils.ChartManager;
 import lab.dxythch.com.commonproject.view.MyMarkerView;
 import lab.dxythch.com.netlib.rx.NetManager;
 import lab.dxythch.com.netlib.rx.RxManager;
@@ -68,9 +67,9 @@ import lab.dxythch.com.netlib.rx.RxNetSubscriber;
 import lab.dxythch.com.netlib.utils.RxBus;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.utils.PixelUtl;
-import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/5/7.
@@ -132,19 +131,28 @@ public class WeightFragment extends BaseFragment {
         initChart();
         initHRefresh();
         initWeightInfo();
-        initQNBle();
+
+        if (!mPrefs.scaleIsBind().get()) {
+            initDeviceConnectTip(1);
+        }
     }
+
 
     private List<WeightInfoItem> weightLists = new ArrayList<>();
 
-    private ArrayList<Entry> yVals = new ArrayList<Entry>();
+
     private BaseQuickAdapter adapter;
 
     private List<QNScaleData> QNDatas = new ArrayList<>();
+    private List<WeightDataBean.WeightListBean.ListBean> weightDatas = new ArrayList<>();//体重的总集合
+    private int pageNum = 1;
+    private boolean refreshOnce = false;//解决多次刷新的问题
+    private boolean notMore = false;//解决多次刷新的问题
 
     @Override
     public void initData() {
         getWeightData();
+        initQNBle();
     }
 
     private void initHRefresh() {
@@ -153,7 +161,7 @@ public class WeightFragment extends BaseFragment {
         header.setPadding(PixelUtl.dp2px(mActivity, 25), 0, PixelUtl.dp2px(mActivity, 25), 0);
         mRefresh.setHeaderView(header);
 
-        mRefresh.setDisableLoadMore(true);
+        mRefresh.setDisableRefresh(true);
         mRefresh.setDisableLoadMore(true);
         mRefresh.setEnableOverScroll(false);
         mRefresh.setNestedScrollingEnabled(false);
@@ -163,16 +171,19 @@ public class WeightFragment extends BaseFragment {
         mRefresh.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
-                mRefresh.refreshComplete(5000);
+                RxLogUtils.d("开始刷新");
+                pageNum++;
+                getWeightData();
             }
         });
-
     }
 
     private void initRxBus() {
         Disposable register = RxBus.getInstance().register(WeightIsUpdate.class, new Consumer<WeightIsUpdate>() {
             @Override
             public void accept(WeightIsUpdate weightIsUpdate) throws Exception {
+                pageNum = 1;
+                weightDatas.clear();
                 getWeightData();
             }
         });
@@ -211,7 +222,6 @@ public class WeightFragment extends BaseFragment {
     @Override
     protected void onInvisible() {
         super.onVisible();
-
     }
 
     private void initQNBle() {
@@ -226,8 +236,8 @@ public class WeightFragment extends BaseFragment {
             public void onDeviceDiscover(QNBleDevice device) {
                 RxLogUtils.v("扫描的设备:" + device.getName());
                 RxLogUtils.v("扫描的设备:" + device.getMac());
-                if ("Scale".equals(device.getName()))
-                    mQNBleTools.connectDevice(device);
+//                if ("Scale".equals(device.getName()))
+//                    mQNBleTools.connectDevice(device);
             }
 
             @Override
@@ -332,7 +342,6 @@ public class WeightFragment extends BaseFragment {
         tv_connectTip.setVisibility(View.VISIBLE);
         switch (QN_bleState) {
             case 0://打开蓝牙
-
                 RxTextUtils.getBuilder(getString(R.string.connectBle))
                         .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
@@ -345,7 +354,10 @@ public class WeightFragment extends BaseFragment {
                 break;
             case 1://绑定设备
                 tv_connectDevice.setText(R.string.unBind);
-                tv_connectDevice.setCompoundDrawables(getResources().getDrawable(R.mipmap.unbound_icon), null, null, null);
+                Drawable drawable = getResources().getDrawable(R.mipmap.unbound_icon);
+                //一定要加这行！！！！！！！！！！！
+                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
                 RxTextUtils.getBuilder(getString(R.string.unbindDevice))
                         .append(getString(R.string.goBind)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
@@ -354,6 +366,9 @@ public class WeightFragment extends BaseFragment {
                     public void onClick(View v) {
                         tv_connectTip.setVisibility(View.GONE);
                         //TODO 去绑定设备
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
+                        RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
                     }
                 });
                 break;
@@ -382,119 +397,18 @@ public class WeightFragment extends BaseFragment {
         }
     }
 
+    ChartManager chartManager;
+
     //初始化图表
     private void initChart() {
-        // no description text
-        mLineChart.getDescription().setEnabled(false);
-        mLineChart.setTouchEnabled(true);//可以点击
-        // enable scaling and dragging
-        mLineChart.setDragEnabled(true);
-        mLineChart.setScaleEnabled(false);
-        // if disabled, scaling can be done on x- and y-axis separately
-        mLineChart.setPinchZoom(false);//X，Y轴缩放
-
-        mLineChart.getAxisRight().setEnabled(false);
-        mLineChart.getLegend().setEnabled(false);//关闭图例
-        mLineChart.setAutoScaleMinMaxEnabled(false);
-        mLineChart.setNoDataText("");//没有数据时显示
-
+        chartManager = new ChartManager(mActivity, mLineChart);
         MyMarkerView mv = new MyMarkerView(mActivity, R.layout.custom_marker_view);
-        mv.setChartView(mLineChart); // For bounds control
-        mLineChart.setMarker(mv); // Set the marker to the chart
+        chartManager.addMarker(mv);
 
-        mLineChart.notifyDataSetChanged();
+        YAxis yAxis = mLineChart.getAxisLeft();
+        yAxis.setAxisMaximum(150f);
+        yAxis.setAxisMinimum(20f);
         mLineChart.invalidate();
-
-    }
-
-
-    private void setData(ArrayList<Entry> yVals, List<String> xVals) {
-        // 阴影线
-        ArrayList<Entry> yVals_2 = new ArrayList<Entry>();
-
-        for (int i = 0; i < yVals.size() + 3; i++) {
-            yVals_2.add(new Entry(i, 42));
-        }
-
-        XAxis x = mLineChart.getXAxis();
-        x.setLabelCount(7, false);
-        x.setTextColor(Color.WHITE);
-        x.setEnabled(true);
-        x.setPosition(XAxis.XAxisPosition.BOTTOM);
-        x.setDrawGridLines(false);
-        x.setGridColor(getResources().getColor(R.color.lineColor));
-        x.setAxisLineColor(Color.WHITE);
-        x.setDrawAxisLine(true);
-        x.setDrawLabels(true);
-        x.setValueFormatter(new MyXFormatter(xVals));
-
-
-        YAxis y = mLineChart.getAxisLeft();
-        y.setDrawLimitLinesBehindData(true);
-        y.setLabelCount(13, false);
-        y.setTextColor(Color.WHITE);
-        y.setDrawGridLines(true);
-        y.setGridColor(getResources().getColor(R.color.lineColor));
-        y.setAxisLineColor(Color.WHITE);
-//        y.setGranularity(2f);// //设置最小间隔，防止当放大时出现重复标签
-        y.setDrawAxisLine(false);
-        y.setAxisMaximum(150f);
-        y.setAxisMinimum(20f);
-
-        //提示线，
-        LimitLine ll = new LimitLine(42, "标准");//线条颜色宽度等
-        ll.setLineColor(getResources().getColor(R.color.colorTheme));
-        ll.setLineWidth(1f);
-        ll.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);//文字颜色、大小
-        ll.setTextColor(getResources().getColor(R.color.white));
-        ll.setTextSize(12f);
-
-        //加入到 mXAxis 或 mYAxis
-        y.addLimitLine(ll);
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
-
-        set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set1.setCubicIntensity(0.2f);
-        set1.setLineWidth(3f);
-
-        set1.setDrawCircles(false);//是否显示节点圆心
-
-        set1.setColor(Color.WHITE);
-        set1.setDrawVerticalHighlightIndicator(false);
-        set1.setDrawHorizontalHighlightIndicator(false);
-
-
-        //阴影线
-        LineDataSet set2 = new LineDataSet(yVals_2, "DataSet 2");
-        set2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set2.setLineWidth(1f);
-        set2.setColor(getResources().getColor(R.color.colorTheme));
-        set2.setDrawCircles(false);//是否显示节点圆心
-        set2.setDrawVerticalHighlightIndicator(false);
-        set2.setDrawHorizontalHighlightIndicator(false);
-        set2.setHighlightEnabled(false);
-
-        // create a data object with the datasets
-        LineData data = new LineData(set1);
-        data.setValueTextSize(9f);
-        data.setDrawValues(false);
-
-
-        // set data
-        mLineChart.setData(data);
-        mLineChart.notifyDataSetChanged();
-        mLineChart.invalidate();
-
-        // do not forget to refresh the chart
-        mLineChart.animateX(500);
-
-        mLineChart.centerViewToY(50f, YAxis.AxisDependency.LEFT);
-
-        mLineChart.moveViewToX(9);
-
-        mLineChart.setVisibleXRangeMaximum(7);
 
     }
 
@@ -513,22 +427,13 @@ public class WeightFragment extends BaseFragment {
                 helper.setImageResource(R.id.img_right, item.getImg_right());
             }
         };
-        mRecyclerView.setAdapter(adapter);
+        adapter.bindToRecyclerView(mRecyclerView);
     }
 
 
     private void getWeightData() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("userId", "testuser");
-            jsonObject.put("pageNum", 1);
-            jsonObject.put("pageSize", 10);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getWeightList(1, 10))
+        RxManager.getInstance().doNetSubscribe(dxyService.getWeightList(pageNum, 20))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -544,16 +449,35 @@ public class WeightFragment extends BaseFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+
                         RxLogUtils.d("获取体重数据：" + s);
 
                         WeightDataBean bean = new Gson().fromJson(s, WeightDataBean.class);
 
                         List<WeightDataBean.WeightListBean.ListBean> list = bean.getWeightList().getList();
 
-                        if (list.size() > 0)
-                            syncChart(list);
-
+                        if (list.size() > 0) {
+                            weightDatas.addAll(0, list);
+                            syncChart(weightDatas);
+                        }
                         tv_idealWeight.setText(bean.getIdealWeight() + "kg");
+                        if (mRefresh.isRefreshing()) {
+                            mRefresh.refreshComplete();
+                        }
+                        for (int i = 0; i < weightDatas.size(); i++) {
+                            RxLogUtils.d(i + "---:" + weightDatas.get(i).getWeight());
+                        }
+
+                        //提示线，
+                        chartManager.addLimitLine2Y((float) bean.getIdealWeight(), "标准");//线条颜色宽度等
+
+                        if (!bean.getWeightList().isHasNextPage()) {
+                            RxToast.info("没有更多数据了");
+                            notMore = true;
+                            mRefresh.setEnableAutoRefresh(false);
+                            mRefresh.setDisableRefresh(true);
+                        }
+
                     }
 
                     @Override
@@ -563,16 +487,20 @@ public class WeightFragment extends BaseFragment {
                 });
     }
 
+
     private void syncChart(final List<WeightDataBean.WeightListBean.ListBean> list) {
-        List<String> days = new ArrayList<>();
         synWeightData(list.get(list.size() - 1));
+        List<String> days = new ArrayList<>();
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
 
         for (int i = 0; i < list.size(); i++) {
             yVals.add(new Entry(i, (float) list.get(i).getWeight()));
             days.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "MM/dd"));
         }
 
-        setData(yVals, days);
+        chartManager.setData(yVals, days);
+
+        mLineChart.moveViewToX(yVals.size() - (pageNum - 1) * 20 - 4);
 
         mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -586,13 +514,67 @@ public class WeightFragment extends BaseFragment {
 
             }
         });
+
+
+        mLineChart.setOnChartGestureListener(new OnChartGestureListener() {
+            @Override
+            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+                refreshOnce = true;
+            }
+
+            @Override
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
+
+            @Override
+            public void onChartLongPressed(MotionEvent me) {
+
+            }
+
+            @Override
+            public void onChartDoubleTapped(MotionEvent me) {
+
+            }
+
+            @Override
+            public void onChartSingleTapped(MotionEvent me) {
+
+            }
+
+            @Override
+            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+            }
+
+            @Override
+            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+            }
+
+            @Override
+            public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                float visibleX = mLineChart.getLowestVisibleX();
+                if (visibleX != 0) {
+                    mRefresh.setEnableAutoRefresh(false);
+                    mRefresh.setDisableRefresh(true);
+                } else {
+                    if (refreshOnce && !notMore) {
+                        refreshOnce = false;
+                        RxLogUtils.d("刷新：");
+                        mRefresh.setDisableRefresh(false);
+                        mRefresh.setEnableAutoRefresh(true);
+                        if (!mRefresh.isRefreshing())
+                            mRefresh.autoRefresh(Constants.ACTION_AT_ONCE, false);
+                    }
+                }
+            }
+        });
     }
 
 
     private void synWeightData(WeightDataBean.WeightListBean.ListBean bean) {
-
         if (bean == null) return;
-
         weightLists.get(0).setData_left(bean.getBodyAge() + getString(R.string.bodyAge));
         weightLists.get(0).setData_right(bean.getBodyFat() + "%");
         weightLists.get(1).setData_left(bean.getBmr() + "kcal");
@@ -612,6 +594,7 @@ public class WeightFragment extends BaseFragment {
 
         tv_weight_date.setText(RxFormat.setFormatDate(bean.getWeightDate(), RxFormat.Date));
         tv_currentWeight.setText(bean.getWeight() + "kg");
+
     }
 
 }

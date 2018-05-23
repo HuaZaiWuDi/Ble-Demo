@@ -214,11 +214,8 @@ public class HeatFragment extends BaseFragment {
         this.date = date;
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("userId", "testuser");
-//            jsonObject.put("heatDate", "2018-05-04");
+            jsonObject.put("userId", mPrefs.UserId().get());
             jsonObject.put("heatDate", date);
-//            jsonObject.put("pageNum", 1);
-//            jsonObject.put("pageSize", 10);
 
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
             RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

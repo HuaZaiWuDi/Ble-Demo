@@ -7,7 +7,11 @@ import android.support.v4.app.FragmentTransaction;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.gson.Gson;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxNetUtils;
+import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -19,8 +23,12 @@ import java.util.List;
 
 import lab.dxythch.com.commonproject.R;
 import lab.dxythch.com.commonproject.base.BaseActivity;
+import lab.dxythch.com.commonproject.base.MyAPP;
 import lab.dxythch.com.commonproject.entity.BottomTabItem;
+import lab.dxythch.com.commonproject.entity.SaveUserInfo;
+import lab.dxythch.com.commonproject.netserivce.RetrofitService;
 import lab.dxythch.com.commonproject.prefs.Prefs_;
+import lab.dxythch.com.commonproject.tools.Key;
 import lab.dxythch.com.commonproject.ui.login.AddDeviceActivity_;
 import lab.dxythch.com.commonproject.ui.login.LoginActivity_;
 import lab.dxythch.com.commonproject.ui.main.find.FindFragment;
@@ -29,6 +37,9 @@ import lab.dxythch.com.commonproject.ui.main.slimming.SlimmingFragment;
 import lab.dxythch.com.commonproject.ui.main.store.StoreFragment;
 import lab.dxythch.com.commonproject.utils.StatusBarUtils;
 import lab.dxythch.com.netlib.rx.NetManager;
+import lab.dxythch.com.netlib.rx.RxManager;
+import lab.dxythch.com.netlib.rx.RxNetSubscriber;
+import okhttp3.RequestBody;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
@@ -50,10 +61,19 @@ public class MainActivity extends BaseActivity {
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
+        initData();
 
         NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
     }
 
+    //重传在无网络情况下未上传的数据
+    private void initData() {
+        if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {
+            //没有网络直接返回
+            return;
+        }
+        saveUserInfo();
+    }
 
     private void initMyViewPager() {
         mFragments.clear();
@@ -116,6 +136,29 @@ public class MainActivity extends BaseActivity {
             }
             mFragmentNow = to;
         }
+    }
+
+
+    //重传用户信息
+    private void saveUserInfo() {
+        SaveUserInfo mUserInfo = (SaveUserInfo) MyAPP.getACache().getAsObject(Key.CACHE_USER_INFO);
+        if (mUserInfo == null) return;
+        String s = new Gson().toJson(mUserInfo, SaveUserInfo.class);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束：" + s);
+                        MyAPP.getACache().remove(Key.CACHE_USER_INFO);
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
     }
 
 

@@ -440,11 +440,14 @@ public class RxTextUtils {
         }
 
         public SpannableStringBuilder setLength(int start, int end) {
-//            if (text != null) {
-//                text = text.subSequence(start, end);
-//            }
             mBuilder.append(this.text);
             setSpan(start, end);
+            return mBuilder;
+        }
+
+        public SpannableStringBuilder setLength(int start) {
+            mBuilder.append(this.text);
+            setSpan(start, text.length());
             return mBuilder;
         }
 

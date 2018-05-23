@@ -108,6 +108,8 @@
     <string name="aerobic">有氧</string>
     <string name="anaerobic">无氧</string>
     <string name="limit">极限</string>
+    <string name="sportsToSee">检查到您正在运动，请点击查看</string>
+
 
     <!--登录信息录入-->
     <string name="login">登\t\t录</string>

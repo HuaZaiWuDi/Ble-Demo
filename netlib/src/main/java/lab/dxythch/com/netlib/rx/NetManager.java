@@ -62,7 +62,8 @@ public class NetManager {
             public Response intercept(Chain chain) throws IOException {
                 if (userId != null && token != null) {
                     Request request = chain.request().newBuilder()
-                            .header("userId", userId)
+//                            .header("userId", userId)
+                            .header("userId", "testuser")
                             .header("token", token).build();
                     return chain.proceed(request);
                 }

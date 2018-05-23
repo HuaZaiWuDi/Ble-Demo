@@ -130,5 +130,13 @@
 
     </LinearLayout>
 
+    <include
+        layout="@layout/dialog_not_connect"
+        android:layout_width="@dimen/d_500"
+        android:layout_height="@dimen/d_400"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>
