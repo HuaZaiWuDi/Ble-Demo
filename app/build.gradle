@@ -86,8 +86,10 @@ dependencies {
         exclude group: 'com.android.support'
     }
 
-    compile('com.just.agentweb:agentweb:4.0.2') {
+    compile('com.just.agentweb:agentweb:4.0.2') {// (必选)
         exclude group: 'com.android.support'
-    } // (必选)
+    }
 
+    //腾讯急速加载网页
+    compile 'com.tencent.sonic:sdk:3.0.0'
 }

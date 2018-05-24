@@ -251,7 +251,7 @@ public class WeightFragment extends BaseFragment {
             }
         });
 
-        mQNBleTools.scanBle();
+        mQNBleTools.scanBle(0);
         MyAPP.QNapi.setBleConnectionChangeListener(new QNBleConnectionChangeListener() {
             @Override
             public void onConnecting(QNBleDevice qnBleDevice) {
@@ -278,7 +278,7 @@ public class WeightFragment extends BaseFragment {
             public void onDisconnected(QNBleDevice qnBleDevice) {
                 RxLogUtils.e("断开连接:");
                 tv_connectDevice.setText(R.string.disConnected);
-                mQNBleTools.scanBle();
+                mQNBleTools.scanBle(0);
             }
 
             @Override
@@ -464,10 +464,6 @@ public class WeightFragment extends BaseFragment {
                         if (mRefresh.isRefreshing()) {
                             mRefresh.refreshComplete();
                         }
-                        for (int i = 0; i < weightDatas.size(); i++) {
-                            RxLogUtils.d(i + "---:" + weightDatas.get(i).getWeight());
-                        }
-
                         //提示线，
                         chartManager.addLimitLine2Y((float) bean.getIdealWeight(), "标准");//线条颜色宽度等
 
@@ -501,6 +497,7 @@ public class WeightFragment extends BaseFragment {
         chartManager.setData(yVals, days);
 
         mLineChart.moveViewToX(yVals.size() - (pageNum - 1) * 20 - 4);
+        mLineChart.invalidate();
 
         mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override

@@ -41,7 +41,7 @@ public class SpalshActivity extends BaseActivity {
             public void run() {
                 RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, MainActivity_.class);
             }
-        }, 2000);
+        }, 500);
     }
 
 
@@ -54,12 +54,6 @@ public class SpalshActivity extends BaseActivity {
                     public void accept(Boolean aBoolean) throws Exception {
                         if (!aBoolean) {
                             RxLogUtils.d("没有给定位权限");
-//                            QMUIDialogAction dialogAction = new QMUIDialogAction(mContext, "前往设置开启权限", new QMUIDialogAction.ActionListener() {
-//                                @Override
-//                                public void onClick(QMUIDialog dialog, int index) {
-//
-//                                }
-//                            });
                         } else {
                             gotoMain();
                         }

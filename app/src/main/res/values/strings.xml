@@ -145,7 +145,7 @@
     <string name="bind">绑定</string>
     <string name="bindings">已绑定</string>
     <string name="notDevice">没有搜索到设备，请确保设备电量充足</string>
-
+    <string name="web_load_error">出错啦！点击空白处刷新</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>
