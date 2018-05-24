@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/d_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_50"
+            android:layout_height="@dimen/d_50"
+            android:src="@mipmap/icon_limit"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:text="@string/limit"
+            android:textColor="@color/textHeatColor"/>
+
+        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+            android:id="@+id/progress_limit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_20"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_50"
+            android:layout_height="@dimen/d_50"
+            android:src="@mipmap/icon_anaerobic"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:text="@string/anaerobic"
+            android:textColor="@color/textHeatColor"/>
+
+        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+            android:id="@+id/progress_anaerobic"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_20"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_50"
+            android:layout_height="@dimen/d_50"
+            android:src="@mipmap/icon_aerobic"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:text="@string/aerobic"
+            android:textColor="@color/textHeatColor"/>
+
+        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+            android:id="@+id/progress_aerobic"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_20"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_50"
+            android:layout_height="@dimen/d_50"
+            android:src="@mipmap/icon_grease"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:text="@string/grease"
+            android:textColor="@color/textHeatColor"/>
+
+        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+            android:id="@+id/progress_grease"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_20"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_50"
+            android:layout_height="@dimen/d_50"
+            android:src="@mipmap/icon_warm"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:text="@string/warm"
+            android:textColor="@color/textHeatColor"/>
+
+        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+            android:id="@+id/progress_slimming"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_20"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

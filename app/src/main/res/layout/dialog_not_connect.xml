@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_500"
+    android:layout_height="@dimen/d_400"
+    android:background="@mipmap/popup_bg"
+    android:orientation="vertical"
+    android:id="@+id/dialog_not_connect"
+    android:padding="@dimen/d_50">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/d_20"
+        android:layout_marginTop="@dimen/d_30"
+        android:text="未链接设备"
+        android:textColor="@color/colorTheme"
+        android:textSize="@dimen/d_45"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="你距离体脂称过较远 或体脂称电量不足"
+        android:textColor="@color/textColor"
+        android:textSize="@dimen/d_40"/>
+
+</LinearLayout>

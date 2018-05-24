@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/d_250">
+
+
+    <ImageView
+        android:id="@+id/img_weight"
+        android:layout_width="@dimen/d_80"
+        android:layout_height="@dimen/d_80"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/d_100"
+        android:layout_marginRight="@dimen/d_50"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_weight_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/img_weight"
+        android:text="我是你的燃脂衣"
+        android:textColor="@color/textColor"
+        android:textSize="@dimen/d_45"/>
+
+
+    <TextView
+        android:id="@+id/tv_receive"
+        android:layout_width="@dimen/d_200"
+        android:layout_height="@dimen/d_100"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/d_50"
+        android:background="@mipmap/continue_button"
+        android:gravity="center"
+        android:text="领取"
+        android:textColor="@color/white"/>
+
+
+</RelativeLayout>

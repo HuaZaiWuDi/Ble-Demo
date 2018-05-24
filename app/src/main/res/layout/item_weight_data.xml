@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/d_250">
+
+
+    <ImageView
+        android:id="@+id/img_weight"
+        android:layout_width="@dimen/d_150"
+        android:layout_height="@dimen/d_150"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/d_50"
+        />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/d_50"
+        android:layout_toRightOf="@+id/img_weight"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_weight_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="69KG"
+            android:textColor="@color/colorTheme"
+            android:textSize="@dimen/d_65"/>
+
+        <TextView
+            android:layout_marginTop="@dimen/d_20"
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测量时间：05/14 11:18:17"
+            android:textColor="@color/textHeatColor"
+            android:textSize="@dimen/d_35"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_receive"
+        android:layout_width="@dimen/d_200"
+        android:layout_height="@dimen/d_80"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/d_50"
+        android:background="@mipmap/continue_button"
+        android:gravity="center"
+        android:text="领取"
+        android:textColor="@color/white"/>
+
+
+</RelativeLayout>

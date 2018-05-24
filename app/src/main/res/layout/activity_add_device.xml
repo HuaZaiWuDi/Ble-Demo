@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.login.AddDeviceActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/layout_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_step"
+        android:background="@mipmap/img_bj23x">
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/layout_scan_2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_step"
+        android:layout_below="@+id/layout_title"
+        android:layout_marginBottom="@dimen/d_80">
+
+        <lab.dxythch.com.commonproject.view.ScanView
+            android:id="@+id/img_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@mipmap/img_bj33x">
+
+        </lab.dxythch.com.commonproject.view.ScanView>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@mipmap/icon_logo_23x"/>
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/layout_bind"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_step"
+        android:layout_below="@+id/layout_title"
+        android:padding="@dimen/d_30"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_nearDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nearDevice"
+            android:textColor="@color/black"
+            android:textSize="@dimen/d_50"/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tv_nearDevice"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/barHeight"
+        android:paddingBottom="@dimen/d_30">
+
+        <LinearLayout
+            android:id="@+id/back"
+            android:layout_width="@dimen/d_200"
+            android:layout_height="match_parent"
+            android:gravity="bottom">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="@dimen/d_60"
+                android:layout_height="@dimen/d_80"
+                android:layout_marginLeft="@dimen/d_30"
+                android:src="@mipmap/back"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="bottom"
+            android:text="@string/AddDevice"
+            android:textColor="@color/black"
+            android:textSize="@dimen/d_60"/>
+
+        <TextView
+            android:id="@+id/tv_skip"
+            android:layout_width="@dimen/d_200"
+            android:layout_height="@dimen/d_200"
+            android:layout_alignParentRight="true"
+            android:gravity="bottom|center"
+            android:text="@string/skip"
+            android:textColor="@color/textHeatColor"
+            android:textSize="@dimen/d_45"/>
+
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/layout_title"
+        android:layout_marginRight="@dimen/d_50"
+        android:layout_marginTop="@dimen/d_30"
+        android:drawableLeft="@mipmap/icon_tishi_w3x"
+        android:drawablePadding="@dimen/d_20"
+        android:text="@string/device_about"
+        android:textColor="@color/white"
+        android:textSize="@dimen/d_30"/>
+
+
+    <LinearLayout
+        android:id="@+id/layout_step"
+        android:layout_width="match_parent"
+        android:layout_height="370px"
+        android:layout_above="@+id/btn_scan"
+        android:orientation="horizontal">
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/img_working"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@mipmap/icon_xuanzhe3x"/>
+
+            <TextView
+                android:id="@+id/tv_working"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_working"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/d_20"
+                android:text="@string/doing"
+                android:textColor="@color/textColor"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_working"
+                android:layout_centerHorizontal="true"
+                android:text="@string/doingSubtitle"
+                android:textColor="@color/textHeatColor"/>
+
+            <View
+                android:id="@+id/line_working"
+                android:layout_width="match_parent"
+                android:layout_height="5px"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/img_working"
+                android:background="@color/colorTheme"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/img_bind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@mipmap/icon_weixuanzhe3x"/>
+
+            <TextView
+                android:id="@+id/tv_bind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_bind"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/d_20"
+                android:text="@string/bindDevice"
+                android:textColor="@color/textHeatColor"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_bind"
+                android:layout_centerHorizontal="true"
+                android:text="@string/bindDeviceSubtitle"
+                android:textColor="@color/textHeatColor"/>
+
+            <View
+                android:id="@+id/line_bind_L"
+                android:layout_width="match_parent"
+                android:layout_height="5px"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/img_bind"
+                android:background="@color/textHeatColor"/>
+
+            <View
+                android:id="@+id/line_bind_R"
+                android:layout_width="match_parent"
+                android:layout_height="5px"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/img_bind"
+                android:background="@color/textHeatColor"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/img_startUse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@mipmap/icon_weixuanzhe3x"/>
+
+            <TextView
+                android:id="@+id/tv_startUse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_startUse"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/d_20"
+                android:text="@string/startUse"
+                android:textColor="@color/textHeatColor"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_startUse"
+                android:layout_centerHorizontal="true"
+                android:text="@string/startUseSubtitle"
+                android:textColor="@color/textHeatColor"/>
+
+            <View
+                android:id="@+id/line_use"
+                android:layout_width="match_parent"
+                android:layout_height="5px"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/img_startUse"
+                android:background="@color/textHeatColor"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_scan"
+        android:layout_width="@dimen/d_350"
+        android:layout_height="180px"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/d_100"
+        android:layout_marginTop="@dimen/d_100"
+        android:background="@mipmap/bt_03"
+        android:paddingBottom="@dimen/d_50"
+        android:text="@string/scan"
+        android:textColor="@color/white"/>
+
+    <include
+        layout="@layout/layout_no_device"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_title"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>
