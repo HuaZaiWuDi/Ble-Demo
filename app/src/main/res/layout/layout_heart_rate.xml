@@ -27,7 +27,7 @@
             android:text="@string/limit"
             android:textColor="@color/textHeatColor"/>
 
-        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+        <lab.wesmartclothing.wefit.flyso.view.HeartRateProgressView
             android:id="@+id/progress_limit"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_20"/>
@@ -55,7 +55,7 @@
             android:text="@string/anaerobic"
             android:textColor="@color/textHeatColor"/>
 
-        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+        <lab.wesmartclothing.wefit.flyso.view.HeartRateProgressView
             android:id="@+id/progress_anaerobic"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_20"/>
@@ -83,7 +83,7 @@
             android:text="@string/aerobic"
             android:textColor="@color/textHeatColor"/>
 
-        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+        <lab.wesmartclothing.wefit.flyso.view.HeartRateProgressView
             android:id="@+id/progress_aerobic"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_20"/>
@@ -111,7 +111,7 @@
             android:text="@string/grease"
             android:textColor="@color/textHeatColor"/>
 
-        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+        <lab.wesmartclothing.wefit.flyso.view.HeartRateProgressView
             android:id="@+id/progress_grease"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_20"/>
@@ -140,7 +140,7 @@
             android:text="@string/warm"
             android:textColor="@color/textHeatColor"/>
 
-        <lab.dxythch.com.commonproject.view.HeartRateProgressView
+        <lab.wesmartclothing.wefit.flyso.view.HeartRateProgressView
             android:id="@+id/progress_slimming"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_20"/>

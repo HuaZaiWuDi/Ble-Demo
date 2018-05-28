@@ -205,7 +205,7 @@
         android:background="@color/bg_color"/>
 
 
-    <lab.dxythch.com.commonproject.view.HeartRateView
+    <lab.wesmartclothing.wefit.flyso.view.HeartRateView
         android:layout_width="match_parent"
         android:layout_height="600px"/>
 

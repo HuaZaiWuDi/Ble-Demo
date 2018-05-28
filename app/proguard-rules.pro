@@ -34,3 +34,6 @@
 }
 -dontwarn com.just.agentweb.**
 -keepclassmembers class com.just.agentweb.sample.common.AndroidInterface{ *; }
+
+#微博
+-keep class com.sina.weibo.sdk.** { *; }

@@ -26,14 +26,14 @@
         android:layout_below="@+id/layout_title"
         android:layout_marginBottom="@dimen/d_80">
 
-        <lab.dxythch.com.commonproject.view.ScanView
+        <lab.wesmartclothing.wefit.flyso.view.ScanView
             android:id="@+id/img_scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@mipmap/img_bj33x">
 
-        </lab.dxythch.com.commonproject.view.ScanView>
+        </lab.wesmartclothing.wefit.flyso.view.ScanView>
 
 
         <ImageView

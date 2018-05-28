@@ -19,14 +19,14 @@
             android:background="@drawable/energy_green_bg_down"
             android:orientation="vertical">
 
-            <lab.dxythch.com.commonproject.view.DateChoose
+            <lab.wesmartclothing.wefit.flyso.view.DateChoose
                 android:id="@+id/mDateChoose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="220px">
 
-            </lab.dxythch.com.commonproject.view.DateChoose>
+            </lab.wesmartclothing.wefit.flyso.view.DateChoose>
 
 
             <RelativeLayout
@@ -62,7 +62,7 @@
                 </LinearLayout>
 
 
-                <lab.dxythch.com.commonproject.view.RoundView
+                <lab.wesmartclothing.wefit.flyso.view.RoundView
                     android:id="@+id/mRoundView"
                     android:layout_width="@dimen/d_450"
                     android:layout_height="@dimen/d_450"
@@ -117,10 +117,10 @@
 
     </LinearLayout>
 
-    <lab.dxythch.com.commonproject.view.CircleMenuView
+    <lab.wesmartclothing.wefit.flyso.view.CircleMenuView
         android:id="@+id/menu"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/d_400"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@mipmap/add_green_normal_icon"/>

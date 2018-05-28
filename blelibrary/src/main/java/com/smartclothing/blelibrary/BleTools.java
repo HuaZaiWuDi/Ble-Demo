@@ -20,8 +20,6 @@ import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 
-import java.util.UUID;
-
 
 /**
  * 项目名称：BLEPlatformSDKDemo
@@ -265,7 +263,7 @@ public class BleTools {
     public void configScan() {
 //        UUID.fromString(BleService.UUID_Servie),
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie)})      // 只扫描指定的服务的设备，可选
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
                 .setDeviceName(true, "QN-Scale")        // 只扫描指定广播名的设备，可选
 //                .setDeviceMac()                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/parent"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="30px">
+              android:id="@+id/parent"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="30px">
 
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_height="100px"
             android:gravity="center"
             android:textSize="35px"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/text"
@@ -28,7 +28,7 @@
             android:layout_height="80px"
             android:gravity="center|top"
             android:textColor="#808080"
-            android:textSize="30px" />
+            android:textSize="30px"/>
 
 
         <ScrollView
@@ -40,7 +40,7 @@
                 android:id="@+id/Linear_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"/>
         </ScrollView>
 
 
@@ -55,7 +55,7 @@
         android:gravity="center"
         android:text="@string/cancel"
         android:textColor="#25b4b4"
-        android:textSize="40px" />
+        android:textSize="40px"/>
 
 
 </LinearLayout>

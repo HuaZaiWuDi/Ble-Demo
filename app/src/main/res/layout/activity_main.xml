@@ -5,7 +5,7 @@
                 android:id="@+id/parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="lab.dxythch.com.commonproject.ui.main.MainActivity">
+                tools:context="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity">
 
 
     <FrameLayout
@@ -35,8 +35,8 @@
             android:layout_height="@dimen/d_150"
             android:layout_alignParentBottom="true"
             android:padding="@dimen/d_10"
-            app:tl_iconHeight="@dimen/d_60"
-            app:tl_iconWidth="@dimen/d_60"
+            app:tl_iconHeight="@dimen/d_50"
+            app:tl_iconWidth="@dimen/d_50"
             app:tl_textBold="SELECT"
             app:tl_textSelectColor="@color/colorTheme"
             app:tl_textUnselectColor="@color/colorTabText"/>

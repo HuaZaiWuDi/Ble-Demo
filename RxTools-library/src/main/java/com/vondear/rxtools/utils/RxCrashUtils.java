@@ -14,6 +14,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 /**
  * Created by vonde on 2016/12/21.
  */
@@ -23,12 +24,13 @@ public class RxCrashUtils implements Thread.UncaughtExceptionHandler {
     private volatile static RxCrashUtils mInstance;
 
     private UncaughtExceptionHandler mHandler;
-    private boolean                  mInitialized;
-    private String                   crashDir;
-    private String                   versionName;
-    private int                      versionCode;
+    private boolean mInitialized;
+    private String crashDir;
+    private String versionName;
+    private int versionCode;
 
     private Context context;
+
     private RxCrashUtils(Context context) {
         this.context = context;
     }

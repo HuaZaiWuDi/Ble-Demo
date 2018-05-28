@@ -18,6 +18,7 @@ package com.vondear.rxtools.model.cache;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -415,6 +416,46 @@ public class ACache {
             }
         }
         return null;
+    }
+
+    /**
+     * 保存 Parcelable数据 到 缓存中
+     *
+     * @param key   保存的key
+     * @param value 保存的value
+     */
+    public void put(String key, Parcelable value) {
+        put(key, value, -1);
+    }
+
+    /**
+     * 保存 Serializable数据到 缓存中
+     *
+     * @param key      保存的key
+     * @param value    保存的value
+     * @param saveTime 保存的时间，单位：秒
+     */
+    public void put(String key, Parcelable value, int saveTime) {
+        ByteArrayOutputStream baos = null;
+        ObjectOutputStream oos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(value);
+            byte[] data = baos.toByteArray();
+            if (saveTime != -1) {
+                put(key, data, saveTime);
+            } else {
+                put(key, data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                oos.close();
+            } catch (IOException e) {
+            }
+        }
     }
 
     // =======================================

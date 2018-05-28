@@ -6,7 +6,7 @@ android {
     compileSdkVersion versions.compileSdkVersion
     buildToolsVersion versions.buildToolsVersion
     defaultConfig {
-        applicationId "lab.dxythch.com.commonproject"
+        applicationId "lab.wesmartclothing.wefit.flyso"
         minSdkVersion versions.minSdkVersion
         targetSdkVersion versions.targetSdkVersion
         versionCode 1
@@ -16,6 +16,20 @@ android {
         // 取消掉系统对.9图片的检查
         aaptOptions.cruncherEnabled = false
         aaptOptions.useNewCruncher = false
+
+        //QQ分享
+        manifestPlaceholders = [
+                //  替换成你的qq_id
+                qq_id: "1106404886"
+        ]
+
+        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ['resourcePackageName': android.defaultConfig.applicationId]
+            }
+        }
+
     }
     buildTypes {
         release {
@@ -29,6 +43,8 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
+
 }
 
 dependencies {
@@ -38,58 +54,85 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
     //注解
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     implementation "org.androidannotations:androidannotations-api:$AAVersion"
+
     //UI库，
     //http://qmuiteam.com/android/get-started
     implementation 'com.qmuiteam:qmui:1.0.6'
+
     //工具库
     compile project(':RxTools-library')
     compile project(':netlib')
+
     //
+
     //    implementation "com.scwang.smartrefresh:SmartRefreshLayout:$rootProject.smartrefreshVersion"
+
     //    implementation "com.scwang.smartrefresh:SmartRefreshHeader:$rootProject.smartrefreshVersion"
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+
     //Glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
+
     //快速开发顶部、底部导航栏
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+
     //弘扬的自定义布局
     implementation 'com.zhy:autolayout:1.4.5'
+
     //万能的下刷新与上啦加载
+
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
     implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4'
+
     //扩展支持横向刷新库
     implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4'
+
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
     implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4'
+
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
     implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
+
     //数据库
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+
     //BUGly
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
+
     //方法超限处理
     implementation 'com.android.support:multidex:1.0.3'
+
     //MPAndroidChart图表控件
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+
     //轻牛体重秤SDK
     implementation files('libs/qnsdk-0.1.0.jar')
-
     compile project(path: ':blelibrary')
 
     //https://github.com/gzu-liyujiang/AndroidPicker
     compile('cn.qqtheme.framework:WheelPicker:latest.release') {
         exclude group: 'com.android.support'
     }
-
     compile('com.just.agentweb:agentweb:4.0.2') {// (必选)
         exclude group: 'com.android.support'
     }
 
     //腾讯急速加载网页
     compile 'com.tencent.sonic:sdk:3.0.0'
+
+////    微信SDK
+//    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+//    //QQSDK
+//    implementation files('libs/open_sdk_r6008_lite.jar')
+//    //微博SDK
+//    compile 'com.sina.weibo.sdk:core:4.2.7:openDefaultRelease@aar'
+
+    //jsbridge
+    compile 'com.github.lzyzsd:jsbridge:1.0.4'
 }

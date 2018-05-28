@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="lab.dxythch.com.commonproject">
+          package="lab.wesmartclothing.wefit.flyso">
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_LOGS"
@@ -30,7 +31,7 @@
         <!-- android7.0适配 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="lab.dxythch.com.commonproject"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
 
@@ -53,13 +54,13 @@
         </service>
 
         <activity
-            android:name=".ui.main.MainActivity_"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".ui.guide.SpalshActivity"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.guide.SpalshActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait"
             android:theme="@style/StartTheme">
@@ -70,17 +71,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.main.slimming.heat.AddFoodActivity_"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".ui.main.slimming.heat.SearchHistoryActivity_"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".ui.main.slimming.weight.WeightDataActivity_"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
@@ -90,22 +91,15 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent"/>
 
-        <service
-            android:name=".service.QNService_"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-
-
         <activity
-            android:name=".ui.main.slimming.sports.SportsDetailsActivity_"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportsDetailsActivity_"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.login.LoginActivity_">
+        <activity android:name="lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_">
         </activity>
-        <activity android:name=".ui.login.UserInfoActivity_">
+        <activity android:name="lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_">
         </activity>
-        <activity android:name=".ui.login.AddDeviceActivity_">
+        <activity android:name="lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_">
         </activity>
     </application>
 

@@ -70,14 +70,13 @@
     <string name="details">查看详情</string>
 
     <string name="currentWeight">当前体重</string>
-    <string name="targetWeight">理想体重</string>
+    <string name="targetWeight">目标体重</string>
 
     <string name="weight_data">体重数据</string>
     <string name="btn_leave">离开</string>
     <string name="btn_continue">继续领取</string>
 
     <string name="receivedCount">%1$s领取的体重数据（%2$d）</string>
-
 
     <string name="unbindDevice">还未绑定设备，</string>
     <string name="goBind">去绑定</string>
@@ -146,6 +145,10 @@
     <string name="bindings">已绑定</string>
     <string name="notDevice">没有搜索到设备，请确保设备电量充足</string>
     <string name="web_load_error">出错啦！点击空白处刷新</string>
+
+    <string name="wx">微信</string>
+    <string name="pengyouquan">朋友圈</string>
+    <string name="shareTo">分享到</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

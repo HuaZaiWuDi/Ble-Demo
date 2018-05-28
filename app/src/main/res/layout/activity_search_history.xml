@@ -82,7 +82,7 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/d_20">
 
-            <lab.dxythch.com.commonproject.view.DynamicTagFlowLayout
+            <lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout
                 android:id="@+id/tagFlowLayout_lately"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/d_500"
@@ -122,7 +122,7 @@
 
         </LinearLayout>
 
-        <lab.dxythch.com.commonproject.view.DynamicTagFlowLayout
+        <lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout
             android:id="@+id/tagFlowLayout_hot"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_500"
