@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/d_30">
+
+
+    <LinearLayout
+        android:id="@+id/Linear_msg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_500"
+        android:background="@drawable/shape_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="150px"
+            android:gravity="center"
+            android:text="@string/shareTo"
+            android:textColor="@color/textColor"
+            android:textSize="35px"
+            android:textStyle="bold"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:id="@+id/Linear_wx"
+                android:layout_width="@dimen/d_300"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/d_20"
+                android:gravity="center"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/weixin"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wx"
+                    android:textColor="@color/textColor"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/Linear_pengyouquan"
+                android:layout_width="@dimen/d_300"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/pengyouquan"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pengyouquan"
+                    android:textColor="@color/textColor"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/cancel"
+        android:layout_width="match_parent"
+        android:layout_height="150px"
+        android:layout_marginTop="40px"
+        android:background="@drawable/shape_background"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textColor="#25b4b4"
+        android:textSize="40px"/>
+
+</LinearLayout>

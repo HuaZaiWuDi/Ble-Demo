@@ -1,0 +1,10 @@
+/*上面的登录*/ 
+/*底部的我要开微店*/
+/*底部footer*/
+#wdSourceBanner,#iWantAShopIndex,.default-nav .index-nav{
+	display:none!important;
+}
+
+#wd_show{
+	padding-bottom: 0!important;
+}
