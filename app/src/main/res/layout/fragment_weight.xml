@@ -59,11 +59,11 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/d_100"
                 android:background="@drawable/prompt_bg"
+                android:gravity="center_horizontal|top"
                 android:paddingLeft="@dimen/d_50"
                 android:paddingRight="@dimen/d_50"
                 android:paddingTop="@dimen/d_30"
                 android:text="@string/unbindDevice"
-                android:gravity="center_horizontal|top"
                 android:textColor="@color/textColor"
                 android:textSize="@dimen/d_40"
                 android:visibility="gone"
@@ -123,7 +123,7 @@
                         android:gravity="left"
                         android:text="--kg"
                         android:textColor="@color/colorTheme"
-                        android:textSize="@dimen/d_70"/>
+                        android:textSize="@dimen/d_60"/>
 
                 </LinearLayout>
 
@@ -173,7 +173,7 @@
                         android:gravity="left"
                         android:text="--kg"
                         android:textColor="@color/colorTheme"
-                        android:textSize="@dimen/d_70"/>
+                        android:textSize="@dimen/d_60"/>
 
                 </LinearLayout>
 

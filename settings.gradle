@@ -1,1 +1,1 @@
-include ':app', ':RxTools-library', ':netlib', ':blelibrary', ":shareutil"
+include ':app', ':RxTools-library', ':netlib', ':blelibrary'

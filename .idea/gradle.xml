@@ -12,7 +12,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/blelibrary" />
             <option value="$PROJECT_DIR$/netlib" />
-            <option value="$PROJECT_DIR$/shareutil" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -60,7 +60,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.guide.SpalshActivity"
+            android:name="lab.wesmartclothing.wefit.flyso.ui.guide.SpalshActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait"
             android:theme="@style/StartTheme">

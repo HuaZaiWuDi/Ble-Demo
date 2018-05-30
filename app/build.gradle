@@ -135,4 +135,7 @@ dependencies {
 
     //jsbridge
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
+
+    //日历控件
+    implementation 'com.github.prolificinteractive:material-calendarview:+'
 }

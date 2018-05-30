@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
 
-    <CalendarView
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/mCalendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusedMonthDateColor="@color/colorTheme"
-        android:selectedWeekBackgroundColor="@color/colorTheme"
-        android:unfocusedMonthDateColor="@color/colorTheme"
-        android:weekNumberColor="@color/colorTheme"
-        android:weekSeparatorLineColor="@color/colorTheme">
+        app:mcv_arrowColor="@color/colorTheme"
+        app:mcv_calendarMode="month"
+        app:mcv_selectionColor="@color/colorTheme"
+        app:mcv_titleAnimationOrientation="horizontal"/>
 
-    </CalendarView>
 
     <TextView
         android:id="@+id/reToday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/mCalendarView"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/d_30"
+        android:layout_marginTop="@dimen/d_20"
         android:background="@mipmap/delete_button"
         android:gravity="center"
         android:text="回到今天"

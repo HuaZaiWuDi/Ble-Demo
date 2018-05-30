@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.zhy.autolayout.AutoLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="@dimen/d_150"
+    android:layout_width="@dimen/d_300"
+    android:layout_height="@dimen/d_200"
     android:background="@mipmap/bg_marker"
-    android:gravity="center_horizontal"
-    android:orientation="horizontal"
-    android:padding="@dimen/d_20">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/d_50"
+    android:paddingTop="@dimen/d_20">
 
     <TextView
         android:id="@+id/tv_heat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/d_10"
-        android:layout_marginTop="@dimen/d_15"
-        android:text="@string/heat"
+        android:layout_marginTop="@dimen/d_10"
+        android:gravity="start"
+        android:text="热量："
         android:textColor="@color/textHeatColor"
-        android:textSize="@dimen/d_35"/>
+        android:textSize="@dimen/d_30"/>
 
 
     <TextView
-        android:id="@+id/tv_value"
+        android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/d_15"
-        android:layout_toRightOf="@+id/tv_heat"
-        android:text="：100千卡"
-        android:textColor="@color/colorTheme"
-        android:textSize="@dimen/d_35"/>
+        android:layout_marginTop="@dimen/d_10"
+        android:gravity="start"
+        android:text="时长："
+        android:textColor="@color/textHeatColor"
+        android:textSize="@dimen/d_30"/>
 
-
-</LinearLayout>
+</com.zhy.autolayout.AutoLinearLayout>
