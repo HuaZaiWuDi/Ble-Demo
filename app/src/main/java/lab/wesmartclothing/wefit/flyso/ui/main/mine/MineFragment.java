@@ -227,6 +227,7 @@ public class MineFragment extends BaseFragment {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Key.BUNDLE_RELOGIN, true);
                     RxActivityUtils.skipActivity(mActivity, LoginActivity_.class, bundle);
+                    RxActivityUtils.finishActivity(SetActivity.class);
                     mActivity.finish();
                 } else if (device.equals("ScanBle")) {
                     Bundle bundle = new Bundle();
@@ -245,7 +246,6 @@ public class MineFragment extends BaseFragment {
                 RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
             }
         });
-
 
         RxBus.getInstance().addSubscription(this, Collect);
         RxBus.getInstance().addSubscription(this, register);

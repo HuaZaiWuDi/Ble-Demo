@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<resources>  
+
+    <!--头像上传-->
+    <declare-styleable name="ClipViewLayout">
+        <attr name="clipType" format="enum">
+            <enum name="circle" value="1" />
+            <enum name="rectangle" value="2" />
+        </attr>
+        <attr name="mHorizontalPadding" format="dimension" />
+        <attr name="clipBorderWidth" format="dimension" />
+    </declare-styleable>
+
+
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="PagerSlidingTabStrip">
+        <attr name="pstsIndicatorColor" format="color" />
+        <attr name="pstsUnderlineColor" format="color" />
+        <attr name="pstsDividerColor" format="color" />
+        <attr name="pstsIndicatorHeight" format="dimension" />
+        <attr name="pstsUnderlineHeight" format="dimension" />
+        <attr name="pstsDividerPadding" format="dimension" />
+        <attr name="pstsTabPaddingLeftRight" format="dimension" />
+        <attr name="pstsScrollOffset" format="dimension" />
+        <attr name="pstsTabBackground" format="reference" />
+        <attr name="pstsShouldExpand" format="boolean" />
+        <attr name="pstsTextAllCaps" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="NiceSpinner">
+        <attr name="arrowTint" format="color" />
+        <attr name="hideArrow" format="boolean" />
+        <attr name="backgroundSelector" format="integer"/>
+        <attr name="textTint" format="color"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="ImageUploadView">
+        <!-- 单张图片大小（宽高一样） -->
+        <attr name="pic_size" format="dimension" />
+        <!-- 最大数量 -->
+        <attr name="max_num" format="integer" />
+        <!-- 添加图片 -->
+        <attr name="add_res" format="reference" />
+        <!-- 删除图片 -->
+        <attr name="del_res" format="reference" />
+        <!-- 是否显示删除按钮-->
+        <attr name="is_show_del" format="boolean" />
+        <!-- 单行显示数量-->
+        <attr name="one_line_show_num" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="absProgressBar">
+        <attr name="progress" format="integer"/>
+        <attr name="backgroundColor" format="reference|color"/>
+        <attr name="textColor1" format="reference|color"/>
+    </declare-styleable>
+
+    <declare-styleable name="progressBar">
+        <attr name="startFillColor" format="reference|color"/>
+        <attr name="middleFillColor" format="reference|color"/>
+        <attr name="endFillColor" format="reference|color"/>
+        <attr name="arrowPointColor" format="reference|color"/>
+        <attr name="arrowPointRadius" format="dimension|reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="floatTextProgressBar">
+        <attr name="triangleColor" format="reference|color"/>
+        <attr name="rectColor" format="reference|color"/>
+        <attr name="fillColorProgress" format="reference|color"/>
+    </declare-styleable>
+
+</resources>

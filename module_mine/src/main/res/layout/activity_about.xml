@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
+
+    <RelativeLayout
+        android:id="@+id/rl_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_300"
+        android:background="@mipmap/mine_bg">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_40">
+
+            <LinearLayout
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="@dimen/dimen_2"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_10"
+                    android:src="@mipmap/left_back"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="关于"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/dimen_18"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_about_company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dimen_80"
+            android:src="@mipmap/wefit"/>
+
+        <TextView
+            android:id="@+id/tv_about_company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_about_company_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dimen_15"
+            android:text="智裳科技APP"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/dimen_18"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_about_company_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:text="版本号"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/dimen_14"/>
+
+    </RelativeLayout>
+
+    <!--下半部分-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_title_bar"
+        android:background="#ffffff"
+        android:overScrollMode="never">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/tv_rv_below"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rv_about"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:text="提示：固件升级请保证app和固件的连接"
+            android:textColor="#FF999999"
+            android:textSize="@dimen/dimen_11"/>
+
+
+        <TextView
+            android:id="@+id/tv_protocol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:text="智裳科技"
+            android:textColor="#FF999999"
+            android:textSize="@dimen/dimen_12"/>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.smartclothing.module_wefit"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="18"
+        android:targetSdkVersion="25" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true" >
+        <activity android:name="com.smartclothing.module_wefit.activity.MineActivity" >
+        </activity>
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.PersonalDataActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.NameEditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.SignEditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.PhoneEditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.tools.ClipImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.CollectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.MyDeviceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.MessageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.ProblemSuggestActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.SetActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.AboutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.smartclothing.module_wefit.activity.MessageDetailActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- &lt;!&ndash; android7.0适配 &ndash;&gt; -->
+        <!-- <provider -->
+        <!-- android:name="android.support.v4.content.FileProvider" -->
+        <!-- android:authorities="${applicationId}.provider" -->
+        <!-- android:exported="false" -->
+        <!-- android:grantUriPermissions="true"> -->
+
+
+        <!-- &lt;!&ndash; 元数据 &ndash;&gt; -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
+        <!-- android:resource="@xml/provider_paths"/> -->
+        <!-- </provider> -->
+
+    </application>
+
+</manifest>

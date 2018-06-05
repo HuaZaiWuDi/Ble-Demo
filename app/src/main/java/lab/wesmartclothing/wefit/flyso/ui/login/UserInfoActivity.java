@@ -97,7 +97,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             viewState++;
             switchView(viewState);
         } else {
-            if (BaseALocationActivity.aMapLocation == null) {
+            if (isLocation) {
                 final QMUITipDialog tipDialog = new QMUITipDialog.Builder(mContext)
                         .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
                         .setTipWord("未获取地理位置")
@@ -144,25 +144,7 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
     private int viewState = 0;
-
-
-//    @Override
-//    public void setGpsInfo(Location location) {
-//        RxLogUtils.d("定位信息：" + location.toString());
-//    }
-//
-//    @Override
-//    public void getAddress(Address address) {
-//        super.getAddress(address);
-//        tipDialog.dismiss();
-//        if (address != null) {
-//            closeLocation();
-//            tv_location.setText(address.getAdminArea() + "," + address.getLocality());
-//            mUserInfo.setCountry(address.getCountryName());
-//            mUserInfo.setProvince(address.getAdminArea());
-//            mUserInfo.setCity(address.getLocality());
-//        }
-//    }
+    private boolean isLocation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,7 +202,7 @@ public class UserInfoActivity extends BaseALocationActivity {
                 startLocation(new MyLocationListener() {
                     @Override
                     public void location(AMapLocation aMapLocation) {
-
+                        isLocation = true;
                         tv_location.setText(aMapLocation.getProvince() + "," + aMapLocation.getCity());
                         mUserInfo.setCountry(aMapLocation.getCountry());
                         mUserInfo.setProvince(aMapLocation.getProvince());

@@ -389,12 +389,14 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        if ("true".equals(s))
+                        if ("true".equals(s)) {
                             if (bean.getDeivceType() == 0) {
                                 mPrefs.scaleIsBind().put(bean.getMac());
                             } else {
                                 mPrefs.clothing().put(bean.getMac());
                             }
+                            initStep(2);
+                        }
                         bean.setBind("true".equals(s));
                         adapter.addData(bean);
                     }

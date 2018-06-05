@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dimen_100"
+    android:layout_marginTop="@dimen/dimen_5"
+    android:layout_marginBottom="@dimen/dimen_5"
+    android:layout_marginLeft="@dimen/dimen_15"
+    android:layout_marginRight="@dimen/dimen_15"
+    android:background="@drawable/radiu_item_bg">
+
+    <ImageView
+        android:id="@+id/iv_device_burn"
+        android:layout_width="@dimen/dimen_40"
+        android:layout_height="@dimen/dimen_30"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:src="@mipmap/icon_gujian" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_25"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:layout_toRightOf="@+id/iv_device_burn"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_device_id_burn0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_5"
+            android:text="体脂秤"
+            android:textColor="#FF212121"
+            android:textSize="@dimen/dimen_15"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/dimen_25"
+        android:layout_toRightOf="@+id/iv_device_burn"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_residual_electricity_burn0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_5"
+            android:text="固件版本号1.0"
+            android:textColor="#FF999999"
+            android:textSize="@dimen/dimen_12" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dimen_20"
+        android:layout_marginLeft="@dimen/dimen_25"
+        android:layout_toRightOf="@+id/iv_device_burn"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_standby_time_burn0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_5"
+            android:text="当前固件版本号1.0"
+            android:textColor="#FF00CBD2"
+            android:textSize="@dimen/dimen_12" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_about_update"
+        android:layout_width="@dimen/dimen_55"
+        android:layout_height="@dimen/dimen_28"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/dimen_20"
+        android:background="@drawable/about_update_btn_selector"
+        android:gravity="center"
+        android:text="升级"
+        android:textColor="#FF49EBBB"
+        android:textSize="@dimen/dimen_14" />
+
+</RelativeLayout>

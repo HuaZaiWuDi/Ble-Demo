@@ -91,14 +91,12 @@ public class WeightFragment extends BaseFragment {
         return new WeightFragment_();
     }
 
+    TextView tv_weight_date;
+    TextView tv_idealWeight;
+    TextView tv_currentWeight;
+
     @ViewById
     RecyclerView mRecyclerView;
-    @ViewById
-    TextView tv_weight_date;
-    @ViewById
-    TextView tv_idealWeight;
-    @ViewById
-    TextView tv_currentWeight;
     @ViewById
     LineChart mLineChart;
     @ViewById
@@ -166,6 +164,7 @@ public class WeightFragment extends BaseFragment {
         RxLogUtils.d("加载：【WeightFragment】");
         if ("".equals(mPrefs.scaleIsBind().get())) {
             initDeviceConnectTip(1);
+
         } else
             getWeightData();
     }
@@ -317,6 +316,8 @@ public class WeightFragment extends BaseFragment {
             item.setData_right(data[i + 1]);
             weightLists.add(item);
         }
+
+
         adapter.setNewData(weightLists);
         tv_weight_date.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
     }
@@ -402,6 +403,7 @@ public class WeightFragment extends BaseFragment {
                 });
                 break;
             case 3:
+                mLineChart.clear();
                 tv_connectTip.setVisibility(View.GONE);
                 dialog_not_connect.setVisibility(View.VISIBLE);
                 break;
@@ -438,6 +440,12 @@ public class WeightFragment extends BaseFragment {
                 helper.setImageResource(R.id.img_right, item.getImg_right());
             }
         };
+        View inflate = View.inflate(mActivity, R.layout.layout_weight_head, null);
+        tv_weight_date = inflate.findViewById(R.id.tv_weight_date);
+        tv_idealWeight = inflate.findViewById(R.id.tv_idealWeight);
+        tv_currentWeight = inflate.findViewById(R.id.tv_currentWeight);
+        adapter.setHeaderView(inflate);
+
         adapter.bindToRecyclerView(mRecyclerView);
     }
 
@@ -455,7 +463,8 @@ public class WeightFragment extends BaseFragment {
                     @Override
                     public void run() throws Exception {
                         tipDialog.dismiss();
-                        mRefresh.refreshComplete();
+                        if (mRefresh != null)
+                            mRefresh.refreshComplete();
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {

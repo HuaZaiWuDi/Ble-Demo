@@ -62,6 +62,7 @@ public class MainActivity extends BaseALocationActivity {
 
     private Intent bleIntent;
 
+
     @Receiver(actions = Key.ACTION_SWITCH_BOTTOM_TAB)
     void switchBottomTab(@Receiver.Extra(Key.EXTRA_SWITCH_BOTTOM_TAB) boolean isVisible) {
         bottom_tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
