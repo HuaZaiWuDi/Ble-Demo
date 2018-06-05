@@ -13,7 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/d_10"
+        android:ellipsize="end"
         android:gravity="start"
+        android:maxLines="1"
         android:text="热量："
         android:textColor="@color/textHeatColor"
         android:textSize="@dimen/d_30"/>
@@ -24,7 +26,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/d_10"
+        android:ellipsize="end"
         android:gravity="start"
+        android:maxLines="1"
         android:text="时长："
         android:textColor="@color/textHeatColor"
         android:textSize="@dimen/d_30"/>

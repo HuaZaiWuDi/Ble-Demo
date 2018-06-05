@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -13,6 +14,7 @@ import com.vondear.rxtools.utils.RxNetUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,15 +24,15 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
+import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netserivce.StoreService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -48,6 +50,21 @@ public class SpalshActivity extends BaseActivity {
     @Pref
     Prefs_ mPrefs;
 
+    @Receiver(actions = Intent.ACTION_PACKAGE_REPLACED)
+    void replaced(Intent intent) {
+        String packageName = intent.getData().getSchemeSpecificPart();
+        if (this.getPackageName().equals(packageName)) {
+            //替换成功
+            UpdateAppBean updateAppBean = new UpdateAppBean();
+            updateAppBean.setVersionFlag(UpdateAppBean.VERSION_FLAG_APP);
+            updateAppBean.setVersion(RxDeviceUtils.getAppVersionName());
+            updateAppBean.setSystem("Android");
+            updateAppBean.setPhoneType(RxDeviceUtils.getBuildMANUFACTURER());
+            updateAppBean.setMacAddr(RxDeviceUtils.getAndroidId());//AndroidID);
+            updateAppBean.addDeviceVersion(updateAppBean);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +79,14 @@ public class SpalshActivity extends BaseActivity {
         initPromissions();
 
 
-        //测试账号
-        mPrefs.UserId().put("testuser");
-        mPrefs.clothingBind().put(true);
-        mPrefs.scaleIsBind().put(true);
+//        //测试账号
+//        mPrefs.UserId().put("");
+//        mPrefs.UserId().put("testuser");
         NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
-        initDevice();
 
         initUserInfo();
         initData();
+
     }
 
     private void initUserInfo() {
@@ -105,15 +121,6 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //数据统计接口
-    private void initDevice() {
-        DeviceLink deviceLink = new DeviceLink();
-        deviceLink.setMacAddr(RxDeviceUtils.getAndroidId(this.getApplicationContext()));//AndroidID
-//        deviceLink.setDeviceName(RxDeviceUtils.getBuildMANUFACTURER());//设备厂商名字，如：小米
-        deviceLink.setDeviceName(getString(R.string.scale));//测试数据
-        deviceLink.setLinkStatus("".equals(mPrefs.UserId().get()) ? 0 : 1);
-        deviceLink.deviceLink(deviceLink);
-    }
 
     private void gotoMain() {
         mHandler.postDelayed(new Runnable() {
@@ -123,7 +130,7 @@ public class SpalshActivity extends BaseActivity {
                 if ("".equals(mPrefs.UserId().get())) {
                     RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, LoginActivity_.class);
                 } else if (isSaveUserInfo)
-                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, AddDeviceActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, UserInfoActivity_.class);
                 else
                     RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, MainActivity_.class);
             }
@@ -163,6 +170,8 @@ public class SpalshActivity extends BaseActivity {
         }
         saveUserInfo();
         getStoreAddr();
+        getOrderUrl();
+        getShoppingAddress();
     }
 
 
@@ -198,6 +207,42 @@ public class SpalshActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         ServiceAPI.Store_Addr = s;
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        //这里不做处理
+                    }
+                });
+    }
+
+    //获取商城订单地址
+    private void getOrderUrl() {
+        StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.getOrderUrl())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束：" + s);
+                        ServiceAPI.Order_Url = s;
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        //这里不做处理
+                    }
+                });
+    }
+
+    //获取商城购物车地址
+    private void getShoppingAddress() {
+        StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.getShoppingAddress())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束：" + s);
+                        ServiceAPI.Shopping_Address = s;
                     }
 
                     @Override

@@ -117,5 +117,17 @@ public interface RetrofitService {
     @POST("appData/deviceLink")
     Observable<String> deviceLink(@Body RequestBody body);
 
+    @POST("appData/addDeviceVersion")
+    Observable<String> addDeviceVersion(@Body RequestBody body);
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 发现
+    ///////////////////////////////////////////////////////////////////////////
+    //发现新连接
+    @FormUrlEncoded
+    @POST("/find/detail.html")
+    Observable<String> newsDetail(@Field("gid") String git);
+
 
 }

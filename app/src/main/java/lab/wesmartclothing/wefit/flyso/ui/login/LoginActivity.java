@@ -17,6 +17,7 @@ import com.vondear.rxtools.view.RxToast;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
@@ -28,7 +29,11 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
+import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -39,6 +44,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
 
@@ -58,14 +64,26 @@ public class LoginActivity extends BaseActivity {
     @Pref
     Prefs_ mPrefs;
 
+    @Extra
+    boolean BUNDLE_RELOGIN;
+
 
     private String phone;
     private String VCode;
 
 
     @Click
+    void tv_about() {
+        Bundle bundle = new Bundle();
+        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
+        RxActivityUtils.skipActivity(mContext, WebActivity.class, bundle);
+    }
+
+
+    @Click
     void btn_login() {
         VCode = edit_VCode.getText().toString();
+        phone = edit_phone.getText().toString();
         if (!RxRegUtils.isMobileExact(phone)) {
             RxToast.warning("手机号码号码不正确");
             return;
@@ -131,7 +149,9 @@ public class LoginActivity extends BaseActivity {
                             e.printStackTrace();
                         }
 
-                        RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity_.class);
+                        initUserInfo();
+
+
                     }
 
                     @Override
@@ -140,6 +160,43 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
     }
+
+
+    private void initUserInfo() {
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("获取用户信息：" + s);
+                        try {
+                            JSONObject object = new JSONObject(s);
+                            int sex = object.getInt("sex");
+                            int height = object.getInt("height");
+                            int targetWeight = object.getInt("targetWeight");
+                            String birthday = object.getString("birthday");
+                            if (sex == 0) {
+                                RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity_.class);
+                            } else {
+                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
+                                mPrefs.weight().put(targetWeight);
+                                mPrefs.height().put(height);
+                                mPrefs.sex().put(sex);
+                                RxActivityUtils.skipActivityAndFinish(mContext, MainActivity_.class);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+//                        RxToast.error(error);
+                    }
+                });
+    }
+
 
     private void getVCode(String phone) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

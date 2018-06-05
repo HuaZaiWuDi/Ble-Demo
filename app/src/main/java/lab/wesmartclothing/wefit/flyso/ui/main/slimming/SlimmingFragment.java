@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.widget.TextView;
 
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.UnScrollableViewPager;
 
 import org.androidannotations.annotations.AfterViews;
@@ -14,12 +15,15 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
+import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created by jk on 2018/5/7.
@@ -79,14 +83,25 @@ public class SlimmingFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
+        RxLogUtils.d("加载：【SlimmingFragment】");
     }
 
     @AfterViews
     public void initView() {
         initTitleTab();
+        initRxBus();
     }
 
+    private void initRxBus() {
+        RxBus.getInstance().register(SlimmingTab.class, new Consumer<SlimmingTab>() {
+            @Override
+            public void accept(SlimmingTab slimmingTab) throws Exception {
+                position = slimmingTab.getTab();
+                initTitle(position);
+                mViewPager.setCurrentItem(position);
+            }
+        });
+    }
 
     private void initTitleTab() {
         mFragments.clear();

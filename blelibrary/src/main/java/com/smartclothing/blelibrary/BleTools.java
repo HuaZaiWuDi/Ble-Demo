@@ -164,7 +164,6 @@ public class BleTools {
         });
     }
 
-
     private BleCallBack mBleCallBack;
 
     public void setBleCallBack(BleCallBack bleCallBack) {
@@ -260,12 +259,26 @@ public class BleTools {
         return bleDevice;
     }
 
-    public void configScan() {
+    public void configScan(long timeout) {
 //        UUID.fromString(BleService.UUID_Servie),
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
 //                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
                 .setDeviceName(true, "QN-Scale")        // 只扫描指定广播名的设备，可选
 //                .setDeviceMac()                  // 只扫描指定mac的设备，可选
+//                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
+                .setScanTimeOut(timeout)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
+                .build();
+
+        bleManager.initScanRule(scanRuleConfig);
+    }
+
+
+    public void configScanByMac(String mac) {
+        Log.d("bleManager", "开始扫描");
+        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
+//                .setDeviceName(true, "QN-Scale")        // 只扫描指定广播名的设备，可选
+                .setDeviceMac(mac)                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
                 .setScanTimeOut(15 * 1000)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
                 .build();
@@ -275,9 +288,9 @@ public class BleTools {
 
     public void stopScan() {
         if (bleManager.getScanSate() == BleScanState.STATE_SCANNING) {
+            Log.d("bleManager", "结束扫描");
             bleManager.cancelScan();
         }
     }
-
 
 }

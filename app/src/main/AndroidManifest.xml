@@ -6,10 +6,19 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions"/>
+    <!-- 用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 用于获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
     <application
         android:name=".base.MyAPP"
@@ -53,14 +62,27 @@
             android:exported="true">
         </service>
 
+        <!-- BUGly升级 -->
         <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_"
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent"/>
+
+        <!-- 高德地图KEY -->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="838e8b0162a88fd56a539bd1e786ef93"/>
+
+        <service android:name="com.amap.api.location.APSService"/>
+
+        <activity
+            android:name=".ui.main.MainActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.guide.SpalshActivity_"
+            android:name=".ui.guide.SpalshActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait"
             android:theme="@style/StartTheme">
@@ -71,35 +93,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_"
+            android:name=".ui.main.slimming.heat.AddFoodActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryActivity_"
+            android:name=".ui.main.slimming.heat.SearchHistoryActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightDataActivity_"
+            android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent"/>
+            android:name=".ui.main.slimming.sports.SportsDetailsActivity_"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".ui.login.LoginActivity_">
+        </activity>
+        <activity android:name=".ui.login.UserInfoActivity_">
+        </activity>
+        <activity android:name=".ui.login.AddDeviceActivity_">
+        </activity>
+        <activity android:name=".ui.WebActivity">
+        </activity>
+        <activity android:name=".ui.WebTitleActivity">
+        </activity>
 
-        <activity
-            android:name="lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportsDetailsActivity_"
-            android:screenOrientation="portrait">
+        <service
+            android:name=".ble.BleService_"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
+        <activity android:name=".ui.main.CollectWebActivity">
         </activity>
-        <activity android:name="lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_">
-        </activity>
-        <activity android:name="lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_">
-        </activity>
-        <activity android:name="lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_">
+        <activity android:name=".ui.main.slimming.sports.TempActivity">
         </activity>
     </application>
 

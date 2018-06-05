@@ -65,9 +65,9 @@ public class SaveUserInfo implements Serializable {
     private String userName;
     private String password;
     private int sex = 1;
-    private String birthday = "315550842277";
-    private int height = 175;
-    private int targetWeight = 60;
+    private String birthday = "631233300000";
+    private int height = 165;
+    private int targetWeight = 55;
     private String country;
     private String province;
     private String city;

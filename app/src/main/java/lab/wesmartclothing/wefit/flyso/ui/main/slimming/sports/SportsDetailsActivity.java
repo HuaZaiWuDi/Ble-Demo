@@ -94,9 +94,9 @@ public class SportsDetailsActivity extends BaseActivity {
         tv_state.setText(getString(R.string.sports) + getString(R.string.sportsTime));
         tv_curHeart.setText(BUNDLE_SPORTS_INFO.getAvgHeart() + "bpm");
         tv_maxHeart.setText(BUNDLE_SPORTS_INFO.getMaxHeart() + "bpm");
-        tv_sportsTime.setText(RxFormat.setFormatDate(BUNDLE_SPORTS_INFO.getDuration()*1000, "hh:mm:ss"));
+        tv_heat.setText(BUNDLE_SPORTS_INFO.getCalorie() + getString(R.string.unit_kcal));
+        tv_sportsTime.setText(RxFormat.setFormatDateG8(BUNDLE_SPORTS_INFO.getDuration() * 1000, RxFormat.Date_Time));
     }
-
 
 
 }

@@ -68,7 +68,6 @@ public class QNBleTools {
 
 
     public void connectDevice(QNBleDevice device) {
-
         MyAPP.QNapi.connectDevice(device, creatUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {

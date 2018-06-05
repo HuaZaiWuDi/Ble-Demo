@@ -22,6 +22,7 @@ import com.vondear.rxtools.view.RxToast;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONObject;
 
@@ -68,6 +69,11 @@ public class SearchHistoryActivity extends BaseActivity {
     @ViewById
     RecyclerView mRecyclerView;
 
+
+    @Extra
+    String ADD_FOOD_DATE;
+    @Extra
+    int ADD_FOOD_TYPE;
 
     @Click
     void tv_cancel() {
@@ -120,7 +126,7 @@ public class SearchHistoryActivity extends BaseActivity {
         searchListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                mRecyclerView.setVisibility(View.GONE);
+
                 ListBean listBean = (ListBean) adapter.getData().get(position);
                 String foodName = listBean.getFoodName();
                 if (!SearchWordTab.isExist(foodName)) {
@@ -135,7 +141,7 @@ public class SearchHistoryActivity extends BaseActivity {
             }
         });
         searchListAdapter.bindToRecyclerView(mRecyclerView);
-        searchListAdapter.setEmptyView(R.layout.layout_no_data);
+        searchListAdapter.setEmptyView(R.layout.layout_not_data);
     }
 
     private void init() {
@@ -163,15 +169,16 @@ public class SearchHistoryActivity extends BaseActivity {
     }
 
     private void showAddFoodDialog(final ListBean item) {
+        item.setEatType(ADD_FOOD_TYPE);
+        item.setHeatDate(ADD_FOOD_DATE);
         new AddOrUpdateFoodDialog(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(AddFoodItem.intakeList item) {
+                mRecyclerView.setVisibility(View.GONE);
                 RxBus.getInstance().post(item);
                 onBackPressed();
             }
         });
-
-
     }
 
 

@@ -80,19 +80,18 @@
     <RelativeLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/barHeight"
-        android:paddingBottom="@dimen/d_30">
+        android:layout_height="@dimen/barHeight">
 
         <LinearLayout
             android:id="@+id/back"
-            android:layout_width="@dimen/d_200"
+            android:layout_width="@dimen/d_100"
             android:layout_height="match_parent"
-            android:gravity="bottom">
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/img_back"
                 android:layout_width="@dimen/d_60"
-                android:layout_height="@dimen/d_80"
+                android:layout_height="@dimen/d_60"
                 android:layout_marginLeft="@dimen/d_30"
                 android:src="@mipmap/back"/>
 
@@ -104,17 +103,18 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:gravity="bottom"
+            android:gravity="center"
             android:text="@string/AddDevice"
             android:textColor="@color/black"
-            android:textSize="@dimen/d_60"/>
+            android:textSize="@dimen/d_50"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_skip"
             android:layout_width="@dimen/d_200"
             android:layout_height="@dimen/d_200"
             android:layout_alignParentRight="true"
-            android:gravity="bottom|center"
+            android:gravity="center"
             android:text="@string/skip"
             android:textColor="@color/textHeatColor"
             android:textSize="@dimen/d_45"/>
@@ -130,7 +130,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/layout_title"
         android:layout_marginRight="@dimen/d_50"
-        android:layout_marginTop="@dimen/d_30"
+        android:layout_marginTop="@dimen/d_10"
         android:drawableLeft="@mipmap/icon_tishi_w3x"
         android:drawablePadding="@dimen/d_20"
         android:text="@string/device_about"

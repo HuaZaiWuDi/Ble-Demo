@@ -66,10 +66,12 @@ public class RxManager {
     }
 
 
+
     public <String> Observable<String> doNetSubscribe(Observable<String> observable) {
         return observable
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .compose(RxThreadUtils.<String>rxThreadHelper());
     }
+
 
 }

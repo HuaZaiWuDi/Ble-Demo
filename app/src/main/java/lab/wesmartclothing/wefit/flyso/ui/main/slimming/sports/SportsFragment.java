@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.clj.fastble.callback.BleScanAndConnectCallback;
+import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.github.mikephil.charting.charts.LineChart;
@@ -48,6 +48,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
@@ -59,6 +60,7 @@ import lab.wesmartclothing.wefit.flyso.view.SportsMarkerView;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.config.Constants;
@@ -118,15 +120,17 @@ public class SportsFragment extends BaseFragment {
     private SportsListBean.ListBean bean;
     private boolean refreshOnce = false;//解决多次刷新的问题
     private boolean notMore = false;//解决多次刷新的问题
+    private boolean isLoad = false;
     private int pageNum = 1;//页码
+
 
     @Override
     public void initData() {
-//        setData(null, null, null);
-        getSportsData();
-        initBle();
-        if (!mPrefs.clothingBind().get()) {
+        RxLogUtils.d("加载：【SportsFragment】");
+        if ("".equals(mPrefs.clothing().get())) {
             initDeviceConnectTip(1);
+        } else {
+            getSportsData();
         }
     }
 
@@ -140,44 +144,9 @@ public class SportsFragment extends BaseFragment {
         checkLocation(new Consumer<Permission>() {
             @Override
             public void accept(Permission permission) throws Exception {
-                if (permission.granted) {
-                    BleTools.getInstance().configScan();
-                    BleTools.getBleManager().scanAndConnect(new BleScanAndConnectCallback() {
-                        @Override
-                        public void onScanFinished(BleDevice scanResult) {
-
-                        }
-
-                        @Override
-                        public void onStartConnect() {
-
-                        }
-
-                        @Override
-                        public void onConnectFail(BleDevice bleDevice, BleException exception) {
-
-                        }
-
-                        @Override
-                        public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                            tv_connectDevice.setText(R.string.connected);
-                        }
-
-                        @Override
-                        public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
-                            tv_connectDevice.setText(R.string.disConnected);
-                        }
-
-                        @Override
-                        public void onScanStarted(boolean success) {
-
-                        }
-
-                        @Override
-                        public void onScanning(BleDevice bleDevice) {
-
-                        }
-                    });
+                if (!permission.granted) {
+                    RxToast.warning("没有定位权限无法连接蓝牙设备");
+                    return;
                 }
             }
         });
@@ -185,10 +154,60 @@ public class SportsFragment extends BaseFragment {
 
     @AfterViews
     public void initView() {
+        isLoad = true;
         initRecycler();
         initWeightInfo();
         initChart();
         initHRefresh();
+        initRxBus();
+    }
+
+    private void initRxBus() {
+        Disposable device = RxBus.getInstance().register(BleDevice.class, new Consumer<BleDevice>() {
+            @Override
+            public void accept(BleDevice device) throws Exception {
+                connectBLE(device);
+            }
+        });
+        RxBus.getInstance().addSubscription(this, device);
+    }
+
+
+    private void connectBLE(BleDevice device) {
+        BleTools.getBleManager().connect(device, new BleGattCallback() {
+            @Override
+            public void onStartConnect() {
+
+            }
+
+            @Override
+            public void onConnectFail(BleDevice bleDevice, BleException exception) {
+
+            }
+
+            @Override
+            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
+                RxLogUtils.d("瘦身衣连接成功");
+                tv_connectDevice.setText(R.string.connected);
+                dialog_not_connect.setVisibility(View.GONE);
+
+                DeviceLink deviceLink = new DeviceLink();
+                deviceLink.setMacAddr(bleDevice.getMac());
+                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
+                deviceLink.deviceLink(deviceLink);
+            }
+
+            @Override
+            public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
+                tv_connectDevice.setText(R.string.disConnected);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        RxBus.getInstance().unSubscribe(this);
+        super.onDestroy();
     }
 
     private void initRecycler() {
@@ -252,19 +271,24 @@ public class SportsFragment extends BaseFragment {
                         SportsListBean bean = new Gson().fromJson(s, SportsListBean.class);
                         List<SportsListBean.ListBean> list = bean.getList();
 
-                        if (list.size() > 0) {
-                            sportsBeans.addAll(0, list);
-                            syncChart(sportsBeans);
+                        if (list.size() <= 0) {
+                            if (!bean.isHasNextPage()) {
+//                            RxToast.info("没有更多数据了");
+                                notMore = true;
+                                mRefresh.setEnableAutoRefresh(false);
+                                mRefresh.setDisableRefresh(true);
+                                if (sportsBeans.size() == 0) {
+                                    initDeviceConnectTip(3);
+                                }
+                            }
+                            return;
                         }
+                        sportsBeans.addAll(0, list);
+                        syncChart(sportsBeans);
                         if (mRefresh.isRefreshing()) {
                             mRefresh.refreshComplete();
                         }
-                        if (!bean.isHasNextPage()) {
-                            RxToast.info("没有更多数据了");
-                            notMore = true;
-                            mRefresh.setEnableAutoRefresh(false);
-                            mRefresh.setDisableRefresh(true);
-                        }
+
                     }
 
                     @Override
@@ -296,13 +320,17 @@ public class SportsFragment extends BaseFragment {
         mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
+//                chartManager.addLimitLine2X(e.getX());
                 RxLogUtils.e("---->", e.getX() + "  " + e.getY());
                 synWeightData(list.get((int) e.getX()));
+                RxLogUtils.d("getX:" + h.getX());
+                RxLogUtils.d("getXPx:" + h.getXPx());
+                RxLogUtils.d("getDrawX:" + h.getDrawX());
             }
 
             @Override
             public void onNothingSelected() {
-
+//                chartManager.addLimitLine2X(e.getX());
             }
         });
 
@@ -344,6 +372,8 @@ public class SportsFragment extends BaseFragment {
 
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                RxLogUtils.d("X轴的平移距离：" + dX);
+//                mLineChart.getXChartMin()
                 float visibleX = mLineChart.getLowestVisibleX();
                 if (visibleX != 0) {
                     mRefresh.setEnableAutoRefresh(false);

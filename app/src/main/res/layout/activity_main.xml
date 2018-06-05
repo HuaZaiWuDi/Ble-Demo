@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_150"
             android:layout_alignParentBottom="true"
-            android:padding="@dimen/d_10"
+            android:padding="@dimen/d_15"
             app:tl_iconHeight="@dimen/d_50"
             app:tl_iconWidth="@dimen/d_50"
             app:tl_textBold="SELECT"

@@ -10,7 +10,53 @@ import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 public class WeightTools {
 
 
+    /**
+     * 1	隐形肥胖型
+     * 2	运动不足型
+     * 3	偏瘦型
+     * 4	标准型
+     * 5	偏瘦肌肉型
+     * 6	肥胖型
+     * 7	偏胖型
+     * 8	标准肌肉型
+     * 9	非常肌肉型
+     */
+    private static String body2String(int value) {
+        String bodyType = "标准型";
+        switch (value) {
+            case 1:
+                bodyType = "隐形肥胖型";
+                break;
+            case 2:
+                bodyType = "运动不足型";
+                break;
+            case 3:
+                bodyType = "偏瘦型";
+                break;
+            case 4:
+                bodyType = "标准型";
+                break;
+            case 5:
+                bodyType = "偏瘦肌肉型";
+                break;
+            case 6:
+                bodyType = "肥胖型";
+                break;
+            case 7:
+                bodyType = "偏胖型";
+                break;
+            case 8:
+                bodyType = "标准肌肉型";
+                break;
+            case 9:
+                bodyType = "非常肌肉型";
+                break;
+        }
+        return bodyType;
+    }
+
     public static void ble2Backstage(QNScaleItemData item, WeightAddBean bean) {
+        if (item == null) return;
         double value = item.getValue();
         switch (item.getType()) {
             case 1:
@@ -63,51 +109,6 @@ public class WeightTools {
             case 17://心脏指数
                 break;
         }
-    }
-
-    /**
-     * 1	隐形肥胖型
-     * 2	运动不足型
-     * 3	偏瘦型
-     * 4	标准型
-     * 5	偏瘦肌肉型
-     * 6	肥胖型
-     * 7	偏胖型
-     * 8	标准肌肉型
-     * 9	非常肌肉型
-     */
-    private static String body2String(int value) {
-        String bodyType = "标准型";
-        switch (value) {
-            case 1:
-                bodyType = "隐形肥胖型";
-                break;
-            case 2:
-                bodyType = "运动不足型";
-                break;
-            case 3:
-                bodyType = "偏瘦型";
-                break;
-            case 4:
-                bodyType = "标准型";
-                break;
-            case 5:
-                bodyType = "偏瘦肌肉型";
-                break;
-            case 6:
-                bodyType = "肥胖型";
-                break;
-            case 7:
-                bodyType = "偏胖型";
-                break;
-            case 8:
-                bodyType = "标准肌肉型";
-                break;
-            case 9:
-                bodyType = "非常肌肉型";
-                break;
-        }
-        return bodyType;
     }
 
 }

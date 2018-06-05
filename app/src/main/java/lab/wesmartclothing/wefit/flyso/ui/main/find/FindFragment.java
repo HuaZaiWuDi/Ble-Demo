@@ -26,6 +26,7 @@ import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.model.wechat.share.WechatShareModel;
 import com.vondear.rxtools.model.wechat.share.WechatShareTools;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -55,7 +56,7 @@ public class FindFragment extends BaseWebFragment {
 
     @Override
     public void initData() {
-
+        RxLogUtils.d("加载：【FindFragment】");
     }
 
     @ViewById
@@ -80,6 +81,7 @@ public class FindFragment extends BaseWebFragment {
                 .useDefaultIndicator(-1, 2)//
                 .setWebViewClient(new BridgeWebViewClient(mBridgeWebView))
                 .setWebView(mBridgeWebView)
+                .setMainFrameErrorView(R.layout.layout_web_error, -1) //参数1是错误显示的布局，参数2点击刷新控件ID -1表示点击整个布局都刷新， AgentWeb 3.0.0 加入。
                 .useMiddlewareWebClient(getMiddleWareWebClient())
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
                 .createAgentWeb()//
@@ -103,13 +105,16 @@ public class FindFragment extends BaseWebFragment {
         mBridgeWebView.registerHandler("shareEvent", new BridgeHandler() {
 
             @Override
-            public void handler(String data, CallBackFunction function) {
+            public void handler(final String data, CallBackFunction function) {
                 RxLogUtils.i("传递参数：" + data);
-                initShare(data);
+
+                if (!RxUtils.isFastClick(1000)) {
+                    initShare(data);
+                }
+
             }
         });
     }
-
 
     //    @Background
     public void initShare(String data) {
@@ -128,11 +133,12 @@ public class FindFragment extends BaseWebFragment {
                     .into(new SimpleTarget<Bitmap>(100, 100) {
                         @Override
                         public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                            final byte[] thumbData = RxImageUtils.bitmap2Bytes(bitmap, Bitmap.CompressFormat.PNG);
+                            Bitmap thumbBmp = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+                            byte[] thumbData = RxImageUtils.bitmap2Bytes(thumbBmp, Bitmap.CompressFormat.PNG);
+
                             final WechatShareModel wechatShareModel = new WechatShareModel(url, title, desc, thumbData);
 
                             showShareDialog(wechatShareModel);
-                            bitmap.recycle();
                         }
                     });
         } catch (JSONException e) {
@@ -152,6 +158,7 @@ public class FindFragment extends BaseWebFragment {
                 switch (type) {
                     case SharePop.SHARE_PENGYOUYUAN:
                         WechatShareTools.shareURL(wechatShareModel, WechatShareTools.SharePlace.Zone);
+
                         break;
                     case SharePop.SHARE_WX:
                         WechatShareTools.shareURL(wechatShareModel, WechatShareTools.SharePlace.Friend);
@@ -159,6 +166,13 @@ public class FindFragment extends BaseWebFragment {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void onDestroy() {
+
+        super.onDestroy();
     }
 
     @Nullable
@@ -175,7 +189,6 @@ public class FindFragment extends BaseWebFragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
-//                tipDialog.dismiss();
                 RxLogUtils.i("加载网页地址：" + url);
                 B.broadUpdate(mActivity, Key.ACTION_SWITCH_BOTTOM_TAB, Key.EXTRA_SWITCH_BOTTOM_TAB, getUrl().equals(url));
                 mAgentWeb.getJsAccessEntrace().quickCallJs("getUserId", mPrefs.UserId().get());
@@ -184,7 +197,6 @@ public class FindFragment extends BaseWebFragment {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-//                tipDialog.show();
             }
         };
     }

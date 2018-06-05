@@ -17,6 +17,12 @@ public class Key {
     public static final String BUNDLE_FORCE_BIND = "BUNDLE_FORCE_BIND";//是否强制绑定
 
 
+    public static final String BUNDLE_WEB_URL = "BUNDLE_WEB_URL";//跳转网页URL
+
+    public static final String BUNDLE_RELOGIN = "BUNDLE_RELOGIN";//重新登录
+    public static final String BUNDLE_TITLE = "BUNDLE_TITLE";//重新登录
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////
@@ -33,7 +39,7 @@ public class Key {
     // 分享登录SDK
     ///////////////////////////////////////////////////////////////////////////
     public static final String QQ_ID = "";
-    public static final String WX_ID = "";
+    public static final String WX_ID = "wxaaeb0352e04684de";
     public static final String WEIBO_ID = "";
     public static final String WB_URL = "";
     public static final String WX_SECRET = "";

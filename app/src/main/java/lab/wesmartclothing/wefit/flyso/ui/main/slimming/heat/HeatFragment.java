@@ -16,14 +16,10 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
-import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -107,12 +103,11 @@ public class HeatFragment extends BaseFragment {
 
     @AfterViews
     public void initView() {
-        initDialog();
+        date = System.currentTimeMillis() + "";
         initDate();
         initRecycler();
         initMenu();
         initRxBus();
-        notifyData(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
     }
 
     private void initRxBus() {
@@ -144,18 +139,11 @@ public class HeatFragment extends BaseFragment {
         });
     }
 
-    private void initDialog() {
-        tipDialog = new QMUITipDialog.Builder(mActivity)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("正在加载")
-                .create();
-    }
-
     private void initDate() {
         mDateChoose.setOnDateChangeListener(new DateChoose.OnDateChangeListener() {
             @Override
             public void onDateChangeListener(int year, int month, int day, long millis) {
-                notifyData(RxFormat.setFormatDate(millis, RxFormat.Date));
+                notifyData(millis + "");
             }
         });
     }
@@ -168,7 +156,8 @@ public class HeatFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
+        RxLogUtils.d("加载：【HeatFragment】");
+        notifyData(date);
     }
 
     private void deleteData(String gid) {
@@ -214,7 +203,6 @@ public class HeatFragment extends BaseFragment {
         this.date = date;
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("userId", mPrefs.UserId().get());
             jsonObject.put("heatDate", date);
 
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
@@ -318,7 +306,6 @@ public class HeatFragment extends BaseFragment {
     private BaseSectionQuickAdapter sectionQuickAdapter;
 
     private void initRecycler() {
-
         //滑动冲突处理
 //        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -362,40 +349,10 @@ public class HeatFragment extends BaseFragment {
             }
         };
 
-//        // 创建菜单：
-//        SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
-//            @Override
-//            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int viewType) {
-//                if (viewType != 0) return;//是headLayout不添加
-//                SwipeMenuItem deleteItem = new SwipeMenuItem(mActivity);
-//                deleteItem.setBackgroundColor(getResources().getColor(R.color.color_material_Red_600));
-//                deleteItem.setText(R.string.delete);
-//                deleteItem.setTextColor(getResources().getColor(R.color.white));
-//                deleteItem.setTextSize(20);
-//                deleteItem.setHeight(LinearLayout.MarginLayoutParams.MATCH_PARENT);
-//                deleteItem.setWidth(200);
-//                // 各种文字和图标属性设置。
-//                rightMenu.addMenuItem(deleteItem); // 在Item左侧添加一个菜单。
-//            }
-//        };
-//        mRecyclerView.setSwipeMenuCreator(mSwipeMenuCreator);
-
-        // 菜单点击监听。
-        mRecyclerView.setSwipeMenuItemClickListener(new SwipeMenuItemClickListener() {
-            @Override
-            public void onItemClick(SwipeMenuBridge menuBridge) {
-                int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                int menuPosition = menuBridge.getPosition(); // 菜单在RecyclerView的Item中的Position。
-                HeatFoodSection section = mBeans.get(adapterPosition);
-                deleteData(section.t.getGid());
-
-//                menu.setVisibility(View.GONE);
-//                menuBridge.closeMenu();
-            }
-        });
         sectionQuickAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (mBeans.get(position).isHeader) return;
                 ListBean bean = new ListBean();
                 final FoodListBean foodListBean = mBeans.get(position).t;
                 bean.setFoodImg(foodListBean.getFoodImg());
@@ -417,6 +374,7 @@ public class HeatFragment extends BaseFragment {
         sectionQuickAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                if (mBeans.get(position).isHeader) return true;
                 showDeleteDialog(position);
                 return true;
             }

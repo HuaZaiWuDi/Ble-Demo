@@ -44,10 +44,12 @@ public class ChartManager {
         mLineChart.getLegend().setEnabled(false);//关闭图例
         mLineChart.setAutoScaleMinMaxEnabled(false);
         mLineChart.setNoDataText("");//没有数据时显示
-        mLineChart.setViewPortOffsets(10, 50, 10, 50);
+        mLineChart.setViewPortOffsets(10, 50, 20, 50);
 
         x = mLineChart.getXAxis();
+        x.setAvoidFirstLastClipping(true);
         x.setTextColor(Color.WHITE);
+//        x.setLabelCount(7, true);
         x.setEnabled(true);
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
         x.setDrawGridLines(false);
@@ -55,7 +57,8 @@ public class ChartManager {
         x.setAxisLineColor(Color.WHITE);
         x.setDrawAxisLine(true);
         x.setDrawLabels(true);
-        x.setXOffset(10f);
+
+//        x.setCenterAxisLabels();
 
 
         y = mLineChart.getAxisLeft();
@@ -68,8 +71,7 @@ public class ChartManager {
 //        y.setGranularity(2f);// //设置最小间隔，防止当放大时出现重复标签
         y.setDrawAxisLine(false);
         y.setDrawLabels(false);
-//        y.setAxisMaximum(150f);
-//        y.setAxisMinimum(20f);
+//
 
         mLineChart.invalidate();
     }
@@ -93,6 +95,7 @@ public class ChartManager {
         LimitLine ll = new LimitLine(value, label);//线条颜色宽度等
         ll.setLineColor(mContext.getResources().getColor(R.color.colorTheme));
         ll.setLineWidth(2f);
+        ll.enableDashedLine(10f, 10f, 0f);
         ll.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);//文字颜色、大小
         ll.setTextColor(mContext.getResources().getColor(R.color.white));
         ll.setTextSize(12f);
@@ -101,6 +104,25 @@ public class ChartManager {
         y.removeAllLimitLines();
         //加入到 mXAxis 或 mYAxis
         y.addLimitLine(ll);
+    }
+
+    //添加提示线
+    public void addLimitLine2X(float value) {
+        mLineChart.highlightValue(value, 0);
+        mLineChart.invalidate();
+        mLineChart.setHighlightPerTapEnabled(false);
+//        //提示线，
+//        LimitLine ll = new LimitLine(value, "");//线条颜色宽度等
+//        ll.setLineColor(Color.WHITE);
+//        ll.setLineWidth(2f);
+//        ll.enableDashedLine(10f, 10f, 0f);
+//
+//        x.removeAllLimitLines();
+//        //加入到 mXAxis 或 mYAxis
+//        x.addLimitLine(ll);
+
+//        mLineChart.setDefaultFocusHighlightEnabled(true);
+
     }
 
 
@@ -126,9 +148,13 @@ public class ChartManager {
         // set data
         mLineChart.setData(data);
 
+        data.notifyDataChanged();
+        mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
-        mLineChart.setVisibleXRangeMaximum(7);
-        mLineChart.animateX(1000);
+
+        mLineChart.animateX(500);
+        addLimitLine2X(yVals.size() - 1);
+
 
     }
 
@@ -151,8 +177,10 @@ public class ChartManager {
         set1.setColor(Color.WHITE);
         set1.setHighlightLineWidth(2f);
         set1.setHighLightColor(Color.WHITE);
+        set1.enableDashedHighlightLine(10f, 10f, 0f);
 //        set1.setDrawVerticalHighlightIndicator(false);
         set1.setDrawHorizontalHighlightIndicator(false);
+
         return set1;
     }
 
@@ -191,14 +219,12 @@ public class ChartManager {
         // set data
         mLineChart.setData(data);
 
-
         data.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
 
-        // do not forget to refresh the chart
-        mLineChart.setVisibleXRangeMaximum(7);
-        mLineChart.animateX(1000);
+//        mLineChart.setVisibleXRangeMaximum(7);
+        mLineChart.animateX(500);
 
 //        addLegend();
     }

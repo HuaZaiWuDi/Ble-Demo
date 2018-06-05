@@ -9,22 +9,20 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
 import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxVibrateUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
-
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
 
@@ -66,6 +64,15 @@ public abstract class ActivityBaseLocation extends BaseActivity {
     //----------------------------------------------------------------------------------------------检测GPS是否已打开 start
     public void gpsCheck() {
         tipDialog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (tipDialog.isShowing()) {
+                    RxToast.warning("获取地址位置失败");
+                    tipDialog.dismiss();
+                }
+            }
+        }, 10000);
         if (!RxLocationUtils.isGpsEnabled(this)) {
             RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
             rxDialogGPSCheck.show();
@@ -93,7 +100,7 @@ public abstract class ActivityBaseLocation extends BaseActivity {
                 RxLogUtils.d("经纬度" + location.toString());
                 setGpsInfo(location);
 
-                subscribe = Observable.create(new ObservableOnSubscribe<Address>() {
+                Observable.create(new ObservableOnSubscribe<Address>() {
                     @Override
                     public void subscribe(ObservableEmitter<Address> emitter) throws Exception {
                         Address address = null;
@@ -104,18 +111,25 @@ public abstract class ActivityBaseLocation extends BaseActivity {
                             emitter.onNext(address);
                     }
                 }).compose(RxThreadUtils.<Address>rxThreadHelper())
-                        .first(null)
-                        .timeout(10, TimeUnit.SECONDS)
-                        .doFinally(new Action() {
+                        .subscribe(new Observer<Address>() {
                             @Override
-                            public void run() throws Exception {
-                                tipDialog.dismiss();
+                            public void onSubscribe(Disposable d) {
+
                             }
-                        })
-                        .subscribe(new Consumer<Address>() {
+
                             @Override
-                            public void accept(Address address) throws Exception {
+                            public void onNext(Address address) {
                                 getAddress(address);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
                             }
                         });
             }
@@ -130,7 +144,7 @@ public abstract class ActivityBaseLocation extends BaseActivity {
                     //GPS状态为服务区外时
                     case LocationProvider.OUT_OF_SERVICE:
                         RxToast.normal("当前GPS信号弱");
-                        RxVibrateUtils.vibrateOnce(mContext, 3000);
+//                        RxVibrateUtils.vibrateOnce(mContext, 3000);
                         break;
                     //GPS状态为暂停服务时
                     case LocationProvider.TEMPORARILY_UNAVAILABLE:
@@ -149,11 +163,11 @@ public abstract class ActivityBaseLocation extends BaseActivity {
             public void onProviderDisabled(String provider) {
                 RxToast.normal("当前GPS设备已关闭");
 //                RxVibrateUtils.vibrateOnce(mContext, 800);
-                gpsCheck();
             }
         };
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            RxLogUtils.d("验证权限");
             return;
         }
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 100, mLocationListener);

@@ -37,6 +37,7 @@ import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.ListBean;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -79,7 +80,10 @@ public class AddFoodActivity extends BaseActivity {
 
     @Click
     void tv_mSearchView() {
-        RxActivityUtils.skipActivity(mContext, SearchHistoryActivity_.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Key.ADD_FOOD_TYPE, ADD_FOOD_TYPE);
+        bundle.putString(Key.ADD_FOOD_DATE, ADD_FOOD_DATE);
+        RxActivityUtils.skipActivity(mContext, SearchHistoryActivity_.class, bundle);
     }
 
     @Click
@@ -143,7 +147,7 @@ public class AddFoodActivity extends BaseActivity {
         });
 
         adapter.bindToRecyclerView(mRecyclerView);
-        adapter.setEmptyView(R.layout.layout_no_data);
+        adapter.setEmptyView(R.layout.layout_not_data);
     }
 
     private void showAddFoodDialog(final ListBean item) {
@@ -160,11 +164,8 @@ public class AddFoodActivity extends BaseActivity {
     }
 
     private void addFood() {
-        String userId = mPrefs.UserId().getOr("testuser");
-        RxLogUtils.d("用户ID" + userId);
         AddFoodItem foodItem = new AddFoodItem();
-        foodItem.setUserId(userId);
-        foodItem.setAddDate(ADD_FOOD_DATE);
+        foodItem.setAddDate(RxFormat.setFormatDate(Long.parseLong(ADD_FOOD_DATE), RxFormat.Date));
         foodItem.setEatType(ADD_FOOD_TYPE);
         foodItem.setIntakeLists(mIntakeLists);
         String s = new Gson().toJson(foodItem);

@@ -3,58 +3,65 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="400px">
+    android:layout_height="match_parent">
 
 
     <ImageView
         android:id="@+id/menu_add"
         android:layout_width="@dimen/d_200"
         android:layout_height="@dimen/d_200"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/d_35"
+        android:layout_marginBottom="130px"
+        android:layout_marginRight="@dimen/d_25"
         tools:src="@mipmap/add_green_normal_icon"/>
 
 
     <ImageView
         android:id="@+id/menu_breakfast"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
-        android:layout_alignRight="@+id/menu_add"
+        android:layout_width="@dimen/d_120"
+        android:layout_height="@dimen/d_120"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="380px"
+        android:layout_marginRight="@dimen/d_20"
         android:layout_toStartOf="@+id/menu_add"
         android:src="@mipmap/breakfast_icon"/>
 
     <ImageView
         android:id="@+id/menu_lunch"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
+        android:layout_width="@dimen/d_120"
+        android:layout_height="@dimen/d_120"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="190px"
-        android:layout_marginTop="@dimen/d_30"
+        android:layout_marginBottom="330px"
+        android:layout_marginRight="180px"
         android:src="@mipmap/lunch_icon"/>
 
     <ImageView
         android:id="@+id/menu_dinner"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
-        android:layout_marginRight="@dimen/d_100"
-        android:layout_marginTop="150px"
-        android:layout_toLeftOf="@+id/menu_breakfast"
+        android:layout_width="@dimen/d_120"
+        android:layout_height="@dimen/d_120"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="200px"
+        android:layout_marginRight="250px"
         android:src="@mipmap/dinner_icon"/>
 
     <ImageView
         android:id="@+id/menu_midnight"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
+        android:layout_width="@dimen/d_120"
+        android:layout_height="@dimen/d_120"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="170px"
-        android:layout_marginTop="270px"
+        android:layout_marginBottom="60px"
+        android:layout_marginRight="180px"
         android:src="@mipmap/midnight_snack_icon"/>
 
     <ImageView
         android:id="@+id/menu_snack"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
+        android:layout_width="@dimen/d_120"
+        android:layout_height="@dimen/d_120"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/menu_add"
         android:src="@mipmap/snack_icon"/>

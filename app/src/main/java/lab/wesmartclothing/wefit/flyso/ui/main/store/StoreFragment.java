@@ -1,10 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.store;
 
-import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
+
+import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -30,7 +29,7 @@ public class StoreFragment extends BaseWebFragment {
 
     @Override
     public void initData() {
-
+        RxLogUtils.d("加载：【StoreFragment】");
     }
 
 
@@ -47,26 +46,4 @@ public class StoreFragment extends BaseWebFragment {
     }
 
 
-    @Nullable
-    @Override
-    protected WebViewClient getWebViewClient() {
-        return new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                tipDialog.show();
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-            }
-
-            @Override
-            public void onPageCommitVisible(WebView view, String url) {
-                super.onPageCommitVisible(view, url);
-                tipDialog.dismiss();
-            }
-        };
-    }
 }

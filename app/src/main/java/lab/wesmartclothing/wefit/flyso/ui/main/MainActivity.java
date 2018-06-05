@@ -1,18 +1,21 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
-import android.location.Location;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxDeviceUtils;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
@@ -25,22 +28,29 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.functions.Consumer;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.ActivityBaseLocation;
+import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
+import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
-import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.SlimmingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 @EActivity(R.layout.activity_main)
-public class MainActivity extends ActivityBaseLocation {
+public class MainActivity extends BaseALocationActivity {
 
     @ViewById
     CommonTabLayout mCommonTabLayout;
@@ -49,6 +59,8 @@ public class MainActivity extends ActivityBaseLocation {
 
     @Pref
     Prefs_ mPrefs;
+
+    private Intent bleIntent;
 
     @Receiver(actions = Key.ACTION_SWITCH_BOTTOM_TAB)
     void switchBottomTab(@Receiver.Extra(Key.EXTRA_SWITCH_BOTTOM_TAB) boolean isVisible) {
@@ -61,16 +73,30 @@ public class MainActivity extends ActivityBaseLocation {
     @Override
     @AfterViews
     public void initView() {
-        StatusBarUtils.from(this).setHindStatusBar(true).process();
-
+        //屏幕沉浸
+        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
+        initRxBus();
+        bleIntent = new Intent(mContext, BleService_.class);
+        startService(bleIntent);
+        startLocation(null);
 
+        RxActivityUtils.skipActivity(mContext, TempActivity.class);
 
     }
 
-
+    private void initRxBus() {
+        RxBus.getInstance().register(SlimmingTab.class, new Consumer<SlimmingTab>() {
+            @Override
+            public void accept(SlimmingTab slimmingTab) throws Exception {
+                switchFragment(mFragments.get(0));
+                mCommonTabLayout.setCurrentTab(0);
+            }
+        });
+    }
 
     private void initMyViewPager() {
         mFragments.clear();
@@ -78,6 +104,7 @@ public class MainActivity extends ActivityBaseLocation {
         mFragments.add(FindFragment.getInstance());
         mFragments.add(StoreFragment.getInstance());
         mFragments.add(MineFragment.getInstance());
+//        mFragments.add(Mine.getInstance());
     }
 
     private void initBottomTab() {
@@ -97,14 +124,34 @@ public class MainActivity extends ActivityBaseLocation {
             @Override
             public void onTabSelect(int position) {
                 switchFragment(mFragments.get(position));
-                if (position == 3) {
-                    RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class);
-                }
             }
 
             @Override
             public void onTabReselect(int position) {
-
+                if (BuildConfig.DEBUG)
+                    if (position == 0) {
+                        final EditText editText = new EditText(mContext);
+                        AlertDialog dialog = new AlertDialog.Builder(mContext)
+                                .setTitle("修改用户ID")
+                                .setView(editText)
+                                .setPositiveButton("完成", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String s = editText.getText().toString();
+                                        if (RxDataUtils.isNullString(s))
+                                            s = "";
+                                        RxActivityUtils.skipActivity(mContext, MainActivity_.class);
+                                        finish();
+                                        mPrefs.UserId().put(s);
+                                        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                    } else if (position == 3) {
+                        RxActivityUtils.skipActivity(mContext, LoginActivity_.class);
+                    } else if (position == 2) {
+                        RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
+                    }
             }
         });
     }
@@ -164,7 +211,6 @@ public class MainActivity extends ActivityBaseLocation {
     }
 
 
-
     //不退出app，而是隐藏当前的app
     @Override
     public void onBackPressed() {
@@ -174,23 +220,10 @@ public class MainActivity extends ActivityBaseLocation {
 
 
     @Override
-    public void setGpsInfo(Location location) {
-
-    }
-
-    @Override
     protected void onDestroy() {
-        initDevice();
+        stopService(bleIntent);
         super.onDestroy();
     }
 
-    //数据统计接口
-    private void initDevice() {
-        DeviceLink deviceLink = new DeviceLink();
-        deviceLink.setMacAddr(RxDeviceUtils.getAndroidId(this.getApplicationContext()));//AndroidID
-        deviceLink.setDeviceName(RxDeviceUtils.getBuildMANUFACTURER());//设备厂商名字，如：小米
-        deviceLink.setLinkStatus(0);
-        deviceLink.deviceLink(deviceLink);
-    }
 
 }

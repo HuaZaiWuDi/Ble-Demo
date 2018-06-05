@@ -45,6 +45,7 @@ import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.ScanView;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -165,6 +166,8 @@ public class AddDeviceActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //屏幕沉浸
+        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
     }
 
     private void startScan() {
@@ -180,12 +183,12 @@ public class AddDeviceActivity extends BaseActivity {
             }
         });
 
-        mQNBleTools.stopScan();
         BleTools.getInstance().stopScan();
-        BleTools.getInstance().configScan();
+        BleTools.getInstance().configScan(15 * 1000);
         BleTools.getBleManager().scan(new BleScanCallback() {
             @Override
             public void onScanFinished(List<BleDevice> scanResultList) {
+                btn_scan.setEnabled(true);
                 RxLogUtils.d("结束扫描：" + scanResultList.size());
                 img_scan.stopAnimation();
                 stepState = scanResultList.size() == 0 ? 3 : 1;
@@ -193,16 +196,21 @@ public class AddDeviceActivity extends BaseActivity {
                 for (BleDevice device : scanResultList) {
                     RxLogUtils.d("扫描设备：" + device.getName());
                 }
+                if (scanResultList.size() == 0) {
+                    RxToast.warning("请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试");
+                }
             }
 
             @Override
             public void onScanStarted(boolean success) {
                 img_scan.startAnimation();
                 RxLogUtils.d("开始扫描：");
+                btn_scan.setEnabled(false);
             }
 
             @Override
             public void onScanning(BleDevice device) {
+                RxLogUtils.d("正在扫描：" + device.getName());
                 BindDeviceBean bean = new BindDeviceBean(device.getName().contains("QN") ? 0 : 1, device.getName(), false, device.getMac());
                 isBind(bean);
             }
@@ -212,23 +220,28 @@ public class AddDeviceActivity extends BaseActivity {
     @Override
     @AfterViews
     public void initView() {
-        initStep(1);
+        initStep(0);
         initRecycler();
         if (BUNDLE_FORCE_BIND)
             tv_skip.setVisibility(View.GONE);
 
-        isBind(new BindDeviceBean(0, getString(R.string.scale), false, "321"));
-        isBind(new BindDeviceBean(0, getString(R.string.scale), false, "321"));
-        isBind(new BindDeviceBean(0, getString(R.string.scale), false, "321"));
-        isBind(new BindDeviceBean(1, getString(R.string.clothing), false, "321"));
-        isBind(new BindDeviceBean(1, getString(R.string.clothing), false, "321"));
-        isBind(new BindDeviceBean(1, getString(R.string.clothing), false, "321"));
+//        isBind(new BindDeviceBean(0, getString(R.string.scale), false, "321"));
+//        isBind(new BindDeviceBean(0, getString(R.string.scale), false, "321"));
+//        isBind(new BindDeviceBean(0, getString(R.string.scale), false, "321"));
+//        isBind(new BindDeviceBean(1, getString(R.string.clothing), false, "321"));
+//        isBind(new BindDeviceBean(1, getString(R.string.clothing), false, "321"));
+//        isBind(new BindDeviceBean(1, getString(R.string.clothing), false, "321"));
     }
 
     @Override
     protected void onDestroy() {
-        BleTools.getInstance().stopScan();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        BleTools.getInstance().stopScan();
+        super.onPause();
     }
 
     private void initRecycler() {
@@ -319,9 +332,14 @@ public class AddDeviceActivity extends BaseActivity {
         for (BindDeviceBean bean : beans) {
             if (bean.isBind()) {
                 BindDeviceItem.deviceList deviceList = new BindDeviceItem.deviceList();
-                deviceList.setDeviceName(bean.getDeivceName());
+                deviceList.setDeviceName(bean.getDeivceType() == 0 ? getString(R.string.scale) : getString(R.string.clothing));
                 deviceList.setCity("深圳市");
                 deviceList.setMacAddr(bean.getMac());
+                if (bean.getDeivceType() == 0) {
+                    mPrefs.scaleIsBind().put(bean.getMac());
+                } else {
+                    mPrefs.clothing().put(bean.getMac());
+                }
                 mDeviceLists.add(deviceList);
             }
         }
@@ -371,11 +389,12 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        if (bean.getDeivceType() == 0) {
-                            mPrefs.scaleIsBind().put(Boolean.parseBoolean(s));
-                        } else {
-                            mPrefs.clothingBind().put(Boolean.parseBoolean(s));
-                        }
+                        if ("true".equals(s))
+                            if (bean.getDeivceType() == 0) {
+                                mPrefs.scaleIsBind().put(bean.getMac());
+                            } else {
+                                mPrefs.clothing().put(bean.getMac());
+                            }
                         bean.setBind("true".equals(s));
                         adapter.addData(bean);
                     }

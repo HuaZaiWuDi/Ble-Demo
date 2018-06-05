@@ -17,4 +17,13 @@ public interface StoreService {
     @GET("smart/getMallAddress")
     Observable<String> getMallAddress();
 
+    //订单地址
+    @GET("smart/getOrderUrl")
+    Observable<String> getOrderUrl();
+
+    //购物车地址
+    @GET("smart/getShoppingAddress")
+    Observable<String> getShoppingAddress();
+
+
 }

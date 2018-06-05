@@ -382,10 +382,10 @@ public class ACache {
     }
 
     /**
-     * 读取 Serializable数据
+     * 读取 Parcelable数据
      *
      * @param key
-     * @return Serializable 数据
+     * @return Parcelable数据 数据
      */
     public Object getAsObject(String key) {
         byte[] data = getAsBinary(key);

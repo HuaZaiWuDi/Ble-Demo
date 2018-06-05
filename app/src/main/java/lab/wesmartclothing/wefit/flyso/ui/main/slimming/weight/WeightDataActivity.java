@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +17,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
+import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -77,8 +77,8 @@ public class WeightDataActivity extends BaseActivity {
         showDialog();
     }
 
-    private List<QNScaleData> listReceiveds = new ArrayList<>();
-    private List<QNScaleData> listReceives;
+    private List<QNScaleStoreData> listReceiveds = new ArrayList<>();
+    private List<QNScaleStoreData> listReceives;
     private BaseQuickAdapter adapter_Receive, adapter_Received;
 
     @Override
@@ -92,12 +92,12 @@ public class WeightDataActivity extends BaseActivity {
         mRecycler_Receive.setLayoutManager(new LinearLayoutManager(mContext));
         mRecycler_Received.setLayoutManager(new LinearLayoutManager(mContext));
 
-        adapter_Receive = new BaseQuickAdapter<QNScaleData, BaseViewHolder>(R.layout.item_weight_data) {
+        adapter_Receive = new BaseQuickAdapter<QNScaleStoreData, BaseViewHolder>(R.layout.item_weight_data) {
             @Override
-            protected void convert(BaseViewHolder helper, QNScaleData item) {
+            protected void convert(BaseViewHolder helper, QNScaleStoreData item) {
                 helper.setImageResource(R.id.img_weight, R.mipmap.scale_icon);
                 helper.setBackgroundRes(R.id.tv_receive, R.mipmap.continue_button);
-                helper.setText(R.id.tv_weight_data, item.getItemValue(1) + "kg");
+                helper.setText(R.id.tv_weight_data, item.getWeight() + "kg");
                 helper.setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDate(item.getMeasureTime().getTime(), "MM/dd hh:mm:ss"));
                 helper.addOnClickListener(R.id.tv_receive);
             }
@@ -108,47 +108,28 @@ public class WeightDataActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.tv_receive) {
                     RxLogUtils.d("点击了领取");
-                    showReceiveWeightData(position);
+                    addWeightData(position);
                 }
             }
         });
 
         mRecycler_Receive.setAdapter(adapter_Receive);
         //已领取
-        adapter_Received = new BaseQuickAdapter<QNScaleData, BaseViewHolder>(R.layout.item_weight_data) {
+        adapter_Received = new BaseQuickAdapter<QNScaleStoreData, BaseViewHolder>(R.layout.item_weight_data) {
             @Override
-            protected void convert(BaseViewHolder helper, QNScaleData item) {
+            protected void convert(BaseViewHolder helper, QNScaleStoreData item) {
                 helper.setImageResource(R.id.img_weight, R.mipmap.scale_icon);
                 helper.setBackgroundRes(R.id.tv_receive, R.mipmap.leave_button);
-                helper.setText(R.id.tv_weight_data, item.getItemValue(1) + "kg");
+                helper.setText(R.id.tv_weight_data, item.getWeight() + "kg");
                 helper.setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDate(item.getMeasureTime().getTime(), "MM/dd hh:mm:ss"));
             }
         };
         mRecycler_Received.setAdapter(adapter_Received);
     }
 
-    private void showReceiveWeightData(final int position) {
-        View view = View.inflate(mContext, R.layout.dialog_receive_weight, null);
-        final AlertDialog dialog = new AlertDialog.Builder(mContext)
-                .setView(view).show();
-        view.findViewById(R.id.btn_leave).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        view.findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Todo 接受体重信息
-                dialog.dismiss();
-                addWeightData(position);
-            }
-        });
-    }
 
     private void initData() {
-        listReceives = new Gson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleData>>() {
+        listReceives = new Gson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleStoreData>>() {
         }.getType());
         if (listReceives == null) {
             RxToast.error("获取异常");
@@ -165,15 +146,17 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void addWeightData(final int position) {
-        final QNScaleData qnScaleData = listReceives.get(position);
+        final QNScaleStoreData qnScaleData = listReceives.get(position);
         String userId = mPrefs.UserId().getOr("testuser");
         RxLogUtils.d("用户ID" + userId);
         WeightAddBean bean = new WeightAddBean();
         bean.setUserId(userId);
         bean.setMeasureTime(System.currentTimeMillis() + "");
-        for (QNScaleItemData item : qnScaleData.getAllItem()) {
-            WeightTools.ble2Backstage(item, bean);
-        }
+        QNScaleData scaleData = qnScaleData.generateScaleData();
+        if (scaleData != null)
+            for (QNScaleItemData item : scaleData.getAllItem()) {
+                WeightTools.ble2Backstage(item, bean);
+            }
         String s = new Gson().toJson(bean, WeightAddBean.class);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
@@ -222,24 +205,25 @@ public class WeightDataActivity extends BaseActivity {
     }
 
     private void showDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(mContext)
-                .setTitle("提示")
-                .setMessage("退出界面，体重数据将被清除")
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        finish();
-                        if (listReceives != null)
-                            listReceives.clear();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+        View view = View.inflate(mContext, R.layout.dialog_receive_weight, null);
+        final AlertDialog dialog = new AlertDialog.Builder(mContext)
+                .setView(view).show();
+        view.findViewById(R.id.btn_leave).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        view.findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Todo 接受体重信息
+                dialog.dismiss();
+
+            }
+        });
     }
+
+
 }

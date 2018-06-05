@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.prefs;
 
-import org.androidannotations.annotations.sharedpreferences.DefaultBoolean;
 import org.androidannotations.annotations.sharedpreferences.DefaultInt;
 import org.androidannotations.annotations.sharedpreferences.DefaultLong;
 import org.androidannotations.annotations.sharedpreferences.DefaultString;
@@ -37,11 +36,9 @@ public interface Prefs {
     @DefaultLong(0)
     long birthDayMillis();
 
-    @DefaultBoolean(false)
-    boolean scaleIsBind();
+    @DefaultString("")
+    String scaleIsBind();
 
-    @DefaultBoolean(false)
-    boolean clothingBind();
-
-
+    @DefaultString("")
+    String clothing();
 }

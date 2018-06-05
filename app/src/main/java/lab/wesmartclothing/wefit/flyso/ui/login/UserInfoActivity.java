@@ -1,8 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.login;
 
-import android.location.Address;
-import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -10,10 +9,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -35,20 +36,21 @@ import cn.qqtheme.framework.picker.DatePicker;
 import cn.qqtheme.framework.picker.DateTimePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.ActivityBaseLocation;
+import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import okhttp3.RequestBody;
 
 @EActivity(R.layout.activity_user_info)
-public class UserInfoActivity extends ActivityBaseLocation {
+public class UserInfoActivity extends BaseALocationActivity {
 
 
     @ViewById
@@ -95,6 +97,21 @@ public class UserInfoActivity extends ActivityBaseLocation {
             viewState++;
             switchView(viewState);
         } else {
+            if (BaseALocationActivity.aMapLocation == null) {
+                final QMUITipDialog tipDialog = new QMUITipDialog.Builder(mContext)
+                        .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                        .setTipWord("未获取地理位置")
+                        .create();
+                tipDialog.show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tipDialog.dismiss();
+                    }
+                }, 2000);
+
+                return;
+            }
             saveUserInfo(false);
             //跳转扫描界面
             Bundle bundle = new Bundle();
@@ -106,6 +123,7 @@ public class UserInfoActivity extends ActivityBaseLocation {
     @Click
     void tv_skip() {
         saveUserInfo(true);
+
         //跳转扫描界面
         Bundle bundle = new Bundle();
         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
@@ -128,27 +146,30 @@ public class UserInfoActivity extends ActivityBaseLocation {
     private int viewState = 0;
 
 
-    @Override
-    public void setGpsInfo(Location location) {
-        RxLogUtils.d("定位信息：" + location.toString());
-    }
-
-    @Override
-    public void getAddress(Address address) {
-        super.getAddress(address);
-        tipDialog.dismiss();
-        if (address != null) {
-            closeLocation();
-            tv_location.setText(address.getAdminArea() + "," + address.getLocality());
-            mUserInfo.setCountry(address.getCountryName());
-            mUserInfo.setProvince(address.getAdminArea());
-            mUserInfo.setCity(address.getLocality());
-        }
-    }
+//    @Override
+//    public void setGpsInfo(Location location) {
+//        RxLogUtils.d("定位信息：" + location.toString());
+//    }
+//
+//    @Override
+//    public void getAddress(Address address) {
+//        super.getAddress(address);
+//        tipDialog.dismiss();
+//        if (address != null) {
+//            closeLocation();
+//            tv_location.setText(address.getAdminArea() + "," + address.getLocality());
+//            mUserInfo.setCountry(address.getCountryName());
+//            mUserInfo.setProvince(address.getAdminArea());
+//            mUserInfo.setCity(address.getLocality());
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //屏幕沉浸
+        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+
     }
 
     @Override
@@ -162,8 +183,8 @@ public class UserInfoActivity extends ActivityBaseLocation {
     private void initTab() {
         ArrayList<CustomTabEntity> sexTabs = new ArrayList<>();
 
-        sexTabs.add(new BottomTabItem(R.mipmap.icon_boy3x, R.mipmap.icon_boy_no3x, ""));
         sexTabs.add(new BottomTabItem(R.mipmap.icon_girl3x, R.mipmap.icon_girl_no3x, ""));
+        sexTabs.add(new BottomTabItem(R.mipmap.icon_boy3x, R.mipmap.icon_boy_no3x, ""));
         mCommonTabLayout.setTabData(sexTabs);
     }
 
@@ -196,8 +217,17 @@ public class UserInfoActivity extends ActivityBaseLocation {
         layout_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startLocation(new MyLocationListener() {
+                    @Override
+                    public void location(AMapLocation aMapLocation) {
 
-                gpsCheck();
+                        tv_location.setText(aMapLocation.getProvince() + "," + aMapLocation.getCity());
+                        mUserInfo.setCountry(aMapLocation.getCountry());
+                        mUserInfo.setProvince(aMapLocation.getProvince());
+                        mUserInfo.setCity(aMapLocation.getCity());
+                    }
+
+                });
             }
         });
     }
@@ -234,9 +264,9 @@ public class UserInfoActivity extends ActivityBaseLocation {
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                //0男1女
+                //0未设置1男2女
                 mPrefs.sex().put(position);
-                mUserInfo.setSex(position + 1);//1男2女
+                mUserInfo.setSex(position == 0 ? 2 : 1);//1男2女
             }
 
             @Override

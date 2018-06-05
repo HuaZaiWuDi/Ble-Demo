@@ -1,11 +1,13 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -153,6 +155,16 @@ public class CircleMenuView extends RelativeLayout {
         }).withLayer().start();
 
     }
+
+
+    //屏幕主题变暗
+    private void setBackgroundAlpha(Activity activity, float bgAlpha) {
+        WindowManager.LayoutParams lp = activity.getWindow()
+                .getAttributes();
+        lp.alpha = bgAlpha;
+        activity.getWindow().setAttributes(lp);
+    }
+
 
     public void closeMenu() {
         RxLogUtils.d("关闭");

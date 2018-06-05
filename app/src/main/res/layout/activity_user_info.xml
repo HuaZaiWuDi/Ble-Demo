@@ -19,7 +19,7 @@
             android:id="@+id/back"
             android:layout_width="@dimen/d_200"
             android:layout_height="match_parent"
-            android:gravity="bottom">
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/img_back"
@@ -36,10 +36,11 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:gravity="bottom"
+            android:gravity="center"
             android:text="@string/inputUserInfo"
             android:textColor="@color/black"
-            android:textSize="@dimen/d_60"
+            android:textSize="@dimen/d_50"
+            android:textStyle="bold"
             tools:text="运动详情"/>
 
         <TextView
@@ -47,7 +48,7 @@
             android:layout_width="@dimen/d_200"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:gravity="bottom|center"
+            android:gravity="center"
             android:text="@string/skip"
             android:textColor="@color/textHeatColor"
             android:textSize="@dimen/d_45"/>

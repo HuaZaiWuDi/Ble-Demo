@@ -54,7 +54,7 @@
         android:layout_height="@dimen/d_100"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/d_50"
-        android:text="待领取的体重数据（2）"
+        android:text="待领取的体重数据（0）"
         android:textColor="@color/textHeatColor"/>
 
     <android.support.v7.widget.RecyclerView
@@ -71,7 +71,7 @@
         android:layout_height="@dimen/d_100"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/d_50"
-        android:text="已领取的体重数据（2）"
+        android:text="已领取的体重数据（0）"
         android:textColor="@color/textHeatColor"/>
 
     <android.support.v7.widget.RecyclerView

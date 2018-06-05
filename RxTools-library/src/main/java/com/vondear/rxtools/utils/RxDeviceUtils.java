@@ -1,7 +1,9 @@
 package com.vondear.rxtools.utils;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -54,13 +56,15 @@ import java.util.Map;
 
 public class RxDeviceUtils {
 
+
+    private static Context context = RxUtils.getContext();
+
     /**
      * 得到屏幕的高
      *
-     * @param context
      * @return
      */
-    public static int getScreenHeight(Context context) {
+    public static int getScreenHeight() {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         int height = wm.getDefaultDisplay().getHeight();
         return height;
@@ -69,10 +73,9 @@ public class RxDeviceUtils {
     /**
      * 得到屏幕的宽
      *
-     * @param context
      * @return
      */
-    public static int getScreenWidth(Context context) {
+    public static int getScreenWidth() {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         int width = wm.getDefaultDisplay().getWidth();
         return width;
@@ -81,21 +84,21 @@ public class RxDeviceUtils {
     /**
      * 得到设备屏幕的宽度
      */
-    public static int getScreenWidths(Context context) {
+    public static int getScreenWidths() {
         return context.getResources().getDisplayMetrics().widthPixels;
     }
 
     /**
      * 得到设备屏幕的高度
      */
-    public static int getScreenHeights(Context context) {
+    public static int getScreenHeights() {
         return context.getResources().getDisplayMetrics().heightPixels;
     }
 
     /**
      * 得到设备的密度
      */
-    public static float getScreenDensity(Context context) {
+    public static float getScreenDensity() {
         return context.getResources().getDisplayMetrics().density;
     }
 
@@ -114,18 +117,16 @@ public class RxDeviceUtils {
 
     /**
      * IMEI （唯一标识序列号）
-     * <p>需与{@link #isPhone(Context)}一起使用</p>
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.READ_PHONE_STATE"/>}</p>
      *
-     * @param context 上下文
      * @return IMEI
      */
-    public static String getIMEI(Context context) {
+    public static String getIMEI() {
         String deviceId;
-        if (isPhone(context)) {
-            deviceId = getDeviceIdIMEI(context);
+        if (isPhone()) {
+            deviceId = getDeviceIdIMEI();
         } else {
-            deviceId = getAndroidId(context);
+            deviceId = getAndroidId();
         }
         return deviceId;
     }
@@ -133,20 +134,18 @@ public class RxDeviceUtils {
     /**
      * 获取设备的IMSI
      *
-     * @param context
      * @return
      */
-    public static String getIMSI(Context context) {
-        return getSubscriberId(context);
+    public static String getIMSI() {
+        return getSubscriberId();
     }
 
     /**
      * 获取设备的IMEI
      *
-     * @param context
      * @return
      */
-    public static String getDeviceIdIMEI(Context context) {
+    public static String getDeviceIdIMEI() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getDeviceId();
     }
@@ -154,10 +153,9 @@ public class RxDeviceUtils {
     /**
      * 获取设备的软件版本号
      *
-     * @param context
      * @return
      */
-    public static String getDeviceSoftwareVersion(Context context) {
+    public static String getDeviceSoftwareVersion() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getDeviceSoftwareVersion();
     }
@@ -165,10 +163,9 @@ public class RxDeviceUtils {
     /**
      * 获取手机号
      *
-     * @param context
      * @return
      */
-    public static String getLine1Number(Context context) {
+    public static String getLine1Number() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getLine1Number();
     }
@@ -176,10 +173,9 @@ public class RxDeviceUtils {
     /**
      * 获取ISO标准的国家码，即国际长途区号
      *
-     * @param context
      * @return
      */
-    public static String getNetworkCountryIso(Context context) {
+    public static String getNetworkCountryIso() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getNetworkCountryIso();
     }
@@ -187,10 +183,9 @@ public class RxDeviceUtils {
     /**
      * 获取设备的 MCC + MNC
      *
-     * @param context
      * @return
      */
-    public static String getNetworkOperator(Context context) {
+    public static String getNetworkOperator() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getNetworkOperator();
     }
@@ -198,10 +193,9 @@ public class RxDeviceUtils {
     /**
      * 获取(当前已注册的用户)的名字
      *
-     * @param context
      * @return
      */
-    public static String getNetworkOperatorName(Context context) {
+    public static String getNetworkOperatorName() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getNetworkOperatorName();
     }
@@ -209,10 +203,9 @@ public class RxDeviceUtils {
     /**
      * 获取当前使用的网络类型
      *
-     * @param context
      * @return
      */
-    public static int getNetworkType(Context context) {
+    public static int getNetworkType() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getNetworkType();
     }
@@ -220,10 +213,9 @@ public class RxDeviceUtils {
     /**
      * 获取手机类型
      *
-     * @param context
      * @return
      */
-    public static int getPhoneType(Context context) {
+    public static int getPhoneType() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getPhoneType();
     }
@@ -231,10 +223,9 @@ public class RxDeviceUtils {
     /**
      * 获取SIM卡的国家码
      *
-     * @param context
      * @return
      */
-    public static String getSimCountryIso(Context context) {
+    public static String getSimCountryIso() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getSimCountryIso();
     }
@@ -242,10 +233,9 @@ public class RxDeviceUtils {
     /**
      * 获取SIM卡提供的移动国家码和移动网络码.5或6位的十进制数字
      *
-     * @param context
      * @return
      */
-    public static String getSimOperator(Context context) {
+    public static String getSimOperator() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getSimOperator();
     }
@@ -253,10 +243,9 @@ public class RxDeviceUtils {
     /**
      * 获取服务商名称
      *
-     * @param context
      * @return
      */
-    public static String getSimOperatorName(Context context) {
+    public static String getSimOperatorName() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getSimOperatorName();
     }
@@ -264,10 +253,9 @@ public class RxDeviceUtils {
     /**
      * 获取SIM卡的序列号
      *
-     * @param context
      * @return
      */
-    public static String getSimSerialNumber(Context context) {
+    public static String getSimSerialNumber() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getSimSerialNumber();
     }
@@ -275,10 +263,9 @@ public class RxDeviceUtils {
     /**
      * 获取SIM的状态信息
      *
-     * @param context
      * @return
      */
-    public static int getSimState(Context context) {
+    public static int getSimState() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getSimState();
     }
@@ -286,10 +273,10 @@ public class RxDeviceUtils {
     /**
      * 获取唯一的用户ID
      *
-     * @param context
      * @return
      */
-    public static String getSubscriberId(Context context) {
+    @SuppressLint("MissingPermission")
+    public static String getSubscriberId() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getSubscriberId();
     }
@@ -297,10 +284,9 @@ public class RxDeviceUtils {
     /**
      * 获取语音邮件号码
      *
-     * @param context
      * @return
      */
-    public static String getVoiceMailNumber(Context context) {
+    public static String getVoiceMailNumber() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getVoiceMailNumber();
     }
@@ -308,10 +294,9 @@ public class RxDeviceUtils {
     /**
      * 获取ANDROID ID
      *
-     * @param context
      * @return
      */
-    public static String getAndroidId(Context context) {
+    public static String getAndroidId() {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
@@ -357,10 +342,9 @@ public class RxDeviceUtils {
     /**
      * 获取App版本名称
      *
-     * @param context
      * @return
      */
-    public static String getAppVersionName(Context context) {
+    public static String getAppVersionName() {
         // 获取packagemanager的实例
         PackageManager packageManager = context.getPackageManager();
         // getPackageName()是你当前类的包名，0代表是获取版本信息
@@ -377,10 +361,9 @@ public class RxDeviceUtils {
     /**
      * 获取App版本号
      *
-     * @param context
      * @return
      */
-    public static int getAppVersionNo(Context context) {
+    public static int getAppVersionNo() {
         // 获取packagemanager的实例
         PackageManager packageManager = context.getPackageManager();
         // getPackageName()是你当前类的包名，0代表是获取版本信息
@@ -401,7 +384,7 @@ public class RxDeviceUtils {
      * @param permission 例如 Manifest.permission.READ_PHONE_STATE
      * @return
      */
-    public static boolean checkPermission(Context context, String permission) {
+    public static boolean checkPermission( String permission) {
         boolean result = false;
         if (Build.VERSION.SDK_INT >= 23) {
             try {
@@ -424,16 +407,15 @@ public class RxDeviceUtils {
     /**
      * 获取设备信息
      *
-     * @param context
      * @return
      */
-    public static String getDeviceInfo(Context context) {
+    public static String getDeviceInfo() {
         try {
             org.json.JSONObject json = new org.json.JSONObject();
             TelephonyManager tm = (TelephonyManager) context
                     .getSystemService(Context.TELEPHONY_SERVICE);
             String device_id = null;
-            if (checkPermission(context, Manifest.permission.READ_PHONE_STATE)) {
+            if (checkPermission( Manifest.permission.READ_PHONE_STATE)) {
                 device_id = tm.getDeviceId();
             }
             String mac = null;
@@ -546,10 +528,9 @@ public class RxDeviceUtils {
     /**
      * 判断设备是否是手机
      *
-     * @param context 上下文
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isPhone(Context context) {
+    public static boolean isPhone() {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return tm.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
     }
@@ -559,7 +540,6 @@ public class RxDeviceUtils {
      * 获取手机状态信息
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.READ_PHONE_STATE"/>}</p>
      *
-     * @param context 上下文
      * @return DeviceId(IMEI) = 99000311726612<br>
      * DeviceSoftwareVersion = 00<br>
      * Line1Number =<br>
@@ -576,7 +556,7 @@ public class RxDeviceUtils {
      * SubscriberId(IMSI) = 460030419724900<br>
      * VoiceMailNumber = *86<br>
      */
-    public static String getPhoneStatus(Context context) {
+    public static String getPhoneStatus() {
         TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
         String str = "";
@@ -601,10 +581,9 @@ public class RxDeviceUtils {
     /**
      * 跳至填充好phoneNumber的拨号界面
      *
-     * @param context     上下文
      * @param phoneNumber 电话号码
      */
-    public static void dial(Context context, String phoneNumber) {
+    public static void dial( String phoneNumber) {
         context.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
     }
 
@@ -612,10 +591,9 @@ public class RxDeviceUtils {
      * 拨打电话
      * 需添加权限 {@code <uses-permission android:name="android.permission.CALL_PHONE"/>}
      *
-     * @param context     上下文
      * @param phoneNumber 电话号码
      */
-    public static void callPhone(final Context context, String phoneNumber) {
+    public static void callPhone( String phoneNumber) {
         if (!RxDataUtils.isNullString(phoneNumber)) {
             final String phoneNumber1 = phoneNumber.trim();// 删除字符串首部和尾部的空格
             // 调用系统的拨号服务实现电话拨打功能
@@ -644,11 +622,10 @@ public class RxDeviceUtils {
     /**
      * 发送短信
      *
-     * @param context     上下文
      * @param phoneNumber 电话号码
      * @param content     内容
      */
-    public static void sendSms(Context context, String phoneNumber, String content) {
+    public static void sendSms( String phoneNumber, String content) {
         Uri uri = Uri.parse("smsto:" + (RxDataUtils.isNullString(phoneNumber) ? "" : phoneNumber));
         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
         intent.putExtra("sms_body", RxDataUtils.isNullString(content) ? "" : content);
@@ -660,10 +637,9 @@ public class RxDeviceUtils {
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>}</p>
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.READ_CONTACTS"/>}</p>
      *
-     * @param context 上下文;
      * @return 联系人链表
      */
-    public static List<HashMap<String, String>> getAllContactInfo(Context context) {
+    public static List<HashMap<String, String>> getAllContactInfo() {
         SystemClock.sleep(3000);
         ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
         // 1.获取内容解析者
@@ -757,9 +733,8 @@ public class RxDeviceUtils {
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.READ_SMS"/>}</p>
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>}</p>
      *
-     * @param context 上下文
      */
-    public static void getAllSMS(Context context) {
+    public static void getAllSMS() {
         // 1.获取短信
         // 1.1获取内容解析者
         ContentResolver resolver = context.getContentResolver();
@@ -897,8 +872,8 @@ public class RxDeviceUtils {
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         Bitmap bmp = view.getDrawingCache();
-        int width = getScreenWidth(activity);
-        int height = getScreenHeight(activity);
+        int width = getScreenWidth();
+        int height = getScreenHeight();
         Bitmap ret = Bitmap.createBitmap(bmp, 0, 0, width, height);
         view.destroyDrawingCache();
         return ret;
@@ -917,8 +892,8 @@ public class RxDeviceUtils {
         view.buildDrawingCache();
         Bitmap bmp = view.getDrawingCache();
         int statusBarHeight = RxBarUtils.getStatusBarHeight(activity);
-        int width = getScreenWidth(activity);
-        int height = getScreenHeight(activity);
+        int width = getScreenWidth();
+        int height = getScreenHeight();
         Bitmap ret = Bitmap.createBitmap(bmp, 0, statusBarHeight, width, height - statusBarHeight);
         view.destroyDrawingCache();
         return ret;

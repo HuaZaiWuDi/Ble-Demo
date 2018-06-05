@@ -8,7 +8,6 @@ import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
-import com.vondear.rxtools.dateUtils.RxFormat;
 
 import lab.wesmartclothing.wefit.flyso.R;
 
@@ -31,7 +30,7 @@ public class MyMarkerView extends MarkerView {
     // content (user-interface)
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        tvContent.setText(RxFormat.setFormatNum((long) e.getY(), "0.0") + "kg");
+        tvContent.setText(e.getY() + "kg");
         super.refreshContent(e, highlight);
     }
 

@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -29,7 +30,6 @@ import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
-import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
  * Created by 华 on 2017/5/2.
@@ -38,6 +38,7 @@ import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 public abstract class BaseActivity extends AppCompatActivity {
 
     public Context mContext;
+    public Activity mActivity;
 
     public QMUITipDialog tipDialog;
     private Disposable subscribe;
@@ -50,9 +51,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         //屏幕沉浸
         StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         mContext = this;
+        mActivity = this;
         RxActivityUtils.addActivity(this);
 
         initDialog();
@@ -107,6 +110,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         RxActivityUtils.removeActivity(this);
         super.onDestroy();
         mContext = null;
+        mActivity = null;
     }
 
     private static final String LAYOUT_LINEARLAYOUT = "LinearLayout";

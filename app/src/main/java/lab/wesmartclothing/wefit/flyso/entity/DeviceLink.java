@@ -3,9 +3,7 @@ package lab.wesmartclothing.wefit.flyso.entity;
 import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import java.util.concurrent.TimeUnit;
-
-import lab.wesmartclothing.wefit.flyso.base.ActivityBaseLocation;
+import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -54,14 +52,17 @@ public class DeviceLink {
     //数据统计接口
     public void deviceLink(DeviceLink deviceLink) {
         if (deviceLink == null) return;
-        deviceLink.setCity(ActivityBaseLocation.City);
-        deviceLink.setCountry(ActivityBaseLocation.Country);
-        deviceLink.setProvince(ActivityBaseLocation.Province);
+        deviceLink.setLinkStatus(1);
+        if (BaseALocationActivity.aMapLocation != null) {
+            deviceLink.setCity(BaseALocationActivity.aMapLocation.getCity());
+            deviceLink.setCountry(BaseALocationActivity.aMapLocation.getCountry());
+            deviceLink.setProvince(BaseALocationActivity.aMapLocation.getProvince());
+        }
         String s = new Gson().toJson(deviceLink, DeviceLink.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.deviceLink(body))
-                .throttleFirst(30, TimeUnit.MINUTES)
+//                .throttleFirst(30, TimeUnit.MINUTES)
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

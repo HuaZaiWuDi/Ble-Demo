@@ -72,8 +72,8 @@ public class RxPopupView extends PopupWindow {
         setOutsideTouchable(true);
 
         // 获得屏幕的宽度和高度
-        mScreenWidth = RxDeviceUtils.getScreenWidth(mContext);
-        mScreenHeight = RxDeviceUtils.getScreenHeight(mContext);
+        mScreenWidth = RxDeviceUtils.getScreenWidth();
+        mScreenHeight = RxDeviceUtils.getScreenHeight();
 
         // 设置弹窗的宽度和高度
         setWidth(width);
@@ -99,8 +99,8 @@ public class RxPopupView extends PopupWindow {
         setOutsideTouchable(true);
 
         // 获得屏幕的宽度和高度
-        mScreenWidth = RxDeviceUtils.getScreenWidth(mContext);
-        mScreenHeight = RxDeviceUtils.getScreenHeight(mContext);
+        mScreenWidth = RxDeviceUtils.getScreenWidth();
+        mScreenHeight = RxDeviceUtils.getScreenHeight();
 
         // 设置弹窗的宽度和高度
         setWidth(width);

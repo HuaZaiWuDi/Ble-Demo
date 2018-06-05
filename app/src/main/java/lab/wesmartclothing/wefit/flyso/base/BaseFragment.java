@@ -208,13 +208,20 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroy();
     }
 
+    boolean isLoad = false;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isLoad = true;
+        onVisible();
+    }
 
     protected void onVisible() {
         lazyLoad();
     }
 
     protected void onInvisible() {
-//        if (tipDialog != null && tipDialog.isShowing()) tipDialog.dismiss();
     }
 
     /**
@@ -222,10 +229,13 @@ public abstract class BaseFragment extends Fragment {
      * isPrepared = true;
      */
     protected void lazyLoad() {
-        if (!isVisible || !isFirstLoad) {
+//        RxLogUtils.d("isVisible:" + isVisible);
+//        RxLogUtils.d("isLoad：" + isLoad);
+        if (!isVisible || !isLoad) {
             return;
         }
-        isFirstLoad = false;
+//        isLoad = false;
+//        RxLogUtils.d("加载数据");
         initData();
     }
 

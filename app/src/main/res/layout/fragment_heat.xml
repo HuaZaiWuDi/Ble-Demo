@@ -105,7 +105,7 @@
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:sr_emptyLayout="@layout/layout_no_data">
+            app:sr_emptyLayout="@layout/layout_not_data">
 
             <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
                 android:id="@+id/mRecyclerView"
@@ -119,8 +119,8 @@
 
     <lab.wesmartclothing.wefit.flyso.view.CircleMenuView
         android:id="@+id/menu"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/d_400"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@mipmap/add_green_normal_icon"/>

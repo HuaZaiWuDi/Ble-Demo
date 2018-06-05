@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeFit</string>
+    <string name="app_name">Timetofit</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -81,7 +81,7 @@
     <string name="unbindDevice">还未绑定设备，</string>
     <string name="goBind">去绑定</string>
 
-    <string name="connectBle">你还未链接设备，请打开</string>
+    <string name="connectBle">你还未连接设备，请打开</string>
     <string name="phoneBle">手机蓝牙</string>
 
     <string name="newWeight">你有新的体重数据，</string>
@@ -129,7 +129,7 @@
     <string name="skip">跳过</string>
     <string name="weight_about">您的身高体重只会作为您的运动参考数据，我们会保证您的隐私。</string>
     <string name="info_about">我们需要一些你的信息来为您专属定制瘦身计划，这些信息都是经过高度加密的。</string>
-    <string name="Location_about">为了给您推送优质的咨询，我们将要获得您的位置信息，我们会保护您的隐私。</string>
+    <string name="Location_about">为了给您推送优质的资讯，我们将要获得您的位置信息。</string>
     <string name="device_about">请添加您最近购买的智能设备</string>
     <string name="inputUserInfo">填写资料</string>
 

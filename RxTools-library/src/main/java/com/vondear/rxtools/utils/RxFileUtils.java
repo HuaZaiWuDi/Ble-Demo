@@ -415,14 +415,13 @@ public class RxFileUtils {
     /**
      * 获取文件或者文件夹大小.
      */
-    public static long getFileAllSize(String path) {
-        File file = new File(path);
+    public static long getFileAllSize(File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
                 File[] childrens = file.listFiles();
                 long size = 0;
                 for (File f : childrens) {
-                    size += getFileAllSize(f.getPath());
+                    size += getFileAllSize(f);
                 }
                 return size;
             } else {
@@ -1642,6 +1641,33 @@ public class RxFileUtils {
     }
 
     /**
+     * 获取缓存大小
+     *
+     * @param context
+     * @return
+     * @throws Exception
+     */
+    public static String getTotalCacheSize(Context context) {
+        long cacheSize = getFileAllSize(context.getCacheDir());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            cacheSize += getFileAllSize(context.getExternalCacheDir());
+        }
+        return RxDataUtils.byte2FitSize(cacheSize);
+    }
+
+    /**
+     * 清除缓存
+     *
+     * @param context
+     */
+    public static void clearAllCache(Context context) {
+        deleteDir(context.getCacheDir());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            deleteDir(context.getExternalCacheDir());
+        }
+    }
+
+    /**
      * 获取文件的MD5校验码
      *
      * @param filePath 文件
@@ -2010,22 +2036,22 @@ public class RxFileUtils {
         }
     }
 
-    public static String file2Base64(String filePath){
+    public static String file2Base64(String filePath) {
         FileInputStream fis = null;
         String base64String = "";
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             fis = new FileInputStream(filePath);
-            byte[] buffer = new byte[1024*100];
+            byte[] buffer = new byte[1024 * 100];
             int count = 0;
-            while ((count = fis.read(buffer)) != -1){
-                bos.write(buffer,0,count);
+            while ((count = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, count);
             }
             fis.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        base64String =  Base64.encodeToString(bos.toByteArray(), Base64.DEFAULT);
+        base64String = Base64.encodeToString(bos.toByteArray(), Base64.DEFAULT);
         return base64String;
 
     }

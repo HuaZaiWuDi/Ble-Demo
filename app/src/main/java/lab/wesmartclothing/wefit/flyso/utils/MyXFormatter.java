@@ -18,6 +18,9 @@ public class MyXFormatter implements IAxisValueFormatter {
     @Override
     public String getFormattedValue(float value, AxisBase axis) {
         // "value" represents the position of the label on the axis (x or y)
+//        RxLogUtils.d("X轴：" + value);
+//        if (value < 0) return "00/00";
+        value = Math.abs(value + 3);
         return mValues.get((int) value % mValues.size());
     }
 }

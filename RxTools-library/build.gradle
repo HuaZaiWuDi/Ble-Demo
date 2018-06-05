@@ -28,12 +28,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    //单元测试模块
-    testCompile 'junit:junit:4.12'
     //design包
     implementation 'com.android.support:design:25.3.1'
     //cardView包
-    implementation 'com.android.support:cardview-v7:25.3.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
     //appcompat包
     implementation 'com.android.support:appcompat-v7:25.3.1'
     //recyclerview包
@@ -66,5 +64,29 @@ dependencies {
     implementation files('src/main/libs/zip4j_1.3.2.jar')
     //侧滑删除Recycler
     compile 'com.yanzhenjie:recyclerview-swipe:1.1.4'
+    //UI库
+    //http://qmuiteam.com/android/get-started
+    compile 'com.qmuiteam:qmui:1.1.1'
 
+    //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4'
+
+    //扩展支持横向刷新库
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4'
+
+    //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4'
+
+    //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
+
+    //    implementation "com.scwang.smartrefresh:SmartRefreshLayout:$rootProject.smartrefreshVersion"
+
+    //    implementation "com.scwang.smartrefresh:SmartRefreshHeader:$rootProject.smartrefreshVersion"
+
+    //万能RecyclerView适配器
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    //图片加载
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
 }
