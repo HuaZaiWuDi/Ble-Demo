@@ -26,20 +26,20 @@ public final class R {
         public static int BaseQuickAdapter_dragging_support = 0x7f0c0002;
         public static int BaseQuickAdapter_swiping_support = 0x7f0c0003;
         public static int BaseQuickAdapter_viewholder_support = 0x7f0c0004;
-        public static int load_more_load_end_view = 0x7f0c011f;
-        public static int load_more_load_fail_view = 0x7f0c0120;
-        public static int load_more_loading_view = 0x7f0c0121;
-        public static int loading_progress = 0x7f0c0122;
-        public static int loading_text = 0x7f0c0124;
-        public static int tv_prompt = 0x7f0c021b;
+        public static int load_more_load_end_view = 0x7f0c0123;
+        public static int load_more_load_fail_view = 0x7f0c0124;
+        public static int load_more_loading_view = 0x7f0c0125;
+        public static int loading_progress = 0x7f0c0126;
+        public static int loading_text = 0x7f0c0128;
+        public static int tv_prompt = 0x7f0c0223;
     }
     public static final class layout {
         public static int quick_view_load_more = 0x7f0f0082;
     }
     public static final class string {
-        public static int app_name = 0x7f150021;
-        public static int load_end = 0x7f15002b;
-        public static int load_failed = 0x7f15002c;
-        public static int loading = 0x7f15002d;
+        public static int app_name = 0x7f150024;
+        public static int load_end = 0x7f150030;
+        public static int load_failed = 0x7f150031;
+        public static int loading = 0x7f150032;
     }
 }

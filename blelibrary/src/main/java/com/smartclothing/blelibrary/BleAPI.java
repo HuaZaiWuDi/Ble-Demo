@@ -27,7 +27,7 @@ public class BleAPI {
      * 01	命令应答
      */
 
-    public void syncSetting(byte[] heartRates, byte heat, byte LED, byte heatState, BleChartChangeCallBack bleChartChange) {
+    public static void syncSetting(byte[] heartRates, int heat, int LED, int heatState, BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 //        0x02 0x11 0x01
         byte[] bytes = new byte[20];
@@ -41,15 +41,15 @@ public class BleAPI {
         }
         if (heat >= 0) {
             bytes[9] = 0x02;
-            bytes[10] = heat;
+            bytes[10] = (byte) heat;
         }
         if (LED >= 0) {
             bytes[11] = 0x03;
-            bytes[12] = LED;
+            bytes[12] = (byte) LED;
         }
         if (heatState >= 0) {
             bytes[13] = 0x04;
-            bytes[14] = heatState;
+            bytes[14] = (byte) heatState;
         }
 
         BleTools.getInstance().write(bytes, bleChartChange);
@@ -57,7 +57,7 @@ public class BleAPI {
     }
 
 
-    public void readSetting(BleChartChangeCallBack bleChartChange) {
+    public static void readSetting(BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x02	0x01 0x02 0x03 0x04
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 
@@ -69,7 +69,7 @@ public class BleAPI {
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
-    public void syncDeviceTime(BleChartChangeCallBack bleChartChange) {
+    public static void syncDeviceTime(BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x03 0x11 0x12 0x33 0x44
 //        0x02 0x11 0x03
         byte[] bytes = new byte[20];
@@ -80,7 +80,7 @@ public class BleAPI {
     }
 
 
-    public void syncDataCount(BleChartChangeCallBack bleChartChange) {
+    public static void syncDataCount(BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x04
 //        0x02 0x11 0x04 0x11 0x22 0x33 0x44
 
@@ -91,7 +91,7 @@ public class BleAPI {
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
-    public void queryData() {
+    public static void queryData() {
 //        0x00 0x11 0x05
 
         byte[] bytes = new byte[20];
@@ -103,7 +103,7 @@ public class BleAPI {
 
 
     //notify
-    public void syncData() {
+    public static void syncData() {
         /**
          * 表示：终端发送同步数据，时间戳为0x44332211 心率为0x45 温度为0x20 计步为0x6655
          * 电池电压为0x8877，整数后两位为小数点之后两位，电压v。

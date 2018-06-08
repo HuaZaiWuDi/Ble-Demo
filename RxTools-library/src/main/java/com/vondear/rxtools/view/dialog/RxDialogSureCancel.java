@@ -52,6 +52,7 @@ public class RxDialogSureCancel extends RxDialog {
         return mTvCancel;
     }
 
+
     public void setSureListener(View.OnClickListener sureListener) {
         mTvSure.setOnClickListener(sureListener);
     }
@@ -94,4 +95,6 @@ public class RxDialogSureCancel extends RxDialog {
         super(context, alpha, gravity);
         initView();
     }
+
+
 }

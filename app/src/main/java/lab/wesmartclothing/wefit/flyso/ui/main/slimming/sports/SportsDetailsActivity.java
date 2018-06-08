@@ -42,8 +42,7 @@ public class SportsDetailsActivity extends BaseActivity {
     TextView tv_2;
     @ViewById
     TextView tv_3;
-    @ViewById
-    TextView tv_tip;
+
 
     @Extra
     SportsListBean.ListBean BUNDLE_SPORTS_INFO;
@@ -86,7 +85,6 @@ public class SportsDetailsActivity extends BaseActivity {
         tv_3.setText(isSports ? R.string.heat : R.string.consumeHeat);
         tv_state_title.setVisibility(isSports ? View.VISIBLE : View.INVISIBLE);
         tv_state.setTextColor(getResources().getColor(isSports ? R.color.colorTheme : R.color.textColor));
-        tv_tip.setVisibility(isSports ? View.VISIBLE : View.GONE);
     }
 
 

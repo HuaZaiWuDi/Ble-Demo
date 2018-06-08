@@ -6,7 +6,6 @@ import android.widget.TextView;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
@@ -43,9 +42,7 @@ public class SportsMarkerView extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         int dataSetIndex = highlight.getDataSetIndex();
 
-
         ChartData data = getChartView().getData();
-        List<LineData> dataSets = data.getDataSets();
 
         LineDataSet set1 = (LineDataSet) data.getDataSetByLabel(context.getString(R.string.heat), true);
         LineDataSet set2 = (LineDataSet) data.getDataSetByLabel(context.getString(R.string.sportsTime), true);
@@ -54,9 +51,6 @@ public class SportsMarkerView extends MarkerView {
         List<Entry> forXValue2 = set2.getEntriesForXValue(e.getX());
         float y1 = forXValue1.get(0).getY();
         float y2 = forXValue2.get(0).getY();
-//        RxLogUtils.i("条目X：" + e.getX(), forXValue1.get(0).getY());
-//        RxLogUtils.i("条目X：" + e.getX(), forXValue2.get(0).getY());
-
 
         RxTextUtils.getBuilder(context.getString(R.string.heat))
                 .append("：")

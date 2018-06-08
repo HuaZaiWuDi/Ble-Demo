@@ -110,6 +110,9 @@ public interface RetrofitService {
     @POST("user/userInfo")
     Observable<String> userInfo();
 
+    /*获取用户绑定设备信息列表*/
+    @POST("user/deviceList")
+    Observable<String> deviceList();
 
     ///////////////////////////////////////////////////////////////////////////
     // 数据统计

@@ -2,156 +2,156 @@
     <string name="app_name">Timetofit</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_dashboard" translatable="false">Dashboard</string>
+    <string name="title_notifications" translatable="false">Notifications</string>
 
 
-    <string name="nav_slimming">瘦身</string>
-    <string name="nav_find">发现</string>
-    <string name="nav_store">商城</string>
-    <string name="nav_me">我的</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="nav_slimming" translatable="false">瘦身</string>
+    <string name="nav_find" translatable="false">发现</string>
+    <string name="nav_store" translatable="false">商城</string>
+    <string name="nav_me" translatable="false">我的</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="section_format" translatable="false">Hello World from section: %1$d</string>
 
 
     <string name="heat">热量</string>
-    <string name="weight">体重</string>
-    <string name="sports">运动</string>
-    <string name="heatRate">心率</string>
-    <string name="sportsTime">时长</string>
+    <string name="weight" translatable="false">体重</string>
+    <string name="sports" translatable="false">运动</string>
+    <string name="heatRate" translatable="false">心率</string>
+    <string name="sportsTime" translatable="false">时长</string>
 
-    <string name="consume">消耗</string>
-    <string name="Ingestion">摄入</string>
+    <string name="consume" translatable="false">消耗</string>
+    <string name="Ingestion" translatable="false">摄入</string>
 
-    <string name="inputFoodName">请输入食物名字</string>
+    <string name="inputFoodName" translatable="false">请输入食物名字</string>
 
-    <string name="cancel">取消</string>
-    <string name="ok">完成</string>
+    <string name="cancel" translatable="false">取消</string>
+    <string name="ok" translatable="false">完成</string>
 
 
-    <string name="unit_g">克</string>
-    <string name="unit_kg">千克</string>
+    <string name="unit_g" translatable="false">克</string>
+    <string name="unit_kg" translatable="false">千克</string>
 
-    <string name="Year">年</string>
-    <string name="Month">月</string>
-    <string name="Day">日</string>
+    <string name="Year" translatable="false">年</string>
+    <string name="Month" translatable="false">月</string>
+    <string name="Day" translatable="false">日</string>
 
-    <string name="delete">删除</string>
+    <string name="delete" translatable="false">删除</string>
 
-    <string name="unit_heat">/100.0克</string>
-    <string name="unit_kcal">千卡</string>
-    <string name="unit_kcal2">单位：千卡</string>
-    <string name="unit_kcal3">--千卡</string>
+    <string name="unit_heat" translatable="false">/100.0克</string>
+    <string name="unit_kcal" translatable="false">千卡</string>
+    <string name="unit_kcal2" translatable="false">单位：千卡</string>
+    <string name="unit_kcal3" translatable="false">--千卡</string>
 
-    <string name="inputRightFoodName">请输入正确的食物名字</string>
-    <string name="weightNoZero">重量不能为0</string>
+    <string name="inputRightFoodName" translatable="false">请输入正确的食物名字</string>
+    <string name="weightNoZero" translatable="false">重量不能为0</string>
 
-    <string name="no_data">还没添加任何食物现在添加吧</string>
-    <string name="no_search_data">没有搜索到食物</string>
-    <string name="addBreakfast">添加早餐</string>
-    <string name="addLunch">添加午餐</string>
-    <string name="addDinner">添加晚餐</string>
-    <string name="addMidnight">添加宵夜</string>
-    <string name="addSnack">添加加餐</string>
+    <string name="no_data" translatable="false">还没添加任何食物现在添加吧</string>
+    <string name="no_search_data" translatable="false">没有搜索到食物</string>
+    <string name="addBreakfast" translatable="false">添加早餐</string>
+    <string name="addLunch" translatable="false">添加午餐</string>
+    <string name="addDinner" translatable="false">添加晚餐</string>
+    <string name="addMidnight" translatable="false">添加宵夜</string>
+    <string name="addSnack" translatable="false">添加加餐</string>
 
-    <string name="breakfast">早餐</string>
-    <string name="lunch">午餐</string>
-    <string name="dinner">晚餐</string>
-    <string name="midnight">宵夜</string>
-    <string name="snack">加餐</string>
-    <string name="ingestioned">已摄入:</string>
+    <string name="breakfast" translatable="false">早餐</string>
+    <string name="lunch" translatable="false">午餐</string>
+    <string name="dinner" translatable="false">晚餐</string>
+    <string name="midnight" translatable="false">宵夜</string>
+    <string name="snack" translatable="false">加餐</string>
+    <string name="ingestioned" translatable="false">已摄入:</string>
 
-    <string name="clearHistoryData">清空历史数据</string>
+    <string name="clearHistoryData" translatable="false">清空历史数据</string>
 
-    <string name="can_eatHeat">还可以吃</string>
-    <string name="EatMore">多吃了</string>
+    <string name="can_eatHeat" translatable="false">还可以吃</string>
+    <string name="EatMore" translatable="false">多吃了</string>
 
-    <string name="weigh_info">身体信息</string>
-    <string name="details">查看详情</string>
+    <string name="weigh_info" translatable="false">身体信息</string>
+    <string name="details" translatable="false">查看详情</string>
 
-    <string name="currentWeight">当前体重</string>
-    <string name="targetWeight">目标体重</string>
+    <string name="currentWeight" translatable="false">当前体重</string>
+    <string name="targetWeight" translatable="false">目标体重</string>
 
-    <string name="weight_data">体重数据</string>
-    <string name="btn_leave">离开</string>
-    <string name="btn_continue">继续领取</string>
+    <string name="weight_data" translatable="false">体重数据</string>
+    <string name="btn_leave" translatable="false">离开</string>
+    <string name="btn_continue" translatable="false">继续领取</string>
 
-    <string name="receivedCount">%1$s领取的体重数据（%2$d）</string>
+    <string name="receivedCount" translatable="false">%1$s领取的体重数据（%2$d）</string>
 
-    <string name="unbindDevice">还未绑定设备，</string>
-    <string name="goBind">去绑定</string>
+    <string name="unbindDevice" translatable="false">还未绑定设备，</string>
+    <string name="goBind" translatable="false">去绑定</string>
 
-    <string name="connectBle">你还未连接设备，请打开</string>
-    <string name="phoneBle">手机蓝牙</string>
+    <string name="connectBle" translatable="false">你还未连接设备，请打开</string>
+    <string name="phoneBle" translatable="false">手机蓝牙</string>
 
-    <string name="newWeight">你有新的体重数据，</string>
-    <string name="waitReceive">等待领取</string>
+    <string name="newWeight" translatable="false">你有新的体重数据，</string>
+    <string name="waitReceive" translatable="false">等待领取</string>
 
-    <string name="bodyAge">岁</string>
-    <string name="level">级</string>
+    <string name="bodyAge" translatable="false">岁</string>
+    <string name="level" translatable="false">级</string>
 
-    <string name="disConnected">未连接</string>
-    <string name="connected">已连接</string>
-    <string name="unBind">未绑定</string>
+    <string name="disConnected" translatable="false">未连接</string>
+    <string name="connected" translatable="false">已连接</string>
+    <string name="unBind" translatable="false">未绑定</string>
 
-    <string name="curHeart">当前心率</string>
-    <string name="maxHeart">最高心率</string>
-    <string name="avgHeart">平均心率</string>
-    <string name="startSports">开始运动</string>
-    <string name="sportsDetails">运动详情</string>
-    <string name="consumeHeat">消耗热量</string>
-    <string name="startSlimming">开始热身</string>
+    <string name="curHeart" translatable="false">当前心率</string>
+    <string name="maxHeart" translatable="false">最高心率</string>
+    <string name="avgHeart" translatable="false">平均心率</string>
+    <string name="startSports" translatable="false">开始运动</string>
+    <string name="sportsDetails" translatable="false">运动详情</string>
+    <string name="consumeHeat" translatable="false">消耗热量</string>
+    <string name="startSlimming" translatable="false">开始热身</string>
 
-    <string name="warm">热身</string>
-    <string name="grease">燃脂</string>
-    <string name="aerobic">有氧</string>
-    <string name="anaerobic">无氧</string>
-    <string name="limit">极限</string>
-    <string name="sportsToSee">检查到您正在运动，请点击查看</string>
+    <string name="warm" translatable="false">热身</string>
+    <string name="grease" translatable="false">燃脂</string>
+    <string name="aerobic" translatable="false">有氧</string>
+    <string name="anaerobic" translatable="false">无氧</string>
+    <string name="limit" translatable="false">极限</string>
+    <string name="sportsToSee" translatable="false">检查到您正在运动，请点击查看</string>
 
 
     <!--登录信息录入-->
-    <string name="login">登\t\t录</string>
-    <string name="phone">手机</string>
-    <string name="VCode">验证码</string>
-    <string name="getVCode">获取验证码</string>
-    <string name="inputPhone">请输入手机号码</string>
-    <string name="inputVCode">请输入验证码</string>
-    <string name="login_clause">登录即表示同意软件服务条款和隐私条款</string>
-    <string name="chooseSex">请选择您的性别</string>
-    <string name="chooseBirth">请选择您的生日</string>
-    <string name="chooseHeight">请输入您的身高</string>
-    <string name="chooseWeight">请输入您的目标体重</string>
-    <string name="chooseCity">请允许我们获取您的城市</string>
-    <string name="chooseCity2">获取城市</string>
-    <string name="AddDevice">添加设备</string>
-    <string name="nextWay">下一步</string>
-    <string name="skip">跳过</string>
-    <string name="weight_about">您的身高体重只会作为您的运动参考数据，我们会保证您的隐私。</string>
-    <string name="info_about">我们需要一些你的信息来为您专属定制瘦身计划，这些信息都是经过高度加密的。</string>
-    <string name="Location_about">为了给您推送优质的资讯，我们将要获得您的位置信息。</string>
-    <string name="device_about">请添加您最近购买的智能设备</string>
-    <string name="inputUserInfo">填写资料</string>
+    <string name="login" translatable="false">登\t\t录</string>
+    <string name="phone" translatable="false">手机</string>
+    <string name="VCode" translatable="false">验证码</string>
+    <string name="getVCode" translatable="false">获取验证码</string>
+    <string name="inputPhone" translatable="false">请输入手机号码</string>
+    <string name="inputVCode" translatable="false">请输入验证码</string>
+    <string name="login_clause" translatable="false">登录即表示同意软件服务条款和隐私条款</string>
+    <string name="chooseSex" translatable="false">请选择您的性别</string>
+    <string name="chooseBirth" translatable="false">请选择您的生日</string>
+    <string name="chooseHeight" translatable="false">请输入您的身高</string>
+    <string name="chooseWeight" translatable="false">请输入您的目标体重</string>
+    <string name="chooseCity" translatable="false">请允许我们获取您的城市</string>
+    <string name="chooseCity2" translatable="false">获取城市</string>
+    <string name="AddDevice" translatable="false">添加设备</string>
+    <string name="nextWay" translatable="false">下一步</string>
+    <string name="skip" translatable="false">跳过</string>
+    <string name="weight_about" translatable="false">您的身高体重只会作为您的运动参考数据，我们会保证您的隐私。</string>
+    <string name="info_about" translatable="false">我们需要一些你的信息来为您专属定制瘦身计划，这些信息都是经过高度加密的。</string>
+    <string name="Location_about" translatable="false">为了给您推送优质的资讯，我们将要获得您的位置信息。</string>
+    <string name="device_about" translatable="false">请添加您最近购买的智能设备</string>
+    <string name="inputUserInfo" translatable="false">填写资料</string>
 
-    <string name="doing">进行中</string>
-    <string name="doingSubtitle">扫描附近的设备</string>
-    <string name="bindDevice">绑定设备</string>
-    <string name="bindDeviceSubtitle">绑定扫描到的设备</string>
-    <string name="startUse">开始使用</string>
-    <string name="startUseSubtitle">马上开始运动</string>
-    <string name="scan">扫描</string>
-    <string name="nearDevice">附近的设备</string>
-    <string name="bind">绑定</string>
-    <string name="bindings">已绑定</string>
-    <string name="notDevice">没有搜索到设备，请确保设备电量充足</string>
-    <string name="web_load_error">出错啦！点击空白处刷新</string>
-    <string name="scale">体脂称</string>
-    <string name="clothing">瘦身衣</string>
+    <string name="doing" translatable="false">进行中</string>
+    <string name="doingSubtitle" translatable="false">扫描附近的设备</string>
+    <string name="bindDevice" translatable="false">绑定设备</string>
+    <string name="bindDeviceSubtitle" translatable="false">绑定扫描到的设备</string>
+    <string name="startUse" translatable="false">开始使用</string>
+    <string name="startUseSubtitle" translatable="false">马上开始运动</string>
+    <string name="scan" translatable="false">扫描</string>
+    <string name="nearDevice" translatable="false">附近的设备</string>
+    <string name="bind" translatable="false">绑定</string>
+    <string name="bindings" translatable="false">已绑定</string>
+    <string name="notDevice" translatable="false">没有搜索到设备，请确保设备电量充足</string>
+    <string name="web_load_error" translatable="false">出错啦！点击空白处刷新</string>
+    <string name="scale" translatable="false">体脂称</string>
+    <string name="clothing" translatable="false">瘦身衣</string>
 
 
-    <string name="wx">微信</string>
-    <string name="pengyouquan">朋友圈</string>
-    <string name="shareTo">分享到</string>
+    <string name="wx" translatable="false">微信</string>
+    <string name="pengyouquan" translatable="false">朋友圈</string>
+    <string name="shareTo" translatable="false">分享到</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

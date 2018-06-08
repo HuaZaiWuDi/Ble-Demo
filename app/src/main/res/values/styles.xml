@@ -21,5 +21,16 @@
     </style>
 
 
+    <!--<style name="SeekBar">-->
+        <!--<item name="indeterminateOnly">false</item>-->
+        <!--&lt;!&ndash;progressDrawable定义了背景图,进度图,和缓冲图&ndash;&gt;-->
+        <!--<item name="progressDrawable">@drawable/progress_horizontal</item>-->
+        <!--&lt;!&ndash;<item name="indeterminateDrawable">@drawable/progress_horizontal</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;thumb定义了滑块的图片&ndash;&gt;-->
+        <!--<item name="thumb">@mipmap/qietu</item>-->
+        <!--&lt;!&ndash;<item name="thumbOffset">8dip</item>&ndash;&gt;-->
+        <!--<item name="focusable">true</item>-->
+        <!--<item name="mirrorForRtl">true</item>-->
+    <!--</style>-->
 
 </resources>

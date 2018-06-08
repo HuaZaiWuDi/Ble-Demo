@@ -15,6 +15,7 @@ public class Key {
     public static final String BUNDLE_SPORTS_INFO = "BUNDLE_SPORTS_INFO";//跳转运动信息
 
     public static final String BUNDLE_FORCE_BIND = "BUNDLE_FORCE_BIND";//是否强制绑定
+    public static final String BUNDLE_BIND_TYPE = "BUNDLE_BIND_TYPE";//绑定类型
 
 
     public static final String BUNDLE_WEB_URL = "BUNDLE_WEB_URL";//跳转网页URL

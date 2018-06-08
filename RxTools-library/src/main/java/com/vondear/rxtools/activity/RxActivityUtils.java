@@ -230,6 +230,31 @@ public class RxActivityUtils {
         context.startActivity(intent);
     }
 
+    /**
+     * Activity 跳转
+     *
+     * @param context
+     * @param goal
+     */
+    public static void skipActivityTop(Context context, Class<?> goal) {
+        Intent intent = new Intent(context, goal);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Activity 跳转
+     *
+     * @param context
+     * @param goal
+     */
+    public static void skipActivityTop(Context context, Class<?> goal, Bundle bundle) {
+        Intent intent = new Intent(context, goal);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+    }
+
     public static void skipActivityForResult(Activity context, Class<?> goal, int requestCode) {
         Intent intent = new Intent(context, goal);
         context.startActivityForResult(intent, requestCode);
@@ -240,6 +265,7 @@ public class RxActivityUtils {
         intent.putExtras(bundle);
         context.startActivityForResult(intent, requestCode);
     }
+
 
     /**
      * 获取launcher activity

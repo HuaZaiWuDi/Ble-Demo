@@ -55,7 +55,7 @@ public class ChartManager {
         x.setDrawGridLines(false);
         x.setGridColor(context.getResources().getColor(R.color.lineColor));
         x.setAxisLineColor(Color.WHITE);
-        x.setDrawAxisLine(true);
+        x.setDrawAxisLine(false);
         x.setDrawLabels(true);
 
 //        x.setCenterAxisLabels();
@@ -95,7 +95,7 @@ public class ChartManager {
         LimitLine ll = new LimitLine(value, label);//线条颜色宽度等
         ll.setLineColor(mContext.getResources().getColor(R.color.colorTheme));
         ll.setLineWidth(2f);
-        ll.enableDashedLine(10f, 10f, 0f);
+//        ll.enableDashedLine(10f, 10f, 0f);
         ll.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);//文字颜色、大小
         ll.setTextColor(mContext.getResources().getColor(R.color.white));
         ll.setTextSize(12f);
@@ -110,7 +110,7 @@ public class ChartManager {
     public void addLimitLine2X(float value) {
         mLineChart.highlightValue(value, 0);
         mLineChart.invalidate();
-        mLineChart.setHighlightPerTapEnabled(false);
+//        mLineChart.setHighlightPerTapEnabled(false);
 //        //提示线，
 //        LimitLine ll = new LimitLine(value, "");//线条颜色宽度等
 //        ll.setLineColor(Color.WHITE);
@@ -153,6 +153,7 @@ public class ChartManager {
         mLineChart.invalidate();
 
         mLineChart.animateX(500);
+
         addLimitLine2X(yVals.size() - 1);
 
 

@@ -1,24 +1,19 @@
 package com.smartclothing.module_wefit.activity;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.smartclothing.module_wefit.R;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.widget.dialog.DepositDialog;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
@@ -30,7 +25,7 @@ import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /*设置*/
 
-public class SetActivity extends AppCompatActivity implements View.OnClickListener {
+public class SetActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout iv_back;
     private TextView tv_set_exit, tv_set_data_count;
@@ -50,7 +45,7 @@ public class SetActivity extends AppCompatActivity implements View.OnClickListen
 
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
         rl_set_clean = findViewById(R.id.rl_set_clean);
         tv_set_exit = findViewById(R.id.tv_set_exit);
@@ -71,52 +66,54 @@ public class SetActivity extends AppCompatActivity implements View.OnClickListen
             onBackPressed();
 
         } else if (i == R.id.rl_set_clean) {//清楚数据
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setTitle("清除缓存？")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final QMUITipDialog tipDialog = new QMUITipDialog.Builder(SetActivity.this)
-                                    .setTipWord("清除成功")
-                                    .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
-                                    .create();
-                            tipDialog.show();
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    tipDialog.dismiss();
-                                }
-                            }, 2000);
-
-                            RxFileUtils.clearAllCache(getApplicationContext());
-                            tv_set_data_count.setText("0MB");
-                        }
-                    }).setNegativeButton(R.string.cancel, null);
-            final AlertDialog dialog = builder.create();
-            Window window = dialog.getWindow();
-            window.setDimAmount(0.3f);
-            window.setWindowAnimations(R.style.dialogWindowAnim);
+            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+            dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
+            dialog.getTvContent().setText("清除缓存？");
+            dialog.setCancel("清除");
+            dialog.setCancelListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    RxFileUtils.clearAllCache(getApplicationContext());
+                    tv_set_data_count.setText("0MB");
+                }
+            });
+            dialog.setSure("取消");
             dialog.show();
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
-
+            dialog.setSureListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
         } else if (i == R.id.tv_set_exit) {//退出登录
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(this)
-                    .setTitle("退出登录？")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            logout();
-                        }
-                    }).setNegativeButton(R.string.cancel, null);
-            final AlertDialog dialog1 = builder1.create();
-            Window window1 = dialog1.getWindow();
-            window1.setDimAmount(0.3f);
-            window1.setWindowAnimations(R.style.dialogWindowAnim);
-            dialog1.show();
-
+            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+            dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
+            dialog.getTvContent().setText("退出登录？");
+            dialog.setCancel("退出");
+            dialog.setCancelListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    logout();
+                }
+            });
+            dialog.setSure("取消");
+            dialog.setSureListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
         }
     }
+
+    //跳转温度设置界面
+    public void setTemp(View view) {
+        RxBus.getInstance().post("temp");
+    }
+
 
     private void logout() {
         dialog1 = new DepositDialog(SetActivity.this, "请求中");

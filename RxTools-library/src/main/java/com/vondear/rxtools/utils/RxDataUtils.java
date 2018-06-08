@@ -33,7 +33,7 @@ public class RxDataUtils {
      * @return
      */
     public static boolean isNullString(@Nullable String str) {
-        return str == null || str.length() == 0 || "".equals(str) || "null".equals(str);
+        return str == null || str.length() == 0 || "".equals(str.trim()) || "null".equals(str);
     }
 
     /**

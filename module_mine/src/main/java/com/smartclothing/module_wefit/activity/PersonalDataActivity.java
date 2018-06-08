@@ -3,7 +3,6 @@ package com.smartclothing.module_wefit.activity;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,8 +13,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +30,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.smartclothing.module_wefit.R;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Sex;
 import com.smartclothing.module_wefit.bean.UserInfo;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
@@ -46,6 +44,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,7 +66,7 @@ import okhttp3.RequestBody;
 
 /*个人资料*/
 
-public class PersonalDataActivity extends AppCompatActivity implements View.OnClickListener {
+public class PersonalDataActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout iv_back;
     private TextView tv_data_save;
@@ -132,7 +131,7 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
         initData();
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
         tv_data_save = findViewById(R.id.tv_data_save);
         rl_data_icon = findViewById(R.id.rl_data_icon);
@@ -188,7 +187,7 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
                         Gson gson = new Gson();
                         user = gson.fromJson(s, UserInfo.class);
                         if (user != null) {
-                            tv_data_sex.setText(user.getSex() == 0 ? "男" : "女");
+                            tv_data_sex.setText(user.getSex() == 1 ? "男" : "女");
                             tv_data_name.setText(user.getUserName());
                             tv_data_birth.setText(RxFormat.setFormatDate(Long.parseLong(user.getBirthday()), RxFormat.Date));
                             tv_data_height.setText(user.getHeight() + "");
@@ -234,22 +233,26 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
         int i1 = view.getId();
         if (i1 == R.id.iv_back) {
             if (user.isChange) {
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("信息已更改，是否保存")
-                        .setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                requestSaveUserInfo();
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                onBackPressed();
-                            }
-                        })
-                        .show();
+                final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+                dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
+                dialog.getTvContent().setText("信息已更改，是否保存？");
+                dialog.setCancel("保存");
+                dialog.setCancelListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        requestSaveUserInfo();
+                    }
+                });
+                dialog.setSure("取消");
+                dialog.setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                });
+                dialog.show();
             } else onBackPressed();
 
         } else if (i1 == R.id.tv_data_save) {
@@ -277,7 +280,7 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
             picker.setCancelTextColor(getResources().getColor(R.color.picker_title_text_color));
             picker.setSubmitTextColor(getResources().getColor(R.color.picker_title_text_color));
             picker.setCanceledOnTouchOutside(true);
-            picker.setSelectedIndex(user.getSex());
+            picker.setSelectedIndex(user.getSex() - 1);
             picker.setCycleDisable(true);
             picker.setDividerRatio(0.2f);
             picker.setOnItemPickListener(new SinglePicker.OnItemPickListener<Sex>() {
@@ -370,8 +373,6 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
 
     /*保存按钮，提交用户数据*/
     private void requestSaveUserInfo() {
-        if (dialog == null)
-            dialog = new DepositDialog(this, "提交中");
         if (user == null) RxToast.showToast("用户数据不能为空");
 
         String gson = new Gson().toJson(user, UserInfo.class);
@@ -382,7 +383,7 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(final Disposable disposable) throws Exception {
-                        dialog.show();
+                        tipDialog.show();
                         RxLogUtils.d("doOnSubscribe");
                     }
                 })
@@ -390,8 +391,7 @@ public class PersonalDataActivity extends AppCompatActivity implements View.OnCl
                         new Action() {
                             @Override
                             public void run() throws Exception {
-                                RxLogUtils.d("结束");
-                                dialog.hideDialog();
+                                tipDialog.dismiss();
                             }
                         })
                 .subscribe(new RxNetSubscriber<String>() {

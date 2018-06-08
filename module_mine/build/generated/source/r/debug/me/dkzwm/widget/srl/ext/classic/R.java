@@ -14,30 +14,30 @@ public final class R {
         public static int sr_classic_arrow_icon = 0x7f09010c;
     }
     public static final class id {
-        public static int sr_classic_arrow = 0x7f0c01ab;
-        public static int sr_classic_last_update = 0x7f0c01ac;
-        public static int sr_classic_progress = 0x7f0c01ad;
-        public static int sr_classic_text_container = 0x7f0c01ae;
-        public static int sr_classic_title = 0x7f0c01af;
+        public static int sr_classic_arrow = 0x7f0c01b0;
+        public static int sr_classic_last_update = 0x7f0c01b1;
+        public static int sr_classic_progress = 0x7f0c01b2;
+        public static int sr_classic_text_container = 0x7f0c01b3;
+        public static int sr_classic_title = 0x7f0c01b4;
     }
     public static final class string {
-        public static int sr_hours_ago = 0x7f150047;
-        public static int sr_last_update = 0x7f150048;
-        public static int sr_load_complete = 0x7f150049;
-        public static int sr_load_failed = 0x7f15004a;
-        public static int sr_loading = 0x7f15004b;
-        public static int sr_minutes_ago = 0x7f15004c;
-        public static int sr_no_more_data = 0x7f15004d;
-        public static int sr_pull_down = 0x7f15004e;
-        public static int sr_pull_down_to_refresh = 0x7f15004f;
-        public static int sr_pull_up = 0x7f150050;
-        public static int sr_pull_up_to_load = 0x7f150051;
-        public static int sr_refresh_complete = 0x7f150052;
-        public static int sr_refresh_failed = 0x7f150053;
-        public static int sr_refreshing = 0x7f150054;
-        public static int sr_release_to_load = 0x7f150055;
-        public static int sr_release_to_refresh = 0x7f150056;
-        public static int sr_seconds_ago = 0x7f150057;
+        public static int sr_hours_ago = 0x7f150052;
+        public static int sr_last_update = 0x7f150053;
+        public static int sr_load_complete = 0x7f150054;
+        public static int sr_load_failed = 0x7f150055;
+        public static int sr_loading = 0x7f150056;
+        public static int sr_minutes_ago = 0x7f150057;
+        public static int sr_no_more_data = 0x7f150058;
+        public static int sr_pull_down = 0x7f150059;
+        public static int sr_pull_down_to_refresh = 0x7f15005a;
+        public static int sr_pull_up = 0x7f15005b;
+        public static int sr_pull_up_to_load = 0x7f15005c;
+        public static int sr_refresh_complete = 0x7f15005d;
+        public static int sr_refresh_failed = 0x7f15005e;
+        public static int sr_refreshing = 0x7f15005f;
+        public static int sr_release_to_load = 0x7f150060;
+        public static int sr_release_to_refresh = 0x7f150061;
+        public static int sr_seconds_ago = 0x7f150062;
     }
     public static final class styleable {
         public static int[] AbsClassicRefreshView = { 0x7f040328 };

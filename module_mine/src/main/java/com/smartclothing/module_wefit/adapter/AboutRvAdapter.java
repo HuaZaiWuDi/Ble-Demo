@@ -6,8 +6,12 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.bean.AboutDeviceBean;
+
+import static com.vondear.rxtools.utils.RxUtils.getContext;
 
 /**
  * Created by ZZP on 2018/5/22.
@@ -26,6 +30,10 @@ public class AboutRvAdapter extends BaseQuickAdapter<AboutDeviceBean, BaseViewHo
     @Override
     protected void convert(final BaseViewHolder helper, AboutDeviceBean item) {
         TextView tv_about_update = helper.convertView.findViewById(R.id.tv_about_update);
+        QMUIRelativeLayout layout_item = helper.getView(R.id.layout_item);
+        layout_item.setRadiusAndShadow(QMUIDisplayHelper.dp2px(getContext(), 10),
+                QMUIDisplayHelper.dp2px(getContext(), 40),
+                0.5f);
         tv_about_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

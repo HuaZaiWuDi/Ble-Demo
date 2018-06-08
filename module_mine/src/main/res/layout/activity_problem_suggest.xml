@@ -61,8 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_15"
                 android:layout_marginTop="@dimen/dimen_15"
-                android:drawableLeft="@mipmap/icon_star"
-                android:text="反馈类型"
+                android:text="*反馈类型"
                 android:textColor="#4D4D4D"
                 android:textSize="@dimen/dimen_15"
                 android:textStyle="bold"/>
@@ -87,8 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_15"
                 android:layout_marginTop="@dimen/dimen_15"
-                android:drawableLeft="@mipmap/icon_star"
-                android:text="问题描述与建议"
+                android:text="*问题描述与建议"
                 android:textColor="#4D4D4D"
                 android:textSize="@dimen/dimen_15"
                 android:textStyle="bold"/>
@@ -172,8 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_15"
                 android:layout_marginTop="@dimen/dimen_15"
-                android:drawableLeft="@mipmap/icon_star"
-                android:text="出现频率"
+                android:text="*出现频率"
                 android:textColor="#4D4D4D"
                 android:textSize="@dimen/dimen_15"
                 android:textStyle="bold"/>
@@ -196,8 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_15"
                 android:layout_marginTop="@dimen/dimen_15"
-                android:drawableLeft="@mipmap/icon_star"
-                android:text="联系方式"
+                android:text="*联系方式"
                 android:textColor="#4D4D4D"
                 android:textSize="@dimen/dimen_15"
                 android:textStyle="bold"/>

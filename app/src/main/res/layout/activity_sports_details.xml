@@ -210,14 +210,4 @@
         android:layout_height="600px"/>
 
 
-    <TextView
-        android:id="@+id/tv_tip"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom|center"
-        android:paddingBottom="@dimen/d_20"
-        android:text="传感品记录中，建议穿着减肥衣，提高数据准确率"
-        android:textColor="@color/textHeatColor"
-        android:textSize="@dimen/d_30"/>
-
 </LinearLayout>

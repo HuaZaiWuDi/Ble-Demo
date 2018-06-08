@@ -12,7 +12,8 @@
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/barHeight"
-        android:paddingBottom="@dimen/d_30">
+        android:paddingBottom="@dimen/d_30"
+        android:paddingTop="90px">
 
 
         <LinearLayout
@@ -93,7 +94,7 @@
 
         <LinearLayout
             android:id="@+id/layout_location"
-            android:layout_width="600px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_titleTop"
             android:layout_centerHorizontal="true"
@@ -103,14 +104,18 @@
 
             <TextView
                 android:id="@+id/tv_location"
-                android:layout_width="wrap_content"
+                android:layout_width="600px"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@mipmap/icon_dingwei3x"
                 android:drawablePadding="@dimen/d_30"
+                android:ellipsize="end"
                 android:gravity="center"
+                android:maxLines="1"
                 android:text="@string/chooseCity2"
                 android:textColor="@color/black"
-                android:textSize="@dimen/d_60"/>
+                android:textSize="@dimen/d_60"
+                tools:text="买的快乐撒娇地方咯傲视"/>
+
         </LinearLayout>
 
 

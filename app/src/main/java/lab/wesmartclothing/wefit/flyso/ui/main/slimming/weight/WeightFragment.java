@@ -24,6 +24,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleTools;
+import com.smartclothing.module_wefit.bean.Device;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -64,7 +65,6 @@ import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
-import lab.wesmartclothing.wefit.flyso.rxbus.WeightIsUpdate;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.ChartManager;
@@ -158,15 +158,17 @@ public class WeightFragment extends BaseFragment {
     private boolean refreshOnce = false;//解决多次刷新的问题
     private boolean notMore = false;//解决多次刷新的问题
     private boolean isConnect = false;
+    Highlight mHighlight; //记录当前高亮的位置
+    ChartManager chartManager; //chart管理类
 
     @Override
     public void initData() {
         RxLogUtils.d("加载：【WeightFragment】");
         if ("".equals(mPrefs.scaleIsBind().get())) {
             initDeviceConnectTip(1);
-
-        } else
+        } else {
             getWeightData();
+        }
     }
 
 
@@ -181,8 +183,10 @@ public class WeightFragment extends BaseFragment {
             public void onConnected(QNBleDevice qnBleDevice) {
                 isConnect = true;
                 RxLogUtils.d("连接:");
-                tv_connectDevice.setText(R.string.connected);
-                dialog_not_connect.setVisibility(View.GONE);
+                if (tv_connectDevice != null)
+                    tv_connectDevice.setText(R.string.connected);
+                if (dialog_not_connect != null)
+                    dialog_not_connect.setVisibility(View.GONE);
 //                DeviceLink deviceLink = new DeviceLink();
 //                deviceLink.setMacAddr(qnBleDevice.getMac());
 //                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
@@ -203,7 +207,8 @@ public class WeightFragment extends BaseFragment {
             public void onDisconnected(QNBleDevice qnBleDevice) {
                 isConnect = false;
                 RxLogUtils.e("断开连接:");
-                tv_connectDevice.setText(R.string.disConnected);
+                if (tv_connectDevice != null)
+                    tv_connectDevice.setText(R.string.disConnected);
                 //重新扫描
                 mActivity.startService(new Intent(mActivity, BleService_.class));
             }
@@ -229,7 +234,7 @@ public class WeightFragment extends BaseFragment {
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                RxLogUtils.d("实时的稳定测量数据是否有效：" + qnScaleData.isValid());
+//                RxLogUtils.d("实时的稳定测量数据是否有效：" + qnScaleData.isValid());
                 for (QNScaleItemData item : qnScaleData.getAllItem()) {
                     RxLogUtils.d("实时的稳定测量数据：" + item.getValue());
                     RxLogUtils.d("实时的稳定测量数据：" + item.getName());
@@ -277,22 +282,27 @@ public class WeightFragment extends BaseFragment {
     }
 
     private void initRxBus() {
-        Disposable register = RxBus.getInstance().register(WeightIsUpdate.class, new Consumer<WeightIsUpdate>() {
-            @Override
-            public void accept(WeightIsUpdate weightIsUpdate) throws Exception {
-                pageNum = 1;
-                weightDatas.clear();
-                getWeightData();
-            }
-        });
-        Disposable device = RxBus.getInstance().register(QNBleDevice.class, new Consumer<QNBleDevice>() {
+        //连接
+        Disposable QNBleDevice = RxBus.getInstance().register(QNBleDevice.class, new Consumer<QNBleDevice>() {
             @Override
             public void accept(QNBleDevice device) throws Exception {
-                mQNBleTools.connectDevice(device);
+                if (device.getMac().equals(mPrefs.scaleIsBind().get())) {
+                    mQNBleTools.disConnectDevice(device.getMac());
+                    mQNBleTools.connectDevice(device);
+                }
             }
         });
-
-        RxBus.getInstance().addSubscription(this, register);
+        //删除绑定
+        Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
+            @Override
+            public void accept(Device device) throws Exception {
+                if ("0".equals(device.getDeviceNo())) {
+                    mPrefs.scaleIsBind().put("");
+                    initDeviceConnectTip(1);
+                }
+            }
+        });
+        RxBus.getInstance().addSubscription(this, QNBleDevice);
         RxBus.getInstance().addSubscription(this, device);
     }
 
@@ -344,6 +354,8 @@ public class WeightFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
+        MyAPP.QNapi.setBleConnectionChangeListener(null);
+        MyAPP.QNapi.setDataListener(null);
         RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
@@ -360,11 +372,14 @@ public class WeightFragment extends BaseFragment {
                 tv_connectTip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        BluetoothAdapter.getDefaultAdapter().enable();
+                        if (!BleTools.getBleManager().isBlueEnable())
+                            BleTools.getBleManager().enableBluetooth();
                     }
                 });
                 break;
             case 1://绑定设备
+                mLineChart.clear();
+                mLineChart.invalidate();
                 tv_connectDevice.setText(R.string.unBind);
                 Drawable drawable = getResources().getDrawable(R.mipmap.unbound_icon);
                 //一定要加这行！！！！！！！！！！！
@@ -380,6 +395,7 @@ public class WeightFragment extends BaseFragment {
                         //TODO 去绑定设备
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
+                        bundle.putString(Key.BUNDLE_BIND_TYPE, "0");
                         RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
                     }
                 });
@@ -403,14 +419,13 @@ public class WeightFragment extends BaseFragment {
                 });
                 break;
             case 3:
-                mLineChart.clear();
                 tv_connectTip.setVisibility(View.GONE);
                 dialog_not_connect.setVisibility(View.VISIBLE);
+
                 break;
         }
     }
 
-    ChartManager chartManager;
 
     //初始化图表
     private void initChart() {
@@ -419,7 +434,7 @@ public class WeightFragment extends BaseFragment {
         chartManager.addMarker(mv);
 
         YAxis yAxis = mLineChart.getAxisLeft();
-        yAxis.setAxisMaximum(90f);
+        yAxis.setAxisMaximum(110f);
         yAxis.setAxisMinimum(35f);
         mLineChart.invalidate();
 
@@ -453,16 +468,9 @@ public class WeightFragment extends BaseFragment {
     private void getWeightData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getWeightList(pageNum, 20))
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        tipDialog.show();
-                    }
-                })
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
-                        tipDialog.dismiss();
                         if (mRefresh != null)
                             mRefresh.refreshComplete();
                     }
@@ -470,6 +478,7 @@ public class WeightFragment extends BaseFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+
                         RxLogUtils.d("获取体重数据：" + s);
 
                         WeightDataBean bean = new Gson().fromJson(s, WeightDataBean.class);
@@ -558,29 +567,31 @@ public class WeightFragment extends BaseFragment {
 
         chartManager.setData(yVals, days);
 
-
-        RxLogUtils.d("标签：" + days.size());
-        for (String s : days) {
-            RxLogUtils.d("标签---：" + s);
-        }
+//        RxLogUtils.d("标签：" + days.size());
+//        for (String s : days) {
+//            RxLogUtils.d("标签---：" + s);
+//        }
 
         mLineChart.setVisibleXRangeMaximum(7);
 
         mLineChart.moveViewToX(yVals.size() - (pageNum - 1) * 20 - 4);
 
+
         mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-
+                mHighlight = h;
+                RxLogUtils.d("点击");
                 synWeightData(list.get((int) e.getX() % list.size()));
             }
 
             @Override
             public void onNothingSelected() {
-
+                RxLogUtils.d("什么都没点击");
+                if (mHighlight != null)
+                    mLineChart.highlightValue(mHighlight);
             }
         });
-
 
         mLineChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
@@ -620,12 +631,12 @@ public class WeightFragment extends BaseFragment {
 
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                Highlight byTouchPoint = mLineChart.getHighlightByTouchPoint(me.getX(), me.getY());
-                if (byTouchPoint != null) {
-                    mLineChart.highlightValue(byTouchPoint);
-                    if (list.size() > 0)
-                        synWeightData(list.get((int) byTouchPoint.getX()));
-                }
+//                Highlight byTouchPoint = mLineChart.getHighlightByTouchPoint(me.getX(), me.getY());
+//                if (byTouchPoint != null) {
+//                    mLineChart.highlightValue(byTouchPoint);
+//                    if (list.size() > 0)
+//                        synWeightData(list.get((int) byTouchPoint.getX()));
+//                }
 
                 float visibleX = mLineChart.getLowestVisibleX();
 //                RxLogUtils.d("最小显示的X轴：" + visibleX);
@@ -730,7 +741,6 @@ public class WeightFragment extends BaseFragment {
         }
     }
 
-
     private void showDialog(final QNScaleData qnScaleData) {
         //差值大于2kg，体重数据不合理
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
@@ -745,6 +755,7 @@ public class WeightFragment extends BaseFragment {
         });
         dialog.setSure("就是我");
         dialog.show();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.setSureListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

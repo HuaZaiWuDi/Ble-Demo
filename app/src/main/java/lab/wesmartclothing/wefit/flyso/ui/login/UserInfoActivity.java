@@ -97,7 +97,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             viewState++;
             switchView(viewState);
         } else {
-            if (isLocation) {
+            if (!isLocation) {
                 final QMUITipDialog tipDialog = new QMUITipDialog.Builder(mContext)
                         .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
                         .setTipWord("未获取地理位置")
@@ -116,18 +116,17 @@ public class UserInfoActivity extends BaseALocationActivity {
             //跳转扫描界面
             Bundle bundle = new Bundle();
             bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
-            RxActivityUtils.skipActivityAndFinish(mContext, AddDeviceActivity_.class, bundle);
+            RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
         }
     }
 
     @Click
     void tv_skip() {
         saveUserInfo(true);
-
         //跳转扫描界面
         Bundle bundle = new Bundle();
         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
-        RxActivityUtils.skipActivityAndFinish(mContext, AddDeviceActivity_.class, bundle);
+        RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
 
     }
 
@@ -199,6 +198,7 @@ public class UserInfoActivity extends BaseALocationActivity {
         layout_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tipDialog.show();
                 startLocation(new MyLocationListener() {
                     @Override
                     public void location(AMapLocation aMapLocation) {
@@ -208,7 +208,6 @@ public class UserInfoActivity extends BaseALocationActivity {
                         mUserInfo.setProvince(aMapLocation.getProvince());
                         mUserInfo.setCity(aMapLocation.getCity());
                     }
-
                 });
             }
         });

@@ -43,7 +43,6 @@ import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.SlimmingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -81,12 +80,17 @@ public class MainActivity extends BaseALocationActivity {
         initMyViewPager();
         setDefaultFragment();
         initRxBus();
-        bleIntent = new Intent(mContext, BleService_.class);
-        startService(bleIntent);
+
         startLocation(null);
 
-        RxActivityUtils.skipActivity(mContext, TempActivity.class);
+//        RxActivityUtils.skipActivity(mContext, TempActivity.class);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bleIntent = new Intent(mContext, BleService_.class);
+        startService(bleIntent);
     }
 
     private void initRxBus() {
@@ -208,6 +212,7 @@ public class MainActivity extends BaseALocationActivity {
                 }
             }
         }
+
         return super.onKeyDown(keyCode, event);
     }
 

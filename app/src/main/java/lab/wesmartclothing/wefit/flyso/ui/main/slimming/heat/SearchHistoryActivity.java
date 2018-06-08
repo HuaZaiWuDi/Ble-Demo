@@ -17,6 +17,7 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -126,7 +127,7 @@ public class SearchHistoryActivity extends BaseActivity {
         searchListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+                if (RxUtils.isFastClick(1000)) return;
                 ListBean listBean = (ListBean) adapter.getData().get(position);
                 String foodName = listBean.getFoodName();
                 if (!SearchWordTab.isExist(foodName)) {

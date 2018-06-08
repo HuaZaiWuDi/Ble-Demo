@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -89,6 +90,10 @@ public class AddFoodActivity extends BaseActivity {
     @Click
     void tv_complete() {
         if (mIntakeLists.size() > 0) {
+            if (mIntakeLists.size() > 99) {
+                RxToast.warning("最多添加99条食材记录");
+                return;
+            }
             addFood();
         }
         finish();
@@ -142,7 +147,8 @@ public class AddFoodActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showAddFoodDialog((ListBean) adapter.getData().get(position));
+                if (!RxUtils.isFastClick(1000))
+                    showAddFoodDialog((ListBean) adapter.getData().get(position));
             }
         });
 

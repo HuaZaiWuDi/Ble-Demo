@@ -8,7 +8,7 @@ package lab.wesmartclothing.wefit.netlib;
 
 public final class R {
     public static final class string {
-        public static int app_name = 0x7f150021;
-        public static int applicationInfo = 0x7f150023;
+        public static int app_name = 0x7f150024;
+        public static int applicationInfo = 0x7f150026;
     }
 }

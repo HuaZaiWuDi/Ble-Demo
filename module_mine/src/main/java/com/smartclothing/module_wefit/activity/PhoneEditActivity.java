@@ -2,19 +2,19 @@ package com.smartclothing.module_wefit.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.smartclothing.module_wefit.R;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.widget.MClearEditText;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.view.RxToast;
 
 /*编辑电话*/
 
-public class PhoneEditActivity extends AppCompatActivity implements View.OnClickListener {
+public class PhoneEditActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout iv_back;
     private TextView tv_data_save;
@@ -31,7 +31,7 @@ public class PhoneEditActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
         tv_data_save = findViewById(R.id.tv_data_save);
         et_data_phone = findViewById(R.id.et_data_phone);

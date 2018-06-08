@@ -12,12 +12,12 @@
 
 
         <ImageView
-            android:padding="@dimen/d_40"
             android:id="@+id/iv_last"
             android:layout_width="130px"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:onClick="iv_last"
+            android:padding="@dimen/d_40"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/arrow_left_icon"
@@ -25,11 +25,11 @@
             android:textColor="@color/colorFontWhite"/>
 
         <LinearLayout
-            android:gravity="center"
             android:id="@+id/ll_date_container"
             android:layout_width="350px"
             android:layout_height="match_parent"
             android:background="@drawable/shape_calender_bg"
+            android:gravity="center"
             android:onClick="date"
             android:orientation="horizontal"
             android:paddingEnd="10dp"
@@ -46,21 +46,21 @@
                 android:textSize="16sp"/>
 
             <ImageView
-                android:layout_marginLeft="@dimen/d_30"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/d_30"
                 android:src="@drawable/arrow_down_icon"/>
         </LinearLayout>
 
 
         <ImageView
-            android:padding="@dimen/d_40"
             android:id="@+id/iv_next"
             android:layout_width="130px"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
             android:onClick="iv_next"
+            android:padding="@dimen/d_40"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:src="@drawable/arrow_right_icon"

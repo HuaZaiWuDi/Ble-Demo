@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ble;
 
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.yolanda.health.qnblesdk.constant.QNUnit;
 import com.yolanda.health.qnblesdk.listen.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNConfig;
@@ -30,7 +31,7 @@ public class QNBleTools {
         config.setDuration(duration);
         config.setOnlyScreenOn(false);
         config.setAllowDuplicates(false);
-//        config.setUnit(QNUnit.WEIGHT_UNIT_KG);
+        config.setUnit(QNUnit.WEIGHT_UNIT_KG);
         MyAPP.QNapi.startBleDeviceDiscovery(config, mQNResultCallback);
     }
 
@@ -68,6 +69,7 @@ public class QNBleTools {
 
 
     public void connectDevice(QNBleDevice device) {
+        scanBle(15 * 1000);
         MyAPP.QNapi.connectDevice(device, creatUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="bg_color">#FCFAFA</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorBlue">#33aacc</color>
+    <color name="colorFontDefault">#757575</color>
+    <color name="colorFontMain">#333333</color>
+    <color name="colorFontNotice">#999999</color>
+    <color name="colorFontShallow">#404040</color>
+    <color name="colorFontUnUse">#b3b3b3</color>
+    <color name="colorFontWhite">#ffffff</color>
+    <color name="colorGray">#ccc</color>
+    <color name="colorGreen">#ff669900</color>
+    <color name="colorGrey100">#f5f5f5</color>
+    <color name="colorGrey1000">#000000</color>
+    <color name="colorGrey200">#eeeeee</color>
+    <color name="colorGrey300">#e0e0e0</color>
+    <color name="colorGrey400">#bdbdbd</color>
+    <color name="colorGrey50">#fafafa</color>
+    <color name="colorGrey500">#9e9e9e</color>
+    <color name="colorGrey600">#757575</color>
+    <color name="colorGrey700">#616161</color>
+    <color name="colorGrey800">#424242</color>
+    <color name="colorGrey900">#212121</color>
+    <color name="colorLightBlue100">#b3e5fc</color>
+    <color name="colorLightBlue200">#81d4fa</color>
+    <color name="colorLightBlue300">#4fc3f7</color>
+    <color name="colorLightBlue400">#29b6f6</color>
+    <color name="colorLightBlue50">#e1f5fe</color>
+    <color name="colorLightBlue500">#03a9f4</color>
+    <color name="colorLightBlue600">#039be5</color>
+    <color name="colorLightBlue700">#0288d1</color>
+    <color name="colorLightBlue800">#0277bd</color>
+    <color name="colorLightBlue900">#01579b</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryLight">#303Fff</color>
+    <color name="colorRed">#FFB094</color>
+    <color name="colorTabText">#585858</color>
+    <color name="colorTeal100">#b2dfdb</color>
+    <color name="colorTeal200">#80cbc4</color>
+    <color name="colorTeal300">#4db6ac</color>
+    <color name="colorTeal400">#26a69a</color>
+    <color name="colorTeal50">#e0f2f1</color>
+    <color name="colorTeal500">#009688</color>
+    <color name="colorTeal600">#00897b</color>
+    <color name="colorTeal700">#00796b</color>
+    <color name="colorTeal800">#00695c</color>
+    <color name="colorTeal900">#004d40</color>
+    <color name="colorTheme">#48EBBB</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="color_material_Green_100">#A3E9A4</color>
+    <color name="color_material_Green_200">#72D572</color>
+    <color name="color_material_Green_300">#42BD41</color>
+    <color name="color_material_Green_400">#2BAF2B</color>
+    <color name="color_material_Green_50">#D0F8CE</color>
+    <color name="color_material_Green_500">#259b24</color>
+    <color name="color_material_Green_600">#0A8F08</color>
+    <color name="color_material_Green_700">#0A7E07</color>
+    <color name="color_material_Green_800">#056F00</color>
+    <color name="color_material_Green_900">#0D5302</color>
+    <color name="color_material_Red_100">#FFCDD2</color>
+    <color name="color_material_Red_200">#EF9A9A</color>
+    <color name="color_material_Red_300">#F44336</color>
+    <color name="color_material_Red_400">#EF5350</color>
+    <color name="color_material_Red_50">#FFEBEE</color>
+    <color name="color_material_Red_500">#F44336</color>
+    <color name="color_material_Red_600">#E53935</color>
+    <color name="color_material_Red_700">#D32F2F</color>
+    <color name="color_material_Red_800">#C62828</color>
+    <color name="color_material_Red_900">#B71C1C</color>
+    <color name="color_material_Yellow_100">#fff9c4</color>
+    <color name="color_material_Yellow_200">#fff59d</color>
+    <color name="color_material_Yellow_300">#fff176</color>
+    <color name="color_material_Yellow_400">#ffee58</color>
+    <color name="color_material_Yellow_50">#fffde7</color>
+    <color name="color_material_Yellow_500">#ffeb3b</color>
+    <color name="color_material_Yellow_600">#fdd835</color>
+    <color name="color_material_Yellow_700">#fbc02d</color>
+    <color name="color_material_Yellow_800">#f9a825</color>
+    <color name="color_material_Yellow_900">#f57f17</color>
+    <color name="itemLowBackground">#d9d9d9</color>
+    <color name="lineColor">#F2F2F2</color>
+    <color name="picker_line_color">#66000000</color>
+    <color name="picker_text_color">#66000000</color>
+    <color name="picker_title_text_color">#A5000000</color>
+    <color name="rl_pressed">#44cccccc</color>
+    <color name="rl_unpressed">#ffffff</color>
+    <color name="swipe_item_color">#aaFE4444</color>
+    <color name="swipe_item_color_pressed">#FFFE4444</color>
+    <color name="textColor">#4D4D4D</color>
+    <color name="textHeatColor">#999999</color>
+    <declare-styleable name="CircleImageView"><attr format="dimension" name="civ_border_width"/><attr format="color" name="civ_border_color"/><attr format="boolean" name="civ_border_overlay"/><attr format="color" name="civ_fill_color"/></declare-styleable>
+    <declare-styleable name="ClipViewLayout"><attr format="enum" name="clipType">
+            <enum name="circle" value="1"/>
+            <enum name="rectangle" value="2"/>
+        </attr><attr format="dimension" name="mHorizontalPadding"/><attr format="dimension" name="clipBorderWidth"/></declare-styleable>
+    <declare-styleable name="ImageUploadView"><attr format="dimension" name="pic_size"/><attr format="integer" name="max_num"/><attr format="reference" name="add_res"/><attr format="reference" name="del_res"/><attr format="boolean" name="is_show_del"/><attr format="integer" name="one_line_show_num"/></declare-styleable>
+    <declare-styleable name="NiceSpinner"><attr format="color" name="arrowTint"/><attr format="boolean" name="hideArrow"/><attr format="integer" name="backgroundSelector"/><attr format="color" name="textTint"/></declare-styleable>
+    <declare-styleable name="PagerSlidingTabStrip"><attr format="color" name="pstsIndicatorColor"/><attr format="color" name="pstsUnderlineColor"/><attr format="color" name="pstsDividerColor"/><attr format="dimension" name="pstsIndicatorHeight"/><attr format="dimension" name="pstsUnderlineHeight"/><attr format="dimension" name="pstsDividerPadding"/><attr format="dimension" name="pstsTabPaddingLeftRight"/><attr format="dimension" name="pstsScrollOffset"/><attr format="reference" name="pstsTabBackground"/><attr format="boolean" name="pstsShouldExpand"/><attr format="boolean" name="pstsTextAllCaps"/></declare-styleable>
+    <declare-styleable name="absProgressBar"><attr format="integer" name="progress"/><attr format="reference|color" name="backgroundColor"/><attr format="reference|color" name="textColor1"/></declare-styleable>
+    <declare-styleable name="floatTextProgressBar"><attr format="reference|color" name="triangleColor"/><attr format="reference|color" name="rectColor"/><attr format="reference|color" name="fillColorProgress"/></declare-styleable>
+    <declare-styleable name="progressBar"><attr format="reference|color" name="startFillColor"/><attr format="reference|color" name="middleFillColor"/><attr format="reference|color" name="endFillColor"/><attr format="reference|color" name="arrowPointColor"/><attr format="dimension|reference" name="arrowPointRadius"/></declare-styleable>
+    <dimen name="dimen_0.5">0.5dp</dimen>
+    <dimen name="dimen_0_35">-35dp</dimen>
+    <dimen name="dimen_0_40">-40dp</dimen>
+    <dimen name="dimen_1">1dp</dimen>
+    <dimen name="dimen_1.5">1.5dp</dimen>
+    <dimen name="dimen_10">10dp</dimen>
+    <dimen name="dimen_100">100dp</dimen>
+    <dimen name="dimen_102">102dp</dimen>
+    <dimen name="dimen_11">11dp</dimen>
+    <dimen name="dimen_11.5">11.5dp</dimen>
+    <dimen name="dimen_115">115dp</dimen>
+    <dimen name="dimen_12">12dp</dimen>
+    <dimen name="dimen_12.5">12.5dp</dimen>
+    <dimen name="dimen_120">120dp</dimen>
+    <dimen name="dimen_126">126dp</dimen>
+    <dimen name="dimen_13">13dp</dimen>
+    <dimen name="dimen_13.5">13.5dp</dimen>
+    <dimen name="dimen_130">130dp</dimen>
+    <dimen name="dimen_135">135dp</dimen>
+    <dimen name="dimen_14">14dp</dimen>
+    <dimen name="dimen_14.5">14.5dp</dimen>
+    <dimen name="dimen_140">140dp</dimen>
+    <dimen name="dimen_141">141dp</dimen>
+    <dimen name="dimen_15">15dp</dimen>
+    <dimen name="dimen_15.5">15.5dp</dimen>
+    <dimen name="dimen_150">150dp</dimen>
+    <dimen name="dimen_16">16dp</dimen>
+    <dimen name="dimen_160">160dp</dimen>
+    <dimen name="dimen_165">165dp</dimen>
+    <dimen name="dimen_17">17dp</dimen>
+    <dimen name="dimen_170">170dp</dimen>
+    <dimen name="dimen_18">18dp</dimen>
+    <dimen name="dimen_180">180dp</dimen>
+    <dimen name="dimen_19">19dp</dimen>
+    <dimen name="dimen_190">190dp</dimen>
+    <dimen name="dimen_2">2dp</dimen>
+    <dimen name="dimen_20">20dp</dimen>
+    <dimen name="dimen_200">200dp</dimen>
+    <dimen name="dimen_205">205dp</dimen>
+    <dimen name="dimen_210">210dp</dimen>
+    <dimen name="dimen_22">22dp</dimen>
+    <dimen name="dimen_220">220dp</dimen>
+    <dimen name="dimen_24">24dp</dimen>
+    <dimen name="dimen_240">240dp</dimen>
+    <dimen name="dimen_25">25dp</dimen>
+    <dimen name="dimen_250">250dp</dimen>
+    <dimen name="dimen_27">27dp</dimen>
+    <dimen name="dimen_28">28dp</dimen>
+    <dimen name="dimen_280">280dp</dimen>
+    <dimen name="dimen_290">290dp</dimen>
+    <dimen name="dimen_3">3dp</dimen>
+    <dimen name="dimen_30">30dp</dimen>
+    <dimen name="dimen_300">300dp</dimen>
+    <dimen name="dimen_32">32dp</dimen>
+    <dimen name="dimen_320">320dp</dimen>
+    <dimen name="dimen_325">325dp</dimen>
+    <dimen name="dimen_340">340dp</dimen>
+    <dimen name="dimen_35">35dp</dimen>
+    <dimen name="dimen_36">36dp</dimen>
+    <dimen name="dimen_360">360dp</dimen>
+    <dimen name="dimen_38">38dp</dimen>
+    <dimen name="dimen_4">4dp</dimen>
+    <dimen name="dimen_40">40dp</dimen>
+    <dimen name="dimen_41">41dp</dimen>
+    <dimen name="dimen_42">42dp</dimen>
+    <dimen name="dimen_45">45dp</dimen>
+    <dimen name="dimen_46">46dp</dimen>
+    <dimen name="dimen_48">48dp</dimen>
+    <dimen name="dimen_49">49dp</dimen>
+    <dimen name="dimen_5">5dp</dimen>
+    <dimen name="dimen_50">50dp</dimen>
+    <dimen name="dimen_55">55dp</dimen>
+    <dimen name="dimen_6">6dp</dimen>
+    <dimen name="dimen_60">60dp</dimen>
+    <dimen name="dimen_7">7dp</dimen>
+    <dimen name="dimen_70">70dp</dimen>
+    <dimen name="dimen_72">72dp</dimen>
+    <dimen name="dimen_75">75dp</dimen>
+    <dimen name="dimen_8">8dp</dimen>
+    <dimen name="dimen_80">80dp</dimen>
+    <dimen name="dimen_85">85dp</dimen>
+    <dimen name="dimen_9">9dp</dimen>
+    <dimen name="dimen_90">90dp</dimen>
+    <dimen name="dimen_95">95dp</dimen>
+    <dimen name="dimen_cg_mail">25dp</dimen>
+    <dimen name="dimen_haobao_margintop">12dp</dimen>
+    <dimen name="dimen_product_progress">300dp</dimen>
+    <string name="FirmwareVersion">固件版本号：%1$s</string>
+    <string name="aboutUs">关于我们</string>
+    <string name="adout">关于</string>
+    <string name="app_name">Timetofit</string>
+    <string name="clothing">瘦身衣</string>
+    <string name="collect">我的收藏</string>
+    <string name="default_sign">她很懒，什么都没留下</string>
+    <string name="my_device">我的设备</string>
+    <string name="my_order">我的订单</string>
+    <string name="my_shop_car">我的购物车</string>
+    <string name="problem">问题与建议</string>
+    <string name="scale">体脂称</string>
+    <string name="slimming">饮食记录</string>
+    <string name="sports">运动记录</string>
+    <string name="update">升级</string>
+    <string name="version">版本号</string>
+    <string name="versionTip">提示：固件升级请保证app和固件的连接</string>
+    <string name="weight">体重记录</string>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="CustomDialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="dialogWindowAnim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_out</item>
+    </style>
+    <style name="progress_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@null</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+</resources>

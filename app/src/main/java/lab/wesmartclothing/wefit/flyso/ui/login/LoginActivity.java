@@ -6,6 +6,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.smartclothing.module_wefit.bean.Device;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -22,6 +25,9 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
@@ -149,8 +155,8 @@ public class LoginActivity extends BaseActivity {
                             e.printStackTrace();
                         }
 
+                        getUserDevice();
                         initUserInfo();
-
 
                     }
 
@@ -161,7 +167,44 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
+    //获取用户绑定信息
+    private void getUserDevice() {
+        RetrofitService dxyService = NetManager.getInstance().createString(
+                RetrofitService.class
+        );
+        RxManager.getInstance().doNetSubscribe(dxyService.deviceList())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束" + s);
+                        try {
+                            Gson gson = new Gson();
+                            JSONObject jsonObject = new JSONObject(s);
+                            Type typeList = new TypeToken<List<Device>>() {
+                            }.getType();
+                            List<Device> beanList = gson.fromJson(jsonObject.getString("list"), typeList);
+                            for (int i = 0; i < beanList.size(); i++) {
+                                Device device = beanList.get(i);
+                                String deviceNo = device.getDeviceNo();
+                                if ("0".equals(deviceNo)) {
+                                    mPrefs.scaleIsBind().put(device.getMacAddr());
+                                } else if ("1".equals(deviceNo)) {
+                                    mPrefs.clothing().put(device.getMacAddr());
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
+    //获取用户信息
     private void initUserInfo() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
@@ -176,13 +219,13 @@ public class LoginActivity extends BaseActivity {
                             int targetWeight = object.getInt("targetWeight");
                             String birthday = object.getString("birthday");
                             if (sex == 0) {
-                                RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity_.class);
+                                RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
                             } else {
                                 mPrefs.birthDayMillis().put(Long.parseLong(birthday));
                                 mPrefs.weight().put(targetWeight);
                                 mPrefs.height().put(height);
                                 mPrefs.sex().put(sex);
-                                RxActivityUtils.skipActivityAndFinish(mContext, MainActivity_.class);
+                                RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
                             }
 
                         } catch (JSONException e) {

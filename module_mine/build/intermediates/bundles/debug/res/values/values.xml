@@ -190,9 +190,24 @@
     <dimen name="dimen_cg_mail">25dp</dimen>
     <dimen name="dimen_haobao_margintop">12dp</dimen>
     <dimen name="dimen_product_progress">300dp</dimen>
-    <string name="app_name">Module_WeFit</string>
+    <string name="FirmwareVersion">固件版本号：%1$s</string>
+    <string name="aboutUs">关于我们</string>
+    <string name="adout">关于</string>
+    <string name="app_name">Timetofit</string>
     <string name="clothing">瘦身衣</string>
+    <string name="collect">我的收藏</string>
+    <string name="default_sign">她很懒，什么都没留下</string>
+    <string name="my_device">我的设备</string>
+    <string name="my_order">我的订单</string>
+    <string name="my_shop_car">我的购物车</string>
+    <string name="problem">问题与建议</string>
     <string name="scale">体脂称</string>
+    <string name="slimming">饮食记录</string>
+    <string name="sports">运动记录</string>
+    <string name="update">升级</string>
+    <string name="version">版本号</string>
+    <string name="versionTip">提示：固件升级请保证app和固件的连接</string>
+    <string name="weight">体重记录</string>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>

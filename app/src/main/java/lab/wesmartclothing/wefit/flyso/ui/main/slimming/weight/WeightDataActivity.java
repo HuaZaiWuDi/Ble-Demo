@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
@@ -74,8 +74,11 @@ public class WeightDataActivity extends BaseActivity {
 
     @Click
     void back() {
-        showDialog();
+        if (listReceives.size() > 0)
+            showDialog();
+        else onBackPressed();
     }
+
 
     private List<QNScaleStoreData> listReceiveds = new ArrayList<>();
     private List<QNScaleStoreData> listReceives;
@@ -98,7 +101,7 @@ public class WeightDataActivity extends BaseActivity {
                 helper.setImageResource(R.id.img_weight, R.mipmap.scale_icon);
                 helper.setBackgroundRes(R.id.tv_receive, R.mipmap.continue_button);
                 helper.setText(R.id.tv_weight_data, item.getWeight() + "kg");
-                helper.setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDate(item.getMeasureTime().getTime(), "MM/dd hh:mm:ss"));
+                helper.setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDateG8(item.getMeasureTime(), "MM/dd HH:mm:ss"));
                 helper.addOnClickListener(R.id.tv_receive);
             }
         };
@@ -147,6 +150,8 @@ public class WeightDataActivity extends BaseActivity {
 
     private void addWeightData(final int position) {
         final QNScaleStoreData qnScaleData = listReceives.get(position);
+        RxLogUtils.d("历史体重:---------------------------------");
+
         String userId = mPrefs.UserId().getOr("testuser");
         RxLogUtils.d("用户ID" + userId);
         WeightAddBean bean = new WeightAddBean();
@@ -157,6 +162,7 @@ public class WeightDataActivity extends BaseActivity {
             for (QNScaleItemData item : scaleData.getAllItem()) {
                 WeightTools.ble2Backstage(item, bean);
             }
+        bean.setWeight(qnScaleData.getWeight());
         String s = new Gson().toJson(bean, WeightAddBean.class);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
@@ -200,29 +206,34 @@ public class WeightDataActivity extends BaseActivity {
     //监听返回按钮，提示如果返回，体重数据将清除
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        showDialog();
+        if (listReceives.size() > 0)
+            showDialog();
+        else onBackPressed();
         return true;
     }
 
+
     private void showDialog() {
-        View view = View.inflate(mContext, R.layout.dialog_receive_weight, null);
-        final AlertDialog dialog = new AlertDialog.Builder(mContext)
-                .setView(view).show();
-        view.findViewById(R.id.btn_leave).setOnClickListener(new View.OnClickListener() {
+        //差值大于2kg，体重数据不合理
+        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+        dialog.getTvTitle().setBackgroundResource(R.mipmap.leave_icon);
+        dialog.getTvContent().setText("请确认这是您的体重吗？");
+        dialog.setCancel(getString(R.string.btn_leave));
+        dialog.setCancelListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
                 finish();
             }
         });
-        view.findViewById(R.id.btn_receive).setOnClickListener(new View.OnClickListener() {
+        dialog.setSure(getString(R.string.btn_continue));
+        dialog.setSureListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Todo 接受体重信息
                 dialog.dismiss();
-
             }
         });
+        dialog.show();
     }
 
 

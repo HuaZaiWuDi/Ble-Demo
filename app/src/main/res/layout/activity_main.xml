@@ -19,29 +19,36 @@
     <RelativeLayout
         android:id="@+id/bottom_tab"
         android:layout_width="match_parent"
-        android:layout_height="160px"
+        android:layout_height="170px"
         android:layout_alignParentBottom="true">
 
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/bottom_nav_bg"/>
+        <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:src="@mipmap/bottom_nav_bg"/>-->
+
 
         <com.flyco.tablayout.CommonTabLayout
             android:id="@+id/mCommonTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_150"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
-            android:padding="@dimen/d_15"
-            app:tl_iconHeight="@dimen/d_50"
-            app:tl_iconWidth="@dimen/d_50"
+            android:background="@color/white"
+            android:padding="@dimen/d_20"
+            app:tl_iconHeight="@dimen/d_70"
+            app:tl_iconWidth="@dimen/d_70"
             app:tl_textBold="SELECT"
             app:tl_textSelectColor="@color/colorTheme"
             app:tl_textUnselectColor="@color/colorTabText"
-            app:tl_textsize="@dimen/d_30"/>
+            app:tl_textsize="@dimen/d_35"/>
 
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_2"
+            android:background="@color/lineColor"/>
     </RelativeLayout>
 
 

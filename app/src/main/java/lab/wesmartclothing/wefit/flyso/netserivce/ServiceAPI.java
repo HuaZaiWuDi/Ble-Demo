@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.netserivce;
 
 
-
 /**
  * 项目名称：Bracelet
  * 类描述：

@@ -80,7 +80,9 @@
     <RelativeLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/barHeight">
+        android:layout_height="@dimen/barHeight"
+        android:paddingBottom="@dimen/d_30"
+        android:paddingTop="90px">
 
         <LinearLayout
             android:id="@+id/back"

@@ -14,12 +14,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -208,20 +208,6 @@ public class HeatFragment extends BaseFragment {
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
             RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
             RxManager.getInstance().doNetSubscribe(dxyService.getHeatHistory(body))
-                    .doOnSubscribe(new Consumer<Disposable>() {
-                        @Override
-                        public void accept(Disposable disposable) throws Exception {
-                            RxLogUtils.d("doOnSubscribe：");
-                            tipDialog.show();
-                        }
-                    })
-                    .doFinally(new Action() {
-                        @Override
-                        public void run() throws Exception {
-                            RxLogUtils.d("结束：");
-                            tipDialog.dismiss();
-                        }
-                    })
                     .subscribe(new RxNetSubscriber<String>() {
                         @Override
                         protected void _onNext(String s) {
@@ -352,6 +338,7 @@ public class HeatFragment extends BaseFragment {
         sectionQuickAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (RxUtils.isFastClick(1000)) return;
                 if (mBeans.get(position).isHeader) return;
                 ListBean bean = new ListBean();
                 final FoodListBean foodListBean = mBeans.get(position).t;
@@ -384,24 +371,26 @@ public class HeatFragment extends BaseFragment {
     }
 
     private void showDeleteDialog(final int position) {
-        QMUIDialog dialog = new QMUIDialog.MessageDialogBuilder(mActivity)
-                .setTitle("提示")
-                .setMessage("是否删除")
-                .addAction(R.string.cancel, new QMUIDialogAction.ActionListener() {
-                    @Override
-                    public void onClick(QMUIDialog dialog, int index) {
-                        dialog.dismiss();
-                    }
-                })
-                .addAction(R.string.delete, new QMUIDialogAction.ActionListener() {
-                    @Override
-                    public void onClick(QMUIDialog dialog, int index) {
-                        dialog.dismiss();
-                        HeatFoodSection section = mBeans.get(position);
-                        deleteData(section.t.getGid());
-                    }
-                }).show();
-
+        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+        dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
+        dialog.getTvContent().setText("是否删除？");
+        dialog.setCancel("删除");
+        dialog.setCancelListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                HeatFoodSection section = mBeans.get(position);
+                deleteData(section.t.getGid());
+            }
+        });
+        dialog.setSure("取消");
+        dialog.show();
+        dialog.setSureListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     private void updateFood(FoodListBean foodListBean, AddFoodItem.intakeList item) {

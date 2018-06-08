@@ -26,8 +26,34 @@ public class Device implements Serializable, MultiItemEntity {
     private String city;
     private int type;
     private int quantity;
-    private boolean isConnect;
+    private boolean isConnect = false;
+    private int standby;
+    private String newFirmwareVersion = "";
+    private boolean isUpdate = false;
 
+    public boolean isUpdate() {
+        return isUpdate;
+    }
+
+    public void setUpdate(boolean update) {
+        isUpdate = update;
+    }
+
+    public String getNewFirmwareVersion() {
+        return newFirmwareVersion;
+    }
+
+    public void setNewFirmwareVersion(String newFirmwareVersion) {
+        this.newFirmwareVersion = newFirmwareVersion;
+    }
+
+    public int getStandby() {
+        return standby;
+    }
+
+    public void setStandby(int standby) {
+        this.standby = standby;
+    }
 
     public boolean isConnect() {
         return isConnect;
@@ -47,6 +73,13 @@ public class Device implements Serializable, MultiItemEntity {
 
     public Device(int type) {
         this.type = type;
+    }
+
+    public Device() {
+    }
+
+    public Device(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public int getType() {

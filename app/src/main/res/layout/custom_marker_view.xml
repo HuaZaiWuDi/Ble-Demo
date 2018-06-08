@@ -13,10 +13,9 @@
         android:background="@mipmap/word_bg"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLength="6"
         android:maxLines="1"
         android:paddingBottom="@dimen/d_30"
-        android:text="1222"
+        android:text="1222kg"
         android:textColor="@color/colorTheme"
         android:textSize="@dimen/d_30"/>
 

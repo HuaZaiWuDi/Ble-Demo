@@ -2,12 +2,12 @@ package com.smartclothing.module_wefit.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.CollectPagerAdapter;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.fragment.CollectPagerItemFragment;
 import com.smartclothing.module_wefit.widget.NoScrollViewPager;
 import com.smartclothing.module_wefit.widget.PagerSlidingTabStrip;
@@ -17,7 +17,7 @@ import java.util.List;
 
 /*我的收藏*/
 
-public class CollectActivity extends AppCompatActivity implements View.OnClickListener {
+public class CollectActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout iv_back;
 
@@ -34,7 +34,7 @@ public class CollectActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
 
         slider_collect = findViewById(R.id.slider_collect);

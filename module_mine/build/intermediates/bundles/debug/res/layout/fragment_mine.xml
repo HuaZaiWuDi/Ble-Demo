@@ -93,7 +93,7 @@
                     android:layout_marginTop="@dimen/dimen_2"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="她很懒，什么都没留下"
+                    android:text="@string/default_sign"
                     android:textColor="#999999"
                     android:textSize="@dimen/dimen_11"/>
 
@@ -115,7 +115,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="饮食记录"
+                        android:text="@string/slimming"
                         android:textColor="#212121"
                         android:textSize="@dimen/dimen_13"
                         android:textStyle="bold"/>
@@ -142,7 +142,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="体重记录"
+                        android:text="@string/weight"
                         android:textColor="#212121"
                         android:textSize="@dimen/dimen_13"
                         android:textStyle="bold"/>
@@ -168,7 +168,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="运动记录"
+                        android:text="@string/sports"
                         android:textColor="#212121"
                         android:textSize="@dimen/dimen_13"
                         android:textStyle="bold"/>
@@ -213,7 +213,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_mine_collect"
-                    android:text="我的收藏"
+                    android:text="@string/collect"
                     android:textColor="#212121"
                     android:textSize="@dimen/dimen_12"/>
 
@@ -269,7 +269,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_mine_order"
-                    android:text="我的订单"
+                    android:text="@string/my_order"
                     android:textColor="#212121"
                     android:textSize="@dimen/dimen_12"/>
 
@@ -311,7 +311,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_mine_shop_car"
-                    android:text="我的购物车"
+                    android:text="@string/my_shop_car"
                     android:textColor="#212121"
                     android:textSize="@dimen/dimen_12"/>
 
@@ -353,7 +353,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_mine_device"
-                    android:text="我的设备"
+                    android:text="@string/my_device"
                     android:textColor="#212121"
                     android:textSize="@dimen/dimen_12"/>
 
@@ -408,7 +408,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_mine_problem_suggest"
-                    android:text="问题与建议"
+                    android:text="@string/problem"
                     android:textColor="#212121"
                     android:textSize="@dimen/dimen_12"/>
 
@@ -450,7 +450,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_mine_about"
-                    android:text="关于我们"
+                    android:text="@string/aboutUs"
                     android:textColor="#212121"
                     android:textSize="@dimen/dimen_12"/>
 

@@ -22,7 +22,7 @@ public class RxHttpException {
 
     public String handleResponseError(Throwable t) {
         //这里不光是只能打印错误,还可以根据不同的错误作出不同的逻辑处理
-        String msg = "未知错误";
+        String msg = "网络异常";
         if (t instanceof UnknownHostException) {
             msg = "网络不可用";
         } else if (t instanceof SocketTimeoutException) {

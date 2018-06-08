@@ -30,7 +30,7 @@ import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 public class BleTools {
     private static BleTools bleTools;
 
-    public static BleDevice bleDevice;
+    private BleDevice bleDevice;
     private Handler TimeOut = new Handler();
     private static BleManager bleManager;
 
@@ -44,6 +44,7 @@ public class BleTools {
 
     }
 
+
     public static BleManager getBleManager() {
         return bleManager;
     }
@@ -56,11 +57,12 @@ public class BleTools {
         return bleTools;
     }
 
+
     private BleChartChangeCallBack bleChartChange;
     private byte[] bytes;
     private final int reWriteCount = 2;    //重连次数
     private int currentCount = 0;          //当前次数
-    private final int timeOut = 3000;          //超时
+    private final int timeOut = 1000;          //超时
 
 
     public static void initBLE(Application application) {
@@ -77,9 +79,16 @@ public class BleTools {
 //        bleManager.disableBluetooth();//关闭蓝牙
         bleManager.enableLog(false);//是否开启蓝牙日志
         bleManager.setMaxConnectCount(1);
-        bleManager.setOperateTimeout(5000);//设置超时时间
+        bleManager.setOperateTimeout(500000);//设置超时时间
     }
 
+    public void setBleDevice(BleDevice bleDevice) {
+        this.bleDevice = bleDevice;
+    }
+
+    public BleDevice getBleDevice() {
+        return bleDevice;
+    }
 
     private Runnable reWrite = new Runnable() {
         @Override
@@ -102,59 +111,34 @@ public class BleTools {
 
         TimeOut.postDelayed(reWrite, timeOut);
         if (currentCount > reWriteCount) {
-            Log.e(TAG, "写失败");
+            Log.e(TAG, "写失败--次数：" + currentCount);
             currentCount = 0;
         } else {
             currentCount++;
-
             bleManager.write(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
 
                 @Override
                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                    Log.e(TAG, "写成功");
-                    bleManager.read(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_READ_NOTIFY, new BleReadCallback() {
-                        @Override
-                        public void onReadSuccess(byte[] data) {
-                            TimeOut.removeCallbacks(reWrite);
-                            HexUtil.encodeHexStr(data);
-                            if (bytes[2] == data[2]) {
-                                currentCount = 0;
-                                Log.e(TAG, "数据正确");
-                                if (bleChartChange != null)
-                                    bleChartChange.callBack(data);
-                            } else {
-                                Log.e(TAG, "数据错误");
-                                write(bytes, bleChartChange);
-                            }
-                        }
-
-                        @Override
-                        public void onReadFailure(BleException exception) {
-                            TimeOut.removeCallbacks(reWrite);
-                            Log.e(TAG, "读失败");
-                            write(bytes, bleChartChange);
-                        }
-                    });
-
+                    Log.d(TAG, "写成功" + "【current】" + current + "【total】" + total + "【justWrite】" + HexUtil.encodeHexStr(justWrite));
+//
                 }
 
                 @Override
                 public void onWriteFailure(BleException exception) {
-                    TimeOut.removeCallbacks(reWrite);
-                    Log.e(TAG, "写失败");
-                    write(bytes, bleChartChange);
+                    Log.e(TAG, "写失败" + exception.toString());
                 }
             });
         }
     }
 
-
     //没有响应的写
+    private BleCallBack mBleCallBack;
+
     public void writeNo(byte[] bytes) {
         bleManager.write(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
             @Override
             public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                Log.e(TAG, "写成功");
+                Log.e(TAG, "无响应写成功:" + HexUtil.encodeHexStr(justWrite));
             }
 
             @Override
@@ -164,7 +148,31 @@ public class BleTools {
         });
     }
 
-    private BleCallBack mBleCallBack;
+    public void read() {
+        bleManager.read(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_READ_NOTIFY, new BleReadCallback() {
+            @Override
+            public void onReadSuccess(byte[] data) {
+                TimeOut.removeCallbacks(reWrite);
+                HexUtil.encodeHexStr(data);
+                if (bytes[2] == data[2]) {
+                    currentCount = 0;
+                    Log.d(TAG, "数据正确");
+                    if (bleChartChange != null)
+                        bleChartChange.callBack(data);
+                } else {
+                    Log.e(TAG, "数据错误");
+                    write(bytes, bleChartChange);
+                }
+            }
+
+            @Override
+            public void onReadFailure(BleException exception) {
+                TimeOut.removeCallbacks(reWrite);
+                Log.e(TAG, "读失败");
+                write(bytes, bleChartChange);
+            }
+        });
+    }
 
     public void setBleCallBack(BleCallBack bleCallBack) {
         mBleCallBack = bleCallBack;
@@ -178,7 +186,7 @@ public class BleTools {
         bleManager.notify(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_READ_NOTIFY, new BleNotifyCallback() {
             @Override
             public void onNotifySuccess() {
-                Log.e(TAG, "打开通知成功");
+                Log.d(TAG, "打开通知成功");
             }
 
             @Override
@@ -188,9 +196,14 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-                Log.e(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
                 if (mBleCallBack != null)
                     mBleCallBack.onNotify(data);
+
+                TimeOut.removeCallbacks(reWrite);
+                currentCount = 0;
+                if (bleChartChange != null)
+                    bleChartChange.callBack(data);
             }
         });
     }
@@ -213,9 +226,15 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-                Log.e(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
                 if (mBleCallBack != null)
                     mBleCallBack.onNotify(data);
+
+                TimeOut.removeCallbacks(reWrite);
+                currentCount = 0;
+                Log.d(TAG, "数据正确");
+                if (bleChartChange != null)
+                    bleChartChange.callBack(data);
             }
         });
     }
@@ -263,7 +282,7 @@ public class BleTools {
 //        UUID.fromString(BleService.UUID_Servie),
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
 //                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
-                .setDeviceName(true, "QN-Scale")        // 只扫描指定广播名的设备，可选
+                .setDeviceName(true, "QN-Scale", "WeSmartCloth")        // 只扫描指定广播名的设备，可选
 //                .setDeviceMac()                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
                 .setScanTimeOut(timeout)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间

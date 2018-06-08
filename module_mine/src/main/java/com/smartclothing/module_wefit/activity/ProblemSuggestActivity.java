@@ -2,7 +2,6 @@ package com.smartclothing.module_wefit.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -14,6 +13,7 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.smartclothing.module_wefit.R;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.tools.GlideImageLoader;
 import com.smartclothing.module_wefit.tools.ImageLoaderUtil;
@@ -48,7 +48,7 @@ import okhttp3.RequestBody;
 
 /*问题与建议*/
 
-public class ProblemSuggestActivity extends AppCompatActivity implements View.OnClickListener, ImageClickListener {
+public class ProblemSuggestActivity extends BaseActivity implements View.OnClickListener, ImageClickListener {
 
     private LinearLayout iv_back;
     private TextView spinner_problem_type, spinner_frequency;
@@ -73,7 +73,7 @@ public class ProblemSuggestActivity extends AppCompatActivity implements View.On
         initView();
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
         spinner_problem_type = findViewById(R.id.spinner_problem_type);
         spinner_frequency = findViewById(R.id.spinner_frequency);
@@ -89,7 +89,7 @@ public class ProblemSuggestActivity extends AppCompatActivity implements View.On
         listener();
         initImagePick();
         dataset0 = new LinkedList<>(Arrays.asList("产品反馈", "使用资讯", "产品建议", "其它"));
-        dataset1 = new LinkedList<>(Arrays.asList("经常出现", "偶尔出现", "很少出现", "老是出现"));
+        dataset1 = new LinkedList<>(Arrays.asList("很少出现", "偶尔出现", "经常出现", "老是出现"));
 
         et_data_sign.addTextChangedListener(textWatcher);
 
@@ -193,6 +193,18 @@ public class ProblemSuggestActivity extends AppCompatActivity implements View.On
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.feedback(body))
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        tipDialog.show();
+                    }
+                })
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        tipDialog.dismiss();
+                    }
+                })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

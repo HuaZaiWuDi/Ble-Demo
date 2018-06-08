@@ -33,10 +33,13 @@ android {
                 arguments = ['resourcePackageName': android.defaultConfig.applicationId]
             }
         }
-
     }
     buildTypes {
         release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -74,7 +77,6 @@ dependencies {
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 
     //BUGly
-
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
 
@@ -85,7 +87,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     //轻牛体重秤SDK
-    implementation files('libs/qnsdk-0.1.0.jar')
+    implementation files('libs/qnsdk-0.2.1.jar')
     compile project(path: ':blelibrary')
 
     //https://github.com/gzu-liyujiang/AndroidPicker
@@ -98,18 +100,6 @@ dependencies {
 
     //腾讯急速加载网页
     compile 'com.tencent.sonic:sdk:3.0.0'
-
-    ////    微信SDK
-
-    //    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
-
-    //    //QQSDK
-
-    //    implementation files('libs/open_sdk_r6008_lite.jar')
-
-    //    //微博SDK
-
-    //    compile 'com.sina.weibo.sdk:core:4.2.7:openDefaultRelease@aar'
 
     //jsbridge
     compile 'com.github.lzyzsd:jsbridge:1.0.4'

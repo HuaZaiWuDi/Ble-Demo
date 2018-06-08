@@ -66,6 +66,15 @@ public class RxFormat {
     public static String setFormatNum(long value, String format) {
         return new DecimalFormat(format).format(value);
     }
+    public static String setFormatNum(int value, String format) {
+        return new DecimalFormat(format).format(value);
+    }
+    public static String setFormatNum(double value, String format) {
+        return new DecimalFormat(format).format(value);
+    }
+    public static String setFormatNum(float value, String format) {
+        return new DecimalFormat(format).format(value);
+    }
 
 
     public static long getDateMillis(String dateString, String pattern) {

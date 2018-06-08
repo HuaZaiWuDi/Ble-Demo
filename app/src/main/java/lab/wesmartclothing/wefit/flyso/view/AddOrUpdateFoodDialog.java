@@ -48,6 +48,7 @@ public class AddOrUpdateFoodDialog {
 
     private void showAddFoodDialog(final ListBean item) {
 
+
         View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
 
         final AlertDialog dialog = new AlertDialog.Builder(mContext)

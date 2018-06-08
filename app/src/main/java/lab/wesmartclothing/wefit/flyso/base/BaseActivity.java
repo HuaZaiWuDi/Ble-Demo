@@ -52,8 +52,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        //屏幕沉浸
+//        //屏幕沉浸
         StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+        //屏幕沉浸
+//        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+
         mContext = this;
         mActivity = this;
         RxActivityUtils.addActivity(this);
@@ -120,15 +123,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
         View view = null;
-        if (name.equals(LAYOUT_FRAMELAYOUT)) {
+        if (LAYOUT_FRAMELAYOUT.equals(name)) {
             view = new AutoFrameLayout(context, attrs);
         }
 
-        if (name.equals(LAYOUT_LINEARLAYOUT)) {
+        if (LAYOUT_LINEARLAYOUT.equals(name)) {
             view = new AutoLinearLayout(context, attrs);
         }
 
-        if (name.equals(LAYOUT_RELATIVELAYOUT)) {
+        if (LAYOUT_RELATIVELAYOUT.equals(name)) {
             view = new AutoRelativeLayout(context, attrs);
         }
 

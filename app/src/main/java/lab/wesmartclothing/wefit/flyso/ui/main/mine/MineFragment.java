@@ -24,6 +24,7 @@ import com.smartclothing.module_wefit.bean.UserInfo;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -47,6 +48,7 @@ import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -106,12 +108,14 @@ public class MineFragment extends BaseFragment {
 
     @Click
     void iv_mine_set() {
-        RxActivityUtils.skipActivity(mActivity, SetActivity.class);
+        if (!RxUtils.isFastClick(1000))
+            RxActivityUtils.skipActivity(mActivity, SetActivity.class);
     }
 
     @Click
     void ll_iv_mine_msg() {
-        RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
+        if (!RxUtils.isFastClick(1000))
+            RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
     }
 
     @Click
@@ -206,9 +210,9 @@ public class MineFragment extends BaseFragment {
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {
-                if (device.getDeviceNo().equals("0")) {
+                if ("0".equals(device.getDeviceNo())) {
                     mPrefs.scaleIsBind().put("");
-                } else if (device.getDeviceNo().equals("1")) {
+                } else if ("1".equals(device.getDeviceNo())) {
                     mPrefs.clothing().put("");
                 }
             }
@@ -216,23 +220,25 @@ public class MineFragment extends BaseFragment {
         Disposable web = RxBus.getInstance().register(String.class, new Consumer<String>() {
             @Override
             public void accept(String device) throws Exception {
-                if (device.equals(Key.BUNDLE_WEB_URL)) {
+                if (Key.BUNDLE_WEB_URL.equals(device)) {
                     //我的订单
                     Bundle bundle = new Bundle();
                     bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
                     RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
-                } else if (device.equals("logout")) {
+                } else if ("logout".equals(device)) {
                     mPrefs.clear();
                     MyAPP.getACache().clear();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Key.BUNDLE_RELOGIN, true);
-                    RxActivityUtils.skipActivity(mActivity, LoginActivity_.class, bundle);
+                    RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginActivity_.class, bundle);
                     RxActivityUtils.finishActivity(SetActivity.class);
-                    mActivity.finish();
-                } else if (device.equals("ScanBle")) {
+                } else if ("0".equals(device) || "1".equals(device)) {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
+                    bundle.putString(Key.BUNDLE_BIND_TYPE, device);
                     RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
+                } else if ("temp".equals(device)) {
+                    RxActivityUtils.skipActivity(mActivity, TempActivity.class);
                 }
             }
         });

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.google.gson.Gson;
+import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -84,6 +85,9 @@ public class SpalshActivity extends BaseActivity {
 //        mPrefs.UserId().put("testuser");
         NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
 
+        RxLogUtils.d("userId" + mPrefs.UserId().get());
+        RxLogUtils.d("token" + mPrefs.token().get());
+
         initUserInfo();
         initData();
 
@@ -128,9 +132,9 @@ public class SpalshActivity extends BaseActivity {
             public void run() {
                 //通过验证是否保存userId来判断是否登录
                 if ("".equals(mPrefs.UserId().get())) {
-                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, LoginActivity_.class);
+                    RxActivityUtils.skipActivity(SpalshActivity.this, LoginActivity_.class);
                 } else if (isSaveUserInfo)
-                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, UserInfoActivity_.class);
+                    RxActivityUtils.skipActivity(SpalshActivity.this, UserInfoActivity_.class);
                 else
                     RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, MainActivity_.class);
             }
@@ -140,12 +144,12 @@ public class SpalshActivity extends BaseActivity {
 
     private void initPromissions() {
         subscribe = new RxPermissions(this)
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new Consumer<Boolean>() {
+                .subscribe(new Consumer<Permission>() {
                     @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        if (!aBoolean) {
+                    public void accept(Permission permission) throws Exception {
+                        if (!permission.granted) {
                             RxLogUtils.d("没有给定位权限");
                         }
                         gotoMain();

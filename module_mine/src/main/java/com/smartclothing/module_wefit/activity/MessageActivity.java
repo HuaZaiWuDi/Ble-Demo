@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.MessagePagerAdapter;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.fragment.MessagePagerItemFragment;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.widget.PagerSlidingTabStrip;
@@ -27,7 +27,7 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 /*消息*/
 
-public class MessageActivity extends AppCompatActivity implements View.OnClickListener {
+public class MessageActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout iv_back;
     private TextView tv_right_commit;
@@ -48,7 +48,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
         tv_right_commit = findViewById(R.id.tv_right_commit);
 

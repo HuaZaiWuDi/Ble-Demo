@@ -2,12 +2,12 @@ package com.smartclothing.module_wefit.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.smartclothing.module_wefit.R;
+import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Message;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.dateUtils.RxTimeUtils;
@@ -24,7 +24,7 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 /*消息详情*/
 
-public class MessageDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class MessageDetailActivity extends BaseActivity implements View.OnClickListener {
 
     private LinearLayout iv_back;
     private TextView tv_title;
@@ -43,7 +43,7 @@ public class MessageDetailActivity extends AppCompatActivity implements View.OnC
         initData();
     }
 
-    private void initView() {
+    public void initView() {
         iv_back = findViewById(R.id.iv_back);
         tv_title = findViewById(R.id.tv_title);
         tv_message_detail_title = findViewById(R.id.tv_message_detail_title);

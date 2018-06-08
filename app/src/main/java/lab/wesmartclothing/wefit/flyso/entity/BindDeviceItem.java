@@ -12,36 +12,36 @@ import java.util.List;
 public class BindDeviceItem implements Serializable {
 
 
-    /**
-     * city : string
-     * deviceName : string
-     * deviceNo : string
-     * firmwareVersion : string
-     * lastOnlineTime : 2018-05-22T05:54:06.057Z
-     * linkStatus : 0
-     * macAddr : string
-     * mcuVersion : string
-     * onlineDuration : 0
-     * productName : string
-     * userId : string
-     * wakeTime : 2018-05-22T05:54:06.057Z
-     * productId : 001
-     */
+    private List<DeviceListBean> deviceList;
 
-    List<deviceList> deviceList;
-
-    public List<deviceList> getDeviceList() {
+    public List<DeviceListBean> getDeviceList() {
         return deviceList;
     }
 
-    public void setDeviceList(List<deviceList> deviceList) {
+    public void setDeviceList(List<DeviceListBean> deviceList) {
         this.deviceList = deviceList;
     }
 
-
-    public static class deviceList implements Serializable {
+    public static class DeviceListBean {
+        /**
+         * city : string
+         * country : string
+         * deviceName : string
+         * deviceNo : string
+         * firmwareVersion : string
+         * lastOnlineTime : 2018-06-05T07:29:48.289Z
+         * linkStatus : 0
+         * macAddr : string
+         * mcuVersion : string
+         * onlineDuration : 0
+         * productId : string
+         * productName : string
+         * province : string
+         * wakeTime : 2018-06-05T07:29:48.289Z
+         */
 
         private String city;
+        private String country;
         private String deviceName;
         private String deviceNo;
         private String firmwareVersion;
@@ -50,10 +50,10 @@ public class BindDeviceItem implements Serializable {
         private String macAddr;
         private String mcuVersion;
         private int onlineDuration;
-        private String productName;
-        private String userId;
-        private String wakeTime;
         private String productId;
+        private String productName;
+        private String province;
+        private String wakeTime;
 
         public String getCity() {
             return city;
@@ -61,6 +61,14 @@ public class BindDeviceItem implements Serializable {
 
         public void setCity(String city) {
             this.city = city;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public void setCountry(String country) {
+            this.country = country;
         }
 
         public String getDeviceName() {
@@ -127,6 +135,14 @@ public class BindDeviceItem implements Serializable {
             this.onlineDuration = onlineDuration;
         }
 
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
+
         public String getProductName() {
             return productName;
         }
@@ -135,12 +151,12 @@ public class BindDeviceItem implements Serializable {
             this.productName = productName;
         }
 
-        public String getUserId() {
-            return userId;
+        public String getProvince() {
+            return province;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
+        public void setProvince(String province) {
+            this.province = province;
         }
 
         public String getWakeTime() {
@@ -150,15 +166,5 @@ public class BindDeviceItem implements Serializable {
         public void setWakeTime(String wakeTime) {
             this.wakeTime = wakeTime;
         }
-
-        public String getProductId() {
-            return productId;
-        }
-
-        public void setProductId(String productId) {
-            this.productId = productId;
-        }
     }
-
-
 }

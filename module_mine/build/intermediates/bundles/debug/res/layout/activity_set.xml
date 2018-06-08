@@ -80,6 +80,34 @@
             android:textSize="@dimen/dimen_14"/>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:onClick="setTemp"
+        android:id="@+id/rl_set_temp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_50"
+        android:layout_below="@+id/rl_set_clean"
+        android:background="@drawable/rl_selector">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:text="设备调节"
+            android:textColor="#FF212121"
+            android:textSize="@dimen/dimen_14"/>
+
+        <ImageView
+            android:id="@+id/iv_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dimen_15"
+            android:src="@mipmap/icon_right_l"
+            />
+
+    </RelativeLayout>
 
 
     <TextView
