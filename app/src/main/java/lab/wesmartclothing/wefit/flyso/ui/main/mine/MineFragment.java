@@ -43,12 +43,11 @@ import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity_;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -144,10 +143,11 @@ public class MineFragment extends BaseFragment {
 
     @Click
     void rl_my_order() {
-        //我的订单
+
         Bundle bundle = new Bundle();
-        bundle.putString(Key.BUNDLE_WEB_URL, lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI.Order_Url);
-        RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
+        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
+        bundle.putString(Key.BUNDLE_TITLE, "我的订单");
+        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
     }
 
     @Click
@@ -221,10 +221,13 @@ public class MineFragment extends BaseFragment {
             @Override
             public void accept(String device) throws Exception {
                 if (Key.BUNDLE_WEB_URL.equals(device)) {
-                    //我的订单
+
+                    //服务协议
                     Bundle bundle = new Bundle();
                     bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-                    RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
+                    bundle.putString(Key.BUNDLE_TITLE, "服务协议");
+                    RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+
                 } else if ("logout".equals(device)) {
                     mPrefs.clear();
                     MyAPP.getACache().clear();
@@ -238,7 +241,7 @@ public class MineFragment extends BaseFragment {
                     bundle.putString(Key.BUNDLE_BIND_TYPE, device);
                     RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
                 } else if ("temp".equals(device)) {
-                    RxActivityUtils.skipActivity(mActivity, TempActivity.class);
+                    RxActivityUtils.skipActivity(mActivity, TempActivity_.class);
                 }
             }
         });

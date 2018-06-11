@@ -33,6 +33,8 @@ public class QNBleTools {
         config.setAllowDuplicates(false);
         config.setUnit(QNUnit.WEIGHT_UNIT_KG);
         MyAPP.QNapi.startBleDeviceDiscovery(config, mQNResultCallback);
+
+
     }
 
 

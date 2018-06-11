@@ -572,7 +572,7 @@ public class WeightFragment extends BaseFragment {
 //            RxLogUtils.d("标签---：" + s);
 //        }
 
-        mLineChart.setVisibleXRangeMaximum(7);
+
 
         mLineChart.moveViewToX(yVals.size() - (pageNum - 1) * 20 - 4);
 

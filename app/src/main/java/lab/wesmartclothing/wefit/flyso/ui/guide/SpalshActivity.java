@@ -132,9 +132,9 @@ public class SpalshActivity extends BaseActivity {
             public void run() {
                 //通过验证是否保存userId来判断是否登录
                 if ("".equals(mPrefs.UserId().get())) {
-                    RxActivityUtils.skipActivity(SpalshActivity.this, LoginActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, LoginActivity_.class);
                 } else if (isSaveUserInfo)
-                    RxActivityUtils.skipActivity(SpalshActivity.this, UserInfoActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, UserInfoActivity_.class);
                 else
                     RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, MainActivity_.class);
             }

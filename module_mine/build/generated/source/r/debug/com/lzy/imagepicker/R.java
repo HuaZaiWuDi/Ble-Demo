@@ -786,7 +786,7 @@ public final class R {
         public static int ic_back = 0x7f11000b;
         public static int ic_del = 0x7f11000c;
         public static int list_selected = 0x7f11002d;
-        public static int text_indicator = 0x7f110030;
+        public static int text_indicator = 0x7f110031;
     }
     public static final class string {
         public static int abc_action_bar_home_description = 0x7f150002;
@@ -823,15 +823,15 @@ public final class R {
         public static int all_images = 0x7f150023;
         public static int complete = 0x7f15002c;
         public static int folder_image_count = 0x7f15002e;
-        public static int origin = 0x7f15003b;
-        public static int origin_size = 0x7f15003c;
-        public static int photo_crop = 0x7f150042;
-        public static int preview_count = 0x7f150043;
-        public static int preview_image_count = 0x7f150044;
-        public static int search_menu_title = 0x7f15004d;
-        public static int select_complete = 0x7f15004e;
-        public static int select_limit = 0x7f15004f;
-        public static int status_bar_notification_info_overflow = 0x7f150063;
+        public static int origin = 0x7f15003c;
+        public static int origin_size = 0x7f15003d;
+        public static int photo_crop = 0x7f150043;
+        public static int preview_count = 0x7f150044;
+        public static int preview_image_count = 0x7f150045;
+        public static int search_menu_title = 0x7f15004e;
+        public static int select_complete = 0x7f15004f;
+        public static int select_limit = 0x7f150050;
+        public static int status_bar_notification_info_overflow = 0x7f150065;
     }
     public static final class style {
         public static int AlertDialog_AppCompat = 0x7f160003;

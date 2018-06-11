@@ -1,11 +1,20 @@
 package com.smartclothing.blelibrary;
 
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
+import com.smartclothing.blelibrary.util.ByteUtil;
 
 /**
  * Created by jk on 2018/5/19.
  */
 public class BleAPI {
+
+
+    private static byte[] time2Byte() {
+        long time = System.currentTimeMillis() / 1000;
+        byte[] bytes = ByteUtil.longToBytesD4(time);
+        return bytes;
+    }
+
 
     /**
      * 配置信息	写配置	0x01
@@ -35,7 +44,7 @@ public class BleAPI {
         bytes[1] = 0x11;
         bytes[2] = 0x01;
 
-        if (heartRates != null) {
+        if (heartRates != null && heartRates.length == 5) {
             bytes[3] = 0x01;
             System.arraycopy(heartRates, 0, bytes, 4, 5);
         }
@@ -65,6 +74,10 @@ public class BleAPI {
         bytes[0] = 0x40;
         bytes[1] = 0x11;
         bytes[2] = 0x02;
+        bytes[3] = time2Byte()[0];
+        bytes[4] = time2Byte()[1];
+        bytes[5] = time2Byte()[2];
+        bytes[6] = time2Byte()[3];
 
         BleTools.getInstance().write(bytes, bleChartChange);
     }
@@ -76,6 +89,10 @@ public class BleAPI {
         bytes[0] = 0x40;
         bytes[1] = 0x11;
         bytes[2] = 0x03;
+        bytes[3] = time2Byte()[0];
+        bytes[4] = time2Byte()[1];
+        bytes[5] = time2Byte()[2];
+        bytes[6] = time2Byte()[3];
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
@@ -95,7 +112,7 @@ public class BleAPI {
 //        0x00 0x11 0x05
 
         byte[] bytes = new byte[20];
-        bytes[0] = 0x40;
+        bytes[0] = 0x00;
         bytes[1] = 0x11;
         bytes[2] = 0x05;
         BleTools.getInstance().writeNo(bytes);
@@ -103,7 +120,7 @@ public class BleAPI {
 
 
     //notify
-    public static void syncData() {
+    public static void syncData(byte[] time) {
         /**
          * 表示：终端发送同步数据，时间戳为0x44332211 心率为0x45 温度为0x20 计步为0x6655
          * 电池电压为0x8877，整数后两位为小数点之后两位，电压v。
@@ -112,9 +129,13 @@ public class BleAPI {
 //        App返回：0x02 0x11 0x06
 
         byte[] bytes = new byte[20];
-        bytes[0] = 0x40;
+        bytes[0] = 0x02;
         bytes[1] = 0x11;
         bytes[2] = 0x06;
+        bytes[3] = time[0];
+        bytes[4] = time[1];
+        bytes[5] = time[2];
+        bytes[6] = time[3];
         BleTools.getInstance().writeNo(bytes);
     }
 

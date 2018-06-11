@@ -3,7 +3,7 @@ package lab.wesmartclothing.wefit.flyso.tools;
 /**
  * Created by jk on 2018/5/7.
  */
-public class Key {
+public interface Key {
 
     public static final String ADD_FOOD_NAME = "ADD_FOOD_NAME";//食物界面跳转携带
     public static final String ADD_FOOD_TYPE = "ADD_FOOD_TYPE";
@@ -36,6 +36,14 @@ public class Key {
     public static final String ACTION_SWITCH_BOTTOM_TAB = "ACTION_SWITCH_BOTTOM_TAB";
     public static final String EXTRA_SWITCH_BOTTOM_TAB = "EXTRA_SWITCH_BOTTOM_TAB";
 
+    //瘦身衣连接状态
+    String ACTION_CLOTHING_CONNECT = "ACTION_CLOTHING_CONNECT";
+    String EXTRA_CLOTHING_CONNECT = "EXTRA_CLOTHING_CONNECT";
+
+    //体脂称连接状态
+    String ACTION_SCALE_CONNECT = "ACTION_SCALE_CONNECT";
+    String EXTRA_SCALE_CONNECT = "EXTRA_SCALE_CONNECT";
+
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK
     ///////////////////////////////////////////////////////////////////////////
@@ -54,4 +62,10 @@ public class Key {
     public static final String CACHE_BIND_INFO = "CACHE_BIND_INFO";
 
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 蓝牙设备名字
+    ///////////////////////////////////////////////////////////////////////////
+
+    String ScaleName = "QN-Scale";//体脂称
+    String Smart_Clothing = "WeSmartCloth";
 }

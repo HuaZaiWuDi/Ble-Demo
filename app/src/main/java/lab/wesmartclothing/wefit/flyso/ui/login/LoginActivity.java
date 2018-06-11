@@ -258,4 +258,11 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
+    //不退出app，而是隐藏当前的app
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+        super.onBackPressed();
+    }
+
 }

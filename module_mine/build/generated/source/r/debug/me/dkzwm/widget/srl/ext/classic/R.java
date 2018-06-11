@@ -21,23 +21,23 @@ public final class R {
         public static int sr_classic_title = 0x7f0c01b4;
     }
     public static final class string {
-        public static int sr_hours_ago = 0x7f150052;
-        public static int sr_last_update = 0x7f150053;
-        public static int sr_load_complete = 0x7f150054;
-        public static int sr_load_failed = 0x7f150055;
-        public static int sr_loading = 0x7f150056;
-        public static int sr_minutes_ago = 0x7f150057;
-        public static int sr_no_more_data = 0x7f150058;
-        public static int sr_pull_down = 0x7f150059;
-        public static int sr_pull_down_to_refresh = 0x7f15005a;
-        public static int sr_pull_up = 0x7f15005b;
-        public static int sr_pull_up_to_load = 0x7f15005c;
-        public static int sr_refresh_complete = 0x7f15005d;
-        public static int sr_refresh_failed = 0x7f15005e;
-        public static int sr_refreshing = 0x7f15005f;
-        public static int sr_release_to_load = 0x7f150060;
-        public static int sr_release_to_refresh = 0x7f150061;
-        public static int sr_seconds_ago = 0x7f150062;
+        public static int sr_hours_ago = 0x7f150054;
+        public static int sr_last_update = 0x7f150055;
+        public static int sr_load_complete = 0x7f150056;
+        public static int sr_load_failed = 0x7f150057;
+        public static int sr_loading = 0x7f150058;
+        public static int sr_minutes_ago = 0x7f150059;
+        public static int sr_no_more_data = 0x7f15005a;
+        public static int sr_pull_down = 0x7f15005b;
+        public static int sr_pull_down_to_refresh = 0x7f15005c;
+        public static int sr_pull_up = 0x7f15005d;
+        public static int sr_pull_up_to_load = 0x7f15005e;
+        public static int sr_refresh_complete = 0x7f15005f;
+        public static int sr_refresh_failed = 0x7f150060;
+        public static int sr_refreshing = 0x7f150061;
+        public static int sr_release_to_load = 0x7f150062;
+        public static int sr_release_to_refresh = 0x7f150063;
+        public static int sr_seconds_ago = 0x7f150064;
     }
     public static final class styleable {
         public static int[] AbsClassicRefreshView = { 0x7f040328 };

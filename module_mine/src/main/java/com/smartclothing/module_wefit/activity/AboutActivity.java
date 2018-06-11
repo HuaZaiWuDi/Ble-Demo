@@ -3,6 +3,7 @@ package com.smartclothing.module_wefit.activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Device;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.widget.dialog.AboutUpdateDialog;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -117,11 +119,14 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         //版本号
         tv_version.setText("版本号v" + RxDeviceUtils.getAppVersionName());
 
-        RxTextUtils.getBuilder("智裳科技")
-                .append("软件服务协议").setForegroundColor(getResources().getColor(R.color.colorTheme))
-                .append("和").setForegroundColor(getResources().getColor(R.color.textColor))
-                .append("隐私协议").setForegroundColor(getResources().getColor(R.color.colorTheme))
-                .into(tv_protocol);
+
+        String info_about = getString(R.string.login_clause);
+        SpannableStringBuilder builder = RxTextUtils.getBuilder(info_about)
+                .setForegroundColor(getResources().getColor(R.color.colorTheme))
+                .setUnderline()
+                .setLength(7, info_about.length());
+        tv_protocol.setText(builder);
+
 
         listener();
 
@@ -139,12 +144,19 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                         QMUIDisplayHelper.dp2px(getContext(), 10),
                         0.2f);
                 helper.setText(R.id.tv_device_title, item.getDeviceName());
-                helper.setText(R.id.tv_device_version, getString(R.string.FirmwareVersion, item.getFirmwareVersion()));
-                helper.setText(R.id.tv_device_newVersion, "最新" + getString(R.string.FirmwareVersion, item.getNewFirmwareVersion()));
+                String FirmwareVersion = "";
+                if (RxDataUtils.isNullString(item.getFirmwareVersion()))
+                    FirmwareVersion = "--";
+                else FirmwareVersion = item.getFirmwareVersion();
+                helper.setText(R.id.tv_device_version, getString(R.string.FirmwareVersion, FirmwareVersion));
+                if (RxDataUtils.isNullString(item.getNewFirmwareVersion()))
+                    FirmwareVersion = "--";
+                else FirmwareVersion = item.getNewFirmwareVersion();
+                helper.setText(R.id.tv_device_newVersion, "最新" + getString(R.string.FirmwareVersion, FirmwareVersion));
                 TextView update = helper.getView(R.id.tv_about_update);
                 update.setEnabled(item.isUpdate());
                 update.setBackgroundResource(item.isUpdate() ? R.drawable.update_btn_bg : R.drawable.update_btn_pressed_bg);
-
+                update.setTextColor(getResources().getColor(item.isUpdate() ? R.color.colorTheme : R.color.textHeatColor));
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -197,12 +197,14 @@
     <string name="clothing">瘦身衣</string>
     <string name="collect">我的收藏</string>
     <string name="default_sign">她很懒，什么都没留下</string>
+    <string name="login_clause">登录即表示同意软件服务条款和隐私条款</string>
     <string name="my_device">我的设备</string>
     <string name="my_order">我的订单</string>
     <string name="my_shop_car">我的购物车</string>
     <string name="problem">问题与建议</string>
     <string name="scale">体脂称</string>
     <string name="slimming">饮食记录</string>
+    <string name="smart_app">智裳科技APP</string>
     <string name="sports">运动记录</string>
     <string name="update">升级</string>
     <string name="version">版本号</string>

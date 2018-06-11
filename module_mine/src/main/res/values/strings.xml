@@ -18,4 +18,6 @@
     <string name="versionTip">提示：固件升级请保证app和固件的连接</string>
     <string name="FirmwareVersion">固件版本号：%1$s</string>
     <string name="update">升级</string>
+    <string name="login_clause">登录即表示同意软件服务条款和隐私条款</string>
+    <string name="smart_app">智裳科技APP</string>
 </resources>

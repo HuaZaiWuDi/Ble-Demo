@@ -209,7 +209,7 @@ public class AddDeviceActivity extends BaseActivity {
                 RxLogUtils.d("扫描设备：" + device.getDeivceName());
             }
             if (data.size() == 0) {
-                RxToast.warning("请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试");
+                RxToast.warning(getString(R.string.checkBle));
             }
         }
     };

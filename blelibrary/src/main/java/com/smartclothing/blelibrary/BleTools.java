@@ -19,6 +19,7 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
+import com.smartclothing.blelibrary.listener.SynDataCallBack;
 
 
 /**
@@ -59,6 +60,7 @@ public class BleTools {
 
 
     private BleChartChangeCallBack bleChartChange;
+    private SynDataCallBack mSynDataCallBack;
     private byte[] bytes;
     private final int reWriteCount = 2;    //重连次数
     private int currentCount = 0;          //当前次数
@@ -104,8 +106,9 @@ public class BleTools {
 
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
             Log.e(TAG, "未连接");
-            if (bleChartChange != null)
-                bleChartChange.callBack(null);
+//            if (bleChartChange != null)
+//                bleChartChange.callBack(null);
+
             return;
         }
 
@@ -178,6 +181,10 @@ public class BleTools {
         mBleCallBack = bleCallBack;
     }
 
+    public void setSynDataCallBack(SynDataCallBack synDataCallBack) {
+        mSynDataCallBack = synDataCallBack;
+    }
+
     public void openNotify() {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
             Log.e(TAG, "未连接");
@@ -196,14 +203,20 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
-                if (mBleCallBack != null)
+//                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                if (mBleCallBack != null && data[2] == 0x07)
                     mBleCallBack.onNotify(data);
 
-                TimeOut.removeCallbacks(reWrite);
-                currentCount = 0;
-                if (bleChartChange != null)
-                    bleChartChange.callBack(data);
+                if (bleChartChange != null) {
+                    if (data[2] == bytes[2]) {
+                        currentCount = 0;
+                        bleChartChange.callBack(data);
+                        TimeOut.removeCallbacks(reWrite);
+                    }
+                }
+                if (mSynDataCallBack != null && data[2] == 0x06) {
+                    mSynDataCallBack.data(data);
+                }
             }
         });
     }
@@ -299,7 +312,20 @@ public class BleTools {
 //                .setDeviceName(true, "QN-Scale")        // 只扫描指定广播名的设备，可选
                 .setDeviceMac(mac)                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
-                .setScanTimeOut(15 * 1000)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
+                .setScanTimeOut(0)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
+                .build();
+
+        bleManager.initScanRule(scanRuleConfig);
+    }
+
+    public void configScanByName(String name) {
+        Log.d("bleManager", "开始扫描");
+        BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
+                .setDeviceName(true, name)        // 只扫描指定广播名的设备，可选
+//                .setDeviceMac(mac)                  // 只扫描指定mac的设备，可选
+//                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
+                .setScanTimeOut(0)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
                 .build();
 
         bleManager.initScanRule(scanRuleConfig);

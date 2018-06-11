@@ -155,7 +155,7 @@ public class ChartManager {
         mLineChart.animateX(500);
 
         addLimitLine2X(yVals.size() - 1);
-
+        mLineChart.setVisibleXRangeMaximum(7);
 
     }
 
@@ -226,7 +226,7 @@ public class ChartManager {
 
 //        mLineChart.setVisibleXRangeMaximum(7);
         mLineChart.animateX(500);
-
+        mLineChart.setVisibleXRangeMaximum(7);
 //        addLegend();
     }
 

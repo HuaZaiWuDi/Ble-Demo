@@ -1,8 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGatt;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -16,9 +14,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.clj.fastble.callback.BleGattCallback;
-import com.clj.fastble.data.BleDevice;
-import com.clj.fastble.exception.BleException;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -27,9 +22,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
-import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleTools;
-import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.module_wefit.bean.Device;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -53,7 +46,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
-import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
@@ -119,6 +111,17 @@ public class SportsFragment extends BaseFragment {
         }
     }
 
+    //监听瘦身衣连接情况
+    @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
+    void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
+        if (state) {
+            tv_connectDevice.setText(R.string.connected);
+        } else {
+            tv_connectDevice.setText(R.string.disConnected);
+        }
+    }
+
+
     private BaseQuickAdapter adapter;
     private List<WeightInfoItem> weightLists = new ArrayList<>();
     private List<SportsListBean.ListBean> sportsBeans = new ArrayList<>();
@@ -167,14 +170,6 @@ public class SportsFragment extends BaseFragment {
     }
 
     private void initRxBus() {
-        Disposable BleDevice = RxBus.getInstance().register(BleDevice.class, new Consumer<BleDevice>() {
-
-            @Override
-            public void accept(BleDevice device) throws Exception {
-                if (device.getMac().equals(mPrefs.clothing().get()))
-                    connectBLE(device);
-            }
-        });
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {
@@ -184,82 +179,12 @@ public class SportsFragment extends BaseFragment {
                 }
             }
         });
-        RxBus.getInstance().addSubscription(this, BleDevice);
         RxBus.getInstance().addSubscription(this, device);
     }
 
 
-    private void connectBLE(final BleDevice device) {
-        BleTools.getBleManager().connect(device, new BleGattCallback() {
-            @Override
-            public void onStartConnect() {
-
-            }
-
-            @Override
-            public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                RxLogUtils.d("连接异常：" + exception.toString());
-                BleTools.getBleManager().disconnect(device);
-                //重新扫描
-                mActivity.startService(new Intent(mActivity, BleService_.class));
-
-            }
-
-            @Override
-            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                BleTools.getInstance().setBleDevice(bleDevice);
-//                BleTools.getInstance().openIndicate();
-                BleTools.getInstance().openNotify();
-
-                RxLogUtils.d("瘦身衣连接成功");
-                tv_connectDevice.setText(R.string.connected);
-                dialog_not_connect.setVisibility(View.GONE);
-
-//
-//                DeviceLink deviceLink = new DeviceLink();
-//                deviceLink.setMacAddr(bleDevice.getMac());
-//                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
-//                deviceLink.deviceLink(deviceLink);
-
-                BleAPI.readSetting(new BleChartChangeCallBack() {
-                    @Override
-                    public void callBack(byte[] data) {
-//
-                        BleAPI.syncSetting(new byte[]{0x00, 0x01, 0x02, 0x03, 0x04}, 0x00, 0x00, 0x00, new BleChartChangeCallBack() {
-                            @Override
-                            public void callBack(byte[] data) {
-
-                                BleAPI.syncDeviceTime(new BleChartChangeCallBack() {
-                                    @Override
-                                    public void callBack(byte[] data) {
-
-                                        BleAPI.syncDataCount(new BleChartChangeCallBack() {
-                                            @Override
-                                            public void callBack(byte[] data) {
-
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-
-            @Override
-            public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
-                tv_connectDevice.setText(R.string.disConnected);
-                RxLogUtils.d("断开连接：");
-                //重新扫描
-                mActivity.startService(new Intent(mActivity, BleService_.class));
-            }
-        });
-    }
-
     @Override
     public void onDestroy() {
-        BleTools.getBleManager().removeConnectGattCallback(BleTools.getInstance().getBleDevice());
         RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
@@ -302,7 +227,6 @@ public class SportsFragment extends BaseFragment {
         tv_weight_date.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
     }
 
-
     private void getSportsData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsList(pageNum, 20))
@@ -326,6 +250,8 @@ public class SportsFragment extends BaseFragment {
                         }
                         sportsBeans.addAll(0, list);
                         syncChart(sportsBeans);
+
+                        synWeightData(sportsBeans.get(sportsBeans.size() - 1));
                         if (mRefresh.isRefreshing()) {
                             mRefresh.refreshComplete();
                         }
@@ -344,7 +270,6 @@ public class SportsFragment extends BaseFragment {
         ArrayList<Entry> heats = new ArrayList<>();
         ArrayList<Entry> sportsTimes = new ArrayList<>();
 
-        synWeightData(list.get(list.size() - 1));
 
         final List<String> days = new ArrayList<>();
         List<String> days_d = new ArrayList<>();//真实数据
@@ -386,6 +311,7 @@ public class SportsFragment extends BaseFragment {
         chartManager.setData(heats, sportsTimes, days);
 
         mLineChart.moveViewToX(heats.size() - (pageNum - 1) * 20 - 4);
+
         mLineChart.invalidate();
 
         mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -474,7 +400,6 @@ public class SportsFragment extends BaseFragment {
 
         tv_weight_date.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date));
     }
-
 
     //初始化图表
     private void initChart() {

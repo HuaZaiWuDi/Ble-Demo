@@ -130,7 +130,7 @@
 
         <activity android:name=".ui.main.CollectWebActivity">
         </activity>
-        <activity android:name=".ui.main.slimming.sports.TempActivity">
+        <activity android:name=".ui.main.slimming.sports.TempActivity_">
         </activity>
     </application>
 

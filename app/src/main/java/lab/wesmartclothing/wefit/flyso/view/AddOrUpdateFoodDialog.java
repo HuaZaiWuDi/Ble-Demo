@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
+import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -47,7 +48,6 @@ public class AddOrUpdateFoodDialog {
 
 
     private void showAddFoodDialog(final ListBean item) {
-
 
         View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
 
@@ -157,7 +157,7 @@ public class AddOrUpdateFoodDialog {
         heatInfo.setFoodId(item.getGid());
         heatInfo.setFoodName(item.getFoodName());
         heatInfo.setUnit(item.getFoodUnit());
-        heatInfo.setHeatDate(item.getHeatDate());
+        heatInfo.setHeatDate(RxFormat.setFormatDate(Long.parseLong(item.getHeatDate()), RxFormat.Date));
         heatInfo.setRemark(item.getRemark());
     }
 
