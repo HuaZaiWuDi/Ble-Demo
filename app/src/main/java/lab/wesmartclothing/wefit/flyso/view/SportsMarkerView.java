@@ -49,6 +49,7 @@ public class SportsMarkerView extends MarkerView {
 
         List<Entry> forXValue1 = set1.getEntriesForXValue(e.getX());
         List<Entry> forXValue2 = set2.getEntriesForXValue(e.getX());
+        if (forXValue1.get(0) == null) return;
         float y1 = forXValue1.get(0).getY();
         float y2 = forXValue2.get(0).getY();
 

@@ -24,18 +24,15 @@ public class HeartRateProgressView extends View {
     private Paint paint_progress;
     private int round;//圆角
 
-    public static final int LINE_TYPE_SLIMMING = 0;//热身
-    public static final int LINE_TYPE_GREASE = 1;//燃脂
-    public static final int LINE_TYPE_AEROBIC = 2;//有氧
-    public static final int LINE_TYPE_ANAEROBIC = 3;//无氧
-    public static final int LINE_TYPE_LIMIT = 4;//极限
+    public static final int LINE_TYPE_SLIMMING = 1;//热身
+    public static final int LINE_TYPE_GREASE = 2;//燃脂
+    public static final int LINE_TYPE_AEROBIC = 3;//有氧
+    public static final int LINE_TYPE_ANAEROBIC = 4;//无氧
+    public static final int LINE_TYPE_LIMIT = 5;//极限
 
 
-    private float[] widthPercentage;//宽度百分比
-
-    private float[] startPercentage;//开始点的百分比
-
-    private float[][] percentage;
+    //点阵集合
+    private float end = 0;
 
     private int[] colors = new int[]{Color.parseColor("#29EBF2"), Color.parseColor("#76FFCD")};
 
@@ -69,21 +66,13 @@ public class HeartRateProgressView extends View {
         paint_progress.setStyle(Paint.Style.FILL);
         paint_progress.setStrokeCap(Paint.Cap.ROUND);//设置为线条圆头
 
-        widthPercentage = new float[]{0.05f, 0.07f, 0.03f};
-
-        startPercentage = new float[]{0.0f, 0.4f, 0.6f};
     }
 
 
-    public void setData(HeartRateView.HeartRate heartRate) {
-        percentage = heartRate.progressPercentage;
+    public void setData(float end, int type) {
+        this.end = end;
 
-//        if (widthPercentage == null) widthPercentage = new float[0];
-//        this.widthPercentage = widthPercentage;
-//        if (startPercentage == null) startPercentage = new float[0];
-//        this.startPercentage = startPercentage;
-
-        switch (heartRate.type) {
+        switch (type) {
             case LINE_TYPE_SLIMMING:
                 colors = new int[]{Color.parseColor("#29EBF2"), Color.parseColor("#76FFCD")};
                 break;
@@ -119,17 +108,13 @@ public class HeartRateProgressView extends View {
 
     //画进度
     private void drawProgress(Canvas canvas) {
+        float progress = (end * mWidth);
         canvas.save();
-
-        for (int i = 0; i < percentage.length; i++) {
-            float start = (int) (percentage[i][0] * mWidth);
-            float end = (int) ((percentage[i][1] * mWidth));
-            LinearGradient linearGradient = new LinearGradient(start, 0, end, 0, colors, null, Shader.TileMode.CLAMP);
-            paint_progress.setShader(linearGradient);
-            RectF rf = new RectF(start, 0, end, mHeight);
-            /*绘制圆角矩形，背景色为画笔颜色*/
-            canvas.drawRoundRect(rf, round, round, paint_progress);
-        }
+        LinearGradient linearGradient = new LinearGradient(0, 0, progress, 0, colors, null, Shader.TileMode.CLAMP);
+        paint_progress.setShader(linearGradient);
+        RectF rf = new RectF(0, 0, progress, mHeight);
+        /*绘制圆角矩形，背景色为画笔颜色*/
+        canvas.drawRoundRect(rf, round, round, paint_progress);
         canvas.restore();
     }
 

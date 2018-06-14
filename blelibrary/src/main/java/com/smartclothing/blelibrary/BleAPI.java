@@ -1,5 +1,8 @@
 package com.smartclothing.blelibrary;
 
+import android.util.Log;
+
+import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.util.ByteUtil;
 
@@ -7,6 +10,8 @@ import com.smartclothing.blelibrary.util.ByteUtil;
  * Created by jk on 2018/5/19.
  */
 public class BleAPI {
+
+    static final String TGA = "【BleAPI】";
 
 
     private static byte[] time2Byte() {
@@ -36,7 +41,7 @@ public class BleAPI {
      * 01	命令应答
      */
 
-    public static void syncSetting(byte[] heartRates, int heat, int LED, int heatState, BleChartChangeCallBack bleChartChange) {
+    public static void syncSetting(int heat, int LED, int heatState, BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 //        0x02 0x11 0x01
         byte[] bytes = new byte[20];
@@ -44,10 +49,10 @@ public class BleAPI {
         bytes[1] = 0x11;
         bytes[2] = 0x01;
 
-        if (heartRates != null && heartRates.length == 5) {
-            bytes[3] = 0x01;
-            System.arraycopy(heartRates, 0, bytes, 4, 5);
-        }
+        //心率阈值
+        bytes[3] = 0x01;
+        System.arraycopy(BleKey.heartRates, 0, bytes, 4, 5);
+
         if (heat >= 0) {
             bytes[9] = 0x02;
             bytes[10] = (byte) heat;
@@ -61,6 +66,7 @@ public class BleAPI {
             bytes[14] = (byte) heatState;
         }
 
+        Log.d("【写配置】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().write(bytes, bleChartChange);
 
     }
@@ -79,6 +85,7 @@ public class BleAPI {
         bytes[5] = time2Byte()[2];
         bytes[6] = time2Byte()[3];
 
+        Log.d("【读配置】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
@@ -93,6 +100,8 @@ public class BleAPI {
         bytes[4] = time2Byte()[1];
         bytes[5] = time2Byte()[2];
         bytes[6] = time2Byte()[3];
+
+        Log.d("【同步设备时间】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
@@ -105,6 +114,8 @@ public class BleAPI {
         bytes[0] = 0x40;
         bytes[1] = 0x11;
         bytes[2] = 0x04;
+
+        Log.d("【同步本地数据包数】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
@@ -115,6 +126,8 @@ public class BleAPI {
         bytes[0] = 0x00;
         bytes[1] = 0x11;
         bytes[2] = 0x05;
+
+        Log.d("【请求包】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().writeNo(bytes);
     }
 
@@ -136,6 +149,25 @@ public class BleAPI {
         bytes[4] = time[1];
         bytes[5] = time[2];
         bytes[6] = time[3];
+
+        Log.d("【反馈数据】", HexUtil.encodeHexStr(bytes));
+        BleTools.getInstance().writeNo(bytes);
+    }
+
+    //notify
+    public static void clothingStop() {
+        /**
+         * 表示：设备停止活动，心率为0
+         * */
+//        0x40 0x11 0x060x11 0x22 0x33 0x44 0x01 0x45 0x02 0x20 0x03 0x55 0x66 0x04 0x77 0x88
+//        App返回：0x02 0x11 0x06
+
+        byte[] bytes = new byte[20];
+        bytes[0] = 0x02;
+        bytes[1] = 0x11;
+        bytes[2] = 0x08;
+
+        Log.d("【结束活动反馈数据】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().writeNo(bytes);
     }
 

@@ -1,23 +1,23 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 	package
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:3:11-51
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-80:12
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:11-69
@@ -46,7 +46,7 @@ ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.
 	android:name
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:11:22-62
 application
-ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:13:5-78:19
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:13:5-88:19
 	android:supportsRtl
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:16:9-35
 	android:label
@@ -131,6 +131,16 @@ ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:62:13-49
 	android:name
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:61:13-59
+activity#com.smartclothing.module_wefit.dfu.NotificationActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:67:9-68:55
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:68:13-53
+service#com.smartclothing.module_wefit.dfu.DfuService
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:70:9-72:38
+	android:exported
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:72:13-36
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:71:13-43
 uses-sdk
 INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml

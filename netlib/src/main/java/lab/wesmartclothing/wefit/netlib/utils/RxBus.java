@@ -99,18 +99,19 @@ public class RxBus {
      */
     private HashMap<String, CompositeDisposable> mSubscriptionMap;
 
-    public void addSubscription(Object o, Disposable disposable) {
+    public void addSubscription(Object o, Disposable... disposables) {
         if (mSubscriptionMap == null) {
             mSubscriptionMap = new HashMap<>();
         }
         String key = o.getClass().getName();
+
         if (mSubscriptionMap.get(key) != null) {
-            mSubscriptionMap.get(key).add(disposable);
+            mSubscriptionMap.get(key).addAll(disposables);
         } else {
             //一次性容器,可以持有多个并提供 添加和移除。
-            CompositeDisposable disposables = new CompositeDisposable();
-            disposables.add(disposable);
-            mSubscriptionMap.put(key, disposables);
+            CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+            mCompositeDisposable.addAll(disposables);
+            mSubscriptionMap.put(key, mCompositeDisposable);
         }
     }
 

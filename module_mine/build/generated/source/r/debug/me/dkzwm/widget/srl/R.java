@@ -49,8 +49,8 @@ public final class R {
         public static int custom = 0x7f0c0078;
         public static int empty = 0x7f0c008c;
         public static int error = 0x7f0c0095;
-        public static int mode_default = 0x7f0c0134;
-        public static int mode_scale = 0x7f0c0135;
+        public static int mode_default = 0x7f0c0135;
+        public static int mode_scale = 0x7f0c0136;
         public static int style_default = 0x7f0c01bc;
         public static int style_followCenter = 0x7f0c01bd;
         public static int style_followPin = 0x7f0c01be;

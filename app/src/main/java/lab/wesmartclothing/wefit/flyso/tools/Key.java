@@ -22,6 +22,7 @@ public interface Key {
 
     public static final String BUNDLE_RELOGIN = "BUNDLE_RELOGIN";//重新登录
     public static final String BUNDLE_TITLE = "BUNDLE_TITLE";//重新登录
+    String BUNDLE_VOLTAGE = "BUNDLE_VOLTAGE";//电压容量
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -40,9 +41,15 @@ public interface Key {
     String ACTION_CLOTHING_CONNECT = "ACTION_CLOTHING_CONNECT";
     String EXTRA_CLOTHING_CONNECT = "EXTRA_CLOTHING_CONNECT";
 
+    //心率更改
+    String ACTION_HEART_RATE_CHANGED = "ACTION_HEART_RATE_CHANGED";
+    String EXTRA_HEART_RATE_CHANGED = "EXTRA_HEART_RATE_CHANGED";
+
+
     //体脂称连接状态
     String ACTION_SCALE_CONNECT = "ACTION_SCALE_CONNECT";
     String EXTRA_SCALE_CONNECT = "EXTRA_SCALE_CONNECT";
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK
@@ -66,6 +73,5 @@ public interface Key {
     // 蓝牙设备名字
     ///////////////////////////////////////////////////////////////////////////
 
-    String ScaleName = "QN-Scale";//体脂称
-    String Smart_Clothing = "WeSmartCloth";
+
 }

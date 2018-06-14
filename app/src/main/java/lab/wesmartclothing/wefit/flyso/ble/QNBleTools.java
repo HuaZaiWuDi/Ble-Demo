@@ -19,7 +19,7 @@ import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
  * Created by jk on 2018/5/16.
  */
 
-@EBean
+@EBean(scope = EBean.Scope.Singleton)//单例模式 传入的是using context.getApplicationContext()对象
 public class QNBleTools {
 
 
@@ -33,7 +33,6 @@ public class QNBleTools {
         config.setAllowDuplicates(false);
         config.setUnit(QNUnit.WEIGHT_UNIT_KG);
         MyAPP.QNapi.startBleDeviceDiscovery(config, mQNResultCallback);
-
 
     }
 
@@ -75,7 +74,7 @@ public class QNBleTools {
         MyAPP.QNapi.connectDevice(device, creatUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
-                RxLogUtils.d("轻牛SDK ：创建用户" + i + "----" + s);
+                RxLogUtils.d("轻牛SDK ：连接设备" + i + "----" + s);
                 if (i == 0) {
                     RxLogUtils.d("轻牛SDK ：连接成功");
                 }
@@ -83,11 +82,12 @@ public class QNBleTools {
         });
     }
 
+
     public void disConnectDevice(String mac) {
         MyAPP.QNapi.disconnectDevice(mac, new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
-                RxLogUtils.d("轻牛SDK ：创建用户" + i + "----" + s);
+                RxLogUtils.d("轻牛SDK ：断开连接" + i + "----" + s);
             }
         });
     }
@@ -96,7 +96,7 @@ public class QNBleTools {
         MyAPP.QNapi.disconnectDevice(device, new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
-                RxLogUtils.d("轻牛SDK ：创建用户" + i + "----" + s);
+                RxLogUtils.d("轻牛SDK ：断开连接" + i + "----" + s);
             }
         });
     }

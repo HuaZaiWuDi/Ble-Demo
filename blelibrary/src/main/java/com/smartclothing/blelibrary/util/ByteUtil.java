@@ -80,6 +80,7 @@ public class ByteUtil {
      * @return int数值
      */
     public static long bytesToLongD4(byte[] src, int offset) {
+        if (src.length < 4) return 0;
         long value;
         value = (int) ((src[offset] & 0xFF)
                 | ((src[offset + 1] & 0xFF) << 8)

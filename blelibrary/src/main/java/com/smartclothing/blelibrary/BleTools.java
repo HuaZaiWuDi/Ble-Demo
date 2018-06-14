@@ -64,7 +64,7 @@ public class BleTools {
     private byte[] bytes;
     private final int reWriteCount = 2;    //重连次数
     private int currentCount = 0;          //当前次数
-    private final int timeOut = 1000;          //超时
+    private final int timeOut = 3000;          //超时
 
 
     public static void initBLE(Application application) {
@@ -106,9 +106,6 @@ public class BleTools {
 
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
             Log.e(TAG, "未连接");
-//            if (bleChartChange != null)
-//                bleChartChange.callBack(null);
-
             return;
         }
 
@@ -118,12 +115,11 @@ public class BleTools {
             currentCount = 0;
         } else {
             currentCount++;
-            bleManager.write(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
+            bleManager.write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
 
                 @Override
                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                    Log.d(TAG, "写成功" + "【current】" + current + "【total】" + total + "【justWrite】" + HexUtil.encodeHexStr(justWrite));
-//
+//                    Log.d(TAG, "写成功" + "【current】" + current + "【total】" + total + "【justWrite】" + HexUtil.encodeHexStr(justWrite));
                 }
 
                 @Override
@@ -138,10 +134,10 @@ public class BleTools {
     private BleCallBack mBleCallBack;
 
     public void writeNo(byte[] bytes) {
-        bleManager.write(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
+        bleManager.write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
             @Override
             public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                Log.e(TAG, "无响应写成功:" + HexUtil.encodeHexStr(justWrite));
+//                Log.e(TAG, "无响应写成功:" + HexUtil.encodeHexStr(justWrite));
             }
 
             @Override
@@ -152,7 +148,7 @@ public class BleTools {
     }
 
     public void read() {
-        bleManager.read(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_READ_NOTIFY, new BleReadCallback() {
+        bleManager.read(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleReadCallback() {
             @Override
             public void onReadSuccess(byte[] data) {
                 TimeOut.removeCallbacks(reWrite);
@@ -190,7 +186,7 @@ public class BleTools {
             Log.e(TAG, "未连接");
             return;
         }
-        bleManager.notify(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_READ_NOTIFY, new BleNotifyCallback() {
+        bleManager.notify(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleNotifyCallback() {
             @Override
             public void onNotifySuccess() {
                 Log.d(TAG, "打开通知成功");
@@ -204,16 +200,21 @@ public class BleTools {
             @Override
             public void onCharacteristicChanged(byte[] data) {
 //                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
-                if (mBleCallBack != null && data[2] == 0x07)
+                //notify数据
+                if (mBleCallBack != null && data[2] == 0x07 || data[2] == 0x08)
                     mBleCallBack.onNotify(data);
 
+                //命令数据
                 if (bleChartChange != null) {
                     if (data[2] == bytes[2]) {
+                        Log.d(TAG, "蓝牙命令反馈:" + HexUtil.encodeHexStr(data));
                         currentCount = 0;
                         bleChartChange.callBack(data);
                         TimeOut.removeCallbacks(reWrite);
                     }
                 }
+
+                //同步数据
                 if (mSynDataCallBack != null && data[2] == 0x06) {
                     mSynDataCallBack.data(data);
                 }
@@ -226,7 +227,7 @@ public class BleTools {
             Log.e(TAG, "未连接");
             return;
         }
-        bleManager.indicate(bleDevice, BleService.UUID_Servie, BleService.UUID_CHART_READ_NOTIFY, new BleIndicateCallback() {
+        bleManager.indicate(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleIndicateCallback() {
             @Override
             public void onIndicateSuccess() {
                 Log.e(TAG, "打开indicate成功");
@@ -292,10 +293,9 @@ public class BleTools {
     }
 
     public void configScan(long timeout) {
-//        UUID.fromString(BleService.UUID_Servie),
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-//                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
-                .setDeviceName(true, "QN-Scale", "WeSmartCloth")        // 只扫描指定广播名的设备，可选
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie), UUID.fromString(BleKey.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
+                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)        // 只扫描指定广播名的设备，可选
 //                .setDeviceMac()                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
                 .setScanTimeOut(timeout)  // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
@@ -308,7 +308,7 @@ public class BleTools {
     public void configScanByMac(String mac) {
         Log.d("bleManager", "开始扫描");
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-//                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie), UUID.fromString(BleKey.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
 //                .setDeviceName(true, "QN-Scale")        // 只扫描指定广播名的设备，可选
                 .setDeviceMac(mac)                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
@@ -321,7 +321,7 @@ public class BleTools {
     public void configScanByName(String name) {
         Log.d("bleManager", "开始扫描");
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
-//                .setServiceUuids(new UUID[]{UUID.fromString(BleService.UUID_Servie), UUID.fromString(BleService.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie), UUID.fromString(BleKey.QN_SCALE_UUID)})      // 只扫描指定的服务的设备，可选
                 .setDeviceName(true, name)        // 只扫描指定广播名的设备，可选
 //                .setDeviceMac(mac)                  // 只扫描指定mac的设备，可选
 //                .setAutoConnect(false)      // 连接时的autoConnect参数，可选，默认false
@@ -336,6 +336,11 @@ public class BleTools {
             Log.d("bleManager", "结束扫描");
             bleManager.cancelScan();
         }
+    }
+
+    public boolean isConnect() {
+        if (bleManager == null || bleDevice == null) return false;
+        return bleManager.isConnected(bleDevice);
     }
 
 }

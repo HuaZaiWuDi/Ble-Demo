@@ -1,23 +1,21 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.smartclothing.module_wefit.widget.dialog.AboutUpdateDialog;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -28,23 +26,21 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
 import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
-import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
@@ -73,8 +69,7 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     @AfterViews
     public void initView() {
-        //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+
         NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
         initBottomTab();
         initMyViewPager();
@@ -82,6 +77,7 @@ public class MainActivity extends BaseALocationActivity {
         initRxBus();
 
         startLocation(null);
+
 
 //        RxActivityUtils.skipActivity(mContext, TempActivity.class);
     }
@@ -94,13 +90,48 @@ public class MainActivity extends BaseALocationActivity {
     }
 
     private void initRxBus() {
-        RxBus.getInstance().register(SlimmingTab.class, new Consumer<SlimmingTab>() {
+        Disposable register = RxBus.getInstance().register(SlimmingTab.class, new Consumer<SlimmingTab>() {
             @Override
             public void accept(SlimmingTab slimmingTab) throws Exception {
                 switchFragment(mFragments.get(0));
                 mCommonTabLayout.setCurrentTab(0);
             }
         });
+        Disposable disposable = RxBus.getInstance().register(FirmwareVersionUpdate.class, new Consumer<FirmwareVersionUpdate>() {
+            @Override
+            public void accept(final FirmwareVersionUpdate firmwareVersionUpdate) throws Exception {
+                final boolean isMust = firmwareVersionUpdate.getMustUpgrade() != 0;
+                //差值大于2kg，体重数据不合理
+                final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+                dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
+                dialog.getTvContent().setText("是否升级到最新的版本");
+                dialog.setCancel(isMust ? "退出" : "取消");
+                dialog.setCancelListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        if (isMust) {
+                            RxActivityUtils.AppExit(mContext);
+                            finish();
+                        }
+                    }
+                });
+                dialog.setSure("升级");
+                dialog.show();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        AboutUpdateDialog updatedialog = new AboutUpdateDialog(mActivity, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                        updatedialog.show();
+                    }
+                });
+
+            }
+        });
+
+        RxBus.getInstance().addSubscription(this, register, disposable);
     }
 
     private void initMyViewPager() {
@@ -133,30 +164,30 @@ public class MainActivity extends BaseALocationActivity {
 
             @Override
             public void onTabReselect(int position) {
-                if (BuildConfig.DEBUG)
-                    if (position == 0) {
-                        final EditText editText = new EditText(mContext);
-                        AlertDialog dialog = new AlertDialog.Builder(mContext)
-                                .setTitle("修改用户ID")
-                                .setView(editText)
-                                .setPositiveButton("完成", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String s = editText.getText().toString();
-                                        if (RxDataUtils.isNullString(s))
-                                            s = "";
-                                        RxActivityUtils.skipActivity(mContext, MainActivity_.class);
-                                        finish();
-                                        mPrefs.UserId().put(s);
-                                        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
-                                        dialog.dismiss();
-                                    }
-                                }).show();
-                    } else if (position == 3) {
-                        RxActivityUtils.skipActivity(mContext, LoginActivity_.class);
-                    } else if (position == 2) {
-                        RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
-                    }
+//                if (BuildConfig.DEBUG)
+//                    if (position == 0) {
+//                        final EditText editText = new EditText(mContext);
+//                        AlertDialog dialog = new AlertDialog.Builder(mContext)
+//                                .setTitle("修改用户ID")
+//                                .setView(editText)
+//                                .setPositiveButton("完成", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        String s = editText.getText().toString();
+//                                        if (RxDataUtils.isNullString(s))
+//                                            s = "";
+//                                        RxActivityUtils.skipActivity(mContext, MainActivity_.class);
+//                                        finish();
+//                                        mPrefs.UserId().put(s);
+//                                        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
+//                                        dialog.dismiss();
+//                                    }
+//                                }).show();
+//                    } else if (position == 3) {
+//                        RxActivityUtils.skipActivity(mContext, LoginActivity_.class);
+//                    } else if (position == 2) {
+//                        RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
+//                    }
             }
         });
     }
@@ -188,7 +219,7 @@ public class MainActivity extends BaseALocationActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+        if (keyCode != KeyEvent.KEYCODE_BACK) return super.onKeyDown(keyCode, event);
         FragmentKeyDown mStoreFragment = (StoreFragment) mFragments.get(2);
         FragmentKeyDown mFindFragment = (FindFragment) mFragments.get(1);
 
@@ -228,6 +259,7 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     protected void onDestroy() {
         stopService(bleIntent);
+        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
 

@@ -25,6 +25,7 @@ public class RxFormat {
     public static final String Date_Date_CH = "yyyy年MM月dd日HH时mm分ss秒";
     public static final String Date_Time_CH = "HH时mm分ss秒";
     public static final String Date = "yyyy-MM-dd";
+    public static final String Date_CH = "yyyy年MM月dd日";
     public static final String Date_Month_Day = "MM月dd日";
 
 
@@ -35,43 +36,55 @@ public class RxFormat {
 
     public static String setFormatDateG8(long value, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        return dateFormat.format(value);
+    }
+    public static String setFormatDateG(long value, String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return dateFormat.format(value);
+    }
+
+    public static String setFormatDateD8(long value, String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT-08:00"));
         return dateFormat.format(value);
     }
 
     public static String setFormatDateG8(Date date, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return dateFormat.format(date);
     }
 
     public static String setFormatDateG8(Calendar calendar, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return dateFormat.format(calendar.getTime());
     }
 
     public static String setFormatDate(Date date, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(date);
     }
 
     public static String setFormatDate(Calendar calendar, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(calendar.getTime());
     }
 
     public static String setFormatNum(long value, String format) {
         return new DecimalFormat(format).format(value);
     }
+
     public static String setFormatNum(int value, String format) {
         return new DecimalFormat(format).format(value);
     }
+
     public static String setFormatNum(double value, String format) {
         return new DecimalFormat(format).format(value);
     }
+
     public static String setFormatNum(float value, String format) {
         return new DecimalFormat(format).format(value);
     }

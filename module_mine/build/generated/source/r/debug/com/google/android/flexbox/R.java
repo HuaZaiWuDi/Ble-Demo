@@ -40,9 +40,9 @@ public final class R {
         public static int end = 0x7f0c0093;
         public static int flex_end = 0x7f0c00a0;
         public static int flex_start = 0x7f0c00a1;
-        public static int middle = 0x7f0c0132;
-        public static int none = 0x7f0c013b;
-        public static int nowrap = 0x7f0c0140;
+        public static int middle = 0x7f0c0133;
+        public static int none = 0x7f0c013c;
+        public static int nowrap = 0x7f0c0141;
         public static int row = 0x7f0c017d;
         public static int row_reverse = 0x7f0c017e;
         public static int space_around = 0x7f0c01a6;

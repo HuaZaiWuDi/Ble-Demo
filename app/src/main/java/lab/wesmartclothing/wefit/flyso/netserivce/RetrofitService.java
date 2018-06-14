@@ -78,6 +78,10 @@ public interface RetrofitService {
     @POST("slim/addAthleticsInfo")
     Observable<String> addAthleticsInfo(@Body RequestBody body);
 
+    @POST("slim/athleticsDetail")
+    Observable<String> athleticsDetail(@Body RequestBody body);
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 登录
     ///////////////////////////////////////////////////////////////////////////
@@ -131,6 +135,13 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("/find/detail.html")
     Observable<String> newsDetail(@Field("gid") String git);
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 固件升级模块
+    ///////////////////////////////////////////////////////////////////////////
+    @POST("upgrade/getUpgradeInfo")
+    Observable<String> getUpgradeInfo(@Body RequestBody body);
 
 
 }

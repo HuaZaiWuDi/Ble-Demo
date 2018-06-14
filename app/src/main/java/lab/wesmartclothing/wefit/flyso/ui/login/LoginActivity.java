@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.module_wefit.bean.Device;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -38,7 +39,7 @@ import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -80,9 +81,11 @@ public class LoginActivity extends BaseActivity {
 
     @Click
     void tv_about() {
+        //服务协议
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-        RxActivityUtils.skipActivity(mContext, WebActivity.class, bundle);
+        bundle.putString(Key.BUNDLE_TITLE, "服务协议");
+        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
     }
 
 
@@ -143,6 +146,7 @@ public class LoginActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+
                         RxLogUtils.d("结束：" + s);
                         try {
                             JSONObject jsonObject = new JSONObject(s);
@@ -186,9 +190,9 @@ public class LoginActivity extends BaseActivity {
                             for (int i = 0; i < beanList.size(); i++) {
                                 Device device = beanList.get(i);
                                 String deviceNo = device.getDeviceNo();
-                                if ("0".equals(deviceNo)) {
+                                if (BleKey.TYPE_SCALE.equals(deviceNo)) {
                                     mPrefs.scaleIsBind().put(device.getMacAddr());
-                                } else if ("1".equals(deviceNo)) {
+                                } else if (BleKey.TYPE_CLOTHING.equals(deviceNo)) {
                                     mPrefs.clothing().put(device.getMacAddr());
                                 }
                             }
@@ -248,6 +252,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
+                        edit_VCode.setText(s);
                         RxToast.success("短信已发送");
                     }
 

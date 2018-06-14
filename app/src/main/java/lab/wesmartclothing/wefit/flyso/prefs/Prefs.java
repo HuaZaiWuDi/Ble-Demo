@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.prefs;
 
+import org.androidannotations.annotations.sharedpreferences.DefaultFloat;
 import org.androidannotations.annotations.sharedpreferences.DefaultInt;
 import org.androidannotations.annotations.sharedpreferences.DefaultLong;
 import org.androidannotations.annotations.sharedpreferences.DefaultString;
@@ -21,8 +22,8 @@ public interface Prefs {
     @DefaultString("")
     String phone();
 
-    @DefaultString("")
-    String QN_mac();
+//    @DefaultString("")
+//    String QN_mac();
 
     @DefaultInt(175)
     int height();
@@ -41,4 +42,9 @@ public interface Prefs {
 
     @DefaultString("")
     String clothing();
+
+    //真实体重
+    @DefaultFloat(0)
+    float realWeight();
+
 }

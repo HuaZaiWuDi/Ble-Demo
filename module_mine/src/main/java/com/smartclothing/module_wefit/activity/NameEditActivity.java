@@ -58,7 +58,6 @@ public class NameEditActivity extends BaseActivity implements View.OnClickListen
             }
             setResult(RESULT_CODE_NAME, new Intent().putExtra("name", "" + et_data_name.getText().toString()));
             finish();
-
         }
     }
 }

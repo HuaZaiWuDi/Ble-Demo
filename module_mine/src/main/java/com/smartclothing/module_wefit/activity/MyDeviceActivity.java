@@ -1,5 +1,9 @@
 package com.smartclothing.module_wefit.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,11 +12,17 @@ import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.smartclothing.blelibrary.BleAPI;
+import com.smartclothing.blelibrary.BleKey;
+import com.smartclothing.blelibrary.BleTools;
+import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.DeviceRvAdapter;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Device;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
+import com.smartclothing.module_wefit.tools.VoltageToPower;
+import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -36,15 +46,42 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
 
     private LinearLayout iv_back;
     private RecyclerView rv_device;
-    private DeviceRvAdapter rvAdapter;
     //默认加一条添加设备的item
+    private DeviceRvAdapter rvAdapter;
     private final List<Device> mDevices = new ArrayList<>();
+    private boolean scale_connect = false;
+    int capacity = 0;
+    double time = 0;
+
+    //体质秤连接状态
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("ACTION_SCALE_CONNECT".equals(intent.getAction())) {
+                boolean scale_connect = intent.getBooleanExtra("EXTRA_SCALE_CONNECT", false);
+                RxLogUtils.d("连接状况:" + intent.getAction() + "-----------" + scale_connect);
+                if (rvAdapter != null && rvAdapter.getItem(0) != null) {
+                    rvAdapter.getItem(0).setConnect(scale_connect);
+                    rvAdapter.notifyItemChanged(0);
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_device0);
         initView();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("ACTION_SCALE_CONNECT");
+        filter.addAction("ACTION_HEART_RATE_CHANGED");
+        registerReceiver(mBroadcastReceiver, filter);
+
+
+        scale_connect = getIntent().getBooleanExtra("ACTION_SCALE_CONNECT", false);
+
 
     }
 
@@ -70,8 +107,14 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
         int i = view.getId();
         if (i == R.id.iv_back) {
             onBackPressed();
-
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mContext.unregisterReceiver(mBroadcastReceiver);
+        rvAdapter.onDestroy();
+        super.onDestroy();
     }
 
     private void initRecyclerView() {
@@ -112,7 +155,7 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
             public void onAddDeviceClick(int position) {
                 //添加绑定设备，这里实在不会
 //                if (!RxUtils.isFastClick(1000))
-                RxBus.getInstance().post("" + position);
+                RxBus.getInstance().post(position == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
             }
         });
     }
@@ -134,22 +177,44 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                             List<Device> beanList = gson.fromJson(jsonObject.getString("list"), typeList);
                             if (beanList.size() == 1) {
                                 Device device = beanList.get(0);
-                                if ("0".equals(device.getDeviceNo())) {
+                                if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
                                     device.setType(1);
-                                    mDevices.set(0, device);
-                                } else if ("1".equals(device.getDeviceNo())) {
+                                    device.setConnect(scale_connect);
+                                    rvAdapter.setData(0, device);
+                                } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
                                     device.setType(1);
-                                    mDevices.set(1, device);
+                                    device.setConnect(BleTools.getInstance().isConnect());
+                                    rvAdapter.setData(1, device);
                                 }
                             } else {
                                 for (int i = 0; i < beanList.size(); i++) {
                                     Device device = beanList.get(i);
                                     device.setType(1);
-                                    mDevices.set(i, device);
+                                    if (i == 0) device.setConnect(scale_connect);
+                                    else device.setConnect(BleTools.getInstance().isConnect());
+                                    rvAdapter.setData(i, device);
                                 }
                             }
-                            if (beanList.size() > 0)
-                                rvAdapter.setNewData(mDevices);
+
+                            BleAPI.readSetting(new BleChartChangeCallBack() {
+                                @Override
+                                public void callBack(byte[] data) {
+                                    RxLogUtils.d("读配置" + HexUtil.encodeHexStr(data));
+                                    boolean heating = data[14] == 0x01;
+
+                                    double voltage = getIntent().getDoubleExtra("BUNDLE_VOLTAGE", 0);
+                                    RxLogUtils.d("电压：" + voltage);
+                                    VoltageToPower toPower = new VoltageToPower();
+                                    int capacity = toPower.getBatteryCapacity(voltage);
+                                    double time = toPower.canUsedTime(voltage, heating);
+
+                                    Device item = rvAdapter.getItem(1);
+                                    item.setQuantity(capacity);
+                                    item.setStandby((int) (time * 3600));
+                                    rvAdapter.notifyItemChanged(1);
+                                }
+                            });
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

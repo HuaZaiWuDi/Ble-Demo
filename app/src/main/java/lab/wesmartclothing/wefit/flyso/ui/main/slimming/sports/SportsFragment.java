@@ -22,6 +22,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
+import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.module_wefit.bean.Device;
 import com.tbruyelle.rxpermissions2.Permission;
@@ -43,6 +44,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
@@ -95,6 +97,7 @@ public class SportsFragment extends BaseFragment {
 
     @Click
     void tv_details() {
+        if (bean == null) return;
         Bundle bundle = new Bundle();
         bundle.putSerializable(Key.BUNDLE_SPORTS_INFO, bean);
         RxActivityUtils.skipActivity(mActivity, SportsDetailsActivity_.class, bundle);
@@ -121,6 +124,11 @@ public class SportsFragment extends BaseFragment {
         }
     }
 
+    //心率
+    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
+    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] heartRate) {
+        initDeviceConnectTip(2);
+    }
 
     private BaseQuickAdapter adapter;
     private List<WeightInfoItem> weightLists = new ArrayList<>();
@@ -169,11 +177,12 @@ public class SportsFragment extends BaseFragment {
         initRxBus();
     }
 
+
     private void initRxBus() {
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {
-                if ("1".equals(device.getDeviceNo())) {
+                if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
                     mPrefs.clothing().put("");
                     initDeviceConnectTip(1);
                 }
@@ -228,8 +237,17 @@ public class SportsFragment extends BaseFragment {
     }
 
     private void getSportsData() {
+        if (pageNum == 1) sportsBeans.clear();
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsList(pageNum, 20))
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        if (mRefresh != null) {
+                            mRefresh.refreshComplete();
+                        }
+                    }
+                })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -242,20 +260,14 @@ public class SportsFragment extends BaseFragment {
                                 notMore = true;
                                 mRefresh.setEnableAutoRefresh(false);
                                 mRefresh.setDisableRefresh(true);
-                                if (sportsBeans.size() == 0) {
-                                    initDeviceConnectTip(3);
-                                }
                             }
                             return;
                         }
+
                         sportsBeans.addAll(0, list);
                         syncChart(sportsBeans);
-
-                        synWeightData(sportsBeans.get(sportsBeans.size() - 1));
-                        if (mRefresh.isRefreshing()) {
-                            mRefresh.refreshComplete();
-                        }
-
+                        if (sportsBeans.size() > 0)
+                            synWeightData(sportsBeans.get(sportsBeans.size() - 1));
                     }
 
                     @Override
@@ -265,11 +277,11 @@ public class SportsFragment extends BaseFragment {
                 });
     }
 
+
     private void syncChart(final List<SportsListBean.ListBean> list) {
         Calendar calendar = Calendar.getInstance();
         ArrayList<Entry> heats = new ArrayList<>();
         ArrayList<Entry> sportsTimes = new ArrayList<>();
-
 
         final List<String> days = new ArrayList<>();
         List<String> days_d = new ArrayList<>();//真实数据
@@ -277,8 +289,12 @@ public class SportsFragment extends BaseFragment {
         List<String> days_l = new ArrayList<>();//尾
 
 
-        calendar.setTimeInMillis(list.get(0).getAthlDate());
+        if (list.size() > 0)
+            calendar.setTimeInMillis(list.get(0).getAthlDate());
+        else days_d.add(RxFormat.setFormatDate(calendar, "MM/dd"));
 
+
+        //左边添加3条数据
         calendar.add(Calendar.DAY_OF_MONTH, -2);
         days_l.add(RxFormat.setFormatDate(calendar, "MM/dd"));
         calendar.add(Calendar.DAY_OF_MONTH, +1);
@@ -286,33 +302,35 @@ public class SportsFragment extends BaseFragment {
         calendar.add(Calendar.DAY_OF_MONTH, +1);
         days_l.add(RxFormat.setFormatDate(calendar, "MM/dd"));
 
+        //添加真实数据
         for (int i = 0; i < list.size(); i++) {
             heats.add(new Entry(i, (float) list.get(i).getCalorie()));
             sportsTimes.add(new Entry(i, (float) list.get(i).getDuration()));
             days_d.add(RxFormat.setFormatDate(list.get(i).getAthlDate(), "MM/dd"));
         }
 
-        calendar.setTimeInMillis(list.get(list.size() - 1).getAthlDate());
+        if (list.size() > 0)
+            calendar.setTimeInMillis(list.get(list.size() - 1).getAthlDate());
 
-        calendar.add(Calendar.DAY_OF_MONTH, +1);
-        for (int i = 0; i < 3; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, +1);
-            days_f.add(RxFormat.setFormatDate(calendar, "MM/dd"));
-        }
+        //右边添加3填数据
+        days_f.add("--/--");
+        days_f.add("--/--");
+        days_f.add("--/--");
 
         days.addAll(days_l);
         days.addAll(days_d);
         days.addAll(days_f);
 
+
         XAxis x = mLineChart.getXAxis();
         x.setSpaceMax(3f);
         x.setSpaceMin(3f);
 
+
         chartManager.setData(heats, sportsTimes, days);
 
-        mLineChart.moveViewToX(heats.size() - (pageNum - 1) * 20 - 4);
+        mLineChart.moveViewToX(heats.size() - (pageNum - 1) * 20 - 3);
 
-        mLineChart.invalidate();
 
         mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -408,7 +426,6 @@ public class SportsFragment extends BaseFragment {
         chartManager.addMarker(markerView);
     }
 
-
     //初始化横向刷新
     private void initHRefresh() {
         MaterialHeader header = new MaterialHeader(mActivity);
@@ -435,10 +452,8 @@ public class SportsFragment extends BaseFragment {
 
     private void initDeviceConnectTip(int QN_bleState) {
         tv_connectTip.setVisibility(View.VISIBLE);
-        dialog_not_connect.setVisibility(View.GONE);
         switch (QN_bleState) {
             case 0://打开蓝牙
-
                 RxTextUtils.getBuilder(getString(R.string.connectBle))
                         .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
@@ -468,7 +483,7 @@ public class SportsFragment extends BaseFragment {
                         //TODO 去绑定设备
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
-                        bundle.putString(Key.BUNDLE_BIND_TYPE, "1");
+                        bundle.putString(Key.BUNDLE_BIND_TYPE, BleKey.TYPE_CLOTHING);
                         RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
                     }
                 });
@@ -485,10 +500,6 @@ public class SportsFragment extends BaseFragment {
                         RxActivityUtils.skipActivity(mActivity, SportsDetailsActivity_.class);
                     }
                 });
-                break;
-            case 3:
-                tv_connectTip.setVisibility(View.GONE);
-                dialog_not_connect.setVisibility(View.VISIBLE);
                 break;
         }
     }

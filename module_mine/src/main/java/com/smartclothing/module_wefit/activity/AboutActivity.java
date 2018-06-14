@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Device;
@@ -87,18 +88,18 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                             }
                             if (beanList.size() == 1) {
                                 Device device = beanList.get(0);
-                                if ("0".equals(device.getDeviceNo())) {
+                                device.setUpdate(true);
+                                if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
                                     adapter.setData(0, device);
-                                } else if ("1".equals(device.getDeviceNo())) {
-                                    adapter.setData(1, device);
                                 }
                             } else if (beanList.size() == 2) {
-                                Device device = beanList.get(0);
-                                device.setUpdate(true);
-                                adapter.setData(0, device);
-                                Device device_1 = beanList.get(1);
-                                device.setUpdate(false);
-                                adapter.setData(1, device_1);
+                                for (int i = 0; i < beanList.size(); i++) {
+                                    Device device = beanList.get(i);
+                                    device.setUpdate(true);
+                                    if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
+                                        adapter.setData(0, device);
+                                    }
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -138,12 +139,14 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         rv_about.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BaseQuickAdapter<Device, BaseViewHolder>(R.layout.rv_item_about) {
             @Override
-            protected void convert(BaseViewHolder helper, Device item) {
+            protected void convert(final BaseViewHolder helper, Device item) {
+
                 QMUIRelativeLayout layout_item = helper.getView(R.id.layout_item);
                 layout_item.setRadiusAndShadow(QMUIDisplayHelper.dp2px(getContext(), 10),
                         QMUIDisplayHelper.dp2px(getContext(), 10),
                         0.2f);
-                helper.setText(R.id.tv_device_title, item.getDeviceName());
+
+                helper.setText(R.id.tv_device_title, getString(R.string.clothing));
                 String FirmwareVersion = "";
                 if (RxDataUtils.isNullString(item.getFirmwareVersion()))
                     FirmwareVersion = "--";
@@ -160,10 +163,8 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AboutUpdateDialog dialog = new AboutUpdateDialog(AboutActivity.this, 0.9f);
+                        AboutUpdateDialog dialog = new AboutUpdateDialog(AboutActivity.this, "", false);
                         //set进度值
-                        dialog.setProgressWithFloat(100);
-                        dialog.setTip("升级中，请勿断开连接");
                         dialog.show();
                         //后续再做进度判断，如果到达100，
                     }
@@ -171,7 +172,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
             }
         };
         adapter.bindToRecyclerView(rv_about);
-        adapter.addData(new Device(getString(R.string.scale)));
+//        adapter.addData(new Device(getString(R.string.scale)));
         adapter.addData(new Device(getString(R.string.clothing)));
     }
 

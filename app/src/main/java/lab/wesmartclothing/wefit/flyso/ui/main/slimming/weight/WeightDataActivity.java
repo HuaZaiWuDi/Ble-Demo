@@ -152,6 +152,9 @@ public class WeightDataActivity extends BaseActivity {
         final QNScaleStoreData qnScaleData = listReceives.get(position);
         RxLogUtils.d("历史体重:---------------------------------");
 
+        long time = qnScaleData.getMeasureTime().getTime();
+        RxLogUtils.d("历史time：" + time);
+
         String userId = mPrefs.UserId().getOr("testuser");
         RxLogUtils.d("用户ID" + userId);
         WeightAddBean bean = new WeightAddBean();
@@ -206,18 +209,19 @@ public class WeightDataActivity extends BaseActivity {
     //监听返回按钮，提示如果返回，体重数据将清除
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (listReceives.size() > 0)
-            showDialog();
-        else onBackPressed();
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+            if (listReceives.size() > 0)
+                showDialog();
+            else onBackPressed();
         return true;
     }
 
 
     private void showDialog() {
-        //差值大于2kg，体重数据不合理
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
         dialog.getTvTitle().setBackgroundResource(R.mipmap.leave_icon);
-        dialog.getTvContent().setText("请确认这是您的体重吗？");
+        dialog.getTvContent().setText("你还有未领取的体重数据，\n" +
+                "离开后将全部被忽略\n？");
         dialog.setCancel(getString(R.string.btn_leave));
         dialog.setCancelListener(new View.OnClickListener() {
             @Override
@@ -235,6 +239,5 @@ public class WeightDataActivity extends BaseActivity {
         });
         dialog.show();
     }
-
 
 }

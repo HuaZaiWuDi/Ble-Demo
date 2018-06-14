@@ -1,0 +1,56 @@
+package lab.wesmartclothing.wefit.flyso.utils;
+
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+
+import java.util.Calendar;
+
+import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+
+/**
+ * Created by jk on 2018/6/13.
+ */
+@EBean
+public class HeartRateToKcal {
+
+
+    @Pref
+    Prefs_ mPrefs;
+
+
+    /**
+     * 男：卡路里=((-55.0969 + (0.6309 x HR) + (0.1988 x W) + (0.2017 x A))/4.184) x 60 x T
+     * 女：卡路里=((-20.4022 + (0.4472 x HR) - (0.1263 x W) + (0.074 x A))/4.184) x 60 x T
+     * <p>
+     * HR =心率（以节拍/分钟计）
+     * W =体重（以公斤计）
+     * A =年龄（以年计）
+     * T =运动持续时间（小时）double
+     **/
+
+    /**
+     * @param HR true 为男，false为女;
+     * @return 千卡
+     */
+    public double getCalorie(int HR, double T) {
+
+        int sex = mPrefs.sex().get();
+        float W = mPrefs.realWeight().getOr(Float.valueOf(mPrefs.weight().get()));
+
+        long birthDayMillis = mPrefs.birthDayMillis().get();
+
+        Calendar calendar = Calendar.getInstance();
+        int newYear = calendar.get(Calendar.YEAR);
+        calendar.setTimeInMillis(birthDayMillis);
+        int birthYear = calendar.get(Calendar.YEAR);
+        int A = newYear - birthYear;
+
+        double kcal = 0;
+        if (sex == 1) {
+            kcal = ((-55.0969 + (0.6309 * HR) + (0.1988 * W) + (0.2017 * A)) / 4.184) * 60 * T;
+        } else {
+            kcal = ((-20.4022 + (0.4472 * HR) - (0.1263 * W) + (0.074 * A)) / 4.184) * 60 * T;
+        }
+        return (kcal / 1000);
+    }
+}

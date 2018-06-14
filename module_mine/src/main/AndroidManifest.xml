@@ -61,6 +61,16 @@
             android:name=".activity.MessageDetailActivity"
             android:screenOrientation="portrait"/>
 
+        <!-- <activity -->
+        <!-- android:name=".dfu.DfuActivity" -->
+        <!-- android:label="@string/title_activity_dfu" /> -->
+        <activity
+            android:name=".dfu.NotificationActivity"/>
+
+        <service
+            android:name=".dfu.DfuService"
+            android:exported="true"/>
+
 
         <!--&lt;!&ndash; android7.0适配 &ndash;&gt;-->
         <!--<provider-->

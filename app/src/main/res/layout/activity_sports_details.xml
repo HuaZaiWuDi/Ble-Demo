@@ -71,6 +71,20 @@
 
 
         <TextView
+            android:id="@+id/tv_Running"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="end"
+            android:layout_marginRight="@dimen/d_50"
+            android:layout_marginTop="@dimen/d_20"
+            android:drawableLeft="@mipmap/icon_run"
+            android:drawablePadding="@dimen/d_20"
+            android:text="步"
+            android:textColor="@color/colorTheme"/>
+
+
+        <TextView
             android:id="@+id/tv_state_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -206,6 +220,7 @@
 
 
     <lab.wesmartclothing.wefit.flyso.view.HeartRateView
+        android:id="@+id/mHeartRateView"
         android:layout_width="match_parent"
         android:layout_height="600px"/>
 

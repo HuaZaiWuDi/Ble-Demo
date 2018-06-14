@@ -53,9 +53,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
 //        //屏幕沉浸
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+//        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         //屏幕沉浸
-//        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
 
         mContext = this;
         mActivity = this;

@@ -7,7 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.smartclothing.blelibrary.BleKey;
+import com.vondear.rxtools.utils.RxLogUtils;
+
+import java.util.Arrays;
+import java.util.List;
+
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 
 /**
  * Created by jk on 2018/5/19.
@@ -16,8 +23,12 @@ public class HeartRateView extends LinearLayout {
 
     private Context mContext;
     private HeartRateProgressView progress_slimming, progress_grease, progress_aerobic, progress_anaerobic, progress_limit;
-    private int[] heartRate;
-    private boolean isOffile = false;
+
+    private float progressPercentage_1;
+    private float progressPercentage_2;
+    private float progressPercentage_3;
+    private float progressPercentage_4;
+    private float progressPercentage_5;
 
     public HeartRateView(Context context) {
         this(context, null);
@@ -38,37 +49,105 @@ public class HeartRateView extends LinearLayout {
         progress_anaerobic = view.findViewById(R.id.progress_anaerobic);
         progress_limit = view.findViewById(R.id.progress_limit);
 
-        HeartRate heartRate = new HeartRate();
-        heartRate.progressPercentage = new float[][]{new float[]{0f, 0.05f}, new float[]{0.47f, 0.5f}, new float[]{0.7f, 0.75f}};
-        heartRate.type = 0;
-        progress_slimming.setData(heartRate);
+    }
 
-        heartRate.progressPercentage = new float[][]{new float[]{0.05f, 0.15f}, new float[]{0.5f, 0.55f}, new float[]{0.75f, 0.8f}};
-        heartRate.type = 1;
-        progress_grease.setData(heartRate);
+    private float maxTime = 1 * 30;//默认最大的时间范围
 
-        heartRate.progressPercentage = new float[][]{new float[]{0.15f, 0.3f}, new float[]{0.55f, 0.6f}, new float[]{0.8f, 0.85f}};
-        heartRate.type = 2;
-        progress_aerobic.setData(heartRate);
 
-        heartRate.progressPercentage = new float[][]{new float[]{0.3f, 0.45f}, new float[]{0.6f, 0.65f}, new float[]{0.85f, 0.9f}};
-        heartRate.type = 3;
-        progress_anaerobic.setData(heartRate);
+    //展示离线数据
+    public void offileData(HeartRateBean mHeartRateBean) {
+        maxTime = mHeartRateBean.getDuration();
+        List<Integer> athlRecord = mHeartRateBean.getAthlList();
 
-        heartRate.progressPercentage = new float[][]{new float[]{0.45f, 0.47f}, new float[]{0.65f, 0.7f}, new float[]{0.9f, 1f}};
-        heartRate.type = 4;
-        progress_limit.setData(heartRate);
-
+        for (int i = 0; i < athlRecord.size(); i++) {
+            checkHeartRate(athlRecord.get(i));
+        }
     }
 
 
-    public void setHeartRate(int[] heartRate) {
-        this.heartRate = heartRate;
+    public void checkHeartRate(int datum) {
+        int type = heartRate(datum);
+        float end = 0;
+
+        switch (type) {
+            case 1:
+                progressPercentage_1 += 2;
+                end = progressPercentage_1 / maxTime;
+                progress_slimming.setData(end, 1);
+                break;
+            case 2:
+                progressPercentage_2 += 2;
+                end = progressPercentage_2 / maxTime;
+                progress_grease.setData(end, 2);
+                break;
+            case 3:
+                progressPercentage_3 += 2;
+                end = progressPercentage_3 / maxTime;
+                progress_aerobic.setData(end, 3);
+                break;
+            case 4:
+                progressPercentage_4 += 2;
+                end = progressPercentage_4 / maxTime;
+                progress_anaerobic.setData(end, 4);
+                break;
+            case 5:
+                progressPercentage_5 += 2;
+                end = progressPercentage_5 / maxTime;
+                progress_limit.setData(end, 5);
+                break;
+        }
+        RxLogUtils.d("结束点：" + end);
+
+        if (end >= 1) {
+            maxTime = maxTime * 2;
+
+            end = progressPercentage_1 / maxTime;
+            progress_slimming.setData(end, 1);
+
+            end = progressPercentage_2 / maxTime;
+            progress_grease.setData(end, 2);
+
+            end = progressPercentage_3 / maxTime;
+            progress_aerobic.setData(end, 3);
+
+            end = progressPercentage_4 / maxTime;
+            progress_anaerobic.setData(end, 4);
+
+            end = progressPercentage_5 / maxTime;
+            progress_limit.setData(end, 5);
+
+        }
     }
 
-    class HeartRate {
-        float[][] progressPercentage;//宽度百分比
-        int type;
+
+    private int heartRate(int heart) {
+        int type = 1;
+
+        byte[] heartRates = BleKey.heartRates;
+        int heart_1 = heartRates[1]&0xff;
+        int heart_2 = heartRates[2]&0xff;
+        int heart_3 = heartRates[3]&0xff;
+        int heart_4 = heartRates[4]&0xff;
+
+
+        RxLogUtils.d("心率法制：" + Arrays.toString(heartRates));
+        if (heart <= heart_1) {
+            type = 1;
+            RxLogUtils.d("热身");
+        } else if (heart > heart_1 && heart <= heart_2) {
+            type = 2;
+            RxLogUtils.d("燃脂");
+        } else if (heart > heart_2 && heart <= heart_3) {
+            RxLogUtils.d("耐力");
+            type = 3;
+        } else if (heart > heart_3 && heart <= heart_4) {
+            RxLogUtils.d("无氧");
+            type = 4;
+        } else if (heart > heart_4) {
+            RxLogUtils.d("极限");
+            type = 5;
+        }
+        return type;
     }
 
 }

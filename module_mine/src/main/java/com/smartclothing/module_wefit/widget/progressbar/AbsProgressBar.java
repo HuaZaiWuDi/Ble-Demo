@@ -14,22 +14,34 @@ public class AbsProgressBar extends View {
 
     protected Context context;
 
-    /**画笔*/
+    /**
+     * 画笔
+     */
     protected Paint paint;
 
-    /**整个控件宽度*/
+    /**
+     * 整个控件宽度
+     */
     protected float width;
 
-    /**整个控件高度*/
+    /**
+     * 整个控件高度
+     */
     protected float height;
 
-    /**进度条未填充颜色*/
+    /**
+     * 进度条未填充颜色
+     */
     protected int backgroundColor;
 
-    /**文字颜色*/
+    /**
+     * 文字颜色
+     */
     protected int textColor;
 
-    /**进度条*/
+    /**
+     * 进度条
+     */
     public float progress;
 //    public float progress0;
 
@@ -55,10 +67,11 @@ public class AbsProgressBar extends View {
 
     /**
      * 初始化
+     *
      * @param context
      * @param attrs
      */
-    private void init(Context context, AttributeSet attrs){
+    private void init(Context context, AttributeSet attrs) {
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.absProgressBar);
         progress = a.getInteger(R.styleable.absProgressBar_progress, 0);
@@ -73,8 +86,8 @@ public class AbsProgressBar extends View {
     /**
      * 初始化画笔
      */
-    protected void initPaint(){
-        if (paint == null){
+    protected void initPaint() {
+        if (paint == null) {
             paint = new Paint();
         } else {
             paint.reset();
@@ -85,7 +98,7 @@ public class AbsProgressBar extends View {
     /**
      * 获取各元素尺寸
      */
-    protected void getDimension(){
+    protected void getDimension() {
         width = getWidth();
         height = getHeight();
     }
@@ -102,24 +115,26 @@ public class AbsProgressBar extends View {
 
     /**
      * 绘制进度
+     *
      * @param canvas
      */
-    public void drawProgress(Canvas canvas){
+    public void drawProgress(Canvas canvas) {
 
     }
 
     /**
      * 绘制文字
+     *
      * @param canvas
      */
-    public void drawText(Canvas canvas){
+    public void drawText(Canvas canvas) {
 
     }
 
 
-
     /**
      * dp转px
+     *
      * @param dpValue
      * @return
      */
@@ -131,6 +146,7 @@ public class AbsProgressBar extends View {
 
     /**
      * 设置进度
+     *
      * @param mProgress
      */
     public void setProgress(final float mProgress) {
@@ -147,6 +163,7 @@ public class AbsProgressBar extends View {
 
     /**
      * 设置进度(无动画)
+     *
      * @param mProgress
      */
     public void setProgressWithoutAnim(final float mProgress) {
@@ -156,6 +173,7 @@ public class AbsProgressBar extends View {
 
     /**
      * 设置无填充色
+     *
      * @param backgroundColor
      */
     public void setBackgroundColor(int backgroundColor) {
@@ -164,6 +182,7 @@ public class AbsProgressBar extends View {
 
     /**
      * 设置文字颜色
+     *
      * @param textColor
      */
     public void setTextColor(int textColor) {

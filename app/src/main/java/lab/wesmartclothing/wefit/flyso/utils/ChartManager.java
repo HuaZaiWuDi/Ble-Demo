@@ -195,11 +195,16 @@ public class ChartManager {
         set2.setLineWidth(3f);
         set2.setColor(Color.WHITE);
         set2.setDrawCircles(false);//是否显示节点圆心
+        set2.setCircleHoleRadius(2f);
+//        set2.setCircleColorHole();
+
         set2.setHighlightLineWidth(2f);
         set2.setHighLightColor(Color.WHITE);
+        set2.enableDashedHighlightLine(10f, 10f, 0f);
 //        set2.setDrawVerticalHighlightIndicator(false);
         set2.setDrawHorizontalHighlightIndicator(false);
         set2.setHighlightEnabled(true);
+
         return set2;
     }
 
@@ -223,7 +228,7 @@ public class ChartManager {
         data.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
-
+        addLimitLine2X(line1.size() - 1);
 //        mLineChart.setVisibleXRangeMaximum(7);
         mLineChart.animateX(500);
         mLineChart.setVisibleXRangeMaximum(7);

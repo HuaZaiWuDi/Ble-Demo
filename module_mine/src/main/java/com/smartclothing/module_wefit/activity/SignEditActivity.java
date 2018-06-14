@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.base.BaseActivity;
+import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.view.RxToast;
 
 /*编辑签名*/
 
@@ -51,10 +53,10 @@ public class SignEditActivity extends BaseActivity implements View.OnClickListen
             onBackPressed();
 
         } else if (i == R.id.tv_data_save) {
-//            if (RxDataUtils.isNullString(et_data_sign.getText().toString())) {
-//                RxToast.showToast("签名不能为空");
-//                return;
-//            }
+            if (RxDataUtils.isNullString(et_data_sign.getText().toString())) {
+                RxToast.showToast("签名不能为空");
+                return;
+            }
             setResult(RESULT_CODE_SIGN, new Intent().putExtra("sign", "" + et_data_sign.getText().toString().trim()));
             finish();
 

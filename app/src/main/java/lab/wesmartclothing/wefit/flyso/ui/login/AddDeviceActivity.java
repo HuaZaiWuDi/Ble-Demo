@@ -17,6 +17,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.clj.fastble.data.BleDevice;
 import com.google.gson.Gson;
+import com.smartclothing.blelibrary.BleKey;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -54,7 +55,6 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxNetUtils;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import okhttp3.RequestBody;
 
@@ -152,11 +152,16 @@ public class AddDeviceActivity extends BaseActivity {
             startScan();
         } else if (stepState == 2) {
             bindDevice();
-            //跳转主页
-            if (!BUNDLE_FORCE_BIND)
-                RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
-            else
-                onBackPressed();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //跳转主页
+                    if (!BUNDLE_FORCE_BIND)
+                        RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
+                    else
+                        onBackPressed();
+                }
+            }, 500);
         }
     }
 
@@ -221,9 +226,10 @@ public class AddDeviceActivity extends BaseActivity {
 
             @Override
             public void accept(BleDevice device) throws Exception {
-                if ("1".equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
+                if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
-                    isBind(bean);
+                    if (filterDevice(device.getMac()))
+                        isBind(bean);
                 }
             }
         });
@@ -232,14 +238,23 @@ public class AddDeviceActivity extends BaseActivity {
 
             @Override
             public void accept(QNBleDevice device) throws Exception {
-                if ("0".equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
+                if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
-                    isBind(bean);
+                    if (filterDevice(device.getMac()))
+                        isBind(bean);
                 }
             }
         });
-        RxBus.getInstance().addSubscription(this, QNDevice);
-        RxBus.getInstance().addSubscription(this, device);
+        RxBus.getInstance().addSubscription(this, QNDevice, device);
+    }
+
+
+    private boolean filterDevice(String mac) {
+        List<BindDeviceBean> data = adapter.getData();
+        for (int i = 0; i < data.size(); i++) {
+            if (mac.equals(data.get(i).getMac())) return false;
+        }
+        return true;
     }
 
 
@@ -355,14 +370,14 @@ public class AddDeviceActivity extends BaseActivity {
         for (BindDeviceBean bean : beans) {
             if (bean.isBind()) {
                 BindDeviceItem.DeviceListBean deviceList = new BindDeviceItem.DeviceListBean();
-                deviceList.setDeviceName(bean.getDeivceType() == 0 ? getString(R.string.scale) : getString(R.string.clothing));
+//                deviceList.setDeviceName(bean.getDeivceType() == 0 ? getString(R.string.scale) : getString(R.string.clothing));
                 if (BaseALocationActivity.aMapLocation != null) {
                     deviceList.setCity(BaseALocationActivity.aMapLocation.getCity());
                     deviceList.setCountry(BaseALocationActivity.aMapLocation.getCountry());
                     deviceList.setProvince(BaseALocationActivity.aMapLocation.getProvince());
                 }
                 deviceList.setMacAddr(bean.getMac());
-                deviceList.setDeviceNo(bean.getDeivceType() + "");
+                deviceList.setDeviceNo(bean.getDeivceType() == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
                 mDeviceLists.add(deviceList);
                 if (bean.getDeivceType() == 0) {
                     mPrefs.scaleIsBind().put(bean.getMac());
@@ -394,22 +409,6 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
-        //网络不可用
-        if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {
-            String s = MyAPP.getACache().getAsString(Key.CACHE_BIND_INFO);
-            if (s != null) {
-                BindDeviceItem item = new Gson().fromJson(s, BindDeviceItem.class);
-                List<BindDeviceItem.DeviceListBean> deviceList = item.getDeviceList();
-                if (deviceList.size() > 0)
-                    for (int i = 0; i < deviceList.size(); i++) {
-                        if (bean.getDeivceName().equals(deviceList.get(i).getDeviceName())) {
-                            bean.setBind(true);
-                        }
-                    }
-            }
-            adapter.addData(bean);
-            return;
-        }
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
@@ -431,7 +430,20 @@ public class AddDeviceActivity extends BaseActivity {
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+//                        RxToast.error(error);
+                        //网络获取异常不可用
+                        String s = MyAPP.getACache().getAsString(Key.CACHE_BIND_INFO);
+                        if (s != null) {
+                            BindDeviceItem item = new Gson().fromJson(s, BindDeviceItem.class);
+                            List<BindDeviceItem.DeviceListBean> deviceList = item.getDeviceList();
+                            if (deviceList.size() > 0)
+                                for (int i = 0; i < deviceList.size(); i++) {
+                                    if (bean.getDeivceName().equals(deviceList.get(i).getDeviceName())) {
+                                        bean.setBind(true);
+                                    }
+                                }
+                        }
+                        adapter.addData(bean);
                     }
                 });
     }

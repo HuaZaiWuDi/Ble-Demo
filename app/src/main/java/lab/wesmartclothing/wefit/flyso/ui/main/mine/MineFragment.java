@@ -11,6 +11,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.smartclothing.blelibrary.BleKey;
+import com.smartclothing.blelibrary.util.ByteUtil;
 import com.smartclothing.module_wefit.activity.AboutActivity;
 import com.smartclothing.module_wefit.activity.CollectActivity;
 import com.smartclothing.module_wefit.activity.MessageActivity;
@@ -30,6 +32,7 @@ import com.vondear.rxtools.view.RxToast;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
@@ -48,6 +51,7 @@ import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -62,6 +66,8 @@ public class MineFragment extends BaseFragment {
     public static MineFragment getInstance() {
         return new MineFragment_();
     }
+
+    private double voltage;//实时电压值
 
 
     @ViewById
@@ -105,6 +111,15 @@ public class MineFragment extends BaseFragment {
     Prefs_ mPrefs;
 
 
+    //心率
+    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
+    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] data) {
+        int value = ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]});
+        voltage = value / 100f;
+
+    }
+
+
     @Click
     void iv_mine_set() {
         if (!RxUtils.isFastClick(1000))
@@ -143,7 +158,6 @@ public class MineFragment extends BaseFragment {
 
     @Click
     void rl_my_order() {
-
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
         bundle.putString(Key.BUNDLE_TITLE, "我的订单");
@@ -161,8 +175,12 @@ public class MineFragment extends BaseFragment {
 
     @Click
     void rl_my_device() {
-        RxActivityUtils.skipActivity(mActivity, MyDeviceActivity.class);
         //我的设备
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Key.ACTION_SCALE_CONNECT, WeightFragment.isConnect);
+        bundle.putDouble(Key.BUNDLE_VOLTAGE, voltage);
+        RxActivityUtils.skipActivity(mActivity, MyDeviceActivity.class, bundle);
+
     }
 
     @Click
@@ -173,6 +191,7 @@ public class MineFragment extends BaseFragment {
 
     @Click
     void rl_my_about() {
+
         RxActivityUtils.skipActivity(mActivity, AboutActivity.class);
         //关于我的
     }
@@ -190,11 +209,9 @@ public class MineFragment extends BaseFragment {
         RxLogUtils.d("加载：【MineFragment】");
     }
 
-    private boolean isload = false;
 
     @AfterViews
     public void initView() {
-        isload = true;
         initBus();
         initMineData();
     }
@@ -210,9 +227,9 @@ public class MineFragment extends BaseFragment {
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {
-                if ("0".equals(device.getDeviceNo())) {
+                if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
                     mPrefs.scaleIsBind().put("");
-                } else if ("1".equals(device.getDeviceNo())) {
+                } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
                     mPrefs.clothing().put("");
                 }
             }
@@ -235,7 +252,7 @@ public class MineFragment extends BaseFragment {
                     bundle.putBoolean(Key.BUNDLE_RELOGIN, true);
                     RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginActivity_.class, bundle);
                     RxActivityUtils.finishActivity(SetActivity.class);
-                } else if ("0".equals(device) || "1".equals(device)) {
+                } else if (BleKey.TYPE_SCALE.equals(device) || BleKey.TYPE_CLOTHING.equals(device)) {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
                     bundle.putString(Key.BUNDLE_BIND_TYPE, device);
@@ -256,10 +273,7 @@ public class MineFragment extends BaseFragment {
             }
         });
 
-        RxBus.getInstance().addSubscription(this, Collect);
-        RxBus.getInstance().addSubscription(this, register);
-        RxBus.getInstance().addSubscription(this, web);
-        RxBus.getInstance().addSubscription(this, device);
+        RxBus.getInstance().addSubscription(this, Collect, register, web, device);
     }
 
 
