@@ -129,7 +129,7 @@ public abstract class BaseFragment extends Fragment {
     public void loadCricle(String img_url, @NonNull ImageView img) {
         Glide.with(mActivity)
                 .load(img_url)
-                .error(R.mipmap.ic_launcher)
+                .error(R.mipmap.group15)
                 .bitmapTransform(new CropCircleTransformation(mActivity))//圆角图片
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(img);

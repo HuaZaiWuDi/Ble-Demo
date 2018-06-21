@@ -42,7 +42,7 @@ public final class R {
         public static int recycler_swipe_view_load_more = 0x7f0f0084;
     }
     public static final class string {
-        public static int loading_default_messsage = 0x7f15004e;
+        public static int loading_default_messsage = 0x7f15004f;
         public static int recycler_swipe_click_load_more = 0x7f150063;
         public static int recycler_swipe_data_empty = 0x7f150064;
         public static int recycler_swipe_load_error = 0x7f150065;

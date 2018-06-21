@@ -12,17 +12,13 @@ import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
-import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.DeviceRvAdapter;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Device;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
-import com.smartclothing.module_wefit.tools.VoltageToPower;
-import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -196,24 +192,25 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                                 }
                             }
 
-                            BleAPI.readSetting(new BleChartChangeCallBack() {
-                                @Override
-                                public void callBack(byte[] data) {
-                                    RxLogUtils.d("读配置" + HexUtil.encodeHexStr(data));
-                                    boolean heating = data[14] == 0x01;
 
-                                    double voltage = getIntent().getDoubleExtra("BUNDLE_VOLTAGE", 0);
-                                    RxLogUtils.d("电压：" + voltage);
-                                    VoltageToPower toPower = new VoltageToPower();
-                                    int capacity = toPower.getBatteryCapacity(voltage);
-                                    double time = toPower.canUsedTime(voltage, heating);
-
-                                    Device item = rvAdapter.getItem(1);
-                                    item.setQuantity(capacity);
-                                    item.setStandby((int) (time * 3600));
-                                    rvAdapter.notifyItemChanged(1);
-                                }
-                            });
+//                            BleAPI.readSetting(new BleChartChangeCallBack() {
+//                                @Override
+//                                public void callBack(byte[] data) {
+//                                    RxLogUtils.d("读配置" + HexUtil.encodeHexStr(data));
+//                                    boolean heating = data[14] == 0x01;
+//
+//                                    double voltage = getIntent().getDoubleExtra("BUNDLE_VOLTAGE", 0);
+//                                    RxLogUtils.d("电压：" + voltage);
+//                                    VoltageToPower toPower = new VoltageToPower();
+//                                    int capacity = toPower.getBatteryCapacity(voltage);
+//                                    double time = toPower.canUsedTime(voltage, heating);
+//                                    RxLogUtils.d("capacity:" + capacity + "time：" + time);
+//                                    Device item = rvAdapter.getItem(1);
+//                                    item.setQuantity(capacity);
+//                                    item.setStandby((int) time);
+//                                    rvAdapter.notifyItemChanged(1);
+//                                }
+//                            });
 
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -3,7 +3,6 @@ package com.smartclothing.module_wefit.activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,7 +22,6 @@ import com.smartclothing.module_wefit.widget.dialog.AboutUpdateDialog;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.json.JSONException;
@@ -121,12 +119,6 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         tv_version.setText("版本号v" + RxDeviceUtils.getAppVersionName());
 
 
-        String info_about = getString(R.string.login_clause);
-        SpannableStringBuilder builder = RxTextUtils.getBuilder(info_about)
-                .setForegroundColor(getResources().getColor(R.color.colorTheme))
-                .setUnderline()
-                .setLength(7, info_about.length());
-        tv_protocol.setText(builder);
 
 
         listener();

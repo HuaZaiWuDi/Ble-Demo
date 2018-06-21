@@ -820,9 +820,9 @@ public final class R {
         public static int abc_shareactionprovider_share_with = 0x7f15001e;
         public static int abc_shareactionprovider_share_with_application = 0x7f15001f;
         public static int abc_toolbar_collapse_description = 0x7f150020;
-        public static int all_images = 0x7f150023;
-        public static int complete = 0x7f15002c;
-        public static int folder_image_count = 0x7f150049;
+        public static int all_images = 0x7f150024;
+        public static int complete = 0x7f15002d;
+        public static int folder_image_count = 0x7f15004a;
         public static int origin = 0x7f150057;
         public static int origin_size = 0x7f150058;
         public static int photo_crop = 0x7f15005e;

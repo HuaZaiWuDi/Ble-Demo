@@ -86,7 +86,6 @@ public class ChartManager {
         legend.setTextSize(12);
         legend.setEnabled(true);
         legend.setForm(Legend.LegendForm.LINE);
-
     }
 
     //添加提示线
@@ -152,10 +151,14 @@ public class ChartManager {
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
 
-        mLineChart.animateX(500);
+//        mLineChart.animateX(500);
+
+
+        mLineChart.setVisibleXRangeMaximum(7);
+
+        mLineChart.moveViewToX(yVals.size() - 4);
 
         addLimitLine2X(yVals.size() - 1);
-        mLineChart.setVisibleXRangeMaximum(7);
 
     }
 
@@ -174,7 +177,14 @@ public class ChartManager {
         set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set1.setCubicIntensity(0.2f);
         set1.setLineWidth(3f);
-        set1.setDrawCircles(false);//是否显示节点圆心
+        set1.setDrawCircles(true);//是否显示节点圆心
+        set1.setDrawCircleHole(true);
+        set1.setCircleHoleRadius(2f);
+        set1.setCircleRadius(5f);
+        set1.setCircleColor(mContext.getResources().getColor(R.color.lineColor));    //可以设置Entry节点的颜色
+        set1.setDrawCircleHole(true); //是否定制节点圆心的颜色，若为false，则节点为单一的同色点，若为true则可以设置节点圆心的颜色
+        set1.setCircleColorHole(Color.WHITE);  //设置节点圆心的颜色
+
         set1.setColor(Color.WHITE);
         set1.setHighlightLineWidth(2f);
         set1.setHighLightColor(Color.WHITE);
@@ -191,12 +201,17 @@ public class ChartManager {
         //心率
         LineDataSet set2 = new LineDataSet(YAxis, label);
         set2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set2.enableDashedLine(20f, 10f, 20f); //设置线条为虚线 1.线条宽度2.间隔宽度3.角度
+        set2.enableDashedLine(10f, 10f, 0f); //设置线条为虚线 1.线条宽度2.间隔宽度3.角度
         set2.setLineWidth(3f);
         set2.setColor(Color.WHITE);
-        set2.setDrawCircles(false);//是否显示节点圆心
+        //设置节点圆角
+        set2.setDrawCircles(true);//是否显示节点圆心
+        set2.setDrawCircleHole(true);
         set2.setCircleHoleRadius(2f);
-//        set2.setCircleColorHole();
+        set2.setCircleRadius(5f);
+        set2.setCircleColor(mContext.getResources().getColor(R.color.lineColor));    //可以设置Entry节点的颜色
+        set2.setDrawCircleHole(true); //是否定制节点圆心的颜色，若为false，则节点为单一的同色点，若为true则可以设置节点圆心的颜色
+        set2.setCircleColorHole(Color.WHITE);  //设置节点圆心的颜色
 
         set2.setHighlightLineWidth(2f);
         set2.setHighLightColor(Color.WHITE);
@@ -228,10 +243,15 @@ public class ChartManager {
         data.notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
-        addLimitLine2X(line1.size() - 1);
+
 //        mLineChart.setVisibleXRangeMaximum(7);
-        mLineChart.animateX(500);
+//        mLineChart.animateX(500);
         mLineChart.setVisibleXRangeMaximum(7);
+
+        mLineChart.moveViewToX(line1.size() - 4);
+
+        addLimitLine2X(line1.size() - 1);
+
 //        addLegend();
     }
 

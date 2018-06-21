@@ -380,11 +380,10 @@ public class RxDeviceUtils {
     /**
      * 检查权限
      *
-     * @param context
      * @param permission 例如 Manifest.permission.READ_PHONE_STATE
      * @return
      */
-    public static boolean checkPermission( String permission) {
+    public static boolean checkPermission(String permission) {
         boolean result = false;
         if (Build.VERSION.SDK_INT >= 23) {
             try {
@@ -415,7 +414,7 @@ public class RxDeviceUtils {
             TelephonyManager tm = (TelephonyManager) context
                     .getSystemService(Context.TELEPHONY_SERVICE);
             String device_id = null;
-            if (checkPermission( Manifest.permission.READ_PHONE_STATE)) {
+            if (checkPermission(Manifest.permission.READ_PHONE_STATE)) {
                 device_id = tm.getDeviceId();
             }
             String mac = null;
@@ -515,7 +514,9 @@ public class RxDeviceUtils {
             Process pp = Runtime.getRuntime().exec("cat /sys/class/net/wlan0/address");
             isr = new InputStreamReader(pp.getInputStream());
             lnr = new LineNumberReader(isr);
-            macAddress = lnr.readLine().replace(":", "");
+            String s = lnr.readLine();
+            if (RxDataUtils.isNullString(s)) return "";
+            macAddress = s.replace(":", "");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -583,7 +584,7 @@ public class RxDeviceUtils {
      *
      * @param phoneNumber 电话号码
      */
-    public static void dial( String phoneNumber) {
+    public static void dial(String phoneNumber) {
         context.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
     }
 
@@ -593,7 +594,7 @@ public class RxDeviceUtils {
      *
      * @param phoneNumber 电话号码
      */
-    public static void callPhone( String phoneNumber) {
+    public static void callPhone(String phoneNumber) {
         if (!RxDataUtils.isNullString(phoneNumber)) {
             final String phoneNumber1 = phoneNumber.trim();// 删除字符串首部和尾部的空格
             // 调用系统的拨号服务实现电话拨打功能
@@ -625,7 +626,7 @@ public class RxDeviceUtils {
      * @param phoneNumber 电话号码
      * @param content     内容
      */
-    public static void sendSms( String phoneNumber, String content) {
+    public static void sendSms(String phoneNumber, String content) {
         Uri uri = Uri.parse("smsto:" + (RxDataUtils.isNullString(phoneNumber) ? "" : phoneNumber));
         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
         intent.putExtra("sms_body", RxDataUtils.isNullString(content) ? "" : content);
@@ -732,7 +733,6 @@ public class RxDeviceUtils {
      * 获取手机短信并保存到xml中
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.READ_SMS"/>}</p>
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>}</p>
-     *
      */
     public static void getAllSMS() {
         // 1.获取短信

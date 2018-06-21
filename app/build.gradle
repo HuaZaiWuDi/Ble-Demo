@@ -13,8 +13,8 @@ android {
         applicationId "lab.wesmartclothing.wefit.flyso"
         minSdkVersion versions.minSdkVersion
         targetSdkVersion versions.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode versions.versionCode
+        versionName versions.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         // 取消掉系统对.9图片的检查

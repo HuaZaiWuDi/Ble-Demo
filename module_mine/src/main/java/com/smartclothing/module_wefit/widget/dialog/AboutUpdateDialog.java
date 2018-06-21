@@ -3,7 +3,6 @@ package com.smartclothing.module_wefit.widget.dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -21,7 +20,6 @@ import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.dfu.DfuService;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.boradcast.B;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
 
@@ -81,12 +79,14 @@ public class AboutUpdateDialog extends BaseDialog implements View.OnClickListene
 
 
         //下载文件固件升级文件
-        if (!RxDataUtils.isNullString(filePath))
-            downLoadFile(filePath);
-        else {
-            final String dirName = Environment.getExternalStorageDirectory() + Dir + fileName;
-            startMyDFU(new File(dirName));
-        }
+//        if (!RxDataUtils.isNullString(filePath))
+//            downLoadFile(filePath);
+//        else {
+//            final String dirName = Environment.getExternalStorageDirectory() + Dir + fileName;
+//        startMyDFU(new File(dirName));
+//        }
+        //演示使用本地DFU文件
+        startMyDFU(null);
 
         setOnDismissListener(new OnDismissListener() {
             @Override
@@ -135,16 +135,16 @@ public class AboutUpdateDialog extends BaseDialog implements View.OnClickListene
             return;
         }
 
-        if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
-            tv_update_tip.setText("升级文件有误");
-            return;
-        }
+//        if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
+//            tv_update_tip.setText("升级文件有误");
+//            return;
+//        }
 
         final DfuServiceInitiator starter = new DfuServiceInitiator(BleTools.getInstance().getBleDevice().getMac())
                 .setDeviceName(BleTools.getInstance().getBleDevice().getName());
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
-//        starter.setZip(R.raw.nrf52832_xxaa_app_4);
-        starter.setZip(o.getPath());
+        starter.setZip(R.raw.nrf52832_xxaa_app_7);
+//        starter.setZip(o.getPath());
         starter.start(mContext, DfuService.class);
     }
 

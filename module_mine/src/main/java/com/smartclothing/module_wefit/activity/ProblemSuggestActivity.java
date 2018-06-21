@@ -60,7 +60,7 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
     private CharSequence temp;
     private int editStart;      // 光标开始位置
     private int editEnd;        // 光标结束位置
-    private ArrayList<ImageModel> imgList = new ArrayList<>();
+    private ArrayList<ImageItem> imgList = new ArrayList<>();
 
     private List<String> dataset0;
     private List<String> dataset1;
@@ -88,11 +88,10 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
                 .setmPicSize(getResources().getDimensionPixelSize(R.dimen.dimen_70));//ImageUploadView.dp2px(this, 80)
         listener();
         initImagePick();
-        dataset0 = new LinkedList<>(Arrays.asList("产品反馈", "使用资讯", "产品建议", "其它"));
-        dataset1 = new LinkedList<>(Arrays.asList("很少出现", "偶尔出现", "经常出现", "老是出现"));
+        dataset0 = new LinkedList<>(Arrays.asList("产品反馈", "使用资询", "产品建议", "其它"));
+        dataset1 = new LinkedList<>(Arrays.asList("很少出现", "一天一次", "一天多次", "始终出现"));
 
         et_data_sign.addTextChangedListener(textWatcher);
-
 
         final SinglePicker picker = new SinglePicker(this, dataset0);
         picker.setSelectedIndex(0);
@@ -166,7 +165,7 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
                 RxToast.success("未填写问题描述与建议");
                 return;
             }
-            if (imgList.size() != 0) {
+            if (iv_load.getImageList().size() != 0) {
                 feedbackImg();
             } else
                 commitData("");
@@ -223,10 +222,13 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
     public void feedbackImg() {
         dialog = new DepositDialog(ProblemSuggestActivity.this, "正在提交");
         List<File> files = new ArrayList<>();
-        for (int i = 0; i < imgList.size(); i++) {
-            File file = new File(imgList.get(i).getImg());
+        ArrayList<ImageModel> imageList = iv_load.getImageList();
+
+        for (int i = 0; i < imageList.size(); i++) {
+            File file = new File(imageList.get(i).getImg());
             files.add(file);
         }
+
         List<MultipartBody.Part> body = filesToMultipartBodyParts(files);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.feedbackImg(body))
@@ -286,6 +288,7 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
     @Override
     public void addImageClickListener() {
         imagePicker.setSelectLimit(4 - iv_load.getImageList().size());    //选中数量限制
+        imagePicker.setSelectedImages(imgList);
         Intent intent = new Intent(ProblemSuggestActivity.this, ImageGridActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
@@ -298,7 +301,7 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
     @Override
     public void delImageClickListener(int position) {
         iv_load.delImage(position);
-        imgList.remove(position);
+//        imgList.remove(position);
     }
 
     @Override
@@ -308,12 +311,11 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
             if (requestCode == REQUEST_CODE && data != null) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 if (images != null && images.size() > 0) {
-                    imgList.clear();
+                    imgList = images;
                     for (ImageItem item : images) {
-                        imgList.add(new ImageModel(item.path));
+                        iv_load.addImage(new ImageModel(item.path));
                         RxLogUtils.d("图片路径：" + item.path);
                     }
-                    iv_load.addImage(imgList);
                 }
             }
         }

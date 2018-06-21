@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleTools;
-import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -14,6 +13,7 @@ import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSure;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -25,17 +25,21 @@ import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
+import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.view.HeartRateView;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.RequestBody;
 
 @EActivity(R.layout.activity_sports_details)
@@ -78,36 +82,18 @@ public class SportsDetailsActivity extends BaseActivity {
     void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
         if (state) {
             tv_connectDevice.setText(R.string.connected);
+            mTimer.startTimer();
         } else {
             tv_connectDevice.setText(R.string.disConnected);
-            sportsTime.stopTimer();
+            mTimer.stopTimer();
+            showDialog();
         }
     }
 
-
-    //心率
-    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
-    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] data) {
-        if (!isSports) return;
-        int heartRate = data[8] & 0xff;
-        sportsTime.startTimer();
-        mHeartRateView.checkHeartRate(heartRate);
-
-        maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
-        minHeart = heartRate < minHeart ? heartRate : minHeart;
-        tv_curHeart.setText(heartRate + "bpm");
-        tv_maxHeart.setText(maxHeart + "bpm");
-
-
-        double hour = duration / 3600000f;
-
-        double calorie = mHeartRateToKcal.getCalorie(heartRate, hour);
-        RxLogUtils.d("calorie：" + calorie);
-        if (calorie < 1) {
-            tv_heat.setText(RxFormatValue.fromatUp(calorie * 1000, 0) + getString(R.string.unit_k));
-        } else
-            tv_heat.setText((int) calorie + getString(R.string.unit_kcal));
-        tv_Running.setText(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}) + "步");
+    //监听系统蓝牙开启
+    @Receiver(actions = Key.ACTION_CLOTHING_STOP)
+    void CLOTHING_STOP() {
+        showDialog();
     }
 
 
@@ -119,12 +105,12 @@ public class SportsDetailsActivity extends BaseActivity {
 
     @Click
     void back() {
-        onBackPressed();
+        finish();
     }
 
     //是否运动界面
     private boolean isSports = false;
-
+    private boolean isFirst = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,50 +130,52 @@ public class SportsDetailsActivity extends BaseActivity {
             showSportsInfo();
         }
         initText();
-
-//        RxLogUtils.d("男：" + HeartRateToKcal.getCalorie(true, 150, 60, 20, 1));
-//        RxLogUtils.d("女：" + HeartRateToKcal.getCalorie(false, 150, 60, 20, 1));
     }
-
-    private int maxHeart = 0;//最大心率
-    private int minHeart = 0;//最小心率
-    private int duration = 0;//运动持续时间
-
-
-    //运动计时
-    MyTimer sportsTime = new MyTimer(1000, new MyTimerListener() {
-        @Override
-        public void enterTimer() {
-            duration += 1000;
-            tv_sportsTime.setText(RxFormat.setFormatDateG(duration, RxFormat.Date_Time));
-        }
-    });
-
-//
-//    //定时改变心率
-//    MyTimer timer = new MyTimer(30000, 30000, new MyTimerListener() {
-//        @Override
-//        public void enterTimer() {
-//            int heart = (int) (Math.random() * 100 + 100);
-//            RxLogUtils.d("心率数据：" + heart);
-//            BleAPI.syncSetting(40, heart, 0x00, new BleChartChangeCallBack() {
-//                @Override
-//                public void callBack(byte[] data) {
-//
-//                }
-//            });
-//        }
-//    });
 
     @Override
     protected void onDestroy() {
-        sportsTime.stopTimer();
+        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
+
+    int duration = 0;
+
+    MyTimer mTimer = new MyTimer(1000, new MyTimerListener() {
+        @Override
+        public void enterTimer() {
+            duration++;
+            tv_sportsTime.setText(RxFormat.setFormatDateG(duration * 1000, RxFormat.Date_Time));
+        }
+    });
 
     private void showStartSports() {
         tv_state.setText("开始运动");
         tv_connectDevice.setText(BleTools.getInstance().isConnect() ? "已连接" : "未连接");
+        initRxBus();
+    }
+
+    private void initRxBus() {
+        Disposable register = RxBus.getInstance().register(SportsDataTab.class, new Consumer<SportsDataTab>() {
+            @Override
+            public void accept(SportsDataTab sportsDataTab) throws Exception {
+                if (isFirst) {
+                    mHeartRateView.offileData(sportsDataTab.getAthlRecord_2(), sportsDataTab.getDuration());
+                    isFirst = false;
+                    mTimer.startTimer();
+                    duration = sportsDataTab.getDuration();
+                }
+                tv_curHeart.setText(sportsDataTab.getCurHeart() + "bpm");
+                tv_maxHeart.setText(sportsDataTab.getMaxHeart() + "bpm");
+                double calorie = sportsDataTab.getKcal();
+                if (calorie < 1) {
+                    tv_heat.setText(RxFormatValue.fromatUp(calorie * 1000, 0) + getString(R.string.unit_k));
+                } else
+                    tv_heat.setText((int) calorie + getString(R.string.unit_kcal));
+                mHeartRateView.checkHeartRate(sportsDataTab.getCurHeart());
+                tv_Running.setText(sportsDataTab.getSteps() + "步");
+            }
+        });
+        RxBus.getInstance().addSubscription(this, register);
     }
 
     private void initText() {
@@ -228,7 +216,7 @@ public class SportsDetailsActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加心率：" + s);
                         HeartRateBean heartRateBean = new Gson().fromJson(s, HeartRateBean.class);
-                        mHeartRateView.offileData(heartRateBean);
+                        mHeartRateView.offileData(heartRateBean.getAthlList(), heartRateBean.getDuration());
                     }
 
                     @Override
@@ -236,6 +224,26 @@ public class SportsDetailsActivity extends BaseActivity {
                         RxToast.error(error);
                     }
                 });
+    }
+
+    RxDialogSure dialog;
+
+    private void showDialog() {
+        if (dialog == null) {
+            dialog = new RxDialogSure(mActivity);
+            dialog.setLogo(R.mipmap.slice);
+            dialog.getTvTitle().setText("运动已经结束！！");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.getTvContent().setVisibility(View.GONE);
+            dialog.setSure("确定");
+            dialog.getTvSure().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+        dialog.show();
     }
 
 }

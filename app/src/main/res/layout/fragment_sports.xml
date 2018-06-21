@@ -25,11 +25,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/d_100"
+                android:layout_marginRight="@dimen/d_50"
                 android:layout_marginTop="230px"
                 android:drawableLeft="@mipmap/connect_icon"
                 android:drawablePadding="@dimen/d_20"
                 android:text="@string/disConnected"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_50"
+                android:layout_marginTop="230px"
+                android:text="一\t热量 -\t-\t时长"
                 android:textColor="@color/white"/>
 
 

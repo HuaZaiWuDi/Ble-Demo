@@ -104,7 +104,7 @@ public class ImageUploadView extends LinearLayout {
     public ImageUploadView setmAddLabel(int mAddLabel) {
         this.mAddLabel = mAddLabel;
         adapter.setAddPicRes(this.mAddLabel);
-        return  this;
+        return this;
     }
 
     public int getmDelLabel() {
@@ -173,7 +173,7 @@ public class ImageUploadView extends LinearLayout {
         imageList = new ArrayList<>();
         gridView = new GridView(context);
         gridView.setNumColumns(oneLineShowNum);
-        adapter = new ImageAdapter(context,imageList);
+        adapter = new ImageAdapter(context, imageList);
         adapter.setIconHeight(mPicSize);
         adapter.setAddPicRes(mAddLabel);
         adapter.setDelPicRes(mDelLabel);
@@ -211,7 +211,7 @@ public class ImageUploadView extends LinearLayout {
     /**
      * 清除数据
      */
-    public void clearImage(){
+    public void clearImage() {
         imageList.clear();
         if (adapter != null) {
             adapter.notifyDataSetChanged();
@@ -220,6 +220,7 @@ public class ImageUploadView extends LinearLayout {
 
     /**
      * 获取图片数量
+     *
      * @return
      */
     public ArrayList<ImageModel> getImageList() {
@@ -233,13 +234,13 @@ public class ImageUploadView extends LinearLayout {
     /**
      * 刷新控件
      */
-    public void notifyImage(){
+    public void notifyImage() {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
     }
 
-    public void delImage(int position){
+    public void delImage(int position) {
         imageList.remove(position);
         if (adapter != null) {
             adapter.notifyDataSetChanged();

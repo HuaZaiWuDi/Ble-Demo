@@ -21,6 +21,7 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -70,6 +71,8 @@ public class SearchHistoryActivity extends BaseActivity {
     @ViewById
     RecyclerView mRecyclerView;
 
+    @Bean
+    AddOrUpdateFoodDialog mAddOrUpdateFoodDialog;
 
     @Extra
     String ADD_FOOD_DATE;
@@ -123,8 +126,8 @@ public class SearchHistoryActivity extends BaseActivity {
                         .into(view);
             }
         };
-
         searchListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (RxUtils.isFastClick(1000)) return;
@@ -172,7 +175,8 @@ public class SearchHistoryActivity extends BaseActivity {
     private void showAddFoodDialog(final ListBean item) {
         item.setEatType(ADD_FOOD_TYPE);
         item.setHeatDate(ADD_FOOD_DATE);
-        new AddOrUpdateFoodDialog(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+
+        mAddOrUpdateFoodDialog.setFoodInfo(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(AddFoodItem.intakeList item) {
                 mRecyclerView.setVisibility(View.GONE);
@@ -180,6 +184,7 @@ public class SearchHistoryActivity extends BaseActivity {
                 onBackPressed();
             }
         });
+
     }
 
 

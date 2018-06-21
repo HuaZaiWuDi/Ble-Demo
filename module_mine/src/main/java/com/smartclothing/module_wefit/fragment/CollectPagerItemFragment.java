@@ -12,10 +12,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.CollectRvAdapter;
+import com.smartclothing.module_wefit.base.BaseFragment;
 import com.smartclothing.module_wefit.bean.Collect;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.widget.dialog.DepositDialog;
-import com.vondear.rxtools.fragment.FragmentLazy;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
@@ -43,10 +43,12 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
 
+import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
+
 /**
  * "我的收藏中viewPager的填充fragment"
  */
-public class CollectPagerItemFragment extends FragmentLazy {
+public class CollectPagerItemFragment extends BaseFragment {
 
     private int infoType = 1;
     private SwipeMenuRecyclerView rv;
@@ -73,7 +75,6 @@ public class CollectPagerItemFragment extends FragmentLazy {
         adapter = new CollectRvAdapter(getActivity());
 
 
-        setOnClickListener();
 
         /*侧滑删除*/
         rv.setSwipeItemClickListener(mItemClickListener);
@@ -107,12 +108,6 @@ public class CollectPagerItemFragment extends FragmentLazy {
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        initData();
-    }
-
     /**
      * RecyclerView的Item中的Menu点击监听。
      */
@@ -123,8 +118,6 @@ public class CollectPagerItemFragment extends FragmentLazy {
             int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
             if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
                 int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                //删除item的操作
-                dialog1 = new DepositDialog(getContext(), "请求中");
                 deleteItemById(((Collect) adapter.getData().get(0)).getGid(), adapterPosition);
             }
         }
@@ -136,6 +129,9 @@ public class CollectPagerItemFragment extends FragmentLazy {
     private SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
         @Override
         public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
+            if (viewType == EMPTY_VIEW) {
+                return;
+            }
             int width = getResources().getDimensionPixelSize(R.dimen.dimen_70);
             // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
             // 2. 指定具体的高，比如80;
@@ -170,19 +166,15 @@ public class CollectPagerItemFragment extends FragmentLazy {
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(final Disposable disposable) throws Exception {
-                        RxLogUtils.d("doOnSubscribe");
-                        dialog1.show();
+                        tipDialog.show();
                     }
                 })
-                .doFinally(
-                        new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                mRefreshLayout.refreshComplete();
-                                RxLogUtils.d("结束");
-                                dialog1.dismiss();
-                            }
-                        })
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        tipDialog.dismiss();
+                    }
+                })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -190,7 +182,6 @@ public class CollectPagerItemFragment extends FragmentLazy {
                         //如果成功，刷新列表，不加载数据
                         adapter.remove(position);
                         adapter.notifyItemChanged(position);
-
                     }
 
                     @Override
@@ -200,20 +191,22 @@ public class CollectPagerItemFragment extends FragmentLazy {
                 });
     }
 
-    private void setOnClickListener() {
-
-    }
-
     public void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.collectionList(infoType, pageNumber, pageSize))
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        if (mActivity != null) {
+                            mRefreshLayout.refreshComplete();
+                        }
+                    }
+                })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        mRefreshLayout.refreshComplete();
-                        RxLogUtils.d("结束" + s);
                         try {
                             JSONObject object = new JSONObject(s);
                             Gson gson = new Gson();
@@ -229,10 +222,13 @@ public class CollectPagerItemFragment extends FragmentLazy {
 
                     @Override
                     public void _onError(String e) {
-                        mRefreshLayout.refreshComplete();
-                        RxLogUtils.d("结束_onError" + e);
                     }
                 });
+    }
+
+    @Override
+    public void initView() {
+
     }
 
     private void loadNextPageData() {

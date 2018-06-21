@@ -192,12 +192,12 @@
     <dimen name="dimen_product_progress">300dp</dimen>
     <string name="FirmwareVersion">固件版本号：%1$s</string>
     <string name="aboutUs">关于我们</string>
+    <string name="about_clause">软件服务条款和隐私条款</string>
     <string name="adout">关于</string>
     <string name="app_name">Timetofit</string>
     <string name="clothing">瘦身衣</string>
     <string name="collect">我的收藏</string>
     <string name="default_sign">她很懒，什么都没留下</string>
-    <string name="login_clause">登录即表示同意软件服务条款和隐私条款</string>
     <string name="my_device">我的设备</string>
     <string name="my_order">我的订单</string>
     <string name="my_shop_car">我的购物车</string>
@@ -211,7 +211,7 @@
     <string name="versionTip">提示：固件升级请保证app和固件的连接</string>
     <string name="weight">体重记录</string>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

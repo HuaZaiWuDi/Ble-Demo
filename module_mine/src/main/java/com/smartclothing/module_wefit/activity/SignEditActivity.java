@@ -37,7 +37,11 @@ public class SignEditActivity extends BaseActivity implements View.OnClickListen
         et_data_sign = findViewById(R.id.et_data_sign);
 
         String string = getIntent().getExtras().getString(PersonalDataActivity.Dafult_Data);
-        et_data_sign.setText(string);
+        if (RxDataUtils.isNullString(string)) {
+            et_data_sign.setHint("请输入您的个性签名");
+        } else {
+            et_data_sign.setText(string);
+        }
         listener();
     }
 

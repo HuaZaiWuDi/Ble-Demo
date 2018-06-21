@@ -17,6 +17,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
 
+import org.androidannotations.annotations.EBean;
+
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
@@ -31,13 +33,16 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/5/14.
  */
+@EBean(scope = EBean.Scope.Singleton)//单例模式 传入的是using context.getApplicationContext()对象
 public class AddOrUpdateFoodDialog {
 
     private Context mContext;
     private boolean isAdd;
     private AddOrUpdateFoodListener addOrUpdateFoodListener;
+    private AlertDialog dialog;
 
-    public AddOrUpdateFoodDialog(Context context, boolean isAdd, ListBean listBean, AddOrUpdateFoodListener addOrUpdateFoodListener) {
+
+    public void setFoodInfo(Context context, boolean isAdd, ListBean listBean, AddOrUpdateFoodListener addOrUpdateFoodListener) {
         mContext = context;
         this.isAdd = isAdd;
         this.addOrUpdateFoodListener = addOrUpdateFoodListener;
@@ -51,13 +56,9 @@ public class AddOrUpdateFoodDialog {
 
         View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
 
-        final AlertDialog dialog = new AlertDialog.Builder(mContext)
+        dialog = new AlertDialog.Builder(mContext)
                 .setView(view).create();
-
-        if (!dialog.isShowing()) {
-            dialog.show();
-        }
-
+        dialog.show();
         ImageView img_food = view.findViewById(R.id.img_food);
         TextView tv_foodName = view.findViewById(R.id.tv_foodName);
         TextView tv_foodInfo = view.findViewById(R.id.tv_info);

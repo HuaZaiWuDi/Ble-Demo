@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.entity;
 
 import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.EBean;
 
@@ -85,7 +84,6 @@ public class HeartRateBean {
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
                     }
                 });
     }

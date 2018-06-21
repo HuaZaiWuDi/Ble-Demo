@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 
 /**
  * Created by jk on 2018/5/19.
@@ -55,10 +54,8 @@ public class HeartRateView extends LinearLayout {
 
 
     //展示离线数据
-    public void offileData(HeartRateBean mHeartRateBean) {
-        maxTime = mHeartRateBean.getDuration();
-        List<Integer> athlRecord = mHeartRateBean.getAthlList();
-
+    public void offileData(List<Integer> athlRecord, int duration) {
+        maxTime = duration;
         for (int i = 0; i < athlRecord.size(); i++) {
             checkHeartRate(athlRecord.get(i));
         }
@@ -124,10 +121,10 @@ public class HeartRateView extends LinearLayout {
         int type = 1;
 
         byte[] heartRates = BleKey.heartRates;
-        int heart_1 = heartRates[1]&0xff;
-        int heart_2 = heartRates[2]&0xff;
-        int heart_3 = heartRates[3]&0xff;
-        int heart_4 = heartRates[4]&0xff;
+        int heart_1 = heartRates[1] & 0xff;
+        int heart_2 = heartRates[2] & 0xff;
+        int heart_3 = heartRates[3] & 0xff;
+        int heart_4 = heartRates[4] & 0xff;
 
 
         RxLogUtils.d("心率法制：" + Arrays.toString(heartRates));

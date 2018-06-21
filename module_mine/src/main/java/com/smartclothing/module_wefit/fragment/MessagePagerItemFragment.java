@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,9 @@ import com.google.gson.reflect.TypeToken;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.activity.MessageDetailActivity;
 import com.smartclothing.module_wefit.adapter.MessageRvAdapter;
+import com.smartclothing.module_wefit.base.BaseFragment;
 import com.smartclothing.module_wefit.bean.Message;
 import com.smartclothing.module_wefit.net.net.RetrofitService;
-import com.vondear.rxtools.fragment.FragmentLazy;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.json.JSONException;
@@ -26,9 +25,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
-import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -43,7 +40,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * "消息中viewPager的填充fragment"
  */
-public class MessagePagerItemFragment extends FragmentLazy {
+public class MessagePagerItemFragment extends BaseFragment {
     private int msgType = 2;
     private RecyclerView rv;
     private MessageRvAdapter adapter;
@@ -59,7 +56,6 @@ public class MessagePagerItemFragment extends FragmentLazy {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View meLayout = inflater.inflate(R.layout.fragment_message, container, false);
         initView(meLayout);
-//            initData();
         return meLayout;
     }
 
@@ -118,10 +114,10 @@ public class MessagePagerItemFragment extends FragmentLazy {
                 }
             }
         });
-
     }
 
     public void initData() {
+        mRefreshLayout.autoRefresh();
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
@@ -129,17 +125,17 @@ public class MessagePagerItemFragment extends FragmentLazy {
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
-                        mRefreshLayout.refreshComplete();
+                        if (mActivity != null) {
+                            mRefreshLayout.refreshComplete();
+                        }
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
                         try {
                             JSONObject object = new JSONObject(s);
                             Gson gson = new Gson();
-                            Log.e("消息列表---------", object.toString());
                             firstPageData = gson.fromJson(object.getString("list"), new TypeToken<List<Message>>() {
                             }.getType());
                             if (firstPageData != null) {
@@ -165,9 +161,13 @@ public class MessagePagerItemFragment extends FragmentLazy {
 
                     @Override
                     public void _onError(String e) {
-                        mRefreshLayout.refreshComplete();
                     }
                 });
+    }
+
+    @Override
+    public void initView() {
+
     }
 
     private void loadNextPageData() {
@@ -175,13 +175,17 @@ public class MessagePagerItemFragment extends FragmentLazy {
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.message(msgType, pageNumber, pageSize))
-                .subscribeOn(Schedulers.io())               //在IO线程进行网络请求
-                .observeOn(AndroidSchedulers.mainThread())  //回到主线程去处理请求结果
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        if (mActivity != null) {
+                            mRefreshLayout.refreshComplete();
+                        }
+                    }
+                })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        mRefreshLayout.refreshComplete();
-                        RxLogUtils.d("结束" + s);
                         try {
                             JSONObject object = new JSONObject(s);
                             Gson gson = new Gson();
@@ -211,7 +215,7 @@ public class MessagePagerItemFragment extends FragmentLazy {
 
                     @Override
                     public void _onError(String e) {
-                        adapter.loadMoreEnd();
+                        RxLogUtils.e("异常" + e);
                     }
                 });
     }
@@ -245,11 +249,6 @@ public class MessagePagerItemFragment extends FragmentLazy {
         return b;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mRefreshLayout.autoRefresh();
-    }
 
     public void setMsgType(int type) {
         this.msgType = type;

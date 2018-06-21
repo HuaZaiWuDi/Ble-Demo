@@ -18,8 +18,10 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.clj.fastble.data.BleDevice;
 import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleKey;
+import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
@@ -49,7 +51,6 @@ import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.ScanView;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -156,10 +157,11 @@ public class AddDeviceActivity extends BaseActivity {
                 @Override
                 public void run() {
                     //跳转主页
-                    if (!BUNDLE_FORCE_BIND)
+                    if (!BUNDLE_FORCE_BIND) {
                         RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
-                    else
-                        onBackPressed();
+                    } else {
+                        RxActivityUtils.finishActivity();
+                    }
                 }
             }, 500);
         }
@@ -171,7 +173,7 @@ public class AddDeviceActivity extends BaseActivity {
         if (!BUNDLE_FORCE_BIND)
             RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
         else
-            onBackPressed();
+            RxActivityUtils.finishActivity();
     }
 
     //监听系统蓝牙开启
@@ -187,10 +189,16 @@ public class AddDeviceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
     }
 
     private void startScan() {
+
+        if (!BleTools.getBleManager().isBlueEnable()) {
+            RxToast.warning("未开启蓝牙，无法搜索到蓝牙设备");
+            BleTools.getBleManager().enableBluetooth();
+        }
+
         mDeviceLists.clear();
 
         startService(new Intent(mContext, BleService_.class));
@@ -206,16 +214,8 @@ public class AddDeviceActivity extends BaseActivity {
         public void run() {
             btn_scan.setEnabled(true);
             img_scan.stopAnimation();
-            List<BindDeviceBean> data = adapter.getData();
-
-            stepState = data.size() == 0 ? 3 : 1;
-            initStep(stepState);
-            for (BindDeviceBean device : data) {
-                RxLogUtils.d("扫描设备：" + device.getDeivceName());
-            }
-            if (data.size() == 0) {
-                RxToast.warning(getString(R.string.checkBle));
-            }
+            RxToast.warning(getString(R.string.checkBle));
+            initStep(3);
         }
     };
 
@@ -409,6 +409,10 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
+        mHandler.removeCallbacks(scanTimeout);
+        btn_scan.setEnabled(true);
+        img_scan.stopAnimation();
+        initStep(1);
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))

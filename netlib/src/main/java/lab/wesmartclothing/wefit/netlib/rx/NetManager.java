@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import lab.wesmartclothing.wefit.netlib.BuildConfig;
+import lab.wesmartclothing.wefit.netlib.utils.DeviceUtil;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -56,13 +57,16 @@ public class NetManager {
      * @return
      */
     public <S> S createString(Class<S> service) {
-
         Interceptor NetInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 if (userId != null && token != null) {
                     Request request = chain.request().newBuilder()
                             .header("userId", userId)
+                            .header("version", DeviceUtil.getAppVersionName())
+                            .header("phoneType", DeviceUtil.getBuildMANUFACTURER())
+                            .header("system", "Android")
+                            .header("macAddr", DeviceUtil.getAndroidId())
                             .header("token", token).build();
                     return chain.proceed(request);
                 }

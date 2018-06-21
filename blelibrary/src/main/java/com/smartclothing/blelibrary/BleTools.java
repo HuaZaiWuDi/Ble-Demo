@@ -19,7 +19,9 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
+import com.smartclothing.blelibrary.listener.StopDataCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
+import com.smartclothing.blelibrary.util.B;
 
 
 /**
@@ -61,6 +63,7 @@ public class BleTools {
 
     private BleChartChangeCallBack bleChartChange;
     private SynDataCallBack mSynDataCallBack;
+    private StopDataCallBack mStopDataCallBack;
     private byte[] bytes;
     private final int reWriteCount = 2;    //重连次数
     private int currentCount = 0;          //当前次数
@@ -181,6 +184,10 @@ public class BleTools {
         mSynDataCallBack = synDataCallBack;
     }
 
+    public void setStopDataCallBack(StopDataCallBack stopDataCallBack) {
+        mStopDataCallBack = stopDataCallBack;
+    }
+
     public void openNotify() {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
             Log.e(TAG, "未连接");
@@ -201,8 +208,13 @@ public class BleTools {
             public void onCharacteristicChanged(byte[] data) {
 //                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
                 //notify数据
-                if (mBleCallBack != null && data[2] == 0x07 || data[2] == 0x08)
+                if (mBleCallBack != null && data[2] == 0x07)
                     mBleCallBack.onNotify(data);
+
+                if (data[2] == 0x08) {
+                    Log.d(TAG, "蓝牙停止:" + HexUtil.encodeHexStr(data));
+                    B.broadUpdate(bleManager.getContext(), "ACTION_CLOTHING_STOP");
+                }
 
                 //命令数据
                 if (bleChartChange != null) {
@@ -341,6 +353,11 @@ public class BleTools {
     public boolean isConnect() {
         if (bleManager == null || bleDevice == null) return false;
         return bleManager.isConnected(bleDevice);
+    }
+
+    public void disConnect() {
+        if (bleManager != null && bleDevice != null)
+            bleManager.disconnect(bleDevice);
     }
 
 }

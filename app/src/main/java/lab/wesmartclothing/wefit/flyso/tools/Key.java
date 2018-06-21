@@ -50,6 +50,8 @@ public interface Key {
     String ACTION_SCALE_CONNECT = "ACTION_SCALE_CONNECT";
     String EXTRA_SCALE_CONNECT = "EXTRA_SCALE_CONNECT";
 
+    String ACTION_CLOTHING_STOP = "ACTION_CLOTHING_STOP";
+    String EXTRA_CLOTHING_STOP = "EXTRA_CLOTHING_STOP";
 
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK

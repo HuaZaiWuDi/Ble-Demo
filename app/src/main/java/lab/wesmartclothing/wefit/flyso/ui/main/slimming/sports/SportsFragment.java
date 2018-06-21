@@ -109,7 +109,7 @@ public class SportsFragment extends BaseFragment {
         if (state == BluetoothAdapter.STATE_OFF) {
             initDeviceConnectTip(0);
         } else if (state == BluetoothAdapter.STATE_ON) {
-            tv_connectTip.setVisibility(View.GONE);
+            initDeviceConnectTip(4);
             initBle();
         }
     }
@@ -121,6 +121,7 @@ public class SportsFragment extends BaseFragment {
             tv_connectDevice.setText(R.string.connected);
         } else {
             tv_connectDevice.setText(R.string.disConnected);
+            initDeviceConnectTip(4);
         }
     }
 
@@ -128,6 +129,12 @@ public class SportsFragment extends BaseFragment {
     @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
     void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] heartRate) {
         initDeviceConnectTip(2);
+    }
+
+    //心率
+    @Receiver(actions = Key.ACTION_CLOTHING_STOP)
+    void sportsStop() {
+        initDeviceConnectTip(4);
     }
 
     private BaseQuickAdapter adapter;
@@ -146,6 +153,7 @@ public class SportsFragment extends BaseFragment {
         if ("".equals(mPrefs.clothing().get())) {
             initDeviceConnectTip(1);
         } else {
+            tv_connectDevice.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
             getSportsData();
         }
     }
@@ -179,12 +187,15 @@ public class SportsFragment extends BaseFragment {
 
 
     private void initRxBus() {
+        //解除绑定，展示栏数据恢复初始状态
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {
                 if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
                     mPrefs.clothing().put("");
                     initDeviceConnectTip(1);
+                    BleTools.getInstance().disConnect();
+                    initWeightInfo();
                 }
             }
         });
@@ -220,7 +231,7 @@ public class SportsFragment extends BaseFragment {
         String[] sports_title = getResources().getStringArray(R.array.sports_title);
         int[] img_icons = {R.mipmap.time_icon, R.mipmap.energy_iocn, R.mipmap.average_icon, R.mipmap.max_icon};
 
-        String[] data = {"--h--min", "--" + getString(R.string.unit_kcal), "--bpm", "--bpm"};
+        String[] data = {"--h--min", "--" + getString(R.string.unit_k), "--bpm", "--bpm"};
 
         for (int i = 0; i < sports_title.length; i = i + 2) {
             WeightInfoItem item = new WeightInfoItem();
@@ -243,9 +254,11 @@ public class SportsFragment extends BaseFragment {
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
-                        if (mRefresh != null) {
+                        if (mActivity != null) {
                             mRefresh.refreshComplete();
                         }
+                        if (sportsBeans.size() == 0)
+                            initDeviceConnectTip(3);
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
@@ -261,9 +274,9 @@ public class SportsFragment extends BaseFragment {
                                 mRefresh.setEnableAutoRefresh(false);
                                 mRefresh.setDisableRefresh(true);
                             }
+
                             return;
                         }
-
                         sportsBeans.addAll(0, list);
                         syncChart(sportsBeans);
                         if (sportsBeans.size() > 0)
@@ -291,11 +304,10 @@ public class SportsFragment extends BaseFragment {
 
         if (list.size() > 0)
             calendar.setTimeInMillis(list.get(0).getAthlDate());
-        else days_d.add(RxFormat.setFormatDate(calendar, "MM/dd"));
 
 
         //左边添加3条数据
-        calendar.add(Calendar.DAY_OF_MONTH, -2);
+        calendar.add(Calendar.DAY_OF_MONTH, -3);
         days_l.add(RxFormat.setFormatDate(calendar, "MM/dd"));
         calendar.add(Calendar.DAY_OF_MONTH, +1);
         days_l.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -309,13 +321,11 @@ public class SportsFragment extends BaseFragment {
             days_d.add(RxFormat.setFormatDate(list.get(i).getAthlDate(), "MM/dd"));
         }
 
-        if (list.size() > 0)
-            calendar.setTimeInMillis(list.get(list.size() - 1).getAthlDate());
-
         //右边添加3填数据
         days_f.add("--/--");
         days_f.add("--/--");
         days_f.add("--/--");
+
 
         days.addAll(days_l);
         days.addAll(days_d);
@@ -326,24 +336,26 @@ public class SportsFragment extends BaseFragment {
         x.setSpaceMax(3f);
         x.setSpaceMin(3f);
 
-
         chartManager.setData(heats, sportsTimes, days);
 
-        mLineChart.moveViewToX(heats.size() - (pageNum - 1) * 20 - 3);
 
+        try {
+            mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                @Override
+                public void onValueSelected(Entry e, Highlight h) {
+                    mHighlight = h;
+                    synWeightData(list.get((int) (e.getX()) % list.size()));
+                }
 
-        mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                mHighlight = h;
-                synWeightData(list.get((int) e.getX()));
-            }
-
-            @Override
-            public void onNothingSelected() {
-                mLineChart.highlightValue(mHighlight);
-            }
-        });
+                @Override
+                public void onNothingSelected() {
+                    if (mHighlight != null)
+                        mLineChart.highlightValue(mHighlight);
+                }
+            });
+        } catch (Exception e) {
+            RxLogUtils.e("发生异常了！！！" + e.getMessage());
+        }
 
         mLineChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
@@ -406,11 +418,9 @@ public class SportsFragment extends BaseFragment {
 
         if (bean == null) return;
         this.bean = bean;
-
         int min = bean.getDuration() / 60;
-
-        weightLists.get(0).setData_left(min / 60 + "h" + min % 60 + "min");
-        weightLists.get(0).setData_right(bean.getCalorie() + getString(R.string.unit_kcal));
+        weightLists.get(0).setData_left(min < 60 ? min % 60 + "min" : min / 60 + "h" + min % 60 + "min");
+        weightLists.get(0).setData_right(bean.getCalorie() + getString(R.string.unit_k));
         weightLists.get(1).setData_left(bean.getAvgHeart() + "bpm");
         weightLists.get(1).setData_right(bean.getMaxHeart() + "bpm");
 
@@ -452,6 +462,10 @@ public class SportsFragment extends BaseFragment {
 
     private void initDeviceConnectTip(int QN_bleState) {
         tv_connectTip.setVisibility(View.VISIBLE);
+        Drawable drawable = getResources().getDrawable(QN_bleState == 1 ? R.mipmap.unbound_icon : R.mipmap.connect_icon);
+        //一定要加这行！！！！！！！！！！！
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
         switch (QN_bleState) {
             case 0://打开蓝牙
                 RxTextUtils.getBuilder(getString(R.string.connectBle))
@@ -469,10 +483,6 @@ public class SportsFragment extends BaseFragment {
                 mLineChart.clear();
                 mLineChart.invalidate();
                 tv_connectDevice.setText(R.string.unBind);
-                Drawable drawable = getResources().getDrawable(R.mipmap.unbound_icon);
-                //一定要加这行！！！！！！！！！！！
-                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
                 RxTextUtils.getBuilder(getString(R.string.unbindDevice))
                         .append(getString(R.string.goBind)).setForegroundColor(getResources().getColor(R.color.colorTheme))
                         .into(tv_connectTip);
@@ -500,6 +510,12 @@ public class SportsFragment extends BaseFragment {
                         RxActivityUtils.skipActivity(mActivity, SportsDetailsActivity_.class);
                     }
                 });
+                break;
+            case 3://没有数据时候提示(绑定返回之后)
+                tv_connectTip.setText(R.string.tip_nodata);
+                break;
+            case 4://不提示，tip消失
+                tv_connectTip.setVisibility(View.GONE);
                 break;
         }
     }

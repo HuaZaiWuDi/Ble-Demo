@@ -39,10 +39,10 @@
     <string name="delete" translatable="false">删除</string>
 
     <string name="unit_heat" translatable="false">/100.0克</string>
-    <string name="unit_kcal" translatable="false">千卡</string>
-    <string name="unit_k" translatable="false">卡</string>
-    <string name="unit_kcal2" translatable="false">单位：千卡</string>
-    <string name="unit_kcal3" translatable="false">--千卡</string>
+    <string name="unit_kcal" translatable="false">kcal</string>
+    <string name="unit_k" translatable="false">cal</string>
+    <string name="unit_kcal2" translatable="false">单位：kcal</string>
+    <string name="unit_kcal3" translatable="false">--kcal</string>
 
     <string name="inputRightFoodName" translatable="false">请输入正确的食物名字</string>
     <string name="weightNoZero" translatable="false">重量不能为0</string>
@@ -154,6 +154,7 @@
     <string name="pengyouquan" translatable="false">朋友圈</string>
     <string name="shareTo" translatable="false">分享到</string>
     <string name="checkBle">请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试</string>
+    <string name="tip_nodata">使用设备，同步数据</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

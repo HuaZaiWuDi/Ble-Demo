@@ -15,7 +15,7 @@ public final class R {
         public static int loading_wait_dialog = 0x7f0f0061;
     }
     public static final class string {
-        public static int loading_default_messsage = 0x7f15004e;
+        public static int loading_default_messsage = 0x7f15004f;
     }
     public static final class style {
         public static int loadingDialog = 0x7f160226;

@@ -30,6 +30,7 @@ import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
 import org.androidannotations.annotations.Bean;
@@ -41,10 +42,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -58,6 +63,7 @@ import okhttp3.RequestBody;
 public class BleService extends Service {
     int packageCounts = 0;
     long lastTime = 0;
+    static boolean isFrist = true;
     private List<Integer> athlRecord = new ArrayList<>();
     private List<Integer> athlRecord_2 = new ArrayList<>();//实时心率
 
@@ -86,10 +92,23 @@ public class BleService extends Service {
         }
     }
 
+
     //监听系统蓝牙开启
     @Receiver(actions = BleKey.ACTION_DFU_STARTING)
     void dfuStarting(@Receiver.Extra(BleKey.EXTRA_DFU_STARTING) boolean state) {
         dfuStarting = state;
+    }
+
+    //监听系统蓝牙开启
+    @Receiver(actions = Key.ACTION_CLOTHING_STOP)
+    void CLOTHING_STOP() {
+        BleAPI.clothingStop();
+        if (athlRecord_2.size() > 0) {
+            mHeartRateBean.setDuration(athlRecord_2.size() * 2);
+            mHeartRateBean.setAthlList(athlRecord_2);
+            mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+            athlRecord_2.clear();
+        }
     }
 
     public BleService() {
@@ -100,14 +119,21 @@ public class BleService extends Service {
     public void onCreate() {
         super.onCreate();
         initHeartRate();
+        connectScaleCallBack();
+    }
+
+    @Override
+    public void onDestroy() {
+        BleTools.getInstance().disConnect();
+        super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!BleTools.getBleManager().isBlueEnable()) {
-            RxToast.warning("未开启蓝牙，无法搜索到蓝牙设备");
-            BleTools.getBleManager().enableBluetooth();
-        }
+//        if (!BleTools.getBleManager().isBlueEnable()) {
+//            RxToast.warning("未开启蓝牙，无法搜索到蓝牙设备");
+//            BleTools.getBleManager().enableBluetooth();
+//        }
 
         if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
             RxLogUtils.d("未开启GPS定位");
@@ -123,24 +149,9 @@ public class BleService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     //    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void initBle() {
 
-//        BluetoothAdapter adapter = BleTools.getBleManager().getBluetoothAdapter();
-//        BluetoothLeScanner scanner = adapter.getBluetoothLeScanner();
-//        List<ScanFilter> filters = new ArrayList<>();
-//        ScanFilter filter = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(BleKey.UUID_Servie)).build();
-//        ScanFilter filter_Scale = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(BleKey.UUID_QN_SCALE)).build();
-//
-//        filters.add(filter);
-//        filters.add(filter_Scale);
-//        scanner.startScan(filters, new ScanSettings.Builder().build(), new ScanCallback() {
-//            @Override
-//            public void onScanResult(int callbackType, android.bluetooth.le.ScanResult result) {
-//                super.onScanResult(callbackType, result);
-//            }
-//        });
 
         BleTools.getInstance().stopScan();
         BleTools.getInstance().configScan(0);
@@ -189,6 +200,58 @@ public class BleService extends Service {
         });
     }
 
+    private void connectScaleCallBack() {
+        MyAPP.QNapi.setBleConnectionChangeListener(new QNBleConnectionChangeListener() {
+            @Override
+            public void onConnecting(QNBleDevice qnBleDevice) {
+
+            }
+
+            @Override
+            public void onConnected(QNBleDevice qnBleDevice) {
+                B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, true);
+                RxLogUtils.d("连接:");
+
+                DeviceLink deviceLink = new DeviceLink();
+                deviceLink.setMacAddr(qnBleDevice.getMac());
+                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
+                deviceLink.deviceLink(deviceLink);
+            }
+
+            @Override
+            public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
+
+            }
+
+            @Override
+            public void onDisconnecting(QNBleDevice qnBleDevice) {
+
+            }
+
+            @Override
+            public void onDisconnected(QNBleDevice qnBleDevice) {
+                B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
+                RxLogUtils.e("断开连接:");
+                initBle();
+            }
+
+            @Override
+            public void onConnectError(QNBleDevice qnBleDevice, int i) {
+                RxLogUtils.d("连接异常：" + i);
+                mQNBleTools.disConnectDevice(qnBleDevice);
+                RxToast.info("连接瘦身衣异常，请开关蓝牙后再连接");
+                B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
+                initBle();
+            }
+
+            @Override
+            public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
+                RxLogUtils.d("体重秤状态变化:" + i);
+            }
+        });
+
+    }
+
 
     //连接瘦身衣
     private void connectClothing(BleDevice device) {
@@ -210,10 +273,10 @@ public class BleService extends Service {
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 //设备统计
-//                DeviceLink deviceLink = new DeviceLink();
-//                deviceLink.setMacAddr(bleDevice.getMac());
-//                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
-//                deviceLink.deviceLink(deviceLink);
+                DeviceLink deviceLink = new DeviceLink();
+                deviceLink.setMacAddr(bleDevice.getMac());
+                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
+                deviceLink.deviceLink(deviceLink);
 
                 RxLogUtils.d("瘦身衣连接成功");
                 if (dfuStarting) return;
@@ -222,34 +285,50 @@ public class BleService extends Service {
                 BleTools.getInstance().setBleDevice(bleDevice);
                 BleTools.getInstance().openNotify();
 
-                checkFirmwareVersion(0);
+                if (isFrist) {
+                    isFrist = false;
+                    checkFirmwareVersion(0);
+                }
 
                 BleAPI.syncDeviceTime(new BleChartChangeCallBack() {
                     @Override
                     public void callBack(byte[] data) {
                         RxLogUtils.d("同步时间成功");
-
                         BleAPI.syncSetting(35, 50, 0x00, new BleChartChangeCallBack() {
                             @Override
                             public void callBack(byte[] data) {
-                                BleAPI.syncDataCount(new BleChartChangeCallBack() {
+                                RxLogUtils.d("配置参数");
+//                                BleAPI.syncDataCount(new BleChartChangeCallBack() {
+//                                    @Override
+//                                    public void callBack(byte[] data) {
+//                                        long packageCount = ByteUtil.bytesToLongD4(data, 3);
+//                                        RxLogUtils.d("包总数：" + packageCount);
+//                                        if (packageCount > 0) {
+//                                            RxLogUtils.d("开始同步包数据");
+//                                            synData();
+//                                            athlRecord.clear();
+//                                        } else RxLogUtils.d("没有数据同步");
+//                                    }
+//                                });
+                                BleAPI.getVoltage(new BleChartChangeCallBack() {
                                     @Override
                                     public void callBack(byte[] data) {
-                                        long packageCount = ByteUtil.bytesToLongD4(data, 3);
-                                        RxLogUtils.d("包总数：" + packageCount);
+                                        RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
 
-                                        if (packageCount > 0) {
-                                            RxLogUtils.d("开始同步包数据");
-                                            synData();
-                                            athlRecord.clear();
-                                        } else RxLogUtils.d("没有数据同步");
+                                        BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
+                                            @Override
+                                            public void callBack(byte[] data) {
+                                                RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
+                                            }
+                                        });
+
                                     }
                                 });
+
                             }
                         });
                     }
                 });
-
             }
 
             @Override
@@ -257,7 +336,6 @@ public class BleService extends Service {
                 RxLogUtils.d("断开连接：");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 initBle();
-
                 if (athlRecord_2.size() > 0) {
                     mHeartRateBean.setDuration(athlRecord_2.size() * 2);
                     mHeartRateBean.setAthlList(athlRecord_2);
@@ -317,36 +395,46 @@ public class BleService extends Service {
         });
     }
 
+    private int maxHeart = 0;//最大心率
+    private int minHeart = 0;//最小心率
+
     private void initHeartRate() {
         BleTools.getInstance().setBleCallBack(new BleCallBack() {
             @Override
             public void onNotify(byte[] data) {
                 RxLogUtils.d("蓝牙Notify数据:" + HexUtil.encodeHexStr(data));
-                if (data[2] == 0x08) {
-                    BleAPI.clothingStop();
-                    if (athlRecord_2.size() > 0) {
-                        mHeartRateBean.setDuration(athlRecord_2.size() * 2);
-                        mHeartRateBean.setAthlList(athlRecord_2);
-                        mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-                        athlRecord_2.clear();
-                    }
-                } else {
-                    B.broadUpdate(BleService.this, Key.ACTION_HEART_RATE_CHANGED, Key.EXTRA_HEART_RATE_CHANGED, data);
-                    if (data.length < 17) return;
 
-                    int heartRate = data[8] & 0xff;
-                    athlRecord_2.add(heartRate);
+                B.broadUpdate(BleService.this, Key.ACTION_HEART_RATE_CHANGED, Key.EXTRA_HEART_RATE_CHANGED, data);
+                if (data.length < 17) return;
 
-                    RxLogUtils.d("时间：" + RxFormat.setFormatDate(ByteUtil.bytesToLongD4(data, 3) * 1000, RxFormat.Date_Date_CH) +
-                            "----------心率:" + heartRate +
-                            "----------温度：" + (data[10] & 0xff) +
-                            "----------步数：" + ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}) +
-                            "----------电压：" + ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]}));
-                }
+                int heartRate = data[8] & 0xff;
+                athlRecord_2.add(heartRate);
+
+                RxLogUtils.d("时间：" + RxFormat.setFormatDate(ByteUtil.bytesToLongD4(data, 3) * 1000, RxFormat.Date_Date_CH) +
+                        "----------心率:" + heartRate +
+                        "----------温度：" + (data[10] & 0xff) +
+                        "----------步数：" + ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}) +
+                        "----------电压：" + ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]}));
+
+                maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
+                minHeart = heartRate < minHeart ? heartRate : minHeart;
+
+                SportsDataTab dataTab = new SportsDataTab();
+                dataTab.setAthlRecord_2(athlRecord_2);
+                dataTab.setCurHeart(heartRate);
+                dataTab.setMaxHeart(maxHeart);
+                dataTab.setMinHeart(minHeart);
+                dataTab.setDuration(athlRecord_2.size() * 2);
+                dataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
+                double calorie = mHeartRateToKcal.getCalorie(heartRate, athlRecord_2.size() * 2f / 3600);
+                dataTab.setKcal(calorie);
+//                    RxLogUtils.d("SportsDataTab：" + dataTab.toString());
+                RxBus.getInstance().post(dataTab);
+
             }
         });
-    }
 
+    }
 
     private void checkFirmwareVersion(int curVersion) {
         JsonObject object = new JsonObject();

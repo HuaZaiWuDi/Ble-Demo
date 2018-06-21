@@ -39,6 +39,9 @@ public class RxManager {
         this.application = application;
     }
 
+    public Application getApplication() {
+        return application;
+    }
 
     public void doUnifySubscribe(Observable<HttpResult> observable, RxNetSubscriber<HttpResult> subscriber) {
         observable

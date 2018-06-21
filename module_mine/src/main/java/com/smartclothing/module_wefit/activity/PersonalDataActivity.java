@@ -42,6 +42,7 @@ import com.smartclothing.module_wefit.widget.wheelpicker.picker.NumberPicker;
 import com.smartclothing.module_wefit.widget.wheelpicker.picker.SinglePicker;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
@@ -192,9 +193,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                             tv_data_birth.setText(RxFormat.setFormatDate(Long.parseLong(user.getBirthday()), RxFormat.Date));
                             tv_data_height.setText(user.getHeight() + "");
                             tv_data_weight.setText(user.getTargetWeight() + "");
-                            if ("".equals(user.getSignature()))
-                                user.setSignature("请输入您的个性签名");
-                            tv_data_sign.setText(user.getSignature());
+                            tv_data_sign.setText(RxDataUtils.isNullString(user.getSignature()) ? "请输入您的个性签名" : user.getSignature());
                             tv_data_phone.setText(user.getPhone());
 
                             if (user.getUserImg() != null) {

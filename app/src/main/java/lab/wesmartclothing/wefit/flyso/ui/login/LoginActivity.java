@@ -74,7 +74,6 @@ public class LoginActivity extends BaseActivity {
     @Extra
     boolean BUNDLE_RELOGIN;
 
-
     private String phone;
     private String VCode;
 
@@ -252,7 +251,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        edit_VCode.setText(s);
+//                        edit_VCode.setText(s);
                         RxToast.success("短信已发送");
                     }
 

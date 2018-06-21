@@ -10,9 +10,9 @@ package lab.wesmartclothing.wefit.flyso.netserivce;
 public class ServiceAPI {
 
     //    public static final String BASE_URL = "http://10.10.11.192:16102";//内网德人
+    public static final String BASE_URL = "http://39.108.152.50:16102";//外网
 //    public static final String BASE_URL = "http://10.10.11.208:16102";//内网牛耕
-//    public static final String BASE_URL = "http://39.108.152.50:16102";//外网
-    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
+//    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
 
     //商城地址
     public static String Store_Addr = "https://weidian.com/?userid=1063198383";
@@ -27,12 +27,13 @@ public class ServiceAPI {
 
     //发现URL   判断网址是否隐藏底部导航栏，需要网址后面加/
     public static String FIND_Addr = "http://39.108.152.50:8088/find/";
+//    public static String FIND_Addr = "http://10.10.11.208:8208/";
 
 
     //服务协议
     public static String Term_Service = "file:///android_asset/TermService.html";
 
-    //资讯详情页面
+
     public static String Detail = "http://39.108.152.50:8088/find/detail.html?gid=";
 
 

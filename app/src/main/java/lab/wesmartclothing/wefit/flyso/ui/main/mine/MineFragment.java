@@ -115,7 +115,7 @@ public class MineFragment extends BaseFragment {
     @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
     void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] data) {
         int value = ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]});
-        voltage = value / 100f;
+        voltage = value / 1000f;
 
     }
 

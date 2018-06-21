@@ -3,21 +3,9 @@ manifest
 ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
-INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 	package
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:3:11-51
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-	android:versionName
-		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
-		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-	android:versionCode
-		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
-		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
 		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:11-69

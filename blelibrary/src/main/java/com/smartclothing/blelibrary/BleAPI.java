@@ -171,6 +171,28 @@ public class BleAPI {
         BleTools.getInstance().writeNo(bytes);
     }
 
+    //读设备信息
+    public static void readDeviceInfo(BleChartChangeCallBack bleChartChange) {
+
+        byte[] bytes = new byte[20];
+        bytes[0] = 0x02;
+        bytes[1] = 0x11;
+        bytes[2] = 0x09;
+
+        Log.d("【读设备信息】", HexUtil.encodeHexStr(bytes));
+        BleTools.getInstance().write(bytes, bleChartChange);
+    }
+
+    public static void getVoltage(BleChartChangeCallBack bleChartChange) {
+        byte[] bytes = new byte[20];
+        bytes[0] = 0x02;
+        bytes[1] = 0x11;
+        bytes[2] = 0x0a;
+
+        Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
+        BleTools.getInstance().write(bytes, bleChartChange);
+    }
+
 
     /**
      * 设备Notify反馈数据

@@ -110,9 +110,9 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/dimen_10"
-            android:textColor="#FF999999"
-            android:textSize="@dimen/dimen_12"
-            tools:text="智裳科技"/>
+            android:text="@string/about_clause"
+            android:textColor="@color/colorTheme"
+            android:textSize="@dimen/dimen_12"/>
 
 
     </RelativeLayout>

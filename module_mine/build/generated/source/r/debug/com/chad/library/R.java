@@ -37,9 +37,9 @@ public final class R {
         public static int quick_view_load_more = 0x7f0f0082;
     }
     public static final class string {
-        public static int app_name = 0x7f150024;
-        public static int load_end = 0x7f15004b;
-        public static int load_failed = 0x7f15004c;
-        public static int loading = 0x7f15004d;
+        public static int app_name = 0x7f150025;
+        public static int load_end = 0x7f15004c;
+        public static int load_failed = 0x7f15004d;
+        public static int loading = 0x7f15004e;
     }
 }

@@ -56,7 +56,7 @@ public class SportsMarkerView extends MarkerView {
         RxTextUtils.getBuilder(context.getString(R.string.heat))
                 .append("：")
                 .setForegroundColor(context.getResources().getColor(R.color.textHeatColor))
-                .append((int) y1 + context.getString(R.string.unit_kcal))
+                .append((int) y1 + context.getString(R.string.unit_k))
                 .setForegroundColor(context.getResources().getColor(R.color.colorTheme))
                 .into(tv_heat);
 

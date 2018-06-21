@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -29,13 +28,11 @@ import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.module_wefit.bean.Device;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
-import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.listen.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
@@ -61,7 +58,6 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
@@ -129,6 +125,17 @@ public class WeightFragment extends BaseFragment {
         }
     }
 
+    //体脂称连接状态
+    @Receiver(actions = Key.ACTION_SCALE_CONNECT)
+    void scaleIsConnect(@Receiver.Extra(Key.EXTRA_SCALE_CONNECT) boolean state) {
+        isConnect = state;
+
+        tv_connectDevice.setText(state ? R.string.connected : R.string.disConnected);
+        if (!state)
+            tv_connectTip.setVisibility(View.GONE);
+    }
+
+
     @Click
     void icon_weight() {
         if (BuildConfig.DEBUG)
@@ -180,66 +187,14 @@ public class WeightFragment extends BaseFragment {
         if ("".equals(mPrefs.scaleIsBind().get())) {
             initDeviceConnectTip(1);
         } else {
+            tv_connectDevice.setText(isConnect ? R.string.connected : R.string.disConnected);
+
             getWeightData();
         }
     }
 
 
     private void initBleCallBack() {
-        MyAPP.QNapi.setBleConnectionChangeListener(new QNBleConnectionChangeListener() {
-            @Override
-            public void onConnecting(QNBleDevice qnBleDevice) {
-
-            }
-
-            @Override
-            public void onConnected(QNBleDevice qnBleDevice) {
-                B.broadUpdate(mActivity, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, true);
-                isConnect = true;
-                RxLogUtils.d("连接:");
-                if (tv_connectDevice != null)
-                    tv_connectDevice.setText(R.string.connected);
-                if (dialog_not_connect != null)
-                    dialog_not_connect.setVisibility(View.GONE);
-//                DeviceLink deviceLink = new DeviceLink();
-//                deviceLink.setMacAddr(qnBleDevice.getMac());
-//                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
-//                deviceLink.deviceLink(deviceLink);
-            }
-
-            @Override
-            public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
-
-            }
-
-            @Override
-            public void onDisconnecting(QNBleDevice qnBleDevice) {
-
-            }
-
-            @Override
-            public void onDisconnected(QNBleDevice qnBleDevice) {
-                B.broadUpdate(mActivity, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
-                isConnect = false;
-                RxLogUtils.e("断开连接:");
-                if (tv_connectDevice != null)
-                    tv_connectDevice.setText(R.string.disConnected);
-                //重新扫描
-                mActivity.startService(new Intent(mActivity, BleService_.class));
-            }
-
-            @Override
-            public void onConnectError(QNBleDevice qnBleDevice, int i) {
-                RxLogUtils.d("连接异常：" + i);
-                //重新扫描
-                mActivity.startService(new Intent(mActivity, BleService_.class));
-            }
-
-            @Override
-            public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
-                RxLogUtils.d("体重秤状态变化:" + i);
-            }
-        });
 
         MyAPP.QNapi.setDataListener(new QNDataListener() {
             @Override
@@ -303,8 +258,10 @@ public class WeightFragment extends BaseFragment {
             @Override
             public void accept(Device device) throws Exception {
                 if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
+                    mQNBleTools.disConnectDevice(device.getMacAddr());
                     mPrefs.scaleIsBind().put("");
                     initDeviceConnectTip(1);
+                    initWeightInfo();
                 }
             }
         });
@@ -331,7 +288,6 @@ public class WeightFragment extends BaseFragment {
             item.setData_right(data[i + 1]);
             weightLists.add(item);
         }
-
 
         adapter.setNewData(weightLists);
         tv_weight_date.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
@@ -363,67 +319,6 @@ public class WeightFragment extends BaseFragment {
         MyAPP.QNapi.setDataListener(null);
         RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
-    }
-
-
-    //界面提示状态
-    private void initDeviceConnectTip(int QN_bleState) {
-        tv_connectTip.setVisibility(View.VISIBLE);
-        switch (QN_bleState) {
-            case 0://打开蓝牙
-                RxTextUtils.getBuilder(getString(R.string.connectBle))
-                        .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
-                        .into(tv_connectTip);
-                tv_connectTip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!BleTools.getBleManager().isBlueEnable())
-                            BleTools.getBleManager().enableBluetooth();
-                    }
-                });
-                break;
-            case 1://绑定设备
-                mLineChart.clear();
-                mLineChart.invalidate();
-                tv_connectDevice.setText(R.string.unBind);
-                Drawable drawable = getResources().getDrawable(R.mipmap.unbound_icon);
-                //一定要加这行！！！！！！！！！！！
-                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
-                RxTextUtils.getBuilder(getString(R.string.unbindDevice))
-                        .append(getString(R.string.goBind)).setForegroundColor(getResources().getColor(R.color.colorTheme))
-                        .into(tv_connectTip);
-                tv_connectTip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        tv_connectTip.setVisibility(View.GONE);
-                        //TODO 去绑定设备
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
-                        bundle.putString(Key.BUNDLE_BIND_TYPE, BleKey.TYPE_SCALE);
-                        RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
-                    }
-                });
-                break;
-            case 2://领取体重
-                RxTextUtils.getBuilder(getString(R.string.newWeight))
-                        .append(getString(R.string.waitReceive)).setForegroundColor(getResources().getColor(R.color.colorTheme))
-                        .into(tv_connectTip);
-                tv_connectTip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        tv_connectTip.setVisibility(View.GONE);
-
-                        String s = new Gson().toJson(QNDatas);
-                        RxLogUtils.d("体重信息:" + s);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
-                        RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
-                        QNDatas.clear();
-                    }
-                });
-                break;
-        }
     }
 
 
@@ -470,8 +365,11 @@ public class WeightFragment extends BaseFragment {
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
-                        if (mRefresh != null)
+                        if (mActivity != null)
                             mRefresh.refreshComplete();
+                        if (weightDatas.size() == 0) {
+                            initDeviceConnectTip(3);
+                        }
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
@@ -495,6 +393,7 @@ public class WeightFragment extends BaseFragment {
                             }
                             return;
                         }
+                        tv_connectTip.setVisibility(View.GONE);
                         weightDatas.addAll(0, list);
                         syncChart(weightDatas);
 
@@ -529,7 +428,7 @@ public class WeightFragment extends BaseFragment {
             calendar.setTimeInMillis(list.get(0).getWeightDate());
 
         //左边添加3条数据
-        calendar.add(Calendar.DAY_OF_MONTH, -2);
+        calendar.add(Calendar.DAY_OF_MONTH, -3);
         days_l.add(RxFormat.setFormatDate(calendar, "MM/dd"));
         calendar.add(Calendar.DAY_OF_MONTH, +1);
         days_l.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -541,9 +440,6 @@ public class WeightFragment extends BaseFragment {
             yVals.add(new Entry(i, (float) list.get(i).getWeight()));
             days_d.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "MM/dd"));
         }
-
-        if (list.size() > 0)
-            calendar.setTimeInMillis(list.get(list.size() - 1).getWeightDate());
 
         //右边添加3填数据
         days_f.add("--/--");
@@ -560,23 +456,26 @@ public class WeightFragment extends BaseFragment {
 
         chartManager.setData(yVals, days);
 
-        mLineChart.moveViewToX(yVals.size() - (pageNum - 1) * 20 - 3);
+        try {
+            mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                @Override
+                public void onValueSelected(Entry e, Highlight h) {
+                    RxLogUtils.d("点击");
+                    mHighlight = h;
+                    synWeightData(list.get((int) e.getX() % list.size()));
+                }
 
-        mLineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                mHighlight = h;
-                RxLogUtils.d("点击");
-                synWeightData(list.get((int) e.getX() % list.size()));
-            }
+                @Override
+                public void onNothingSelected() {
+                    RxLogUtils.d("什么都没点击");
+                    if (mHighlight != null)
+                        mLineChart.highlightValue(mHighlight);
+                }
+            });
+        } catch (Exception e) {
+            RxLogUtils.e("发生异常了！！！" + e.getMessage());
+        }
 
-            @Override
-            public void onNothingSelected() {
-                RxLogUtils.d("什么都没点击");
-                if (mHighlight != null)
-                    mLineChart.highlightValue(mHighlight);
-            }
-        });
 
         mLineChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
@@ -748,6 +647,70 @@ public class WeightFragment extends BaseFragment {
                 addWeightData(qnScaleData);
             }
         });
+    }
+
+
+    //界面提示状态
+    private void initDeviceConnectTip(int QN_bleState) {
+        tv_connectTip.setVisibility(View.VISIBLE);
+        Drawable drawable = getResources().getDrawable(QN_bleState == 1 ? R.mipmap.unbound_icon : R.mipmap.connect_icon);
+        //一定要加这行！！！！！！！！！！！
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
+        switch (QN_bleState) {
+            case 0://打开蓝牙
+                RxTextUtils.getBuilder(getString(R.string.connectBle))
+                        .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
+                        .into(tv_connectTip);
+                tv_connectTip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!BleTools.getBleManager().isBlueEnable())
+                            BleTools.getBleManager().enableBluetooth();
+                    }
+                });
+                break;
+            case 1://绑定设备
+                mLineChart.clear();
+                mLineChart.invalidate();
+                tv_connectDevice.setText(R.string.unBind);
+                RxTextUtils.getBuilder(getString(R.string.unbindDevice))
+                        .append(getString(R.string.goBind)).setForegroundColor(getResources().getColor(R.color.colorTheme))
+                        .into(tv_connectTip);
+                tv_connectTip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tv_connectTip.setVisibility(View.GONE);
+                        //TODO 去绑定设备
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Key.BUNDLE_FORCE_BIND, true);
+                        bundle.putString(Key.BUNDLE_BIND_TYPE, BleKey.TYPE_SCALE);
+                        RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class, bundle);
+                    }
+                });
+                break;
+            case 2://领取体重
+                RxTextUtils.getBuilder(getString(R.string.newWeight))
+                        .append(getString(R.string.waitReceive)).setForegroundColor(getResources().getColor(R.color.colorTheme))
+                        .into(tv_connectTip);
+                tv_connectTip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tv_connectTip.setVisibility(View.GONE);
+
+                        String s = new Gson().toJson(QNDatas);
+                        RxLogUtils.d("体重信息:" + s);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
+                        RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
+                        QNDatas.clear();
+                    }
+                });
+                break;
+            case 3://没有数据时候提示(绑定返回之后)
+                tv_connectTip.setText(R.string.tip_nodata);
+                break;
+        }
     }
 
 }

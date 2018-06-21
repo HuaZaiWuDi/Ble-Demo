@@ -62,7 +62,6 @@ public class DeviceLink {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.deviceLink(body))
-//                .throttleFirst(30, TimeUnit.MINUTES)
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -72,7 +71,6 @@ public class DeviceLink {
                     @Override
                     protected void _onError(String error) {
                         RxLogUtils.e("统计接口：" + error);
-//                        RxToast.error(error);
                     }
                 });
     }

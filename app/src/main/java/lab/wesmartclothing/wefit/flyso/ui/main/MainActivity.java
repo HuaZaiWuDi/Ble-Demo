@@ -13,6 +13,8 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.smartclothing.module_wefit.widget.dialog.AboutUpdateDialog;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxDeviceUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
@@ -79,7 +81,9 @@ public class MainActivity extends BaseALocationActivity {
         startLocation(null);
 
 
-//        RxActivityUtils.skipActivity(mContext, TempActivity.class);
+//        RxActivityUtils.skipActivity(mContext, TestBleScanActivity.class);
+        RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
+        RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
     }
 
     @Override
@@ -105,8 +109,19 @@ public class MainActivity extends BaseALocationActivity {
                 final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
                 dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
                 dialog.getTvContent().setText("是否升级到最新的版本");
-                dialog.setCancel(isMust ? "退出" : "取消");
+                dialog.setCancel("升级");
                 dialog.setCancelListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        AboutUpdateDialog updatedialog = new AboutUpdateDialog(mActivity, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                        updatedialog.show();
+                    }
+                });
+                dialog.setSure(isMust ? "退出" : "取消");
+                dialog.show();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
@@ -114,17 +129,6 @@ public class MainActivity extends BaseALocationActivity {
                             RxActivityUtils.AppExit(mContext);
                             finish();
                         }
-                    }
-                });
-                dialog.setSure("升级");
-                dialog.show();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.setSureListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        AboutUpdateDialog updatedialog = new AboutUpdateDialog(mActivity, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
-                        updatedialog.show();
                     }
                 });
 
@@ -140,7 +144,6 @@ public class MainActivity extends BaseALocationActivity {
         mFragments.add(FindFragment.getInstance());
         mFragments.add(StoreFragment.getInstance());
         mFragments.add(MineFragment.getInstance());
-//        mFragments.add(Mine.getInstance());
     }
 
     private void initBottomTab() {
@@ -164,30 +167,6 @@ public class MainActivity extends BaseALocationActivity {
 
             @Override
             public void onTabReselect(int position) {
-//                if (BuildConfig.DEBUG)
-//                    if (position == 0) {
-//                        final EditText editText = new EditText(mContext);
-//                        AlertDialog dialog = new AlertDialog.Builder(mContext)
-//                                .setTitle("修改用户ID")
-//                                .setView(editText)
-//                                .setPositiveButton("完成", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        String s = editText.getText().toString();
-//                                        if (RxDataUtils.isNullString(s))
-//                                            s = "";
-//                                        RxActivityUtils.skipActivity(mContext, MainActivity_.class);
-//                                        finish();
-//                                        mPrefs.UserId().put(s);
-//                                        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
-//                                        dialog.dismiss();
-//                                    }
-//                                }).show();
-//                    } else if (position == 3) {
-//                        RxActivityUtils.skipActivity(mContext, LoginActivity_.class);
-//                    } else if (position == 2) {
-//                        RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
-//                    }
             }
         });
     }

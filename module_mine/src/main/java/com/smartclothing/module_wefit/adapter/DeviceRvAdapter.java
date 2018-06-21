@@ -18,16 +18,12 @@ public class DeviceRvAdapter extends BaseMultiItemQuickAdapter<Device, BaseViewH
     private addDeviceClickListener addDeviceClickListener;
 
 
-
-
     public DeviceRvAdapter() {
         super(null);
         addItemType(0, R.layout.viewstub_device_scale_nodata);
         addItemType(1, R.layout.viewstub_device_scale_hasdata);
 
     }
-
-
 
 
     @Override
@@ -58,9 +54,10 @@ public class DeviceRvAdapter extends BaseMultiItemQuickAdapter<Device, BaseViewH
                     helper.getView(R.id.tv_residual_electricity_scale).setVisibility(View.GONE);
                     helper.getView(R.id.tv_residual_electricity_scale0).setVisibility(View.GONE);
                 } else {
-                    helper.setText(R.id.tv_residual_electricity_scale, item.getQuantity() + "%");
-                    int i = item.getStandby() / 60;
-                    String time = item.getStandby() == 0 ? "--" : i / 60 + "h" + i % 60 + "min";
+
+                    helper.setText(R.id.tv_residual_electricity_scale, item.getQuantity() == 0 ? "--" : item.getQuantity() + "%");
+                    int i = item.getStandby();
+                    String time = item.getStandby() == 0 ? "--" : i + "h";
 
                     helper.setText(R.id.tv_standby_time_scale, time);
                 }

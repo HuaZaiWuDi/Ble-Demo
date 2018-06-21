@@ -995,9 +995,9 @@ public final class R {
         public static int abc_shareactionprovider_share_with = 0x7f15001e;
         public static int abc_shareactionprovider_share_with_application = 0x7f15001f;
         public static int abc_toolbar_collapse_description = 0x7f150020;
-        public static int appbar_scrolling_view_behavior = 0x7f150025;
-        public static int bottom_sheet_behavior = 0x7f150027;
-        public static int character_counter_pattern = 0x7f150029;
+        public static int appbar_scrolling_view_behavior = 0x7f150026;
+        public static int bottom_sheet_behavior = 0x7f150028;
+        public static int character_counter_pattern = 0x7f15002a;
         public static int password_toggle_content_description = 0x7f150059;
         public static int path_password_eye = 0x7f15005a;
         public static int path_password_eye_mask_strike_through = 0x7f15005b;

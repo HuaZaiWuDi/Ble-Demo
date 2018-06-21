@@ -2305,8 +2305,8 @@ public final class R {
         public static int beep = 0x7f140001;
         public static int heart = 0x7f140003;
         public static int like = 0x7f140004;
-        public static int smile = 0x7f14000b;
-        public static int star = 0x7f14000c;
+        public static int smile = 0x7f14000c;
+        public static int star = 0x7f14000d;
     }
     public static final class string {
         public static int abc_action_bar_home_description = 0x7f150002;
@@ -2338,17 +2338,17 @@ public final class R {
         public static int abc_shareactionprovider_share_with = 0x7f15001e;
         public static int abc_shareactionprovider_share_with_application = 0x7f15001f;
         public static int abc_toolbar_collapse_description = 0x7f150020;
-        public static int app_name = 0x7f150024;
-        public static int appbar_scrolling_view_behavior = 0x7f150025;
-        public static int bottom_sheet_behavior = 0x7f150027;
-        public static int cancel = 0x7f150028;
-        public static int character_counter_pattern = 0x7f150029;
-        public static int hint_login_password = 0x7f15004a;
-        public static int load_end = 0x7f15004b;
-        public static int load_failed = 0x7f15004c;
-        public static int loading = 0x7f15004d;
-        public static int loading_default_messsage = 0x7f15004e;
-        public static int login = 0x7f15004f;
+        public static int app_name = 0x7f150025;
+        public static int appbar_scrolling_view_behavior = 0x7f150026;
+        public static int bottom_sheet_behavior = 0x7f150028;
+        public static int cancel = 0x7f150029;
+        public static int character_counter_pattern = 0x7f15002a;
+        public static int hint_login_password = 0x7f15004b;
+        public static int load_end = 0x7f15004c;
+        public static int load_failed = 0x7f15004d;
+        public static int loading = 0x7f15004e;
+        public static int loading_default_messsage = 0x7f15004f;
+        public static int login = 0x7f150050;
         public static int login_forget_pwd = 0x7f150051;
         public static int newest_apk_down = 0x7f150055;
         public static int newest_apk_down_int = 0x7f150056;

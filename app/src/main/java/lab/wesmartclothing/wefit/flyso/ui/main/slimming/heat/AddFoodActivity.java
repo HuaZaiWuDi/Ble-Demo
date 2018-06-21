@@ -18,6 +18,7 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -66,6 +67,9 @@ public class AddFoodActivity extends BaseActivity {
     String ADD_FOOD_DATE;
     @Extra
     int ADD_FOOD_TYPE;
+
+    @Bean
+    AddOrUpdateFoodDialog mAddOrUpdateFoodDialog;
 
     @Pref
     Prefs_ mPrefs;
@@ -139,8 +143,8 @@ public class AddFoodActivity extends BaseActivity {
             protected void convert(BaseViewHolder helper, ListBean item) {
                 helper.setText(R.id.tv_food, item.getFoodName());
                 helper.setText(R.id.tv_foodWeight, RxFormat.setFormatNum(item.getFoodCount(), "0.0") + item.getFoodUnit());
-                helper.setText(R.id.tv_foodKcal, item.getCalorie() + getString(R.string.unit_kcal));
                 loadCricle(item.getFoodImg(), (ImageView) helper.getView(R.id.img_food));
+                helper.setText(R.id.tv_foodKcal, item.getCalorie() + getString(R.string.unit_kcal));
             }
         };
 
@@ -159,7 +163,7 @@ public class AddFoodActivity extends BaseActivity {
     private void showAddFoodDialog(final ListBean item) {
         item.setEatType(ADD_FOOD_TYPE);
         item.setHeatDate(ADD_FOOD_DATE);
-        new AddOrUpdateFoodDialog(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+        mAddOrUpdateFoodDialog.setFoodInfo(mContext,true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(AddFoodItem.intakeList item) {
                 mIntakeLists.add(item);

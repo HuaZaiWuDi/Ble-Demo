@@ -150,7 +150,6 @@ public class UserInfoActivity extends BaseALocationActivity {
         super.onCreate(savedInstanceState);
         //屏幕沉浸
         StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
-
     }
 
     @Override

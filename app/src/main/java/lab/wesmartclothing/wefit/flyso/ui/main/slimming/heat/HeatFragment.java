@@ -23,6 +23,7 @@ import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
@@ -85,6 +86,9 @@ public class HeatFragment extends BaseFragment {
 
     @Pref
     Prefs_ mPrefs;
+
+    @Bean
+    AddOrUpdateFoodDialog mAddOrUpdateFoodDialog;
 
     private int[] foodTypeRes_green = {R.mipmap.breakfast_green_icon, R.mipmap.lunch_green_icon,
             R.mipmap.dinner_green_icon, R.mipmap.midnight_snack_green_icon, R.mipmap.snack_green_icon};
@@ -349,12 +353,15 @@ public class HeatFragment extends BaseFragment {
                 bean.setGid(foodListBean.getGid());
                 bean.setFoodId(foodListBean.getFoodId());
                 bean.setHeatDate(date);
-                new AddOrUpdateFoodDialog(mActivity, false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+
+
+                mAddOrUpdateFoodDialog.setFoodInfo(mActivity,false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
                     @Override
                     public void complete(AddFoodItem.intakeList item) {
                         updateFood(foodListBean, item);
                     }
                 });
+
             }
         });
 

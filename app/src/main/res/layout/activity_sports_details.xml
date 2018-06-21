@@ -80,7 +80,7 @@
             android:layout_marginTop="@dimen/d_20"
             android:drawableLeft="@mipmap/icon_run"
             android:drawablePadding="@dimen/d_20"
-            android:text="步"
+            android:text="0步"
             android:textColor="@color/colorTheme"/>
 
 

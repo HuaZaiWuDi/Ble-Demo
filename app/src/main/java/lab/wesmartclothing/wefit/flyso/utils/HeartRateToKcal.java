@@ -51,6 +51,6 @@ public class HeartRateToKcal {
         } else {
             kcal = ((-20.4022 + (0.4472 * HR) - (0.1263 * W) + (0.074 * A)) / 4.184) * 60 * T;
         }
-        return (kcal / 1000);
+        return Math.abs(kcal / 1000);
     }
 }
