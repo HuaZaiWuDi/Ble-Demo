@@ -12,7 +12,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.smartclothing.blelibrary.BleKey;
-import com.smartclothing.blelibrary.util.ByteUtil;
 import com.smartclothing.module_wefit.activity.AboutActivity;
 import com.smartclothing.module_wefit.activity.CollectActivity;
 import com.smartclothing.module_wefit.activity.MessageActivity;
@@ -20,21 +19,18 @@ import com.smartclothing.module_wefit.activity.MyDeviceActivity;
 import com.smartclothing.module_wefit.activity.PersonalDataActivity;
 import com.smartclothing.module_wefit.activity.ProblemSuggestActivity;
 import com.smartclothing.module_wefit.activity.SetActivity;
-import com.smartclothing.module_wefit.bean.Device;
 import com.smartclothing.module_wefit.bean.UserCenterBean;
 import com.smartclothing.module_wefit.bean.UserInfo;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -42,8 +38,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
@@ -52,6 +47,8 @@ import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -66,8 +63,6 @@ public class MineFragment extends BaseFragment {
     public static MineFragment getInstance() {
         return new MineFragment_();
     }
-
-    private double voltage;//实时电压值
 
 
     @ViewById
@@ -107,17 +102,8 @@ public class MineFragment extends BaseFragment {
     @ViewById
     View icon_unread;
 
-    @Pref
-    Prefs_ mPrefs;
-
-
-    //心率
-    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
-    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] data) {
-        int value = ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]});
-        voltage = value / 1000f;
-
-    }
+//    @Pref
+//    Prefs_ mPrefs;
 
 
     @Click
@@ -160,7 +146,7 @@ public class MineFragment extends BaseFragment {
     void rl_my_order() {
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
-        bundle.putString(Key.BUNDLE_TITLE, "我的订单");
+        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.myOrder));
         RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
     }
 
@@ -169,7 +155,7 @@ public class MineFragment extends BaseFragment {
         //我的购物车
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Shopping_Address);
-        bundle.putString(Key.BUNDLE_TITLE, "购物车");
+        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.shopping));
         RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
     }
 
@@ -178,7 +164,6 @@ public class MineFragment extends BaseFragment {
         //我的设备
         Bundle bundle = new Bundle();
         bundle.putBoolean(Key.ACTION_SCALE_CONNECT, WeightFragment.isConnect);
-        bundle.putDouble(Key.BUNDLE_VOLTAGE, voltage);
         RxActivityUtils.skipActivity(mActivity, MyDeviceActivity.class, bundle);
 
     }
@@ -191,8 +176,10 @@ public class MineFragment extends BaseFragment {
 
     @Click
     void rl_my_about() {
-
-        RxActivityUtils.skipActivity(mActivity, AboutActivity.class);
+        //我的设备
+        Bundle bundle = new Bundle();
+        bundle.putString(BleKey.FIRMWARE_VERSION, BleService.firmwareVersion);
+        RxActivityUtils.skipActivity(mActivity, AboutActivity.class, bundle);
         //关于我的
     }
 
@@ -224,16 +211,6 @@ public class MineFragment extends BaseFragment {
                 initMineData();
             }
         });
-        Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
-            @Override
-            public void accept(Device device) throws Exception {
-                if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
-                    mPrefs.scaleIsBind().put("");
-                } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                    mPrefs.clothing().put("");
-                }
-            }
-        });
         Disposable web = RxBus.getInstance().register(String.class, new Consumer<String>() {
             @Override
             public void accept(String device) throws Exception {
@@ -242,11 +219,12 @@ public class MineFragment extends BaseFragment {
                     //服务协议
                     Bundle bundle = new Bundle();
                     bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-                    bundle.putString(Key.BUNDLE_TITLE, "服务协议");
+                    bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
                     RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
 
                 } else if ("logout".equals(device)) {
-                    mPrefs.clear();
+//                    mPrefs.clear();
+                    SPUtils.clear();
                     MyAPP.getACache().clear();
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(Key.BUNDLE_RELOGIN, true);
@@ -273,7 +251,7 @@ public class MineFragment extends BaseFragment {
             }
         });
 
-        RxBus.getInstance().addSubscription(this, Collect, register, web, device);
+        RxBus.getInstance().addSubscription(this, Collect, register, web);
     }
 
 

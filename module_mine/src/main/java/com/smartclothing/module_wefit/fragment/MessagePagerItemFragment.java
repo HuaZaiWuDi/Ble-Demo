@@ -17,7 +17,6 @@ import com.smartclothing.module_wefit.activity.MessageDetailActivity;
 import com.smartclothing.module_wefit.adapter.MessageRvAdapter;
 import com.smartclothing.module_wefit.base.BaseFragment;
 import com.smartclothing.module_wefit.bean.Message;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.json.JSONException;
@@ -26,6 +25,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import io.reactivex.functions.Action;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;

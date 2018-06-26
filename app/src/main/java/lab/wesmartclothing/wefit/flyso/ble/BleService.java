@@ -22,6 +22,7 @@ import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
+import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.HexUtil;
@@ -29,6 +30,7 @@ import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
@@ -36,7 +38,6 @@ import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.Receiver;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,11 +48,11 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -67,12 +68,10 @@ public class BleService extends Service {
     private List<Integer> athlRecord = new ArrayList<>();
     private List<Integer> athlRecord_2 = new ArrayList<>();//实时心率
 
-    public static String firmwareVersion;
+    public static String firmwareVersion = "";
 
-    private boolean dfuStarting = false;
+    private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
 
-    @Pref
-    Prefs_ mPrefs;
 
     @Bean
     QNBleTools mQNBleTools;
@@ -137,12 +136,12 @@ public class BleService extends Service {
 
         if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
             RxLogUtils.d("未开启GPS定位");
-            RxToast.warning("未开启GPS定位，部分手机可能搜索不到蓝牙设备");
+            RxToast.warning(getString(R.string.open_GPS));
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             RxLogUtils.d("验证权限");
-            RxToast.warning("未给予定位权限，无法搜索到蓝牙设备");
+            RxToast.warning(getString(R.string.open_loaction));
         }
 
         initBle();
@@ -176,22 +175,22 @@ public class BleService extends Service {
                     ScanResult scanResult = new ScanResult(device.getDevice(), new c(device.getScanRecord()), device.getRssi());
                     QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);
                     RxBus.getInstance().post(bleDevice);
-                    if (device.getMac().equals(mPrefs.scaleIsBind().get())) {
+                    if (device.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
                         mQNBleTools.disConnectDevice(bleDevice.getMac());
                         mQNBleTools.connectDevice(bleDevice);
                     }
                 } else if (BleKey.Smart_Clothing.equals(device.getName())) {
                     RxLogUtils.d("扫描到瘦身衣：" + device.getMac());
-                    if (device.getMac().equals(mPrefs.clothing().get()))
+                    if (device.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)))
                         connectClothing(device);
 
                     byte[] scanRecord = device.getScanRecord();
-                    byte b1 = scanRecord[21];
-                    byte b2 = scanRecord[22];
-                    byte b3 = scanRecord[23];
+                    int b1 = scanRecord[21];
+                    int b2 = scanRecord[22];
+                    int b3 = scanRecord[23];
 
                     //版本号
-                    firmwareVersion = b1 + "-" + b2 + "-" + b3;
+                    firmwareVersion = b1 + "." + b2 + "." + b3;
                     RxLogUtils.d("版本号：" + firmwareVersion);
 
                     RxBus.getInstance().post(device);
@@ -239,7 +238,7 @@ public class BleService extends Service {
             public void onConnectError(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("连接异常：" + i);
                 mQNBleTools.disConnectDevice(qnBleDevice);
-                RxToast.info("连接瘦身衣异常，请开关蓝牙后再连接");
+                RxToast.info(getString(R.string.connectError));
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
                 initBle();
             }
@@ -264,7 +263,7 @@ public class BleService extends Service {
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
                 RxLogUtils.d("连接异常：" + exception.toString());
-                RxToast.info("连接瘦身衣异常，请开关蓝牙后再连接");
+                RxToast.info(getString(R.string.connectError));
                 BleTools.getBleManager().disconnect(bleDevice);
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 initBle();
@@ -272,63 +271,27 @@ public class BleService extends Service {
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                //设备统计
-                DeviceLink deviceLink = new DeviceLink();
-                deviceLink.setMacAddr(bleDevice.getMac());
-                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
-                deviceLink.deviceLink(deviceLink);
-
                 RxLogUtils.d("瘦身衣连接成功");
                 if (dfuStarting) return;
 
+                //设备统计
+                DeviceLink deviceLink = new DeviceLink();
+                deviceLink.setMacAddr(bleDevice.getMac());
+                deviceLink.setDeviceName(getString(R.string.clothing));//测试数据
+                deviceLink.setFirmwareVersion(firmwareVersion);
+                deviceLink.deviceLink(deviceLink);
+
+
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
                 BleTools.getInstance().setBleDevice(bleDevice);
-                BleTools.getInstance().openNotify();
-
-                if (isFrist) {
-                    isFrist = false;
-                    checkFirmwareVersion(0);
-                }
-
-                BleAPI.syncDeviceTime(new BleChartChangeCallBack() {
+                BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
                     @Override
-                    public void callBack(byte[] data) {
-                        RxLogUtils.d("同步时间成功");
-                        BleAPI.syncSetting(35, 50, 0x00, new BleChartChangeCallBack() {
-                            @Override
-                            public void callBack(byte[] data) {
-                                RxLogUtils.d("配置参数");
-//                                BleAPI.syncDataCount(new BleChartChangeCallBack() {
-//                                    @Override
-//                                    public void callBack(byte[] data) {
-//                                        long packageCount = ByteUtil.bytesToLongD4(data, 3);
-//                                        RxLogUtils.d("包总数：" + packageCount);
-//                                        if (packageCount > 0) {
-//                                            RxLogUtils.d("开始同步包数据");
-//                                            synData();
-//                                            athlRecord.clear();
-//                                        } else RxLogUtils.d("没有数据同步");
-//                                    }
-//                                });
-                                BleAPI.getVoltage(new BleChartChangeCallBack() {
-                                    @Override
-                                    public void callBack(byte[] data) {
-                                        RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
-
-                                        BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
-                                            @Override
-                                            public void callBack(byte[] data) {
-                                                RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
-                                            }
-                                        });
-
-                                    }
-                                });
-
-                            }
-                        });
+                    public void success(boolean isSuccess) {
+                        syncBleSetting();
                     }
                 });
+
+
             }
 
             @Override
@@ -344,6 +307,68 @@ public class BleService extends Service {
                 }
             }
         });
+    }
+
+
+    /**
+     * 流程：同步时间->同步配置->同步历史数据->检查固件版本（仅一次）
+     */
+    private void syncBleSetting() {
+        BleAPI.syncDeviceTime(new BleChartChangeCallBack() {
+            @Override
+            public void callBack(byte[] data) {
+                RxLogUtils.d("同步时间成功");
+                syncSetting();
+            }
+        });
+    }
+
+    private void syncSetting() {
+        BleAPI.syncSetting(35, 50, 0x00, new BleChartChangeCallBack() {
+            @Override
+            public void callBack(byte[] data) {
+                RxLogUtils.d("配置参数");
+                syncHistoryData();
+            }
+        });
+    }
+
+    private void syncHistoryData() {
+        BleAPI.syncDataCount(new BleChartChangeCallBack() {
+            @Override
+            public void callBack(byte[] data) {
+                long packageCount = ByteUtil.bytesToLongD4(data, 3);
+                RxLogUtils.d("包总数：" + packageCount);
+                if (packageCount > 0) {
+                    RxLogUtils.d("开始同步包数据");
+                    synData();
+                    athlRecord.clear();
+                } else RxLogUtils.d("没有数据同步");
+
+                checkVersion();
+            }
+        });
+    }
+
+    private void checkVersion() {
+        if (isFrist) {
+            isFrist = false;
+            BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
+                @Override
+                public void callBack(byte[] data) {
+                    RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
+                    //021309 010203000400050607090a0b0c10111213
+
+                    JsonObject object = new JsonObject();
+                    object.addProperty("category", data[3]);//设备类型
+                    object.addProperty("modelNo", data[4]);//待定
+                    object.addProperty("manufacture", com.vondear.rxtools.aboutByte.ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
+                    object.addProperty("hwVersion", com.vondear.rxtools.aboutByte.ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
+                    object.addProperty("firmwareVersion", data[9] + "." + data[10] + "." + data[11]);//当前固件版本
+                    checkFirmwareVersion(object);
+                }
+            });
+        }
     }
 
 
@@ -433,14 +458,9 @@ public class BleService extends Service {
 
             }
         });
-
     }
 
-    private void checkFirmwareVersion(int curVersion) {
-        JsonObject object = new JsonObject();
-        object.addProperty("category", 1);//设备类型
-        object.addProperty("modelNo", 1);//待定
-        object.addProperty("hwVersion", curVersion);//当前固件版本
+    private void checkFirmwareVersion(JsonObject object) {
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

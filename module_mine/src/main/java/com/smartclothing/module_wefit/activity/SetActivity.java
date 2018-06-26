@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.base.BaseActivity;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.widget.dialog.DepositDialog;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -18,6 +17,7 @@ import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;

@@ -11,15 +11,14 @@
     <FrameLayout
         android:id="@+id/mFrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_tab">
+        android:layout_height="match_parent">
 
     </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/bottom_tab"
         android:layout_width="match_parent"
-        android:layout_height="170px"
+        android:layout_height="@dimen/bottom_padding"
         android:layout_alignParentBottom="true">
 
 
@@ -36,14 +35,11 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:background="@color/white"
-            android:padding="@dimen/d_20"
-            app:tl_iconHeight="@dimen/d_70"
-            app:tl_iconWidth="@dimen/d_70"
+            android:padding="5dp"
             app:tl_textBold="SELECT"
             app:tl_textSelectColor="@color/colorTheme"
             app:tl_textUnselectColor="@color/colorTabText"
             app:tl_textsize="@dimen/d_35"/>
-
 
         <View
             android:layout_width="match_parent"

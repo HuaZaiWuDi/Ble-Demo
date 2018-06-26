@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,6 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.module_wefit.bean.Device;
@@ -31,6 +29,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listen.QNDataListener;
@@ -41,11 +40,9 @@ import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +51,6 @@ import java.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -62,13 +58,13 @@ import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.ChartManager;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.flyso.view.MyMarkerView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -93,7 +89,6 @@ public class WeightFragment extends BaseFragment {
     TextView tv_weight_date;
     TextView tv_idealWeight;
     TextView tv_currentWeight;
-    QMUITipDialog uiTipDialog;
 
     @ViewById
     RecyclerView mRecyclerView;
@@ -111,9 +106,6 @@ public class WeightFragment extends BaseFragment {
     @Bean
     QNBleTools mQNBleTools;
 
-    @Pref
-    Prefs_ mPrefs;
-
 
     //监听系统蓝牙开启
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
@@ -121,7 +113,7 @@ public class WeightFragment extends BaseFragment {
         if (state == BluetoothAdapter.STATE_OFF) {
             initDeviceConnectTip(0);
         } else if (state == BluetoothAdapter.STATE_ON) {
-            tv_connectTip.setVisibility(View.GONE);
+            initDeviceConnectTip(3);
         }
     }
 
@@ -132,15 +124,9 @@ public class WeightFragment extends BaseFragment {
 
         tv_connectDevice.setText(state ? R.string.connected : R.string.disConnected);
         if (!state)
-            tv_connectTip.setVisibility(View.GONE);
+            initDeviceConnectTip(3);
     }
 
-
-    @Click
-    void icon_weight() {
-        if (BuildConfig.DEBUG)
-            RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class);
-    }
 
     @AfterViews
     public void initView() {
@@ -151,14 +137,6 @@ public class WeightFragment extends BaseFragment {
         initWeightInfo();
         initQNBle();
         initBleCallBack();
-        initTipDialog();
-    }
-
-    private void initTipDialog() {
-        uiTipDialog = new QMUITipDialog.Builder(mActivity)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("正在获取体重数据")
-                .create();
 
     }
 
@@ -184,13 +162,19 @@ public class WeightFragment extends BaseFragment {
     @Override
     public void initData() {
         RxLogUtils.d("加载：【WeightFragment】");
-        if ("".equals(mPrefs.scaleIsBind().get())) {
+
+    }
+
+
+    @Override
+    public void onStart() {
+        if ("".equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
             initDeviceConnectTip(1);
         } else {
             tv_connectDevice.setText(isConnect ? R.string.connected : R.string.disConnected);
-
             getWeightData();
         }
+        super.onStart();
     }
 
 
@@ -204,8 +188,6 @@ public class WeightFragment extends BaseFragment {
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                if (uiTipDialog != null)
-                    uiTipDialog.dismiss();
 //                RxLogUtils.d("实时的稳定测量数据是否有效：" + qnScaleData.isValid());
                 for (QNScaleItemData item : qnScaleData.getAllItem()) {
                     RxLogUtils.d("实时的稳定测量数据：" + item.getValue());
@@ -221,7 +203,6 @@ public class WeightFragment extends BaseFragment {
                 RxLogUtils.d("历史数据：" + list.size());
                 for (QNScaleStoreData data : list) {
                     RxLogUtils.d("历史数据：" + data.getWeight());
-
                     QNDatas.add(data);
                     initDeviceConnectTip(2);
                 }
@@ -253,18 +234,21 @@ public class WeightFragment extends BaseFragment {
     }
 
     private void initRxBus() {
-        //删除绑定
+
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {
                 if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
+                    //删除绑定
+                    RxLogUtils.d("WeightFragment:删除绑定");
                     mQNBleTools.disConnectDevice(device.getMacAddr());
-                    mPrefs.scaleIsBind().put("");
+                    SPUtils.put(SPKey.SP_scaleMAC, "");
                     initDeviceConnectTip(1);
                     initWeightInfo();
                 }
             }
         });
+
         RxBus.getInstance().addSubscription(this, device);
     }
 
@@ -367,15 +351,11 @@ public class WeightFragment extends BaseFragment {
                     public void run() throws Exception {
                         if (mActivity != null)
                             mRefresh.refreshComplete();
-                        if (weightDatas.size() == 0) {
-                            initDeviceConnectTip(3);
-                        }
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-
                         RxLogUtils.d("获取体重数据：" + s);
 
                         WeightDataBean bean = new Gson().fromJson(s, WeightDataBean.class);
@@ -393,7 +373,6 @@ public class WeightFragment extends BaseFragment {
                             }
                             return;
                         }
-                        tv_connectTip.setVisibility(View.GONE);
                         weightDatas.addAll(0, list);
                         syncChart(weightDatas);
 
@@ -565,17 +544,15 @@ public class WeightFragment extends BaseFragment {
     }
 
     private void addWeightData(final QNScaleData qnScaleData) {
-        String userId = mPrefs.UserId().getOr("testuser");
-        RxLogUtils.d("用户ID" + userId);
         WeightAddBean bean = new WeightAddBean();
-        bean.setUserId(userId);
+        bean.setUserId(SPUtils.getString(SPKey.SP_UserId));
         bean.setMeasureTime(System.currentTimeMillis() + "");
         for (QNScaleItemData item : qnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);
         }
         String s = new Gson().toJson(bean, WeightAddBean.class);
 
-        mPrefs.realWeight().put((float) qnScaleData.getItem(1).getValue());
+        SPUtils.put(SPKey.SP_realWeight, (float) qnScaleData.getItem(1).getValue());
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
@@ -596,7 +573,6 @@ public class WeightFragment extends BaseFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
                         pageNum = 1;
-                        weightDatas.clear();
                         getWeightData();
                     }
 
@@ -613,7 +589,7 @@ public class WeightFragment extends BaseFragment {
             addWeightData(qnScaleData);
         } else {
             double weight_1 = weightDatas.get(weightDatas.size() - 1).getWeight();//网络数据
-            double weight_2 = mPrefs.realWeight().getOr((float) weightDatas.get(weightDatas.size() - 1).getWeight());//本地数据
+            double weight_2 = SPUtils.getFloat(SPKey.SP_realWeight, (float) weightDatas.get(weightDatas.size() - 1).getWeight());
             double weight_3 = qnScaleData.getAllItem().get(0).getValue();//当前数据
             if (Math.abs(weight_1 - weight_3) >= 2) {
                 showDialog(qnScaleData);
@@ -649,26 +625,29 @@ public class WeightFragment extends BaseFragment {
         });
     }
 
-
     //界面提示状态
     private void initDeviceConnectTip(int QN_bleState) {
         tv_connectTip.setVisibility(View.VISIBLE);
-        Drawable drawable = getResources().getDrawable(QN_bleState == 1 ? R.mipmap.unbound_icon : R.mipmap.connect_icon);
-        //一定要加这行！！！！！！！！！！！
-        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
+//        Drawable drawable = getResources().getDrawable(QN_bleState == 1 ? R.mipmap.unbound_icon : R.mipmap.connect_icon);
+//        //一定要加这行！！！！！！！！！！！
+//        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+//        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
         switch (QN_bleState) {
             case 0://打开蓝牙
-                RxTextUtils.getBuilder(getString(R.string.connectBle))
-                        .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
-                        .into(tv_connectTip);
-                tv_connectTip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!BleTools.getBleManager().isBlueEnable())
-                            BleTools.getBleManager().enableBluetooth();
-                    }
-                });
+                if ("".equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                    initDeviceConnectTip(1);
+                } else {
+                    RxTextUtils.getBuilder(getString(R.string.connectBle))
+                            .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
+                            .into(tv_connectTip);
+                    tv_connectTip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!BleTools.getBleManager().isBlueEnable())
+                                BleTools.getBleManager().enableBluetooth();
+                        }
+                    });
+                }
                 break;
             case 1://绑定设备
                 mLineChart.clear();
@@ -707,8 +686,11 @@ public class WeightFragment extends BaseFragment {
                     }
                 });
                 break;
-            case 3://没有数据时候提示(绑定返回之后)
-                tv_connectTip.setText(R.string.tip_nodata);
+            case 3:
+                if ("".equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                    initDeviceConnectTip(1);
+                } else
+                    tv_connectTip.setVisibility(View.GONE);
                 break;
         }
     }

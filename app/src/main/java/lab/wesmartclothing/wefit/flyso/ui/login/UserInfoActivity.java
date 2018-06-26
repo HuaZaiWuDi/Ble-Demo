@@ -19,6 +19,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -26,7 +27,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,10 +40,10 @@ import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -76,8 +76,8 @@ public class UserInfoActivity extends BaseALocationActivity {
     @ViewById
     LinearLayout layout_location;
 
-    @Pref
-    Prefs_ mPrefs;
+    //    @Pref
+//    Prefs_ mPrefs;
     @Bean
     SaveUserInfo mUserInfo;
 
@@ -100,7 +100,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             if (!isLocation) {
                 final QMUITipDialog tipDialog = new QMUITipDialog.Builder(mContext)
                         .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
-                        .setTipWord("未获取地理位置")
+                        .setTipWord(getString(R.string.not_locationAddr))
                         .create();
                 tipDialog.show();
                 new Handler().postDelayed(new Runnable() {
@@ -245,7 +245,8 @@ public class UserInfoActivity extends BaseALocationActivity {
             @Override
             public void onTabSelect(int position) {
                 //0未设置1男2女
-                mPrefs.sex().put(position);
+//                mPrefs.sex().put(position);
+                SPUtils.put(SPKey.SP_sex, position);
                 mUserInfo.setSex(position == 0 ? 2 : 1);//1男2女
             }
 
@@ -283,7 +284,8 @@ public class UserInfoActivity extends BaseALocationActivity {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 tv_bottom.setText(year + "-" + month + "-" + day);
                 Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
-                mPrefs.birthDayMillis().put(date.getTime());
+//                mPrefs.birthDayMillis().put(date.getTime());
+                SPUtils.put(SPKey.SP_birthDayMillis, date.getTime());
                 mUserInfo.setBirthday(date.getTime() + "");
             }
         });
@@ -306,7 +308,8 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("身高：" + item);
                 tv_top.setText(item + "cm");
-                mPrefs.height().put((int) item);
+//                mPrefs.height().put((int) item);
+                SPUtils.put(SPKey.SP_height, (int) item);
                 mUserInfo.setHeight((int) item);
             }
         });
@@ -329,7 +332,8 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("体重：" + item);
                 tv_bottom.setText(item + "kg");
-                mPrefs.weight().put((int) item);
+//                mPrefs.weight().put((int) item);
+                SPUtils.put(SPKey.SP_weight, (int) item);
                 mUserInfo.setTargetWeight((int) item);
             }
         });
@@ -343,8 +347,11 @@ public class UserInfoActivity extends BaseALocationActivity {
             mUserInfo.setProvince("");
             mUserInfo.setCity("");
         }
-        mUserInfo.setPhone(mPrefs.phone().get());
-        mUserInfo.setToken(mPrefs.token().get());
+//        mUserInfo.setPhone(mPrefs.phone().get());
+//        mUserInfo.setToken(mPrefs.token().get());
+        mUserInfo.setPhone(SPUtils.getString(SPKey.SP_phone));
+        mUserInfo.setToken(SPUtils.getString(SPKey.SP_token));
+
         String s = new Gson().toJson(mUserInfo, SaveUserInfo.class);
 
         if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {

@@ -30,6 +30,16 @@ public class Device implements Serializable, MultiItemEntity {
     private int standby;
     private String newFirmwareVersion = "";
     private boolean isUpdate = false;
+    private boolean isBind;
+
+
+    public boolean isBind() {
+        return isBind;
+    }
+
+    public void setBind(boolean bind) {
+        isBind = bind;
+    }
 
     public boolean isUpdate() {
         return isUpdate;

@@ -30,6 +30,7 @@ import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
+import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
  * Created by 华 on 2017/5/2.
@@ -80,8 +81,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void initDialog() {
         tipDialog = new QMUITipDialog.Builder(this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("正在加载")
+                .setTipWord(getString(R.string.tv_loading))
                 .create();
+        new TipDialog(tipDialog);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {
@@ -145,8 +147,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
     }
-
-
 
 
 }

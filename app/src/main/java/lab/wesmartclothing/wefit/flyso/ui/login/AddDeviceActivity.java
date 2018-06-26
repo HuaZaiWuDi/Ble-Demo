@@ -21,6 +21,7 @@ import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
@@ -32,7 +33,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +47,11 @@ import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.flyso.view.ScanView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -119,8 +119,9 @@ public class AddDeviceActivity extends BaseActivity {
     String BUNDLE_BIND_TYPE = "all";
 
 
-    @Pref
-    Prefs_ mPrefs;
+//    @Pref
+//    Prefs_ mPrefs;
+
 
     private int stepState = 0;
     private BaseQuickAdapter adapter;
@@ -195,7 +196,7 @@ public class AddDeviceActivity extends BaseActivity {
     private void startScan() {
 
         if (!BleTools.getBleManager().isBlueEnable()) {
-            RxToast.warning("未开启蓝牙，无法搜索到蓝牙设备");
+            RxToast.warning(getString(R.string.open_BLE));
             BleTools.getBleManager().enableBluetooth();
         }
 
@@ -380,9 +381,11 @@ public class AddDeviceActivity extends BaseActivity {
                 deviceList.setDeviceNo(bean.getDeivceType() == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
                 mDeviceLists.add(deviceList);
                 if (bean.getDeivceType() == 0) {
-                    mPrefs.scaleIsBind().put(bean.getMac());
+//                    mPrefs.scaleIsBind().put(bean.getMac());
+                    SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
                 } else {
-                    mPrefs.clothing().put(bean.getMac());
+//                    mPrefs.clothing().put(bean.getMac());
+                    SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
                 }
             }
         }
@@ -422,10 +425,13 @@ public class AddDeviceActivity extends BaseActivity {
                         RxLogUtils.d("结束：" + s);
                         if ("true".equals(s)) {
                             if (bean.getDeivceType() == 0) {
-                                mPrefs.scaleIsBind().put(bean.getMac());
+//                                mPrefs.scaleIsBind().put(bean.getMac());
+                                SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
                             } else {
-                                mPrefs.clothing().put(bean.getMac());
+//                                mPrefs.clothing().put(bean.getMac());
+                                SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
                             }
+
                             initStep(2);
                         }
                         bean.setBind("true".equals(s));

@@ -1,21 +1,18 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.vondear.rxtools.utils.SPUtils;
+
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.Calendar;
 
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * Created by jk on 2018/6/13.
  */
 @EBean
 public class HeartRateToKcal {
-
-
-    @Pref
-    Prefs_ mPrefs;
 
 
     /**
@@ -34,10 +31,15 @@ public class HeartRateToKcal {
      */
     public double getCalorie(int HR, double T) {
 
-        int sex = mPrefs.sex().get();
-        float W = mPrefs.realWeight().getOr(Float.valueOf(mPrefs.weight().get()));
+        int sex = SPUtils.getInt(SPKey.SP_sex, 0);
+        float W = SPUtils.getFloat(SPKey.SP_realWeight, SPUtils.getInt(SPKey.SP_weight));
+        long birthDayMillis = SPUtils.getLong(SPKey.SP_birthDayMillis);
 
-        long birthDayMillis = mPrefs.birthDayMillis().get();
+//        int sex = mPrefs.sex().get();
+
+//        float W = mPrefs.realWeight().getOr(Float.valueOf(mPrefs.weight().get()));
+
+//        long birthDayMillis = mPrefs.birthDayMillis().get();
 
         Calendar calendar = Calendar.getInstance();
         int newYear = calendar.get(Calendar.YEAR);

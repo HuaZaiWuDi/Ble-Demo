@@ -18,14 +18,15 @@ import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.dfu.DfuService;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.boradcast.B;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
 
 import java.io.File;
 
 import io.reactivex.functions.Function;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.FileDownLoadObserver;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -79,14 +80,11 @@ public class AboutUpdateDialog extends BaseDialog implements View.OnClickListene
 
 
         //下载文件固件升级文件
-//        if (!RxDataUtils.isNullString(filePath))
-//            downLoadFile(filePath);
-//        else {
-//            final String dirName = Environment.getExternalStorageDirectory() + Dir + fileName;
-//        startMyDFU(new File(dirName));
-//        }
-        //演示使用本地DFU文件
-        startMyDFU(null);
+        if (!RxDataUtils.isNullString(filePath))
+            downLoadFile(filePath);
+
+//        //演示使用本地DFU文件
+//        startMyDFU(null);
 
         setOnDismissListener(new OnDismissListener() {
             @Override
@@ -135,16 +133,16 @@ public class AboutUpdateDialog extends BaseDialog implements View.OnClickListene
             return;
         }
 
-//        if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
-//            tv_update_tip.setText("升级文件有误");
-//            return;
-//        }
+        if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
+            tv_update_tip.setText("升级文件有误");
+            return;
+        }
 
         final DfuServiceInitiator starter = new DfuServiceInitiator(BleTools.getInstance().getBleDevice().getMac())
                 .setDeviceName(BleTools.getInstance().getBleDevice().getName());
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
-        starter.setZip(R.raw.nrf52832_xxaa_app_7);
-//        starter.setZip(o.getPath());
+//        starter.setZip(R.raw.nrf52832_xxaa_app_7);
+        starter.setZip(o.getPath());
         starter.start(mContext, DfuService.class);
     }
 
@@ -212,7 +210,6 @@ public class AboutUpdateDialog extends BaseDialog implements View.OnClickListene
             super.onDfuCompleted(deviceAddress);
             B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
             RxLogUtils.d("onDfuCompleted");
-//            RxToast.success("升级完成");
             tv_update_tip.setText("升级完成");
             setCanceledOnTouchOutside(true);
         }
@@ -228,7 +225,6 @@ public class AboutUpdateDialog extends BaseDialog implements View.OnClickListene
             super.onError(deviceAddress, error, errorType, message);
             RxLogUtils.e("onError:" + message);
             B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
-//            startMyDFU();
             tv_update_tip.setText("升级失败,请重试");
             setCanceledOnTouchOutside(true);
         }

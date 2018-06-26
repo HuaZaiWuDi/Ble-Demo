@@ -43,7 +43,8 @@ public class ChartManager {
         mLineChart.getAxisRight().setEnabled(false);
         mLineChart.getLegend().setEnabled(false);//关闭图例
         mLineChart.setAutoScaleMinMaxEnabled(false);
-        mLineChart.setNoDataText("");//没有数据时显示
+        mLineChart.setNoDataText(mContext.getString(R.string.tip_nodata));//没有数据时显示
+        mLineChart.setNoDataTextColor(Color.WHITE);
         mLineChart.setViewPortOffsets(10, 50, 20, 50);
 
         x = mLineChart.getXAxis();
@@ -58,14 +59,12 @@ public class ChartManager {
         x.setDrawAxisLine(false);
         x.setDrawLabels(true);
 
-//        x.setCenterAxisLabels();
-
 
         y = mLineChart.getAxisLeft();
         y.setDrawLimitLinesBehindData(true);
-        y.setLabelCount(13, false);
+        y.setLabelCount(7, true);
         y.setTextColor(Color.WHITE);
-        y.setDrawGridLines(true);
+        y.setDrawGridLines(false);
         y.setGridColor(context.getResources().getColor(R.color.lineColor));
         y.setAxisLineColor(Color.WHITE);
 //        y.setGranularity(2f);// //设置最小间隔，防止当放大时出现重复标签
@@ -95,7 +94,7 @@ public class ChartManager {
         ll.setLineColor(mContext.getResources().getColor(R.color.colorTheme));
         ll.setLineWidth(2f);
 //        ll.enableDashedLine(10f, 10f, 0f);
-        ll.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);//文字颜色、大小
+        ll.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);//文字颜色、大小
         ll.setTextColor(mContext.getResources().getColor(R.color.white));
         ll.setTextSize(12f);
 
@@ -153,9 +152,8 @@ public class ChartManager {
 
 //        mLineChart.animateX(500);
 
-
         mLineChart.setVisibleXRangeMaximum(7);
-
+        mLineChart.setVisibleXRangeMinimum(7);
         mLineChart.moveViewToX(yVals.size() - 4);
 
         addLimitLine2X(yVals.size() - 1);
@@ -244,10 +242,9 @@ public class ChartManager {
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
 
-//        mLineChart.setVisibleXRangeMaximum(7);
 //        mLineChart.animateX(500);
         mLineChart.setVisibleXRangeMaximum(7);
-
+        mLineChart.setVisibleXRangeMinimum(7);
         mLineChart.moveViewToX(line1.size() - 4);
 
         addLimitLine2X(line1.size() - 1);

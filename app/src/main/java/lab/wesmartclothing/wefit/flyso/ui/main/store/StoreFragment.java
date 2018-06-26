@@ -11,7 +11,7 @@ import org.androidannotations.annotations.ViewById;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
-import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 
 /**
  * Created by jk on 2018/5/7.

@@ -12,13 +12,17 @@ import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
+import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
+import com.smartclothing.blelibrary.util.ByteUtil;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.DeviceRvAdapter;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Device;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
+import com.smartclothing.module_wefit.tools.VoltageToPower;
+import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -31,6 +35,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -192,25 +197,22 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                                 }
                             }
 
-
-//                            BleAPI.readSetting(new BleChartChangeCallBack() {
-//                                @Override
-//                                public void callBack(byte[] data) {
-//                                    RxLogUtils.d("读配置" + HexUtil.encodeHexStr(data));
-//                                    boolean heating = data[14] == 0x01;
-//
-//                                    double voltage = getIntent().getDoubleExtra("BUNDLE_VOLTAGE", 0);
-//                                    RxLogUtils.d("电压：" + voltage);
-//                                    VoltageToPower toPower = new VoltageToPower();
-//                                    int capacity = toPower.getBatteryCapacity(voltage);
-//                                    double time = toPower.canUsedTime(voltage, heating);
-//                                    RxLogUtils.d("capacity:" + capacity + "time：" + time);
-//                                    Device item = rvAdapter.getItem(1);
-//                                    item.setQuantity(capacity);
-//                                    item.setStandby((int) time);
-//                                    rvAdapter.notifyItemChanged(1);
-//                                }
-//                            });
+                            BleAPI.getVoltage(new BleChartChangeCallBack() {
+                                @Override
+                                public void callBack(byte[] data) {
+                                    RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
+                                    int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
+                                    RxLogUtils.d("电压：" + voltage);
+                                    VoltageToPower toPower = new VoltageToPower();
+                                    int capacity = toPower.getBatteryCapacity(voltage);
+                                    double time = toPower.canUsedTime(voltage, false);
+                                    RxLogUtils.d("capacity:" + capacity + "time：" + time);
+                                    Device item = rvAdapter.getItem(1);
+                                    item.setQuantity(capacity);
+                                    item.setStandby((int) time);
+                                    rvAdapter.notifyItemChanged(1);
+                                }
+                            });
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -235,6 +237,7 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
                         //添加绑定设备，这里实在不会
+                        item.setBind(false);
                         RxBus.getInstance().post(item);
                         rvAdapter.setData(position, new Device(0));
                     }

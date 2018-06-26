@@ -154,7 +154,19 @@
     <string name="pengyouquan" translatable="false">朋友圈</string>
     <string name="shareTo" translatable="false">分享到</string>
     <string name="checkBle">请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试</string>
-    <string name="tip_nodata">使用设备，同步数据</string>
+    <string name="tip_nodata">还未上传数据哦！</string>
+    <string name="tv_loading">正在加载</string>
+    <string name="open_GPS">未开启GPS定位，部分手机可能搜索不到蓝牙设备</string>
+    <string name="open_loaction">未给予定位权限，无法搜索到蓝牙设备</string>
+    <string name="connectError">连接瘦身衣异常，请开关蓝牙后再连接</string>
+    <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
+    <string name="ServiceAgreement">服务协议</string>
+    <string name="phoneError">手机号码号码不正确</string>
+    <string name="VCodeError">验证码不正确</string>
+    <string name="SMSSended">短信已发送</string>
+    <string name="not_locationAddr">未获取地理位置</string>
+    <string name="myOrder">我的订单</string>
+    <string name="shopping">购物车</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

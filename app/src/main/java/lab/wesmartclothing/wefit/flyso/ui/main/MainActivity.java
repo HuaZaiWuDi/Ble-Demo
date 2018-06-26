@@ -16,6 +16,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -23,7 +24,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
 import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.SlimmingFragment;
@@ -54,8 +54,6 @@ public class MainActivity extends BaseALocationActivity {
     @ViewById
     RelativeLayout bottom_tab;
 
-    @Pref
-    Prefs_ mPrefs;
 
     private Intent bleIntent;
 
@@ -72,7 +70,7 @@ public class MainActivity extends BaseALocationActivity {
     @AfterViews
     public void initView() {
 
-        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
+        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
@@ -207,6 +205,7 @@ public class MainActivity extends BaseALocationActivity {
                 return true;
             } else {
                 if (!RxUtils.isFastClick(2000)) {
+                    RxLogUtils.d("mStoreFragment:再按一次");
                     RxToast.success("再按一次退出");
                     return true;
                 }
@@ -217,6 +216,7 @@ public class MainActivity extends BaseALocationActivity {
                 return true;
             } else {
                 if (!RxUtils.isFastClick(2000)) {
+                    RxLogUtils.d("mFindFragment:再按一次");
                     RxToast.success("再按一次退出");
                     return true;
                 }

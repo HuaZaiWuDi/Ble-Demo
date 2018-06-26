@@ -19,6 +19,7 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
+import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.StopDataCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.util.B;
@@ -188,7 +189,7 @@ public class BleTools {
         mStopDataCallBack = stopDataCallBack;
     }
 
-    public void openNotify() {
+    public void openNotify(final BleOpenNotifyCallBack mBleOpenNotifyCallBack) {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
             Log.e(TAG, "未连接");
             return;
@@ -197,11 +198,13 @@ public class BleTools {
             @Override
             public void onNotifySuccess() {
                 Log.d(TAG, "打开通知成功");
+                if (mBleOpenNotifyCallBack != null) mBleOpenNotifyCallBack.success(true);
             }
 
             @Override
             public void onNotifyFailure(BleException exception) {
                 Log.e(TAG, "打开通知失败:" + exception.toString());
+                if (mBleOpenNotifyCallBack != null) mBleOpenNotifyCallBack.success(false);
             }
 
             @Override

@@ -16,6 +16,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -23,7 +24,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,12 +35,12 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -68,8 +68,8 @@ public class LoginActivity extends BaseActivity {
     @ViewById
     TextView tv_countDown;
 
-    @Pref
-    Prefs_ mPrefs;
+//    @Pref
+//    Prefs_ mPrefs;
 
     @Extra
     boolean BUNDLE_RELOGIN;
@@ -83,7 +83,7 @@ public class LoginActivity extends BaseActivity {
         //服务协议
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-        bundle.putString(Key.BUNDLE_TITLE, "服务协议");
+        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
         RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
     }
 
@@ -93,11 +93,11 @@ public class LoginActivity extends BaseActivity {
         VCode = edit_VCode.getText().toString();
         phone = edit_phone.getText().toString();
         if (!RxRegUtils.isMobileExact(phone)) {
-            RxToast.warning("手机号码号码不正确");
+            RxToast.warning(getString(R.string.phoneError));
             return;
         }
         if (RxDataUtils.isNullString(VCode) || VCode.length() < 4 || !RxDataUtils.isNumber(VCode)) {
-            RxToast.warning("验证码不正确");
+            RxToast.warning(getString(R.string.VCodeError));
             return;
         }
         login(phone, VCode);
@@ -107,7 +107,7 @@ public class LoginActivity extends BaseActivity {
     void tv_countDown() {
         phone = edit_phone.getText().toString();
         if (!RxRegUtils.isMobileExact(phone)) {
-            RxToast.warning("手机号码号码不正确");
+            RxToast.warning(getString(R.string.phoneError));
             return;
         }
         getVCode(phone);
@@ -151,8 +151,11 @@ public class LoginActivity extends BaseActivity {
                             JSONObject jsonObject = new JSONObject(s);
                             String userId = jsonObject.getString("userId");
                             String token = jsonObject.getString("token");
-                            mPrefs.UserId().put(userId);
-                            mPrefs.token().put(token);
+//                            mPrefs.UserId().put(userId);
+//                            mPrefs.token().put(token);
+                            SPUtils.put(SPKey.SP_UserId, userId);
+                            SPUtils.put(SPKey.SP_token, token);
+
                             NetManager.getInstance().setUserIdToken(userId, token);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -190,10 +193,13 @@ public class LoginActivity extends BaseActivity {
                                 Device device = beanList.get(i);
                                 String deviceNo = device.getDeviceNo();
                                 if (BleKey.TYPE_SCALE.equals(deviceNo)) {
-                                    mPrefs.scaleIsBind().put(device.getMacAddr());
+//                                    mPrefs.scaleIsBind().put(device.getMacAddr());
+                                    SPUtils.put(SPKey.SP_scaleMAC, device.getMacAddr());
                                 } else if (BleKey.TYPE_CLOTHING.equals(deviceNo)) {
-                                    mPrefs.clothing().put(device.getMacAddr());
+//                                    mPrefs.clothing().put(device.getMacAddr());
+                                    SPUtils.put(SPKey.SP_clothingMAC, device.getMacAddr());
                                 }
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -224,10 +230,16 @@ public class LoginActivity extends BaseActivity {
                             if (sex == 0) {
                                 RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
                             } else {
-                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
-                                mPrefs.weight().put(targetWeight);
-                                mPrefs.height().put(height);
-                                mPrefs.sex().put(sex);
+//                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
+//                                mPrefs.weight().put(targetWeight);
+//                                mPrefs.height().put(height);
+//                                mPrefs.sex().put(sex);
+
+                                SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
+                                SPUtils.put(SPKey.SP_weight, targetWeight);
+                                SPUtils.put(SPKey.SP_height, height);
+                                SPUtils.put(SPKey.SP_sex, sex);
+
                                 RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
                             }
 
@@ -251,8 +263,8 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-//                        edit_VCode.setText(s);
-                        RxToast.success("短信已发送");
+                        edit_VCode.setText(s);
+                        RxToast.success(getString(R.string.SMSSended));
                     }
 
                     @Override

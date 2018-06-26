@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
-import android.content.Context;
 import android.os.Handler;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
@@ -8,29 +7,38 @@ import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 /**
  * Created by jk on 2018/5/28.
  */
-public class TipDialog extends QMUITipDialog {
+public class TipDialog {
 
+    private QMUITipDialog tipDialog;
     private Handler mHandler = new Handler();
 
-    public TipDialog(Context context) {
-        super(context);
-
+    public TipDialog(QMUITipDialog tipDialog) {
+        this.tipDialog = tipDialog;
     }
 
-    public TipDialog(Context context, int themeResId) {
-        super(context, themeResId);
-    }
 
     public void setDuration(long timeOut) {
         mHandler.removeCallbacksAndMessages(null);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isShowing()) {
-                    dismiss();
+                if (tipDialog.isShowing()) {
+                    tipDialog.dismiss();
                 }
             }
         }, timeOut);
+    }
+
+    public void show(long timeOut) {
+        if (tipDialog == null) return;
+        setDuration(timeOut);
+        tipDialog.show();
+    }
+
+    public void dismiss() {
+        if (tipDialog == null) return;
+        mHandler.removeCallbacksAndMessages(null);
+        tipDialog.dismiss();
     }
 
 }

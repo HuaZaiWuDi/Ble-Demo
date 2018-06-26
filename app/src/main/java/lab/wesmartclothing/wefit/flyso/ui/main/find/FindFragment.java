@@ -27,22 +27,22 @@ import com.vondear.rxtools.model.wechat.share.WechatShareModel;
 import com.vondear.rxtools.model.wechat.share.WechatShareTools;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
-import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
 import lab.wesmartclothing.wefit.flyso.view.SharePop;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 
 /**
  * Created by jk on 2018/5/7.
@@ -61,9 +61,9 @@ public class FindFragment extends BaseWebFragment {
 
     @ViewById
     RelativeLayout parent;
-
-    @Pref
-    Prefs_ mPrefs;
+//
+//    @Pref
+//    Prefs_ mPrefs;
 
     private BridgeWebView mBridgeWebView;
 
@@ -191,7 +191,7 @@ public class FindFragment extends BaseWebFragment {
 
                 RxLogUtils.i("加载网页地址：" + url);
                 B.broadUpdate(mActivity, Key.ACTION_SWITCH_BOTTOM_TAB, Key.EXTRA_SWITCH_BOTTOM_TAB, getUrl().equals(url));
-                mAgentWeb.getJsAccessEntrace().quickCallJs("getUserId", mPrefs.UserId().get());
+                mAgentWeb.getJsAccessEntrace().quickCallJs("getUserId", SPUtils.getString(SPKey.SP_UserId));
             }
 
             @Override

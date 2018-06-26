@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +27,10 @@ import com.smartclothing.module_wefit.bean.Device;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -37,7 +38,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,12 +50,12 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.ChartManager;
 import lab.wesmartclothing.wefit.flyso.view.SportsMarkerView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -92,8 +92,6 @@ public class SportsFragment extends BaseFragment {
     @ViewById
     LinearLayout dialog_not_connect;
 
-    @Pref
-    Prefs_ mPrefs;
 
     @Click
     void tv_details() {
@@ -109,8 +107,7 @@ public class SportsFragment extends BaseFragment {
         if (state == BluetoothAdapter.STATE_OFF) {
             initDeviceConnectTip(0);
         } else if (state == BluetoothAdapter.STATE_ON) {
-            initDeviceConnectTip(4);
-            initBle();
+            initDeviceConnectTip(3);
         }
     }
 
@@ -121,7 +118,7 @@ public class SportsFragment extends BaseFragment {
             tv_connectDevice.setText(R.string.connected);
         } else {
             tv_connectDevice.setText(R.string.disConnected);
-            initDeviceConnectTip(4);
+            initDeviceConnectTip(3);
         }
     }
 
@@ -131,10 +128,10 @@ public class SportsFragment extends BaseFragment {
         initDeviceConnectTip(2);
     }
 
-    //心率
+    //运动停止
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
     void sportsStop() {
-        initDeviceConnectTip(4);
+        initDeviceConnectTip(3);
     }
 
     private BaseQuickAdapter adapter;
@@ -150,7 +147,13 @@ public class SportsFragment extends BaseFragment {
     @Override
     public void initData() {
         RxLogUtils.d("加载：【SportsFragment】");
-        if ("".equals(mPrefs.clothing().get())) {
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if ("".equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
             initDeviceConnectTip(1);
         } else {
             tv_connectDevice.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
@@ -183,6 +186,7 @@ public class SportsFragment extends BaseFragment {
         initChart();
         initHRefresh();
         initRxBus();
+        initBle();
     }
 
 
@@ -192,7 +196,8 @@ public class SportsFragment extends BaseFragment {
             @Override
             public void accept(Device device) throws Exception {
                 if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                    mPrefs.clothing().put("");
+//                    mPrefs.clothing().put("");
+                    SPUtils.put(SPKey.SP_clothingMAC, "");
                     initDeviceConnectTip(1);
                     BleTools.getInstance().disConnect();
                     initWeightInfo();
@@ -257,8 +262,6 @@ public class SportsFragment extends BaseFragment {
                         if (mActivity != null) {
                             mRefresh.refreshComplete();
                         }
-                        if (sportsBeans.size() == 0)
-                            initDeviceConnectTip(3);
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
@@ -395,7 +398,6 @@ public class SportsFragment extends BaseFragment {
 
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                RxLogUtils.d("X轴的平移距离：" + dX);
                 float visibleX = mLineChart.getLowestVisibleX();
                 if (visibleX != -3) {
                     mRefresh.setEnableAutoRefresh(false);
@@ -418,8 +420,8 @@ public class SportsFragment extends BaseFragment {
 
         if (bean == null) return;
         this.bean = bean;
-        int min = bean.getDuration() / 60;
-        weightLists.get(0).setData_left(min < 60 ? min % 60 + "min" : min / 60 + "h" + min % 60 + "min");
+        double min = bean.getDuration() / 60f;
+        weightLists.get(0).setData_left(min < 60 ? RxFormatValue.fromatUp(min, 0) + "min" : (int) min / 60 + "h" + (int) min % 60 + "min");
         weightLists.get(0).setData_right(bean.getCalorie() + getString(R.string.unit_k));
         weightLists.get(1).setData_left(bean.getAvgHeart() + "bpm");
         weightLists.get(1).setData_right(bean.getMaxHeart() + "bpm");
@@ -462,22 +464,26 @@ public class SportsFragment extends BaseFragment {
 
     private void initDeviceConnectTip(int QN_bleState) {
         tv_connectTip.setVisibility(View.VISIBLE);
-        Drawable drawable = getResources().getDrawable(QN_bleState == 1 ? R.mipmap.unbound_icon : R.mipmap.connect_icon);
-        //一定要加这行！！！！！！！！！！！
-        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
+//        Drawable drawable = getResources().getDrawable(QN_bleState == 1 ? R.mipmap.unbound_icon : R.mipmap.connect_icon);
+//        //一定要加这行！！！！！！！！！！！
+//        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+//        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
         switch (QN_bleState) {
             case 0://打开蓝牙
-                RxTextUtils.getBuilder(getString(R.string.connectBle))
-                        .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
-                        .into(tv_connectTip);
-                tv_connectTip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!BleTools.getBleManager().isBlueEnable())
-                            BleTools.getBleManager().enableBluetooth();
-                    }
-                });
+                if ("".equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                    initDeviceConnectTip(1);
+                } else {
+                    RxTextUtils.getBuilder(getString(R.string.connectBle))
+                            .append(getString(R.string.phoneBle)).setForegroundColor(getResources().getColor(R.color.colorTheme))
+                            .into(tv_connectTip);
+                    tv_connectTip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!BleTools.getBleManager().isBlueEnable())
+                                BleTools.getBleManager().enableBluetooth();
+                        }
+                    });
+                }
                 break;
             case 1://绑定设备
                 mLineChart.clear();
@@ -511,11 +517,11 @@ public class SportsFragment extends BaseFragment {
                     }
                 });
                 break;
-            case 3://没有数据时候提示(绑定返回之后)
-                tv_connectTip.setText(R.string.tip_nodata);
-                break;
-            case 4://不提示，tip消失
-                tv_connectTip.setVisibility(View.GONE);
+            case 3://不提示，tip消失
+                if ("".equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                    initDeviceConnectTip(1);
+                } else
+                    tv_connectTip.setVisibility(View.GONE);
                 break;
         }
     }

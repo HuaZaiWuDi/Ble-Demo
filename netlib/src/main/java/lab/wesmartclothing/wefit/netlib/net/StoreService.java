@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.netserivce;
+package lab.wesmartclothing.wefit.netlib.net;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;

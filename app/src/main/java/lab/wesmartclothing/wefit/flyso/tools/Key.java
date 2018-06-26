@@ -5,6 +5,11 @@ package lab.wesmartclothing.wefit.flyso.tools;
  */
 public interface Key {
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // BUNDLE跳转
+    ///////////////////////////////////////////////////////////////////////////
+
     public static final String ADD_FOOD_NAME = "ADD_FOOD_NAME";//食物界面跳转携带
     public static final String ADD_FOOD_TYPE = "ADD_FOOD_TYPE";
     public static final String ADD_FOOD_DATE = "ADD_FOOD_DATE";

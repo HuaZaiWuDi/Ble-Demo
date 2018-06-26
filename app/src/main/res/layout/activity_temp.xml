@@ -61,7 +61,7 @@
             android:layout_below="@+id/tv_SubtitleTemp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/d_20"
-            android:text="38.00"
+            android:text="00.00"
             android:textColor="@color/white"
             android:textSize="250px"
             android:textStyle="bold"/>

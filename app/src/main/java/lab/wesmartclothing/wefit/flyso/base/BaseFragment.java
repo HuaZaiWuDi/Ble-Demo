@@ -60,12 +60,6 @@ public abstract class BaseFragment extends Fragment {
 
     private Handler mHandler = new Handler();
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 解决页面重叠
-    ///////////////////////////////////////////////////////////////////////////
-
-    private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
-
 
     public void checkLocation(Consumer<Permission> consumer) {
         subscribe = new RxPermissions(mActivity)
@@ -78,6 +72,13 @@ public abstract class BaseFragment extends Fragment {
                 .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(consumer);
     }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 解决页面重叠
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
 
 
     @Override
@@ -122,7 +123,7 @@ public abstract class BaseFragment extends Fragment {
     private void initDialog() {
         tipDialog = new QMUITipDialog.Builder(mActivity)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("正在加载")
+                .setTipWord(getString(R.string.tv_loading))
                 .create();
     }
 
@@ -210,9 +211,10 @@ public abstract class BaseFragment extends Fragment {
 
     boolean isLoad = false;
 
+
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         isLoad = true;
         onVisible();
     }

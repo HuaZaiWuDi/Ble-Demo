@@ -1,5 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.netserivce;
-
+package lab.wesmartclothing.wefit.netlib.net;
 
 /**
  * 项目名称：Bracelet
@@ -9,10 +8,12 @@ package lab.wesmartclothing.wefit.flyso.netserivce;
  */
 public class ServiceAPI {
 
-    //    public static final String BASE_URL = "http://10.10.11.192:16102";//内网德人
-    public static final String BASE_URL = "http://39.108.152.50:16102";//外网
-//    public static final String BASE_URL = "http://10.10.11.208:16102";//内网牛耕
-//    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
+    //    public static final String BASE_URL = "http://10.10.11.208:16100/mix/";
+//    public static final String BASE_URL = "http://10.10.11.192:16102";
+//    public static final String BASE_URL = "http://39.108.152.50:16102";
+//    public static final String BASE_URL = "http://10.10.11.208:16102";
+    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
+
 
     //商城地址
     public static String Store_Addr = "https://weidian.com/?userid=1063198383";

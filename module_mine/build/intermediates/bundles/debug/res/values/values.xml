@@ -211,7 +211,7 @@
     <string name="versionTip">提示：固件升级请保证app和固件的连接</string>
     <string name="weight">体重记录</string>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        
+        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

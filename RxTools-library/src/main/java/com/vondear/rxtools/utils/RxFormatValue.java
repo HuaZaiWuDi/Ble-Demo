@@ -69,8 +69,24 @@ public final class RxFormatValue {
     public static String fromatDouble(double i, int scale, int type) {
         BigDecimal bigDecimal = new BigDecimal(i);
         BigDecimal decimal = bigDecimal.setScale(scale, type);//保留小数点后2位，直接去掉值。
+
         return String.valueOf(decimal);
     }
+
+    /**
+     * 方法描述：doubleToString
+     *
+     * @param i     值
+     * @param scale 保留小数点后几位
+     * @param type  保留的模式
+     * @return String
+     */
+    public static BigDecimal fromatValue(double i, int scale, int type) {
+        BigDecimal bigDecimal = new BigDecimal(i);
+        BigDecimal decimal = bigDecimal.setScale(scale, type);//保留小数点后2位，直接去掉值。
+        return decimal;
+    }
+
 
     public static String fromatFloat(float i, int scale) {
         return fromatDouble(i, scale, BigDecimal.ROUND_HALF_UP);
@@ -119,4 +135,6 @@ public final class RxFormatValue {
     public static String fromatUp(double i, int scale) {
         return fromatDouble(i, scale, BigDecimal.ROUND_UP);
     }
+
+
 }

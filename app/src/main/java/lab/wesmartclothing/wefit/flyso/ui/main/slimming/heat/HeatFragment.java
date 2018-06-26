@@ -18,6 +18,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
@@ -26,7 +27,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,13 +44,13 @@ import lab.wesmartclothing.wefit.flyso.entity.FoodHistoryItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.ListBean;
 import lab.wesmartclothing.wefit.flyso.entity.section.HeatFoodSection;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.CircleMenuView;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
 import lab.wesmartclothing.wefit.flyso.view.RoundView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -84,8 +84,6 @@ public class HeatFragment extends BaseFragment {
     @ViewById
     RoundView mRoundView;
 
-    @Pref
-    Prefs_ mPrefs;
 
     @Bean
     AddOrUpdateFoodDialog mAddOrUpdateFoodDialog;
@@ -161,6 +159,12 @@ public class HeatFragment extends BaseFragment {
     @Override
     public void initData() {
         RxLogUtils.d("加载：【HeatFragment】");
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
         notifyData(date);
     }
 
@@ -168,7 +172,7 @@ public class HeatFragment extends BaseFragment {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("gid", gid);
-            jsonObject.put("userId", mPrefs.UserId().getOr("testuser"));
+            jsonObject.put("userId", SPUtils.getString(SPKey.SP_UserId));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -212,6 +216,20 @@ public class HeatFragment extends BaseFragment {
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
             RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
             RxManager.getInstance().doNetSubscribe(dxyService.getHeatHistory(body))
+                    .doOnSubscribe(new Consumer<Disposable>() {
+                        @Override
+                        public void accept(Disposable disposable) throws Exception {
+                            RxLogUtils.d("doOnSubscribe：");
+                            tipDialog.show();
+                        }
+                    })
+                    .doFinally(new Action() {
+                        @Override
+                        public void run() throws Exception {
+                            RxLogUtils.d("结束：");
+                            tipDialog.dismiss();
+                        }
+                    })
                     .subscribe(new RxNetSubscriber<String>() {
                         @Override
                         protected void _onNext(String s) {
@@ -355,7 +373,7 @@ public class HeatFragment extends BaseFragment {
                 bean.setHeatDate(date);
 
 
-                mAddOrUpdateFoodDialog.setFoodInfo(mActivity,false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+                mAddOrUpdateFoodDialog.setFoodInfo(mActivity, false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
                     @Override
                     public void complete(AddFoodItem.intakeList item) {
                         updateFood(foodListBean, item);
@@ -401,10 +419,8 @@ public class HeatFragment extends BaseFragment {
     }
 
     private void updateFood(FoodListBean foodListBean, AddFoodItem.intakeList item) {
-        String userId = mPrefs.UserId().getOr("testuser");
-        RxLogUtils.d("用户ID" + userId);
         AddFoodItem foodItem = new AddFoodItem();
-        foodItem.setUserId(userId);
+        foodItem.setUserId(SPUtils.getString(SPKey.SP_UserId));
         foodItem.setAddDate(date);
         foodItem.setEatType(foodListBean.getEatType());
         ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();

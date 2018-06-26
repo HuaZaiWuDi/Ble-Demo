@@ -13,7 +13,6 @@ import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.adapter.MessagePagerAdapter;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.fragment.MessagePagerItemFragment;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.widget.PagerSlidingTabStrip;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -21,6 +20,7 @@ import com.vondear.rxtools.view.RxToast;
 import java.util.ArrayList;
 import java.util.List;
 
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;

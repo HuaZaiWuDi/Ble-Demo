@@ -111,7 +111,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/dimen_10"
             android:text="@string/about_clause"
-            android:textColor="#FF999999"
+            android:textColor="@color/colorTheme"
             android:textSize="@dimen/dimen_12"/>
 
 

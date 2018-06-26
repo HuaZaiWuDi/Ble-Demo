@@ -92,7 +92,8 @@ public class ScanView extends ImageView {
     }
 
     public void stopAnimation() {
-        animate.end();
+        if (animate != null)
+            animate.end();
     }
 
 //    @Override

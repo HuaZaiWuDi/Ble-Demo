@@ -31,11 +31,11 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.view.HeartRateView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -85,6 +85,7 @@ public class SportsDetailsActivity extends BaseActivity {
             mTimer.startTimer();
         } else {
             tv_connectDevice.setText(R.string.disConnected);
+            if (!isSports) return;
             mTimer.stopTimer();
             showDialog();
         }
@@ -93,6 +94,8 @@ public class SportsDetailsActivity extends BaseActivity {
     //监听系统蓝牙开启
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
     void CLOTHING_STOP() {
+        if (!isSports) return;
+        mTimer.stopTimer();
         showDialog();
     }
 
@@ -161,9 +164,12 @@ public class SportsDetailsActivity extends BaseActivity {
                 if (isFirst) {
                     mHeartRateView.offileData(sportsDataTab.getAthlRecord_2(), sportsDataTab.getDuration());
                     isFirst = false;
-                    mTimer.startTimer();
                     duration = sportsDataTab.getDuration();
                 }
+                mTimer.startTimer();
+                if (dialog != null)
+                    dialog.dismiss();
+
                 tv_curHeart.setText(sportsDataTab.getCurHeart() + "bpm");
                 tv_maxHeart.setText(sportsDataTab.getMaxHeart() + "bpm");
                 double calorie = sportsDataTab.getKcal();
@@ -239,6 +245,7 @@ public class SportsDetailsActivity extends BaseActivity {
             dialog.getTvSure().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    dialog.dismiss();
                     finish();
                 }
             });

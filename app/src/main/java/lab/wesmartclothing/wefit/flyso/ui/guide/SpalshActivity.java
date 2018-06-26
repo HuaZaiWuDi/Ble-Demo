@@ -12,11 +12,11 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
+import com.vondear.rxtools.utils.SPUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,14 +27,14 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.netserivce.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netserivce.StoreService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
+import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -48,8 +48,6 @@ public class SpalshActivity extends BaseActivity {
     private Disposable subscribe;
     private boolean isSaveUserInfo = false;
 
-    @Pref
-    Prefs_ mPrefs;
 
     @Receiver(actions = Intent.ACTION_PACKAGE_REPLACED)
     void replaced(Intent intent) {
@@ -83,10 +81,8 @@ public class SpalshActivity extends BaseActivity {
 //        //测试账号
 //        mPrefs.UserId().put("");
 //        mPrefs.UserId().put("testuser");
-        NetManager.getInstance().setUserIdToken(mPrefs.UserId().get(), mPrefs.token().get());
+        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 
-        RxLogUtils.d("userId" + mPrefs.UserId().get());
-        RxLogUtils.d("token" + mPrefs.token().get());
 
         initUserInfo();
         initData();
@@ -108,10 +104,17 @@ public class SpalshActivity extends BaseActivity {
                             String birthday = object.getString("birthday");
                             isSaveUserInfo = sex == 0;
                             if (!isSaveUserInfo) {
-                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
-                                mPrefs.weight().put(targetWeight);
-                                mPrefs.height().put(height);
-                                mPrefs.sex().put(sex);
+
+                                SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
+                                SPUtils.put(SPKey.SP_weight, targetWeight);
+                                SPUtils.put(SPKey.SP_height, height);
+                                SPUtils.put(SPKey.SP_sex, sex);
+
+
+//                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
+//                                mPrefs.weight().put(targetWeight);
+//                                mPrefs.height().put(height);
+//                                mPrefs.sex().put(sex);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -131,7 +134,7 @@ public class SpalshActivity extends BaseActivity {
             @Override
             public void run() {
                 //通过验证是否保存userId来判断是否登录
-                if ("".equals(mPrefs.UserId().get())) {
+                if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
                     RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, LoginActivity_.class);
                 } else if (isSaveUserInfo)
                     RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, UserInfoActivity_.class);

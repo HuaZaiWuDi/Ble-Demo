@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
@@ -24,7 +25,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +35,11 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
-import lab.wesmartclothing.wefit.flyso.prefs.Prefs_;
 import lab.wesmartclothing.wefit.flyso.rxbus.WeightIsUpdate;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -69,8 +69,6 @@ public class WeightDataActivity extends BaseActivity {
     @Extra
     String BUNDLE_WEIGHT_HISTORY;
 
-    @Pref
-    Prefs_ mPrefs;
 
     @Click
     void back() {
@@ -155,10 +153,8 @@ public class WeightDataActivity extends BaseActivity {
         long time = qnScaleData.getMeasureTime().getTime();
         RxLogUtils.d("历史time：" + time);
 
-        String userId = mPrefs.UserId().getOr("testuser");
-        RxLogUtils.d("用户ID" + userId);
         WeightAddBean bean = new WeightAddBean();
-        bean.setUserId(userId);
+        bean.setUserId(SPUtils.getString(SPKey.SP_UserId));
         bean.setMeasureTime(System.currentTimeMillis() + "");
         QNScaleData scaleData = qnScaleData.generateScaleData();
         if (scaleData != null)

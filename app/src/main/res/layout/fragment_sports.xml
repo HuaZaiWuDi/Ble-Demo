@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_50"
                 android:layout_marginTop="230px"
-                android:text="一\t热量 -\t-\t时长"
+                android:text="一\t热量 ---时长"
                 android:textColor="@color/white"/>
 
 
@@ -45,7 +45,7 @@
                 android:id="@+id/mRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="230px"
+                android:layout_marginTop="270px"
                 >
 
                 <com.github.mikephil.charting.charts.LineChart

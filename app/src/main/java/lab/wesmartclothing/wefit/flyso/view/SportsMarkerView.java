@@ -9,6 +9,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 
 import java.util.List;
@@ -61,11 +62,11 @@ public class SportsMarkerView extends MarkerView {
                 .into(tv_heat);
 
         String time = "";
-        int ss = (int) y2 / 60;
+        double ss = y2 / 60;
         if (ss >= 60) {
-            time = ss / 60 + "h" + ss % 60 + "min";
+            time = (int)ss / 60 + "h" + (int)ss % 60 + "min";
         } else
-            time = ss % 60 + "min";
+            time = RxFormatValue.fromatUp(ss, 0) + "min";
 
         RxTextUtils.getBuilder(context.getString(R.string.sportsTime))
                 .append("：")

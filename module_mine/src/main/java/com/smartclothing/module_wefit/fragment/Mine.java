@@ -24,13 +24,12 @@ import com.smartclothing.module_wefit.activity.PersonalDataActivity;
 import com.smartclothing.module_wefit.activity.ProblemSuggestActivity;
 import com.smartclothing.module_wefit.activity.SetActivity;
 import com.smartclothing.module_wefit.bean.UserCenterBean;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.tools.CircleImageView;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import io.reactivex.functions.Action;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -70,7 +69,6 @@ public class Mine extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View meLayout = inflater.inflate(R.layout.fragment_mine, container, false);
         initView(meLayout);
-        RxUtils.init(getContext());
         initData();
         return meLayout;
     }

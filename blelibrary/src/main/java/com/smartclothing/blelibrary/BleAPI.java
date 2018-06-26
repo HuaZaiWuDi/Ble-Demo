@@ -175,8 +175,8 @@ public class BleAPI {
     public static void readDeviceInfo(BleChartChangeCallBack bleChartChange) {
 
         byte[] bytes = new byte[20];
-        bytes[0] = 0x02;
-        bytes[1] = 0x11;
+        bytes[0] = 0x40;
+        bytes[1] = 0x13;
         bytes[2] = 0x09;
 
         Log.d("【读设备信息】", HexUtil.encodeHexStr(bytes));
@@ -185,8 +185,8 @@ public class BleAPI {
 
     public static void getVoltage(BleChartChangeCallBack bleChartChange) {
         byte[] bytes = new byte[20];
-        bytes[0] = 0x02;
-        bytes[1] = 0x11;
+        bytes[0] = 0x40;
+        bytes[1] = 0x13;
         bytes[2] = 0x0a;
 
         Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));

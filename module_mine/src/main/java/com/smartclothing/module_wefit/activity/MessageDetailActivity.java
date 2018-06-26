@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Message;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.vondear.rxtools.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -17,6 +16,7 @@ import com.vondear.rxtools.view.RxToast;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;

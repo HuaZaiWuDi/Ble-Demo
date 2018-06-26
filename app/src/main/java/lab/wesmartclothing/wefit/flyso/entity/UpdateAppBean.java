@@ -3,7 +3,7 @@ package lab.wesmartclothing.wefit.flyso.entity;
 import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import lab.wesmartclothing.wefit.flyso.netserivce.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;

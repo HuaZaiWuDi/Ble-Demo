@@ -1,5 +1,6 @@
 package com.vondear.rxtools.utils;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -29,9 +30,10 @@ public class RxUtils {
      *
      * @param context 上下文
      */
-    public static void init(Context context) {
+    public static void init(Application context) {
         RxUtils.context = context.getApplicationContext();
         RxCrashUtils.getInstance(context).init();
+        SPUtils.getInstance(context);
     }
 
     /**

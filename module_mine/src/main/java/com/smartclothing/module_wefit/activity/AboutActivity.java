@@ -10,31 +10,30 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.smartclothing.blelibrary.BleKey;
+import com.smartclothing.blelibrary.BleAPI;
+import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Device;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
+import com.smartclothing.module_wefit.bean.FirmwareVersionUpdate;
 import com.smartclothing.module_wefit.widget.dialog.AboutUpdateDialog;
+import com.vondear.rxtools.aboutByte.ByteUtil;
+import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import static com.vondear.rxtools.utils.RxUtils.getContext;
 
@@ -46,8 +45,8 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
     private LinearLayout iv_back;
     private TextView tv_version, tv_protocol;
     private RecyclerView rv_about;
-    private List<Device> list = new ArrayList<>();
     private BaseQuickAdapter adapter;
+    private String updateURL = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,52 +62,32 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onStart() {
         super.onStart();
-        initData();
-    }
+        BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
+            @Override
+            public void callBack(byte[] data) {
+                RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
+                //021309 010203000400050607090a0b0c10111213
+                /**
+                 * 	uint8_t category;3
+                 uint8_t module;4
+                 uint16_t manufacture;5,6
+                 uint16_t HW_version;7,8
+                 uint8_t  APP_version[3];9,10,11
+                 uint8_t  BOOT_version[3];12,13,14
+                 uint8_t  BLE_version;15
+                 uint8_t  SN[4];16,17,18,19
+                 *
+                 * */
 
-    private void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.deviceList())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
-                        try {
-                            Gson gson = new Gson();
-                            JSONObject jsonObject = new JSONObject(s);
-                            Type typeList = new TypeToken<List<Device>>() {
-                            }.getType();
-                            List<Device> beanList = gson.fromJson(jsonObject.getString("list"), typeList);
-                            for (int i = 0; i < beanList.size(); i++) {
-                                beanList.get(i).setUpdate(true);
-                            }
-                            if (beanList.size() == 1) {
-                                Device device = beanList.get(0);
-                                device.setUpdate(true);
-                                if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                                    adapter.setData(0, device);
-                                }
-                            } else if (beanList.size() == 2) {
-                                for (int i = 0; i < beanList.size(); i++) {
-                                    Device device = beanList.get(i);
-                                    device.setUpdate(true);
-                                    if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                                        adapter.setData(0, device);
-                                    }
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
-                    }
-                });
+                JsonObject object = new JsonObject();
+                object.addProperty("category", data[3]);//设备类型
+                object.addProperty("modelNo", data[4]);//待定
+                object.addProperty("manufacture", ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
+                object.addProperty("hwVersion", ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
+                object.addProperty("firmwareVersion", data[9] + "." + data[10] + "." + data[11]);//当前固件版本
+                checkFirmwareVersion(object);
+            }
+        });
     }
 
     public void initView() {
@@ -117,9 +96,6 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         tv_protocol = findViewById(R.id.tv_protocol);
         //版本号
         tv_version.setText("版本号v" + RxDeviceUtils.getAppVersionName());
-
-
-
 
         listener();
 
@@ -155,7 +131,7 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AboutUpdateDialog dialog = new AboutUpdateDialog(AboutActivity.this, "", false);
+                        AboutUpdateDialog dialog = new AboutUpdateDialog(AboutActivity.this, updateURL, false);
                         //set进度值
                         dialog.show();
                         //后续再做进度判断，如果到达100，
@@ -164,7 +140,6 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
             }
         };
         adapter.bindToRecyclerView(rv_about);
-//        adapter.addData(new Device(getString(R.string.scale)));
         adapter.addData(new Device(getString(R.string.clothing)));
     }
 
@@ -172,6 +147,39 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
         iv_back.setOnClickListener(this);
         tv_protocol.setOnClickListener(this);
     }
+
+
+    private void checkFirmwareVersion(final JsonObject object) {
+
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.getUpgradeInfo(body))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("获取固件版本：" + s);
+
+                        FirmwareVersionUpdate firmwareVersionUpdate = new Gson().fromJson(s, FirmwareVersionUpdate.class);
+                        if (firmwareVersionUpdate.isHasNewVersion()) {
+                            RxLogUtils.d("有最新的版本");
+                            updateURL = firmwareVersionUpdate.getFileUrl();
+                            Device device = (Device) adapter.getItem(0);
+                            device.setFirmwareVersion(object.get("firmwareVersion").getAsString());
+                            device.setNewFirmwareVersion(firmwareVersionUpdate.getFirmwareVersion());
+                            device.setUpdate(true);
+                            adapter.setData(0, device);
+                        } else {
+                            RxLogUtils.d("已经是最新的版本");
+                        }
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
 
     @Override
     public void onClick(View view) {

@@ -33,7 +33,6 @@ import com.smartclothing.module_wefit.R;
 import com.smartclothing.module_wefit.base.BaseActivity;
 import com.smartclothing.module_wefit.bean.Sex;
 import com.smartclothing.module_wefit.bean.UserInfo;
-import com.smartclothing.module_wefit.net.net.RetrofitService;
 import com.smartclothing.module_wefit.tools.ClipImageActivity;
 import com.smartclothing.module_wefit.widget.dialog.DepositDialog;
 import com.smartclothing.module_wefit.widget.wheelpicker.picker.DatePicker;
@@ -57,6 +56,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -231,7 +231,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View view) {
         int i1 = view.getId();
         if (i1 == R.id.iv_back) {
-            if (user.isChange) {
+            if (user != null && user.isChange) {
                 final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
                 dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
                 dialog.getTvContent().setText("信息已更改，是否保存？");
