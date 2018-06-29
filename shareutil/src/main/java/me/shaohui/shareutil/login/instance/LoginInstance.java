@@ -3,8 +3,6 @@ package me.shaohui.shareutil.login.instance;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
 import me.shaohui.shareutil.login.LoginListener;
 import me.shaohui.shareutil.login.result.BaseToken;
 

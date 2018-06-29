@@ -24,7 +24,7 @@ android {
         //QQ分享
         manifestPlaceholders = [
                 //  替换成你的qq_id
-                qq_id: "1106404886"
+                qq_id: "1106924585"
         ]
 
         // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
@@ -110,4 +110,5 @@ dependencies {
 
     //高德定位SDK
     compile 'com.amap.api:location:latest.integration'
+    compile project(path: ':shareutil')
 }

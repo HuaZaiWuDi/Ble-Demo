@@ -49,4 +49,14 @@ public class LoginResult {
     public void setUserInfo(BaseUser userInfo) {
         mUserInfo = userInfo;
     }
+
+
+    @Override
+    public String toString() {
+        return "LoginResult{" +
+                "mToken=" + mToken.toString() +
+                ", mUserInfo=" + mUserInfo.toString() +
+                ", mPlatform=" + mPlatform +
+                '}';
+    }
 }

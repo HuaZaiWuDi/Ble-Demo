@@ -51,8 +51,6 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
     private DeviceRvAdapter rvAdapter;
     private final List<Device> mDevices = new ArrayList<>();
     private boolean scale_connect = false;
-    int capacity = 0;
-    double time = 0;
 
     //体质秤连接状态
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -82,7 +80,6 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
 
 
         scale_connect = getIntent().getBooleanExtra("ACTION_SCALE_CONNECT", false);
-
 
     }
 
@@ -125,6 +122,7 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
         rvAdapter.setUpdateClickListener(new DeviceRvAdapter.deleteClickListener() {
             @Override
             public void onUpdateClick(final int position) {
+                RxLogUtils.d("下标：" + position);
                 if (RxUtils.isFastClick(1000)) return;
                 final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
                 dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
@@ -155,7 +153,6 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onAddDeviceClick(int position) {
                 //添加绑定设备，这里实在不会
-//                if (!RxUtils.isFastClick(1000))
                 RxBus.getInstance().post(position == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
             }
         });
@@ -190,10 +187,15 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                             } else {
                                 for (int i = 0; i < beanList.size(); i++) {
                                     Device device = beanList.get(i);
-                                    device.setType(1);
-                                    if (i == 0) device.setConnect(scale_connect);
-                                    else device.setConnect(BleTools.getInstance().isConnect());
-                                    rvAdapter.setData(i, device);
+                                    if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
+                                        device.setType(1);
+                                        device.setConnect(scale_connect);
+                                        rvAdapter.setData(0, device);
+                                    } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
+                                        device.setType(1);
+                                        device.setConnect(BleTools.getInstance().isConnect());
+                                        rvAdapter.setData(1, device);
+                                    }
                                 }
                             }
 

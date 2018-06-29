@@ -9,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
 import com.tbruyelle.rxpermissions2.Permission;
@@ -64,15 +63,6 @@ public abstract class ActivityBaseLocation extends BaseActivity {
     //----------------------------------------------------------------------------------------------检测GPS是否已打开 start
     public void gpsCheck() {
         tipDialog.show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (tipDialog.isShowing()) {
-                    RxToast.warning("获取地址位置失败");
-                    tipDialog.dismiss();
-                }
-            }
-        }, 10000);
         if (!RxLocationUtils.isGpsEnabled(this)) {
             RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
             rxDialogGPSCheck.show();

@@ -61,11 +61,11 @@ public interface Key {
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK
     ///////////////////////////////////////////////////////////////////////////
-    public static final String QQ_ID = "";
+    public static final String QQ_ID = "1106924585";//QQkey：RGcOhc7q8qZMrhxz
     public static final String WX_ID = "wxaaeb0352e04684de";
-    public static final String WEIBO_ID = "";
-    public static final String WB_URL = "";
-    public static final String WX_SECRET = "";
+    public static final String WX_SECRET = "0d23407fe42a2665dabe3ea2a958daf9";
+    public static final String WEIBO_ID = "3322261844";
+    public static final String WB_URL = "https://sns.whalecloud.com/sina2/callback";
 
 
     ///////////////////////////////////////////////////////////////////////////

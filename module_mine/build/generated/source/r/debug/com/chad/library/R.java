@@ -8,14 +8,14 @@ package com.chad.library;
 
 public final class R {
     public static final class dimen {
-        public static int def_height = 0x7f080056;
-        public static int dp_10 = 0x7f0800d6;
-        public static int dp_4 = 0x7f0800d7;
-        public static int dp_40 = 0x7f0800d8;
-        public static int dp_72 = 0x7f0800d9;
-        public static int sp_12 = 0x7f080114;
-        public static int sp_14 = 0x7f080115;
-        public static int sp_16 = 0x7f080116;
+        public static int def_height = 0x7f080057;
+        public static int dp_10 = 0x7f0800d7;
+        public static int dp_4 = 0x7f0800d8;
+        public static int dp_40 = 0x7f0800d9;
+        public static int dp_72 = 0x7f0800da;
+        public static int sp_12 = 0x7f080115;
+        public static int sp_14 = 0x7f080116;
+        public static int sp_16 = 0x7f080117;
     }
     public static final class drawable {
         public static int sample_footer_loading = 0x7f0900ec;
@@ -34,7 +34,7 @@ public final class R {
         public static int tv_prompt = 0x7f0c0223;
     }
     public static final class layout {
-        public static int quick_view_load_more = 0x7f0f0082;
+        public static int quick_view_load_more = 0x7f0f0083;
     }
     public static final class string {
         public static int app_name = 0x7f150025;

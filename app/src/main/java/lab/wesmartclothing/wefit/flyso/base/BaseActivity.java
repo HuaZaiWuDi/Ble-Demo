@@ -41,9 +41,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Context mContext;
     public Activity mActivity;
 
-    public QMUITipDialog tipDialog;
+    public TipDialog tipDialog;
     private Disposable subscribe;
-    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-//        //屏幕沉浸
-//        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         //屏幕沉浸
         StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
 
@@ -79,11 +76,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     private void initDialog() {
-        tipDialog = new QMUITipDialog.Builder(this)
+        QMUITipDialog mQMUITipDialog = new QMUITipDialog.Builder(this)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord(getString(R.string.tv_loading))
                 .create();
-        new TipDialog(tipDialog);
+        tipDialog = new TipDialog(mQMUITipDialog);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {

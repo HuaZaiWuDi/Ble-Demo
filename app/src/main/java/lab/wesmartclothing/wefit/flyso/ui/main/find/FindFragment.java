@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -11,9 +12,6 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.lzyzsd.jsbridge.BridgeHandler;
 import com.github.lzyzsd.jsbridge.BridgeWebView;
 import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
@@ -21,17 +19,14 @@ import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.MiddlewareWebClientBase;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.boradcast.B;
-import com.vondear.rxtools.model.wechat.share.WechatShareModel;
-import com.vondear.rxtools.model.wechat.share.WechatShareTools;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +38,13 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
 import lab.wesmartclothing.wefit.flyso.view.SharePop;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
+import me.shaohui.shareutil.LoginUtil;
+import me.shaohui.shareutil.ShareUtil;
+import me.shaohui.shareutil.login.LoginListener;
+import me.shaohui.shareutil.login.LoginPlatform;
+import me.shaohui.shareutil.login.LoginResult;
+import me.shaohui.shareutil.share.ShareListener;
+import me.shaohui.shareutil.share.SharePlatform;
 
 /**
  * Created by jk on 2018/5/7.
@@ -61,9 +63,6 @@ public class FindFragment extends BaseWebFragment {
 
     @ViewById
     RelativeLayout parent;
-//
-//    @Pref
-//    Prefs_ mPrefs;
 
     private BridgeWebView mBridgeWebView;
 
@@ -71,6 +70,8 @@ public class FindFragment extends BaseWebFragment {
     @AfterViews
     public void initView() {
         initWebView();
+
+
     }
 
     private void initWebView() {
@@ -109,46 +110,69 @@ public class FindFragment extends BaseWebFragment {
                 RxLogUtils.i("传递参数：" + data);
 
                 if (!RxUtils.isFastClick(1000)) {
-                    initShare(data);
-                }
+                    try {
+                        JSONObject object = new JSONObject(data);
+                        String img = object.getString("img");
+                        final String title = object.getString("title");
+                        final String desc = object.getString("desc");
+                        final String url = object.getString("url");
 
+                        showSimpleBottomSheetGrid(img, title, desc, url);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
 
-    //    @Background
-    public void initShare(String data) {
-        try {
-            JSONObject object = new JSONObject(data);
-            String img = object.getString("img");
-            final String title = object.getString("title");
-            final String desc = object.getString("desc");
-            final String url = object.getString("url");
-
-//            Bitmap bitmap = RxImageUtils.GetLocalOrNetBitmap(img);
-
-            Glide.with(mActivity)
-                    .load(img)
-                    .asBitmap()
-                    .into(new SimpleTarget<Bitmap>(100, 100) {
-                        @Override
-                        public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                            Bitmap thumbBmp = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
-                            byte[] thumbData = RxImageUtils.bitmap2Bytes(thumbBmp, Bitmap.CompressFormat.PNG);
-
-                            final WechatShareModel wechatShareModel = new WechatShareModel(url, title, desc, thumbData);
-
-                            showShareDialog(wechatShareModel);
+    private void showSimpleBottomSheetGrid(final String imgUrl, final String title, final String desc, final String url) {
+        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(getActivity());
+        builder.addItem(R.mipmap.icon_more_operation_share_friend, "分享到微信", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_moment, "分享到朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_weibo, "分享到微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "分享到QQ", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "分享到QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "登录到微信", 6, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "登录到QQ", 7, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "登录到微博", 8, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView) {
+                        dialog.dismiss();
+                        int tag = (int) itemView.getTag();
+                        switch (tag) {
+                            case 1:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.WX, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 2:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.WX_TIMELINE, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 3:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.WEIBO, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 4:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.QQ, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 5:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.QZONE, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 6:
+                                LoginUtil.login(mActivity, LoginPlatform.WX, listener, true);
+                                break;
+                            case 7:
+                                LoginUtil.login(mActivity, LoginPlatform.QQ, listener, true);
+                                break;
+                            case 8:
+                                LoginUtil.login(mActivity, LoginPlatform.WEIBO, listener, true);
+                                break;
                         }
-                    });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                    }
+                }).build().show();
     }
 
 
-    @UiThread
-    public void showShareDialog(final WechatShareModel wechatShareModel) {
+    public void showShareDialog(final String imgUrl, final String title, final String desc, final String url) {
         SharePop sharePop = new SharePop(mActivity);
         sharePop.initPop();
         sharePop.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
@@ -157,23 +181,59 @@ public class FindFragment extends BaseWebFragment {
             public void shareType(int type) {
                 switch (type) {
                     case SharePop.SHARE_PENGYOUYUAN:
-                        WechatShareTools.shareURL(wechatShareModel, WechatShareTools.SharePlace.Zone);
 
+                        ShareUtil.shareMedia(mActivity, SharePlatform.WX_TIMELINE, title, desc, url, imgUrl, shareListener);
                         break;
                     case SharePop.SHARE_WX:
-                        WechatShareTools.shareURL(wechatShareModel, WechatShareTools.SharePlace.Friend);
+                        ShareUtil.shareMedia(mActivity, SharePlatform.WX, title, desc, url, imgUrl, shareListener);
                         break;
                 }
             }
         });
     }
 
+    ShareListener shareListener = new ShareListener() {
+        @Override
+        public void shareSuccess() {
+            RxLogUtils.d("分享成功");
+        }
+
+        @Override
+        public void shareFailure(Exception e) {
+            RxLogUtils.d("分享失败");
+        }
+
+
+        @Override
+        public void shareCancel() {
+            RxLogUtils.d("分享关闭");
+        }
+
+    };
+
+    final LoginListener listener = new LoginListener() {
+        @Override
+        public void loginSuccess(LoginResult result) {
+            //登录成功， 如果你选择了获取用户信息，可以通过
+            RxLogUtils.e("登录成功:" + result.toString());
+        }
+
+        @Override
+        public void loginFailure(Exception e) {
+            RxLogUtils.e("登录失败");
+        }
+
+        @Override
+        public void loginCancel() {
+            RxLogUtils.e("登录取消");
+        }
+    };
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
     }
+
 
     @Nullable
     @Override

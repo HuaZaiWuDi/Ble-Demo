@@ -3,23 +3,28 @@ package me.shaohui.shareutil.login.instance;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
-import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
-import com.sina.weibo.sdk.api.share.WeiboShareSDK;
-import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.WbAuthListener;
+import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
-import com.sina.weibo.sdk.exception.WeiboException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import me.shaohui.shareutil.RxThreadUtils;
 import me.shaohui.shareutil.ShareLogger;
-import me.shaohui.shareutil.ShareManager;
 import me.shaohui.shareutil.login.LoginListener;
 import me.shaohui.shareutil.login.LoginPlatform;
 import me.shaohui.shareutil.login.LoginResult;
@@ -29,11 +34,6 @@ import me.shaohui.shareutil.login.result.WeiboUser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.Emitter;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static me.shaohui.shareutil.ShareLogger.INFO;
 
@@ -51,20 +51,17 @@ public class WeiboLoginInstance extends LoginInstance {
 
     public WeiboLoginInstance(Activity activity, LoginListener listener, boolean fetchUserInfo) {
         super(activity, listener, fetchUserInfo);
-        AuthInfo authInfo = new AuthInfo(activity, ShareManager.CONFIG.getWeiboId(),
-                ShareManager.CONFIG.getWeiboRedirectUrl(), ShareManager.CONFIG.getWeiboScope());
-        mSsoHandler = new SsoHandler(activity, authInfo);
+        mSsoHandler = new SsoHandler(activity);
         mLoginListener = listener;
     }
 
     @Override
     public void doLogin(Activity activity, final LoginListener listener,
-            final boolean fetchUserInfo) {
-        mSsoHandler.authorize(new WeiboAuthListener() {
+                        final boolean fetchUserInfo) {
+        mSsoHandler.authorize(new WbAuthListener() {
             @Override
-            public void onComplete(Bundle bundle) {
-                Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(bundle);
-                WeiboToken weiboToken = WeiboToken.parse(accessToken);
+            public void onSuccess(Oauth2AccessToken oauth2AccessToken) {
+                WeiboToken weiboToken = WeiboToken.parse(oauth2AccessToken);
                 if (fetchUserInfo) {
                     listener.beforeFetchUserInfo(weiboToken);
                     fetchUserInfo(weiboToken);
@@ -74,52 +71,62 @@ public class WeiboLoginInstance extends LoginInstance {
             }
 
             @Override
-            public void onWeiboException(WeiboException e) {
-                ShareLogger.i(INFO.WEIBO_AUTH_ERROR);
-                listener.loginFailure(e);
+            public void cancel() {
+                ShareLogger.i(INFO.AUTH_CANCEL);
+                listener.loginCancel();
             }
 
             @Override
-            public void onCancel() {
-                ShareLogger.i(INFO.AUTH_CANCEL);
-                listener.loginCancel();
+            public void onFailure(WbConnectErrorMessage wbConnectErrorMessage) {
+                ShareLogger.i(INFO.WEIBO_AUTH_ERROR);
+                listener.loginFailure(new Exception(wbConnectErrorMessage.getErrorMessage()));
             }
         });
     }
 
     @Override
     public void fetchUserInfo(final BaseToken token) {
-        Observable.create(new Action1<Emitter<WeiboUser>>() {
+        Observable.create(new ObservableOnSubscribe<WeiboUser>() {
             @Override
-            public void call(Emitter<WeiboUser> weiboUserEmitter) {
+            public void subscribe(ObservableEmitter<WeiboUser> emitter) throws Exception {
                 OkHttpClient client = new OkHttpClient();
                 Request request =
                         new Request.Builder().url(buildUserInfoUrl(token, USER_INFO)).build();
                 try {
                     Response response = client.newCall(request).execute();
+                    ShareLogger.e("微博用户信息：" + response.body().string());
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     WeiboUser user = WeiboUser.parse(jsonObject);
-                    weiboUserEmitter.onNext(user);
+                    emitter.onNext(user);
                 } catch (IOException | JSONException e) {
                     ShareLogger.e(INFO.FETCH_USER_INOF_ERROR);
-                    weiboUserEmitter.onError(e);
+                    emitter.onError(e);
                 }
             }
-        }, Emitter.BackpressureMode.DROP)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<WeiboUser>() {
+        }).compose(RxThreadUtils.<WeiboUser>rxThreadHelper())
+                .subscribe(new Observer<WeiboUser>() {
                     @Override
-                    public void call(WeiboUser weiboUser) {
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(WeiboUser weiboUser) {
                         mLoginListener.loginSuccess(
                                 new LoginResult(LoginPlatform.WEIBO, token, weiboUser));
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        mLoginListener.loginFailure(new Exception(throwable));
+                    public void onError(Throwable e) {
+                        mLoginListener.loginFailure(new Exception(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
+
     }
 
     private String buildUserInfoUrl(BaseToken token, String baseUrl) {
@@ -128,19 +135,28 @@ public class WeiboLoginInstance extends LoginInstance {
 
     @Override
     public void handleResult(int requestCode, int resultCode, Intent data) {
-        mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        if (mSsoHandler != null)
+            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
     }
 
     @Override
     public boolean isInstall(Context context) {
-        IWeiboShareAPI shareAPI =
-                WeiboShareSDK.createWeiboAPI(context, ShareManager.CONFIG.getWeiboId());
-        return shareAPI.isWeiboAppInstalled();
+        PackageManager pm = context.getPackageManager();
+        if (pm == null) {
+            return false;
+        }
+        List<PackageInfo> packageInfos = pm.getInstalledPackages(0);
+        for (PackageInfo info : packageInfos) {
+            if (TextUtils.equals(info.packageName.toLowerCase(), "com.sina.weibo")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void recycle() {
         mSsoHandler = null;
-        mLoginListener = null;
+//        mLoginListener = null;
     }
 }

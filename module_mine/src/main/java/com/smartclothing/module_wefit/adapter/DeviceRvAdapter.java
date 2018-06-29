@@ -67,7 +67,7 @@ public class DeviceRvAdapter extends BaseMultiItemQuickAdapter<Device, BaseViewH
                     @Override
                     public void onClick(View view) {
                         if (deleteClickListener != null) {
-                            deleteClickListener.onUpdateClick(helper.getLayoutPosition());
+                            deleteClickListener.onUpdateClick(helper.getAdapterPosition());
                         }
                     }
                 });

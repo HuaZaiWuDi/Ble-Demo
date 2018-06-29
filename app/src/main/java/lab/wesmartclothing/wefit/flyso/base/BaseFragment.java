@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +20,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
@@ -57,8 +57,6 @@ public abstract class BaseFragment extends Fragment {
     public FragmentActivity mActivity;
 
     private Disposable subscribe;
-
-    private Handler mHandler = new Handler();
 
 
     public void checkLocation(Consumer<Permission> consumer) {
@@ -117,14 +115,15 @@ public abstract class BaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public QMUITipDialog tipDialog;
+    public TipDialog tipDialog;
 
 
     private void initDialog() {
-        tipDialog = new QMUITipDialog.Builder(mActivity)
+        QMUITipDialog mQMUITipDialog = new QMUITipDialog.Builder(mActivity)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord(getString(R.string.tv_loading))
                 .create();
+        tipDialog = new TipDialog(mQMUITipDialog);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {

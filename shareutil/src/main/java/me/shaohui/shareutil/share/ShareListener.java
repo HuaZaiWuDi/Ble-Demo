@@ -1,8 +1,6 @@
 package me.shaohui.shareutil.share;
 
-import com.sina.weibo.sdk.api.share.BaseResponse;
-import com.sina.weibo.sdk.api.share.IWeiboHandler;
-import com.sina.weibo.sdk.constant.WBConstants;
+import com.sina.weibo.sdk.share.WbShareCallback;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
 
@@ -12,7 +10,7 @@ import static me.shaohui.shareutil.ShareLogger.INFO;
  * Created by shaohui on 2016/11/18.
  */
 
-public abstract class ShareListener implements IUiListener, IWeiboHandler.Response {
+public abstract class ShareListener implements IUiListener, WbShareCallback {
     @Override
     public final void onComplete(Object o) {
         shareSuccess();
@@ -29,21 +27,20 @@ public abstract class ShareListener implements IUiListener, IWeiboHandler.Respon
         shareCancel();
     }
 
+
     @Override
-    public final void onResponse(BaseResponse baseResponse) {
-        switch (baseResponse.errCode) {
-            case WBConstants.ErrorCode.ERR_OK:
-                shareSuccess();
-                break;
-            case WBConstants.ErrorCode.ERR_FAIL:
-                shareFailure(new Exception(baseResponse.errMsg));
-                break;
-            case WBConstants.ErrorCode.ERR_CANCEL:
-                shareCancel();
-                break;
-            default:
-                shareFailure(new Exception(baseResponse.errMsg));
-        }
+    public void onWbShareCancel() {
+        shareCancel();
+    }
+
+    @Override
+    public void onWbShareSuccess() {
+        shareSuccess();
+    }
+
+    @Override
+    public void onWbShareFail() {
+        shareFailure(new Exception("微博 share fail"));
     }
 
     public abstract void shareSuccess();

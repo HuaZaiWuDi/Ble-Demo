@@ -10,25 +10,25 @@ public final class R {
     public static final class attr {
         public static int alignContent = 0x7f04003b;
         public static int alignItems = 0x7f04003c;
-        public static int dividerDrawable = 0x7f0400b7;
-        public static int dividerDrawableHorizontal = 0x7f0400b8;
-        public static int dividerDrawableVertical = 0x7f0400b9;
-        public static int flexDirection = 0x7f0400da;
-        public static int flexWrap = 0x7f0400db;
-        public static int justifyContent = 0x7f040110;
-        public static int layout_alignSelf = 0x7f040114;
-        public static int layout_flexBasisPercent = 0x7f04013f;
-        public static int layout_flexGrow = 0x7f040140;
-        public static int layout_flexShrink = 0x7f040141;
-        public static int layout_maxHeight = 0x7f04014b;
-        public static int layout_maxWidth = 0x7f04014c;
-        public static int layout_minHeight = 0x7f04014d;
-        public static int layout_minWidth = 0x7f04014e;
-        public static int layout_order = 0x7f040150;
-        public static int layout_wrapBefore = 0x7f040153;
-        public static int showDivider = 0x7f0402f1;
-        public static int showDividerHorizontal = 0x7f0402f2;
-        public static int showDividerVertical = 0x7f0402f3;
+        public static int dividerDrawable = 0x7f0400b9;
+        public static int dividerDrawableHorizontal = 0x7f0400ba;
+        public static int dividerDrawableVertical = 0x7f0400bb;
+        public static int flexDirection = 0x7f0400dd;
+        public static int flexWrap = 0x7f0400de;
+        public static int justifyContent = 0x7f040113;
+        public static int layout_alignSelf = 0x7f040117;
+        public static int layout_flexBasisPercent = 0x7f040142;
+        public static int layout_flexGrow = 0x7f040143;
+        public static int layout_flexShrink = 0x7f040144;
+        public static int layout_maxHeight = 0x7f04014e;
+        public static int layout_maxWidth = 0x7f04014f;
+        public static int layout_minHeight = 0x7f040150;
+        public static int layout_minWidth = 0x7f040151;
+        public static int layout_order = 0x7f040153;
+        public static int layout_wrapBefore = 0x7f040156;
+        public static int showDivider = 0x7f0402f4;
+        public static int showDividerHorizontal = 0x7f0402f5;
+        public static int showDividerVertical = 0x7f0402f6;
     }
     public static final class id {
         public static int auto = 0x7f0c003e;
@@ -52,7 +52,7 @@ public final class R {
         public static int wrap_reverse = 0x7f0c0251;
     }
     public static final class styleable {
-        public static int[] FlexboxLayout = { 0x7f04003b, 0x7f04003c, 0x7f0400b7, 0x7f0400b8, 0x7f0400b9, 0x7f0400da, 0x7f0400db, 0x7f040110, 0x7f0402f1, 0x7f0402f2, 0x7f0402f3 };
+        public static int[] FlexboxLayout = { 0x7f04003b, 0x7f04003c, 0x7f0400b9, 0x7f0400ba, 0x7f0400bb, 0x7f0400dd, 0x7f0400de, 0x7f040113, 0x7f0402f4, 0x7f0402f5, 0x7f0402f6 };
         public static int FlexboxLayout_alignContent = 0;
         public static int FlexboxLayout_alignItems = 1;
         public static int FlexboxLayout_dividerDrawable = 2;
@@ -64,7 +64,7 @@ public final class R {
         public static int FlexboxLayout_showDivider = 8;
         public static int FlexboxLayout_showDividerHorizontal = 9;
         public static int FlexboxLayout_showDividerVertical = 10;
-        public static int[] FlexboxLayout_Layout = { 0x7f040114, 0x7f04013f, 0x7f040140, 0x7f040141, 0x7f04014b, 0x7f04014c, 0x7f04014d, 0x7f04014e, 0x7f040150, 0x7f040153 };
+        public static int[] FlexboxLayout_Layout = { 0x7f040117, 0x7f040142, 0x7f040143, 0x7f040144, 0x7f04014e, 0x7f04014f, 0x7f040150, 0x7f040151, 0x7f040153, 0x7f040156 };
         public static int FlexboxLayout_Layout_layout_alignSelf = 0;
         public static int FlexboxLayout_Layout_layout_flexBasisPercent = 1;
         public static int FlexboxLayout_Layout_layout_flexGrow = 2;

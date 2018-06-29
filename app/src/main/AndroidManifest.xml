@@ -75,12 +75,16 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
+
         <activity
             android:name=".ui.main.MainActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            >
         </activity>
+
+
         <activity
             android:name=".ui.guide.SpalshActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

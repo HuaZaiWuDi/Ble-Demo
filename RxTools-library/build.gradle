@@ -28,45 +28,56 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     //design包
     implementation 'com.android.support:design:25.3.1'
+
     //cardView包
     implementation 'com.android.support:cardview-v7:27.1.1'
+
     //appcompat包
     implementation 'com.android.support:appcompat-v7:25.3.1'
+
     //recyclerview包
     implementation 'com.android.support:recyclerview-v7:25.3.1'
-
     implementation 'com.android.support:support-annotations:25.3.1'
-
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
     //流式布局
     implementation 'com.google.android:flexbox:0.2.7'
+
     //动画向下版本兼容 nineold包
     implementation 'com.nineoldandroids:library:2.4.0'
+
     //沉浸式
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
     //okgo 网络请求框架包
     implementation 'com.lzy.net:okgo:3.0.4'
+
     //gson json工具类 google解析Json的库
     implementation 'com.google.code.gson:gson:2.8.1'
+
     //Log日志格式美化包
     implementation 'com.orhanobut:logger:2.1.1'
-    //微信登录，支付，分享包
-    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+
     //支付宝 支付包c
-    implementation files('src/main/libs/alipaySdk-20170309.jar')
+    api files('src/main/libs/alipaySdk-20170309.jar')
+
     //二维码解析
     implementation files('src/main/libs/zbardecoder.jar')
+
     //二维码生成
     implementation files('src/main/libs/zxing.jar')
+
     //压缩与加密
     implementation files('src/main/libs/zip4j_1.3.2.jar')
+
     //侧滑删除Recycler
     compile 'com.yanzhenjie:recyclerview-swipe:1.1.4'
-    //UI库
-    //http://qmuiteam.com/android/get-started
-    compile 'com.qmuiteam:qmui:1.1.1'
+
+    //UI库 http://qmuiteam.com/android/get-started
+    compile 'com.qmuiteam:qmui:1.1.3'
 
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
     compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4'
@@ -86,7 +97,10 @@ dependencies {
 
     //万能RecyclerView适配器
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+
     //图片加载
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
+
+
 }

@@ -9,10 +9,8 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
-import com.sina.weibo.sdk.api.share.WeiboShareSDK;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.util.List;
 import java.util.Locale;
@@ -158,12 +156,13 @@ public class ShareUtil {
                 ShareLogger.e(INFO.HANDLE_DATA_NULL);
             }
         } else {
-            ShareLogger.e(INFO.UNKNOWN_ERROR);
+            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码："+data.toString());
+            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码："+mShareInstance);
         }
     }
 
     private static ShareInstance getShareInstance(@SharePlatform.Platform int platform,
-                                                  Context context) {
+                                                  Activity context) {
         switch (platform) {
             case SharePlatform.WX:
             case SharePlatform.WX_TIMELINE:
@@ -201,7 +200,6 @@ public class ShareUtil {
     /**
      * 检查客户端是否安装
      */
-
     public static boolean isInstalled(@SharePlatform.Platform int platform, Context context) {
         switch (platform) {
             case SharePlatform.QQ:
@@ -238,9 +236,17 @@ public class ShareUtil {
 
     @Deprecated
     public static boolean isWeiBoInstalled(@NonNull Context context) {
-        IWeiboShareAPI shareAPI =
-                WeiboShareSDK.createWeiboAPI(context, ShareManager.CONFIG.getWeiboId());
-        return shareAPI.isWeiboAppInstalled();
+        PackageManager pm = context.getPackageManager();
+        if (pm == null) {
+            return false;
+        }
+        List<PackageInfo> packageInfos = pm.getInstalledPackages(0);
+        for (PackageInfo info : packageInfos) {
+            if (TextUtils.equals(info.packageName.toLowerCase(), "com.sina.weibo")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Deprecated

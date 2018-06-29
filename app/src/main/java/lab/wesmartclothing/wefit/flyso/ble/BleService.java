@@ -3,27 +3,28 @@ package lab.wesmartclothing.wefit.flyso.ble;
 import android.Manifest;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
+import android.os.ParcelUuid;
 import android.support.v4.app.ActivityCompat;
 
 import com.clj.fastble.callback.BleGattCallback;
-import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.qingniu.qnble.scanner.ScanResult;
-import com.qingniu.qnble.scanner.c;
 import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
+import com.smartclothing.blelibrary.BleScanConfig;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
+import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
@@ -40,7 +41,6 @@ import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.R;
@@ -148,43 +148,36 @@ public class BleService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    //    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void initBle() {
 
-
-        BleTools.getInstance().stopScan();
-        BleTools.getInstance().configScan(0);
-        BleTools.getBleManager().scan(new BleScanCallback() {
+        BleScanConfig config = new BleScanConfig.Builder()
+                .setServiceUuids(BleKey.UUID_QN_SCALE, BleKey.UUID_Servie)
+                .setScanTimeOut(0)
+                .build();
+        BleTools.getInstance().startScan(config, new ScanCallback() {
             @Override
-            public void onScanFinished(List<BleDevice> scanResultList) {
-                RxLogUtils.d("结束扫描：" + scanResultList.size());
-            }
-
-            @Override
-            public void onScanStarted(boolean success) {
-                RxLogUtils.d("开始扫描：");
-            }
-
-            @Override
-            public void onScanning(BleDevice device) {
-                RxLogUtils.d("设备的UUID:" + Arrays.toString(device.getDevice().getUuids()));
-
-                RxLogUtils.d("扫描到：" + device.getName());
-                if (BleKey.ScaleName.equals(device.getName())) {
-                    RxLogUtils.d("扫描到秤：" + device.getMac());
-                    ScanResult scanResult = new ScanResult(device.getDevice(), new c(device.getScanRecord()), device.getRssi());
-                    QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);
+            public void onScanResult(int callbackType, com.smartclothing.blelibrary.scanner.ScanResult result) {
+                super.onScanResult(callbackType, result);
+                RxLogUtils.d("蓝牙扫描：" + result.toString());
+                BluetoothDevice device = result.getDevice();
+                if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
+                    RxLogUtils.d("扫描到体脂称：" + device.getName());
+                    byte[] bytes = result.getScanRecord().getBytes();
+                    RxLogUtils.d("广播数据：" + HexUtil.encodeHexStr(bytes));
+                    com.qingniu.qnble.scanner.ScanResult scanResult = new com.qingniu.qnble.scanner.ScanResult(device, null, result.getRssi());
+                    QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);//转换对象
                     RxBus.getInstance().post(bleDevice);
-                    if (device.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
                         mQNBleTools.disConnectDevice(bleDevice.getMac());
                         mQNBleTools.connectDevice(bleDevice);
                     }
-                } else if (BleKey.Smart_Clothing.equals(device.getName())) {
-                    RxLogUtils.d("扫描到瘦身衣：" + device.getMac());
-                    if (device.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)))
-                        connectClothing(device);
+                } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
+                    BleDevice bleDevice = new BleDevice(device);//转换对象
+                    RxLogUtils.d("扫描到瘦身衣：" + device.getName());
+                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)))
+                        connectClothing(bleDevice);
 
-                    byte[] scanRecord = device.getScanRecord();
+                    byte[] scanRecord = result.getScanRecord().getBytes();
                     int b1 = scanRecord[21];
                     int b2 = scanRecord[22];
                     int b3 = scanRecord[23];
@@ -193,10 +186,32 @@ public class BleService extends Service {
                     firmwareVersion = b1 + "." + b2 + "." + b3;
                     RxLogUtils.d("版本号：" + firmwareVersion);
 
-                    RxBus.getInstance().post(device);
+                    RxBus.getInstance().post(bleDevice);
                 }
             }
+
+            @Override
+            public void onScanFailed(int errorCode) {
+                super.onScanFailed(errorCode);
+                RxLogUtils.d("蓝牙失败：" + errorCode);
+            }
+
+            @Override
+            public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
+                super.onBatchScanResults(results);
+                RxLogUtils.d("蓝牙扫描：" + results.size());
+            }
         });
+
+
+    }
+
+    public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {
+        List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
+        for (ParcelUuid uuid : uuids) {
+            if (UUID.equals(uuid.getUuid().toString())) return true;
+        }
+        return false;
     }
 
     private void connectScaleCallBack() {

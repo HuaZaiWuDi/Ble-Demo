@@ -86,4 +86,18 @@ public class ShareConfig {
     public boolean isDebug() {
         return debug;
     }
+
+
+    @Override
+    public String toString() {
+        return "ShareConfig{" +
+                "wxId='" + wxId + '\'' +
+                ", wxSecret='" + wxSecret + '\'' +
+                ", qqId='" + qqId + '\'' +
+                ", weiboId='" + weiboId + '\'' +
+                ", weiboRedirectUrl='" + weiboRedirectUrl + '\'' +
+                ", weiboScope='" + weiboScope + '\'' +
+                ", debug=" + debug +
+                '}';
+    }
 }

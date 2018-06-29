@@ -32,7 +32,7 @@ public class WeightAddBean {
     double bmr;
     double flesh;
     int bodyAge;
-    double bodyfat;
+    double bodyFat;
     String bodyType;
     double bone;
     double muscle;
@@ -138,12 +138,12 @@ public class WeightAddBean {
         this.bodyAge = bodyAge;
     }
 
-    public double getBodyfat() {
-        return bodyfat;
+    public double getBodyFat() {
+        return bodyFat;
     }
 
-    public void setBodyfat(double bodyfat) {
-        this.bodyfat = bodyfat;
+    public void setBodyFat(double bodyFat) {
+        this.bodyFat = bodyFat;
     }
 
     public String getBodyType() {
@@ -199,7 +199,7 @@ public class WeightAddBean {
                 ", bmr=" + bmr +
                 ", flesh=" + flesh +
                 ", bodyAge=" + bodyAge +
-                ", bodyfat=" + bodyfat +
+                ", bodyfat=" + bodyFat +
                 ", bodyType=" + bodyType +
                 ", bone=" + bone +
                 ", muscle=" + muscle +

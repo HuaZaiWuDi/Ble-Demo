@@ -66,7 +66,7 @@ public class WeightTools {
                 bean.setBmi(value);
                 break;
             case 3:
-                bean.setBodyfat(value);
+                bean.setBodyFat(value);
                 break;
             case 4:
                 bean.setSubfat(value);

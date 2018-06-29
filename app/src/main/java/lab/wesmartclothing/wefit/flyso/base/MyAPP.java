@@ -9,7 +9,6 @@ import com.activeandroid.app.Application;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.model.cache.ACache;
-import com.vondear.rxtools.model.wechat.share.WechatShareTools;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listen.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
@@ -18,6 +17,8 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import me.shaohui.shareutil.ShareConfig;
+import me.shaohui.shareutil.ShareManager;
 
 /**
  * Created by jk on 2018/5/8.
@@ -43,7 +44,15 @@ public class MyAPP extends Application {
     }
 
     private void initShareLogin() {
-        WechatShareTools.init(this, Key.WX_ID);
+        // init
+        ShareConfig config = ShareConfig.instance()
+                .qqId(Key.QQ_ID)
+                .wxId(Key.WX_ID)
+                .weiboId(Key.WEIBO_ID)
+                // 下面两个，如果不需要登录功能，可不填写
+                .weiboRedirectUrl(Key.WB_URL)
+                .wxSecret(Key.WX_SECRET);
+        ShareManager.init(config);
     }
 
 

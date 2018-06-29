@@ -16,16 +16,17 @@ import com.tencent.tauth.Tencent;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import me.shaohui.shareutil.RxThreadUtils;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ImageDecoder;
 import me.shaohui.shareutil.share.ShareImageObject;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
-import rx.Emitter;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static me.shaohui.shareutil.ShareLogger.INFO;
 
@@ -55,28 +56,24 @@ public class QQShareInstance implements ShareInstance {
     public void shareMedia(final int platform, final String title, final String targetUrl,
                            final String summary, final ShareImageObject shareImageObject, final Activity activity,
                            final ShareListener listener) {
-        Observable.create(new Action1<Emitter<String>>() {
+        Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Emitter<String> emitter) {
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 try {
                     emitter.onNext(ImageDecoder.decode(activity, shareImageObject));
-                    emitter.onCompleted();
                 } catch (Exception e) {
                     emitter.onError(e);
                 }
             }
-        }, Emitter.BackpressureMode.DROP)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnRequest(new Action1<Long>() {
+        }).compose(RxThreadUtils.<String>rxThreadHelper())
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void call(Long aLong) {
-                        listener.shareRequest();
+                    public void onSubscribe(Disposable d) {
+
                     }
-                })
-                .subscribe(new Action1<String>() {
+
                     @Override
-                    public void call(String s) {
+                    public void onNext(String s) {
                         if (platform == SharePlatform.QZONE) {
                             shareToQZoneForMedia(title, targetUrl, summary, s, activity,
                                     listener);
@@ -84,11 +81,15 @@ public class QQShareInstance implements ShareInstance {
                             shareToQQForMedia(title, summary, targetUrl, s, activity, listener);
                         }
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        activity.finish();
-                        listener.shareFailure(new Exception(throwable));
+                    public void onError(Throwable e) {
+                        listener.shareFailure(new Exception(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
@@ -96,39 +97,41 @@ public class QQShareInstance implements ShareInstance {
     @Override
     public void shareImage(final int platform, final ShareImageObject shareImageObject,
                            final Activity activity, final ShareListener listener) {
-        Observable.create(new Action1<Emitter<String>>() {
+        Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Emitter<String> emitter) {
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
                 try {
                     emitter.onNext(ImageDecoder.decode(activity, shareImageObject));
-                    emitter.onCompleted();
                 } catch (Exception e) {
                     emitter.onError(e);
                 }
             }
-        }, Emitter.BackpressureMode.DROP)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnRequest(new Action1<Long>() {
+        }).compose(RxThreadUtils.<String>rxThreadHelper())
+
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void call(Long aLong) {
-                        listener.shareRequest();
+                    public void onSubscribe(Disposable d) {
+
                     }
-                })
-                .subscribe(new Action1<String>() {
+
                     @Override
-                    public void call(String localPath) {
+                    public void onNext(String s) {
                         if (platform == SharePlatform.QZONE) {
-                            shareToQzoneForImage(localPath, activity, listener);
+                            shareToQzoneForImage(s, activity, listener);
                         } else {
-                            shareToQQForImage(localPath, activity, listener);
+                            shareToQQForImage(s, activity, listener);
                         }
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
+                    public void onError(Throwable e) {
                         activity.finish();
-                        listener.shareFailure(new Exception(throwable));
+                        listener.shareFailure(new Exception(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }

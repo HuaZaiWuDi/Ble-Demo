@@ -42,4 +42,12 @@ public class QQUser extends BaseUser {
     public void setqZoneHeadImageLarge(String qZoneHeadImageLarge) {
         this.qZoneHeadImageLarge = qZoneHeadImageLarge;
     }
+
+    @Override
+    public String toString() {
+        return "QQUser{" +
+                "qZoneHeadImage='" + qZoneHeadImage + '\'' +
+                ", qZoneHeadImageLarge='" + qZoneHeadImageLarge + '\'' +
+                '}';
+    }
 }

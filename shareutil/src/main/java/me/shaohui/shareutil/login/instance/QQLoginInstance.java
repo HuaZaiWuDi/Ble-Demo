@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -17,6 +18,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import me.shaohui.shareutil.RxThreadUtils;
 import me.shaohui.shareutil.ShareLogger;
 import me.shaohui.shareutil.ShareManager;
 import me.shaohui.shareutil.login.LoginListener;
@@ -28,11 +35,6 @@ import me.shaohui.shareutil.login.result.QQUser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.Emitter;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 import static me.shaohui.shareutil.ShareLogger.INFO;
 
@@ -40,7 +42,7 @@ import static me.shaohui.shareutil.ShareLogger.INFO;
  * Created by shaohui on 2016/12/1.
  */
 
-public class QQLoginInstance extends LoginInstance {
+public class QQLoginInstance extends LoginInstance implements IUiListener {
 
     private static final String SCOPE = "get_simple_userinfo";
 
@@ -48,59 +50,33 @@ public class QQLoginInstance extends LoginInstance {
 
     private Tencent mTencent;
 
-    private IUiListener mIUiListener;
 
     private LoginListener mLoginListener;
+    private boolean fetchUserInfo;
 
     public QQLoginInstance(Activity activity, final LoginListener listener,
-            final boolean fetchUserInfo) {
+                           final boolean fetchUserInfo) {
         super(activity, listener, fetchUserInfo);
         mTencent = Tencent.createInstance(ShareManager.CONFIG.getQqId(),
                 activity.getApplicationContext());
+        Log.d("QQ登录：", mTencent.toString());
+        this.fetchUserInfo = fetchUserInfo;
         mLoginListener = listener;
-        mIUiListener = new IUiListener() {
-            @Override
-            public void onComplete(Object o) {
-                ShareLogger.i(INFO.QQ_AUTH_SUCCESS);
-                try {
-                    QQToken token = QQToken.parse((JSONObject) o);
-                    if (fetchUserInfo) {
-                        listener.beforeFetchUserInfo(token);
-                        fetchUserInfo(token);
-                    } else {
-                        listener.loginSuccess(new LoginResult(LoginPlatform.QQ, token));
-                    }
-                } catch (JSONException e) {
-                    ShareLogger.i(INFO.ILLEGAL_TOKEN);
-                    mLoginListener.loginFailure(e);
-                }
-            }
 
-            @Override
-            public void onError(UiError uiError) {
-                ShareLogger.i(INFO.QQ_LOGIN_ERROR);
-                listener.loginFailure(
-                        new Exception("QQError: " + uiError.errorCode + uiError.errorDetail));
-            }
-
-            @Override
-            public void onCancel() {
-                ShareLogger.i(INFO.AUTH_CANCEL);
-                listener.loginCancel();
-            }
-        };
     }
 
     @Override
     public void doLogin(Activity activity, final LoginListener listener, boolean fetchUserInfo) {
-        mTencent.login(activity, SCOPE, mIUiListener);
+
+        mTencent.login(activity, SCOPE, this);
     }
 
     @Override
     public void fetchUserInfo(final BaseToken token) {
-        Observable.create(new Action1<Emitter<QQUser>>() {
+
+        Observable.create(new ObservableOnSubscribe<QQUser>() {
             @Override
-            public void call(Emitter<QQUser> qqUserEmitter) {
+            public void subscribe(ObservableEmitter<QQUser> emitter) throws Exception {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder().url(buildUserInfoUrl(token, URL)).build();
 
@@ -108,25 +84,34 @@ public class QQLoginInstance extends LoginInstance {
                     Response response = client.newCall(request).execute();
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     QQUser user = QQUser.parse(token.getOpenid(), jsonObject);
-                    qqUserEmitter.onNext(user);
+                    emitter.onNext(user);
+                    Log.d("QQ登录：", user.toString());
                 } catch (IOException | JSONException e) {
                     ShareLogger.e(INFO.FETCH_USER_INOF_ERROR);
-                    qqUserEmitter.onError(e);
+                    emitter.onError(e);
                 }
             }
-        }, Emitter.BackpressureMode.DROP)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<QQUser>() {
+        }).compose(RxThreadUtils.<QQUser>rxThreadHelper())
+                .subscribe(new Observer<QQUser>() {
                     @Override
-                    public void call(QQUser qqUser) {
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(QQUser qqUser) {
                         mLoginListener.loginSuccess(
                                 new LoginResult(LoginPlatform.QQ, token, qqUser));
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        mLoginListener.loginFailure(new Exception(throwable));
+                    public void onError(Throwable e) {
+                        mLoginListener.loginFailure(new Exception(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
@@ -143,7 +128,7 @@ public class QQLoginInstance extends LoginInstance {
 
     @Override
     public void handleResult(int requestCode, int resultCode, Intent data) {
-        Tencent.handleResultData(data, mIUiListener);
+        Tencent.handleResultData(data, this);
     }
 
     @Override
@@ -164,9 +149,39 @@ public class QQLoginInstance extends LoginInstance {
 
     @Override
     public void recycle() {
-        mTencent.releaseResource();
-        mIUiListener = null;
+//        mTencent.releaseResource();
         mLoginListener = null;
         mTencent = null;
+    }
+
+    @Override
+    public void onComplete(Object o) {
+        ShareLogger.i(INFO.QQ_AUTH_SUCCESS + ((JSONObject) o).toString());
+        try {
+            QQToken token = QQToken.parse((JSONObject) o);
+            if (fetchUserInfo) {
+                mLoginListener.beforeFetchUserInfo(token);
+                fetchUserInfo(token);
+            } else {
+                mLoginListener.loginSuccess(new LoginResult(LoginPlatform.QQ, token));
+            }
+
+        } catch (JSONException e) {
+            ShareLogger.i(INFO.ILLEGAL_TOKEN);
+            mLoginListener.loginFailure(e);
+        }
+    }
+
+    @Override
+    public void onError(UiError uiError) {
+        ShareLogger.i(INFO.QQ_LOGIN_ERROR);
+        mLoginListener.loginFailure(
+                new Exception("QQError: " + uiError.errorCode + uiError.errorDetail));
+    }
+
+    @Override
+    public void onCancel() {
+        ShareLogger.i(INFO.AUTH_CANCEL);
+        mLoginListener.loginCancel();
     }
 }

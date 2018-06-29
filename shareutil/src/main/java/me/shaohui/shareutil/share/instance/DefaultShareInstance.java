@@ -8,15 +8,16 @@ import android.net.Uri;
 
 import java.io.File;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import me.shaohui.shareutil.R;
+import me.shaohui.shareutil.RxThreadUtils;
 import me.shaohui.shareutil.share.ImageDecoder;
 import me.shaohui.shareutil.share.ShareImageObject;
 import me.shaohui.shareutil.share.ShareListener;
-import rx.Emitter;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by shaohui on 2016/11/18.
@@ -48,30 +49,27 @@ public class DefaultShareInstance implements ShareInstance {
     @Override
     public void shareImage(int platform, final ShareImageObject shareImageObject,
                            final Activity activity, final ShareListener listener) {
-        Observable.create(new Action1<Emitter<Uri>>() {
+
+        Observable.create(new ObservableOnSubscribe<Uri>() {
             @Override
-            public void call(Emitter<Uri> emitter) {
+            public void subscribe(ObservableEmitter<Uri> emitter) throws Exception {
                 try {
                     Uri uri =
                             Uri.fromFile(new File(ImageDecoder.decode(activity, shareImageObject)));
                     emitter.onNext(uri);
-                    emitter.onCompleted();
                 } catch (Exception e) {
                     emitter.onError(e);
                 }
             }
-        }, Emitter.BackpressureMode.BUFFER)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnRequest(new Action1<Long>() {
+        }).compose(RxThreadUtils.<Uri>rxThreadHelper())
+                .subscribe(new Observer<Uri>() {
                     @Override
-                    public void call(Long aLong) {
+                    public void onSubscribe(Disposable d) {
                         listener.shareRequest();
                     }
-                })
-                .subscribe(new Action1<Uri>() {
+
                     @Override
-                    public void call(Uri uri) {
+                    public void onNext(Uri uri) {
                         Intent shareIntent = new Intent();
                         shareIntent.setAction(Intent.ACTION_SEND);
                         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -79,12 +77,18 @@ public class DefaultShareInstance implements ShareInstance {
                         activity.startActivity(Intent.createChooser(shareIntent,
                                 activity.getResources().getText(R.string.vista_share_title)));
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        listener.shareFailure(new Exception(throwable));
+                    public void onError(Throwable e) {
+                        listener.shareFailure(new Exception(e));
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
+
     }
 
     @Override

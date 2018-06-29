@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
+
 import static me.shaohui.shareutil.ShareLogger.INFO;
 
 /**
@@ -37,6 +40,8 @@ public class _ShareActivity extends Activity {
         isNew = true;
         ShareLogger.i("onCreate:");
         // init data
+        WbSdk.install(this, new AuthInfo(this, ShareManager.CONFIG.getWeiboId(), ShareManager.CONFIG.getWeiboRedirectUrl(), ShareManager.CONFIG.getWeiboScope()));
+        ShareLogger.i("配置信息:" + ShareManager.CONFIG.toString());
         mType = getIntent().getIntExtra(TYPE, 0);
         if (mType == ShareUtil.TYPE) {
             // 分享
@@ -63,28 +68,30 @@ public class _ShareActivity extends Activity {
         super.onResume();
         ShareLogger.i("onResume:" + isNew);
         ShareLogger.i(INFO.ACTIVITY_RESUME);
-        if (isNew) {
-            isNew = false;
-        } else
-            finish();
+//        if (isNew) {
+//            isNew = false;
+//        } else
+//            finish();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         ShareLogger.i("onStop:" + isNew);
-        if (isNew) {
-            isNew = false;
-        } else
-            finish();
+//        if (isNew) {
+//            isNew = false;
+//        } else
+//            finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ShareLogger.i("onDestroy:" + isNew);
-        ShareUtil.recycle();
-        LoginUtil.recycle();
+        if (isNew) {
+            ShareUtil.recycle();
+            LoginUtil.recycle();
+        }
     }
 
     @Override

@@ -43,3 +43,13 @@
 -keep class com.amap.api.location.**{*;}
 -keep class com.amap.api.fence.**{*;}
 -keep class com.autonavi.aps.amapapi.model.**{*;}
+
+#微信
+-keep class com.tencent.mm.opensdk.** {*;}
+
+-keep class com.tencent.wxop.** {*;}
+
+-keep class com.tencent.mm.sdk.** {*;}
+
+#微博
+-keep class com.sina.weibo.sdk.** { *; }
