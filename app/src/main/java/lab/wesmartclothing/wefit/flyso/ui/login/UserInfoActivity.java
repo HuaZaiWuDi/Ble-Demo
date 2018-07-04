@@ -76,8 +76,6 @@ public class UserInfoActivity extends BaseALocationActivity {
     @ViewById
     LinearLayout layout_location;
 
-    //    @Pref
-//    Prefs_ mPrefs;
     @Bean
     SaveUserInfo mUserInfo;
 
@@ -245,7 +243,6 @@ public class UserInfoActivity extends BaseALocationActivity {
             @Override
             public void onTabSelect(int position) {
                 //0未设置1男2女
-//                mPrefs.sex().put(position);
                 SPUtils.put(SPKey.SP_sex, position);
                 mUserInfo.setSex(position == 0 ? 2 : 1);//1男2女
             }
@@ -284,7 +281,6 @@ public class UserInfoActivity extends BaseALocationActivity {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 tv_bottom.setText(year + "-" + month + "-" + day);
                 Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
-//                mPrefs.birthDayMillis().put(date.getTime());
                 SPUtils.put(SPKey.SP_birthDayMillis, date.getTime());
                 mUserInfo.setBirthday(date.getTime() + "");
             }
@@ -308,7 +304,6 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("身高：" + item);
                 tv_top.setText(item + "cm");
-//                mPrefs.height().put((int) item);
                 SPUtils.put(SPKey.SP_height, (int) item);
                 mUserInfo.setHeight((int) item);
             }
@@ -332,7 +327,6 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("体重：" + item);
                 tv_bottom.setText(item + "kg");
-//                mPrefs.weight().put((int) item);
                 SPUtils.put(SPKey.SP_weight, (int) item);
                 mUserInfo.setTargetWeight((int) item);
             }
@@ -347,8 +341,6 @@ public class UserInfoActivity extends BaseALocationActivity {
             mUserInfo.setProvince("");
             mUserInfo.setCity("");
         }
-//        mUserInfo.setPhone(mPrefs.phone().get());
-//        mUserInfo.setToken(mPrefs.token().get());
         mUserInfo.setPhone(SPUtils.getString(SPKey.SP_phone));
         mUserInfo.setToken(SPUtils.getString(SPKey.SP_token));
 

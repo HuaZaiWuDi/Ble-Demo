@@ -320,7 +320,7 @@ public class BleTools {
     private ScanCallback scanCallback;
 
     public void startScan(BleScanConfig config, ScanCallback scanCallback) {
-        Log.d("bleManager", "开始扫描");
+
         this.scanCallback = scanCallback;
         final long timeOut = config.getScanTimeOut();
 
@@ -335,7 +335,7 @@ public class BleTools {
         }
 
         stopScanByM();
-
+        Log.d("bleManager", "开始扫描");
         BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
         ScanSettings scanSettings = new ScanSettings.Builder()
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)//仅回调第一个

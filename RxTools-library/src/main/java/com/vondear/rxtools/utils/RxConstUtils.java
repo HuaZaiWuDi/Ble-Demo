@@ -125,6 +125,16 @@ public class RxConstUtils {
      * 正则：用户名，取值范围为a-z,A-Z,0-9,"_",汉字，不能以"_"结尾,用户名必须是6-20位
      */
     public static final String REGEX_USERNAME = "^[\\w\\u4e00-\\u9fa5]{6,20}(?<!_)$";
+
+    /**
+     * 正则：密码，取值范围为a-z,A-Z,0-9用户名必须是6-20位
+     */
+    public static final String REGEX_PASSWORD = "^[A-Za-z0-9]{6,20}$";
+    /**
+     * 正则：验证码，取值范围为0-9用户名必须是4-6位
+     */
+    public static final String REGEX_VCODE = "^[0-9]{4,6}$";
+
     /**
      * 正则：yyyy-MM-dd格式的日期校验，已考虑平闰年
      */

@@ -10,7 +10,7 @@ import com.activeandroid.query.Update;
 import java.util.List;
 
 /**
- * Created by Jack on 2018/5/9.
+ * Created icon_hide_password Jack on 2018/5/9.
  */
 @Table(name = "SearchKeyTabs")
 public class SearchKeyTab extends Model {

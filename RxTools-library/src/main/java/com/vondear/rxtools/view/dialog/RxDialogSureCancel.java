@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vondear.rxtools.R;
@@ -15,37 +16,42 @@ import com.vondear.rxtools.R;
  */
 public class RxDialogSureCancel extends RxDialog {
 
+    private TextView mTvTitle;
     private TextView mTvContent;
     private TextView mTvSure;
     private TextView mTvCancel;
-    private TextView mTvTitle;
+    private ImageView img_close;
 
-    public void setTitle(String title) {
+    public RxDialogSureCancel setTitle(String title) {
         mTvTitle.setText(title);
+        return this;
     }
 
     public TextView getTvTitle() {
         return mTvTitle;
     }
 
-    public void setContent(String content) {
+    public RxDialogSureCancel setContent(String content) {
         this.mTvContent.setText(content);
+        return this;
     }
 
     public TextView getTvContent() {
         return mTvContent;
     }
 
-    public void setSure(String strSure) {
+    public RxDialogSureCancel setSure(String strSure) {
         this.mTvSure.setText(strSure);
+        return this;
     }
 
     public TextView getTvSure() {
         return mTvSure;
     }
 
-    public void setCancel(String strCancel) {
+    public RxDialogSureCancel setCancel(String strCancel) {
         this.mTvCancel.setText(strCancel);
+        return this;
     }
 
     public TextView getTvCancel() {
@@ -53,12 +59,18 @@ public class RxDialogSureCancel extends RxDialog {
     }
 
 
-    public void setSureListener(View.OnClickListener sureListener) {
-        mTvSure.setOnClickListener(sureListener);
+    public ImageView getImg_close() {
+        return img_close;
     }
 
-    public void setCancelListener(View.OnClickListener cancelListener) {
+    public RxDialogSureCancel setSureListener(View.OnClickListener sureListener) {
+        mTvSure.setOnClickListener(sureListener);
+        return this;
+    }
+
+    public RxDialogSureCancel setCancelListener(View.OnClickListener cancelListener) {
         mTvCancel.setOnClickListener(cancelListener);
+        return this;
     }
 
     private void initView() {
@@ -68,7 +80,14 @@ public class RxDialogSureCancel extends RxDialog {
         mTvContent = (TextView) dialog_view.findViewById(R.id.tv_content);
         mTvContent.setTextIsSelectable(true);
         mTvTitle = (TextView) dialog_view.findViewById(R.id.tv_title);
+        img_close = dialog_view.findViewById(R.id.iv_close);
         setContentView(dialog_view);
+        img_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
     public RxDialogSureCancel(Context context, int themeResId) {

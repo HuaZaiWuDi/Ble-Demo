@@ -148,10 +148,6 @@ public class WeightDataActivity extends BaseActivity {
 
     private void addWeightData(final int position) {
         final QNScaleStoreData qnScaleData = listReceives.get(position);
-        RxLogUtils.d("历史体重:---------------------------------");
-
-        long time = qnScaleData.getMeasureTime().getTime();
-        RxLogUtils.d("历史time：" + time);
 
         WeightAddBean bean = new WeightAddBean();
         bean.setUserId(SPUtils.getString(SPKey.SP_UserId));
@@ -216,8 +212,7 @@ public class WeightDataActivity extends BaseActivity {
     private void showDialog() {
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
         dialog.getTvTitle().setBackgroundResource(R.mipmap.leave_icon);
-        dialog.getTvContent().setText("你还有未领取的体重数据，\n" +
-                "离开后将全部被忽略\n？");
+        dialog.getTvContent().setText("你还有未领取的体重数据，\n离开后将全部被忽略\n？");
         dialog.setCancel(getString(R.string.btn_leave));
         dialog.setCancelListener(new View.OnClickListener() {
             @Override

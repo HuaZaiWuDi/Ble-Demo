@@ -11,14 +11,14 @@ public final class R {
         public static int sr_style = 0x7f04032b;
     }
     public static final class drawable {
-        public static int sr_classic_arrow_icon = 0x7f09010e;
+        public static int sr_classic_arrow_icon = 0x7f09010f;
     }
     public static final class id {
-        public static int sr_classic_arrow = 0x7f0c01b0;
-        public static int sr_classic_last_update = 0x7f0c01b1;
-        public static int sr_classic_progress = 0x7f0c01b2;
-        public static int sr_classic_text_container = 0x7f0c01b3;
-        public static int sr_classic_title = 0x7f0c01b4;
+        public static int sr_classic_arrow = 0x7f0c01af;
+        public static int sr_classic_last_update = 0x7f0c01b0;
+        public static int sr_classic_progress = 0x7f0c01b1;
+        public static int sr_classic_text_container = 0x7f0c01b2;
+        public static int sr_classic_title = 0x7f0c01b3;
     }
     public static final class string {
         public static int sr_hours_ago = 0x7f15006f;

@@ -190,6 +190,7 @@
     <dimen name="dimen_cg_mail">25dp</dimen>
     <dimen name="dimen_haobao_margintop">12dp</dimen>
     <dimen name="dimen_product_progress">300dp</dimen>
+    <dimen name="topBarHeight">@dimen/dimen_50</dimen>
     <string name="FirmwareVersion">固件版本号：%1$s</string>
     <string name="aboutUs">关于我们</string>
     <string name="about_clause">软件服务条款和隐私条款</string>

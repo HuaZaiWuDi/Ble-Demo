@@ -29,7 +29,7 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
- * Created by jk on 2018/5/24.
+ * Created icon_hide_password jk on 2018/5/24.
  */
 public abstract class BaseWebFragment extends BaseFragment implements FragmentKeyDown {
 

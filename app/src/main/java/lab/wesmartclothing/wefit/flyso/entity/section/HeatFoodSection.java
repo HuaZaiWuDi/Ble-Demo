@@ -5,7 +5,7 @@ import com.chad.library.adapter.base.entity.SectionEntity;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 
 /**
- * Created by jk on 2018/5/10.
+ * Created icon_hide_password jk on 2018/5/10.
  */
 public class HeatFoodSection extends SectionEntity<FoodListBean> {
 

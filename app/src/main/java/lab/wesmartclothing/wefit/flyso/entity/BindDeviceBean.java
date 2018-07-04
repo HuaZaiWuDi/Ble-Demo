@@ -3,7 +3,7 @@ package lab.wesmartclothing.wefit.flyso.entity;
 import java.io.Serializable;
 
 /**
- * Created by Jack on 2018/5/22.
+ * Created icon_hide_password Jack on 2018/5/22.
  */
 public class BindDeviceBean implements Serializable{
 

@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
 /**
- * Created by jk on 2018/5/28.
+ * Created icon_hide_password jk on 2018/5/28.
  */
 public class AddedHeatInfo {
 

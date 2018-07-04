@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.netlib.utils;
 
+import android.app.Dialog;
+
 import org.reactivestreams.Publisher;
 
 import io.reactivex.Flowable;
@@ -10,6 +12,9 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -37,6 +42,7 @@ public class RxThreadUtils {
         };
     }
 
+
     /**
      * 统一线程处理
      *
@@ -49,6 +55,31 @@ public class RxThreadUtils {
             public ObservableSource<T> apply(Observable<T> observable) {
                 return observable.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
+    /**
+     * 统一线程处理
+     *
+     * @param <T> 指定的泛型类型
+     * @return ObservableTransformer
+     */
+    public static <T> ObservableTransformer<T, T> showDialog(final Dialog dialog) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> observable) {
+                return observable.doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        dialog.show();
+                    }
+                }).doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        dialog.dismiss();
+                    }
+                });
             }
         };
     }

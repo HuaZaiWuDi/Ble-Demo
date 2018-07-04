@@ -14,7 +14,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 /**
- * Created by jk on 2018/5/19.
+ * Created icon_hide_password jk on 2018/5/19.
  */
 public class HeartRateProgressView extends View {
 

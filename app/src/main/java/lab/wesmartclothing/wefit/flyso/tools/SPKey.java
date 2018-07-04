@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.tools;
 
 /**
- * Created by jk on 2018/6/22.
+ * Created icon_hide_password jk on 2018/6/22.
  */
 public interface SPKey {
 

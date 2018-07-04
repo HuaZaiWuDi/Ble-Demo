@@ -15,7 +15,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
- * Created by jk on 2018/5/16.
+ * Created icon_hide_password jk on 2018/5/16.
  */
 
 @EBean(scope = EBean.Scope.Singleton)//单例模式 传入的是using context.getApplicationContext()对象

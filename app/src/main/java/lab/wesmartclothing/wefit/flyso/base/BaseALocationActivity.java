@@ -11,7 +11,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 /**
- * Created by jk on 2018/6/4.
+ * Created icon_hide_password jk on 2018/6/4.
  * <p>
  * 高德地图定位
  * <p>

@@ -237,10 +237,9 @@ public class SportsDetailsActivity extends BaseActivity {
     private void showDialog() {
         if (dialog == null) {
             dialog = new RxDialogSure(mActivity);
-            dialog.setLogo(R.mipmap.slice);
-            dialog.getTvTitle().setText("运动已经结束！！");
+            dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
+            dialog.getTvContent().setText("运动已经结束！！");
             dialog.setCanceledOnTouchOutside(false);
-            dialog.getTvContent().setVisibility(View.GONE);
             dialog.setSure("确定");
             dialog.getTvSure().setOnClickListener(new View.OnClickListener() {
                 @Override

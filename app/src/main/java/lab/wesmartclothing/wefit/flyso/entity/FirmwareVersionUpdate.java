@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
 /**
- * Created by jk on 2018/6/13.
+ * Created icon_hide_password jk on 2018/6/13.
  */
 public class FirmwareVersionUpdate {
 

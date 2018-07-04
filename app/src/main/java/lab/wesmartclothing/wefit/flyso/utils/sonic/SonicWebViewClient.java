@@ -9,7 +9,7 @@ import com.just.agentweb.MiddlewareWebClientBase;
 import com.tencent.sonic.sdk.SonicSession;
 
 /**
- * Created by cenxiaozhong on 2017/12/17.
+ * Created icon_hide_password cenxiaozhong on 2017/12/17.
  */
 
 public class SonicWebViewClient extends MiddlewareWebClientBase {

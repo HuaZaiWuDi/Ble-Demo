@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
- * Created by Jack on 2018/5/22.
+ * Created icon_hide_password Jack on 2018/5/22.
  */
 @SuppressLint("AppCompatCustomView")
 public class ScanView extends ImageView {

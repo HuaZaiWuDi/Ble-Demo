@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
 /**
- * Created by jk on 2018/5/17.
+ * Created icon_hide_password jk on 2018/5/17.
  */
 public class WeightIsUpdate {
 

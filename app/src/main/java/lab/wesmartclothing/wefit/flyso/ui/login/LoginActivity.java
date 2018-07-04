@@ -30,15 +30,13 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -51,9 +49,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
-
 
     @ViewById
     Button btn_login;
@@ -68,8 +64,6 @@ public class LoginActivity extends BaseActivity {
     @ViewById
     TextView tv_countDown;
 
-//    @Pref
-//    Prefs_ mPrefs;
 
     @Extra
     boolean BUNDLE_RELOGIN;
@@ -128,31 +122,14 @@ public class LoginActivity extends BaseActivity {
     private void login(String phone, String code) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.login(phone, code))
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        RxLogUtils.d("doOnSubscribe：");
-                        tipDialog.show();
-                    }
-                })
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        RxLogUtils.d("结束：");
-                        tipDialog.dismiss();
-                    }
-                })
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-
-                        RxLogUtils.d("结束：" + s);
                         try {
                             JSONObject jsonObject = new JSONObject(s);
                             String userId = jsonObject.getString("userId");
                             String token = jsonObject.getString("token");
-//                            mPrefs.UserId().put(userId);
-//                            mPrefs.token().put(token);
                             SPUtils.put(SPKey.SP_UserId, userId);
                             SPUtils.put(SPKey.SP_token, token);
 
@@ -163,7 +140,6 @@ public class LoginActivity extends BaseActivity {
 
                         getUserDevice();
                         initUserInfo();
-
                     }
 
                     @Override
@@ -193,13 +169,10 @@ public class LoginActivity extends BaseActivity {
                                 Device device = beanList.get(i);
                                 String deviceNo = device.getDeviceNo();
                                 if (BleKey.TYPE_SCALE.equals(deviceNo)) {
-//                                    mPrefs.scaleIsBind().put(device.getMacAddr());
                                     SPUtils.put(SPKey.SP_scaleMAC, device.getMacAddr());
                                 } else if (BleKey.TYPE_CLOTHING.equals(deviceNo)) {
-//                                    mPrefs.clothing().put(device.getMacAddr());
                                     SPUtils.put(SPKey.SP_clothingMAC, device.getMacAddr());
                                 }
-
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -230,10 +203,6 @@ public class LoginActivity extends BaseActivity {
                             if (sex == 0) {
                                 RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
                             } else {
-//                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
-//                                mPrefs.weight().put(targetWeight);
-//                                mPrefs.height().put(height);
-//                                mPrefs.sex().put(sex);
 
                                 SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
                                 SPUtils.put(SPKey.SP_weight, targetWeight);
@@ -258,12 +227,12 @@ public class LoginActivity extends BaseActivity {
 
     private void getVCode(String phone) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone))
+        RxManager.getInstance().doNetSubscribe(dxyService.sendCode2Login(phone))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        edit_VCode.setText(s);
+//                        edit_VCode.setText(s);
                         RxToast.success(getString(R.string.SMSSended));
                     }
 

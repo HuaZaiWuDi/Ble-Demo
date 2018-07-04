@@ -3,7 +3,7 @@ package lab.wesmartclothing.wefit.flyso.entity;
 import java.util.List;
 
 /**
- * Created by jk on 2018/5/9.
+ * Created icon_hide_password jk on 2018/5/9.
  */
 public class FoodInfoItem {
 

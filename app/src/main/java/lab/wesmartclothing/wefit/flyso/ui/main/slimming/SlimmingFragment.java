@@ -26,7 +26,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_slimming)
 public class SlimmingFragment extends BaseFragment {

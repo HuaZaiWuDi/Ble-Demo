@@ -38,16 +38,12 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
 import lab.wesmartclothing.wefit.flyso.view.SharePop;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import me.shaohui.shareutil.LoginUtil;
 import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.login.LoginListener;
-import me.shaohui.shareutil.login.LoginPlatform;
-import me.shaohui.shareutil.login.LoginResult;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_find)
 public class FindFragment extends BaseWebFragment {
@@ -157,15 +153,7 @@ public class FindFragment extends BaseWebFragment {
                             case 5:
                                 ShareUtil.shareMedia(mActivity, SharePlatform.QZONE, title, desc, url, imgUrl, shareListener);
                                 break;
-                            case 6:
-                                LoginUtil.login(mActivity, LoginPlatform.WX, listener, true);
-                                break;
-                            case 7:
-                                LoginUtil.login(mActivity, LoginPlatform.QQ, listener, true);
-                                break;
-                            case 8:
-                                LoginUtil.login(mActivity, LoginPlatform.WEIBO, listener, true);
-                                break;
+
                         }
                     }
                 }).build().show();
@@ -211,23 +199,6 @@ public class FindFragment extends BaseWebFragment {
 
     };
 
-    final LoginListener listener = new LoginListener() {
-        @Override
-        public void loginSuccess(LoginResult result) {
-            //登录成功， 如果你选择了获取用户信息，可以通过
-            RxLogUtils.e("登录成功:" + result.toString());
-        }
-
-        @Override
-        public void loginFailure(Exception e) {
-            RxLogUtils.e("登录失败");
-        }
-
-        @Override
-        public void loginCancel() {
-            RxLogUtils.e("登录取消");
-        }
-    };
 
     @Override
     public void onDestroy() {

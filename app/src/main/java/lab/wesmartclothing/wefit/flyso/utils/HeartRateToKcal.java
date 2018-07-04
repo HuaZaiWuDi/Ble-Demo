@@ -9,7 +9,7 @@ import java.util.Calendar;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
- * Created by jk on 2018/6/13.
+ * Created icon_hide_password jk on 2018/6/13.
  */
 @EBean
 public class HeartRateToKcal {

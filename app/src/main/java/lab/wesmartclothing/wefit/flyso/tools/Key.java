@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.tools;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 public interface Key {
 
@@ -28,7 +28,7 @@ public interface Key {
     public static final String BUNDLE_RELOGIN = "BUNDLE_RELOGIN";//重新登录
     public static final String BUNDLE_TITLE = "BUNDLE_TITLE";//重新登录
     String BUNDLE_VOLTAGE = "BUNDLE_VOLTAGE";//电压容量
-
+    String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播
@@ -67,6 +67,9 @@ public interface Key {
     public static final String WEIBO_ID = "3322261844";
     public static final String WB_URL = "https://sns.whalecloud.com/sina2/callback";
 
+    String LoginType_WEXIN = "WeChat";
+    String LoginType_QQ = "QQ";
+    String LoginType_WEIBO = "MicroBlog";
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY

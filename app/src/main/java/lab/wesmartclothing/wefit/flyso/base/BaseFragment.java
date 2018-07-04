@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -24,7 +23,7 @@ import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
- * Created by vondear
+ * Created icon_hide_password vondear
  * on 2015/11/21.
  * <p>
  * 若需要采用Lazy方式加载的Fragment，初始化内容放到initData实现
@@ -36,6 +35,8 @@ import lab.wesmartclothing.wefit.netlib.utils.RxBus;
  * 注意事项 2:
  * 如果是通过FragmentTransaction的show和hide的方法来控制显示，调用的是onHiddenChanged.
  * 针对初始就show的Fragment 为了触发onHiddenChanged事件 达到lazy效果 需要先hide再show
+ * QMUIFragment.UI
+ *
  */
 public abstract class BaseFragment extends Fragment {
 
@@ -95,6 +96,11 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    public BaseFragment() {
+    }
+
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -119,11 +125,8 @@ public abstract class BaseFragment extends Fragment {
 
 
     private void initDialog() {
-        QMUITipDialog mQMUITipDialog = new QMUITipDialog.Builder(mActivity)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(getString(R.string.tv_loading))
-                .create();
-        tipDialog = new TipDialog(mQMUITipDialog);
+
+        tipDialog = new TipDialog(mActivity);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {

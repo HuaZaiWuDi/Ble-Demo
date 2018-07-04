@@ -15,7 +15,7 @@ import android.widget.PopupWindow;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
- * Created by jk on 2018/5/28.
+ * Created icon_hide_password jk on 2018/5/28.
  */
 public class SharePop extends PopupWindow {
     private Activity mContext;

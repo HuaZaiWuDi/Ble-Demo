@@ -77,7 +77,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
 import okhttp3.RequestBody;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_weight)
 public class WeightFragment extends BaseFragment {
@@ -494,13 +494,6 @@ public class WeightFragment extends BaseFragment {
 
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-//                Highlight byTouchPoint = mLineChart.getHighlightByTouchPoint(me.getX(), me.getY());
-//                if (byTouchPoint != null) {
-//                    mLineChart.highlightValue(byTouchPoint);
-//                    if (list.size() > 0)
-//                        synWeightData(list.get((int) byTouchPoint.getX()));
-//                }
-
                 float visibleX = mLineChart.getLowestVisibleX();
 //                RxLogUtils.d("最小显示的X轴：" + visibleX);
                 if (visibleX != -3) {
@@ -521,35 +514,16 @@ public class WeightFragment extends BaseFragment {
     }
 
 
-    private void synWeightData(WeightDataBean.WeightListBean.ListBean bean) {
-        if (bean == null) return;
-        weightLists.get(0).setData_left(bean.getBodyAge() + getString(R.string.bodyAge));
-        weightLists.get(0).setData_right(bean.getBodyFat() + "%");
-        weightLists.get(1).setData_left(bean.getBmr() + "kcal");
-        weightLists.get(1).setData_right(bean.getBodyType());
-        weightLists.get(2).setData_left(bean.getBodyFfm() + "kg");
-        weightLists.get(2).setData_right(bean.getWeight() + "kg");
-        weightLists.get(3).setData_left(bean.getSinew() + "%");
-        weightLists.get(3).setData_right(bean.getMuscle() + "kg");
-        weightLists.get(4).setData_left(bean.getProtein() + "%");
-        weightLists.get(4).setData_right(bean.getWater() + "%");
-        weightLists.get(5).setData_left(bean.getSubfat() + "%");
-        weightLists.get(5).setData_right(bean.getBone() + "kg");
-        weightLists.get(6).setData_left(bean.getVisfat() + getString(R.string.level));
-        weightLists.get(6).setData_right(bean.getBmi() + "");
-
-        adapter.setNewData(weightLists);
-
-        tv_weight_date.setText(RxFormat.setFormatDate(bean.getWeightDate(), RxFormat.Date));
-    }
-
     private void addWeightData(final QNScaleData qnScaleData) {
         WeightAddBean bean = new WeightAddBean();
         bean.setUserId(SPUtils.getString(SPKey.SP_UserId));
         bean.setMeasureTime(System.currentTimeMillis() + "");
         for (QNScaleItemData item : qnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);
+            WeightDataBean.WeightListBean.ListBean listBean = WeightTools.ble2Backstage2(item);
+            synWeightData(listBean);
         }
+
         String s = new Gson().toJson(bean, WeightAddBean.class);
 
         SPUtils.put(SPKey.SP_realWeight, (float) qnScaleData.getItem(1).getValue());
@@ -581,6 +555,28 @@ public class WeightFragment extends BaseFragment {
                         RxToast.error(error);
                     }
                 });
+    }
+
+    private void synWeightData(WeightDataBean.WeightListBean.ListBean bean) {
+        if (bean == null) return;
+        weightLists.get(0).setData_left(bean.getBodyAge() + getString(R.string.bodyAge));
+        weightLists.get(0).setData_right(bean.getBodyFat() + "%");
+        weightLists.get(1).setData_left(bean.getBmr() + "kcal");
+        weightLists.get(1).setData_right(bean.getBodyType());
+        weightLists.get(2).setData_left(bean.getBodyFfm() + "kg");
+        weightLists.get(2).setData_right(bean.getWeight() + "kg");
+        weightLists.get(3).setData_left(bean.getSinew() + "%");
+        weightLists.get(3).setData_right(bean.getMuscle() + "kg");
+        weightLists.get(4).setData_left(bean.getProtein() + "%");
+        weightLists.get(4).setData_right(bean.getWater() + "%");
+        weightLists.get(5).setData_left(bean.getSubfat() + "%");
+        weightLists.get(5).setData_right(bean.getBone() + "kg");
+        weightLists.get(6).setData_left(bean.getVisfat() + getString(R.string.level));
+        weightLists.get(6).setData_right(bean.getBmi() + "");
+
+        adapter.setNewData(weightLists);
+
+        tv_weight_date.setText(RxFormat.setFormatDate(bean.getWeightDate(), RxFormat.Date));
     }
 
     //验证体重是否合理

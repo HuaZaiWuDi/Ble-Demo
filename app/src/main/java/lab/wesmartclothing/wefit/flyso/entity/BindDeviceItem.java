@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by jk on 2018/5/22.
+ * Created icon_hide_password jk on 2018/5/22.
  */
 @EBean
 public class BindDeviceItem implements Serializable {

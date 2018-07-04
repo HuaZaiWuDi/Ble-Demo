@@ -7,7 +7,17 @@
               android:background="@drawable/shape_round_white"
               android:gravity="center"
               android:orientation="vertical"
-              android:paddingTop="16.5dp">
+    >
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="5dp"
+        android:padding="8dp"
+        android:src="@drawable/icon_cancle"/>
+
 
     <TextView
         android:id="@+id/tv_title"

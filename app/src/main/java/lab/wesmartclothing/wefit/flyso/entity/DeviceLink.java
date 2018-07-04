@@ -12,7 +12,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 /**
- * Created by jk on 2018/5/29.
+ * Created icon_hide_password jk on 2018/5/29.
  */
 public class DeviceLink {
 

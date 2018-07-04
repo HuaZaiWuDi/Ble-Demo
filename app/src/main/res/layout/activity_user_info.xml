@@ -161,7 +161,6 @@
             android:layout_width="@dimen/d_350"
             android:layout_height="180px"
             android:layout_alignParentBottom="true"
-            android:layout_below="@id/layout_VCode"
             android:layout_centerHorizontal="true"
             android:background="@mipmap/bt_03"
             android:paddingBottom="@dimen/d_50"

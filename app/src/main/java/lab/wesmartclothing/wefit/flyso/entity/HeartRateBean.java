@@ -16,7 +16,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 /**
- * Created by jk on 2018/6/11.
+ * Created icon_hide_password jk on 2018/6/11.
  */
 @EBean
 public class HeartRateBean {

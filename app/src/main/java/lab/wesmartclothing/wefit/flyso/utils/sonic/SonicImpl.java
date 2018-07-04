@@ -11,7 +11,7 @@ import com.tencent.sonic.sdk.SonicSession;
 import com.tencent.sonic.sdk.SonicSessionConfig;
 
 /**
- * Created by cenxiaozhong on 2017/12/17.
+ * Created icon_hide_password cenxiaozhong on 2017/12/17.
  */
 
 public class SonicImpl {

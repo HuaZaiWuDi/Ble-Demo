@@ -48,10 +48,14 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
                     String data = object.getString("data");
                     if (data != null)
                         _onNext((T) data);
-                    else
+                    else {
                         _onNext((T) msg);
-                } else
+
+                    }
+                } else {
                     _onError(msg);
+                    _onError(msg, status);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 onError(new Throwable("异常"));
@@ -63,5 +67,11 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     protected abstract void _onNext(T t);
 
 
-    protected abstract void _onError(String error);
+    protected void _onError(String error) {
+
+    }
+
+    protected void _onError(String error, int code) {
+
+    }
 }

@@ -25,7 +25,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 
 
 /**
- * Created by jk on 2017/7/7.
+ * Created icon_hide_password jk on 2017/7/7.
  */
 
 public class DateChoose extends RelativeLayout {

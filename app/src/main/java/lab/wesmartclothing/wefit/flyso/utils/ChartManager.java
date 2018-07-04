@@ -19,7 +19,7 @@ import java.util.List;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
- * Created by jk on 2018/5/23.
+ * Created icon_hide_password jk on 2018/5/23.
  */
 public class ChartManager {
     private XAxis x;

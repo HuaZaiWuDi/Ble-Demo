@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 
 import com.google.gson.Gson;
@@ -53,7 +52,7 @@ public class SpalshActivity extends BaseActivity {
     void replaced(Intent intent) {
         String packageName = intent.getData().getSchemeSpecificPart();
         if (this.getPackageName().equals(packageName)) {
-            //替换成功
+            //覆盖升级APP成功
             UpdateAppBean updateAppBean = new UpdateAppBean();
             updateAppBean.setVersionFlag(UpdateAppBean.VERSION_FLAG_APP);
             updateAppBean.setVersion(RxDeviceUtils.getAppVersionName());
@@ -66,21 +65,12 @@ public class SpalshActivity extends BaseActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_spalsh);
-
-    }
-
-    @Override
     @AfterViews
     public void initView() {
         initPromissions();
 
 
 //        //测试账号
-//        mPrefs.UserId().put("");
-//        mPrefs.UserId().put("testuser");
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 
 
@@ -103,18 +93,12 @@ public class SpalshActivity extends BaseActivity {
                             int targetWeight = object.getInt("targetWeight");
                             String birthday = object.getString("birthday");
                             isSaveUserInfo = sex == 0;
-                            if (!isSaveUserInfo) {
+                            if (!isSaveUserInfo) {//判断性别是否为0来判断是否录入个人信息
 
                                 SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
                                 SPUtils.put(SPKey.SP_weight, targetWeight);
                                 SPUtils.put(SPKey.SP_height, height);
                                 SPUtils.put(SPKey.SP_sex, sex);
-
-
-//                                mPrefs.birthDayMillis().put(Long.parseLong(birthday));
-//                                mPrefs.weight().put(targetWeight);
-//                                mPrefs.height().put(height);
-//                                mPrefs.sex().put(sex);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -135,11 +119,11 @@ public class SpalshActivity extends BaseActivity {
             public void run() {
                 //通过验证是否保存userId来判断是否登录
                 if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
-                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, LoginActivity_.class);
-                } else if (isSaveUserInfo)
-                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, UserInfoActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(mActivity, LoginActivity_.class);
+                } else if (isSaveUserInfo)//
+                    RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity_.class);
                 else
-                    RxActivityUtils.skipActivityAndFinish(SpalshActivity.this, MainActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity_.class);
             }
         }, 500);
     }
@@ -186,6 +170,7 @@ public class SpalshActivity extends BaseActivity {
     private void saveUserInfo() {
         SaveUserInfo mUserInfo = (SaveUserInfo) MyAPP.getACache().getAsObject(Key.CACHE_USER_INFO);
         if (mUserInfo == null) return;
+        else RxLogUtils.e("未上传的用户信息：" + mUserInfo.toString());
         String s = new Gson().toJson(mUserInfo, SaveUserInfo.class);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

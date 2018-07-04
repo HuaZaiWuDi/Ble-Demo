@@ -119,9 +119,6 @@ public class AddDeviceActivity extends BaseActivity {
     String BUNDLE_BIND_TYPE = "all";
 
 
-//    @Pref
-//    Prefs_ mPrefs;
-
 
     private int stepState = 0;
     private BaseQuickAdapter adapter;
@@ -164,7 +161,7 @@ public class AddDeviceActivity extends BaseActivity {
                         RxActivityUtils.finishActivity();
                     }
                 }
-            }, 500);
+            }, 800);
         }
     }
 
@@ -371,7 +368,6 @@ public class AddDeviceActivity extends BaseActivity {
         for (BindDeviceBean bean : beans) {
             if (bean.isBind()) {
                 BindDeviceItem.DeviceListBean deviceList = new BindDeviceItem.DeviceListBean();
-//                deviceList.setDeviceName(bean.getDeivceType() == 0 ? getString(R.string.scale) : getString(R.string.clothing));
                 if (BaseALocationActivity.aMapLocation != null) {
                     deviceList.setCity(BaseALocationActivity.aMapLocation.getCity());
                     deviceList.setCountry(BaseALocationActivity.aMapLocation.getCountry());
@@ -381,10 +377,8 @@ public class AddDeviceActivity extends BaseActivity {
                 deviceList.setDeviceNo(bean.getDeivceType() == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
                 mDeviceLists.add(deviceList);
                 if (bean.getDeivceType() == 0) {
-//                    mPrefs.scaleIsBind().put(bean.getMac());
                     SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
                 } else {
-//                    mPrefs.clothing().put(bean.getMac());
                     SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
                 }
             }
@@ -440,7 +434,6 @@ public class AddDeviceActivity extends BaseActivity {
 
                     @Override
                     protected void _onError(String error) {
-//                        RxToast.error(error);
                         //网络获取异常不可用
                         String s = MyAPP.getACache().getAsString(Key.CACHE_BIND_INFO);
                         if (s != null) {

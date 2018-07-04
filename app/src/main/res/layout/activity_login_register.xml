@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.login.LoginRegisterActivity">
+
+
+    <com.flyco.tablayout.CommonTabLayout
+        android:id="@+id/mCommonTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_50"
+        android:layout_marginLeft="@dimen/dimen_35"
+        android:layout_marginRight="@dimen/dimen_35"
+        android:layout_marginTop="@dimen/dimen_50"
+        android:background="@color/white"
+        app:tl_divider_color="@color/GrayWrite"
+        app:tl_divider_width="@dimen/dimen_1"
+        app:tl_indicator_color="@color/red"
+        app:tl_indicator_gravity="BOTTOM"
+        app:tl_indicator_margin_top="@dimen/dimen_10"
+        app:tl_indicator_style="NORMAL"
+        app:tl_textBold="SELECT"
+        app:tl_textSelectColor="@color/Gray"
+        app:tl_textUnselectColor="@color/GrayWrite"
+        app:tl_textsize="18sp"/>
+
+    <com.vondear.rxtools.view.UnScrollableViewPager
+        android:id="@+id/mViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_200"
+        android:layout_below="@+id/mCommonTabLayout">
+
+    </com.vondear.rxtools.view.UnScrollableViewPager>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mViewPager"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/dimen_35">
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_login"
+            android:layout_width="260dp"
+            android:layout_height="46dp"
+            android:layout_alignParentRight="true"
+            android:background="@mipmap/icon_biyan"
+            android:text="登录"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dimen_18"
+            app:qmui_backgroundColor="@color/BrightGray"
+            app:qmui_borderColor="@color/BrightGray"
+            app:qmui_radius="23dp"/>
+
+
+        <View
+            android:layout_width="@dimen/dimen_40"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_below="@+id/edit_password"
+            android:layout_marginTop="@dimen/dimen_50"
+            android:background="@color/GrayWrite"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/dimen_35"
+            android:layout_marginTop="@dimen/dimen_35"
+            android:text="其他登录方式"
+            android:textColor="@color/Gray"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/img_wexin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dimen_40"
+                android:layout_toLeftOf="@+id/img_qq"
+                android:background="@mipmap/icon_login_wechat"/>
+
+            <ImageView
+                android:id="@+id/img_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@mipmap/icon_login_qq"/>
+
+            <ImageView
+                android:id="@+id/img_weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_40"
+                android:layout_toRightOf="@+id/img_qq"
+                android:background="@mipmap/icon_login_weibo"/>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

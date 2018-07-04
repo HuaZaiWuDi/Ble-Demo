@@ -31,7 +31,7 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import okhttp3.RequestBody;
 
 /**
- * Created by jk on 2018/5/14.
+ * Created icon_hide_password jk on 2018/5/14.
  */
 @EBean(scope = EBean.Scope.Singleton)//单例模式 传入的是using context.getApplicationContext()对象
 public class AddOrUpdateFoodDialog {

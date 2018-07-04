@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +16,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -33,7 +31,7 @@ import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
- * Created by 华 on 2017/5/2.
+ * Created icon_hide_password 华 on 2017/5/2.
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -59,6 +57,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mActivity = this;
         RxActivityUtils.addActivity(this);
 
+        ScreenAdapter.setCustomDensity(this);
         initDialog();
     }
 
@@ -76,11 +75,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     private void initDialog() {
-        QMUITipDialog mQMUITipDialog = new QMUITipDialog.Builder(this)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(getString(R.string.tv_loading))
-                .create();
-        tipDialog = new TipDialog(mQMUITipDialog);
+        tipDialog = new TipDialog(mContext);
     }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {

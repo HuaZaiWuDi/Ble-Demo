@@ -16,6 +16,7 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.qingniu.qnble.scanner.c;
 import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleScanConfig;
@@ -75,7 +76,6 @@ public class BleService extends Service {
 
     @Bean
     QNBleTools mQNBleTools;
-
     @Bean
     HeartRateBean mHeartRateBean;
     @Bean
@@ -160,11 +160,17 @@ public class BleService extends Service {
                 super.onScanResult(callbackType, result);
                 RxLogUtils.d("蓝牙扫描：" + result.toString());
                 BluetoothDevice device = result.getDevice();
+
                 if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
-                    RxLogUtils.d("扫描到体脂称：" + device.getName());
+                    RxLogUtils.d("扫描到体脂称：" + device.getAddress());
                     byte[] bytes = result.getScanRecord().getBytes();
                     RxLogUtils.d("广播数据：" + HexUtil.encodeHexStr(bytes));
-                    com.qingniu.qnble.scanner.ScanResult scanResult = new com.qingniu.qnble.scanner.ScanResult(device, null, result.getRssi());
+                    RxLogUtils.d("广播数据长度：" + bytes.length);
+
+                    byte[] bleBytes = new byte[92];
+                    System.arraycopy(bleBytes, 0, bytes, 0, bytes.length);
+
+                    com.qingniu.qnble.scanner.ScanResult scanResult = new com.qingniu.qnble.scanner.ScanResult(device, new c(bleBytes), result.getRssi());
                     QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);//转换对象
                     RxBus.getInstance().post(bleDevice);
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
@@ -173,9 +179,10 @@ public class BleService extends Service {
                     }
                 } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
                     BleDevice bleDevice = new BleDevice(device);//转换对象
-                    RxLogUtils.d("扫描到瘦身衣：" + device.getName());
+                    RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)))
                         connectClothing(bleDevice);
+                    RxBus.getInstance().post(bleDevice);
 
                     byte[] scanRecord = result.getScanRecord().getBytes();
                     int b1 = scanRecord[21];
@@ -186,26 +193,24 @@ public class BleService extends Service {
                     firmwareVersion = b1 + "." + b2 + "." + b3;
                     RxLogUtils.d("版本号：" + firmwareVersion);
 
-                    RxBus.getInstance().post(bleDevice);
                 }
             }
 
             @Override
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
-                RxLogUtils.d("蓝牙失败：" + errorCode);
+                RxLogUtils.d("扫描失败：" + errorCode);
             }
 
             @Override
             public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
                 super.onBatchScanResults(results);
-                RxLogUtils.d("蓝牙扫描：" + results.size());
+                RxLogUtils.d("扫描扫描结果：" + results.size());
             }
         });
-
-
     }
 
+    //通过UUID验证设备类型
     public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {
         List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
         for (ParcelUuid uuid : uuids) {
@@ -263,7 +268,6 @@ public class BleService extends Service {
                 RxLogUtils.d("体重秤状态变化:" + i);
             }
         });
-
     }
 
 
@@ -305,8 +309,6 @@ public class BleService extends Service {
                         syncBleSetting();
                     }
                 });
-
-
             }
 
             @Override
@@ -319,6 +321,12 @@ public class BleService extends Service {
                     mHeartRateBean.setAthlList(athlRecord_2);
                     mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
                     athlRecord_2.clear();
+                }
+                if (athlRecord.size() > 0) {
+                    mHeartRateBean.setDuration(athlRecord.size() * 10);
+                    mHeartRateBean.setAthlList(athlRecord);
+                    mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+                    athlRecord.clear();
                 }
             }
         });
@@ -357,6 +365,7 @@ public class BleService extends Service {
                 if (packageCount > 0) {
                     RxLogUtils.d("开始同步包数据");
                     synData();
+                    RxToast.info("开始同步本地数据");
                     athlRecord.clear();
                 } else RxLogUtils.d("没有数据同步");
 
@@ -398,7 +407,7 @@ public class BleService extends Service {
                 //验证没有数据则同步结束
                 if (data.length <= 3) {
                     RxLogUtils.d("数据同步结束");
-
+                    RxToast.success("同步本地数据成功");
                     if (athlRecord.size() > 0) {
                         mHeartRateBean.setDuration(athlRecord.size() * 10);
                         mHeartRateBean.setAthlList(athlRecord);
@@ -483,8 +492,6 @@ public class BleService extends Service {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("添加心率：" + s);
-
                         FirmwareVersionUpdate firmwareVersionUpdate = new Gson().fromJson(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");

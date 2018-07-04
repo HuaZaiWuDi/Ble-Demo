@@ -67,7 +67,7 @@ import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_sports)
 public class SportsFragment extends BaseFragment {

@@ -104,7 +104,38 @@ public interface RetrofitService {
     Observable<String> logout();
 
     @GET("login/sendCode")
+    Observable<String> sendCode2Login(@Query("phone") String phone);
+
+    @GET("sendCode")
     Observable<String> sendCode(@Query("phone") String phone);
+
+    @FormUrlEncoded
+    @POST("register")
+    Observable<String> register(@Field("phone") String phone, @Field("code") String code, @Field("password") String password);
+
+
+    @FormUrlEncoded
+    @POST("outerLogin")
+    Observable<String> outerLogin(@Field("outerId") String outerId, @Field("userName") String userName,
+                                  @Field("imgUrl") String imgUrl, @Field("userType") String userType);
+
+    @FormUrlEncoded
+    @POST("toResetPassword")
+    Observable<String> toResetPassword(@Field("phone") String phone, @Field("code") String code);
+
+    @FormUrlEncoded
+    @POST("pwdLogin")
+    Observable<String> pwdLogin(@Field("phone") String phone, @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("resetPassword")
+    Observable<String> resetPassword(@Field("phone") String phone, @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("phoneBind")
+    Observable<String> phoneBind(@Field("phone") String phone, @Field("code") String password,
+                                 @Field("outerId") String outerId, @Field("userName") String userName,
+                                 @Field("imgUrl") String imgUrl, @Field("userType") String userType);
 
     ///////////////////////////////////////////////////////////////////////////
     // 我的

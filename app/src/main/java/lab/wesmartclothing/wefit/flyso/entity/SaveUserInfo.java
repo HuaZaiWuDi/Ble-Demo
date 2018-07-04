@@ -5,7 +5,7 @@ import org.androidannotations.annotations.EBean;
 import java.io.Serializable;
 
 /**
- * Created by jk on 2018/5/22.
+ * Created icon_hide_password jk on 2018/5/22.
  */
 @EBean
 public class SaveUserInfo implements Serializable {
@@ -27,8 +27,8 @@ public class SaveUserInfo implements Serializable {
      * signature : string
      * token : string
      * userType : string
-     * wechat : string
-     * weibo : string
+     * icon_login_wechat : string
+     * icon_login_weibo : string
      * email : tom@qq.com
      * phone : 13366668888
      * userName : 13366668888
@@ -304,5 +304,41 @@ public class SaveUserInfo implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+
+    @Override
+    public String toString() {
+        return "SaveUserInfo{" +
+                "createTokenTime=" + createTokenTime +
+                ", failCount=" + failCount +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", lockStatus=" + lockStatus +
+                ", loginCount=" + loginCount +
+                ", loginFlag=" + loginFlag +
+                ", loginMacId='" + loginMacId + '\'' +
+                ", loginTime=" + loginTime +
+                ", phoneCode=" + phoneCode +
+                ", qq='" + qq + '\'' +
+                ", registerTime=" + registerTime +
+                ", saltRandom='" + saltRandom + '\'' +
+                ", signature='" + signature + '\'' +
+                ", token='" + token + '\'' +
+                ", userType='" + userType + '\'' +
+                ", icon_login_wechat='" + wechat + '\'' +
+                ", icon_login_weibo='" + weibo + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", sex=" + sex +
+                ", birthday='" + birthday + '\'' +
+                ", height=" + height +
+                ", targetWeight=" + targetWeight +
+                ", country='" + country + '\'' +
+                ", province='" + province + '\'' +
+                ", city='" + city + '\'' +
+                ", avatar='" + avatar + '\'' +
+                '}';
     }
 }

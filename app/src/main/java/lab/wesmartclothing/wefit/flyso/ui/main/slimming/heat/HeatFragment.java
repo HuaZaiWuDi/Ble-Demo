@@ -60,7 +60,7 @@ import me.dkzwm.widget.srl.config.Constants;
 import okhttp3.RequestBody;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_heat)
 public class HeatFragment extends BaseFragment {

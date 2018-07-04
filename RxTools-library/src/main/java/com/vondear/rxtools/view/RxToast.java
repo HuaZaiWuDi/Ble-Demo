@@ -13,6 +13,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,14 +51,13 @@ public class RxToast {
     private static Toast currentToast;
 
 
-
-
     //*******************************************普通 使用ApplicationContext 方法*********************
     /**
      * Toast 替代方法 ：立即显示无需等待
      */
     private static Toast mToast;
     private static long mExitTime;
+    private static int gravity = Gravity.CENTER;//中间显示
 
     public static void normal(@NonNull String message) {
         normal(getContext(), message, Toast.LENGTH_SHORT, null, false).show();
@@ -246,6 +246,7 @@ public class RxToast {
         }
         setBackground(toastLayout, drawableFrame);
 
+
         if (withIcon) {
             if (icon == null)
                 throw new IllegalArgumentException("Avoid passing 'icon' as null if 'withIcon' is set to true");
@@ -259,6 +260,7 @@ public class RxToast {
 
         currentToast.setView(toastLayout);
         currentToast.setDuration(duration);
+        currentToast.setGravity(gravity, 0, 0);
         return currentToast;
     }
 

@@ -20,14 +20,16 @@ import com.vondear.rxtools.utils.RxTextUtils;
  */
 public class RxDialogSure extends RxDialog {
 
-    private ImageView mIvLogo;
     private TextView mTvTitle;
     private TextView mTvContent;
     private TextView mTvSure;
+    private ImageView iv_close;
 
-    public ImageView getIvLogo() {
-        return mIvLogo;
+
+    public ImageView getIv_close() {
+        return iv_close;
     }
+
 
     public TextView getTvTitle() {
         return mTvTitle;
@@ -41,20 +43,23 @@ public class RxDialogSure extends RxDialog {
         return mTvContent;
     }
 
-    public void setLogo(int resId) {
-        mIvLogo.setImageResource(resId);
-    }
 
-    public void setTitle(String title) {
+    public RxDialogSure setTitle(String title) {
         mTvTitle.setText(title);
+        return this;
     }
 
-    public void setSure(String content) {
+    public RxDialogSure setSure(String content) {
         mTvSure.setText(content);
+        return this;
     }
 
+    public RxDialogSure setSureListener(View.OnClickListener sureListener) {
+        mTvSure.setOnClickListener(sureListener);
+        return this;
+    }
 
-    public void setContent(String str) {
+    public RxDialogSure setContent(String str) {
         if (RxRegUtils.isURL(str)) {
             // 响应点击事件的话必须设置以下属性
             mTvContent.setMovementMethod(LinkMovementMethod.getInstance());
@@ -62,7 +67,7 @@ public class RxDialogSure extends RxDialog {
         } else {
             mTvContent.setText(str);
         }
-
+        return this;
     }
 
     private void initView() {
@@ -73,7 +78,13 @@ public class RxDialogSure extends RxDialog {
         mTvContent = (TextView) dialog_view.findViewById(R.id.tv_content);
         mTvContent.setMovementMethod(ScrollingMovementMethod.getInstance());
         mTvContent.setTextIsSelectable(true);
-        mIvLogo = (ImageView) dialog_view.findViewById(R.id.iv_logo);
+        iv_close = dialog_view.findViewById(R.id.iv_close);
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         setContentView(dialog_view);
     }
 

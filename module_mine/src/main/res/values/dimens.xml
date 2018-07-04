@@ -88,4 +88,7 @@
     <!--红包选择margintop-->
     <dimen name="dimen_haobao_margintop">12dp</dimen>
     <dimen name="dimen_product_progress">300dp</dimen>
+
+    <dimen name="topBarHeight">@dimen/dimen_50</dimen>
+
 </resources>

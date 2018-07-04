@@ -20,6 +20,37 @@ import retrofit2.HttpException;
  */
 public class RxHttpException {
 
+    /**
+     * INVALID_PHONE("10000", "无效的手机号"),
+     * <p>
+     * // 用户注册
+     * PHONE_IS_REGISTER("10001", "您输入的手机号已经被注册"),
+     * PHONE_NOT_REGISTER("10002", "您输入的手机号未注册"),
+     * AUTH_CHECK_FAIL("10003", "权限校验失败"),
+     * USER_NOT_EXIST("10004", "找不到对应的用户信息"),
+     * <p>
+     * //前台用户登录
+     * CODE_NOT_EXISTS("10010", "此手机号对应的验证码不存在"),
+     * ERROR_CODE("10011", "验证码不正确"),
+     * <p>
+     * // app用户密码登录
+     * INVALID_ACCOUNT("10020", "无效账号（手机号不存在）"),
+     * PASSWORD_NOT_SET("10021", "未设置登录密码"),
+     * PASSWORD_ERROR("10022", "密码错误"),
+     * <p>
+     * // 第三方登录
+     * INVALID_USER_TYPE("10030", "无效登录类型"),
+     * USER_TYPE_IS_BIND("10031", "您输入的手机号已经被绑定"),
+     * <p>
+     * //用户模块
+     * USER_ID_EMPTY("10021", "用户ID不能为空"),
+     * <p>
+     * //10000-19999 管理员登录
+     * ADMIN_NOT_EXISTS("10100", "管理员账号不存在"),
+     * ADMIN_ERROR_PASSWORD("10101", "密码有误");
+     */
+
+
     public String handleResponseError(Throwable t) {
         //这里不光是只能打印错误,还可以根据不同的错误作出不同的逻辑处理
         String msg = "网络异常";
@@ -37,6 +68,7 @@ public class RxHttpException {
     }
 
     private String convertStatusCode(HttpException httpException) {
+
         String msg;
         if (httpException.code() == 500) {
             msg = "服务器发生错误";

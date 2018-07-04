@@ -21,7 +21,7 @@ import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
 
 /**
- * Created by jk on 2018/5/8.
+ * Created icon_hide_password jk on 2018/5/8.
  */
 public class MyAPP extends Application {
 
@@ -41,6 +41,7 @@ public class MyAPP extends Application {
         BleTools.initBLE(this);
         initCache();
         initShareLogin();
+        ScreenAdapter.init(this);
     }
 
     private void initShareLogin() {

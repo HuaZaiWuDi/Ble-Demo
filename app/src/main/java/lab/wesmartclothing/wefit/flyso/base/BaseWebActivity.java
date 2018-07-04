@@ -30,7 +30,7 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
- * Created by jk on 2018/5/31.
+ * Created icon_hide_password jk on 2018/5/31.
  */
 public abstract class BaseWebActivity extends BaseActivity {
 

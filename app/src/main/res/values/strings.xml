@@ -117,8 +117,8 @@
     <string name="VCode" translatable="false">验证码</string>
     <string name="getVCode" translatable="false">获取验证码</string>
     <string name="inputPhone" translatable="false">请输入手机号码</string>
-    <string name="inputVCode" translatable="false">请输入验证码</string>
-    <string name="login_clause" translatable="false">登录即表示同意软件服务条款和隐私条款</string>
+    <string name="inputVCode" translatable="false">请输入短信验证码</string>
+    <string name="login_clause" translatable="false">注册即表示同意软件 服务条款和隐私条款</string>
     <string name="chooseSex" translatable="false">请选择您的性别</string>
     <string name="chooseBirth" translatable="false">请选择您的生日</string>
     <string name="chooseHeight" translatable="false">请输入您的身高</string>
@@ -162,11 +162,18 @@
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
     <string name="ServiceAgreement">服务协议</string>
     <string name="phoneError">手机号码号码不正确</string>
+    <string name="passwordError">密码不合理（请输入不少于6位字符密码）</string>
     <string name="VCodeError">验证码不正确</string>
     <string name="SMSSended">短信已发送</string>
     <string name="not_locationAddr">未获取地理位置</string>
     <string name="myOrder">我的订单</string>
     <string name="shopping">购物车</string>
+    <string name="please_input_phone">请输入手机号码</string>
+    <string name="pleaseInputPassword">请输入密码</string>
+    <string name="passwordCheck">请输入不少于6位字符密码</string>
+    <string name="complete">完成</string>
+    <string name="password_not_same">两次输入的密码不一致</string>
+    <string name="settingPasswordSuccess">密码设置成功</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

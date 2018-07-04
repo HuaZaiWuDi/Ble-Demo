@@ -14,7 +14,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 
 /**
- * Created by jk on 2018/5/7.
+ * Created icon_hide_password jk on 2018/5/7.
  */
 @EFragment(R.layout.fragment_shore)
 public class StoreFragment extends BaseWebFragment {

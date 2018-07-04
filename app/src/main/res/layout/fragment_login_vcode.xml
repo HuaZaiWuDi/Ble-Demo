@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dimen_35"
+    android:paddingRight="@dimen/dimen_35"
+    android:paddingTop="@dimen/dimen_35"
+    >
+
+
+    <EditText
+        android:id="@+id/edit_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:drawableLeft="@mipmap/icon_phone3x"
+        android:drawablePadding="10dp"
+        android:hint="@string/please_input_phone"
+        android:inputType="phone"
+        android:maxLength="11"
+        android:maxLines="1"
+        android:textColor="@color/Gray"
+        android:textColorHint="@color/GrayWrite"
+        tools:text="我是输入框"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_1"
+        android:layout_below="@+id/edit_phone"
+        android:layout_marginTop="@dimen/dimen_15"
+        android:background="@color/GrayWrite"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_35"
+            android:background="@null"
+            android:drawableLeft="@mipmap/icon_code"
+            android:drawablePadding="10dp"
+            android:hint="@string/inputVCode"
+            android:inputType="number"
+            android:maxLength="6"
+            android:maxLines="1"
+            android:textColor="@color/Gray"
+            android:textColorHint="@color/GrayWrite"
+            tools:text="我是密码框"/>
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_getVCode"
+            android:layout_width="85dp"
+            android:layout_height="36dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/dimen_35"
+            android:alpha="0.7"
+            android:background="@mipmap/icon_biyan"
+            android:enabled="false"
+            android:text="@string/getVCode"
+            android:textColor="@color/GrayWrite"
+            app:qmui_borderColor="@color/GrayWrite"
+            app:qmui_radius="@dimen/dimen_4"
+            />
+
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_1"
+        android:layout_below="@+id/edit_password"
+        android:layout_marginTop="@dimen/dimen_15"
+        android:background="@color/GrayWrite"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新用户注册"
+            android:textColor="@color/Gray"/>
+
+    </RelativeLayout>
+</LinearLayout>

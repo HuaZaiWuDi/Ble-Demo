@@ -40,7 +40,7 @@ import java.util.HashMap;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
- * Created by cenxiaozhong on 2017/5/15.
+ * Created icon_hide_password cenxiaozhong on 2017/5/15.
  * source code  https://github.com/Justson/AgentWeb
  */
 
