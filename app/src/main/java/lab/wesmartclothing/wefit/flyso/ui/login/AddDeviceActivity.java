@@ -20,10 +20,12 @@ import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
 import org.androidannotations.annotations.AfterViews;
@@ -119,7 +121,6 @@ public class AddDeviceActivity extends BaseActivity {
     String BUNDLE_BIND_TYPE = "all";
 
 
-
     private int stepState = 0;
     private BaseQuickAdapter adapter;
     private Handler mHandler = new Handler();
@@ -197,6 +198,13 @@ public class AddDeviceActivity extends BaseActivity {
             BleTools.getBleManager().enableBluetooth();
         }
 
+        if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
+            RxLogUtils.d("未开启GPS定位");
+//            RxToast.warning(getString(R.string.open_GPS));
+            RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
+            rxDialogGPSCheck.show();
+        }
+
         mDeviceLists.clear();
 
         startService(new Intent(mContext, BleService_.class));
@@ -204,7 +212,6 @@ public class AddDeviceActivity extends BaseActivity {
         btn_scan.setEnabled(false);
 
         mHandler.postDelayed(scanTimeout, 15000);
-
     }
 
     private Runnable scanTimeout = new Runnable() {

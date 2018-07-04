@@ -134,10 +134,6 @@ public class BleService extends Service {
 //            BleTools.getBleManager().enableBluetooth();
 //        }
 
-        if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
-            RxLogUtils.d("未开启GPS定位");
-            RxToast.warning(getString(R.string.open_GPS));
-        }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             RxLogUtils.d("验证权限");

@@ -13,13 +13,13 @@ import com.vondear.rxtools.utils.RxLocationUtils;
  * Mainly used for confirmation and cancel.
  */
 public class RxDialogGPSCheck extends RxDialogSureCancel {
-    
+
     private void initView() {
         getTvTitle().setBackgroundDrawable(null);
         setTitle("GPS未打开");
         getTvTitle().setTextSize(16f);
         getTvTitle().setTextColor(Color.BLACK);
-        setContent("您需要在系统设置中打开GPS方可采集数据");
+        setContent("您需要在系统设置中打开GPS\n部分手机可能搜索不到蓝牙设备");
         getTvSure().setText("去设置");
         getTvCancel().setText("知道了");
 
