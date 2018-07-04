@@ -1,0 +1,145 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:1-90:12
+	package
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:3:11-51
+		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:5:5-66
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:5:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:6:5-78
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:6:22-76
+uses-permission#android.permission.CHANGE_NETWORK_STATE
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:7:5-78
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:7:22-76
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:9:5-80
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:9:22-78
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:10:5-79
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:10:22-77
+uses-permission#android.permission.CAMERA
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:11:5-64
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:11:22-62
+application
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:13:5-88:19
+	android:supportsRtl
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:16:9-35
+	android:label
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:15:9-41
+	android:allowBackup
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:14:9-35
+activity#com.smartclothing.module_wefit.activity.MineActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:18:9-19:20
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:18:19-56
+activity#com.smartclothing.module_wefit.activity.PersonalDataActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:21:9-23:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:23:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:22:13-58
+activity#com.smartclothing.module_wefit.activity.NameEditActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:25:9-27:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:27:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:26:13-54
+activity#com.smartclothing.module_wefit.activity.SignEditActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:29:9-31:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:31:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:30:13-54
+activity#com.smartclothing.module_wefit.activity.PhoneEditActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:33:9-35:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:35:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:34:13-55
+activity#com.smartclothing.module_wefit.tools.ClipImageActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:37:9-39:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:39:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:38:13-52
+activity#com.smartclothing.module_wefit.activity.CollectActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:41:9-43:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:43:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:42:13-53
+activity#com.smartclothing.module_wefit.activity.MyDeviceActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:44:9-46:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:46:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:45:13-54
+activity#com.smartclothing.module_wefit.activity.MessageActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:47:9-49:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:49:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:48:13-53
+activity#com.smartclothing.module_wefit.activity.ProblemSuggestActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:50:9-53:69
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:52:13-49
+	android:windowSoftInputMode
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:53:13-67
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:51:13-60
+activity#com.smartclothing.module_wefit.activity.SetActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:54:9-56:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:56:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:55:13-49
+activity#com.smartclothing.module_wefit.activity.AboutActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:57:9-59:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:59:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:58:13-51
+activity#com.smartclothing.module_wefit.activity.MessageDetailActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:60:9-62:51
+	android:screenOrientation
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:62:13-49
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:61:13-59
+activity#com.smartclothing.module_wefit.dfu.NotificationActivity
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:67:9-68:55
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:68:13-53
+service#com.smartclothing.module_wefit.dfu.DfuService
+ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:70:9-72:38
+	android:exported
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:72:13-36
+	android:name
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml:71:13-43
+uses-sdk
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+		ADDED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml
+		INJECTED from D:\Android\github\Android_WeFit\module_mine\src\main\AndroidManifest.xml

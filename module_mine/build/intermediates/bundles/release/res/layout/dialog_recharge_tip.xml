@@ -1,0 +1,75 @@
+<com.qmuiteam.qmui.layout.QMUIRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fr_content"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dimen_250"
+    android:layout_centerHorizontal="true"
+    android:background="@color/white"
+    android:elevation="@dimen/dimen_5"
+    app:qmui_radius="@dimen/dimen_10"
+    app:qmui_showBorderOnlyBeforeL="true">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_200"
+        android:background="@mipmap/mine_bg"/>
+
+    <LinearLayout
+        android:id="@+id/ll_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_10"
+
+            android:src="@mipmap/icon_tankuancha"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dimen_50"
+        android:src="@mipmap/logo_l"
+        />
+
+    <TextView
+        android:id="@+id/tv_update_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mRxTextRoundProgressBar"
+        android:layout_marginBottom="@dimen/dimen_5"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:text="升级中，请勿断开连接"
+        android:textColor="@color/textColor"/>
+
+    <!--<com.smartclothing.module_wefit.widget.progressbar.UpdateProgressBar-->
+    <!--android:id="@+id/progressbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="@dimen/dimen_20"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginBottom="@dimen/dimen_20"-->
+    <!--android:layout_marginLeft="@dimen/dimen_20"-->
+    <!--android:layout_marginRight="@dimen/dimen_20"-->
+    <!--app:backgroundColor="#ffffffff"-->
+    <!--app:fillColorProgress="#FF00CBD2"-->
+    <!--app:rectColor="#ffffffff"/>-->
+
+
+    <com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar
+        android:id="@+id/mRxTextRoundProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_15"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dimen_20"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"/>
+
+
+</com.qmuiteam.qmui.layout.QMUIRelativeLayout>

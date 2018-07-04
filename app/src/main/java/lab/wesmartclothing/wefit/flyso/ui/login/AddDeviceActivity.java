@@ -426,10 +426,8 @@ public class AddDeviceActivity extends BaseActivity {
                         RxLogUtils.d("结束：" + s);
                         if ("true".equals(s)) {
                             if (bean.getDeivceType() == 0) {
-//                                mPrefs.scaleIsBind().put(bean.getMac());
                                 SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
                             } else {
-//                                mPrefs.clothing().put(bean.getMac());
                                 SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
                             }
 

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/dimen_10"
+              android:layout_marginLeft="@dimen/dimen_15"
+              android:layout_marginRight="@dimen/dimen_15"
+              android:layout_marginTop="@dimen/dimen_10"
+              android:background="@drawable/radiu_item_bg"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_device_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_30"
+        android:layout_marginTop="@dimen/dimen_5">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_0.5"
+            android:layout_alignParentBottom="true"
+            android:background="#FFFAFAFA"/>
+
+        <ImageView
+            android:id="@+id/iv_icon_body_fit_scale"
+            android:layout_width="@dimen/dimen_15"
+            android:layout_height="@dimen/dimen_15"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:src="@mipmap/icon_shebei"/>
+
+        <TextView
+            android:id="@+id/tv_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dimen_5"
+            android:layout_toRightOf="@+id/iv_icon_body_fit_scale"
+            android:text="体脂秤"
+            android:textColor="#4D4D4D"
+            android:textSize="@dimen/dimen_12"/>
+
+        <ImageView
+            android:id="@+id/iv_link_state_scale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dimen_5"
+            android:layout_toLeftOf="@+id/tv_link_state_scale"
+            android:src="@drawable/link_state_enable"/>
+
+        <TextView
+            android:id="@+id/tv_link_state_scale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dimen_15"
+            android:text="已连接"
+            android:textColor="#4D4D4D"
+            android:textSize="@dimen/dimen_12"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_120">
+
+        <ImageView
+            android:id="@+id/iv_device_scale"
+            android:layout_width="@dimen/dimen_80"
+            android:layout_height="@dimen/dimen_80"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:src="@mipmap/icon_tizhicheng_big"/>
+
+
+        <LinearLayout
+            android:id="@+id/layout_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_25"
+            android:layout_marginTop="@dimen/dimen_30"
+            android:layout_toRightOf="@+id/iv_device_scale"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tv_device_id_scale0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:drawableLeft="@mipmap/icon_shebei"
+                android:drawablePadding="@dimen/dimen_5"
+                android:text="设备ID"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12"/>
+
+
+            <TextView
+                android:id="@+id/tv_residual_electricity_scale0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:drawableLeft="@mipmap/icon_dianliang"
+                android:drawablePadding="@dimen/dimen_5"
+                android:text="剩余电量"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12"/>
+
+            <TextView
+                android:id="@+id/tv_standby_time_scale0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/icon_daiji"
+                android:drawablePadding="@dimen/dimen_5"
+                android:text="待机时长"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen_30"
+            android:layout_marginTop="@dimen/dimen_30"
+            android:layout_toRightOf="@+id/layout_title"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_device_id_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:gravity="start"
+                android:text="564765"
+                android:textColor="#FF212121"
+                android:textSize="@dimen/dimen_12"/>
+
+            <TextView
+                android:id="@+id/tv_residual_electricity_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:text="564765"
+                android:textColor="#FF212121"
+                android:textSize="@dimen/dimen_12"/>
+
+
+            <TextView
+                android:id="@+id/tv_standby_time_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="564765"
+                android:textColor="#FF212121"
+                android:textSize="@dimen/dimen_12"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/icon_device_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/dimen_6">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dimen_12"
+                android:src="@mipmap/icon_shebeishanchu"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

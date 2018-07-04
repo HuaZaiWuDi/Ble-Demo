@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_50">
+
+        <LinearLayout
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:src="@mipmap/left_back"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:text="消息"
+            android:textColor="#212121"
+            android:textSize="@dimen/dimen_18"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_right_commit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:text="标记已读"
+            android:textColor="#49EBBB"
+            android:textSize="@dimen/dimen_16"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_title_bar"
+        android:orientation="vertical">
+
+        <com.smartclothing.module_wefit.widget.PagerSlidingTabStrip
+            android:id="@+id/slider_message"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_50"
+            android:background="#FAFAFA"
+            app:pstsIndicatorColor="#49EBBB"
+            app:pstsIndicatorHeight="@dimen/dimen_4"
+            app:pstsUnderlineColor="@color/white"
+            app:pstsUnderlineHeight="@dimen/dimen_3"
+            />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager_message"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:flipInterval="30"
+            android:persistentDrawingCache="animation"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_55"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_40">
+
+            <LinearLayout
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="@dimen/dimen_2"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_10"
+                    android:src="@mipmap/left_back" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="我的设备"
+                android:textColor="#212121"
+                android:textSize="@dimen/dimen_18"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <com.qmuiteam.qmui.layout.QMUIRelativeLayout
+        android:id="@+id/rl_body_fit_scale"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_170"
+        android:layout_below="@+id/rl_title_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:background="#ffffff"
+        app:qmui_radius="@dimen/dimen_20"
+        app:qmui_showBorderOnlyBeforeL="true">
+
+        <RelativeLayout
+            android:id="@+id/rl_device_top"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_30">
+
+            <ImageView
+                android:id="@+id/iv_icon_body_fit_scale"
+                android:layout_width="@dimen/dimen_15"
+                android:layout_height="@dimen/dimen_15"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dimen_5"
+                android:layout_toRightOf="@+id/iv_icon_body_fit_scale"
+                android:text="体脂秤"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12" />
+
+            <ImageView
+                android:id="@+id/iv_link_state_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dimen_2"
+                android:layout_toLeftOf="@+id/tv_link_state_scale"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/tv_link_state_scale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dimen_15"
+                android:text="无设备"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12" />
+        </RelativeLayout>
+
+        <ViewStub
+            android:id="@+id/viewstub_device_scale_nodata"
+            android:layout="@layout/viewstub_device_scale_nodata"
+            android:layout_below="@+id/rl_device_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <ViewStub
+            android:id="@+id/viewstub_device_scale_hasdata"
+            android:layout="@layout/viewstub_device_scale_hasdata"
+            android:layout_below="@+id/rl_device_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </com.qmuiteam.qmui.layout.QMUIRelativeLayout>
+
+
+    <com.qmuiteam.qmui.layout.QMUIRelativeLayout
+        android:id="@+id/rl_burn_fit_clothe"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_170"
+        android:layout_below="@+id/rl_body_fit_scale"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:background="#ffffff"
+        app:qmui_radius="@dimen/dimen_20"
+        app:qmui_showBorderOnlyBeforeL="true">
+
+        <RelativeLayout
+            android:id="@+id/rl_device_top_burn"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_30">
+
+            <ImageView
+                android:id="@+id/iv_icon_burn_fit"
+                android:layout_width="@dimen/dimen_15"
+                android:layout_height="@dimen/dimen_15"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:src="@mipmap/icon_ranzhiyi" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dimen_5"
+                android:layout_toRightOf="@+id/iv_icon_burn_fit"
+                android:text="燃脂衣"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12" />
+
+            <ImageView
+                android:id="@+id/iv_link_state_burn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dimen_5"
+                android:layout_toLeftOf="@+id/tv_link_state_burn"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/tv_link_state_burn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:text="无设备"
+                android:textColor="#4D4D4D"
+                android:textSize="@dimen/dimen_12" />
+        </RelativeLayout>
+
+        <ViewStub
+            android:id="@+id/viewstub_device_burn_nodata"
+            android:layout="@layout/viewstub_device_scale_nodata"
+            android:layout_below="@+id/rl_device_top_burn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <ViewStub
+            android:id="@+id/viewstub_device_burn_hasdata"
+            android:layout="@layout/viewstub_device_burn_hasdata"
+            android:layout_below="@+id/rl_device_top_burn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    </com.qmuiteam.qmui.layout.QMUIRelativeLayout>
+
+</RelativeLayout>
