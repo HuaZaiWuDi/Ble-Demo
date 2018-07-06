@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.login;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.clj.fastble.data.BleDevice;
 import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
+import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -179,6 +181,10 @@ public class AddDeviceActivity extends BaseActivity {
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
     void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
         if (state == BluetoothAdapter.STATE_OFF) {
+            btn_scan.setEnabled(true);
+            img_scan.stopAnimation();
+            RxToast.warning(getString(R.string.checkBle));
+            initStep(3);
         } else if (state == BluetoothAdapter.STATE_ON) {
             startScan();
         }
@@ -293,24 +299,26 @@ public class AddDeviceActivity extends BaseActivity {
         adapter = new BaseQuickAdapter<BindDeviceBean, BaseViewHolder>(R.layout.item_bind_device) {
             @Override
             protected void convert(BaseViewHolder helper, BindDeviceBean item) {
-                TextView tv_receive = helper.getView(R.id.tv_receive);
-                tv_receive.setEnabled(!item.isBind());
-                helper.setImageResource(R.id.img_weight, item.getDeivceType() == 0 ? R.mipmap.icon_scale : R.mipmap.icon_ranzhiyi3x);
-                helper.setBackgroundRes(R.id.tv_receive, item.isBind() ? R.drawable.round_indicator_bg_blue : R.mipmap.continue_button);
-                helper.setText(R.id.tv_receive, item.isBind() ? R.string.bindings : R.string.bind);
-                helper.setTextColor(R.id.tv_receive, getResources().getColor(item.isBind() ? R.color.colorTheme : R.color.white));
+                Drawable drawableColor = RxImageTools.changeDrawableColor(mContext, item.getDeivceType() == 0 ? R.mipmap.icon_scale : R.mipmap.icon_ranzhiyi3x, R.color.green_61D97F);
+                helper.setImageDrawable(R.id.img_weight, drawableColor);
+                if (item.isBind()) {
+                    helper.getView(R.id.tv_Bind).setVisibility(View.GONE);
+                    helper.setVisible(R.id.tv_bindings, true);
+                } else {
+                    helper.getView(R.id.tv_bindings).setVisibility(View.GONE);
+                    helper.setVisible(R.id.tv_Bind, true);
+                }
                 helper.setText(R.id.tv_weight_data, item.getDeivceName());
-                helper.addOnClickListener(R.id.tv_receive);
+                helper.addOnClickListener(R.id.tv_Bind);
             }
         };
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (view.getId() == R.id.tv_receive) {
+                if (view.getId() == R.id.tv_Bind) {
                     RxLogUtils.d("点击了绑定");
 
                     final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
-
                     List<BindDeviceBean> data = adapter.getData();
                     for (int i = 0; i < data.size(); i++) {
                         if (data.get(i).getDeivceType() == item.getDeivceType()) {
@@ -321,7 +329,6 @@ public class AddDeviceActivity extends BaseActivity {
                     item.setBind(true);
                     adapter.setData(position, item);
                     initStep(2);
-
                 }
             }
         });
@@ -337,6 +344,9 @@ public class AddDeviceActivity extends BaseActivity {
             tv_skip.setVisibility(stepState == 1 ? View.GONE : View.VISIBLE);
         tv_skip.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
         tv_info.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.textHeatColor));
+
+        Drawable drawableColor = RxImageTools.changeDrawableColor(mContext, R.mipmap.icon_wancheng3x, R.color.green_61D97F);
+
         switch (stepState) {
             case 0:
                 layout_scan.setVisibility(View.VISIBLE);
@@ -348,17 +358,18 @@ public class AddDeviceActivity extends BaseActivity {
                 layout_scan.setVisibility(View.GONE);
                 layout_scan_2.setVisibility(View.GONE);
                 layout_bind.setVisibility(View.VISIBLE);
-                img_working.setBackgroundResource(R.mipmap.icon_wancheng3x);
-                img_bind.setBackgroundResource(R.mipmap.icon_xuanzhe3x);
-                line_bind_L.setBackgroundColor(getResources().getColor(R.color.colorTheme));
-                line_bind_R.setBackgroundColor(getResources().getColor(R.color.colorTheme));
+                img_working.setBackground(drawableColor);
+
+                img_bind.setBackgroundResource(R.mipmap.icon_xuanzhe);
+                line_bind_L.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
+                line_bind_R.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
                 tv_bind.setTextColor(getResources().getColor(R.color.textColor));
                 btn_scan.setVisibility(View.INVISIBLE);
                 break;
             case 2:
-                img_startUse.setBackgroundResource(R.mipmap.icon_xuanzhe3x);
-                img_bind.setBackgroundResource(R.mipmap.icon_wancheng3x);
-                line_use.setBackgroundColor(getResources().getColor(R.color.colorTheme));
+                img_startUse.setBackgroundResource(R.mipmap.icon_xuanzhe);
+                img_bind.setBackground(drawableColor);
+                line_use.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
                 tv_startUse.setTextColor(getResources().getColor(R.color.textColor));
                 btn_scan.setVisibility(View.VISIBLE);
                 btn_scan.setText(R.string.startUse);

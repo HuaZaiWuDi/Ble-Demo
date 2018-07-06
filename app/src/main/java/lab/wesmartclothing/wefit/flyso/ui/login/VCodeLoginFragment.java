@@ -56,13 +56,12 @@ public class VCodeLoginFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
+        RxBus.getInstance().post(new VCodeBus(phone, vCode));
     }
 
     @Override
     public void initView() {
         switchEnable(false);
-        RxBus.getInstance().post(new VCodeBus(phone, vCode));
         mEditPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -140,7 +139,7 @@ public class VCodeLoginFragment extends BaseFragment {
             return;
         }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone))
+        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone, null))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {

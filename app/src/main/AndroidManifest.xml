@@ -113,7 +113,7 @@
         </activity>
         <activity android:name=".ui.login.LoginActivity_">
         </activity>
-        <activity android:name=".ui.login.UserInfoActivity_">
+        <activity android:name=".ui.login.UserInfoActivity">
         </activity>
         <activity android:name=".ui.login.AddDeviceActivity_">
         </activity>

@@ -124,7 +124,7 @@ public class VerificationPhoneActivity extends BaseActivity {
             return;
         }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone))
+        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone, "resetPassword"))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {

@@ -190,7 +190,7 @@ public abstract class BaseWebActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                RxLogUtils.d("网页地址："+url);
+                RxLogUtils.d("网页地址：" + url);
             }
 
             @Override

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/d_250">
 
@@ -26,17 +27,36 @@
         android:textSize="@dimen/d_45"/>
 
 
-    <TextView
-        android:id="@+id/tv_receive"
-        android:layout_width="@dimen/d_200"
-        android:layout_height="@dimen/d_100"
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/tv_Bind"
+        android:layout_width="60dp"
+        android:layout_height="32dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/d_50"
-        android:background="@mipmap/continue_button"
-        android:gravity="center"
-        android:text="领取"
-        android:textColor="@color/white"/>
+        android:layout_marginRight="@dimen/dimen_15"
+        android:text="@string/bind"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:qmui_backgroundColor="@color/green_61D97F"
+        app:qmui_borderColor="@color/green_61D97F"
+        app:qmui_radius="16dp"/>
+
+
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/tv_bindings"
+        android:layout_width="60dp"
+        android:layout_height="32dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/dimen_15"
+        android:enabled="false"
+        android:text="@string/bindings"
+        android:textColor="@color/green_61D97F"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:qmui_backgroundColor="@color/white"
+        app:qmui_borderColor="@color/green_61D97F"
+        app:qmui_radius="16dp"/>
 
 
 </RelativeLayout>

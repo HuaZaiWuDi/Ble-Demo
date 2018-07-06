@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/layout_step"
-        android:background="@mipmap/img_bj23x">
+        android:background="@mipmap/img_bj2">
 
     </RelativeLayout>
 
@@ -158,7 +158,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="@mipmap/icon_xuanzhe3x"/>
+                android:background="@mipmap/icon_xuanzhe"/>
 
             <TextView
                 android:id="@+id/tv_working"
@@ -185,7 +185,7 @@
                 android:layout_height="5px"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/img_working"
-                android:background="@color/colorTheme"/>
+                android:background="@color/green_61D97F"/>
 
         </RelativeLayout>
 
@@ -282,18 +282,22 @@
 
     </LinearLayout>
 
-    <Button
+
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
         android:id="@+id/btn_scan"
-        android:layout_width="@dimen/d_350"
-        android:layout_height="180px"
+        android:layout_width="195dp"
+        android:layout_height="46dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/d_100"
-        android:layout_marginTop="@dimen/d_100"
-        android:background="@mipmap/bt_03"
-        android:paddingBottom="@dimen/d_50"
+        android:layout_marginBottom="@dimen/dimen_24"
+        android:layout_marginTop="@dimen/dimen_35"
         android:text="@string/scan"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:textSize="@dimen/dimen_18"
+        app:qmui_backgroundColor="@color/green_61D97F"
+        app:qmui_borderColor="@color/green_61D97F"
+        app:qmui_radius="23dp"/>
+
 
     <include
         layout="@layout/layout_no_device"

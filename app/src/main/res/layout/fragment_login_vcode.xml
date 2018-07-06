@@ -29,6 +29,7 @@
         android:maxLines="1"
         android:textColor="@color/Gray"
         android:textColorHint="@color/GrayWrite"
+        android:textSize="@dimen/dimen_15"
         tools:text="我是输入框"/>
 
     <View
@@ -36,7 +37,7 @@
         android:layout_height="@dimen/dimen_1"
         android:layout_below="@+id/edit_phone"
         android:layout_marginTop="@dimen/dimen_15"
-        android:background="@color/GrayWrite"/>
+        android:background="@color/BrightGray"/>
 
 
     <RelativeLayout
@@ -57,6 +58,7 @@
             android:maxLines="1"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"
+            android:textSize="@dimen/dimen_15"
             tools:text="我是密码框"/>
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -82,7 +84,7 @@
         android:layout_height="@dimen/dimen_1"
         android:layout_below="@+id/edit_password"
         android:layout_marginTop="@dimen/dimen_15"
-        android:background="@color/GrayWrite"/>
+        android:background="@color/BrightGray"/>
 
 
     <RelativeLayout

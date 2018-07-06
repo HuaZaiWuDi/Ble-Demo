@@ -95,19 +95,19 @@ public interface RetrofitService {
     // 登录
     ///////////////////////////////////////////////////////////////////////////
 
+    @GET("login/sendCode")
+    Observable<String> sendCode2Login(@Query("phone") String phone);
+
     @FormUrlEncoded
     @POST("login")
     Observable<String> login(@Field("phone") String phone, @Field("code") String code);
 
-    //    @FormUrlEncoded
-    @POST("login/logout")
+    @POST("logout")
     Observable<String> logout();
 
-    @GET("login/sendCode")
-    Observable<String> sendCode2Login(@Query("phone") String phone);
-
-    @GET("sendCode")
-    Observable<String> sendCode(@Query("phone") String phone);
+    @FormUrlEncoded
+    @POST("sendCode")
+    Observable<String> sendCode(@Field("phone") String phone, @Field("verify") String verify);
 
     @FormUrlEncoded
     @POST("register")

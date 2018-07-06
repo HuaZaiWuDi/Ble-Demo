@@ -30,6 +30,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,179 +38,187 @@ import java.util.List;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-/* package */ class BluetoothLeScannerImplLollipop extends BluetoothLeScannerCompat {
-	private final BluetoothAdapter mBluetoothAdapter;
-	private final Map<ScanCallback, ScanCallbackWrapper> mWrappers; // used to get settings
-	private final Map<ScanCallback, android.bluetooth.le.ScanCallback> mCallbacks; // used to stop scanning and flash pending results
-	private final Map<android.bluetooth.le.ScanCallback, ScanCallbackWrapper> mWrappers2; // used to get wrapper in scan result callback
-	private boolean offloadedFilteringSupported;
+        /* package */ class BluetoothLeScannerImplLollipop extends BluetoothLeScannerCompat {
+    private final BluetoothAdapter mBluetoothAdapter;
+    private final Map<ScanCallback, ScanCallbackWrapper> mWrappers; // used to get settings
+    private final Map<ScanCallback, android.bluetooth.le.ScanCallback> mCallbacks; // used to stop scanning and flash pending results
+    private final Map<android.bluetooth.le.ScanCallback, ScanCallbackWrapper> mWrappers2; // used to get wrapper in scan result callback
+    private boolean offloadedFilteringSupported;
 
-	public BluetoothLeScannerImplLollipop() {
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		mWrappers = new HashMap<>();
-		mWrappers2 = new HashMap<>();
-		mCallbacks = new HashMap<>();
-	}
+    public BluetoothLeScannerImplLollipop() {
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mWrappers = new HashMap<>();
+        mWrappers2 = new HashMap<>();
+        mCallbacks = new HashMap<>();
+    }
 
-	@Override
-	@RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH})
-	/* package */ void startScanInternal(final List<ScanFilter> filters, final ScanSettings settings, final ScanCallback callback) {
-		BluetoothLeUtils.checkAdapterStateOn(mBluetoothAdapter);
-		offloadedFilteringSupported = mBluetoothAdapter.isOffloadedFilteringSupported();
+    @Override
+    @RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH})
+        /* package */ void startScanInternal(final List<ScanFilter> filters, final ScanSettings settings, final ScanCallback callback) {
+        BluetoothLeUtils.checkAdapterStateOn(mBluetoothAdapter);
+        offloadedFilteringSupported = mBluetoothAdapter.isOffloadedFilteringSupported();
 
-		if (mWrappers.containsKey(callback)) {
-			throw new IllegalArgumentException("scanner already started with given callback");
-		}
+        if (mWrappers.containsKey(callback)) {
+            throw new IllegalArgumentException("scanner already started with given callback");
+        }
 
-		final BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
-		if (scanner == null)
-			throw new IllegalStateException("BT le scanner not available");
+        final BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
+        if (scanner == null)
+            throw new IllegalStateException("BT le scanner not available");
 
-		final ScanCallbackWrapper wrapper = new ScanCallbackWrapper(filters, settings, callback);
-		final ScanCallbackImpl _callback = new ScanCallbackImpl();
-		final android.bluetooth.le.ScanSettings _settings = toImpl(mBluetoothAdapter, settings);
-		List<android.bluetooth.le.ScanFilter> _filters = null;
-		if (filters != null && mBluetoothAdapter.isOffloadedFilteringSupported() && settings.getUseHardwareFilteringIfSupported())
-			_filters = toImpl(filters);
+        final ScanCallbackWrapper wrapper = new ScanCallbackWrapper(filters, settings, callback);
+        final ScanCallbackImpl _callback = new ScanCallbackImpl();
+        final android.bluetooth.le.ScanSettings _settings = toImpl(mBluetoothAdapter, settings);
+        List<android.bluetooth.le.ScanFilter> _filters = null;
+        if (filters != null && mBluetoothAdapter.isOffloadedFilteringSupported() && settings.getUseHardwareFilteringIfSupported())
+            _filters = toImpl(filters);
 
-		mWrappers.put(callback, wrapper);
-		mCallbacks.put(callback, _callback);
-		mWrappers2.put(_callback, wrapper);
+        mWrappers.put(callback, wrapper);
+        mCallbacks.put(callback, _callback);
+        mWrappers2.put(_callback, wrapper);
 
-		scanner.startScan(_filters, _settings, _callback);
-	}
+        scanner.startScan(_filters, _settings, _callback);
+    }
 
-	@Override
-	public void stopScan(final ScanCallback callback) {
-		final ScanCallbackWrapper wrapper = mWrappers.get(callback);
-		if (wrapper == null)
-			return;
+    @Override
+    public void stopScan(final ScanCallback callback) {
+        final ScanCallbackWrapper wrapper = mWrappers.get(callback);
+        if (wrapper == null)
+            return;
 
-		wrapper.close();
-		mWrappers.remove(callback);
-		android.bluetooth.le.ScanCallback _callback = mCallbacks.get(callback);
-		mCallbacks.remove(callback);
-		mWrappers2.remove(_callback);
+        wrapper.close();
+        mWrappers.remove(callback);
+        android.bluetooth.le.ScanCallback _callback = mCallbacks.get(callback);
+        mCallbacks.remove(callback);
+        mWrappers2.remove(_callback);
 
-		final BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
-		if (scanner == null)
-			return;
+        final BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
+        if (scanner == null)
+            return;
 
-		scanner.stopScan(_callback);
-	}
+        scanner.stopScan(_callback);
+    }
 
-	@Override
-	@RequiresPermission(Manifest.permission.BLUETOOTH)
-	public void flushPendingScanResults(final ScanCallback callback) {
-		BluetoothLeUtils.checkAdapterStateOn(mBluetoothAdapter);
-		if (callback == null) {
-			throw new IllegalArgumentException("callback cannot be null!");
-		}
+    @Override
+    @RequiresPermission(Manifest.permission.BLUETOOTH)
+    public void flushPendingScanResults(final ScanCallback callback) {
+        BluetoothLeUtils.checkAdapterStateOn(mBluetoothAdapter);
+        if (callback == null) {
+            throw new IllegalArgumentException("callback cannot be null!");
+        }
 
-		final ScanCallbackWrapper wrapper = mWrappers.get(callback);
-		if (wrapper == null) {
-			throw new IllegalArgumentException("callback not registered!");
-		}
+        final ScanCallbackWrapper wrapper = mWrappers.get(callback);
+        if (wrapper == null) {
+            throw new IllegalArgumentException("callback not registered!");
+        }
 
-		final ScanSettings settings = wrapper.getScanSettings();
-		if (mBluetoothAdapter.isOffloadedScanBatchingSupported() && settings.getUseHardwareBatchingIfSupported())
-			mBluetoothAdapter.getBluetoothLeScanner().flushPendingScanResults(mCallbacks.get(callback));
-		else
-			mWrappers.get(callback).flushPendingScanResults();
-	}
+        final ScanSettings settings = wrapper.getScanSettings();
+        if (mBluetoothAdapter.isOffloadedScanBatchingSupported() && settings.getUseHardwareBatchingIfSupported())
+            mBluetoothAdapter.getBluetoothLeScanner().flushPendingScanResults(mCallbacks.get(callback));
+        else
+            mWrappers.get(callback).flushPendingScanResults();
+    }
 
-	private class ScanCallbackImpl extends android.bluetooth.le.ScanCallback {
-		private long mLastBatchTimestamp;
+    private class ScanCallbackImpl extends android.bluetooth.le.ScanCallback {
+        private long mLastBatchTimestamp;
 
-		@Override
-		public void onScanResult(final int callbackType, final android.bluetooth.le.ScanResult _result) {
-			final ScanCallbackWrapper wrapper = mWrappers2.get(this);
-			if (wrapper != null) {
-				final byte[] data = _result.getScanRecord() != null ? _result.getScanRecord().getBytes() : null;
-				final ScanResult result = new ScanResult(_result.getDevice(), ScanRecord.parseFromBytes(data), _result.getRssi(), _result.getTimestampNanos());
+        @Override
+        public void onScanResult(final int callbackType, final android.bluetooth.le.ScanResult _result) {
+//            Log.e("扫描回调：", _result.toString());
 
-				wrapper.handleScanResult(result);
-			}
-		}
+            final ScanCallbackWrapper wrapper = mWrappers2.get(this);
+            if (wrapper != null) {
+                final byte[] data = _result.getScanRecord() != null ? _result.getScanRecord().getBytes() : null;
+                final ScanResult result = new ScanResult(_result.getDevice(), ScanRecord.parseFromBytes(data), _result.getRssi(), _result.getTimestampNanos());
+                //设置@{setCallbackType}扫描回调类型这串代码可能因为华为P10，P20，8.0系统搜索不到蓝牙
+                //这里添加主动设备过滤，只显示第一个设备
 
-		@Override
-		public void onBatchScanResults(final List<android.bluetooth.le.ScanResult> _results) {
-			final ScanCallbackWrapper wrapper = mWrappers2.get(this);
-			if (wrapper != null) {
-				// On several phones the onBatchScanResults is called twice for every batch. Skip the second call if came to early.
-				final long now = SystemClock.elapsedRealtime();
-				if (mLastBatchTimestamp > now - wrapper.getScanSettings().getReportDelayMillis() + 5) {
-					return;
-				}
-				mLastBatchTimestamp = now;
+                wrapper.handleScanResult(result);
+            }
+        }
 
-				final List<ScanResult> results = new ArrayList<>();
-				for (final android.bluetooth.le.ScanResult _result : _results) {
-					final byte[] data = _result.getScanRecord() != null ? _result.getScanRecord().getBytes() : null;
-					final ScanResult result = new ScanResult(_result.getDevice(), ScanRecord.parseFromBytes(data), _result.getRssi(), _result.getTimestampNanos());
-					results.add(result);
-				}
+        @Override
+        public void onBatchScanResults(final List<android.bluetooth.le.ScanResult> _results) {
+//            for (int i = 0; i < _results.size(); i++) {
+//                Log.e("扫描回调：", _results.get(i).toString());
+//            }
+            final ScanCallbackWrapper wrapper = mWrappers2.get(this);
+            if (wrapper != null) {
+                // On several phones the onBatchScanResults is called twice for every batch. Skip the second call if came to early.
+                final long now = SystemClock.elapsedRealtime();
+                if (mLastBatchTimestamp > now - wrapper.getScanSettings().getReportDelayMillis() + 5) {
+                    return;
+                }
+                mLastBatchTimestamp = now;
 
-				wrapper.handleScanResults(results, offloadedFilteringSupported);
-			}
-		}
+                final List<ScanResult> results = new ArrayList<>();
+                for (final android.bluetooth.le.ScanResult _result : _results) {
+                    final byte[] data = _result.getScanRecord() != null ? _result.getScanRecord().getBytes() : null;
+                    final ScanResult result = new ScanResult(_result.getDevice(), ScanRecord.parseFromBytes(data), _result.getRssi(), _result.getTimestampNanos());
+                    results.add(result);
+                }
 
-		@Override
-		@RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH})
-		public void onScanFailed(final int errorCode) {
-			final ScanCallbackWrapper wrapper = mWrappers2.get(this);
-			if (wrapper == null)
-				return;
+                wrapper.handleScanResults(results, offloadedFilteringSupported);
+            }
+        }
 
-			final ScanSettings settings = wrapper.getScanSettings();
+        @Override
+        @RequiresPermission(allOf = {Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH})
+        public void onScanFailed(final int errorCode) {
+            Log.e("扫描回调：", "扫描失败");
+            final ScanCallbackWrapper wrapper = mWrappers2.get(this);
+            if (wrapper == null)
+                return;
 
-			// We were able to determine offloaded batching and filtering before we started scan, but there is no method
-			// checking if callback types FIRST_MATCH and MATCH_LOST are supported. We get an error here it they are not.
-			if (settings.getUseHardwareCallbackTypesIfSupported() && settings.getCallbackType() != ScanSettings.CALLBACK_TYPE_ALL_MATCHES) {
-				// On Nexus 6 with Android 6.0 (MPA44G, M Pre-release 3) the errorCode = 5
+            final ScanSettings settings = wrapper.getScanSettings();
 
-				// This feature seems to be not supported on your phone. We will try to do pretty much the same in the code.
-				settings.disableUseHardwareCallbackTypes();
+            // We were able to determine offloaded batching and filtering before we started scan, but there is no method
+            // checking if callback types FIRST_MATCH and MATCH_LOST are supported. We get an error here it they are not.
+            if (settings.getUseHardwareCallbackTypesIfSupported() && settings.getCallbackType() != ScanSettings.CALLBACK_TYPE_ALL_MATCHES) {
+                // On Nexus 6 with Android 6.0 (MPA44G, M Pre-release 3) the errorCode = 5
 
-				final ScanCallback callback = wrapper.getScanCallback();
-				stopScan(callback);
-				startScanInternal(wrapper.getScanFilters(), settings, callback);
-				return;
-			}
+                // This feature seems to be not supported on your phone. We will try to do pretty much the same in the code.
+                settings.disableUseHardwareCallbackTypes();
 
-			// else, notify user application
-			wrapper.onScanManagerErrorCallback(errorCode);
-		}
-	}
+                final ScanCallback callback = wrapper.getScanCallback();
+                stopScan(callback);
+                startScanInternal(wrapper.getScanFilters(), settings, callback);
+                return;
+            }
 
-	/* package */ android.bluetooth.le.ScanSettings toImpl(@NonNull final BluetoothAdapter adapter, @NonNull final ScanSettings settings) {
-		final android.bluetooth.le.ScanSettings.Builder builder = new android.bluetooth.le.ScanSettings.Builder().setScanMode(settings.getScanMode());
+            // else, notify user application
+            wrapper.onScanManagerErrorCallback(errorCode);
+        }
+    }
 
-		if (adapter.isOffloadedScanBatchingSupported() && settings.getUseHardwareBatchingIfSupported())
-			builder.setReportDelay(settings.getReportDelayMillis());
+    /* package */ android.bluetooth.le.ScanSettings toImpl(@NonNull final BluetoothAdapter adapter, @NonNull final ScanSettings settings) {
+        final android.bluetooth.le.ScanSettings.Builder builder = new android.bluetooth.le.ScanSettings.Builder().setScanMode(settings.getScanMode());
 
-		settings.disableUseHardwareCallbackTypes(); // callback types other then CALLBACK_TYPE_ALL_MATCHES are not supported on Lollipop
+        if (adapter.isOffloadedScanBatchingSupported() && settings.getUseHardwareBatchingIfSupported())
+            builder.setReportDelay(settings.getReportDelayMillis());
 
-		return builder.build();
-	}
+        settings.disableUseHardwareCallbackTypes(); // callback types other then CALLBACK_TYPE_ALL_MATCHES are not supported on Lollipop
 
-	/* package */ List<android.bluetooth.le.ScanFilter> toImpl(final @NonNull List<ScanFilter> filters) {
-		final List<android.bluetooth.le.ScanFilter> _filters = new ArrayList<>();
-		for (final ScanFilter filter : filters)
-			_filters.add(toImpl(filter));
-		return _filters;
-	}
+        return builder.build();
+    }
 
-	/* package */ android.bluetooth.le.ScanFilter toImpl(final ScanFilter filter) {
-		final android.bluetooth.le.ScanFilter.Builder builder = new android.bluetooth.le.ScanFilter.Builder();
-		builder.setDeviceAddress(filter.getDeviceAddress())
-				.setDeviceName(filter.getDeviceName())
-				.setServiceUuid(filter.getServiceUuid(), filter.getServiceUuidMask())
-				.setManufacturerData(filter.getManufacturerId(), filter.getManufacturerData(), filter.getManufacturerDataMask());
+    /* package */ List<android.bluetooth.le.ScanFilter> toImpl(final @NonNull List<ScanFilter> filters) {
+        final List<android.bluetooth.le.ScanFilter> _filters = new ArrayList<>();
+        for (final ScanFilter filter : filters)
+            _filters.add(toImpl(filter));
+        return _filters;
+    }
 
-		if (filter.getServiceDataUuid() != null)
-			builder.setServiceData(filter.getServiceDataUuid(), filter.getServiceData(), filter.getServiceDataMask());
+    /* package */ android.bluetooth.le.ScanFilter toImpl(final ScanFilter filter) {
+        final android.bluetooth.le.ScanFilter.Builder builder = new android.bluetooth.le.ScanFilter.Builder();
+        builder.setDeviceAddress(filter.getDeviceAddress())
+                .setDeviceName(filter.getDeviceName())
+                .setServiceUuid(filter.getServiceUuid(), filter.getServiceUuidMask())
+                .setManufacturerData(filter.getManufacturerId(), filter.getManufacturerData(), filter.getManufacturerDataMask());
 
-		return builder.build();
-	}
+        if (filter.getServiceDataUuid() != null)
+            builder.setServiceData(filter.getServiceDataUuid(), filter.getServiceData(), filter.getServiceDataMask());
+
+        return builder.build();
+    }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,66 +8,24 @@
     android:background="@color/white"
     tools:context=".ui.login.UserInfoActivity">
 
-    <RelativeLayout
-        android:id="@+id/layout_title"
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/mQMUITopBar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/barHeight"
-        android:paddingBottom="@dimen/d_30"
-        android:paddingTop="90px">
+        android:layout_height="@dimen/topBarHeight">
+
+    </com.qmuiteam.qmui.widget.QMUITopBar>
 
 
-        <LinearLayout
-            android:id="@+id/back"
-            android:layout_width="@dimen/d_200"
-            android:layout_height="match_parent"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/img_back"
-                android:layout_width="@dimen/d_100"
-                android:layout_height="@dimen/d_80"
-                android:src="@mipmap/back"/>
-
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:text="@string/inputUserInfo"
-            android:textColor="@color/black"
-            android:textSize="@dimen/d_50"
-            android:textStyle="bold"
-            tools:text="运动详情"/>
-
-        <TextView
-            android:id="@+id/tv_skip"
-            android:layout_width="@dimen/d_200"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:text="@string/skip"
-            android:textColor="@color/textHeatColor"
-            android:textSize="@dimen/d_45"/>
-
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_body"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/tv_info"
-        android:layout_below="@+id/layout_title"
+        android:layout_marginTop="@dimen/topBarHeight"
         android:background="@color/white"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="@dimen/d_150">
+        android:paddingTop="@dimen/dimen_35">
 
         <TextView
             android:id="@+id/tv_titleTop"
@@ -76,19 +34,21 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:text="@string/chooseSex"
-            android:textColor="@color/textHeatColor"
-            android:textSize="@dimen/d_40"/>
+            android:textColor="@color/Gray"
+            android:textSize="20sp"/>
 
         <com.flyco.tablayout.CommonTabLayout
+            android:visibility="gone"
             android:id="@+id/mCommonTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_300"
+            android:layout_height="@dimen/dimen_100"
             android:layout_below="@+id/tv_titleTop"
-            android:layout_marginTop="@dimen/d_50"
+            android:layout_marginLeft="@dimen/dimen_35"
+            android:layout_marginRight="@dimen/dimen_35"
+            android:layout_marginTop="35dp"
             app:tl_indicator_anim_enable="true"
             app:tl_indicator_color="@color/colorTheme"
             app:tl_indicator_gravity="BOTTOM"
-            app:tl_indicator_margin_top="@dimen/d_20"
             app:tl_indicator_style="TRIANGLE"/>
 
 
@@ -97,91 +57,145 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_titleTop"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/d_100"
-            android:background="@drawable/round_indicator_bg_blue"
-            android:gravity="center">
+            android:layout_marginTop="35dp"
+            android:background="@mipmap/icon_worldmap"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_location"
-                android:layout_width="600px"
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@mipmap/icon_dingwei3x"
-                android:drawablePadding="@dimen/d_30"
+                android:background="@mipmap/icon_location"/>
+
+
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/tv_location"
+                android:layout_width="@dimen/dimen_280"
+                android:layout_height="46dp"
+                android:layout_below="@+id/tv_bottom"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dimen_20"
                 android:ellipsize="end"
-                android:gravity="center"
                 android:maxLines="1"
-                android:text="@string/chooseCity2"
-                android:textColor="@color/black"
-                android:textSize="@dimen/d_60"
-                tools:text="买的快乐撒娇地方咯傲视"/>
+                android:text="@string/nextWay"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:qmui_backgroundColor="@color/Gray"
+                app:qmui_borderColor="@color/Gray"
+                app:qmui_radius="23dp"/>
 
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/tv_top"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout_height"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_titleTop"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/d_50"
-            android:text="1980-01-01"
-            android:textColor="@color/black"
-            android:textSize="@dimen/d_100"
-            android:visibility="gone"/>
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
 
-        <TextView
-            android:id="@+id/tv_titleBottom"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tv_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_titleBottom"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimen_35"
+                android:text="166cm"
+                android:textColor="@color/Gray"
+                android:textSize="36sp"/>
+
+            <View
+                android:layout_width="185dp"
+                android:layout_height="@dimen/dimen_0.5"
+                android:layout_below="@+id/tv_bottom"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:background="@color/BrightGray"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_bottom"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/d_500"
-            android:text="@string/chooseBirth"
-            android:textColor="@color/textHeatColor"
-            android:textSize="@dimen/d_40"/>
+            android:layout_marginTop="@dimen/dimen_35"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_bottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_titleBottom"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/d_50"
-            android:text="1990-01-01"
-            android:textColor="@color/black"
-            android:textSize="@dimen/d_100"/>
 
-        <Button
+            <TextView
+                android:id="@+id/tv_titleBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:text="@string/chooseBirth"
+                android:textColor="@color/Gray"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_titleBottom"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimen_35"
+                android:text="1990-01-01"
+                android:textColor="@color/Gray"
+                android:textSize="36sp"/>
+
+            <View
+                android:layout_width="185dp"
+                android:layout_height="@dimen/dimen_0.5"
+                android:layout_below="@+id/tv_bottom"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:background="@color/BrightGray"/>
+
+        </LinearLayout>
+
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/btn_nextStep"
-            android:layout_width="@dimen/d_350"
-            android:layout_height="180px"
-            android:layout_alignParentBottom="true"
+            android:layout_width="195dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/tv_bottom"
             android:layout_centerHorizontal="true"
-            android:background="@mipmap/bt_03"
-            android:paddingBottom="@dimen/d_50"
+            android:layout_marginTop="@dimen/dimen_70"
             android:text="@string/nextWay"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:qmui_backgroundColor="@color/red"
+            app:qmui_borderColor="@color/red"
+            app:qmui_radius="23dp"/>
 
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="29dp"
+            android:gravity="center"
+            android:paddingLeft="26dp"
+            android:paddingRight="26dp"
+            android:text="@string/info_about"
+            android:textColor="@color/textHeatColor"
+            android:textSize="@dimen/d_30"/>
     </RelativeLayout>
 
 
-    <TextView
-        android:id="@+id/tv_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/d_100"
-        android:drawableLeft="@mipmap/icon_tishi_b3x"
-        android:drawablePadding="@dimen/d_20"
-        android:paddingLeft="@dimen/d_50"
-        android:paddingRight="@dimen/d_50"
-        android:text="@string/info_about"
-        android:textColor="@color/textHeatColor"
-        android:textSize="@dimen/d_30"/>
-
-</RelativeLayout>
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

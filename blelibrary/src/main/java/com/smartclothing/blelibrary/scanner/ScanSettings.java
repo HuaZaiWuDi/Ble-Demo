@@ -214,7 +214,7 @@ public class ScanSettings implements Parcelable {
 
     private ScanSettings(Parcel in) {
         mScanMode = in.readInt();
-        mCallbackType = in.readInt();
+//        mCallbackType = in.readInt();
         mReportDelayMillis = in.readLong();
         mMatchMode = in.readInt();
         mNumOfMatchesPerFilter = in.readInt();
@@ -227,7 +227,7 @@ public class ScanSettings implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(mScanMode);
-        dest.writeInt(mCallbackType);
+//        dest.writeInt(mCallbackType);
         dest.writeLong(mReportDelayMillis);
         dest.writeInt(mMatchMode);
         dest.writeInt(mNumOfMatchesPerFilter);
@@ -272,12 +272,30 @@ public class ScanSettings implements Parcelable {
         return mPowerSaveScanInterval;
     }
 
+    @Override
+    public String toString() {
+        return "ScanSettings{" +
+                "mPowerSaveScanInterval=" + mPowerSaveScanInterval +
+                ", mPowerSaveRestInterval=" + mPowerSaveRestInterval +
+                ", mScanMode=" + mScanMode +
+                ", mCallbackType=" + mCallbackType +
+                ", mReportDelayMillis=" + mReportDelayMillis +
+                ", mMatchMode=" + mMatchMode +
+                ", mNumOfMatchesPerFilter=" + mNumOfMatchesPerFilter +
+                ", mUseHardwareFilteringIfSupported=" + mUseHardwareFilteringIfSupported +
+                ", mUseHardwareBatchingIfSupported=" + mUseHardwareBatchingIfSupported +
+                ", mUseHardwareCallbackTypesIfSupported=" + mUseHardwareCallbackTypesIfSupported +
+                ", mMatchLostDeviceTimeout=" + mMatchLostDeviceTimeout +
+                ", mMatchLostTaskInterval=" + mMatchLostTaskInterval +
+                '}';
+    }
+
     /**
      * Builder for {@link ScanSettings}.
      */
     public static final class Builder {
         private int mScanMode = SCAN_MODE_LOW_POWER;
-        private int mCallbackType = CALLBACK_TYPE_ALL_MATCHES;
+        private int mCallbackType = CALLBACK_TYPE_FIRST_MATCH;
         private long mReportDelayMillis = 0;
         private int mMatchMode = MATCH_MODE_AGGRESSIVE;
         private int mNumOfMatchesPerFilter = MATCH_NUM_MAX_ADVERTISEMENT;

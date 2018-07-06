@@ -46,12 +46,11 @@ public class PasswordLoginFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
+        RxBus.getInstance().post(new PasswordLoginBus(phone, password));
     }
 
     @Override
     public void initView() {
-        RxBus.getInstance().post(new PasswordLoginBus(phone, password));
         mTvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

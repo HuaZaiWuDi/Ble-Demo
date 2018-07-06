@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -28,8 +29,8 @@ import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
-import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
+import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -67,14 +68,14 @@ public class SpalshActivity extends BaseActivity {
     @Override
     @AfterViews
     public void initView() {
-        initPromissions();
 
+        RxActivityUtils.skipActivityAndFinish(this, LoginRegisterActivity.class);
 
 //        //测试账号
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 
 
-        initUserInfo();
+//        initUserInfo();
         initData();
 
     }
@@ -82,6 +83,12 @@ public class SpalshActivity extends BaseActivity {
     private void initUserInfo() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        initPromissions();
+                    }
+                })
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -104,11 +111,6 @@ public class SpalshActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                     }
-
-                    @Override
-                    protected void _onError(String error) {
-//                        RxToast.error(error);
-                    }
                 });
     }
 
@@ -119,9 +121,9 @@ public class SpalshActivity extends BaseActivity {
             public void run() {
                 //通过验证是否保存userId来判断是否登录
                 if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
-                    RxActivityUtils.skipActivityAndFinish(mActivity, LoginActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
                 } else if (isSaveUserInfo)//
-                    RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity_.class);
+                    RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
                 else
                     RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity_.class);
             }
@@ -147,7 +149,8 @@ public class SpalshActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        subscribe.dispose();
+        if (subscribe != null)
+            subscribe.dispose();
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
     }
@@ -181,11 +184,6 @@ public class SpalshActivity extends BaseActivity {
                         RxLogUtils.d("结束：" + s);
                         MyAPP.getACache().remove(Key.CACHE_USER_INFO);
                     }
-
-                    @Override
-                    protected void _onError(String error) {
-//                        RxToast.error(error);
-                    }
                 });
     }
 
@@ -200,11 +198,6 @@ public class SpalshActivity extends BaseActivity {
                         RxLogUtils.d("结束：" + s);
                         ServiceAPI.Store_Addr = s;
                     }
-
-                    @Override
-                    protected void _onError(String error) {
-                        //这里不做处理
-                    }
                 });
     }
 
@@ -218,11 +211,6 @@ public class SpalshActivity extends BaseActivity {
                         RxLogUtils.d("结束：" + s);
                         ServiceAPI.Order_Url = s;
                     }
-
-                    @Override
-                    protected void _onError(String error) {
-                        //这里不做处理
-                    }
                 });
     }
 
@@ -235,11 +223,6 @@ public class SpalshActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         ServiceAPI.Shopping_Address = s;
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
-                        //这里不做处理
                     }
                 });
     }

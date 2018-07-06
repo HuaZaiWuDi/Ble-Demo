@@ -201,7 +201,7 @@ public class LoginActivity extends BaseActivity {
                             int targetWeight = object.getInt("targetWeight");
                             String birthday = object.getString("birthday");
                             if (sex == 0) {
-                                RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
+                                RxActivityUtils.skipActivity(mContext, UserInfoActivity.class);
                             } else {
 
                                 SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));

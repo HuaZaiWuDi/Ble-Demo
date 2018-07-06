@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -128,6 +129,7 @@ public class ForgetPasswordActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("修改密码成功：" + s);
                         RxToast.success(getString(R.string.settingPasswordSuccess));
+                        new LoginSuccessUtils(mContext, s);
                     }
 
                     @Override

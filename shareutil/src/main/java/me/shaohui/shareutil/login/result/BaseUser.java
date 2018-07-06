@@ -1,10 +1,12 @@
 package me.shaohui.shareutil.login.result;
 
+import java.io.Serializable;
+
 /**
  * Created by shaohui on 2016/12/1.
  */
 
-public class BaseUser {
+public class BaseUser implements Serializable {
 
     /**
      * sex

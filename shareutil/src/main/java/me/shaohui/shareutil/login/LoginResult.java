@@ -1,7 +1,6 @@
 package me.shaohui.shareutil.login;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.io.Serializable;
 
 import me.shaohui.shareutil.login.result.BaseToken;
 import me.shaohui.shareutil.login.result.BaseUser;
@@ -10,7 +9,7 @@ import me.shaohui.shareutil.login.result.BaseUser;
  * Created by shaohui on 2016/12/3.
  */
 
-public class LoginResult implements Parcelable {
+public class LoginResult implements Serializable {
 
     private BaseToken mToken;
 
@@ -29,31 +28,7 @@ public class LoginResult implements Parcelable {
         mUserInfo = userInfo;
     }
 
-    protected LoginResult(Parcel in) {
-        mPlatform = in.readInt();
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mPlatform);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<LoginResult> CREATOR = new Creator<LoginResult>() {
-        @Override
-        public LoginResult createFromParcel(Parcel in) {
-            return new LoginResult(in);
-        }
-
-        @Override
-        public LoginResult[] newArray(int size) {
-            return new LoginResult[size];
-        }
-    };
 
     public int getPlatform() {
         return mPlatform;
@@ -88,4 +63,5 @@ public class LoginResult implements Parcelable {
                 ", mPlatform=" + mPlatform +
                 '}';
     }
+
 }

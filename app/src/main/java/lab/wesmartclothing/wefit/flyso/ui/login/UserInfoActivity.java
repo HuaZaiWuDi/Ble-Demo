@@ -1,11 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.login;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,24 +13,21 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.qqtheme.framework.picker.DatePicker;
 import cn.qqtheme.framework.picker.DateTimePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
@@ -42,91 +38,87 @@ import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-@EActivity(R.layout.activity_user_info)
 public class UserInfoActivity extends BaseALocationActivity {
 
 
-    @ViewById
-    CommonTabLayout mCommonTabLayout;
-    @ViewById
-    ImageView img_back;
-    @ViewById
-    TextView tv_title;
-    @ViewById
-    TextView tv_info;
-    @ViewById
-    TextView tv_titleTop;
-    @ViewById
-    TextView tv_titleBottom;
-    @ViewById
-    TextView tv_top;
-    @ViewById
-    TextView tv_bottom;
-    @ViewById
-    TextView tv_skip;
-    @ViewById
-    TextView tv_location;
-    @ViewById
-    LinearLayout layout_location;
-
-    @Bean
     SaveUserInfo mUserInfo;
 
-    @Click
-    void img_back() {
-        if (viewState > 0) {
-            viewState--;
-            switchView(viewState);
-        } else {
-            RxActivityUtils.finishActivity(this);
-        }
-    }
+    @BindView(R.id.tv_titleTop)
+    TextView tv_titleTop;
+    @BindView(R.id.mCommonTabLayout)
+    CommonTabLayout mCommonTabLayout;
+    @BindView(R.id.tv_location)
+    QMUIRoundButton tv_location;
+    @BindView(R.id.layout_location)
+    LinearLayout layout_location;
+    @BindView(R.id.tv_top)
+    TextView tv_top;
+    @BindView(R.id.tv_titleBottom)
+    TextView tv_titleBottom;
+    @BindView(R.id.tv_bottom)
+    TextView tv_bottom;
+    @BindView(R.id.btn_nextStep)
+    QMUIRoundButton mBtnNextStep;
+    @BindView(R.id.tv_info)
+    TextView tv_info;
+    @BindView(R.id.mQMUITopBar)
+    QMUITopBar mMQMUITopBar;
+    @BindView(R.id.layout_bottom)
+    LinearLayout mLayoutBottom;
+    @BindView(R.id.layout_height)
+    LinearLayout mLayoutHeight;
 
-    @Click
-    void btn_nextStep() {
-        if (viewState < 2) {
-            viewState++;
-            switchView(viewState);
-        } else {
-            if (!isLocation) {
-                final QMUITipDialog tipDialog = new QMUITipDialog.Builder(mContext)
-                        .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
-                        .setTipWord(getString(R.string.not_locationAddr))
-                        .create();
+
+    @OnClick({R.id.tv_location, R.id.tv_top, R.id.tv_bottom, R.id.btn_nextStep})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_location:
                 tipDialog.show();
-                new Handler().postDelayed(new Runnable() {
+                startLocation(new MyLocationListener() {
                     @Override
-                    public void run() {
-                        tipDialog.dismiss();
+                    public void location(AMapLocation aMapLocation) {
+                        isLocation = true;
+                        tv_location.setText(aMapLocation.getProvince() + "," + aMapLocation.getCity());
+                        mUserInfo.setCountry(aMapLocation.getCountry());
+                        mUserInfo.setProvince(aMapLocation.getProvince());
+                        mUserInfo.setCity(aMapLocation.getCity());
                     }
-                }, 2000);
+                });
+                break;
+            case R.id.tv_top:
+                showHeight();
+                break;
+            case R.id.tv_bottom:
+                showDate();
+                break;
+            case R.id.btn_nextStep:
 
-                return;
-            }
-            saveUserInfo(false);
-            //跳转扫描界面
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
-            RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
+                if (viewState < 2) {
+                    viewState++;
+                    switchView(viewState);
+                } else {
+                    if (!isLocation) {
+                        tipDialog.showFail(getString(R.string.not_locationAddr));
+                        return;
+                    }
+                    saveUserInfo(false);
+                    //跳转扫描界面
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
+                    RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
+                }
+
+                break;
         }
     }
 
-    @Click
-    void tv_skip() {
-        saveUserInfo(true);
-        //跳转扫描界面
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
-        RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
-
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -146,35 +138,53 @@ public class UserInfoActivity extends BaseALocationActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+        setContentView(R.layout.activity_user_info);
+        ButterKnife.bind(this);
+        initView();
     }
 
     @Override
-    @AfterViews
     public void initView() {
+        mUserInfo = new SaveUserInfo();
+        initTopBar();
         initTab();
         switchView(viewState);
     }
 
+    private void initTopBar() {
+        mMQMUITopBar.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (viewState > 0) {
+                    viewState--;
+                    switchView(viewState);
+                } else {
+                    RxActivityUtils.finishActivity(mActivity);
+                }
+            }
+        });
+
+    }
 
     private void initTab() {
         ArrayList<CustomTabEntity> sexTabs = new ArrayList<>();
 
-        sexTabs.add(new BottomTabItem(R.mipmap.icon_girl3x, R.mipmap.icon_girl_no3x, ""));
-        sexTabs.add(new BottomTabItem(R.mipmap.icon_boy3x, R.mipmap.icon_boy_no3x, ""));
+        sexTabs.add(new BottomTabItem(R.mipmap.icon_men_select, R.mipmap.icon_men, ""));
+        sexTabs.add(new BottomTabItem(R.mipmap.icon_women_select, R.mipmap.icon_women, ""));
         mCommonTabLayout.setTabData(sexTabs);
     }
 
 
     private void switchView(int viewState) {
-        tv_title.setText(viewState != 2 ? R.string.inputUserInfo : R.string.chooseCity2);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/DIN-Regular.ttf");
+        tv_top.setTypeface(typeface);
+        tv_bottom.setTypeface(typeface);
+        mMQMUITopBar.removeAllRightViews();
+
         mCommonTabLayout.setVisibility(viewState == 0 ? View.VISIBLE : View.GONE);
-        tv_skip.setVisibility(viewState == 2 ? View.VISIBLE : View.GONE);
-        tv_bottom.setVisibility(viewState != 2 ? View.VISIBLE : View.GONE);
-        tv_titleBottom.setVisibility(viewState != 2 ? View.VISIBLE : View.GONE);
         layout_location.setVisibility(viewState == 2 ? View.VISIBLE : View.GONE);
-        tv_top.setVisibility(viewState != 2 ? View.VISIBLE : View.GONE);
+        mLayoutBottom.setVisibility(viewState == 0 ? View.VISIBLE : View.GONE);
+        mLayoutHeight.setVisibility(viewState == 1 ? View.VISIBLE : View.GONE);
         switch (viewState) {
             case 0:
                 initSexBirth();
@@ -189,62 +199,41 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
     private void initLocation() {
+        mMQMUITopBar.addRightTextButton(R.string.skip, R.id.tv_skip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveUserInfo(true);
+                //跳转扫描界面
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
+                RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
+            }
+        });
+
         tv_info.setText(R.string.Location_about);
         tv_titleTop.setText(R.string.chooseCity);
 
-        layout_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tipDialog.show();
-                startLocation(new MyLocationListener() {
-                    @Override
-                    public void location(AMapLocation aMapLocation) {
-                        isLocation = true;
-                        tv_location.setText(aMapLocation.getProvince() + "," + aMapLocation.getCity());
-                        mUserInfo.setCountry(aMapLocation.getCountry());
-                        mUserInfo.setProvince(aMapLocation.getProvince());
-                        mUserInfo.setCity(aMapLocation.getCity());
-                    }
-                });
-            }
-        });
     }
 
     private void initWeightHeight() {
         tv_info.setText(R.string.weight_about);
         tv_titleTop.setText(R.string.chooseHeight);
         tv_titleBottom.setText(R.string.chooseWeight);
-        tv_top.setVisibility(View.VISIBLE);
         tv_top.setText(mUserInfo.getHeight() + "cm");
-        tv_bottom.setText(mUserInfo.getTargetWeight() + "kg");
-        tv_top.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showHeight();
-            }
-        });
-
-        tv_bottom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showWeight();
-            }
-        });
     }
 
     private void initSexBirth() {
         tv_info.setText(R.string.info_about);
         tv_titleTop.setText(R.string.chooseSex);
         tv_titleBottom.setText(R.string.chooseBirth);
-        tv_top.setVisibility(View.GONE);
         tv_bottom.setText(RxFormat.setFormatDate(Long.parseLong(mUserInfo.getBirthday()), RxFormat.Date));
         mCommonTabLayout.setCurrentTab(mUserInfo.getSex() - 1);
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
                 //0未设置1男2女
-                SPUtils.put(SPKey.SP_sex, position);
-                mUserInfo.setSex(position == 0 ? 2 : 1);//1男2女
+                SPUtils.put(SPKey.SP_sex, position + 1);
+                mUserInfo.setSex(position + 1);//1男2女
             }
 
             @Override
@@ -252,12 +241,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
             }
         });
-        tv_bottom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDate();
-            }
-        });
+
     }
 
 
@@ -346,11 +330,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
         String s = new Gson().toJson(mUserInfo, SaveUserInfo.class);
 
-        if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {
-            MyAPP.getACache().put(Key.CACHE_USER_INFO, mUserInfo);
-            return;
-        }
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -362,6 +342,7 @@ public class UserInfoActivity extends BaseALocationActivity {
                     @Override
                     protected void _onError(String error) {
                         RxToast.error(error);
+                        MyAPP.getACache().put(Key.CACHE_USER_INFO, mUserInfo);
                     }
                 });
     }

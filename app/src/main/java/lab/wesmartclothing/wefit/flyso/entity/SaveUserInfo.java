@@ -1,13 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import org.androidannotations.annotations.EBean;
-
 import java.io.Serializable;
 
 /**
  * Created icon_hide_password jk on 2018/5/22.
  */
-@EBean
 public class SaveUserInfo implements Serializable {
 
 

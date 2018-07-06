@@ -17,7 +17,7 @@
         android:layout_marginRight="@dimen/dimen_35"
         android:layout_marginTop="@dimen/dimen_50"
         android:background="@color/white"
-        app:tl_divider_color="@color/GrayWrite"
+        app:tl_divider_color="@color/BrightGray"
         app:tl_divider_width="@dimen/dimen_1"
         app:tl_indicator_color="@color/red"
         app:tl_indicator_gravity="BOTTOM"
@@ -26,7 +26,7 @@
         app:tl_textBold="SELECT"
         app:tl_textSelectColor="@color/Gray"
         app:tl_textUnselectColor="@color/GrayWrite"
-        app:tl_textsize="18sp"/>
+        app:tl_textsize="20sp"/>
 
     <com.vondear.rxtools.view.UnScrollableViewPager
         android:id="@+id/mViewPager"
@@ -52,10 +52,11 @@
             android:layout_alignParentRight="true"
             android:background="@mipmap/icon_biyan"
             android:text="登录"
+            android:enabled="false"
             android:textColor="@color/white"
             android:textSize="@dimen/dimen_18"
             app:qmui_backgroundColor="@color/BrightGray"
-            app:qmui_borderColor="@color/BrightGray"
+            app:qmui_borderColor="@color/white"
             app:qmui_radius="23dp"/>
 
 
@@ -64,7 +65,7 @@
             android:layout_height="@dimen/dimen_1"
             android:layout_below="@+id/edit_password"
             android:layout_marginTop="@dimen/dimen_50"
-            android:background="@color/GrayWrite"/>
+            android:background="@color/BrightGray"/>
 
 
         <TextView
@@ -74,7 +75,7 @@
             android:layout_marginBottom="@dimen/dimen_35"
             android:layout_marginTop="@dimen/dimen_35"
             android:text="其他登录方式"
-            android:textColor="@color/Gray"/>
+            android:textColor="@color/GrayWrite"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

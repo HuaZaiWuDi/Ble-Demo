@@ -49,6 +49,7 @@
             android:maxLines="1"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"
+            android:textSize="@dimen/dimen_15"
             tools:text="我是输入框"/>
 
         <View
@@ -56,7 +57,7 @@
             android:layout_height="@dimen/dimen_1"
             android:layout_below="@+id/edit_phone"
             android:layout_marginTop="@dimen/dimen_15"
-            android:background="@color/GrayWrite"/>
+            android:background="@color/BrightGray"/>
 
 
         <RelativeLayout
@@ -77,6 +78,7 @@
                 android:maxLines="1"
                 android:textColor="@color/Gray"
                 android:textColorHint="@color/GrayWrite"
+                android:textSize="@dimen/dimen_15"
                 tools:text="我是密码框"/>
 
             <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -86,6 +88,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/dimen_35"
                 android:background="@mipmap/icon_biyan"
+                android:enabled="false"
                 android:text="@string/getVCode"
                 android:textColor="@color/GrayWrite"
                 app:qmui_borderColor="@color/GrayWrite"
@@ -99,7 +102,7 @@
             android:layout_height="@dimen/dimen_1"
             android:layout_below="@+id/edit_password"
             android:layout_marginTop="@dimen/dimen_15"
-            android:background="@color/GrayWrite"/>
+            android:background="@color/BrightGray"/>
 
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -108,21 +111,30 @@
             android:layout_height="46dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/dimen_35"
-            android:text="绑定"
+            android:text="@string/bind"
             android:textColor="@color/white"
             android:textSize="@dimen/dimen_18"
             app:qmui_backgroundColor="@color/BrightGray"
-            app:qmui_borderColor="@color/BrightGray"
-            app:qmui_radius="23dp"
-            tools:background="@mipmap/icon_login_wechat"/>
+            app:qmui_borderColor="@color/white"
+            app:qmui_radius="23dp"/>
 
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/tv_clause"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
-            android:text="@string/login_clause"/>
-    </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dimen_40"
+            android:gravity="center_horizontal"
+            android:text="@string/login_clause"
+            android:textColor="@color/Gray"
+            android:textSize="@dimen/dimen_11"/>
+    </RelativeLayout>
 
 </com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

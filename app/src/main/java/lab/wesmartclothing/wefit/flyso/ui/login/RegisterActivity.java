@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -22,12 +23,17 @@ import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -52,6 +58,15 @@ public class RegisterActivity extends BaseActivity {
     QMUIRoundButton mBtnRegister;
     @BindView(R.id.tv_clause)
     TextView mTvClause;
+
+    @OnClick(R.id.tv_clause)
+    void tv_clause() {
+        //服务协议
+        Bundle bundle = new Bundle();
+        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
+        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
+        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,7 +161,7 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone))
+        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone, "register"))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -192,6 +207,7 @@ public class RegisterActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("验证码：" + s);
                         RxToast.success("注册成功");
+                        new LoginSuccessUtils(mContext, s);
                     }
 
                     @Override

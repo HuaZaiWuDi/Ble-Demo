@@ -28,19 +28,21 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 
 @TargetApi(Build.VERSION_CODES.M)
-/* package */ class BluetoothLeScannerImplMarshmallow extends BluetoothLeScannerImplLollipop {
+        /* package */ class BluetoothLeScannerImplMarshmallow extends BluetoothLeScannerImplLollipop {
 
-	protected android.bluetooth.le.ScanSettings toImpl(@NonNull final BluetoothAdapter adapter, @NonNull final ScanSettings settings) {
-		final android.bluetooth.le.ScanSettings.Builder builder = new android.bluetooth.le.ScanSettings.Builder().setScanMode(settings.getScanMode());
+    protected android.bluetooth.le.ScanSettings toImpl(@NonNull final BluetoothAdapter adapter, @NonNull final ScanSettings settings) {
+        final android.bluetooth.le.ScanSettings.Builder builder = new android.bluetooth.le.ScanSettings.Builder();
+        builder.setScanMode(settings.getScanMode());
 
-		if (adapter.isOffloadedScanBatchingSupported() && settings.getUseHardwareBatchingIfSupported())
-			builder.setReportDelay(settings.getReportDelayMillis());
+        if (adapter.isOffloadedScanBatchingSupported() && settings.getUseHardwareBatchingIfSupported())
+            builder.setReportDelay(settings.getReportDelayMillis());
 
-		if (settings.getUseHardwareCallbackTypesIfSupported())
-			builder.setCallbackType(settings.getCallbackType())
-					.setMatchMode(settings.getMatchMode())
-					.setNumOfMatches(settings.getNumOfMatches());
+        builder
+                //设置@{setCallbackType}扫描回调类型这串代码可能因为华为P10，P20，8.0系统搜索不到蓝牙
+//                .setCallbackType(android.bluetooth.le.ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
+                .setMatchMode(settings.getMatchMode())
+                .setNumOfMatches(settings.getNumOfMatches());
 
-		return builder.build();
-	}
+        return builder.build();
+    }
 }

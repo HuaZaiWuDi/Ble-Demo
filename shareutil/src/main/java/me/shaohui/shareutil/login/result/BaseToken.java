@@ -1,10 +1,12 @@
 package me.shaohui.shareutil.login.result;
 
+import java.io.Serializable;
+
 /**
  * Created by shaohui on 2016/12/3.
  */
 
-public class BaseToken {
+public class BaseToken implements Serializable{
 
     private String access_token;
 

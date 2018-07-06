@@ -9,31 +9,21 @@ import android.widget.ImageView;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
-import com.smartclothing.blelibrary.BleKey;
-import com.smartclothing.module_wefit.bean.Device;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.UnScrollableViewPager;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,13 +32,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.ScreenAdapter;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.rxbus.PasswordLoginBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -103,76 +91,30 @@ public class LoginRegisterActivity extends BaseActivity {
     }
 
 
-//    @Extra
-//    boolean BUNDLE_RELOGIN;
-//
-//    private String phone;
-//    private String VCode;
-//
-//
-//    @Click
-//    void tv_about() {
-//        //服务协议
-//        Bundle bundle = new Bundle();
-//        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-//        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
-//        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
-//    }
-//
-//
-//    @Click
-//    void btn_login() {
-//        VCode = edit_VCode.getText().toString();
-//        phone = edit_phone.getText().toString();
-//        if (!RxRegUtils.isMobileExact(phone)) {
-//            RxToast.warning(getString(R.string.phoneError));
-//            return;
-//        }
-//        if (RxDataUtils.isNullString(VCode) || VCode.length() < 4 || !RxDataUtils.isNumber(VCode)) {
-//            RxToast.warning(getString(R.string.VCodeError));
-//            return;
-//        }
-//        login(phone, VCode);
-//    }
-//
-//    @Click
-//    void tv_countDown() {
-//        phone = edit_phone.getText().toString();
-//        if (!RxRegUtils.isMobileExact(phone)) {
-//            RxToast.warning(getString(R.string.phoneError));
-//            return;
-//        }
-//        getVCode(phone);
-//        RxComposeUtils.countDown(tv_countDown, 60, 1, getString(R.string.getVCode));
-//    }
-
-
     final LoginListener listener = new LoginListener() {
         @Override
         public void loginSuccess(LoginResult result) {
             //登录成功， 如果你选择了获取用户信息，可以通过
             RxLogUtils.e("登录成功:" + result.toString());
-            tipDialog.show();
             loginOther(result);
         }
 
         @Override
         public void loginFailure(Exception e) {
             RxLogUtils.e("登录失败");
-            tipDialog.dismiss();
+            RxToast.error("登录失败");
         }
 
         @Override
         public void loginCancel() {
             RxLogUtils.e("登录取消");
-            tipDialog.dismiss();
+            RxToast.normal("登录取消");
         }
     };
 
 
     @Override
     public void initView() {
-        ScreenAdapter.setCustomDensity(this);
         initTab();
         initRxBus();
     }
@@ -259,20 +201,7 @@ public class LoginRegisterActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxToast.success("登录成功");
                         RxLogUtils.d("结束：" + s);
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(s);
-//                            String userId = jsonObject.getString("userId");
-//                            String token = jsonObject.getString("token");
-//                            SPUtils.put(SPKey.SP_UserId, userId);
-//                            SPUtils.put(SPKey.SP_token, token);
-//
-//                            NetManager.getInstance().setUserIdToken(userId, token);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        getUserDevice();
-//                        initUserInfo();
+                        new LoginSuccessUtils(mContext, s);
                     }
 
                     @Override
@@ -282,81 +211,6 @@ public class LoginRegisterActivity extends BaseActivity {
                 });
     }
 
-    //获取用户绑定信息
-    private void getUserDevice() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.deviceList())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
-                        try {
-                            Gson gson = new Gson();
-                            JSONObject jsonObject = new JSONObject(s);
-                            Type typeList = new TypeToken<List<Device>>() {
-                            }.getType();
-                            List<Device> beanList = gson.fromJson(jsonObject.getString("list"), typeList);
-                            for (int i = 0; i < beanList.size(); i++) {
-                                Device device = beanList.get(i);
-                                String deviceNo = device.getDeviceNo();
-                                if (BleKey.TYPE_SCALE.equals(deviceNo)) {
-                                    SPUtils.put(SPKey.SP_scaleMAC, device.getMacAddr());
-                                } else if (BleKey.TYPE_CLOTHING.equals(deviceNo)) {
-                                    SPUtils.put(SPKey.SP_clothingMAC, device.getMacAddr());
-                                }
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
-                    }
-                });
-    }
-
-    //获取用户信息
-    private void initUserInfo() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("获取用户信息：" + s);
-                        try {
-                            JSONObject object = new JSONObject(s);
-                            int sex = object.getInt("sex");
-                            int height = object.getInt("height");
-                            int targetWeight = object.getInt("targetWeight");
-                            String birthday = object.getString("birthday");
-                            if (sex == 0) {
-                                RxActivityUtils.skipActivity(mContext, UserInfoActivity_.class);
-                            } else {
-
-                                SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
-                                SPUtils.put(SPKey.SP_weight, targetWeight);
-                                SPUtils.put(SPKey.SP_height, height);
-                                SPUtils.put(SPKey.SP_sex, sex);
-
-                                RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
-//                        RxToast.error(error);
-                    }
-                });
-    }
 
     private void loginPassword(String phone, String password) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -366,22 +220,7 @@ public class LoginRegisterActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxToast.success("登录成功");
-//                        RxLogUtils.d("结束：" + s);
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(s);
-//                            String userId = jsonObject.getString("userId");
-//                            String token = jsonObject.getString("token");
-//                            SPUtils.put(SPKey.SP_UserId, userId);
-//                            SPUtils.put(SPKey.SP_token, token);
-//
-//                            NetManager.getInstance().setUserIdToken(userId, token);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        getUserDevice();
-//                        initUserInfo();
-
+                        new LoginSuccessUtils(mContext, s);
                     }
 
                     @Override
@@ -450,33 +289,16 @@ public class LoginRegisterActivity extends BaseActivity {
 
                         JsonParser parser = new JsonParser();
                         JsonObject object = (JsonObject) parser.parse(s);
-                        if (object.has("userId")) {
-                            String userId = object.get("userId").getAsString();
-                            if (RxDataUtils.isNullString(userId)) {
-                                //UserId为空意味着没有绑定手机号码需要跳转到绑定手机号界面
+                        if (object.has("success")) {
+                            boolean success = object.get("success").getAsBoolean();
+                            if (!success) {
+                                //!success意味着没有绑定手机号码需要跳转到绑定手机号界面
                                 Bundle bundle = new Bundle();
-                                bundle.putParcelable(Key.BUNDLE_OTHER_LOGIN_INFO, result);
+                                bundle.putSerializable(Key.BUNDLE_OTHER_LOGIN_INFO, result);
                                 RxActivityUtils.skipActivity(mContext, BindPhoneActivity.class, bundle);
-                            }
+                            } else
+                                new LoginSuccessUtils(mContext, s);
                         }
-
-
-//                        RxLogUtils.d("结束：" + s);
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(s);
-//                            String userId = jsonObject.getString("userId");
-//                            String token = jsonObject.getString("token");
-//                            SPUtils.put(SPKey.SP_UserId, userId);
-//                            SPUtils.put(SPKey.SP_token, token);
-//
-//                            NetManager.getInstance().setUserIdToken(userId, token);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        getUserDevice();
-//                        initUserInfo();
-
                     }
 
                     @Override

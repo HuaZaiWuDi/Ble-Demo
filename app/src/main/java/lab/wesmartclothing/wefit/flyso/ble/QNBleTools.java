@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ble;
 
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.yolanda.health.qnblesdk.listen.QNBleDeviceDiscoveryListener;
 import com.yolanda.health.qnblesdk.listen.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNConfig;
@@ -22,17 +23,13 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 public class QNBleTools {
 
 
-//    @Pref
-//    Prefs_ mPrefs;
-
     public void scanBle(int duration) {
         QNConfig config = new QNConfig();
         config.setDuration(duration);
         config.setOnlyScreenOn(false);
         config.setAllowDuplicates(false);
-//        config.setUnit(QNUnit.WEIGHT_UNIT_KG);
+        config.setUnit(0);
         MyAPP.QNapi.startBleDeviceDiscovery(config, mQNResultCallback);
-
     }
 
 
@@ -51,12 +48,6 @@ public class QNBleTools {
 
 
     public QNUser creatUser() {
-//        String userId = mPrefs.UserId().getOr("testuser");
-//        int height = mPrefs.height().getOr(175);
-//        int sexIndex = mPrefs.sex().getOr(0);
-//        String sex = sexIndex == 0 ? "male" : "female";
-//        long birthDayMillis = mPrefs.birthDayMillis().getOr(System.currentTimeMillis());
-
 
         String sex = SPUtils.getInt(SPKey.SP_sex, 0) == 0 ? "male" : "female";
         long birthDayMillis = SPUtils.getLong(SPKey.SP_birthDayMillis);
@@ -75,7 +66,23 @@ public class QNBleTools {
 
 
     public void connectDevice(QNBleDevice device) {
-        scanBle(15 * 1000);
+        MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
+            @Override
+            public void onDeviceDiscover(QNBleDevice qnBleDevice) {
+
+            }
+
+            @Override
+            public void onStartScan() {
+
+            }
+
+            @Override
+            public void onStopScan() {
+
+            }
+        });
+        scanBle(1 * 1000);
         MyAPP.QNapi.connectDevice(device, creatUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
