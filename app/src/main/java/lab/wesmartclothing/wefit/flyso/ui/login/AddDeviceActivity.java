@@ -189,6 +189,7 @@ public class AddDeviceActivity extends BaseActivity {
             startScan();
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
