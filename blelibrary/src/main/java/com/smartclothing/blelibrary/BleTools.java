@@ -121,11 +121,11 @@ public class BleTools {
             return;
         }
 
-        TimeOut.postDelayed(reWrite, timeOut);
         if (currentCount > reWriteCount) {
             Log.e(TAG, "写失败--次数：" + currentCount);
             currentCount = 0;
         } else {
+            TimeOut.postDelayed(reWrite, timeOut);
             currentCount++;
             bleManager.write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
 

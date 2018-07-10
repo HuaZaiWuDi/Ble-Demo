@@ -30,7 +30,6 @@ import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -119,6 +118,11 @@ public class BleService extends Service {
         super.onCreate();
         initHeartRate();
         connectScaleCallBack();
+    }
+
+    private void initJPush() {
+//        IntentFilter intentFilter = new IntentFilter();
+//        registerReceiver(new MyJPushMessageReceiver(), intentFilter);
     }
 
     @Override

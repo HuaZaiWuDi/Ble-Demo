@@ -129,7 +129,7 @@ public interface RetrofitService {
 
     @FormUrlEncoded
     @POST("resetPassword")
-    Observable<String> resetPassword(@Field("phone") String phone, @Field("password") String password);
+    Observable<String> resetPassword(@Field("phone") String phone, @Field("password") String password, @Field("code") String code);
 
     @FormUrlEncoded
     @POST("phoneBind")

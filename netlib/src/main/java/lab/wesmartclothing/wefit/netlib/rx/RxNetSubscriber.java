@@ -28,6 +28,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     public void onError(Throwable e) {
         Log.e(TAG, "onError: " + e.toString());
         _onError(new RxHttpException().handleResponseError(e));
+        _onError(new RxHttpException().handleResponseError(e), -1);
     }
 
     @Override
@@ -50,7 +51,6 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
                         _onNext((T) data);
                     else {
                         _onNext((T) msg);
-
                     }
                 } else {
                     _onError(msg);
@@ -58,7 +58,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                onError(new Throwable("异常"));
+                onError(e);
             }
         }
         Log.v(TAG, "onNext: " + t);

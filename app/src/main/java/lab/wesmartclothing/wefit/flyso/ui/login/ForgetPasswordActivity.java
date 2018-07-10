@@ -122,7 +122,8 @@ public class ForgetPasswordActivity extends BaseActivity {
         }
         String phone = getIntent().getStringExtra(SPKey.SP_phone);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.resetPassword(phone, RxEncryptUtils.encryptMD5ToString(pwFirst)))
+        RxManager.getInstance().doNetSubscribe(dxyService.resetPassword(phone,
+                RxEncryptUtils.encryptMD5ToString(pwFirst), getIntent().getStringExtra("VCODE")))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

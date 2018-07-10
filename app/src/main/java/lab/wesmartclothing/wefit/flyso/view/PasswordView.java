@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 
 /**
@@ -21,6 +23,8 @@ public class PasswordView extends RelativeLayout {
     EditText mEditPassword;
     @BindView(R.id.img_biyan)
     ImageView mImgBiyan;
+    @BindView(R.id.layout_switch_password)
+    LinearLayout mLayoutSwitchPassword;
     private Context mContext;
 
     public PasswordView(Context context) {
@@ -36,19 +40,17 @@ public class PasswordView extends RelativeLayout {
     private void init() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.layout_password, this, true);
         ButterKnife.bind(this, view);
-
-        mImgBiyan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditPassword.setInputType(mEditPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ?
-                        InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD : InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                mImgBiyan.setBackgroundResource(mEditPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ?
-                        R.mipmap.icon_dispaly_password : R.mipmap.icon_hide_password);
-            }
-        });
     }
 
     public EditText getPassword() {
         return mEditPassword;
+    }
+
+    @OnClick(R.id.layout_switch_password)
+    public void onViewClicked() {
+        mEditPassword.setInputType(mEditPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ?
+                InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD : InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        mImgBiyan.setBackgroundResource(mEditPassword.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ?
+                R.mipmap.icon_dispaly_password : R.mipmap.icon_hide_password);
     }
 }

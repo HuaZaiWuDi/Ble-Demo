@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+import com.vondear.rxtools.interfaces.onUpdateListener;
 
 /**
  * 项目名称：TextureViewDome
@@ -94,7 +95,6 @@ public class AnimUtils {
             ActivityOptionsCompat option = ActivityOptionsCompat.makeClipRevealAnimation(triggerView, 0, 0,
                     triggerView.getMeasuredWidth(), triggerView.getMeasuredHeight());
             ActivityCompat.startActivity(activity, intent, option.toBundle());
-
             return;
         }
 
@@ -165,6 +165,49 @@ public class AnimUtils {
         anim.start();
     }
 
+
+    /**
+     * 水波纹渐渐出现的动画
+     * 需要注意的是，当按钮显示的时候会响应用户点击事件，当随渐变动画消失之后，再次点击会失去响应，此外如果我们想要改变波纹的颜色
+     * 可以在xml中修改 android:colorControlHighlight 的属性
+     */
+    private void doCircle(View myView) {
+        // get the center for the clipping circle
+        int cx = (myView.getLeft() + myView.getRight()) / 2;
+        int cy = (myView.getTop() + myView.getBottom()) / 2;
+
+        int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+        anim.setDuration(3000);
+        myView.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+
+    /**
+     * 水波纹渐渐消失的动画
+     * 需要注意的是，当按钮显示的时候会响应用户点击事件，当随渐变动画消失之后，再次点击会失去响应，此外如果我们想要改变波纹的颜色
+     * 可以在xml中修改 android:colorControlHighlight 的属性
+     */
+    private void hideCircle(final View myView) {
+        int cx = (myView.getLeft() + myView.getRight()) / 2;
+        int cy = (myView.getTop() + myView.getBottom()) / 2;
+
+        int finalRadius = myView.getWidth();
+
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, finalRadius, 0);
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                myView.setVisibility(View.INVISIBLE);
+            }
+        });
+        anim.setDuration(3000);
+        anim.start();
+    }
 
     /**
      * 跳跃动画

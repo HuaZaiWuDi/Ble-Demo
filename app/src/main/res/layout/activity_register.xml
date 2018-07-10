@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/dimen_1"
             android:layout_below="@+id/edit_phone"
-            android:layout_marginTop="@dimen/dimen_15"
+            android:layout_marginTop="@dimen/dimen_10"
             android:background="@color/BrightGray"/>
 
 
@@ -102,10 +102,10 @@
 
 
         <View
-            android:layout_width="match_parent"
+            android:layout_marginRight="64dp"
+            android:layout_width="200dp"
             android:layout_height="@dimen/dimen_1"
             android:layout_below="@+id/edit_password"
-            android:layout_marginTop="@dimen/dimen_15"
             android:background="@color/BrightGray"/>
 
 

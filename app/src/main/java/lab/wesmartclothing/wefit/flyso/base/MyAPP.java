@@ -16,6 +16,7 @@ import com.yolanda.health.qnblesdk.out.QNBleApi;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
@@ -42,6 +43,7 @@ public class MyAPP extends Application {
         initCache();
         initShareLogin();
         ScreenAdapter.init(this);
+        JPushUtils.init(this);
     }
 
     private void initShareLogin() {

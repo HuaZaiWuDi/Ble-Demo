@@ -69,13 +69,13 @@ public class SpalshActivity extends BaseActivity {
     @AfterViews
     public void initView() {
 
-        RxActivityUtils.skipActivityAndFinish(this, LoginRegisterActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(this, UserInfoActivity.class);
 
 //        //测试账号
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 
 
-//        initUserInfo();
+        initUserInfo();
         initData();
 
     }
@@ -148,11 +148,11 @@ public class SpalshActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (subscribe != null)
             subscribe.dispose();
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
+        super.onDestroy();
     }
 
 

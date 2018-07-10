@@ -22,7 +22,6 @@ import com.vondear.rxtools.view.RxToast;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,9 +63,6 @@ public class LoginActivity extends BaseActivity {
     @ViewById
     TextView tv_countDown;
 
-
-    @Extra
-    boolean BUNDLE_RELOGIN;
 
     private String phone;
     private String VCode;

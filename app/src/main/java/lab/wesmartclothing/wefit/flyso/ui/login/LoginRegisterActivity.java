@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -193,6 +194,14 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginVCode(String phone, String code) {
+        if (!RxRegUtils.isMobileExact(phone)) {
+            RxToast.warning(getString(R.string.phoneError));
+            return;
+        }
+        if (!RxRegUtils.isVCode(code)) {
+            RxToast.warning(getString(R.string.VCodeError));
+            return;
+        }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.login(phone, code))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -213,6 +222,14 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginPassword(String phone, String password) {
+        if (!RxRegUtils.isMobileExact(phone)) {
+            RxToast.warning(getString(R.string.phoneError));
+            return;
+        }
+        if (!RxRegUtils.isPassword(password)) {
+            RxToast.warning(getString(R.string.passwordError));
+            return;
+        }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.pwdLogin(phone, RxEncryptUtils.encryptMD5ToString(password)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -227,8 +244,6 @@ public class LoginRegisterActivity extends BaseActivity {
                     protected void _onError(String error, int code) {
                         if (code == 10021) {//未设置登录密码
                             showDialog2settingPassword();
-                        } else if (code == 10002) {//手机号未注册
-                            showDialog2Register();
                         } else {
                             RxToast.error(error);
                         }
@@ -269,8 +284,12 @@ public class LoginRegisterActivity extends BaseActivity {
                 })
                 .setContent("该手机号还未设置密码");
         dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.red));
-        dialog.getTvSure().setBackgroundColor(getResources().getColor(R.color.BrightGray));
+        TextView tvCancel = dialog.getTvCancel();
+        TextView tvSure = dialog.getTvSure();
+        tvCancel.setBackgroundColor(getResources().getColor(R.color.red));
+        tvCancel.setTextColor(getResources().getColor(R.color.white));
+        tvSure.setBackgroundColor(getResources().getColor(R.color.BrightGray));
+        tvSure.setTextColor(getResources().getColor(R.color.white));
         dialog.show();
     }
 
@@ -279,14 +298,14 @@ public class LoginRegisterActivity extends BaseActivity {
         String openId = result.getUserInfo().getOpenId();
         String nickname = result.getUserInfo().getNickname();
         String imageUrl = result.getUserInfo().getHeadImageUrl();
-        String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ : result.getPlatform() == LoginPlatform.WEIBO ? Key.LoginType_WEIBO : Key.LoginType_WEXIN;
+        String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ :
+                result.getPlatform() == LoginPlatform.WEIBO ? Key.LoginType_WEIBO : Key.LoginType_WEXIN;
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.outerLogin(openId, nickname, imageUrl, userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-
                         JsonParser parser = new JsonParser();
                         JsonObject object = (JsonObject) parser.parse(s);
                         if (object.has("success")) {

@@ -10,23 +10,22 @@ public class ServiceAPI {
 
     //一期
 //    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
-//    public static final String BASE_URL = "http://10.10.11.192:16102";
-//    public static final String BASE_URL = "http://39.108.152.50:16102";
-//    public static final String BASE_URL = "http://10.10.11.208:16102";
-//    public static final String BASE_URL = "http://10.10.11.208:16100/mix/";
+//    public static final String BASE_URL = "http://10.10.11.192:15112";
+//    public static final String BASE_URL = "http://10.10.11.208:15112/mix/";
 
     //二期
-    public static final String BASE_URL = "http://10.10.11.208:16105";
+//    public static final String BASE_URL = "http://10.10.11.208:15112";
+    public static final String BASE_URL = "http://10.10.11.208:15101/mix/";//网关
 
     //商城地址
     public static String Store_Addr = "https://weidian.com/?userid=1063198383";
 
     //商城URL
-    public static String STORE_URL = "http://10.10.11.208:16100";
+    public static String STORE_URL = "http://10.10.11.208:15111";
 
-    public static String Order_Url = "http://10.10.11.208:16100";
+    public static String Order_Url = "http://10.10.11.208:15111";
 
-    public static String Shopping_Address = "http://10.10.11.208:16100";
+    public static String Shopping_Address = "http://10.10.11.208:15111";
 
 
     //发现URL   判断网址是否隐藏底部导航栏，需要网址后面加/

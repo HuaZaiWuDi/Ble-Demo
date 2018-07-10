@@ -33,6 +33,25 @@ android {
                 arguments = ['resourcePackageName': android.defaultConfig.applicationId]
             }
         }
+
+        //极光推送
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+
+        //极光推送：
+//        TimeToFit：
+//        AppKey : 905f32b2246c47b2c017a118
+//        Master Secret : fb6ad806e3a46e1ddf71a9b2
+        manifestPlaceholders = [
+                JPUSH_PKGNAME: applicationId,
+                JPUSH_APPKEY : "905f32b2246c47b2c017a118", //JPush上注册的包名对应的appkey.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+        ]
+
+
     }
     buildTypes {
         release {
@@ -91,7 +110,7 @@ dependencies {
     compile project(path: ':blelibrary')
 
     //https://github.com/gzu-liyujiang/AndroidPicker
-    compile('cn.qqtheme.framework:WheelPicker:latest.release') {
+    compile('cn.qqtheme.framework:WheelPicker:+') {
         exclude group: 'com.android.support'
     }
     compile('com.just.agentweb:agentweb:4.0.2') {// (必选)
@@ -115,4 +134,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
+    //极光推送
+    compile 'cn.jiguang.sdk:jpush:3.1.3'  // 此处以JPush 3.1.1 版本为例。
+    compile 'cn.jiguang.sdk:jcore:1.2.1'  // 此处以JCore 1.1.9 版本为例。
 }

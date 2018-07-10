@@ -139,6 +139,7 @@ public class BindPhoneActivity extends BaseActivity {
     }
 
     private void switchEnable(boolean isEnable) {
+        if (!mBtnGetVCode.getText().toString().equals(getString(R.string.getVCode))) return;
         mBtnGetVCode.setEnabled(isEnable);
         mBtnGetVCode.setAlpha(isEnable ? 1f : 0.5f);
     }
@@ -184,6 +185,7 @@ public class BindPhoneActivity extends BaseActivity {
             return;
         }
         LoginResult result = (LoginResult) getIntent().getSerializableExtra(Key.BUNDLE_OTHER_LOGIN_INFO);
+        RxLogUtils.e("登录信息：" + result.toString());
         String openId = result.getUserInfo().getOpenId();
         String nickname = result.getUserInfo().getNickname();
         String imageUrl = result.getUserInfo().getHeadImageUrl();

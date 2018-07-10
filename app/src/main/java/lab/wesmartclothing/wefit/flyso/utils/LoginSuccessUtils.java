@@ -111,9 +111,8 @@ public class LoginSuccessUtils {
                         } else
                             birthday = "631233300000";
                         if (sex == 0) {
-                            RxActivityUtils.skipActivity(mContext, UserInfoActivity.class);
+                            RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity.class);
                         } else {
-
                             SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
                             SPUtils.put(SPKey.SP_weight, targetWeight);
                             SPUtils.put(SPKey.SP_height, height);

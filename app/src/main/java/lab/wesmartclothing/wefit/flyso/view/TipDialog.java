@@ -28,6 +28,7 @@ public class TipDialog {
 
 
     public void setDuration(long timeOut) {
+        dismiss();
         if (timeOut <= 0) return;
         mHandler.removeCallbacksAndMessages(null);
         mHandler.postDelayed(new Runnable() {
@@ -96,7 +97,8 @@ public class TipDialog {
     public void dismiss() {
         if (tipDialog == null) return;
         mHandler.removeCallbacksAndMessages(null);
-        tipDialog.dismiss();
+        if (tipDialog.isShowing())
+            tipDialog.dismiss();
     }
 
 }

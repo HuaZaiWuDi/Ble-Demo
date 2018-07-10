@@ -113,6 +113,7 @@ public class VerificationPhoneActivity extends BaseActivity {
     }
 
     private void switchEnable(boolean isEnable) {
+        if (!mBtnGetVCode.getText().toString().equals(getString(R.string.getVCode))) return;
         mBtnGetVCode.setEnabled(isEnable);
         mBtnGetVCode.setAlpha(isEnable ? 1f : 0.5f);
     }
@@ -148,7 +149,7 @@ public class VerificationPhoneActivity extends BaseActivity {
 
     private void toRestPassword() {
         final String phone = mEditPhone.getText().toString();
-        String vCode = mEditVcode.getText().toString();
+        final String vCode = mEditVcode.getText().toString();
         if (!RxRegUtils.isMobileExact(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
@@ -167,6 +168,7 @@ public class VerificationPhoneActivity extends BaseActivity {
                         RxToast.success(getString(R.string.SMSSended));
                         Bundle bundle = new Bundle();
                         bundle.putString(SPKey.SP_phone, phone);
+                        bundle.putString("VCODE", vCode);
                         RxActivityUtils.skipActivityAndFinish(mContext, ForgetPasswordActivity.class, bundle);
                     }
 

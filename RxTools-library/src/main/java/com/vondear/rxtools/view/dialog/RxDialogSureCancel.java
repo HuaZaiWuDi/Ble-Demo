@@ -40,13 +40,13 @@ public class RxDialogSureCancel extends RxDialog {
         return mTvContent;
     }
 
+    public TextView getTvSure() {
+        return mTvSure;
+    }
+
     public RxDialogSureCancel setSure(String strSure) {
         this.mTvSure.setText(strSure);
         return this;
-    }
-
-    public TextView getTvSure() {
-        return mTvSure;
     }
 
     public RxDialogSureCancel setCancel(String strCancel) {

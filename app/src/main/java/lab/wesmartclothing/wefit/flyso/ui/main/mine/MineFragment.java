@@ -43,7 +43,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
-import lab.wesmartclothing.wefit.flyso.ui.login.LoginActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
@@ -215,20 +215,16 @@ public class MineFragment extends BaseFragment {
             @Override
             public void accept(String device) throws Exception {
                 if (Key.BUNDLE_WEB_URL.equals(device)) {
-
                     //服务协议
                     Bundle bundle = new Bundle();
                     bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
                     bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
                     RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
-
                 } else if ("logout".equals(device)) {
 //                    mPrefs.clear();
                     SPUtils.clear();
                     MyAPP.getACache().clear();
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean(Key.BUNDLE_RELOGIN, true);
-                    RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginActivity_.class, bundle);
+                    RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
                     RxActivityUtils.finishActivity(SetActivity.class);
                 } else if (BleKey.TYPE_SCALE.equals(device) || BleKey.TYPE_CLOTHING.equals(device)) {
                     Bundle bundle = new Bundle();

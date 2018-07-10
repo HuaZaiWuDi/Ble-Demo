@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by shaohui on 2016/12/3.
  */
 
-public class BaseToken implements Serializable{
+public class BaseToken implements Serializable {
 
     private String access_token;
 

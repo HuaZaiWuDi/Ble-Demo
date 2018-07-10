@@ -218,6 +218,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void switchEnable(boolean isEnable) {
+        if (!mBtnGetVCode.getText().toString().equals(getString(R.string.getVCode))) return;
         mBtnGetVCode.setEnabled(isEnable);
         mBtnGetVCode.setAlpha(isEnable ? 1f : 0.5f);
     }

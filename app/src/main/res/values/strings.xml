@@ -162,7 +162,7 @@
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
     <string name="ServiceAgreement">服务协议</string>
     <string name="phoneError">手机号码号码不正确</string>
-    <string name="passwordError">密码不合理（请输入不少于6位字符密码）</string>
+    <string name="passwordError">密码不合理（请输入不少于6位字母或数字）</string>
     <string name="VCodeError">验证码不正确</string>
     <string name="SMSSended">短信已发送</string>
     <string name="not_locationAddr">未获取地理位置</string>

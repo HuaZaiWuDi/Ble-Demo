@@ -58,10 +58,15 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
         public void onReceive(Context context, Intent intent) {
             if ("ACTION_SCALE_CONNECT".equals(intent.getAction())) {
                 boolean scale_connect = intent.getBooleanExtra("EXTRA_SCALE_CONNECT", false);
-                RxLogUtils.d("连接状况:" + intent.getAction() + "-----------" + scale_connect);
                 if (rvAdapter != null && rvAdapter.getItem(0) != null) {
                     rvAdapter.getItem(0).setConnect(scale_connect);
                     rvAdapter.notifyItemChanged(0);
+                }
+            } else if ("ACTION_CLOTHING_CONNECT".equals(intent.getAction())) {
+                boolean scale_connect = intent.getBooleanExtra("EXTRA_CLOTHING_CONNECT", false);
+                if (rvAdapter != null && rvAdapter.getItem(1) != null) {
+                    rvAdapter.getItem(1).setConnect(scale_connect);
+                    rvAdapter.notifyItemChanged(1);
                 }
             }
         }
@@ -75,7 +80,7 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("ACTION_SCALE_CONNECT");
-        filter.addAction("ACTION_HEART_RATE_CHANGED");
+        filter.addAction("ACTION_CLOTHING_CONNECT");
         registerReceiver(mBroadcastReceiver, filter);
 
 
