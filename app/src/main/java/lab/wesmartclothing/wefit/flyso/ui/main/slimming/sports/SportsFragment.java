@@ -153,7 +153,7 @@ public class SportsFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if ("".equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
             initDeviceConnectTip(1);
         } else {
             tv_connectDevice.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
@@ -470,7 +470,7 @@ public class SportsFragment extends BaseFragment {
 //        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
         switch (QN_bleState) {
             case 0://打开蓝牙
-                if ("".equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
                     initDeviceConnectTip(1);
                 } else {
                     RxTextUtils.getBuilder(getString(R.string.connectBle))
@@ -518,7 +518,7 @@ public class SportsFragment extends BaseFragment {
                 });
                 break;
             case 3://不提示，tip消失
-                if ("".equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
                     initDeviceConnectTip(1);
                 } else
                     tv_connectTip.setVisibility(View.GONE);

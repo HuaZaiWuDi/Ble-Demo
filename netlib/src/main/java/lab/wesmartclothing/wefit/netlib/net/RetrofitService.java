@@ -54,6 +54,10 @@ public interface RetrofitService {
     @POST("slim/getAddedHeatInfo")
     Observable<String> getAddedHeatInfo(@Body RequestBody body);
 
+    @FormUrlEncoded
+    @POST("slim/indexInfo")
+    Observable<String> indexInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+
     ///////////////////////////////////////////////////////////////////////////
     // 体重
     ///////////////////////////////////////////////////////////////////////////

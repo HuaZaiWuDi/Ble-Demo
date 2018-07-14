@@ -9,6 +9,7 @@ import android.widget.EditText;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -54,7 +55,7 @@ public class ForgetPasswordActivity extends BaseActivity {
         mQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                RxActivityUtils.finishActivity();
             }
         });
         mEditFirst.addTextChangedListener(new TextWatcher() {

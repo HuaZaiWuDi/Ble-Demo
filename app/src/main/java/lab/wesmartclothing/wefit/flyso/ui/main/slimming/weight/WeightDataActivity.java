@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -74,7 +75,7 @@ public class WeightDataActivity extends BaseActivity {
     void back() {
         if (listReceives.size() > 0)
             showDialog();
-        else onBackPressed();
+        else RxActivityUtils.finishActivity();
     }
 
 
@@ -204,7 +205,7 @@ public class WeightDataActivity extends BaseActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK)
             if (listReceives.size() > 0)
                 showDialog();
-            else onBackPressed();
+            else RxActivityUtils.finishActivity();
         return true;
     }
 

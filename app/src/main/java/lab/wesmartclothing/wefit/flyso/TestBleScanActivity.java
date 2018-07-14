@@ -1,88 +1,61 @@
 package lab.wesmartclothing.wefit.flyso;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelUuid;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.smartclothing.blelibrary.BleKey;
-import com.smartclothing.blelibrary.BleTools;
-import com.vondear.rxtools.utils.RxLogUtils;
+import com.qmuiteam.qmui.widget.QMUIEmptyView;
 
-import java.util.ArrayList;
-import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TestBleScanActivity extends AppCompatActivity {
+
+    @BindView(R.id.parent)
+    RelativeLayout mParent;
+    @BindView(R.id.tv_content)
+    TextView mTvContent;
+
+    private QMUIEmptyView mEmptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_ble_scan);
+        ButterKnife.bind(this);
 
-        initBle();
+
+        mEmptyView = new QMUIEmptyView(this);
+        mEmptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        mParent.addView(mEmptyView);
 
     }
 
+    int count = 0;
 
-    private void initBle() {
-
-    }
-
-
-    BluetoothLeScanner scanner;
-
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void bleScan(View v) {
-        RxLogUtils.d("开始扫描：");
-        BluetoothAdapter adapter = BleTools.getBleManager().getBluetoothAdapter();
-        scanner = adapter.getBluetoothLeScanner();
-        List<ScanFilter> filters = new ArrayList<>();
-        ScanFilter filter = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(BleKey.UUID_Servie)).build();
-        ScanFilter filter_Scale = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(BleKey.UUID_QN_SCALE)).build();
-
-        filters.add(filter);
-        filters.add(filter_Scale);
-        scanner.startScan(filters, new ScanSettings.Builder().build(), mScanCallback);
-    }
-
-    ScanCallback mScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, android.bluetooth.le.ScanResult result) {
-            RxLogUtils.d("扫描设备：" + result.toString());
-            super.onScanResult(callbackType, result);
+    @OnClick(R.id.tv_content)
+    public void onViewClicked() {
+        count++;
+        switch (count % 4) {
+            case 0:
+                mEmptyView.show("我是title", "我是Content");
+                break;
+            case 1:
+                mEmptyView.show("我是错误的文字", null);
+                break;
+            case 2:
+                mEmptyView.show(true);
+                break;
+            case 3:
+                mEmptyView.show(false, "我是title", null, "我是Content", null);
+                break;
+            case 4:
+                mEmptyView.show(false, "我是title", "我是Content", "点击重试", null);
+                break;
+            default:
+                break;
         }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            RxLogUtils.d("扫描结束：" + errorCode);
-            super.onScanFailed(errorCode);
-        }
-
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            RxLogUtils.d("扫描设备：" + results.size());
-            for (ScanResult result : results) {
-                RxLogUtils.d("扫描设备：" + result.toString());
-            }
-            super.onBatchScanResults(results);
-        }
-    };
-
-
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void stopScan(View v) {
-        RxLogUtils.d("结束扫描：");
-        scanner.stopScan(mScanCallback);
     }
-
 }

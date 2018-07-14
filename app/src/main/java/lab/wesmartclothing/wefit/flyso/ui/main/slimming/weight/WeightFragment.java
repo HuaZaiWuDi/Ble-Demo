@@ -168,7 +168,7 @@ public class WeightFragment extends BaseFragment {
 
     @Override
     public void onStart() {
-        if ("".equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
+        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             initDeviceConnectTip(1);
         } else {
             tv_connectDevice.setText(isConnect ? R.string.connected : R.string.disConnected);
@@ -630,7 +630,7 @@ public class WeightFragment extends BaseFragment {
 //        tv_connectDevice.setCompoundDrawables(drawable, null, null, null);
         switch (QN_bleState) {
             case 0://打开蓝牙
-                if ("".equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
                     initDeviceConnectTip(1);
                 } else {
                     RxTextUtils.getBuilder(getString(R.string.connectBle))
@@ -683,7 +683,7 @@ public class WeightFragment extends BaseFragment {
                 });
                 break;
             case 3:
-                if ("".equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
                     initDeviceConnectTip(1);
                 } else
                     tv_connectTip.setVisibility(View.GONE);

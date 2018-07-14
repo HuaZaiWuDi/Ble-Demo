@@ -28,6 +28,8 @@ public final class R {
         public static int design_bottom_sheet_slide_out = 0x7f010014;
         public static int design_snackbar_in = 0x7f010015;
         public static int design_snackbar_out = 0x7f010016;
+        public static int fade_in = 0x7f010019;
+        public static int fade_out = 0x7f01001a;
         public static int grow_from_bottom = 0x7f01001b;
         public static int grow_from_bottomleft_to_topright = 0x7f01001c;
         public static int grow_from_bottomright_to_topleft = 0x7f01001d;

@@ -248,11 +248,11 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
-                        onBackPressed();
+                        RxActivityUtils.finishActivity();
                     }
                 });
                 dialog.show();
-            } else onBackPressed();
+            } else RxActivityUtils.finishActivity();
 
         } else if (i1 == R.id.tv_data_save) {
             requestSaveUserInfo();

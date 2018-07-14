@@ -88,7 +88,7 @@ public class RegisterActivity extends BaseActivity {
         mMQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.btn_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                RxActivityUtils.finishActivity();
             }
         });
         mEditPhone.addTextChangedListener(new TextWatcher() {

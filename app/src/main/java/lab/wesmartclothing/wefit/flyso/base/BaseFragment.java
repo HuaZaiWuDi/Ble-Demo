@@ -36,7 +36,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxBus;
  * 如果是通过FragmentTransaction的show和hide的方法来控制显示，调用的是onHiddenChanged.
  * 针对初始就show的Fragment 为了触发onHiddenChanged事件 达到lazy效果 需要先hide再show
  * QMUIFragment.UI
- *
  */
 public abstract class BaseFragment extends Fragment {
 
@@ -48,12 +47,11 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 标志位，View已经初始化完成。
      */
-    private boolean isPrepared;
 
     /**
      * 是否第一次加载
      */
-    private boolean isFirstLoad = true;
+    boolean isLoad = false;
 
     public FragmentActivity mActivity;
 
@@ -98,8 +96,6 @@ public abstract class BaseFragment extends Fragment {
 
     public BaseFragment() {
     }
-
-
 
 
     @Override
@@ -210,8 +206,6 @@ public abstract class BaseFragment extends Fragment {
         RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
-
-    boolean isLoad = false;
 
 
     @Override

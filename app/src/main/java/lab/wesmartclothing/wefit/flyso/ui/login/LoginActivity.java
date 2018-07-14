@@ -239,7 +239,14 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
-    //不退出app，而是隐藏当前的app
+    /**
+     * 退出app，而是隐藏当前的app
+     * <p>
+     * nonRoot=false→ 仅当activity为task根（即首个activity例如启动activity之类的）时才生效
+     * <p>
+     * nonRoot=true→ 忽略上面的限制
+     */
+
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);

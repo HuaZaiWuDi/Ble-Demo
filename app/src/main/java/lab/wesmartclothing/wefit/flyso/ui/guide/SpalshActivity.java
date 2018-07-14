@@ -2,9 +2,11 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.Handler;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -16,8 +18,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
@@ -44,7 +44,6 @@ import okhttp3.RequestBody;
 public class SpalshActivity extends BaseActivity {
 
 
-    private Handler mHandler = new Handler();
     private Disposable subscribe;
     private boolean isSaveUserInfo = false;
 
@@ -64,16 +63,14 @@ public class SpalshActivity extends BaseActivity {
         }
     }
 
-
     @Override
     @AfterViews
     public void initView() {
 
-//        RxActivityUtils.skipActivityAndFinish(this, UserInfoActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(this, MainActivity_.class);
 
 //        //测试账号
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-
 
         initUserInfo();
         initData();
@@ -93,22 +90,33 @@ public class SpalshActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("获取用户信息：" + s);
-                        try {
-                            JSONObject object = new JSONObject(s);
-                            int sex = object.getInt("sex");
-                            int height = object.getInt("height");
-                            int targetWeight = object.getInt("targetWeight");
-                            String birthday = object.getString("birthday");
-                            isSaveUserInfo = sex == 0;
-                            if (!isSaveUserInfo) {//判断性别是否为0来判断是否录入个人信息
+                        SPUtils.put(SPKey.SP_UserInfo, s);
 
-                                SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
-                                SPUtils.put(SPKey.SP_weight, targetWeight);
-                                SPUtils.put(SPKey.SP_height, height);
-                                SPUtils.put(SPKey.SP_sex, sex);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        JsonParser parser = new JsonParser();
+                        JsonObject object = (JsonObject) parser.parse(s);
+                        int sex = object.get("sex").getAsInt();
+                        isSaveUserInfo = sex == 0;
+
+                        int height = object.get("height").getAsInt();
+                        int targetWeight = object.get("targetWeight").getAsInt();
+                        String birthday;
+                        JsonElement jsonElement = object.get("birthday");
+                        if (!jsonElement.isJsonNull()) {
+                            birthday = jsonElement.getAsString();
+                        } else
+                            birthday = "631233300000";
+
+                        String clothesMacAddr = object.get("clothesMacAddr").getAsString();
+                        String scalesMacAddr = object.get("scalesMacAddr").getAsString();
+                        SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
+                        SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
+
+                        if (!isSaveUserInfo) {//判断性别是否为0来判断是否录入个人信息
+
+                            SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
+                            SPUtils.put(SPKey.SP_weight, targetWeight);
+                            SPUtils.put(SPKey.SP_height, height);
+                            SPUtils.put(SPKey.SP_sex, sex);
                         }
                     }
                 });
@@ -116,18 +124,13 @@ public class SpalshActivity extends BaseActivity {
 
 
     private void gotoMain() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //通过验证是否保存userId来判断是否登录
-                if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
-                    RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
-                } else if (isSaveUserInfo)//
-                    RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
-                else
-                    RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity_.class);
-            }
-        }, 500);
+        //通过验证是否保存userId来判断是否登录
+        if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
+        } else if (isSaveUserInfo)//
+            RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
+        else
+            RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity_.class);
     }
 
 
@@ -150,8 +153,6 @@ public class SpalshActivity extends BaseActivity {
     protected void onDestroy() {
         if (subscribe != null)
             subscribe.dispose();
-        mHandler.removeCallbacksAndMessages(null);
-        mHandler = null;
         super.onDestroy();
     }
 
@@ -227,5 +228,12 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
+
+    //不退出app，而是隐藏当前的app
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+        super.onBackPressed();
+    }
 
 }

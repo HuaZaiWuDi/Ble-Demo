@@ -62,7 +62,6 @@ public class PhoneEditActivity extends BaseActivity implements View.OnClickListe
                 RxToast.showToast("联系电话不能为空");
             }
 
-
         }
     }
 }

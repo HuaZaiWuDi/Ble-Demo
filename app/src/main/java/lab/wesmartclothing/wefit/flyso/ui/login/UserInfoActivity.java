@@ -19,10 +19,12 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,12 +86,17 @@ public class UserInfoActivity extends BaseALocationActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_location:
+                if (!RxLocationUtils.isGpsEnabled(this)) {
+                    RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
+                    rxDialogGPSCheck.show();
+                    return;
+                }
                 tipDialog.show();
                 startLocation(new MyLocationListener() {
                     @Override
                     public void location(AMapLocation aMapLocation) {
                         tipDialog.dismiss();
-                        switchLoactionUI();
+                        switchLoactionUI(true);
                         checkNextWay(true);
                         tv_location.setText(aMapLocation.getProvince() + "," + aMapLocation.getCity());
                         mUserInfo.setCountry(aMapLocation.getCountry());
@@ -125,7 +132,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             } else {
                 if (!RxUtils.isFastClick(2000)) {
                     RxToast.normal("再按一次退出");
-                } else RxActivityUtils.finishActivity();
+                } else moveTaskToBack(true);
             }
         return true;
     }
@@ -187,22 +194,29 @@ public class UserInfoActivity extends BaseALocationActivity {
         mBtnNextStep.setEnabled(isEnable);
     }
 
-    private void switchLoactionUI() {
+    private void switchLoactionUI(boolean isClick) {
         QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) tv_location.getBackground();
-        background.setColor(getResources().getColor(R.color.Gray));
-        background.setStroke(1, getResources().getColor(R.color.white));
-        tv_location.setTextColor(getResources().getColor(R.color.white));
+        background.setColor(getResources().getColor(isClick ? R.color.Gray : R.color.white));
+        background.setStroke(1, getResources().getColor(isClick ? R.color.white : R.color.BrightGray));
+        tv_location.setTextColor(getResources().getColor(isClick ? R.color.white : R.color.Gray));
     }
 
 
     private void initLocation() {
+        checkNextWay(aMapLocation != null);
         Button button = mMQMUITopBar.addRightTextButton(R.string.skip, R.id.tv_skip);
         button.setTextColor(getResources().getColor(R.color.Gray));
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveUserInfo(true);
-
+            }
+        });
+        mMQMUITopBar.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewState--;
+                switchView(viewState);
             }
         });
 
@@ -367,5 +381,13 @@ public class UserInfoActivity extends BaseALocationActivity {
                     }
                 });
     }
+
+
+//    //不退出app，而是隐藏当前的app
+//    @Override
+//    public void onBackPressed() {
+//        moveTaskToBack(true);
+//        super.onBackPressed();
+//    }
 
 }

@@ -17,6 +17,7 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -41,7 +42,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.SlimmingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
@@ -69,6 +70,8 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     @AfterViews
     public void initView() {
+        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+
 
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         initBottomTab();
@@ -138,7 +141,8 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initMyViewPager() {
         mFragments.clear();
-        mFragments.add(SlimmingFragment.getInstance());
+//        mFragments.add(SlimmingFragment.getInstance());
+        mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(FindFragment.getInstance());
         mFragments.add(StoreFragment.getInstance());
         mFragments.add(MineFragment.getInstance());

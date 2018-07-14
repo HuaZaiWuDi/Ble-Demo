@@ -133,7 +133,7 @@ public class AddDeviceActivity extends BaseActivity {
         if (stepState == 3) {
             initStep(0);
         } else {
-            onBackPressed();
+            RxActivityUtils.finishActivity();
         }
     }
 
@@ -143,7 +143,7 @@ public class AddDeviceActivity extends BaseActivity {
             if (stepState == 3) {
                 initStep(0);
             } else {
-                onBackPressed();
+                RxActivityUtils.finishActivity();
             }
         return true;
     }
@@ -239,8 +239,7 @@ public class AddDeviceActivity extends BaseActivity {
             public void accept(BleDevice device) throws Exception {
                 if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
-                    if (filterDevice(device.getMac()))
-                        isBind(bean);
+                    isBind(bean);
                 }
             }
         });
@@ -251,8 +250,7 @@ public class AddDeviceActivity extends BaseActivity {
             public void accept(QNBleDevice device) throws Exception {
                 if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
-                    if (filterDevice(device.getMac()))
-                        isBind(bean);
+                    isBind(bean);
                 }
             }
         });
@@ -445,24 +443,15 @@ public class AddDeviceActivity extends BaseActivity {
                             initStep(2);
                         }
                         bean.setBind("true".equals(s));
-                        adapter.addData(bean);
+                        if (filterDevice(bean.getMac()))
+                            adapter.addData(bean);
                     }
 
                     @Override
                     protected void _onError(String error) {
                         //网络获取异常不可用
-                        String s = MyAPP.getACache().getAsString(Key.CACHE_BIND_INFO);
-                        if (s != null) {
-                            BindDeviceItem item = new Gson().fromJson(s, BindDeviceItem.class);
-                            List<BindDeviceItem.DeviceListBean> deviceList = item.getDeviceList();
-                            if (deviceList.size() > 0)
-                                for (int i = 0; i < deviceList.size(); i++) {
-                                    if (bean.getDeivceName().equals(deviceList.get(i).getDeviceName())) {
-                                        bean.setBind(true);
-                                    }
-                                }
-                        }
-                        adapter.addData(bean);
+                        if (filterDevice(bean.getMac()))
+                            adapter.addData(bean);
                     }
                 });
     }

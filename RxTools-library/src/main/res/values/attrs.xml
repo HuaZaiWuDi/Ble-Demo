@@ -233,11 +233,11 @@
         <attr name="seekBarResId" format="reference"/>
         <!-- must use 9 path ！！！-->
         <attr name="progressHintResId" format="reference"/>
-        <attr name="textPadding" format="dimension" />
-        <attr name="textSize2" format="dimension" />
-        <attr name="hintBGHeight" format="dimension" />
-        <attr name="hintBGWith" format="dimension" />
-        <attr name="hintBGPadding" format="dimension" />
+        <attr name="textPadding" format="dimension"/>
+        <attr name="textSize2" format="dimension"/>
+        <attr name="hintBGHeight" format="dimension"/>
+        <attr name="hintBGWith" format="dimension"/>
+        <attr name="hintBGPadding" format="dimension"/>
         <attr name="seekBarHeight" format="dimension"/>
         <attr name="thumbSize" format="dimension"/>
         <attr name="cellMode" format="enum">
@@ -251,27 +251,27 @@
 
     </declare-styleable>
 
-    <attr name="SpinKitViewStyle" format="reference" />
+    <attr name="SpinKitViewStyle" format="reference"/>
 
     <declare-styleable name="SpinKitView">
         <attr name="SpinKit_Style">
-            <enum name="RotatingPlane" value="0" />
-            <enum name="DoubleBounce" value="1" />
-            <enum name="Wave" value="2" />
-            <enum name="WanderingCubes" value="3" />
-            <enum name="Pulse" value="4" />
-            <enum name="ChasingDots" value="5" />
-            <enum name="ThreeBounce" value="6" />
-            <enum name="Circle" value="7" />
-            <enum name="CubeGrid" value="8" />
-            <enum name="FadingCircle" value="9" />
-            <enum name="FoldingCube" value="10" />
-            <enum name="RotatingCircle" value="11" />
-            <enum name="MultiplePulse" value="12" />
-            <enum name="PulseRing" value="13" />
-            <enum name="MultiplePulseRing" value="14" />
+            <enum name="RotatingPlane" value="0"/>
+            <enum name="DoubleBounce" value="1"/>
+            <enum name="Wave" value="2"/>
+            <enum name="WanderingCubes" value="3"/>
+            <enum name="Pulse" value="4"/>
+            <enum name="ChasingDots" value="5"/>
+            <enum name="ThreeBounce" value="6"/>
+            <enum name="Circle" value="7"/>
+            <enum name="CubeGrid" value="8"/>
+            <enum name="FadingCircle" value="9"/>
+            <enum name="FoldingCube" value="10"/>
+            <enum name="RotatingCircle" value="11"/>
+            <enum name="MultiplePulse" value="12"/>
+            <enum name="PulseRing" value="13"/>
+            <enum name="MultiplePulseRing" value="14"/>
         </attr>
-        <attr name="SpinKit_Color" format="color" />
+        <attr name="SpinKit_Color" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="RxScaleImageView">

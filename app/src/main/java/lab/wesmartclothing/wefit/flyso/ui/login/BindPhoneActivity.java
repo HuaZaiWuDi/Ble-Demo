@@ -84,7 +84,7 @@ public class BindPhoneActivity extends BaseActivity {
         mQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                RxActivityUtils.finishActivity();
             }
         });
         SpannableStringBuilder spannableStringBuilder = RxTextUtils.getBuilder(mTvClause.getText())
@@ -196,7 +196,6 @@ public class BindPhoneActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("验证码：" + s);
                         new LoginSuccessUtils(mContext, s);
                     }
 

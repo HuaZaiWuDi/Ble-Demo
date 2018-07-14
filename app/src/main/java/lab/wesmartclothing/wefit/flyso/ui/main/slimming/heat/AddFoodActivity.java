@@ -76,7 +76,7 @@ public class AddFoodActivity extends BaseActivity {
 
     @Click
     void back() {
-        onBackPressed();
+        RxActivityUtils.finishActivity();
     }
 
     @Click
@@ -159,7 +159,7 @@ public class AddFoodActivity extends BaseActivity {
     private void showAddFoodDialog(final ListBean item) {
         item.setEatType(ADD_FOOD_TYPE);
         item.setHeatDate(ADD_FOOD_DATE);
-        mAddOrUpdateFoodDialog.setFoodInfo(mContext,true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+        mAddOrUpdateFoodDialog.setFoodInfo(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(AddFoodItem.intakeList item) {
                 mIntakeLists.add(item);

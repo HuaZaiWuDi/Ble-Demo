@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/bottom_padding"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_F7F7F9"
+            android:orientation="vertical">
+
+            <!--title-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="126dp"
+                android:background="@color/Gray"
+                android:paddingTop="36dp"
+                tools:visibility="gone">
+
+
+                <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+                    android:id="@+id/iv_userImg"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="26dp"
+                    android:layout_marginLeft="@dimen/dimen_16"
+                    android:layout_marginRight="@dimen/dimen_16"
+                    android:src="@mipmap/app_name"
+                    app:qmui_corner_radius="@dimen/dimen_32"/>
+
+
+                <TextView
+                    android:id="@+id/tv_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_userImg"
+                    android:text="我是用户名"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+
+                <RelativeLayout
+                    android:id="@+id/layout_progress"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_userName"
+                    android:layout_marginTop="@dimen/dimen_16"
+                    android:layout_toRightOf="@+id/iv_userImg">
+
+
+                    <TextView
+                        android:id="@+id/tv_weight_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--.--kg"
+                        android:textColor="@color/white"
+                        android:textSize="8sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_weight_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="--.--kg"
+                        android:textColor="@color/white"
+                        android:textSize="8sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_weight"
+                        android:layout_width="110dp"
+                        android:layout_height="6dp"
+                        android:layout_below="@+id/tv_weight_start"
+                        android:layout_marginTop="@dimen/dimen_3"
+                        android:max="100"
+                        android:progress="30"
+                        app:rcBackgroundColor="@color/GrayWrite"
+                        app:rcMax="100"
+                        app:rcProgress="50"
+                        app:rcProgressColor="@color/white"
+                        app:rcRadius="3dp"
+                        />
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_target"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layout_progress"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:layout_toRightOf="@+id/iv_userImg"
+                    android:text="请到体重记录页设定小目标哟！ ^-^"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"/>
+
+
+                <LinearLayout
+                    android:id="@+id/layout_notify"
+                    android:layout_width="@dimen/dimen_50"
+                    android:layout_height="@dimen/dimen_50"
+                    android:layout_alignParentRight="true"
+                    android:gravity="top|center_horizontal">
+
+
+                    <ImageView
+                        android:id="@+id/iv_notify"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@mipmap/icon_email_white"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+            <!--健康评级-->
+            <RelativeLayout
+                android:id="@+id/layout_Healthy"
+                android:layout_width="match_parent"
+                android:layout_height="228dp"
+                android:background="@color/white"
+                android:padding="@dimen/dimen_16"
+                tools:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_Healthy"
+                    android:layout_width="@dimen/dimen_24"
+                    android:layout_height="@dimen/dimen_24"
+                    android:background="@mipmap/icon_healthy"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_marginTop="@dimen/dimen_2"
+                    android:layout_toRightOf="@+id/iv_Healthy"
+                    android:text="健康评级"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <View
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_0.5"
+                    android:layout_below="@+id/iv_Healthy"
+                    android:layout_marginBottom="@dimen/dimen_16"
+                    android:layout_marginTop="@dimen/dimen_17"
+                    android:background="@color/line"/>
+
+
+                <LinearLayout
+                    android:id="@+id/layout_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/line"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="身材："
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="13sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未知"
+                        android:textColor="@color/Gray"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_24"
+                        android:text="犯病风险："
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="13sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_risk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未知"
+                        android:textColor="@color/Gray"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dimen_100"
+                        android:text="----/--/--"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+                </LinearLayout>
+
+                <lab.wesmartclothing.wefit.flyso.view.HealthLevelView
+                    android:id="@+id/Healthy_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layout_title"
+                    />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/tv_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--.--"
+                        android:textColor="@color/Gray"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_8"
+                        android:text="体重（kg）"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_BMI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_24"
+                        android:text="--.--"
+                        android:textColor="@color/Gray"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_8"
+                        android:text="BMI"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_bodyFat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_24"
+                        android:text="--.--"
+                        android:textColor="@color/Gray"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_8"
+                        android:text="体脂率（%）"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <!--热量记录-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="248dp"
+                android:layout_margin="@dimen/dimen_8"
+                android:orientation="horizontal"
+                tools:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/layout_heat"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="@dimen/dimen_16"
+                        android:paddingRight="@dimen/dimen_16">
+
+                        <ImageView
+                            android:id="@+id/iv_heat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@mipmap/icon_heat"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/dimen_10"
+                            android:layout_toRightOf="@+id/iv_heat"
+                            android:text="热量记录"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:background="@mipmap/icon_goto"/>
+
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dimen_0.5"
+                        android:background="@color/line"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                        <com.qmuiteam.qmui.widget.QMUIProgressBar
+                            android:id="@+id/circleProgressBar"
+                            android:layout_width="136dp"
+                            android:layout_height="136dp"
+                            android:layout_centerInParent="true"
+                            app:qmui_background_color="?attr/qmui_config_color_gray_8"
+                            app:qmui_max_value="100"
+                            app:qmui_progress_color="@color/orange_FF7200"
+                            app:qmui_stroke_round_cap="true"
+                            app:qmui_stroke_width="10dp"
+                            app:qmui_type="type_circle"
+                            app:qmui_value="1"/>
+
+                        <TextView
+                            android:id="@+id/tv_heat_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="74dp"
+                            android:text="还可以摄入热量"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_heat_title"
+                            android:layout_centerHorizontal="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_kcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/dimen_5"
+                                android:gravity="bottom"
+                                android:maxLength="6"
+                                android:text="2000"
+                                android:textColor="@color/green_61D97F"
+                                android:textSize="24sp"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:id="@+id/tv_heatUnit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_marginBottom="@dimen/dimen_2"
+                                android:text=" kcal"
+                                android:textColor="@color/green_61D97F"
+                                android:textSize="13sp"/>
+
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dimen_8"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+
+                    <RelativeLayout
+                        android:id="@+id/layout_breakfast"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginBottom="@dimen/dimen_8"
+                        android:background="@color/white"
+                        android:paddingLeft="@dimen/dimen_16"
+                        android:paddingRight="@dimen/dimen_16">
+
+                        <ImageView
+                            android:id="@+id/iv_breakfast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dimen_8"
+                            android:background="@mipmap/icon_breakfast"/>
+
+                        <TextView
+                            android:id="@+id/tv_breakfast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            android:layout_toRightOf="@+id/iv_breakfast"
+                            android:text="早餐已摄入"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_breakfast_kcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_breakfast"
+                            android:layout_toRightOf="@+id/iv_breakfast"
+                            android:maxLength="5"
+                            android:maxLines="1"
+                            android:text="231.0"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/tv_breakfast_kcal"
+                            android:layout_toRightOf="@+id/tv_breakfast_kcal"
+                            android:text=" kcal"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="13sp"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_20"
+                            android:layout_height="@dimen/dimen_20"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_add"/>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/layout_lunch"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginBottom="@dimen/dimen_8"
+                        android:background="@color/white"
+                        android:paddingLeft="@dimen/dimen_16"
+                        android:paddingRight="@dimen/dimen_16">
+
+                        <ImageView
+                            android:id="@+id/iv_lunch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dimen_8"
+                            android:background="@mipmap/icon_lunch"/>
+
+                        <TextView
+                            android:id="@+id/tv_lunch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            android:layout_toRightOf="@+id/iv_lunch"
+                            android:text="午餐已摄入"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_lunch_kcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_lunch"
+                            android:layout_toRightOf="@+id/iv_lunch"
+                            android:maxLength="5"
+                            android:text="223"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/tv_lunch_kcal"
+                            android:layout_toRightOf="@+id/tv_lunch_kcal"
+                            android:text=" kcal"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="13sp"/>
+
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_20"
+                            android:layout_height="@dimen/dimen_20"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_add"/>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/layout_dinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginBottom="@dimen/dimen_8"
+                        android:background="@color/white"
+                        android:paddingLeft="@dimen/dimen_16"
+                        android:paddingRight="@dimen/dimen_16">
+
+                        <ImageView
+                            android:id="@+id/iv_dinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dimen_8"
+                            android:background="@mipmap/icon_dinner"/>
+
+                        <TextView
+                            android:id="@+id/tv_dinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            android:layout_toRightOf="@+id/iv_dinner"
+                            android:text="晚餐已摄入"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_dinner_kcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_dinner"
+                            android:layout_toRightOf="@+id/iv_dinner"
+                            android:maxLength="5"
+                            android:text="223"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/tv_dinner_kcal"
+                            android:layout_toRightOf="@+id/tv_dinner_kcal"
+                            android:text=" kcal"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="13sp"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_20"
+                            android:layout_height="@dimen/dimen_20"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_add"/>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/layout_meal"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:background="@color/white"
+                        android:paddingLeft="@dimen/dimen_16"
+                        android:paddingRight="@dimen/dimen_16">
+
+                        <ImageView
+                            android:id="@+id/iv_meal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dimen_8"
+                            android:background="@mipmap/icon_meal"/>
+
+                        <TextView
+                            android:id="@+id/tv_meal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            android:layout_toRightOf="@+id/iv_meal"
+                            android:text="加餐已摄入"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_meal_kcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_meal"
+                            android:layout_toRightOf="@+id/iv_meal"
+                            android:maxLength="5"
+                            android:text="223"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/tv_meal_kcal"
+                            android:layout_toRightOf="@+id/tv_meal_kcal"
+                            android:text=" kcal"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="13sp"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_20"
+                            android:layout_height="@dimen/dimen_20"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_add"/>
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/btn_bind_clothing"
+                android:layout_width="344dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/dimen_8"
+                android:drawableRight="@mipmap/icon_cha"
+                android:paddingRight="@dimen/dimen_10"
+                android:text="目前还没有数据，请穿上燃脂衣赶紧运动吧。"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"
+                app:qmui_backgroundColor="@color/white"
+                app:qmui_borderColor="@color/white"/>
+
+            <!--运动记录-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="228dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                tools:visibility="visible">
+
+                <RelativeLayout
+                    android:id="@+id/layout_sports"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/dimen_16"
+                    android:paddingRight="@dimen/dimen_16">
+
+                    <ImageView
+                        android:id="@+id/iv_sports"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_sports"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_toRightOf="@+id/iv_sports"
+                        android:text="运动记录"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@mipmap/icon_goto"/>
+
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_0.5"
+                    android:background="@color/line"/>
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/mBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/btn_bind_scale"
+                android:layout_width="344dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:drawableRight="@mipmap/icon_cha"
+                android:paddingRight="@dimen/dimen_10"
+                android:text="目前还没有数据，请绑定并使用体脂称。"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"
+                app:qmui_backgroundColor="@color/white"
+                app:qmui_borderColor="@color/white"/>
+
+            <!--体重记录-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="228dp"
+                android:layout_marginBottom="@dimen/dimen_8"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:background="@color/white"
+                android:orientation="vertical"
+                tools:visibility="visible">
+
+                <RelativeLayout
+                    android:id="@+id/layout_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/dimen_16"
+                    android:paddingRight="@dimen/dimen_16">
+
+                    <ImageView
+                        android:id="@+id/iv_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_weight"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_toRightOf="@+id/iv_weight"
+                        android:text="体重记录"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@mipmap/icon_goto"/>
+
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_0.5"
+                    android:background="@color/line"/>
+
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/mLineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="395dp"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                tools:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:src="@mipmap/icon_default"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="32dp"
+                    android:text="跟着Timetofit"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="13sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="58dp"
+                    android:text="一起来健康瘦"
+                    android:textColor="@color/Gray"
+                    android:textSize="18sp"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="266dp"
+                    android:text="请绑定您的智能硬件设备"
+                    android:textColor="@color/Gray"
+                    android:textSize="13sp"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_0.5"
+                    android:layout_marginTop="300dp"
+                    android:background="@color/line"/>
+
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                    android:id="@+id/btn_bind"
+                    android:layout_width="195dp"
+                    android:layout_height="46dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="317dp"
+                    android:text="去绑定"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:qmui_backgroundColor="@color/red"
+                    app:qmui_borderColor="@color/white"/>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

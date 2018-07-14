@@ -22,6 +22,7 @@ import com.smartclothing.module_wefit.widget.ImageUploadView;
 import com.smartclothing.module_wefit.widget.MClearEditText;
 import com.smartclothing.module_wefit.widget.dialog.DepositDialog;
 import com.smartclothing.module_wefit.widget.wheelpicker.picker.SinglePicker;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -154,7 +155,7 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
     public void onClick(View view) {
         int i = view.getId();
         if (i == R.id.iv_back) {
-            onBackPressed();
+            RxActivityUtils.finishActivity();
         } else if (i == R.id.tv_problem_commit) {//提交表单
             String phone = et_problem_call.getText().toString();
             if (!RxRegUtils.isEmail(phone) && !RxRegUtils.isMobile(phone)) {
@@ -208,7 +209,7 @@ public class ProblemSuggestActivity extends BaseActivity implements View.OnClick
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        onBackPressed();
+                       RxActivityUtils.finishActivity();
                     }
 
                     @Override

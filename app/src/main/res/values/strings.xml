@@ -129,7 +129,7 @@
     <string name="nextWay" translatable="false">下一步</string>
     <string name="skip" translatable="false">跳过</string>
     <string name="weight_about" translatable="false">您的身高体重只会作为您的运动参考数据，我们会保证您的隐私。</string>
-    <string name="info_about" translatable="false">我们需要一些你的信息来为您专属定制瘦身计划，这些信息都是经过高度加密的。</string>
+    <string name="info_about" translatable="false">我们需要一些你的信息来为您定制瘦身计划，这些信息都是经过高度加密的。</string>
     <string name="Location_about" translatable="false">为了给您推送优质的资讯，我们将要获得您的位置信息。</string>
     <string name="device_about" translatable="false">请添加您最近购买的智能设备</string>
     <string name="inputUserInfo" translatable="false">填写资料</string>

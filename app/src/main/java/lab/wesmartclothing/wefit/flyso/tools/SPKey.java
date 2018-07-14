@@ -26,4 +26,5 @@ public interface SPKey {
     //真实体重
     String SP_realWeight = "SP_realWeight";
 
+    String SP_UserInfo = "SP_UserInfo";
 }
