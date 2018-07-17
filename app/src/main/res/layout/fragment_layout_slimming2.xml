@@ -63,7 +63,7 @@
                         android:id="@+id/tv_weight_start"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="--.--kg"
+                        android:text="--kg"
                         android:textColor="@color/white"
                         android:textSize="8sp"/>
 
@@ -72,7 +72,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:text="--.--kg"
+                        android:text="--kg"
                         android:textColor="@color/white"
                         android:textSize="8sp"/>
 
@@ -103,7 +103,7 @@
                         app:qmui_progress_color="@color/white"
                         app:qmui_stroke_round_cap="true"
                         app:qmui_type="type_rect"
-                        app:qmui_value="30"/>
+                        app:qmui_value="0"/>
 
 
                 </RelativeLayout>
@@ -161,6 +161,7 @@
                     android:layout_marginTop="@dimen/dimen_2"
                     android:layout_toRightOf="@+id/iv_Healthy"
                     android:text="健康评级"
+                    android:textColor="@color/Gray"
                     android:textSize="15sp"
                     android:textStyle="bold"/>
 
@@ -238,7 +239,7 @@
                         android:id="@+id/tv_weight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="--.--"
+                        android:text="--"
                         android:textColor="@color/Gray"
                         android:textSize="13sp"
                         android:textStyle="bold"/>
@@ -256,7 +257,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_24"
-                        android:text="--.--"
+                        android:text="--"
                         android:textColor="@color/Gray"
                         android:textSize="13sp"
                         android:textStyle="bold"/>
@@ -274,7 +275,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_24"
-                        android:text="--.--"
+                        android:text="--"
                         android:textColor="@color/Gray"
                         android:textSize="13sp"
                         android:textStyle="bold"/>
@@ -296,7 +297,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/line"
-                    android:text="----/--/--"
                     android:textColor="@color/GrayWrite"
                     android:textSize="10sp"/>
 
@@ -308,7 +308,7 @@
                 android:layout_height="248dp"
                 android:layout_margin="@dimen/dimen_8"
                 android:orientation="horizontal"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -398,10 +398,11 @@
                                 android:layout_marginTop="@dimen/dimen_5"
                                 android:gravity="bottom"
                                 android:maxLength="6"
-                                android:text="2000"
+                                android:text="----"
                                 android:textColor="@color/green_61D97F"
                                 android:textSize="24sp"
-                                android:textStyle="bold"/>
+                                android:textStyle="bold"
+                                tools:text="2000"/>
 
                             <TextView
                                 android:id="@+id/tv_heatUnit"
@@ -465,10 +466,11 @@
                             android:layout_toRightOf="@+id/iv_breakfast"
                             android:maxLength="5"
                             android:maxLines="1"
-                            android:text="231.0"
+                            android:text="--"
                             android:textColor="@color/orange_FF7200"
                             android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            tools:text="231.0"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -523,10 +525,11 @@
                             android:layout_below="@+id/tv_lunch"
                             android:layout_toRightOf="@+id/iv_lunch"
                             android:maxLength="5"
-                            android:text="223"
+                            android:text="--"
                             android:textColor="@color/orange_FF7200"
                             android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            tools:text="223"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -582,10 +585,11 @@
                             android:layout_below="@+id/tv_dinner"
                             android:layout_toRightOf="@+id/iv_dinner"
                             android:maxLength="5"
-                            android:text="223"
+                            android:text="--"
                             android:textColor="@color/orange_FF7200"
                             android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            tools:text="223"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -639,10 +643,11 @@
                             android:layout_below="@+id/tv_meal"
                             android:layout_toRightOf="@+id/iv_meal"
                             android:maxLength="5"
-                            android:text="223"
+                            android:text="--"
                             android:textColor="@color/orange_FF7200"
                             android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            tools:text="223"/>
 
 
                         <TextView
@@ -737,7 +742,8 @@
                         android:id="@+id/mBarChart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="@dimen/dimen_16"/>
+                        android:layout_margin="@dimen/dimen_16"
+                        android:focusable="false"/>
 
 
                     <TextView
@@ -746,9 +752,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/tv_sportsUnit"
                         android:layout_toLeftOf="@+id/tv_sportsUnit"
-                        android:text="--.--"
+                        android:text="--"
                         android:textColor="@color/red"
                         android:textSize="24sp"
+                        android:textStyle="bold"
                         tools:text="166"/>
 
                     <TextView
@@ -840,7 +847,8 @@
                         android:id="@+id/mLineChart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="@dimen/dimen_16"/>
+                        android:layout_margin="@dimen/dimen_16"
+                        android:focusable="false"/>
 
                     <TextView
                         android:id="@+id/tv_currentkg"
@@ -848,9 +856,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/tv_weightUnit"
                         android:layout_toLeftOf="@+id/tv_weightUnit"
-                        android:text="--.--"
+                        android:text="--"
                         android:textColor="@color/green_61D97F"
                         android:textSize="24sp"
+                        android:textStyle="bold"
                         tools:text="166"/>
 
                     <TextView
@@ -870,6 +879,7 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:id="@+id/layout_bind"
                 android:layout_width="match_parent"
                 android:layout_height="395dp"
                 android:background="@color/white"

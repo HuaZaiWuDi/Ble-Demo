@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.netlib.rx;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -16,12 +17,18 @@ import lab.wesmartclothing.wefit.netlib.utils.RxHttpException;
  * 创建时间：2018/4/14
  */
 public abstract class RxNetSubscriber<T> implements Observer<T> {
-
-
+    private Context mContext;
     String TAG = "【RxNetSubscriber】";
 
     @Override
     public void onSubscribe(Disposable d) {
+    }
+
+    public RxNetSubscriber() {
+    }
+
+    public RxNetSubscriber(Context context) {
+        mContext = context;
     }
 
     @Override

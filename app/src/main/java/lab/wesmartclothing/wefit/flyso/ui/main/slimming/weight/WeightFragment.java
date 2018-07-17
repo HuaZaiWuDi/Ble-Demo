@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -24,7 +25,6 @@ import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.module_wefit.bean.Device;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -37,6 +37,8 @@ import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -52,7 +54,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
@@ -62,6 +64,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.ChartManager;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.flyso.view.MyMarkerView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -79,8 +82,8 @@ import okhttp3.RequestBody;
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
-@EFragment(R.layout.fragment_weight)
-public class WeightFragment extends BaseFragment {
+@EFragment()
+public class WeightFragment extends BaseAcFragment {
 
     public static WeightFragment getInstance() {
         return new WeightFragment_();
@@ -159,12 +162,6 @@ public class WeightFragment extends BaseFragment {
     Highlight mHighlight; //记录当前高亮的位置
     ChartManager chartManager; //chart管理类
 
-    @Override
-    public void initData() {
-        RxLogUtils.d("加载：【WeightFragment】");
-
-    }
-
 
     @Override
     public void onStart() {
@@ -175,6 +172,12 @@ public class WeightFragment extends BaseFragment {
             getWeightData();
         }
         super.onStart();
+    }
+
+    @Override
+    protected View onCreateView() {
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_weight, null);
+        return rootView;
     }
 
 
@@ -279,15 +282,6 @@ public class WeightFragment extends BaseFragment {
 
 
     private void initQNBle() {
-        checkLocation(new Consumer<Permission>() {
-            @Override
-            public void accept(Permission permission) throws Exception {
-                if (!permission.granted) {
-                    RxToast.warning("没有定位权限无法连接蓝牙设备");
-                    return;
-                }
-            }
-        });
 
         if (!BleTools.getBleManager().isBlueEnable()) {
             RxLogUtils.v("蓝牙未开启:");
@@ -353,6 +347,8 @@ public class WeightFragment extends BaseFragment {
                             mRefresh.refreshComplete();
                     }
                 })
+                .compose(MyAPP.getRxCache().<String>transformObservable("getWeightList", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -530,18 +526,7 @@ public class WeightFragment extends BaseFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        tipDialog.show();
-                    }
-                })
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        tipDialog.dismiss();
-                    }
-                })
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

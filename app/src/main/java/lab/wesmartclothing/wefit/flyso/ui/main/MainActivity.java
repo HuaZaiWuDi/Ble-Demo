@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,8 +18,6 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
-import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -39,12 +39,10 @@ import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 @EActivity(R.layout.activity_main)
@@ -67,13 +65,17 @@ public class MainActivity extends BaseALocationActivity {
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
 
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+    }
+
     @Override
     @AfterViews
     public void initView() {
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
 
-
-        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         initBottomTab();
         initMyViewPager();
         setDefaultFragment();
@@ -81,8 +83,6 @@ public class MainActivity extends BaseALocationActivity {
 
         startLocation(null);
 
-
-//        RxActivityUtils.skipActivity(mContext, TestBleScanActivity.class);
         RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
     }
@@ -150,15 +150,17 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initBottomTab() {
         String[] tab_text = getResources().getStringArray(R.array.tab_text);
-        int[] imgs_unselect = {R.mipmap.slimming_unselect, R.mipmap.found_normal_icon1,
-                R.mipmap.market_normal_icon1, R.mipmap.my_normal_icon1};
-        int[] imgs_select = {R.mipmap.fit_click_icon1, R.mipmap.found_click_icon,
-                R.mipmap.market_click_icon, R.mipmap.my_click_icon1};
+        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_find_unselect,
+                R.mipmap.icon_shopping_unselect, R.mipmap.icon_mine_unselect};
+        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_find_select,
+                R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
 
         for (int i = 0; i < tab_text.length; i++) {
             mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
+        mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
+        mCommonTabLayout.setTextUnselectColor(getResources().getColor(R.color.GrayWrite));
         mCommonTabLayout.setTabData(mBottomTabItems);
 
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {

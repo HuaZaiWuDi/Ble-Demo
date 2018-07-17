@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +27,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -36,7 +39,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
@@ -57,8 +60,8 @@ import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
-@EFragment(R.layout.fragment_mine)
-public class MineFragment extends BaseFragment {
+@EFragment()
+public class MineFragment extends BaseAcFragment {
 
     public static MineFragment getInstance() {
         return new MineFragment_();
@@ -190,19 +193,16 @@ public class MineFragment extends BaseFragment {
     }
 
 
-    @Override
-    public void initData() {
-        initMineData();
-        RxLogUtils.d("加载：【MineFragment】");
-    }
-
-
     @AfterViews
     public void initView() {
         initBus();
-        initMineData();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        initMineData();
+    }
 
     private void initBus() {
         Disposable register = RxBus.getInstance().register(UserInfo.class, new Consumer<UserInfo>() {
@@ -224,6 +224,7 @@ public class MineFragment extends BaseFragment {
 //                    mPrefs.clear();
                     SPUtils.clear();
                     MyAPP.getACache().clear();
+                    MyAPP.getRxCache().clear2();
                     RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
                     RxActivityUtils.finishActivity(SetActivity.class);
                 } else if (BleKey.TYPE_SCALE.equals(device) || BleKey.TYPE_CLOTHING.equals(device)) {
@@ -252,10 +253,10 @@ public class MineFragment extends BaseFragment {
 
 
     private void initMineData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userCenter())
+                .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.cacheAndRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -295,5 +296,11 @@ public class MineFragment extends BaseFragment {
     public void onDestroy() {
         RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
+    }
+
+    @Override
+    protected View onCreateView() {
+        View rootView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_mine, null);
+        return rootView;
     }
 }

@@ -139,6 +139,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     private int viewState = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

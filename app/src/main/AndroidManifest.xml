@@ -144,6 +144,7 @@
         </activity>
         <activity android:name=".ui.login.VerificationPhoneActivity">
         </activity>
+        <activity android:name=".base.BaseFragmentActivity"/>
     </application>
 
 </manifest>

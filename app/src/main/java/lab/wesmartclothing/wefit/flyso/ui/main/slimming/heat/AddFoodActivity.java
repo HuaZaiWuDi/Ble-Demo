@@ -11,11 +11,14 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -23,20 +26,20 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.ListBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -96,7 +99,6 @@ public class AddFoodActivity extends BaseActivity {
             }
             addFood();
         }
-        finish();
     }
 
     @Override
@@ -115,7 +117,6 @@ public class AddFoodActivity extends BaseActivity {
         RxBus.getInstance().addSubscription(this, disposable);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -128,11 +129,11 @@ public class AddFoodActivity extends BaseActivity {
         tv_title.setText(ADD_FOOD_NAME);
         mark.setVisibility(View.GONE);
         initRecycler();
+        initData();
     }
 
 
     private void initRecycler() {
-        initData();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BaseQuickAdapter<ListBean, BaseViewHolder>(R.layout.item_add_foods) {
             @Override
@@ -179,10 +180,12 @@ public class AddFoodActivity extends BaseActivity {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxBus.getInstance().post(mIntakeLists.size() > 0);
+                        finish();
                     }
 
                     @Override
@@ -193,23 +196,12 @@ public class AddFoodActivity extends BaseActivity {
     }
 
     private void initData() {
-        JSONObject jsonObject = new JSONObject();
-
+        JsonObject jsonObject = new JsonObject();
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(body))
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        tipDialog.show();
-                    }
-                })
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        tipDialog.dismiss();
-                    }
-                })
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + ADD_FOOD_TYPE, String.class, CacheStrategy.cacheAndRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -221,7 +213,7 @@ public class AddFoodActivity extends BaseActivity {
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+                        RxToast.normal(error);
                     }
                 });
     }

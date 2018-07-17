@@ -64,7 +64,7 @@
 
     <string name="clearHistoryData" translatable="false">清空历史数据</string>
 
-    <string name="can_eatHeat" translatable="false">还可以吃</string>
+    <string name="can_eatHeat" translatable="false">还可以摄入热量</string>
     <string name="EatMore" translatable="false">多吃了</string>
 
     <string name="weigh_info" translatable="false">身体信息</string>

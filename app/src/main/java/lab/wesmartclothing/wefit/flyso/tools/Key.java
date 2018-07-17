@@ -30,6 +30,9 @@ public interface Key {
     String BUNDLE_VOLTAGE = "BUNDLE_VOLTAGE";//电压容量
     String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
+
+    String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";
+
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////

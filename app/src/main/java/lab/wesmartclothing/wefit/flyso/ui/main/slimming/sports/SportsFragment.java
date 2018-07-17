@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -24,7 +25,6 @@ import com.google.gson.Gson;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.module_wefit.bean.Device;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -32,6 +32,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -47,7 +49,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -69,8 +72,8 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
-@EFragment(R.layout.fragment_sports)
-public class SportsFragment extends BaseFragment {
+@EFragment()
+public class SportsFragment extends BaseAcFragment {
 
 
     public static SportsFragment getInstance() {
@@ -144,11 +147,6 @@ public class SportsFragment extends BaseFragment {
     ChartManager chartManager; //chart管理类
     Highlight mHighlight; //记录当前高亮的位置
 
-    @Override
-    public void initData() {
-        RxLogUtils.d("加载：【SportsFragment】");
-
-    }
 
     @Override
     public void onStart() {
@@ -161,22 +159,18 @@ public class SportsFragment extends BaseFragment {
         }
     }
 
+    @Override
+    protected View onCreateView() {
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_sports, null);
+        return rootView;
+    }
+
     private void initBle() {
         if (!BleTools.getBleManager().isBlueEnable()) {
             RxLogUtils.v("蓝牙未开启:");
             initDeviceConnectTip(0);
             return;
         }
-
-        checkLocation(new Consumer<Permission>() {
-            @Override
-            public void accept(Permission permission) throws Exception {
-                if (!permission.granted) {
-                    RxToast.warning("没有定位权限无法连接蓝牙设备");
-                    return;
-                }
-            }
-        });
     }
 
     @AfterViews
@@ -264,6 +258,8 @@ public class SportsFragment extends BaseFragment {
                         }
                     }
                 })
+                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsList", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

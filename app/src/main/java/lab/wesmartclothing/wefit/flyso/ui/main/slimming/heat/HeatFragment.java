@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -22,6 +24,8 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -34,11 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodHistoryItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
@@ -46,6 +50,7 @@ import lab.wesmartclothing.wefit.flyso.entity.ListBean;
 import lab.wesmartclothing.wefit.flyso.entity.section.HeatFoodSection;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.CircleMenuView;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
@@ -62,8 +67,8 @@ import okhttp3.RequestBody;
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
-@EFragment(R.layout.fragment_heat)
-public class HeatFragment extends BaseFragment {
+@EFragment()
+public class HeatFragment extends BaseAcFragment {
 
     @ViewById
     SwipeMenuRecyclerView mRecyclerView;
@@ -156,16 +161,17 @@ public class HeatFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    @Override
-    public void initData() {
-        RxLogUtils.d("加载：【HeatFragment】");
-    }
-
 
     @Override
     public void onStart() {
         super.onStart();
         notifyData(date);
+    }
+
+    @Override
+    protected View onCreateView() {
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_heat, null);
+        return rootView;
     }
 
     private void deleteData(String gid) {
@@ -179,20 +185,7 @@ public class HeatFragment extends BaseFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeHeatInfo(body))
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        RxLogUtils.d("doOnSubscribe：");
-                        tipDialog.show();
-                    }
-                })
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        RxLogUtils.d("结束：");
-                        tipDialog.dismiss();
-                    }
-                })
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -209,43 +202,27 @@ public class HeatFragment extends BaseFragment {
 
     private void notifyData(String date) {
         this.date = date;
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("heatDate", date);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("heatDate", date);
+        RxLogUtils.d("时间：" + date);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.getHeatHistory(body))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getHeatHistory", String.class, CacheStrategy.cacheAndRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("网络请求：" + s);
+                        handleData(s);
+                    }
 
-            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
-            RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-            RxManager.getInstance().doNetSubscribe(dxyService.getHeatHistory(body))
-                    .doOnSubscribe(new Consumer<Disposable>() {
-                        @Override
-                        public void accept(Disposable disposable) throws Exception {
-                            RxLogUtils.d("doOnSubscribe：");
-                            tipDialog.show();
-                        }
-                    })
-                    .doFinally(new Action() {
-                        @Override
-                        public void run() throws Exception {
-                            RxLogUtils.d("结束：");
-                            tipDialog.dismiss();
-                        }
-                    })
-                    .subscribe(new RxNetSubscriber<String>() {
-                        @Override
-                        protected void _onNext(String s) {
-                            RxLogUtils.d("网络请求：" + s);
-                            handleData(s);
-                        }
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
 
-                        @Override
-                        protected void _onError(String error) {
-                            RxToast.error(error);
-                        }
-
-                    });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                });
     }
 
     private void handleData(String s) {
@@ -431,6 +408,7 @@ public class HeatFragment extends BaseFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

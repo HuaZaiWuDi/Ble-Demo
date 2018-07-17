@@ -18,6 +18,7 @@ import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 public abstract class BaseAcFragment extends QMUIFragment {
     public Activity mActivity;
+    public Context mContext;
 
 
     public BaseAcFragment() {
@@ -32,7 +33,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mActivity = getActivity();
+        mContext = mActivity = getActivity();
         initDialog();
     }
 
@@ -135,7 +136,6 @@ public abstract class BaseAcFragment extends QMUIFragment {
         super.onSaveInstanceState(outState);
         outState.putBoolean("STATE_SAVE_IS_HIDDEN", isHidden());
     }
-
 
 
 }

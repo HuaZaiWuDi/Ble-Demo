@@ -12,6 +12,10 @@ import com.vondear.rxtools.model.cache.ACache;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listen.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
+import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.diskconverter.GsonDiskConverter;
+
+import java.io.File;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
@@ -29,6 +33,7 @@ public class MyAPP extends Application {
     private String BUGly_id = "11c87579c7";
     public static QNBleApi QNapi;
     private static ACache aCache;
+    private static RxCache rxCache;
 
     @Override
     public void onCreate() {
@@ -44,6 +49,7 @@ public class MyAPP extends Application {
         initShareLogin();
         ScreenAdapter.init(this);
         JPushUtils.init(this);
+
     }
 
     private void initShareLogin() {
@@ -61,12 +67,23 @@ public class MyAPP extends Application {
 
     private void initCache() {
         aCache = ACache.get(this);
+        rxCache = new RxCache.Builder()
+                .appVersion(1)//当版本号改变,缓存路径下存储的所有数据都会被清除掉
+                .diskDir(new File(getCacheDir().getPath() + File.separator + "Timetofit-cache"))
+                .diskConverter(new GsonDiskConverter())//支持Serializable、Json(GsonDiskConverter)
+                .memoryMax(10 * 1024 * 1024)
+                .diskMax(50 * 1024 * 1024)
+                .build();
+
     }
 
     public static ACache getACache() {
         return aCache;
     }
 
+    public static RxCache getRxCache() {
+        return rxCache;
+    }
 
     private void initQN() {
         QNapi = QNBleApi.getInstance(this);

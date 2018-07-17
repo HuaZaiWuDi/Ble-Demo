@@ -29,7 +29,7 @@ public class FirstPageBean {
      * weightInfo : {"bmi":0,"bmr":0,"bodyAge":0,"bodyFat":0,"bodyFfm":0,"bodyType":"string","bone":0,"createTime":1511248354000,"createUser":1,"flesh":0,"gid":1,"healthScore":0,"measureTime":"2018-07-16T09:08:56.384Z","muscle":0,"protein":0,"sinew":0,"status":101,"subfat":0,"updateTime":1511248354000,"updateUser":1,"userId":"string","visfat":0,"water":0,"weight":0,"weightDate":"2018-07-16T09:08:56.384Z"}
      * weightInfoList : [{"bmi":0,"bmr":0,"bodyAge":0,"bodyFat":0,"bodyFfm":0,"bodyType":"string","bone":0,"createTime":1511248354000,"createUser":1,"flesh":0,"gid":1,"healthScore":0,"measureTime":"2018-07-16T09:08:56.384Z","muscle":0,"protein":0,"sinew":0,"status":101,"subfat":0,"updateTime":1511248354000,"updateUser":1,"userId":"string","visfat":0,"water":0,"weight":0,"weightDate":"2018-07-16T09:08:56.384Z"}]
      */
-
+    private String bodyType;
     private int ableIntake;
     private int breakfast;
     private double complete;
@@ -49,6 +49,11 @@ public class FirstPageBean {
     private WeightInfoBean weightInfo;
     private List<AthleticsInfoListBean> athleticsInfoList;
     private List<WeightInfoListBean> weightInfoList;
+
+
+    public String getBodyType() {
+        return bodyType;
+    }
 
     public int getAbleIntake() {
         return ableIntake;
@@ -620,5 +625,32 @@ public class FirstPageBean {
         public long getWeightDate() {
             return weightDate;
         }
+    }
+
+
+    @Override
+    public String toString() {
+        return "FirstPageBean{" +
+                "bodyType='" + bodyType + '\'' +
+                ", ableIntake=" + ableIntake +
+                ", breakfast=" + breakfast +
+                ", complete=" + complete +
+                ", dinner=" + dinner +
+                ", hasDays=" + hasDays +
+                ", initialWeight=" + initialWeight +
+                ", intakePercent=" + intakePercent +
+                ", levelDesc='" + levelDesc + '\'' +
+                ", lunch=" + lunch +
+                ", normWeight=" + normWeight +
+                ", peakValue=" + peakValue +
+                ", sickLevel='" + sickLevel + '\'' +
+                ", snacks=" + snacks +
+                ", targetWeight=" + targetWeight +
+                ", unreadCount=" + unreadCount +
+                ", warning=" + warning +
+                ", weightInfo=" + weightInfo +
+                ", athleticsInfoList=" + athleticsInfoList +
+                ", weightInfoList=" + weightInfoList +
+                '}';
     }
 }

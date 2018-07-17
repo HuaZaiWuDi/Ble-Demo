@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.timer.MyTimer;
@@ -14,6 +15,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -22,13 +25,12 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
@@ -207,16 +209,14 @@ public class SportsDetailsActivity extends BaseActivity {
 
     private void getHistoryData() {
         if (BUNDLE_SPORTS_INFO == null) return;
-        JSONObject object = new JSONObject();
-        try {
-            object.put("athlDate", BUNDLE_SPORTS_INFO.getAthlDate());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JsonObject object = new JsonObject();
+        object.addProperty("athlDate", BUNDLE_SPORTS_INFO.getAthlDate());
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.athleticsDetail(body))
+                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail", String.class, CacheStrategy.cacheAndRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

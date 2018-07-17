@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
+import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,11 +15,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.utils.RxDataUtils;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -32,10 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.ListBean;
@@ -59,6 +62,7 @@ public class SearchHistoryActivity extends BaseActivity {
     private List<String> hotLists = new ArrayList<>();
     private BaseQuickAdapter searchListAdapter;
     private boolean isStorage = false;
+    private Disposable subscribe;
 
     @ViewById
     DynamicTagFlowLayout tagFlowLayout_hot;
@@ -102,12 +106,16 @@ public class SearchHistoryActivity extends BaseActivity {
     @Override
     @AfterViews
     public void initView() {
-        checkStorage(new Consumer<Permission>() {
-            @Override
-            public void accept(Permission permission) throws Exception {
-                isStorage = permission.granted;
-            }
-        });
+
+        subscribe = new RxPermissions(mActivity)
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(new Consumer<Permission>() {
+                    @Override
+                    public void accept(Permission permission) throws Exception {
+                        isStorage = permission.granted;
+                    }
+                });
+
         init();
         initRecyclerView();
     }
@@ -169,6 +177,8 @@ public class SearchHistoryActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if (subscribe != null) subscribe.dispose();
+        subscribe = null;
         super.onDestroy();
     }
 
@@ -235,7 +245,6 @@ public class SearchHistoryActivity extends BaseActivity {
             }
         });
 
-
         if (!isStorage) return;
 
         List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
@@ -247,7 +256,6 @@ public class SearchHistoryActivity extends BaseActivity {
         tagFlowLayout_lately.setTags(latelyLists);
 
     }
-
 
     private void initSearchData(String key) {
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -273,20 +281,8 @@ public class SearchHistoryActivity extends BaseActivity {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getKeyWord(body))
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        RxLogUtils.d("doOnSubscribe：");
-                        tipDialog.show();
-                    }
-                })
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        RxLogUtils.d("结束：");
-                        tipDialog.dismiss();
-                    }
-                })
+                .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.cacheAndRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
