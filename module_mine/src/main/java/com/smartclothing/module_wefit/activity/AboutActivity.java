@@ -67,17 +67,6 @@ public class AboutActivity extends BaseActivity implements View.OnClickListener 
             public void callBack(byte[] data) {
                 RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
                 //021309 010203000400050607090a0b0c10111213
-                /**
-                 * 	uint8_t category;3
-                 uint8_t module;4
-                 uint16_t manufacture;5,6
-                 uint16_t HW_version;7,8
-                 uint8_t  APP_version[3];9,10,11
-                 uint8_t  BOOT_version[3];12,13,14
-                 uint8_t  BLE_version;15
-                 uint8_t  SN[4];16,17,18,19
-                 *
-                 * */
 
                 JsonObject object = new JsonObject();
                 object.addProperty("category", data[3]);//设备类型

@@ -14,8 +14,8 @@ public class ServiceAPI {
 //    public static final String BASE_URL = "http://10.10.11.208:15112/mix/";
 
     //二期
-    public static final String BASE_URL = "http://10.10.11.208:15112";
-//    public static final String BASE_URL = "http://119.23.225.125:15100/mix/";
+//    public static final String BASE_URL = "http://10.10.11.208:15112";
+    public static final String BASE_URL = "http://119.23.225.125:15112";
 //    public static final String BASE_URL = "http://10.10.11.208:15101/mix/";//网关
 
     //商城地址

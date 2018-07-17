@@ -14,13 +14,18 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -33,7 +38,6 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,13 +66,17 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
  * Created by jk on 2018/7/13.
  */
 public class Slimming2Fragment extends BaseAcFragment {
-
-    public String[] add_food;
     private String[] barXLists = new String[7];
     private String[] lineXLists = new String[7];
     private int[] colors = {R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0,
-            R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.red};
+            R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0};
+    public String[] add_food;
 
+
+    @BindView(R.id.tv_currentKcal)
+    TextView mTvCurrentKcal;
+    @BindView(R.id.tv_currentkg)
+    TextView mTvCurrentkg;
     @BindView(R.id.iv_userImg)
     QMUIRadiusImageView mIvUserImg;
     @BindView(R.id.tv_userName)
@@ -78,7 +86,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     @BindView(R.id.tv_weight_end)
     TextView mTvWeightEnd;
     @BindView(R.id.pro_weight)
-    RxRoundProgressBar mProWeight;
+    QMUIProgressBar mProWeight;
     @BindView(R.id.layout_progress)
     RelativeLayout mLayoutProgress;
     @BindView(R.id.iv_notify)
@@ -189,8 +197,9 @@ public class Slimming2Fragment extends BaseAcFragment {
 
     private void initView() {
         initChart(mMBarChart);
+        initChart(mMLineChart);
         setDefaultBarData(null);
-
+        setLineChartData(null);
     }
 
 
@@ -212,9 +221,10 @@ public class Slimming2Fragment extends BaseAcFragment {
 
         YAxis leftAxis = lineChartBase.getAxisLeft();
         YAxis rightAxis = lineChartBase.getAxisRight();
-        leftAxis.setEnabled(false);
         rightAxis.setEnabled(false);
-
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setDrawLabels(false);
     }
 
     //添加X轴标签
@@ -229,65 +239,70 @@ public class Slimming2Fragment extends BaseAcFragment {
         lineChartBase.invalidate();
     }
 
+    //添加提示线
+    public void addLimitLine2Y(BarLineChartBase lineChartBase, float value, String label) {
+        //提示线，
+        LimitLine ll = new LimitLine(value, label);//线条颜色宽度等
+        ll.setLineColor(getResources().getColor(R.color.gray_ECEBF0));
+        ll.setLineWidth(2f);
+        ll.enableDashedLine(10f, 10f, 0f);
+        ll.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);//文字颜色、大小
+        ll.setTextColor(getResources().getColor(R.color.gray_ECEBF0));
+        ll.setTextSize(10f);
+        YAxis y = lineChartBase.getAxisLeft();
+        y.removeAllLimitLines();
+        //加入到 mXAxis 或 mYAxis
+        y.addLimitLine(ll);
+    }
 
     private void setDefaultBarData(FirstPageBean bean) {
-        boolean isDefault = true;
         Calendar calendar = Calendar.getInstance();
         ArrayList<BarEntry> barEntry = new ArrayList<>();
-        int max = 15;
+
+        int max = bean == null ? 3000 : bean.getPeakValue();
+
+        for (int i = 0; i < 7; i++) {
+            barXLists[6 - i] = RxFormat.setFormatDate(calendar, "MM/dd");
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            barEntry.add(new BarEntry(i, max * 0.85f));
+        }
+
         if (bean != null && bean.getAthleticsInfoList().size() != 0) {
             List<FirstPageBean.AthleticsInfoListBean> list = bean.getAthleticsInfoList();
-            isDefault = false;
-            calendar.setTimeInMillis(Long.parseLong(list.get(0).getAthlDate()));
+            calendar.setTimeInMillis(list.get(0).getAthlDate());
 
             int size = list.size();
             for (int i = 6; i >= 0; i--) {
-                if (i <= 6 - list.size()) {
-                    barXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
+                size--;
+                if (size < 0) {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
-                    barEntry.add(i, new BarEntry(i, max * 0.1f));
+                    barXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
+                    barEntry.set(i, new BarEntry(i, max * 0.1f));
                 } else {
-                    size--;
-                    barEntry.add(i, new BarEntry(i, list.get(size).getCalorie()));
-                    barXLists[i] = RxFormat.setFormatDate(Long.parseLong(list.get(size).getAthlDate()), "MM/dd");
-                    max = max > list.get(size).getCalorie() ? max : list.get(size).getCalorie();
-                    max = (int) (max * 1.3);
+                    barEntry.set(i, new BarEntry(i, list.get(size).getCalorie()));
+                    barXLists[i] = RxFormat.setFormatDate(list.get(size).getAthlDate(), "MM/dd");
                 }
             }
-        } else {
-            for (int i = 7; i >= 0; i--) {
-                barXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
-                calendar.add(Calendar.DAY_OF_MONTH, -1);
-                barEntry.add(i, new BarEntry(i, 1));
-            }
         }
 
-        
-        for (int i = 0; i < 7; i++) {
-
-            barEntry.add(new BarEntry(i, 1));
-
-            if (isDefault) {
-                calendar.add(Calendar.DAY_OF_MONTH, -3);
-                barXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
-            }
-        }
-
+        colors[6] = R.color.red;
         YAxis yAxis = mMBarChart.getAxisLeft();
         yAxis.setAxisMaximum(max);
+        yAxis.setAxisMinimum(0f);
 
         BarDataSet set1;
         if (mMBarChart.getData() != null &&
                 mMBarChart.getData().getDataSetCount() > 0) {
             set1 = (BarDataSet) mMBarChart.getData().getDataSetByIndex(0);
             set1.setValues(barEntry);
+            set1.setColors(colors, mActivity);
             mMBarChart.getData().notifyDataChanged();
             mMBarChart.notifyDataSetChanged();
         } else {
             set1 = new BarDataSet(barEntry, "sports");
             set1.setDrawIcons(false);
             set1.setDrawValues(false);
-            colors[6] = R.color.red;
+
             set1.setColors(colors, mActivity);
 
             ArrayList<IBarDataSet> dataSets = new ArrayList<>();
@@ -298,11 +313,85 @@ public class Slimming2Fragment extends BaseAcFragment {
             mMBarChart.setData(data);
             mMBarChart.setFitBars(true);
         }
-
         addXLabel(mMBarChart, barXLists);
         mMBarChart.invalidate();
         mMBarChart.setVisibleXRangeMaximum(7);
     }
+
+    private void setLineChartData(FirstPageBean bean) {
+        Calendar calendar = Calendar.getInstance();
+
+        ArrayList<Entry> lineEntry = new ArrayList<>();
+        int max = 100;
+
+        for (int i = 0; i < 7; i++) {
+            lineXLists[6 - i] = RxFormat.setFormatDate(calendar, "MM/dd");
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            lineEntry.add(new Entry(i, 0));
+        }
+
+        if (bean != null && bean.getWeightInfoList().size() != 0) {
+
+            List<FirstPageBean.WeightInfoListBean> list = bean.getWeightInfoList();
+            calendar.setTimeInMillis(list.get(0).getWeightDate());
+            int size = list.size();
+
+            for (int i = 6; i >= 0; i--) {
+                size--;
+                if (size < 0) {
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    lineXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
+                    lineEntry.set(i, new BarEntry(i, 0));
+                } else {
+                    lineEntry.set(i, new BarEntry(i, (float) list.get(size).getWeight()));
+                    lineXLists[i] = RxFormat.setFormatDate(list.get(size).getWeightDate(), "MM/dd");
+                    max = max > (int) list.get(size).getWeight() ? max : (int) list.get(size).getWeight();
+                    RxLogUtils.d("最大范围：" + max);
+                }
+            }
+            max = (int) (max * 1.3);
+        }
+
+        colors[6] = R.color.green_61D97F;
+        YAxis yAxis = mMLineChart.getAxisLeft();
+        yAxis.setAxisMaximum(max);
+        yAxis.setAxisMinimum(0f);
+
+        mMLineChart.getXAxis().setLabelCount(7, true);
+
+        LineDataSet set1;
+        if (mMLineChart.getData() != null &&
+                mMLineChart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) mMLineChart.getData().getDataSetByIndex(0);
+            set1.setValues(lineEntry);
+            set1.setCircleColors(colors, mActivity);
+            mMLineChart.getData().notifyDataChanged();
+            mMLineChart.notifyDataSetChanged();
+        } else {
+            set1 = new LineDataSet(lineEntry, "weight");
+            set1.setDrawIcons(false);
+            set1.setDrawValues(false);
+            set1.setColor(getResources().getColor(R.color.gray_ECEBF0));
+
+            set1.setDrawCircleHole(false);
+            set1.setDrawCircles(true);
+            set1.setCircleRadius(6f);
+            set1.setLineWidth(2f);
+            set1.setCircleColors(colors, mActivity);
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+            dataSets.add(set1);
+
+            LineData data = new LineData(dataSets);
+            mMLineChart.setData(data);
+        }
+
+        if (bean != null)
+            addLimitLine2Y(mMLineChart, (float) bean.getNormWeight(), bean.getNormWeight() + "kg");
+        addXLabel(mMLineChart, lineXLists);
+        mMLineChart.invalidate();
+        mMLineChart.setVisibleXRangeMaximum(7);
+    }
+
 
     private void initData() {
         getFirstPageData();
@@ -318,6 +407,11 @@ public class Slimming2Fragment extends BaseAcFragment {
                 .asBitmap()
                 .placeholder(R.mipmap.userimg_man)
                 .into(mIvUserImg);
+
+        if (RxDataUtils.isNullString(info.getClothesMacAddr())
+                && RxDataUtils.isNullString(info.getScalesMacAddr())) {
+            mBtnBind.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -405,31 +499,60 @@ public class Slimming2Fragment extends BaseAcFragment {
     }
 
     private void notifyData(FirstPageBean bean) {
+        setLineChartData(bean);
+        setDefaultBarData(bean);
         mTvBreakfastKcal.setText(bean.getBreakfast() + "");
         mTvLunchKcal.setText(bean.getLunch() + "");
-        mTvDinnerKcal.setText(bean.getLunch() + "");
+        mTvDinnerKcal.setText(bean.getDinner() + "");
         mTvMealKcal.setText(bean.getSnacks() + "");
         mTvKcal.setText(bean.getAbleIntake() + "");
 
         mTvKcal.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mTvHeatUnit.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
-        if (bean.getTargetWeight() == 0) {
-            //提示需要录入目标体重
-        }
+
         if (bean.getWeightInfo() != null) {
             mTvBody.setText(RxDataUtils.isNullString(bean.getWeightInfo().getBodyType()) ? "--.--" : bean.getWeightInfo().getBodyType());
-            mTvWeightStart.setText(bean.getWeightInfo().getWeight() + "kg");
-            mTvWeightEnd.setText(bean.getTargetWeight() + "kg");
-//            mTvDate.setText(RxFormat.setFormatDate(bean.getWeightInfo().getWeightDate(), RxFormat.Date)));
+            mTvDate.setText(RxFormat.setFormatDate(bean.getWeightInfo().getWeightDate(), RxFormat.Date));
+            if (bean.getWeightInfo().getWeight() != 0) {
+                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
+            }
+            if (bean.getWeightInfo().getWeight() != 0) {
+                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
+                mTvCurrentkg.setText(bean.getWeightInfo().getWeight() + "");
+            }
+            if (bean.getWeightInfo().getBmi() != 0) {
+                mTvBMI.setText(bean.getWeightInfo().getBmi() + "");
+            }
+            if (bean.getWeightInfo().getBodyFat() != 0) {
+                mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
+            }
         }
         if (!RxDataUtils.isNullString(bean.getSickLevel())) {
-            mTvRisk.setText(bean.getSickLevel());
+            mIvHealthyLevel.switchLevel(bean.getSickLevel());
         }
+        if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
+            mTvRisk.setText(bean.getLevelDesc());
+        }
+        mProWeight.setProgress((int) (bean.getComplete() * 100));
         mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : "离目标完成还剩 " + bean.getHasDays() + " 天");
 
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
         mBtnBindScale.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
+
+        if (bean.getInitialWeight() != 0) {
+            mTvWeightStart.setText(bean.getInitialWeight() + "kg");
+        }
+        if (bean.getTargetWeight() != 0) {
+            mTvWeightEnd.setText(bean.getTargetWeight() + "kg");
+        } else if (bean.getTargetWeight() == 0) {
+            //TODO 提示需要录入目标体重
+        }
+        mCircleProgressBar.setProgress((int) (bean.getIntakePercent() * 100));
+        int size = bean.getAthleticsInfoList().size();
+        if (size != 0) {
+            mTvCurrentKcal.setText(bean.getAthleticsInfoList().get(size - 1).getCalorie() + "");
+        }
     }
 
 }

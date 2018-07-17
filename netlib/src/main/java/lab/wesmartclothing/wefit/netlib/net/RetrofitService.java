@@ -62,18 +62,30 @@ public interface RetrofitService {
     // 体重
     ///////////////////////////////////////////////////////////////////////////
 
-    @POST("slim/getWeightInfo")
-    Observable<String> getWeightInfo(@Body RequestBody body);
 
 //    @POST("slim/getWeightList")
 //    Observable<String> getWeightList(@Body RequestBody body);
 
     @FormUrlEncoded
-    @POST("slim/getWeightList")
+    @POST("weight/fetchWeightList")
     Observable<String> getWeightList(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
-    @POST("slim/addWeightInfo")
+    //移除体重信息
+    @POST("weight/removeWeightInfo")
+    Observable<String> removeWeightInfo(@Body RequestBody body);
+
+
+    //获取目标体重信息
+    @FormUrlEncoded
+    @POST("weight/fetchTargetWeight")
+    Observable<String> fetchTargetWeight();
+
+    @POST("weight/addWeightInfo")
     Observable<String> addWeightInfo(@Body RequestBody body);
+
+    //设置目标体重
+    @POST("weight/setTargetWeight")
+    Observable<String> setTargetWeight(@Body RequestBody body);
 
 
     ///////////////////////////////////////////////////////////////////////////
