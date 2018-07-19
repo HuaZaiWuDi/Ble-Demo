@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming;
 
+import android.animation.ValueAnimator;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -62,7 +64,7 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -74,12 +76,6 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
  * Created by jk on 2018/7/13.
  */
 public class Slimming2Fragment extends BaseAcFragment {
-    private String[] barXLists = new String[7];
-    private String[] lineXLists = new String[7];
-    private int[] colors = {R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0,
-            R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0};
-    public String[] add_food;
-
 
     @BindView(R.id.layout_bind)
     RelativeLayout mLayoutBind;
@@ -190,10 +186,30 @@ public class Slimming2Fragment extends BaseAcFragment {
     BarChart mMBarChart;
     @BindView(R.id.mLineChart)
     LineChart mMLineChart;
+    @BindView(R.id.collapsing_topbar_layout)
+    QMUICollapsingTopBarLayout mCollapsingTopbarLayout;
+    @BindView(R.id.iv_userImg2)
+    QMUIRadiusImageView mIvUserImg2;
+    @BindView(R.id.tv_userName2)
+    TextView mTvUserName2;
+    @BindView(R.id.iv_notify2)
+    ImageView mIvNotify2;
+    @BindView(R.id.layout_notify2)
+    LinearLayout mLayoutNotify2;
+    @BindView(R.id.layout_title2)
+    RelativeLayout mLayoutTitle2;
 
     public static Fragment getInstance() {
         return new Slimming2Fragment();
     }
+
+    private String[] barXLists = new String[7];
+    private String[] lineXLists = new String[7];
+    private int[] colors = {R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0,
+            R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0};
+    public String[] add_food;
+    private TextView tvUserName;
+    private QMUIRadiusImageView ivUserImg, ivNotify;
 
     @Override
     protected View onCreateView() {
@@ -221,12 +237,10 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvCurrentKcal.setTypeface(typeface);
         mTvBMI.setTypeface(typeface);
         mTvBodyFat.setTypeface(typeface);
-
         initChart(mMBarChart);
         initChart(mMLineChart);
-//        setDefaultBarData(null);
-//        setLineChartData(null);
     }
+
 
     @Override
     public void onStart() {
@@ -246,15 +260,26 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvUserName.setText(info.getUserName());
         Glide.with(mActivity).load(info.getUserImg())
                 .asBitmap()
-                .placeholder(R.mipmap.userimg_man)
+                .placeholder(R.mipmap.userimg)
                 .into(mIvUserImg);
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
         if (!RxDataUtils.isNullString(info.getClothesMacAddr())
                 && !RxDataUtils.isNullString(info.getScalesMacAddr())) {
             mLayoutBind.setVisibility(View.GONE);
         }
-    }
 
+        Glide.with(mActivity).load(info.getUserImg())
+                .asBitmap()
+                .placeholder(R.mipmap.userimg)
+                .into(mIvUserImg2);
+        mTvUserName2.setText(info.getUserName());
+        mCollapsingTopbarLayout.setScrimUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mLayoutTitle2.setVisibility((int) animation.getAnimatedValue() < 200 ? View.INVISIBLE : View.VISIBLE);
+            }
+        });
+    }
 
     private void initChart(BarLineChartBase lineChartBase) {
         lineChartBase.setEnabled(false);
@@ -341,7 +366,9 @@ public class Slimming2Fragment extends BaseAcFragment {
                     barXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
                     barEntry.set(i, new BarEntry(i, max * 0.1f));
                 } else {
-                    barEntry.set(i, new BarEntry(i, list.get(size).getCalorie()));
+                    int calorie = list.get(size).getCalorie();
+                    calorie = calorie < max * 0.1f ? (int) (max * 0.1f) : calorie;
+                    barEntry.set(i, new BarEntry(i, calorie));
                     barXLists[i] = RxFormat.setFormatDate(list.get(size).getAthlDate(), "MM/dd");
                 }
             }
@@ -457,7 +484,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.iv_userImg, R.id.layout_notify, R.id.layout_Healthy, R.id.layout_heat, R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal, R.id.btn_bind_clothing, R.id.layout_sports, R.id.btn_bind_scale, R.id.layout_weight, R.id.btn_bind})
+    @OnClick({R.id.iv_userImg2, R.id.layout_notify2, R.id.iv_userImg, R.id.layout_notify, R.id.layout_Healthy, R.id.layout_heat, R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal, R.id.btn_bind_clothing, R.id.layout_sports, R.id.btn_bind_scale, R.id.layout_weight, R.id.btn_bind})
     public void onViewClicked(View view) {
         Bundle bundle = new Bundle();
         bundle.putString(Key.ADD_FOOD_DATE, System.currentTimeMillis() + "");
@@ -502,7 +529,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                 mBtnBindClothing.setVisibility(View.GONE);
                 break;
             case R.id.layout_sports:
-                bundle.putString(Key.BUNDLE_FRAGMENT, SportsFragment.class.getSimpleName());
+                bundle.putString(Key.BUNDLE_FRAGMENT, SmartClothingFragment.class.getSimpleName());
                 RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
                 break;
             case R.id.btn_bind_scale:
@@ -514,6 +541,14 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.btn_bind:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                break;
+            case R.id.layout_notify2:
+                //跳转消息通知
+                RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
+                break;
+            case R.id.iv_userImg2:
+                //跳转个人主页
+                RxActivityUtils.skipActivity(mActivity, PersonalDataActivity.class);
                 break;
         }
     }
@@ -557,6 +592,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvKcal.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mTvHeatUnit.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
+        mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
         if (bean.getWeightInfo() != null) {
             mTvBody.setText(RxDataUtils.isNullString(bean.getBodyType()) ? "--.--" : bean.getBodyType());
@@ -586,7 +622,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : "离目标完成还剩 " + bean.getHasDays() + " 天");
 
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
-        mBtnBindScale.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
+        mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
 
         if (bean.getInitialWeight() != 0) {
             mTvWeightStart.setText(bean.getInitialWeight() + "kg");
@@ -601,6 +637,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         if (size != 0) {
             mTvCurrentKcal.setText(bean.getAthleticsInfoList().get(size - 1).getCalorie() + "");
         }
+
+
     }
+
 
 }

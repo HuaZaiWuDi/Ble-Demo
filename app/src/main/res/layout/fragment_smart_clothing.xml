@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_marginTop="?attr/qmui_topbar_height"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_F7F7F9"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/layout_StrongTip"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@color/red">
+
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/btn_strongTip"
+                android:layout_width="289dp"
+                android:layout_height="48dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/dimen_8"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:text="检测到您未开启手机蓝牙，开启蓝牙"
+                android:textColor="@color/Gray"
+                android:textSize="13sp"
+                app:qmui_backgroundColor="@color/white"
+                app:qmui_borderColor="@color/red"/>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/red"
+            android:minHeight="216dp">
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/layout_sports"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16">
+
+            <ImageView
+                android:id="@+id/iv_sports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/icon_sports"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_toRightOf="@+id/iv_sports"
+                android:text="2018年7月8日"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="34dp"
+                android:text="查看详情"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@mipmap/icon_goto"/>
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_0.5"
+            android:background="@color/line"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:background="@color/white"
+            android:paddingLeft="@dimen/dimen_16"
+            >
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="@dimen/dimen_10">
+
+
+                <ImageView
+                    android:id="@+id/iv_heatKacl"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/icon_heatkcal"/>
+
+
+                <TextView
+                    android:id="@+id/tv_heatTitlle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_toRightOf="@+id/iv_heatKacl"
+                    android:text="消耗热量"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"/>
+
+
+                <TextView
+                    android:id="@+id/tv_Heat_Kcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_heatTitlle"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:layout_toRightOf="@+id/iv_heatKacl"
+                    android:maxLength="5"
+                    android:maxLines="1"
+                    android:text="--"
+                    android:textColor="@color/orange_FF7200"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="231.0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_Heat_Kcal"
+                    android:layout_toRightOf="@+id/tv_Heat_Kcal"
+                    android:text=" kcal"
+                    android:textColor="@color/orange_FF7200"
+                    android:textSize="13sp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="@dimen/dimen_10">
+
+
+                <ImageView
+                    android:id="@+id/iv_sports_time"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/icon_time"/>
+
+
+                <TextView
+                    android:id="@+id/tv_sports_time_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_toRightOf="@+id/iv_sports_time"
+                    android:text="运动时长"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"/>
+
+
+                <TextView
+                    android:id="@+id/tv_Sports_Time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_sports_time_title"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="@dimen/dimen_8"
+                    android:layout_toRightOf="@+id/iv_sports_time"
+                    android:maxLength="5"
+                    android:maxLines="1"
+                    android:text="--"
+                    android:textColor="@color/orange_FF7200"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="231.0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_Sports_Time"
+                    android:layout_toRightOf="@+id/tv_Sports_Time"
+                    android:text=" min"
+                    android:textColor="@color/orange_FF7200"
+                    android:textSize="13sp"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:padding="16dp">
+
+
+            <ImageView
+                android:id="@+id/iv_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/icon_tip"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_8"
+                android:layout_toRightOf="@+id/iv_tip"
+                android:text="小贴士"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_0.5"
+                android:layout_below="@+id/iv_tip"
+                android:layout_marginTop="18dp"
+                android:background="@color/line"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/line"
+                android:layout_marginTop="@dimen/dimen_16"
+                android:text="今天还差300kcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。"
+                android:textColor="@color/GrayWrite"/>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height"
+        android:fitsSystemWindows="true"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/red"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_title_color="@color/white"
+        app:qmui_topbar_title_container_padding_horizontal="20dp"
+        app:qmui_topbar_title_text_size="16sp"
+        />
+
+</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>

@@ -1,9 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
-        <!-- Customize your theme here. -->
+    <!-- Customize your theme here. -->
     <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
-    <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
@@ -25,23 +25,12 @@
 
     <style name="QDTopBar" parent="QMUI.TopBar">
         <item name="qmui_topbar_bg_color">@color/white</item>
-        <item name="qmui_topbar_title_color">@color/qmui_config_color_white</item>
-        <item name="qmui_topbar_subtitle_color">@color/qmui_config_color_white</item>
+        <item name="qmui_topbar_title_color">@color/Gray</item>
+        <item name="qmui_topbar_subtitle_color">@color/GrayWrite</item>
         <item name="qmui_topbar_height">@dimen/topBarHeight</item>
         <item name="qmui_topbar_image_btn_height">@dimen/topBarHeight</item>
         <item name="qmui_topbar_left_back_drawable_id">@mipmap/icon_back</item>
     </style>
 
-    <!--<style name="SeekBar">-->
-    <!--<item name="indeterminateOnly">false</item>-->
-    <!--&lt;!&ndash;progressDrawable定义了背景图,进度图,和缓冲图&ndash;&gt;-->
-    <!--<item name="progressDrawable">@drawable/progress_horizontal</item>-->
-    <!--&lt;!&ndash;<item name="indeterminateDrawable">@drawable/progress_horizontal</item>&ndash;&gt;-->
-    <!--&lt;!&ndash;thumb定义了滑块的图片&ndash;&gt;-->
-    <!--<item name="thumb">@mipmap/qietu</item>-->
-    <!--&lt;!&ndash;<item name="thumbOffset">8dip</item>&ndash;&gt;-->
-    <!--<item name="focusable">true</item>-->
-    <!--<item name="mirrorForRtl">true</item>-->
-    <!--</style>-->
 
 </resources>

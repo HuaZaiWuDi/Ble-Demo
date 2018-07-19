@@ -44,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        //屏幕沉浸
+//        //屏幕沉浸
         StatusBarUtils.from(this).setTransparentStatusbar(true).process();
 
         mContext = this;

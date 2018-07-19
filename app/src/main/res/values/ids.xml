@@ -9,4 +9,8 @@
     <item name="topbar_right_change_button" type="id"/>
 
     <item name="layout_for_test" type="id"/>
+    <item name="tv_muserName" type="id"/>
+    <item name="iv_mnoftify" type="id"/>
+    <item name="iv_muserImg" type="id"/>
+    <item name="tv_connect" type="id"/>
 </resources>

@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:orientation="vertical">
 
-    <ScrollView
+
+    <com.qmuiteam.qmui.widget.QMUIAppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/bottom_padding"
-        >
+        android:layout_height="126dp"
+        android:fitsSystemWindows="true">
 
-        <LinearLayout
+        <com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout
+            android:id="@+id/collapsing_topbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/bg_F7F7F9"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/qmui_topbar_height"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:qmui_contentScrim="@color/Gray"
+            app:qmui_statusBarScrim="@color/Gray"
+            app:titleEnabled="false">
 
             <!--title-->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="126dp"
                 android:background="@color/Gray"
+                android:contentDescription="@string/app_name"
+                android:fitsSystemWindows="false"
                 android:paddingTop="36dp"
+                app:qmui_layout_collapseMode="parallax"
+                app:qmui_layout_collapseParallaxMultiplier="0.7"
                 tools:visibility="visible">
 
 
@@ -138,6 +147,92 @@
 
 
             </RelativeLayout>
+
+
+            <com.qmuiteam.qmui.widget.QMUITopBar
+                android:id="@+id/topbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/qmui_topbar_height"
+                android:fitsSystemWindows="true"
+                android:paddingLeft="@dimen/dimen_16"
+                android:paddingRight="@dimen/dimen_16"
+                android:visibility="visible"
+                app:qmui_layout_collapseMode="pin"
+                app:qmui_topbar_bg_color="@color/qmui_config_color_transparent"
+                app:qmui_topbar_need_separator="false"/>
+
+            <RelativeLayout
+                android:id="@+id/layout_title2"
+                android:layout_width="match_parent"
+                android:layout_height="84dp"
+                android:background="@color/Gray"
+                android:paddingBottom="@dimen/dimen_16"
+                android:paddingLeft="@dimen/dimen_16"
+                android:paddingTop="20dp"
+                android:visibility="invisible"
+                app:qmui_layout_collapseMode="pin">
+
+
+                <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+                    android:id="@+id/iv_userImg2"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentBottom="true"
+                    android:src="@mipmap/app_name"
+                    app:qmui_is_circle="true"/>
+
+
+                <TextView
+                    android:layout_marginBottom="@dimen/dimen_10"
+                    android:id="@+id/tv_userName2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="@dimen/dimen_16"
+                    android:layout_toRightOf="@+id/iv_userImg2"
+                    android:text="@string/app_name"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"/>
+
+
+                <LinearLayout
+                    android:layout_marginBottom="@dimen/dimen_10"
+                    android:id="@+id/layout_notify2"
+                    android:layout_width="@dimen/dimen_50"
+                    android:layout_height="@dimen/dimen_50"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|center_horizontal">
+
+
+                    <ImageView
+                        android:id="@+id/iv_notify2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@mipmap/icon_email_white"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout>
+    </com.qmuiteam.qmui.widget.QMUIAppBarLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:paddingBottom="@dimen/bottom_padding"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_F7F7F9"
+            android:orientation="vertical">
+
 
             <!--健康评级-->
             <RelativeLayout
@@ -946,7 +1041,7 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 
-</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
+</android.support.design.widget.CoordinatorLayout>
