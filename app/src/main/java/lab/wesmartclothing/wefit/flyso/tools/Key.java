@@ -33,6 +33,10 @@ public interface Key {
 
     String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";
 
+    String BUNDLE_IS_SPORTING = "BUNDLE_IS_SPORTING";
+    String BUNDLE_SPORTING_DATE = "BUNDLE_SPORTING_DATE";
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////

@@ -190,10 +190,7 @@ public class SportsFragment extends BaseAcFragment {
             @Override
             public void accept(Device device) throws Exception {
                 if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-//                    mPrefs.clothing().put("");
-                    SPUtils.put(SPKey.SP_clothingMAC, "");
                     initDeviceConnectTip(1);
-                    BleTools.getInstance().disConnect();
                     initWeightInfo();
                 }
             }

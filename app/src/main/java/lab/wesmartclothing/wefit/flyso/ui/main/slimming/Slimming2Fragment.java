@@ -253,18 +253,15 @@ public class Slimming2Fragment extends BaseAcFragment {
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = new Gson().fromJson(string, UserInfo.class);
-        if (info == null) {
-            RxLogUtils.e("UserInfo is Null");
-            return;
-        }
+
         mTvUserName.setText(info.getUserName());
         Glide.with(mActivity).load(info.getUserImg())
                 .asBitmap()
                 .placeholder(R.mipmap.userimg)
                 .into(mIvUserImg);
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
-        if (!RxDataUtils.isNullString(info.getClothesMacAddr())
-                && !RxDataUtils.isNullString(info.getScalesMacAddr())) {
+        if (!RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_clothingMAC))
+                && !RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutBind.setVisibility(View.GONE);
         }
 
@@ -308,17 +305,10 @@ public class Slimming2Fragment extends BaseAcFragment {
 
     //添加X轴标签
     private void addXLabel(BarLineChartBase lineChartBase, final String[] label) {
-        if (lineChartBase instanceof LineChart) {
-            RxLogUtils.e("LineChart");
-        } else if (lineChartBase instanceof BarChart) {
-            RxLogUtils.e("BarChart");
-        }
         XAxis x = lineChartBase.getXAxis();
         x.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                RxLogUtils.d("X轴：" + value);
-                if (value > label.length) return "";
                 return label[(int) value % label.length];
             }
         });
@@ -346,7 +336,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         ArrayList<BarEntry> barEntry = new ArrayList<>();
 
         int max = 3000;
-
+        colors[6] = R.color.gray_ECEBF0;
         for (int i = 0; i < 7; i++) {
             barXLists[6 - i] = RxFormat.setFormatDate(calendar, "MM/dd");
             calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -400,6 +390,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             RxLogUtils.d("运动数据:" + Arrays.toString(barXLists));
             addXLabel(mMBarChart, barXLists);
         }
+
         set1.setColors(colors, mActivity);
         mMBarChart.invalidate();
         mMBarChart.setVisibleXRangeMaximum(7);
@@ -410,7 +401,7 @@ public class Slimming2Fragment extends BaseAcFragment {
 
         ArrayList<Entry> lineEntry = new ArrayList<>();
         int max = 100;
-
+        colors[6] = R.color.gray_ECEBF0;
         for (int i = 0; i < 7; i++) {
             lineXLists[6 - i] = RxFormat.setFormatDate(calendar, "MM/dd");
             calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -637,9 +628,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         if (size != 0) {
             mTvCurrentKcal.setText(bean.getAthleticsInfoList().get(size - 1).getCalorie() + "");
         }
-
-
     }
-
 
 }

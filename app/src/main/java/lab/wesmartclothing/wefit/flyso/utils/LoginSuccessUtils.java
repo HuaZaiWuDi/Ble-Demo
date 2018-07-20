@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import android.content.Context;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -54,14 +53,14 @@ public class LoginSuccessUtils {
                         JsonParser parser = new JsonParser();
                         JsonObject object = (JsonObject) parser.parse(s);
                         int sex = object.get("sex").getAsInt();
-                        int height = object.get("height").getAsInt();
-                        int targetWeight = object.get("targetWeight").getAsInt();
-                        String birthday;
-                        JsonElement jsonElement = object.get("birthday");
-                        if (!jsonElement.isJsonNull()) {
-                            birthday = jsonElement.getAsString();
-                        } else
-                            birthday = "631233300000";
+//                        int height = object.get("height").getAsInt();
+//                        int targetWeight = object.get("targetWeight").getAsInt();
+//                        String birthday;
+//                        JsonElement jsonElement = object.get("birthday");
+//                        if (!jsonElement.isJsonNull()) {
+//                            birthday = jsonElement.getAsString();
+//                        } else
+//                            birthday = "631233300000";
 
                         String clothesMacAddr = object.get("clothesMacAddr").getAsString();
                         String scalesMacAddr = object.get("scalesMacAddr").getAsString();
@@ -71,11 +70,6 @@ public class LoginSuccessUtils {
                         if (sex == 0) {
                             RxActivityUtils.skipActivityAndFinishAll(mContext, UserInfoActivity.class);
                         } else {
-                            SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
-                            SPUtils.put(SPKey.SP_weight, targetWeight);
-                            SPUtils.put(SPKey.SP_height, height);
-                            SPUtils.put(SPKey.SP_sex, sex);
-
                             RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
                         }
                     }

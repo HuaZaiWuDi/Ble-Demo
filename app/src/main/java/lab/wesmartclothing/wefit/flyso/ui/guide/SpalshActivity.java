@@ -3,8 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 import android.Manifest;
 import android.content.Intent;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tbruyelle.rxpermissions2.Permission;
@@ -24,10 +22,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity;
@@ -38,7 +33,6 @@ import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import okhttp3.RequestBody;
 
 @EActivity(R.layout.activity_spalsh)
 public class SpalshActivity extends BaseActivity {
@@ -71,7 +65,7 @@ public class SpalshActivity extends BaseActivity {
 
 //        //测试账号
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-
+        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
         initUserInfo();
         initData();
 
@@ -97,27 +91,11 @@ public class SpalshActivity extends BaseActivity {
                         int sex = object.get("sex").getAsInt();
                         isSaveUserInfo = sex == 0;
 
-                        int height = object.get("height").getAsInt();
-                        int targetWeight = object.get("targetWeight").getAsInt();
-                        String birthday;
-                        JsonElement jsonElement = object.get("birthday");
-                        if (!jsonElement.isJsonNull()) {
-                            birthday = jsonElement.getAsString();
-                        } else
-                            birthday = "631233300000";
-
                         String clothesMacAddr = object.get("clothesMacAddr").getAsString();
                         String scalesMacAddr = object.get("scalesMacAddr").getAsString();
                         SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
                         SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
 
-                        if (!isSaveUserInfo) {//判断性别是否为0来判断是否录入个人信息
-
-                            SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
-                            SPUtils.put(SPKey.SP_weight, targetWeight);
-                            SPUtils.put(SPKey.SP_height, height);
-                            SPUtils.put(SPKey.SP_sex, sex);
-                        }
                     }
                 });
     }
@@ -163,31 +141,10 @@ public class SpalshActivity extends BaseActivity {
             //没有网络直接返回
             return;
         }
-        saveUserInfo();
         getStoreAddr();
         getOrderUrl();
         getShoppingAddress();
     }
-
-
-    //重传用户信息
-    private void saveUserInfo() {
-        SaveUserInfo mUserInfo = (SaveUserInfo) MyAPP.getACache().getAsObject(Key.CACHE_USER_INFO);
-        if (mUserInfo == null) return;
-        else RxLogUtils.e("未上传的用户信息：" + mUserInfo.toString());
-        String s = new Gson().toJson(mUserInfo, SaveUserInfo.class);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
-                        MyAPP.getACache().remove(Key.CACHE_USER_INFO);
-                    }
-                });
-    }
-
 
     //获取商城地址
     private void getStoreAddr() {

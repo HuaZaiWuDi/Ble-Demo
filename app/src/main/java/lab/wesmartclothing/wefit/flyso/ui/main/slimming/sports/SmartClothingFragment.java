@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created by jk on 2018/7/18.
@@ -85,25 +87,25 @@ public class SmartClothingFragment extends BaseAcFragment {
         mQMUIAppBarLayout.setTitle("运动记录");
         btn_Connect = mQMUIAppBarLayout.addRightTextButton("未连接", R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
-
+        btn_Connect.setTextSize(13);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
 
     @OnClick({R.id.layout_sports, R.id.btn_strongTip})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_sports:
+                Bundle args = new Bundle();
+                args.putLong(Key.BUNDLE_SPORTING_DATE, System.currentTimeMillis());
+                QMUIFragment fragment = SportsDetailsFragment.getInstance();
+                fragment.setArguments(args);
+                startFragment(fragment);
                 break;
             case R.id.btn_strongTip:
-                mLayoutStrongTip.setVisibility(View.GONE);
+//                mLayoutStrongTip.setVisibility(View.GONE);
+                startFragment(SportingFragment.getInstance());
                 break;
         }
     }
-
 
 }

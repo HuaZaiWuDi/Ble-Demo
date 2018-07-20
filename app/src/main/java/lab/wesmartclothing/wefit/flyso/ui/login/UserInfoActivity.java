@@ -38,9 +38,8 @@ import cn.qqtheme.framework.picker.DateTimePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
-import lab.wesmartclothing.wefit.flyso.entity.SaveUserInfo;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -54,7 +53,7 @@ import okhttp3.RequestBody;
 public class UserInfoActivity extends BaseALocationActivity {
 
 
-    SaveUserInfo mUserInfo;
+    UserInfo mUserInfo;
 
     @BindView(R.id.tv_titleTop)
     TextView tv_titleTop;
@@ -150,7 +149,10 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     @Override
     public void initView() {
-        mUserInfo = new SaveUserInfo();
+        String string = SPUtils.getString(SPKey.SP_UserInfo);
+        mUserInfo = new Gson().fromJson(string, UserInfo.class);
+        if (mUserInfo.getSex() == 0) mUserInfo.setSex(1);
+        RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
         switchView(viewState);
     }
@@ -245,13 +247,12 @@ public class UserInfoActivity extends BaseALocationActivity {
         tv_info.setText(R.string.info_about);
         tv_titleTop.setText(R.string.chooseSex);
         tv_titleBottom.setText(R.string.chooseBirth);
-        tv_bottom.setText(RxFormat.setFormatDate(Long.parseLong(mUserInfo.getBirthday()), RxFormat.Date));
+        tv_bottom.setText(RxFormat.setFormatDate(mUserInfo.getBirthday(), RxFormat.Date));
         mCommonTabLayout.setCurrentTab(mUserInfo.getSex() - 1);
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
                 //0未设置1男2女
-                SPUtils.put(SPKey.SP_sex, position + 1);
                 mUserInfo.setSex(position + 1);//1男2女
             }
 
@@ -260,15 +261,10 @@ public class UserInfoActivity extends BaseALocationActivity {
 
             }
         });
-
     }
 
 
     private void showDate() {
-        View footerView = View.inflate(mContext, R.layout.layout_picker_footer, null);
-        TextView mTvCancel = footerView.findViewById(R.id.tv_cancel);
-        TextView mTvOk = footerView.findViewById(R.id.tv_ok);
-
         Calendar calendar = Calendar.getInstance();
         final DatePicker picker = new DatePicker(this, DateTimePicker.YEAR_MONTH_DAY);
         picker.setGravity(Gravity.BOTTOM);
@@ -282,7 +278,7 @@ public class UserInfoActivity extends BaseALocationActivity {
         picker.setOffset(2);//偏移量
         picker.setRangeStart(1940, 01, 01);
         picker.setRangeEnd(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-        calendar.setTimeInMillis(Long.parseLong(mUserInfo.getBirthday()));
+        calendar.setTimeInMillis(mUserInfo.getBirthday());
         picker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         picker.setTextSize(21);
         picker.setLabel("-", "-", "");
@@ -292,8 +288,7 @@ public class UserInfoActivity extends BaseALocationActivity {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 tv_bottom.setText(year + "-" + month + "-" + day);
                 Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
-                SPUtils.put(SPKey.SP_birthDayMillis, date.getTime());
-                mUserInfo.setBirthday(date.getTime() + "");
+                mUserInfo.setBirthday(date.getTime());
             }
         });
         picker.show();
@@ -319,7 +314,6 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("身高：" + item);
                 tv_top.setText(item + "cm");
-                SPUtils.put(SPKey.SP_height, (int) item);
                 mUserInfo.setHeight((int) item);
             }
         });
@@ -356,10 +350,9 @@ public class UserInfoActivity extends BaseALocationActivity {
             mUserInfo.setProvince("");
             mUserInfo.setCity("");
         }
-        mUserInfo.setPhone(SPUtils.getString(SPKey.SP_phone));
-        mUserInfo.setToken(SPUtils.getString(SPKey.SP_token));
 
-        String s = new Gson().toJson(mUserInfo, SaveUserInfo.class);
+        String s = new Gson().toJson(mUserInfo, UserInfo.class);
+        SPUtils.put(SPKey.SP_UserInfo, s);
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -378,7 +371,6 @@ public class UserInfoActivity extends BaseALocationActivity {
                     @Override
                     protected void _onError(String error) {
                         RxToast.error(error);
-                        MyAPP.getACache().put(Key.CACHE_USER_INFO, mUserInfo);
                     }
                 });
     }

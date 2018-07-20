@@ -1,11 +1,14 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.google.gson.Gson;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
 import org.androidannotations.annotations.EBean;
 
 import java.util.Calendar;
 
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
@@ -30,16 +33,17 @@ public class HeartRateToKcal {
      * @return 千卡
      */
     public double getCalorie(int HR, double T) {
+        String string = SPUtils.getString(SPKey.SP_UserInfo);
+        UserInfo info = new Gson().fromJson(string, UserInfo.class);
+        if (info == null) {
+            RxLogUtils.e("UserInfo is null");
+            return 0;
+        }
 
-        int sex = SPUtils.getInt(SPKey.SP_sex, 0);
+        int sex = info.getSex();
         float W = SPUtils.getFloat(SPKey.SP_realWeight, SPUtils.getInt(SPKey.SP_weight));
-        long birthDayMillis = SPUtils.getLong(SPKey.SP_birthDayMillis);
+        long birthDayMillis = info.getBirthday();
 
-//        int sex = mPrefs.sex().get();
-
-//        float W = mPrefs.realWeight().getOr(Float.valueOf(mPrefs.weight().get()));
-
-//        long birthDayMillis = mPrefs.birthDayMillis().get();
 
         Calendar calendar = Calendar.getInstance();
         int newYear = calendar.get(Calendar.YEAR);

@@ -8,41 +8,41 @@ package me.dkzwm.widget.srl;
 
 public final class R {
     public static final class attr {
-        public static int layout_gravity = 0x7f04014b;
-        public static int sr_backToKeepDuration = 0x7f04030a;
-        public static int sr_backToKeepFooterDuration = 0x7f04030b;
-        public static int sr_backToKeepHeaderDuration = 0x7f04030c;
-        public static int sr_closeDuration = 0x7f04030d;
-        public static int sr_closeFooterDuration = 0x7f04030e;
-        public static int sr_closeHeaderDuration = 0x7f04030f;
-        public static int sr_content = 0x7f040310;
-        public static int sr_customLayout = 0x7f040311;
-        public static int sr_emptyLayout = 0x7f040312;
-        public static int sr_enableKeep = 0x7f040313;
-        public static int sr_enableLoadMore = 0x7f040314;
-        public static int sr_enableOverScroll = 0x7f040315;
-        public static int sr_enablePinContent = 0x7f040316;
-        public static int sr_enablePullToRefresh = 0x7f040317;
-        public static int sr_enableRefresh = 0x7f040318;
-        public static int sr_errorLayout = 0x7f040319;
-        public static int sr_footerBackgroundColor = 0x7f04031a;
-        public static int sr_headerBackgroundColor = 0x7f04031b;
-        public static int sr_maxMoveRatio = 0x7f04031c;
-        public static int sr_maxMoveRatioOfFooter = 0x7f04031d;
-        public static int sr_maxMoveRatioOfHeader = 0x7f04031e;
-        public static int sr_mode = 0x7f04031f;
-        public static int sr_ratioOfFooterToRefresh = 0x7f040320;
-        public static int sr_ratioOfHeaderToRefresh = 0x7f040321;
-        public static int sr_ratioToKeep = 0x7f040322;
-        public static int sr_ratioToKeepFooter = 0x7f040323;
-        public static int sr_ratioToKeepHeader = 0x7f040324;
-        public static int sr_ratioToRefresh = 0x7f040325;
-        public static int sr_resistance = 0x7f040326;
-        public static int sr_resistanceOfFooter = 0x7f040327;
-        public static int sr_resistanceOfHeader = 0x7f040328;
-        public static int sr_state = 0x7f040329;
-        public static int sr_stickyHeader = 0x7f04032a;
-        public static int sr_style = 0x7f04032b;
+        public static int layout_gravity = 0x7f04014d;
+        public static int sr_backToKeepDuration = 0x7f040312;
+        public static int sr_backToKeepFooterDuration = 0x7f040313;
+        public static int sr_backToKeepHeaderDuration = 0x7f040314;
+        public static int sr_closeDuration = 0x7f040315;
+        public static int sr_closeFooterDuration = 0x7f040316;
+        public static int sr_closeHeaderDuration = 0x7f040317;
+        public static int sr_content = 0x7f040318;
+        public static int sr_customLayout = 0x7f040319;
+        public static int sr_emptyLayout = 0x7f04031a;
+        public static int sr_enableKeep = 0x7f04031b;
+        public static int sr_enableLoadMore = 0x7f04031c;
+        public static int sr_enableOverScroll = 0x7f04031d;
+        public static int sr_enablePinContent = 0x7f04031e;
+        public static int sr_enablePullToRefresh = 0x7f04031f;
+        public static int sr_enableRefresh = 0x7f040320;
+        public static int sr_errorLayout = 0x7f040321;
+        public static int sr_footerBackgroundColor = 0x7f040322;
+        public static int sr_headerBackgroundColor = 0x7f040323;
+        public static int sr_maxMoveRatio = 0x7f040324;
+        public static int sr_maxMoveRatioOfFooter = 0x7f040325;
+        public static int sr_maxMoveRatioOfHeader = 0x7f040326;
+        public static int sr_mode = 0x7f040327;
+        public static int sr_ratioOfFooterToRefresh = 0x7f040328;
+        public static int sr_ratioOfHeaderToRefresh = 0x7f040329;
+        public static int sr_ratioToKeep = 0x7f04032a;
+        public static int sr_ratioToKeepFooter = 0x7f04032b;
+        public static int sr_ratioToKeepHeader = 0x7f04032c;
+        public static int sr_ratioToRefresh = 0x7f04032d;
+        public static int sr_resistance = 0x7f04032e;
+        public static int sr_resistanceOfFooter = 0x7f04032f;
+        public static int sr_resistanceOfHeader = 0x7f040330;
+        public static int sr_state = 0x7f040331;
+        public static int sr_stickyHeader = 0x7f040332;
+        public static int sr_style = 0x7f040333;
     }
     public static final class id {
         public static int content = 0x7f0c0074;
@@ -59,9 +59,9 @@ public final class R {
         public static int style_scale = 0x7f0c01c0;
     }
     public static final class styleable {
-        public static int[] IRefreshView = { 0x7f04032b };
+        public static int[] IRefreshView = { 0x7f040333 };
         public static int IRefreshView_sr_style = 0;
-        public static int[] SmoothRefreshLayout = { 0x7f04014b, 0x7f04030a, 0x7f04030b, 0x7f04030c, 0x7f04030d, 0x7f04030e, 0x7f04030f, 0x7f040310, 0x7f040311, 0x7f040312, 0x7f040313, 0x7f040314, 0x7f040315, 0x7f040316, 0x7f040317, 0x7f040318, 0x7f040319, 0x7f04031a, 0x7f04031b, 0x7f04031c, 0x7f04031d, 0x7f04031e, 0x7f04031f, 0x7f040320, 0x7f040321, 0x7f040322, 0x7f040323, 0x7f040324, 0x7f040325, 0x7f040326, 0x7f040327, 0x7f040328, 0x7f040329, 0x7f04032a };
+        public static int[] SmoothRefreshLayout = { 0x7f04014d, 0x7f040312, 0x7f040313, 0x7f040314, 0x7f040315, 0x7f040316, 0x7f040317, 0x7f040318, 0x7f040319, 0x7f04031a, 0x7f04031b, 0x7f04031c, 0x7f04031d, 0x7f04031e, 0x7f04031f, 0x7f040320, 0x7f040321, 0x7f040322, 0x7f040323, 0x7f040324, 0x7f040325, 0x7f040326, 0x7f040327, 0x7f040328, 0x7f040329, 0x7f04032a, 0x7f04032b, 0x7f04032c, 0x7f04032d, 0x7f04032e, 0x7f04032f, 0x7f040330, 0x7f040331, 0x7f040332 };
         public static int SmoothRefreshLayout_layout_gravity = 0;
         public static int SmoothRefreshLayout_sr_backToKeepDuration = 1;
         public static int SmoothRefreshLayout_sr_backToKeepFooterDuration = 2;

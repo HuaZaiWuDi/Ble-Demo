@@ -237,7 +237,6 @@ public class WeightFragment extends BaseAcFragment {
     }
 
     private void initRxBus() {
-
         Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
             @Override
             public void accept(Device device) throws Exception {

@@ -27,6 +27,7 @@ import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
+import com.smartclothing.module_wefit.bean.Device;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -43,6 +44,8 @@ import org.androidannotations.annotations.Receiver;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
@@ -118,6 +121,25 @@ public class BleService extends Service {
         super.onCreate();
         initHeartRate();
         connectScaleCallBack();
+        initBus();
+    }
+
+    private void initBus() {
+        Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
+            @Override
+            public void accept(Device device) throws Exception {
+                RxLogUtils.d(":删除绑定");
+                if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
+                    //删除绑定
+                    mQNBleTools.disConnectDevice(device.getMacAddr());
+                    SPUtils.put(SPKey.SP_scaleMAC, "");
+                } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
+                    SPUtils.put(SPKey.SP_clothingMAC, "");
+                    BleTools.getInstance().disConnect();
+                }
+            }
+        });
+        RxBus.getInstance().addSubscription(this, device);
     }
 
     private void initJPush() {
@@ -128,6 +150,7 @@ public class BleService extends Service {
     @Override
     public void onDestroy() {
         BleTools.getInstance().disConnect();
+        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
 

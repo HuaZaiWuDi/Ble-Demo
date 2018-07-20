@@ -3,7 +3,10 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.MarkerView;
@@ -12,6 +15,8 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.vondear.rxtools.utils.RxLogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +171,27 @@ public class ChartManager {
         x.setValueFormatter(new MyXFormatter(days));
         mLineChart.invalidate();
     }
+
+
+    //添加X轴标签
+    private void addXLabel(BarLineChartBase lineChartBase, final String[] label) {
+        if (lineChartBase instanceof LineChart) {
+            RxLogUtils.e("LineChart");
+        } else if (lineChartBase instanceof BarChart) {
+            RxLogUtils.e("BarChart");
+        }
+        XAxis x = lineChartBase.getXAxis();
+        x.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                RxLogUtils.d("X轴：" + value);
+                if (value > label.length) return "";
+                return label[(int) value % label.length];
+            }
+        });
+        lineChartBase.invalidate();
+    }
+
 
     //添加实线
     private LineDataSet addLine(ArrayList<Entry> YAxis, String label) {

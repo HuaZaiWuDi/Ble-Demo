@@ -39,11 +39,13 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
@@ -208,6 +210,17 @@ public class MineFragment extends BaseAcFragment {
         Disposable register = RxBus.getInstance().register(UserInfo.class, new Consumer<UserInfo>() {
             @Override
             public void accept(UserInfo userInfo) throws Exception {
+                String string = SPUtils.getString(SPKey.SP_UserInfo);
+                lab.wesmartclothing.wefit.flyso.entity.UserInfo info = new Gson().fromJson(string, lab.wesmartclothing.wefit.flyso.entity.UserInfo.class);
+                info.setBirthday(Long.parseLong(userInfo.getBirthday()));
+                info.setSex(userInfo.getSex());
+                info.setSignature(userInfo.getSignature());
+                info.setUserImg(userInfo.getUserImg());
+                info.setHeight(userInfo.getHeight());
+                info.setTargetWeight(userInfo.getTargetWeight());
+                info.setUserName(userInfo.getUserName());
+                String s = new Gson().toJson(info, lab.wesmartclothing.wefit.flyso.entity.UserInfo.class);
+                SPUtils.put(SPKey.SP_UserInfo, s);
                 initMineData();
             }
         });
@@ -222,6 +235,7 @@ public class MineFragment extends BaseAcFragment {
                     RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
                 } else if ("logout".equals(device)) {
 //                    mPrefs.clear();
+                    BaseALocationActivity.aMapLocation = null;
                     SPUtils.clear();
                     MyAPP.getACache().clear();
                     MyAPP.getRxCache().clear2();

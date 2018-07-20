@@ -375,8 +375,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
         if (user == null) RxToast.showToast("用户数据不能为空");
 
         String gson = new Gson().toJson(user, UserInfo.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8")
-                , gson);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
                 .doOnSubscribe(new Consumer<Disposable>() {

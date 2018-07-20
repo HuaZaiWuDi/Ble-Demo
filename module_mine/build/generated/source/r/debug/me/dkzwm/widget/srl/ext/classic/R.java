@@ -8,7 +8,7 @@ package me.dkzwm.widget.srl.ext.classic;
 
 public final class R {
     public static final class attr {
-        public static int sr_style = 0x7f04032b;
+        public static int sr_style = 0x7f040333;
     }
     public static final class drawable {
         public static int sr_classic_arrow_icon = 0x7f09010f;
@@ -40,7 +40,7 @@ public final class R {
         public static int sr_seconds_ago = 0x7f15007f;
     }
     public static final class styleable {
-        public static int[] AbsClassicRefreshView = { 0x7f04032b };
+        public static int[] AbsClassicRefreshView = { 0x7f040333 };
         public static int AbsClassicRefreshView_sr_style = 0;
     }
 }

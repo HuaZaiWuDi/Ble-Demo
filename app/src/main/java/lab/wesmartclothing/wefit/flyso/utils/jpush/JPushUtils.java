@@ -5,6 +5,8 @@ import android.app.Application;
 import android.app.Notification;
 import android.widget.Toast;
 
+import com.vondear.rxtools.utils.SPUtils;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import cn.jpush.android.api.CustomPushNotificationBuilder;
 import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * Created by jk on 2018/7/9.
@@ -33,12 +36,11 @@ public class JPushUtils {
         tagAliasBean.action = TagAliasOperatorHelper.ACTION_SET;
         tagAliasBean.tags = tags;
         tagAliasBean.isAliasAction = true;
-        tagAliasBean.alias = "alias1";
+        tagAliasBean.alias = SPUtils.getString(SPKey.SP_UserId);
 
 //        JPushInterface.getAllTags(application, 2);
         TagAliasOperatorHelper.getInstance().handleAction(application, 0, tagAliasBean);
     }
-
 
 
     /**

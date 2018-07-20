@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ble;
 
+import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.yolanda.health.qnblesdk.listen.QNBleDeviceDiscoveryListener;
@@ -13,6 +14,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.Date;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
@@ -48,11 +50,17 @@ public class QNBleTools {
 
 
     public QNUser creatUser() {
+        String string = SPUtils.getString(SPKey.SP_UserInfo);
+        UserInfo info = new Gson().fromJson(string, UserInfo.class);
+        if (info == null) {
+            RxLogUtils.e("UserInfo is null");
+            return null;
+        }
 
-        String sex = SPUtils.getInt(SPKey.SP_sex, 0) == 0 ? "male" : "female";
-        long birthDayMillis = SPUtils.getLong(SPKey.SP_birthDayMillis);
+        String sex = info.getSex() == 1 ? "male" : "female";
+        long birthDayMillis = info.getBirthday();
         String userId = SPUtils.getString(SPKey.SP_UserId);
-        int height = SPUtils.getInt(SPKey.SP_height, 175);
+        int height = info.getHeight();
 
         Date date = new Date(birthDayMillis);
         QNUser qnUser = MyAPP.QNapi.buildUser(userId, height, sex, date, new QNResultCallback() {

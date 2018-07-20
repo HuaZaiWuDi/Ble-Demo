@@ -1,9 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by jk on 2018/7/13.
  */
-public class UserInfo {
+public class UserInfo implements Serializable {
 
 
     /**
@@ -19,22 +21,50 @@ public class UserInfo {
      * userName : string
      */
 
-    private String birthday;
+    private long birthday = Long.parseLong("631123200000");
     private String clothesMacAddr;
-    private int height;
+    private int height = 175;
     private String phone;
     private String scalesMacAddr;
-    private int sex;
+    private int sex = 1;
     private String signature;
     private int targetWeight;
     private String userImg;
     private String userName;
+    private String city;
+    private String country;
+    private String province;
 
-    public String getBirthday() {
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public long getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 
@@ -47,6 +77,8 @@ public class UserInfo {
     }
 
     public int getHeight() {
+        if (this.height == 0)
+            this.height = 175;
         return height;
     }
 
@@ -108,5 +140,25 @@ public class UserInfo {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "birthday=" + birthday +
+                ", clothesMacAddr='" + clothesMacAddr + '\'' +
+                ", height=" + height +
+                ", phone='" + phone + '\'' +
+                ", scalesMacAddr='" + scalesMacAddr + '\'' +
+                ", sex=" + sex +
+                ", signature='" + signature + '\'' +
+                ", targetWeight=" + targetWeight +
+                ", userImg='" + userImg + '\'' +
+                ", userName='" + userName + '\'' +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                ", province='" + province + '\'' +
+                '}';
     }
 }

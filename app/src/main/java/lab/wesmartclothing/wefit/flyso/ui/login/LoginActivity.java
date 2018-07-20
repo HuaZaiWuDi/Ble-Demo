@@ -200,10 +200,10 @@ public class LoginActivity extends BaseActivity {
                                 RxActivityUtils.skipActivity(mContext, UserInfoActivity.class);
                             } else {
 
-                                SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
-                                SPUtils.put(SPKey.SP_weight, targetWeight);
-                                SPUtils.put(SPKey.SP_height, height);
-                                SPUtils.put(SPKey.SP_sex, sex);
+//                                SPUtils.put(SPKey.SP_birthDayMillis, Long.parseLong(birthday));
+//                                SPUtils.put(SPKey.SP_weight, targetWeight);
+//                                SPUtils.put(SPKey.SP_height, height);
+//                                SPUtils.put(SPKey.SP_sex, sex);
 
                                 RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
                             }

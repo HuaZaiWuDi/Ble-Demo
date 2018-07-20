@@ -83,7 +83,6 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
         filter.addAction("ACTION_CLOTHING_CONNECT");
         registerReceiver(mBroadcastReceiver, filter);
 
-
         scale_connect = getIntent().getBooleanExtra("ACTION_SCALE_CONNECT", false);
 
     }
@@ -247,6 +246,7 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                         item.setBind(false);
                         RxBus.getInstance().post(item);
                         rvAdapter.setData(position, new Device(0));
+
                     }
 
                     @Override
