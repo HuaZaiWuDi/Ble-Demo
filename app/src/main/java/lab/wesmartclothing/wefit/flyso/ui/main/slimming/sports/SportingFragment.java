@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.graphics.Color;
 import android.media.AsyncPlayer;
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +22,10 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.SwitchView;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +76,29 @@ public class SportingFragment extends BaseAcFragment {
         return view;
     }
 
+
+    TextToSpeech textToSpeech;
+
     private void initView() {
+        textToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                RxLogUtils.e("语音合成：" + status);
+                // 判断是否转化成功
+                if (status == TextToSpeech.SUCCESS) {
+                    //默认设定语言为中文，原生的android貌似不支持中文。
+                    int result = textToSpeech.setLanguage(Locale.CHINESE);
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        RxLogUtils.e("支持中文");
+                    } else {
+                        //不支持中文就将语言设置为英文
+                        textToSpeech.setLanguage(Locale.US);
+                    }
+                }
+            }
+        });
+
+
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +115,10 @@ public class SportingFragment extends BaseAcFragment {
             @Override
             public void toggleToOn(SwitchView view) {
                 view.setOpened(true);
+
+
+                textToSpeech.speak("我是测试语音", TextToSpeech.QUEUE_FLUSH, null);
+
 //                player.play(mContext, Uri.parse("android.resource://" + mContext.getPackageName()
 //                        + "/" + R.raw.timetofit1), false, AudioAttributes.CONTENT_TYPE_MUSIC);
             }
@@ -190,6 +220,7 @@ public class SportingFragment extends BaseAcFragment {
         set.setDrawCircles(false);
         set.setLineWidth(3f);
         set.setHighlightEnabled(false);
+//        set.setCircleColors();
 //        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 //        set.setCubicIntensity(0.2f);
         return set;

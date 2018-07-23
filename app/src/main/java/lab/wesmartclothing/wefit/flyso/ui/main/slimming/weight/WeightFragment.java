@@ -489,6 +489,8 @@ public class WeightFragment extends BaseAcFragment {
 
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+
                 float visibleX = mLineChart.getLowestVisibleX();
 //                RxLogUtils.d("最小显示的X轴：" + visibleX);
                 if (visibleX != -3) {

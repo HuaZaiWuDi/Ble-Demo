@@ -77,38 +77,28 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-
     //注解
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     implementation "org.androidannotations:androidannotations-api:$AAVersion"
-
     //工具库
     compile project(':RxTools-library')
     compile project(':netlib')
-
     //快速开发顶部、底部导航栏
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
-
     //弘扬的自定义布局
     implementation 'com.zhy:autolayout:1.4.5'
-
     //数据库
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
-
     //BUGly
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
-
     //方法超限处理
     implementation 'com.android.support:multidex:1.0.3'
-
     //MPAndroidChart图表控件
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-
     //轻牛体重秤SDK
     implementation files('libs/qnsdk-0.2.1.jar')
     compile project(path: ':blelibrary')
-
     //https://github.com/gzu-liyujiang/AndroidPicker
     compile('cn.qqtheme.framework:WheelPicker:+') {
         exclude group: 'com.android.support'
@@ -116,27 +106,23 @@ dependencies {
     compile('com.just.agentweb:agentweb:4.0.2') {// (必选)
         exclude group: 'com.android.support'
     }
-
     //腾讯急速加载网页
     compile 'com.tencent.sonic:sdk:3.0.0'
-
     //jsbridge
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
-
     //日历控件
     implementation 'com.github.prolificinteractive:material-calendarview:+'
     compile project(path: ':module_mine')
-
     //高德定位SDK
     compile 'com.amap.api:location:latest.integration'
     compile project(path: ':shareutil')
     implementation 'com.qmuiteam:arch:0.1.1'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
     //极光推送
-    compile 'cn.jiguang.sdk:jpush:3.1.3'  // 此处以JPush 3.1.1 版本为例。
-    compile 'cn.jiguang.sdk:jcore:1.2.1'  // 此处以JCore 1.1.9 版本为例。
-
-
+    compile 'cn.jiguang.sdk:jpush:3.1.3'
+    // 此处以JPush 3.1.1 版本为例。
+    compile 'cn.jiguang.sdk:jcore:1.2.1'
+    // 此处以JCore 1.1.9 版本为例。
+    implementation files('libs/com.baidu.tts_2.3.2.20180419_5a5fec8.jar')
 }
