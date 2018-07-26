@@ -13,8 +13,8 @@ public final class R {
         public static int leftViewId = 0x7f04015f;
         public static int reverseLayout = 0x7f0402d5;
         public static int rightViewId = 0x7f0402dc;
-        public static int spanCount = 0x7f04030d;
-        public static int stackFromEnd = 0x7f040338;
+        public static int spanCount = 0x7f040313;
+        public static int stackFromEnd = 0x7f04033e;
     }
     public static final class color {
         public static int recycler_swipe_color_loading_color1 = 0x7f060189;
@@ -29,12 +29,12 @@ public final class R {
     }
     public static final class id {
         public static int item_touch_helper_previous_elevation = 0x7f0c00c4;
-        public static int loading_tv_message = 0x7f0c0128;
-        public static int loading_view = 0x7f0c0129;
-        public static int swipe_content = 0x7f0c01c3;
-        public static int swipe_left = 0x7f0c01c4;
-        public static int swipe_right = 0x7f0c01c5;
-        public static int tv_load_more_message = 0x7f0c0218;
+        public static int loading_tv_message = 0x7f0c012b;
+        public static int loading_view = 0x7f0c012c;
+        public static int swipe_content = 0x7f0c01c9;
+        public static int swipe_left = 0x7f0c01ca;
+        public static int swipe_right = 0x7f0c01cb;
+        public static int tv_load_more_message = 0x7f0c021e;
     }
     public static final class layout {
         public static int loading_wait_dialog = 0x7f0f0062;
@@ -54,7 +54,7 @@ public final class R {
         public static int loadingDialog_Loading = 0x7f160228;
     }
     public static final class styleable {
-        public static int[] RecyclerView = { 0x010100f1, 0x010100c4, 0x7f0400d6, 0x7f0400d7, 0x7f0400d8, 0x7f0400d9, 0x7f0400da, 0x7f040118, 0x7f0402d5, 0x7f04030d, 0x7f040338 };
+        public static int[] RecyclerView = { 0x010100f1, 0x010100c4, 0x7f0400d6, 0x7f0400d7, 0x7f0400d8, 0x7f0400d9, 0x7f0400da, 0x7f040118, 0x7f0402d5, 0x7f040313, 0x7f04033e };
         public static int RecyclerView_android_descendantFocusability = 0;
         public static int RecyclerView_android_orientation = 1;
         public static int RecyclerView_fastScrollEnabled = 2;

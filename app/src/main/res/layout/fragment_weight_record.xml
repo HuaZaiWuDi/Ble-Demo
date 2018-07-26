@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green_61D97F"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/green_61D97F"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/QMUIAppBarLayout"
+        android:background="@color/bg_F7F7F9"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/layout_StrongTip"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@color/green_61D97F"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/btn_strongTip"
+                android:layout_width="289dp"
+                android:layout_height="48dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/dimen_8"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:text="检测到您未开启手机蓝牙，开启蓝牙"
+                android:textColor="@color/Gray"
+                android:textSize="13sp"
+                app:qmui_backgroundColor="@color/white"
+                app:qmui_borderColor="@color/green_61D97F"/>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="216dp"
+            android:background="@color/green_61D97F">
+
+
+            <tech.linjiang.suitlines.SuitLines
+                android:id="@+id/suitlines"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/layout_lenged"/>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@mipmap/icon_triangle"
+                android:scaleType="centerCrop"/>
+
+
+            <LinearLayout
+                android:id="@+id/layout_lenged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_16"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/dimen_16"
+                    android:text="一\t体重"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"/>
+
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:alpha="0.5"
+                    android:background="@color/white"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="\t体脂"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"/>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:id="@+id/layout_sports"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/dimen_16"
+                    android:paddingRight="@dimen/dimen_16">
+
+                    <ImageView
+                        android:id="@+id/iv_sports"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_weight"/>
+
+                    <TextView
+                        android:id="@+id/tv_sportDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_toRightOf="@+id/iv_sports"
+                        android:text="2018年7月8日"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="34dp"
+                        android:text="查看详情"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="13sp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@mipmap/icon_goto"/>
+
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_0.5"
+                    android:background="@color/line"/>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="84dp"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_curWeight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/green_61D97F"
+                        android:textSize="36sp"
+                        android:textStyle="bold"
+                        tools:text="100"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/tv_curWeight"
+                        android:layout_marginBottom="5dp"
+                        android:layout_toRightOf="@+id/tv_curWeight"
+                        android:text="\tkg"
+                        android:textColor="@color/green_61D97F"
+                        android:textSize="18sp"/>
+
+
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="68dp"
+                    android:background="@color/white"
+                    android:paddingLeft="@dimen/dimen_16"
+                    >
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingTop="@dimen/dimen_10">
+
+
+                        <ImageView
+                            android:id="@+id/iv_bodyFat"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_woman"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_bodyFatTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_toRightOf="@+id/iv_bodyFat"
+                            android:text="体脂率"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_Heat_Kcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_bodyFatTitle"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="@dimen/dimen_8"
+                            android:layout_toRightOf="@+id/iv_bodyFat"
+                            android:maxLength="5"
+                            android:maxLines="1"
+                            android:text="--"
+                            android:textColor="@color/green_61D97F"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="231.0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/tv_Heat_Kcal"
+                            android:layout_toRightOf="@+id/tv_Heat_Kcal"
+                            android:text="\t%"
+                            android:textColor="@color/green_61D97F"
+                            android:textSize="13sp"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingTop="@dimen/dimen_10">
+
+
+                        <ImageView
+                            android:id="@+id/iv_bmi"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_bmi2"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_bmi_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_toRightOf="@+id/iv_bmi"
+                            android:text="运动时长"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_bmi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_bmi_title"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="@dimen/dimen_8"
+                            android:layout_toRightOf="@+id/iv_bmi"
+                            android:maxLength="5"
+                            android:maxLines="1"
+                            android:text="--"
+                            android:textColor="@color/green_61D97F"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="231.0"/>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingTop="@dimen/dimen_10">
+
+
+                        <ImageView
+                            android:id="@+id/iv_muscle"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_muscle2"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_muscle_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_toRightOf="@+id/iv_muscle"
+                            android:text="运动时长"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_muscle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_muscle_title"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="@dimen/dimen_8"
+                            android:layout_toRightOf="@+id/iv_muscle"
+                            android:maxLength="5"
+                            android:maxLines="1"
+                            android:text="--"
+                            android:textColor="@color/green_61D97F"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="231.0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/tv_muscle"
+                            android:layout_toRightOf="@+id/tv_muscle"
+                            android:text="\t%"
+                            android:textColor="@color/green_61D97F"
+                            android:textSize="13sp"/>
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/layout_sportTip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dimen_46"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:padding="16dp">
+
+
+                    <ImageView
+                        android:id="@+id/iv_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_location_point"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_8"
+                        android:layout_toRightOf="@+id/iv_tip"
+                        android:text="体重目标"
+                        android:textColor="@color/Gray"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="34dp"
+                        android:text="设置"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="13sp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@mipmap/icon_goto"/>
+
+
+                    <View
+                        android:id="@+id/line"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dimen_0.5"
+                        android:layout_below="@+id/iv_tip"
+                        android:layout_marginTop="18dp"
+                        android:background="@color/line"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/line"
+                        android:layout_marginTop="@dimen/dimen_16"
+                        android:text="先来一个小目标！"
+                        android:textColor="@color/Gray"
+                        android:textStyle="bold"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_tip"
+                        android:layout_marginTop="@dimen/dimen_8"
+                        android:text="研究表明，设定了目标的人减肥成功率可以提升80%。，快穿上减肥衣去运动吧。"
+                        android:textColor="@color/GrayWrite"/>
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_settingTarget"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/orange_FF7200"
+        android:gravity="center"
+        android:text="设置目标"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+
+
+</RelativeLayout>

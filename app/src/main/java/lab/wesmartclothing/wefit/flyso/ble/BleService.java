@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +17,7 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.qingniu.qnble.scanner.c;
 import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
@@ -36,6 +38,8 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
+import com.zchu.rxcache.CacheTarget;
+import com.zchu.rxcache.data.CacheResult;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
@@ -46,6 +50,7 @@ import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
@@ -67,14 +72,15 @@ import okhttp3.RequestBody;
 public class BleService extends Service {
     int packageCounts = 0;
     long lastTime = 0;
-    static boolean isFrist = true;
-    private List<Integer> athlRecord = new ArrayList<>();
+    static boolean isFirst = true;
+    private List<HeartRateBean.AthlList> athlHistoryRecord = new ArrayList<>();//需要上传的心率数据
     private List<Integer> athlRecord_2 = new ArrayList<>();//实时心率
 
     public static String firmwareVersion = "";
 
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
 
+    private Handler mHandler = new Handler();
 
     @Bean
     QNBleTools mQNBleTools;
@@ -82,7 +88,8 @@ public class BleService extends Service {
     HeartRateBean mHeartRateBean;
     @Bean
     HeartRateToKcal mHeartRateToKcal;
-
+    @Bean
+    SportsDataTab mSportsDataTab;
 
     //监听系统蓝牙开启
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
@@ -92,7 +99,6 @@ public class BleService extends Service {
             initBle();
         }
     }
-
 
     //监听系统蓝牙开启
     @Receiver(actions = BleKey.ACTION_DFU_STARTING)
@@ -104,11 +110,10 @@ public class BleService extends Service {
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
     void CLOTHING_STOP() {
         BleAPI.clothingStop();
-        if (athlRecord_2.size() > 0) {
-            mHeartRateBean.setDuration(athlRecord_2.size() * 2);
-            mHeartRateBean.setAthlList(athlRecord_2);
+        if (athlHistoryRecord.size() > 0) {
+            mHeartRateBean.setAthlList(athlHistoryRecord);
             mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-            athlRecord_2.clear();
+            athlHistoryRecord.clear();
         }
     }
 
@@ -122,6 +127,26 @@ public class BleService extends Service {
         initHeartRate();
         connectScaleCallBack();
         initBus();
+        uploadHistoryData();
+    }
+
+    //判断本地是否有之前保存的心率数据：有则上传
+    private void uploadHistoryData() {
+        if (MyAPP.getRxCache().containsKey(Key.CACHE_ATHL_RECORD))
+            MyAPP.getRxCache().<String>load(Key.CACHE_ATHL_RECORD, String.class)
+                    .map(new CacheResult.MapFunc<String>())
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(String value) throws Exception {
+                            RxLogUtils.i("保存本地的心率数据：" + value);
+                            List<HeartRateBean.AthlList> lists = new Gson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
+                            }.getType());
+                            if (lists != null && lists.size() > 0) {
+                                mHeartRateBean.setAthlList(lists);
+                                mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+                            }
+                        }
+                    });
     }
 
     private void initBus() {
@@ -132,9 +157,7 @@ public class BleService extends Service {
                 if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
                     //删除绑定
                     mQNBleTools.disConnectDevice(device.getMacAddr());
-                    SPUtils.put(SPKey.SP_scaleMAC, "");
                 } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                    SPUtils.put(SPKey.SP_clothingMAC, "");
                     BleTools.getInstance().disConnect();
                 }
             }
@@ -156,12 +179,6 @@ public class BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        if (!BleTools.getBleManager().isBlueEnable()) {
-//            RxToast.warning("未开启蓝牙，无法搜索到蓝牙设备");
-//            BleTools.getBleManager().enableBluetooth();
-//        }
-
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             RxLogUtils.d("验证权限");
             RxToast.warning(getString(R.string.open_loaction));
@@ -258,6 +275,9 @@ public class BleService extends Service {
                 deviceLink.setMacAddr(qnBleDevice.getMac());
                 deviceLink.setDeviceName(getString(R.string.scale));//测试数据
                 deviceLink.deviceLink(deviceLink);
+
+                mQNBleTools.setConnect(true);
+
             }
 
             @Override
@@ -274,16 +294,29 @@ public class BleService extends Service {
             public void onDisconnected(QNBleDevice qnBleDevice) {
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
                 RxLogUtils.e("断开连接:");
-                initBle();
+
+                mQNBleTools.setConnect(false);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initBle();
+                    }
+                }, 5000);
             }
 
             @Override
             public void onConnectError(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("连接异常：" + i);
                 mQNBleTools.disConnectDevice(qnBleDevice);
+                mQNBleTools.setConnect(false);
                 RxToast.info(getString(R.string.connectError));
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
-                initBle();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initBle();
+                    }
+                }, 5000);
             }
 
             @Override
@@ -304,16 +337,24 @@ public class BleService extends Service {
 
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                RxLogUtils.d("连接异常：" + exception.toString());
+                RxLogUtils.d("连接失败：" + exception.toString());
                 RxToast.info(getString(R.string.connectError));
                 BleTools.getBleManager().disconnect(bleDevice);
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
-                initBle();
+
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initBle();
+                    }
+                }, 5000);
             }
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 RxLogUtils.d("瘦身衣连接成功");
+
+                B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
                 if (dfuStarting) return;
 
                 //设备统计
@@ -323,8 +364,6 @@ public class BleService extends Service {
                 deviceLink.setFirmwareVersion(firmwareVersion);
                 deviceLink.deviceLink(deviceLink);
 
-
-                B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
                 BleTools.getInstance().setBleDevice(bleDevice);
                 BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
                     @Override
@@ -338,18 +377,13 @@ public class BleService extends Service {
             public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
                 RxLogUtils.d("断开连接：");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
+
                 initBle();
-                if (athlRecord_2.size() > 0) {
-                    mHeartRateBean.setDuration(athlRecord_2.size() * 2);
-                    mHeartRateBean.setAthlList(athlRecord_2);
+
+                if (athlHistoryRecord.size() > 0) {
+                    mHeartRateBean.setAthlList(athlHistoryRecord);
                     mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-                    athlRecord_2.clear();
-                }
-                if (athlRecord.size() > 0) {
-                    mHeartRateBean.setDuration(athlRecord.size() * 10);
-                    mHeartRateBean.setAthlList(athlRecord);
-                    mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-                    athlRecord.clear();
+                    athlHistoryRecord.clear();
                 }
             }
         });
@@ -389,17 +423,15 @@ public class BleService extends Service {
                     RxLogUtils.d("开始同步包数据");
                     synData();
                     RxToast.info("开始同步本地数据");
-                    athlRecord.clear();
                 } else RxLogUtils.d("没有数据同步");
-
                 checkVersion();
             }
         });
     }
 
     private void checkVersion() {
-        if (isFrist) {
-            isFrist = false;
+        if (isFirst) {
+            isFirst = false;
             BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
                 @Override
                 public void callBack(byte[] data) {
@@ -431,11 +463,10 @@ public class BleService extends Service {
                 if (data.length <= 3) {
                     RxLogUtils.d("数据同步结束");
                     RxToast.success("同步本地数据成功");
-                    if (athlRecord.size() > 0) {
-                        mHeartRateBean.setDuration(athlRecord.size() * 10);
-                        mHeartRateBean.setAthlList(athlRecord);
+                    if (athlHistoryRecord.size() > 0) {
+                        mHeartRateBean.setAthlList(athlHistoryRecord);
                         mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-                        athlRecord.clear();
+                        athlHistoryRecord.clear();
                     }
                     return;
                 }
@@ -457,7 +488,17 @@ public class BleService extends Service {
                     lastTime = time;
                     int heartRate = data[8] & 0xff;
 
-                    athlRecord.add(heartRate);
+                    HeartRateBean.AthlList bean = new HeartRateBean.AthlList();
+                    bean.setHeartRate(heartRate);
+                    bean.setHeartTime(time * 1000);
+                    bean.setStepTime(10);
+
+                    athlHistoryRecord.add(bean);
+                    //添加本地缓存
+                    String athlData = new Gson().toJson(athlHistoryRecord);
+                    MyAPP.getRxCache().save(Key.CACHE_ATHL_RECORD, athlData, CacheTarget.Memory)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe();
                 }
 
                 BleAPI.syncData(bytes);
@@ -480,9 +521,24 @@ public class BleService extends Service {
                 if (data.length < 17) return;
 
                 int heartRate = data[8] & 0xff;
-                athlRecord_2.add(heartRate);
 
-                RxLogUtils.d("时间：" + RxFormat.setFormatDate(ByteUtil.bytesToLongD4(data, 3) * 1000, RxFormat.Date_Date_CH) +
+                long time = ByteUtil.bytesToLongD4(data, 3) * 1000;
+
+                HeartRateBean.AthlList bean = new HeartRateBean.AthlList();
+                bean.setHeartRate(heartRate);
+                bean.setHeartTime(time);
+                bean.setStepTime(2);
+
+                athlHistoryRecord.add(bean);
+                athlRecord_2.add(heartRate);
+                //添加本地缓存
+                String athlData = new Gson().toJson(athlHistoryRecord);
+                MyAPP.getRxCache().save(Key.CACHE_ATHL_RECORD, athlData, CacheTarget.Memory)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+
+
+                RxLogUtils.d("时间：" + RxFormat.setFormatDate(time, RxFormat.Date_Date_CH) +
                         "----------心率:" + heartRate +
                         "----------温度：" + (data[10] & 0xff) +
                         "----------步数：" + ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}) +
@@ -491,18 +547,16 @@ public class BleService extends Service {
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
                 minHeart = heartRate < minHeart ? heartRate : minHeart;
 
-                SportsDataTab dataTab = new SportsDataTab();
-                dataTab.setAthlRecord_2(athlRecord_2);
-                dataTab.setCurHeart(heartRate);
-                dataTab.setMaxHeart(maxHeart);
-                dataTab.setMinHeart(minHeart);
-                dataTab.setDuration(athlRecord_2.size() * 2);
-                dataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
-                double calorie = mHeartRateToKcal.getCalorie(heartRate, athlRecord_2.size() * 2f / 3600);
-                dataTab.setKcal(calorie);
-//                    RxLogUtils.d("SportsDataTab：" + dataTab.toString());
-                RxBus.getInstance().post(dataTab);
 
+                mSportsDataTab.setAthlRecord_2(athlRecord_2);
+                mSportsDataTab.setCurHeart(heartRate);
+                mSportsDataTab.setMaxHeart(maxHeart);
+                mSportsDataTab.setMinHeart(minHeart);
+                mSportsDataTab.setDuration(athlRecord_2.size() * 2);
+                mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
+                double calorie = mHeartRateToKcal.getCalorie(heartRate, athlRecord_2.size() * 2f / 3600);
+                mSportsDataTab.setKcal(calorie);
+                RxBus.getInstance().post(mSportsDataTab);
             }
         });
     }

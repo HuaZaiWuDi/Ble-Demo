@@ -25,6 +25,7 @@ import com.smartclothing.module_wefit.tools.VoltageToPower;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -244,9 +245,14 @@ public class MyDeviceActivity extends BaseActivity implements View.OnClickListen
                         RxLogUtils.d("结束" + s);
                         //添加绑定设备，这里实在不会
                         item.setBind(false);
-                        RxBus.getInstance().post(item);
                         rvAdapter.setData(position, new Device(0));
 
+                        if (position == 0) {
+                            SPUtils.remove("SP_scaleMAC");
+
+                        } else {
+                            SPUtils.remove("SP_clothingMAC");
+                        }
                     }
 
                     @Override

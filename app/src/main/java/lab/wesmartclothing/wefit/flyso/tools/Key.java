@@ -31,11 +31,11 @@ public interface Key {
     String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
 
-    String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";
+    String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";//跳转制定页面
 
-    String BUNDLE_IS_SPORTING = "BUNDLE_IS_SPORTING";
-    String BUNDLE_SPORTING_DATE = "BUNDLE_SPORTING_DATE";
+    String BUNDLE_SPORTING_DATE = "BUNDLE_SPORTING_DATE";//运动的日期
 
+    String BUNDLE_IS_CONNECT = "BUNDLE_IS_CONNECT";//传递蓝牙的链接状态
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播
@@ -84,8 +84,7 @@ public interface Key {
     public static final String CACHE_USER_INFO = "CACHE_USER_INFO";
     public static final String CACHE_WEIGHT_INFO = "CACHE_WEIGHT_INFO";
     public static final String CACHE_BIND_INFO = "CACHE_BIND_INFO";
-
-
+    String CACHE_ATHL_RECORD = "CACHE_ATHL_RECORD";
     ///////////////////////////////////////////////////////////////////////////
     // 蓝牙设备名字
     ///////////////////////////////////////////////////////////////////////////

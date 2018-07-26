@@ -19,7 +19,6 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.vondear.rxtools.dateUtils.RxFormat;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import lab.wesmartclothing.wefit.flyso.R;
 
@@ -35,8 +34,8 @@ public class DateChoose extends RelativeLayout {
     LinearLayout mLlDateContainer;
     AlertDialog.Builder Builder;
 
-    private Calendar calendar;
     private int month;
+    private Calendar calendar;
     private int year;
     private int day;
     private boolean isToday = true;
@@ -108,7 +107,7 @@ public class DateChoose extends RelativeLayout {
         final AlertDialog show = Builder.show();
 
         final MaterialCalendarView mCalendarView = view.findViewById(R.id.mCalendarView);
-        mCalendarView.state().edit().setMaximumDate(new Date()).commit();
+        mCalendarView.state().edit().setMaximumDate(System.currentTimeMillis()).commit();
         mCalendarView.setCurrentDate(calendar);
         mCalendarView.setDateSelected(calendar, true);
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
@@ -129,7 +128,7 @@ public class DateChoose extends RelativeLayout {
             public void onClick(View v) {
                 isToday = true;
                 nextIsEnable(isToday);
-                mCalendarView.setCurrentDate(new Date());
+                mCalendarView.setCurrentDate(System.currentTimeMillis());
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 notidyDate();
                 show.dismiss();

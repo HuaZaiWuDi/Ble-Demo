@@ -11,15 +11,15 @@
 
 
     <com.qmuiteam.qmui.widget.QMUITopBar
-        android:id="@+id/QMUIAppBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/topBarHeight"
-        android:hapticFeedbackEnabled="true"
-        app:qmui_topbar_bg_color="@color/red"
-        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
-        app:qmui_topbar_need_separator="false"
-        app:qmui_topbar_title_color="@color/white"
-        />
+    android:id="@+id/QMUIAppBarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/topBarHeight"
+    android:hapticFeedbackEnabled="true"
+    app:qmui_topbar_bg_color="@color/red"
+    app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+    app:qmui_topbar_need_separator="false"
+    app:qmui_topbar_title_color="@color/white"
+    />
 
 
     <LinearLayout
@@ -34,7 +34,8 @@
             android:id="@+id/layout_StrongTip"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:background="@color/red">
+            android:background="@color/red"
+            android:visibility="gone">
 
             <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                 android:id="@+id/btn_strongTip"
@@ -55,10 +56,55 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="216dp"
             android:background="@color/red"
-            android:minHeight="216dp">
+            >
 
+
+            <tech.linjiang.suitlines.SuitLines
+                android:id="@+id/suitlines"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/layout_lenged"/>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@mipmap/icon_triangle"
+                android:scaleType="centerCrop"/>
+
+
+            <LinearLayout
+                android:id="@+id/layout_lenged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_16"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="一\t热量"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_16"
+                    android:text="-\t-\t时长"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"/>
+
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -80,6 +126,7 @@
                 android:background="@mipmap/icon_sports"/>
 
             <TextView
+                android:id="@+id/tv_sportDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_10"
@@ -228,6 +275,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/layout_sportTip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -262,6 +310,7 @@
 
 
             <TextView
+                android:id="@+id/tv_tip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/line"

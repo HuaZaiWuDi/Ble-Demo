@@ -15,7 +15,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 
 /**
  * Created by cgspine on 2018/1/7.
@@ -27,10 +27,6 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
     public Context mContext;
     public Activity mActivity;
 
-
-    public static BaseFragmentActivity getInstance() {
-        return new BaseFragmentActivity();
-    }
 
     @Override
     protected int getContextViewId() {
@@ -61,8 +57,8 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
 
             if (fragmentName.equals(HeatFragment.class.getSimpleName()))
                 startFragment(HeatFragment.getInstance());
-            else if (fragmentName.equals(WeightFragment.class.getSimpleName()))
-                startFragment(WeightFragment.getInstance());
+            else if (fragmentName.equals(WeightRecordFragment.class.getSimpleName()))
+                startFragment(WeightRecordFragment.getInstance());
             else if (fragmentName.equals(SmartClothingFragment.class.getSimpleName()))
                 startFragment(SmartClothingFragment.getInstance());
         }

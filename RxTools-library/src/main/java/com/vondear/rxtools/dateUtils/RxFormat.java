@@ -1,5 +1,7 @@
 package com.vondear.rxtools.dateUtils;
 
+import com.vondear.rxtools.utils.RxFormatValue;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +41,7 @@ public class RxFormat {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return dateFormat.format(value);
     }
+
     public static String setFormatDateG(long value, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -87,6 +90,22 @@ public class RxFormat {
 
     public static String setFormatNum(float value, String format) {
         return new DecimalFormat(format).format(value);
+    }
+
+    /**
+     * 秒转换成分钟：未满一小时，只显示分钟，满小时，显示小时分钟
+     */
+    public static String setSec2HM(int second) {
+        double min = second / 60f;
+        String s = RxFormatValue.fromatUp(min, 0);
+        return min < 60 ? s.length() == 1 ? "0" + s : s + "min" : String.format("%02d", (int) min / 60) + "h" + String.format("%02d", (int) min % 60) + "min";
+    }
+
+    /**
+     * 秒转换成分钟：未满一小时，只显示分钟，满小时，显示小时分钟
+     */
+    public static String setSec2MS(int second) {
+        return String.format("%02d", (int) (second / 60)) + "'" + String.format("%02d", (int) (second % 60)) + "''";
     }
 
 

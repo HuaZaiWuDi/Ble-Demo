@@ -215,14 +215,14 @@ public class SportsDetailsActivity extends BaseActivity {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.athleticsDetail(body))
-                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加心率：" + s);
                         HeartRateBean heartRateBean = new Gson().fromJson(s, HeartRateBean.class);
-                        mHeartRateView.offileData(heartRateBean.getAthlList(), heartRateBean.getDuration());
+//                        mHeartRateView.offileData(heartRateBean.getAthlList(), heartRateBean.getDuration());
                     }
 
                     @Override

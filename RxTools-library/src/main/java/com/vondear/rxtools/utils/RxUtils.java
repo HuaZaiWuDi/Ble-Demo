@@ -14,6 +14,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -34,6 +36,7 @@ public class RxUtils {
         RxUtils.context = context.getApplicationContext();
         RxCrashUtils.getInstance(context).init();
         SPUtils.getInstance(context);
+        DrawUtil.resetDensity(context);
     }
 
     /**

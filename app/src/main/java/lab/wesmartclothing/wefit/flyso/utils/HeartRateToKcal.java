@@ -29,6 +29,11 @@ public class HeartRateToKcal {
      **/
 
     /**
+     *
+     *
+     * */
+
+    /**
      * @param HR true 为男，false为女;
      * @return 千卡
      */
@@ -59,4 +64,14 @@ public class HeartRateToKcal {
         }
         return Math.abs(kcal / 1000);
     }
+
+
+    /**
+     * 更换卡路里计算公式
+     */
+    public double getCalorie2() {
+        return 0;
+    }
+
+
 }

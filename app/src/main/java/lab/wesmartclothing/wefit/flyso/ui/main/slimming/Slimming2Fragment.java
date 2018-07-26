@@ -65,7 +65,7 @@ import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -527,7 +527,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                 mBtnBindScale.setVisibility(View.GONE);
                 break;
             case R.id.layout_weight:
-                bundle.putString(Key.BUNDLE_FRAGMENT, WeightFragment.class.getSimpleName());
+                bundle.putString(Key.BUNDLE_FRAGMENT, WeightRecordFragment.class.getSimpleName());
                 RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
                 break;
             case R.id.btn_bind:
@@ -552,7 +552,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void getFirstPageData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -608,9 +608,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
             mTvRisk.setText(bean.getLevelDesc());
         }
-        int heatProgress = (int) (bean.getComplete() * 100);
-        mProWeight.setProgress(heatProgress == 0 ? 1 : heatProgress);
-        mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : "离目标完成还剩 " + bean.getHasDays() + " 天");
+        int targetProgress = (int) (bean.getComplete() * 100);
+        mProWeight.setProgress(targetProgress);
+        mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
 
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
         mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
@@ -623,7 +623,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         } else if (bean.getTargetWeight() == 0) {
             //TODO 提示需要录入目标体重
         }
-        mCircleProgressBar.setProgress((int) (bean.getIntakePercent() * 100));
+        int heatProgress = (int) (bean.getIntakePercent() * 100);
+        mCircleProgressBar.setProgress(heatProgress == 0 ? 1 : heatProgress);
         int size = bean.getAthleticsInfoList().size();
         if (size != 0) {
             mTvCurrentKcal.setText(bean.getAthleticsInfoList().get(size - 1).getCalorie() + "");

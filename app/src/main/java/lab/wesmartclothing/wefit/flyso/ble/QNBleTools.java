@@ -121,4 +121,15 @@ public class QNBleTools {
         });
     }
 
+    private boolean isConnect = false;
+
+    public void setConnect(boolean isConnect) {
+        this.isConnect = isConnect;
+    }
+
+    public boolean isConnect() {
+        return isConnect;
+    }
+
+
 }

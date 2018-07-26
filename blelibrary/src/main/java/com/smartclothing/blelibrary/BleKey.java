@@ -21,7 +21,7 @@ public interface BleKey {
      */
     //心率阈值
     //60-75-90-105-130
-    byte[] heartRates = new byte[]{0x3c, 0x4b, (byte) 0x5a, (byte) 0x69, (byte) 0x82};
+    byte[] heartRates = new byte[]{0x64, 0x78, (byte) 0x8c, (byte) 0xa0, (byte) 0xb4};
 
 
     //绑定设备类型

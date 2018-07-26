@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 
 /**
  * Created by vonde on 2017/2/15.
+ * 网速控件
  */
 
 public class RxNetSpeedView extends FrameLayout {

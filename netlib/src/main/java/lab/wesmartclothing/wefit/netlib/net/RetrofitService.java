@@ -92,18 +92,20 @@ public interface RetrofitService {
     // 运动
     ///////////////////////////////////////////////////////////////////////////
 
-
-    @POST("slim/getAthleticsInfo")
-    Observable<String> getAthleticsInfo(@Body RequestBody body);
-
+    //获取运动记录信息(用于左右翻页)
     @FormUrlEncoded
-    @POST("slim/getAthleticsList")
+    @POST("athl/fetchAthleticsInfo")
+    Observable<String> getAthleticsInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+
+    //获取运动列表记录
+    @FormUrlEncoded
+    @POST("athl/fetchAthleticsList")
     Observable<String> getAthleticsList(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
-    @POST("slim/addAthleticsInfo")
+    @POST("athl/addAthleticsInfo")
     Observable<String> addAthleticsInfo(@Body RequestBody body);
 
-    @POST("slim/athleticsDetail")
+    @POST("athl/athleticsDetail")
     Observable<String> athleticsDetail(@Body RequestBody body);
 
 

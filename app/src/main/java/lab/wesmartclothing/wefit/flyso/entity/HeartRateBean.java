@@ -7,6 +7,8 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -48,17 +50,19 @@ public class HeartRateBean {
     private int minHeart;
     private int stepNumber;
     private String userId;
-    private List<Integer> athlList;
+    private List<AthlList> athlList;
 
 
     public void saveHeartRate(HeartRateBean heartRateBean, HeartRateToKcal mHeartRateToKcal) {
-        List<Integer> athlList = heartRateBean.getAthlList();
-        int duration = heartRateBean.getDuration();
+        List<AthlList> athlList = heartRateBean.getAthlList();
+        int duration = 0;
 
         int sum = 0;
-        for (int heart : athlList) {
-            sum += heart;
+        for (AthlList heart : athlList) {
+            sum += heart.getHeartRate();
+            duration += heart.getStepTime();
         }
+
         int avgHeart = sum / athlList.size();
         RxLogUtils.d("平均心率：" + avgHeart);
 
@@ -69,21 +73,16 @@ public class HeartRateBean {
         RxLogUtils.d("卡路里（千卡）：" + calorie);
 
         heartRateBean.setCalorie((int) (calorie * 1000));
-        heartRateBean.setAthlDate(System.currentTimeMillis() + "");
 
         String s = new Gson().toJson(heartRateBean, HeartRateBean.class);
-
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addAthleticsInfo(body))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("添加心率：" + s);
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
+                        RxLogUtils.d("添加心率：保存成功删除本地缓存" + s);
+                        MyAPP.getRxCache().remove(Key.CACHE_ATHL_RECORD);
                     }
                 });
     }
@@ -176,11 +175,44 @@ public class HeartRateBean {
         this.userId = userId;
     }
 
-    public List<Integer> getAthlList() {
+    public List<AthlList> getAthlList() {
         return athlList;
     }
 
-    public void setAthlList(List<Integer> athlList) {
+    public void setAthlList(List<AthlList> athlList) {
         this.athlList = athlList;
     }
+
+    public static class AthlList {
+
+        private int heartRate;
+        private long heartTime;
+        private int stepTime;
+
+        public int getHeartRate() {
+            return heartRate;
+        }
+
+        public void setHeartRate(int heartRate) {
+            this.heartRate = heartRate;
+        }
+
+        public long getHeartTime() {
+            return heartTime;
+        }
+
+        public void setHeartTime(long heartTime) {
+            this.heartTime = heartTime;
+        }
+
+        public int getStepTime() {
+            return stepTime;
+        }
+
+        public void setStepTime(int stepTime) {
+            this.stepTime = stepTime;
+        }
+    }
+
+
 }

@@ -18,7 +18,7 @@ import com.orhanobut.logger.Logger;
 
 /**
  * 项目名称：Ali_Sophix
- * 类描述：
+ * 类描述：心率控件
  * 创建人：Jack
  * 创建时间：2017/12/25
  */

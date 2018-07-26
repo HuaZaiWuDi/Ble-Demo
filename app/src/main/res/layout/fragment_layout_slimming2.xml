@@ -96,7 +96,7 @@
                     <!--android:progress="30"-->
                     <!--app:rcBackgroundColor="@color/GrayWrite"-->
                     <!--app:rcMax="100"-->
-                    <!--app:rcProgress="50"-->
+                    <!--app:rcProgress="0"-->
                     <!--app:rcProgressColor="@color/white"-->
                     <!--app:rcRadius="3dp"-->
                     <!--/>-->
@@ -183,11 +183,11 @@
 
 
                 <TextView
-                    android:layout_marginBottom="@dimen/dimen_10"
                     android:id="@+id/tv_userName2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/dimen_10"
                     android:layout_marginLeft="@dimen/dimen_16"
                     android:layout_toRightOf="@+id/iv_userImg2"
                     android:text="@string/app_name"
@@ -196,12 +196,12 @@
 
 
                 <LinearLayout
-                    android:layout_marginBottom="@dimen/dimen_10"
                     android:id="@+id/layout_notify2"
                     android:layout_width="@dimen/dimen_50"
                     android:layout_height="@dimen/dimen_50"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
+                    android:layout_marginBottom="@dimen/dimen_10"
                     android:gravity="bottom|center_horizontal">
 
 
@@ -299,7 +299,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_24"
-                        android:text="犯病风险："
+                        android:text="患病风险："
                         android:textColor="@color/GrayWrite"
                         android:textSize="13sp"/>
 
@@ -493,7 +493,7 @@
                                 android:layout_marginTop="@dimen/dimen_5"
                                 android:gravity="bottom"
                                 android:maxLength="6"
-                                android:text="----"
+                                android:text="0"
                                 android:textColor="@color/green_61D97F"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
@@ -832,6 +832,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
 
                     <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/mBarChart"

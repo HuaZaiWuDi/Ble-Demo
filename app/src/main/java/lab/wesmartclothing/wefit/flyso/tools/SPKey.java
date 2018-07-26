@@ -17,7 +17,7 @@ public interface SPKey {
 
     String SP_sex = "SP_sex";
 
-    String SP_birthDayMillis = "SP_birthDayMillis";
+    String SP_VoiceTip = "SP_VoiceTip";
 
     String SP_scaleMAC = "SP_scaleMAC";
 
@@ -25,6 +25,9 @@ public interface SPKey {
 
     //真实体重
     String SP_realWeight = "SP_realWeight";
+
+    //理想体重
+    String SP_TargetWeight = "SP_TargetWeight";
 
     String SP_UserInfo = "SP_UserInfo";
 }

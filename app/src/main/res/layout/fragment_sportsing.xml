@@ -65,7 +65,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/dimen_16"
             app:hasShadow="true"
-            app:isOpened="true"
+            app:isOpened="false"
             app:offColor="@color/GrayWrite"
             app:offColorDark="@color/GrayWrite"
             app:primaryColor="@color/green_61D97F"
@@ -73,6 +73,7 @@
 
 
         <TextView
+            android:textStyle="bold"
             android:id="@+id/tv_kcal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,7 +113,7 @@
             android:maxLines="2"
             android:paddingLeft="@dimen/dimen_15"
             android:paddingRight="@dimen/dimen_15"
-            android:text="保持燃脂衣与app的连接，可提高数据数据准确性 如关闭或脱掉减肥衣将自动结束本次运动"
+            android:text="保持燃脂衣与App的连接，可提高数据数据准确性 如关闭或脱掉减肥衣将自动结束本次运动"
             android:textColor="@color/GrayWrite"
             android:textSize="11sp"/>
 
