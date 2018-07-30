@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -8,7 +9,7 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxFormatValue;
-import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
 
@@ -29,6 +30,8 @@ public class SettingTargetFragment extends BaseAcFragment {
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.tv_targetWeight)
     TextView mTvTargetWeight;
+    @BindView(R.id.tv_tips)
+    TextView mTvTips;
     @BindView(R.id.ruler_weight)
     DecimalScaleRulerView mWeightRulerView;
     @BindView(R.id.btn_nextStep)
@@ -51,9 +54,18 @@ public class SettingTargetFragment extends BaseAcFragment {
     private void initView() {
         initTopBar();
         initRuler();
+
+        String tips = "需减重 " + RxFormatValue.fromat4S5R(3, 1) + " kg";
+        SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
+                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
+                .setProportion(1.4f)
+                .setLength(4, tips.length() - 3);
+
+        mTvTips.setText(builder);
     }
 
     private void initRuler() {
+        mTvTargetWeight.setText(53 + "");
         mWeightRulerView.setTextLabel("kg");
         mWeightRulerView.setColor(getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.orange_FF7200));
         mWeightRulerView.setParam(DrawUtil.dip2px(10), DrawUtil.dip2px(60), DrawUtil.dip2px(40),
@@ -62,7 +74,6 @@ public class SettingTargetFragment extends BaseAcFragment {
         mWeightRulerView.setValueChangeListener(new DecimalScaleRulerView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
-                RxLogUtils.d("皮尺：" + value);
                 mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
             }
         });
@@ -82,5 +93,6 @@ public class SettingTargetFragment extends BaseAcFragment {
 
     @OnClick(R.id.btn_nextStep)
     public void onViewClicked() {
+        startFragment(TargetDateFargment.getInstance());
     }
 }

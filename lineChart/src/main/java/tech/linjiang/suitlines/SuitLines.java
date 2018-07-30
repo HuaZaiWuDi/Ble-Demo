@@ -16,10 +16,6 @@
 
 package tech.linjiang.suitlines;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -30,7 +26,6 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.os.Handler;
@@ -38,27 +33,24 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.EdgeEffect;
 import android.widget.Scroller;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * https://github.com/whataa
  */
-public class SuitLines extends View implements GestureDetector.OnGestureListener {
+public class SuitLines extends View {
 
     public static final String TAG = SuitLines.class.getSimpleName();
 
@@ -74,11 +66,9 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         super(context, attrs, defStyleAttr);
         initOptionalState(context, attrs);
 
+        mMinVelocity = ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity();
         basePadding = Util.dip2px(basePadding);
-        maxVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
-        clickSlop = ViewConfiguration.get(context).getScaledEdgeSlop();
 
-        mGestureDetector = new GestureDetector(context, this);
         scroller = new Scroller(context);
         edgeEffectLeft = new EdgeEffect(context);
         edgeEffectRight = new EdgeEffect(context);
@@ -90,17 +80,36 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         coverLinePaint.setStyle(Paint.Style.STROKE);
         coverLinePaint.setStrokeWidth(Util.dip2px(5));
         setLineStyle(0, SOLID);
+
         xyPaint.setTextSize(Util.size2sp(defaultXySize, getContext()));
         xyPaint.setColor(defaultXyColor);
+
         hintPaint.setTextSize(Util.size2sp(12, getContext()));
-        hintPaint.setColor(Color.WHITE);
+        hintPaint.setColor(defaultXyColor);
         hintPaint.setStyle(Paint.Style.FILL);
         hintPaint.setStrokeWidth(2);
         hintPaint.setTextAlign(Paint.Align.CENTER);
+        hintPaint.setAlpha((int) (255 * 0.6f));
+
+        selectPaint.setTextSize(Util.size2sp(12, getContext()));
+        selectPaint.setColor(defaultXyColor);
+        selectPaint.setStyle(Paint.Style.FILL);
+        selectPaint.setStrokeWidth(2);
+
+
         //每个点上面的线条
-        pointLinePaint.setStyle(Paint.Style.STROKE);
-        pointLinePaint.setPathEffect(new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0));
-        pointLinePaint.setStrokeWidth(0.2f);
+//        pointLinePaint.setStyle(Paint.Style.STROKE);
+        pointLinePaint.setStrokeWidth(0.3f);
+        pointLinePaint.setColor(defaultXyColor);
+        pointLinePaint.setAlpha((int) (255 * 0.6f));
+
+
+        //辅助线
+        LimitLinePaint.setStyle(Paint.Style.FILL);
+        LimitLinePaint.setPathEffect(new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0));
+        LimitLinePaint.setStrokeWidth(1f);
+        LimitLinePaint.setColor(defaultXyColor);
+        LimitLinePaint.setAlpha((int) (255 * 0.6f));
     }
 
     private void initOptionalState(Context ctx, AttributeSet attrs) {
@@ -123,11 +132,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
 
     // 创建自己的Handler，与ViewRootImpl的Handler隔离，方便detach时remove。
     private Handler handler = new Handler(Looper.getMainLooper());
-    // 遍历线上点的动画插值器
-    private TimeInterpolator linearInterpolator = new LinearInterpolator();
-    // 每个数据点的动画插值
-    private TimeInterpolator pointInterpolator = new OvershootInterpolator(3);
-    private RectF linesArea, xArea, yArea, hintArea;
+    private RectF linesArea, xArea, yArea;
     /**
      * 默认画笔
      */
@@ -140,6 +145,11 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      * 点击提示的画笔
      */
     private Paint hintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /**
+     * 点击提示的画笔
+     */
+    private Paint selectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
     /**
      * 默认画笔的颜色，索引0位置为画笔颜色，整个数组为shader颜色
      */
@@ -169,34 +179,6 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     private Map<Integer, List<Unit>> datas = new HashMap<>();
 
     /**
-     * 所有数据集的动画
-     */
-    private List<ValueAnimator> animators = new ArrayList<>();
-    /**
-     * line的点击效果
-     */
-    private ValueAnimator clickHintAnimator;
-    /**
-     * 当前正在动画的那组数据
-     */
-    private int curAnimLine;
-    /**
-     * 整体动画的起始时间
-     */
-    private long startTimeOfAnim;
-    /**
-     * 是否正在整体动画中
-     */
-    private boolean isAniming;
-    /**
-     * 两个点之间的动画启动间隔，大于0时仅当总数据点<可见点数时有效
-     */
-    private long intervalOfAnimCost = 100;
-    /**
-     * 可见区域中，将一组数据遍历完总共花费的最大时间
-     */
-    private long maxOfAnimCost = 1000;
-    /**
      * 一组数据在可见区域中的最大可见点数，至少>=2
      */
     private int maxOfVisible = 7;
@@ -217,7 +199,11 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     /**
      * y轴的最大刻度值，保留一位小数
      */
-    private float maxValueOfY;
+    private float maxValueOfY = 100f;
+    /**
+     * y轴的最小刻度值，保留一位小数
+     */
+    private float minValueY;
 
     /**
      * 根据可见点数计算出的两点之间的距离
@@ -239,12 +225,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      * 滚动偏移量的边界
      */
     private float maxOffset;
-    /**
-     * fling最大速度
-     */
-    private int maxVelocity;
-    // 点击y的误差
-    private int clickSlop;
+
     /**
      * 判断左/右方向，当在边缘就不触发fling，以优化性能
      */
@@ -272,7 +253,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     /**
      * 实际的点击位置，0为x索引，1为某条line
      */
-    private int[] clickIndexs;
+    private int[] clickIndexs = new int[2];
     private float firstX, firstY;
     /**
      * 控制是否强制重新生成path，当改变lineType/paint时需要
@@ -284,16 +265,28 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      */
     private int[] suitEdge;
 
+    /**
+     * 每个点后面的线
+     */
     private Paint pointLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /**
+     * 辅助线
+     */
+    private Paint LimitLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    //是否在onFling
-    private boolean isFling = true;
+    /**
+     * 图标上下间距
+     */
+    private float spaceMax = 0;
+    private float spaceMin = 0;
 
-//    //线上点的圆点
-//    private Paint mPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    /**
+     * 画辅助线
+     */
+    private Map<Float, String> limits;
 
     public interface LineChartSelectItemListener {
-        void selectItem(int valueX, String labelX);
+        void selectItem(int valueX);
     }
 
     public interface LineChartScrollEdgeListener {
@@ -335,183 +328,108 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
     }
 
-    private GestureDetector mGestureDetector;
-
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//
-//        return mGestureDetector.onTouchEvent(event);
-//    }
-
+    private int mLastX, mMove, mMinVelocity;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (datas.isEmpty() || isAniming) {
-            recycleVelocityTracker();
-            return false;
+        int action = event.getAction();
+        int xPosition = (int) event.getX();
+
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
         }
-        switch (event.getActionMasked()) {
+        velocityTracker.addMovement(event);
+
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
-//                Log.d("滑动效果：", "放下");
-                firstX = lastX = event.getX();
-                firstY = event.getY();
-                scroller.abortAnimation();
-                initOrResetVelocityTracker();
-                velocityTracker.addMovement(event);
-                super.onTouchEvent(event);
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                isFling = true;
-                orientationX = event.getX() - lastX;
-//                mWidth = linesArea.right - linesArea.left;
-//                onTap(0, 0);
-//                onScroll(orientationX);
-
-                velocityTracker.addMovement(event);
-
-//                if (needEdgeEffect && datas.get(0).size() > maxOfVisible) {
-//                    if (isArriveAtLeftEdge()) {
-//                        edgeEffectLeft.onPull(Math.abs(orientationX) / linesArea.height());
-//                    } else if (isArriveAtRightEdge()) {
-//                        edgeEffectRight.onPull(Math.abs(orientationX) / linesArea.height());
-//                    }
-//                }
-                if (!isArriveAtLeftEdge() && !isArriveAtRightEdge()) {
-                    onTap(0, scroller.getCurrY());
-                    onScroll(orientationX);
-                }
-
-                lastX = event.getX();
+                scroller.forceFinished(true);
+                mLastX = xPosition;
+                mMove = 0;
                 break;
-            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_MOVE:
+                mMove = (mLastX - xPosition);
+                changeMoveAndValue();
+                break;
             case MotionEvent.ACTION_UP:
-
-                onTap(0, 0);
-
-                velocityTracker.addMovement(event);
-                velocityTracker.computeCurrentVelocity(1000, maxVelocity);
-                int initialVelocity = (int) velocityTracker.getXVelocity();
-                velocityTracker.clear();
-                if (!isArriveAtLeftEdge() && !isArriveAtRightEdge()) {
-                    scroller.fling((int) event.getX(), (int) event.getY(), initialVelocity / 2,
-                            0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
-                    invalidate();
-                } else {
-                    edgeEffectLeft.onRelease();
-                    edgeEffectRight.onRelease();
-                }
-                lastX = event.getX();
+            case MotionEvent.ACTION_CANCEL:
+                countMoveEnd();
+                countVelocityTracker();
+                return false;
+            default:
                 break;
         }
 
-        return super.onTouchEvent(event);
+        mLastX = xPosition;
+        return true;
     }
 
+    private void changeMoveAndValue() {
+        offset -= mMove;
+        if (offset <= maxOffset) {
+            offset = maxOffset;
+            mMove = 0;
+            scroller.forceFinished(true);
+        } else if (offset >= 0) {
+            offset = 0;
+            mMove = 0;
+            scroller.forceFinished(true);
+        }
+
+        clickIndexs[0] = (Math.round(Math.abs(offset) * 1.0f / realBetween));
+        notifyValueChange();
+        postInvalidate();
+    }
+
+    private void notifyValueChange() {
+        if (mLineChartSelectItemListener != null && !datas.isEmpty()) {
+            mLineChartSelectItemListener.selectItem(clickIndexs[0]);
+        }
+    }
+
+    private void countMoveEnd() {
+        offset -= mMove;
+        if (offset <= maxOffset) {
+            offset = maxOffset;
+            Log.d("测试：", "滑动到右边");
+            if (mLineChartScrollEdgeListener != null)
+                mLineChartScrollEdgeListener.rightEdge();
+        } else if (offset >= 0) {
+            offset = 0;
+            Log.d("测试：", "滑动到左边");
+            if (mLineChartScrollEdgeListener != null)
+                mLineChartScrollEdgeListener.leftEdge();
+        }
+
+        mLastX = 0;
+        mMove = 0;
+
+        clickIndexs[0] = (Math.round(Math.abs(offset) * 1.0f / realBetween));
+        offset = -clickIndexs[0] * realBetween; // 矫正位置,保证不会停留在两个相邻刻度之间
+        notifyValueChange();
+        postInvalidate();
+    }
+
+    private void countVelocityTracker() {
+        velocityTracker.computeCurrentVelocity(1000);
+        float xVelocity = velocityTracker.getXVelocity();
+        if (Math.abs(xVelocity) > mMinVelocity) {
+            scroller.fling(0, 0, (int) xVelocity, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+        }
+    }
 
     @Override
     public void computeScroll() {
         if (scroller.computeScrollOffset()) {
-            isFling = false;
-            lastX = scroller.getCurrX();
-//            Log.e("滑动效果：computeScroll", "" + lastX);
-//            if (needEdgeEffect) {
-//                if (!hasAbsorbLeft && isArriveAtLeftEdge()) {
-//                    hasAbsorbLeft = true;
-//                    edgeEffectLeft.onAbsorb((int) scroller.getCurrVelocity());
-//                } else if (!hasAbsorbRight && isArriveAtRightEdge()) {
-//                    hasAbsorbRight = true;
-//                    edgeEffectRight.onAbsorb((int) scroller.getCurrVelocity());
-//                }
-//            }
-
-            if (!isArriveAtLeftEdge() && !isArriveAtRightEdge()) {
-                onTap(0, scroller.getCurrY());
-                onScroll(scroller.getCurrX() - lastX);
+            if (scroller.getCurrX() == scroller.getFinalX()) { // over
+                countMoveEnd();
+            } else {
+                int xPosition = scroller.getCurrX();
+                mMove = (mLastX - xPosition);
+                changeMoveAndValue();
+                mLastX = xPosition;
             }
-            postInvalidate();
-        } else {
-            hasAbsorbLeft = false;
-            hasAbsorbRight = false;
-        }
-
-    }
-
-
-    @Override
-    public boolean onDown(MotionEvent event) {
-        firstX = lastX = event.getX();
-        firstY = event.getY();
-        scroller.abortAnimation();
-        initOrResetVelocityTracker();
-        velocityTracker.addMovement(event);
-        return true;
-
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-//        Log.e("测试：onShowPress：", "");
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        isFling = true;
-        onTap(0, e2.getY());
-        onScroll(-distanceX);
-
-        lastX = e2.getX();
-        return true;
-    }
-
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        lastX = e2.getX();
-        scroller
-                .fling((int) e2.getX(), (int) e2.getY(), (int) velocityX / 2, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
-//        Log.e("测试：onFling：", "");
-        return true;
-    }
-
-
-    //绘制边缘效果
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-        if (datas.isEmpty()) return;
-        if (!needEdgeEffect) return;
-        if (!edgeEffectLeft.isFinished()) {
-            canvas.save();
-            canvas.rotate(-90);
-            canvas.translate(-linesArea.bottom, linesArea.left);
-            edgeEffectLeft.setSize((int) linesArea.height(), (int) linesArea.height());
-            if (edgeEffectLeft.draw(canvas)) {
-                postInvalidate();
-            }
-            canvas.restore();
-        }
-
-        if (!edgeEffectRight.isFinished()) {
-            canvas.save();
-            canvas.rotate(90);
-            canvas.translate(linesArea.top, -linesArea.right);
-            edgeEffectRight.setSize((int) linesArea.height(), (int) linesArea.height());
-            if (edgeEffectRight.draw(canvas)) {
-                postInvalidate();
-            }
-            canvas.restore();
         }
     }
 
@@ -520,130 +438,76 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (datas.isEmpty()) return;
+//        if (datas.isEmpty()) return;
         // lines
 
         canvas.save();
         canvas.clipRect(linesArea.left, linesArea.top, linesArea.right, linesArea.bottom + xArea.height());
         canvas.translate(offset, 0);
 
-
         // 当滑动到边缘 或 上次与本次结果相同 或 不需要计算边缘点 的时候就不再计算，直接draw已有的path
-        if (!paths.isEmpty() && !forceToDraw && !isAniming) {
+        if (!paths.isEmpty() && !forceToDraw) {
             drawExsitDirectly(canvas);
             //画线上的点
-            for (int i = 0; i < datas.size(); i++) {
-                for (int j = 0; j < datas.get(i).size(); j++) {
-                    Unit unit = datas.get(i).get(j);
-                    canvas.drawCircle(unit.getXY().x, unit.getXY().y, 10f, hintPaint);
-                }
-            }
-            // hint
-            if (clickIndexs != null) {
-                drawClickHint(canvas);
-            }
+            drawPoint(canvas);
+            drawClickHint(canvas);
+            Log.d("测试", "1111111111");
         } else if (!paths.isEmpty()) {
             // 因为手指或fling计算出的offset不是连续按1px递增/减的，即无法准确地确定当前suitEdge和linesArea之间的相对位置
             // 所以不适合直接加减suitEdge来划定数据区间
-            suitEdge = findSuitEdgeInVisual2();
             drawLines(canvas, 0, datas.get(0).size() - 1);
-            //画线上的点
-            for (int i = 0; i < datas.size(); i++) {
-                for (int j = 0; j < datas.get(i).size(); j++) {
-                    Unit unit = datas.get(i).get(j);
-                    canvas.drawCircle(unit.getXY().x, unit.getXY().y, 10f, hintPaint);
-                }
-            }
-            if (clickIndexs != null) {
-                drawClickHint(canvas);
-            }
+            drawPoint(canvas);
+            drawClickHint(canvas);
+            Log.d("测试", "22222222222");
         }
 
         // x 蓝色会稍增加
-        drawX(canvas, 0, datas.get(0).size() - 1);
-        lastOffset = offset;
+        if (!datas.isEmpty())
+            drawX(canvas, 0, datas.get(0).size() - 1);
+
         forceToDraw = false;
         canvas.restore();
 
-        // y
-//        drawY(canvas, suitEdge[0], suitEdge[1]);
-    }
-
-    /**
-     * 边缘点在可见区域两侧时不需要重新计算<br>
-     * 但是手指滑动越快，该分支的有效效果越差
-     *
-     * @param offset
-     * @return
-     */
-    private boolean noNeedCalcEdge(float offset) {
-        return suitEdge != null
-                && datas.get(0).get(suitEdge[0]).getXY().x <= linesArea.left - offset - linesArea.width() * 0.5f
-                && datas.get(0).get(suitEdge[1]).getXY().x >= linesArea.right - offset;
-    }
-
-    /**
-     * 滑动方法，同时检测边缘条件
-     *
-     * @param deltaX
-     */
-    private void onScroll(float deltaX) {
-        offset += deltaX;
-        offset = offset > 0 ? 0 : (Math.abs(offset) > maxOffset) ? -maxOffset : offset;
-        invalidate();
+        // 不位移
+        drawHintLine(canvas);
     }
 
 
-    public void scrollLast(float currentOffset) {
-        offset = currentOffset;
-        invalidate();
-    }
+    //画辅助线
+    private void drawHintLine(Canvas canvas) {
+        if (limits != null && limits.size() > 0) {
+            Set<Float> integers = limits.keySet();
+            for (float value : integers) {
+                String text = limits.get(value);
+                value = value > maxValueOfY ? maxValueOfY : value;
+                value = value < minValueY ? minValueY : value;
+                float y = linesArea.top + (linesArea.height() * (0.8f - spaceMin)) * (1 - value / maxValueOfY + spaceMax);
 
-    private void onTap(float upX, float upY) {
-        upX -= offset;
-        RectF bak = new RectF(linesArea);
-        bak.offset(-offset, 0);
+                xyPaint.setTextAlign(Paint.Align.LEFT);
 
-        float index = (upX - linesArea.left) / realBetween;
-        index = (upX - linesArea.left) / realBetween;
-
-        int realIndex = -1;
-        float v = index - (int) index;
-        if (v >= 0.5f) {
-            realIndex = (int) index + 1;
-        } else if (v < 0.5f) {
-            realIndex = (int) index;
-        }
-
-        if (realIndex != -1) {
-            clickIndexs = new int[]{realIndex, 0};
-
-            if (scroller.isFinished() && !isFling) {
-                if (v >= 0.5f) {
-                    offset = offset - (1 - v) * realBetween;
-                } else if (v < 0.5f) {
-                    offset = offset + v * realBetween;
-                }
-
-                invalidate();
+                canvas.drawText(text, linesArea.left + basePadding, y, xyPaint);
+                LimitLinePaint.setPathEffect(new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0));
+                canvas.drawLine(linesArea.left + xyPaint.measureText(text) + basePadding * 2, y,
+                        linesArea.right, y, LimitLinePaint);
             }
-
         }
     }
 
-    private void initOrResetVelocityTracker() {
-        if (velocityTracker == null) {
-            velocityTracker = VelocityTracker.obtain();
-        } else {
-            velocityTracker.clear();
+    //画线上的点
+    private void drawPoint(Canvas canvas) {
+        for (int i = 0; i < datas.size(); i++) {
+            for (int j = 0; j < datas.get(i).size(); j++) {
+                Unit unit = datas.get(i).get(j);
+                if (unit.isShowPoint())
+                    canvas.drawCircle(unit.getXY().x, unit.getXY().y, 10f, hintPaint);
+            }
         }
     }
 
-    private void recycleVelocityTracker() {
-        if (velocityTracker != null) {
-            velocityTracker.recycle();
-            velocityTracker = null;
-        }
+
+    public void scrollLast() {
+        offset = maxOffset;
+        invalidate();
     }
 
     /**
@@ -652,7 +516,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      * @return
      */
     private boolean isArriveAtLeftEdge() {
-        return offset == 0 && orientationX > 0;
+        return offset == 0 && mMove > 0;
     }
 
     /**
@@ -661,90 +525,9 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      * @return
      */
     private boolean isArriveAtRightEdge() {
-        return Math.abs(offset) == Math.abs(maxOffset) && orientationX < 0;
+        return Math.abs(offset) == Math.abs(maxOffset) && mMove < 0;
     }
 
-    /**
-     * 找到当前可见区间内合适的两个边缘点，注意如果边缘点不在可见区间的边缘，则需要包含下一个不可见的点
-     *
-     * @return
-     */
-    private int[] findSuitEdgeInVisual() {
-        int startIndex = 0, endIndex = datas.get(0).size() - 1;
-        if (offset == 0) {// 不可滑动或当前位于最左边
-            startIndex = 3;
-            endIndex = Math.min(datas.get(0).size() - 1, maxOfVisible - 1);
-        } else if (Math.abs(offset) == maxOffset) {// 可滑动且当前位于最右边
-            endIndex = datas.get(0).size() - 4;
-            startIndex = endIndex - maxOfVisible + 1;
-        } else {
-            float startX = linesArea.left - offset;
-            float endX = linesArea.right - offset;
-            if (datas.get(0).size() > maxOfVisible) {
-                // 找到指定区间的第一个被发现的点
-                int suitKey = 0;
-                int low = 0;
-                int high = datas.get(0).size() - 1;
-                List<Unit> i = datas.get(0);
-                while (low <= high) {
-                    int mid = (low + high) >>> 1;
-                    Unit midVal = i.get(mid);
-                    if (midVal.getXY().x < startX) {
-                        low = mid + 1;
-                    } else if (midVal.getXY().x > endX) {
-                        high = mid - 1;
-                    } else {
-                        suitKey = mid;
-                        break;
-                    }
-                }
-                int bakKey = suitKey;
-                // 先左边
-                while (suitKey >= 0) {
-                    startIndex = suitKey;
-                    if (datas.get(0).get(suitKey).getXY().x <= startX) {
-                        break;
-                    }
-                    suitKey--;
-                }
-                suitKey = bakKey;
-                // 再右边
-                while (suitKey < datas.get(0).size()) {
-                    endIndex = suitKey;
-                    if (datas.get(0).get(suitKey).getXY().x >= endX) {
-                        break;
-                    }
-                    suitKey++;
-                }
-            }
-        }
-        return new int[]{startIndex, endIndex};
-    }
-
-    /**
-     * 1. ax+b >= y
-     * 2. a(x+1)+b <= y
-     * 得到： (int)x = (y-b) / a
-     * 由于 y = b - offset
-     * 所以：(int)x = |offset| / a
-     *
-     * @return
-     */
-    private int[] findSuitEdgeInVisual2() {
-//        Log.e("偏移量2222：", "" + offset);
-        int startIndex, endIndex;
-        if (offset == 0) {// 不可滑动或当前位于最左边
-            startIndex = 0;
-            endIndex = Math.min(datas.get(0).size() - 1, maxOfVisible - 1);
-        } else if (Math.abs(offset) == maxOffset) {// 可滑动且当前位于最右边
-            endIndex = datas.get(0).size() - 1;
-            startIndex = endIndex - maxOfVisible + 1;
-        } else {
-            startIndex = (int) (Math.abs(offset + linesArea.width() * 0.5f) / realBetween);
-            endIndex = startIndex + maxOfVisible;
-        }
-        return new int[]{startIndex, endIndex};
-    }
 
     /**
      * 开始连接每条线的各个点<br>
@@ -780,8 +563,9 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
                             (previous.getXY().x + current.getXY().x) / 2, curY,
                             current.getXY().x, curY);
                 }
-
-                if (!needCoverLine && isLineFill() && i == endIndex) {
+                //绘制阴影需要连接底部的点
+                boolean fill = current.isFill();
+                if (!needCoverLine && fill && i == endIndex) {
                     paths.get(j).lineTo(current.getXY().x, linesArea.bottom);
                     paths.get(j).lineTo(datas.get(j).get(startIndex).getXY().x, linesArea.bottom);
                     paths.get(j).close();
@@ -799,7 +583,9 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     private void drawExsitDirectly(Canvas canvas) {
         // TODO 需要优化
         for (int j = 0; j < datas.size(); j++) {
-            if (!isLineFill() || !needCoverLine) {
+            if (!needCoverLine) {
+                boolean isFill = datas.get(j).get(0).isFill();
+                paints.get(j).setStyle(isFill ? Paint.Style.FILL : Paint.Style.STROKE);
                 canvas.drawPath(paths.get(j), paints.get(j));
             } else {
                 if (needCoverLine) {
@@ -810,23 +596,16 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
                     canvas.drawPath(paths.get(j), coverLinePaint);
                     canvas.restore();
                     tmpPath.set(paths.get(j));
-                    tmpPath.lineTo(datas.get(j).get(suitEdge[1]).getXY().x, linesArea.bottom);
-                    tmpPath.lineTo(datas.get(j).get(suitEdge[0]).getXY().x, linesArea.bottom);
+                    tmpPath.lineTo(datas.get(j).get(0).getXY().x, linesArea.bottom);
+                    tmpPath.lineTo(datas.get(j).get(datas.size()).getXY().x, linesArea.bottom);
                     tmpPath.close();
                     canvas.drawPath(tmpPath, paints.get(j));
                     tmpPath.reset();
                 }
             }
-//            calcReferenceLengthOf(j);
         }
-        // TODO 画点
     }
 
-    private float calcReferenceLengthOf(int j) {
-        return linesArea.height() * 2 - datas.get(j).get(suitEdge[0]).getXY().y
-                - datas.get(j).get(suitEdge[1]).getXY().y
-                + datas.get(j).get(suitEdge[1]).getXY().x - datas.get(j).get(suitEdge[0]).getXY().x;
-    }
 
     /**
      * 画提示文本和辅助线
@@ -834,41 +613,11 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      * @param canvas
      */
     public void drawClickHint(Canvas canvas) {
-
         for (int i = 0; i < datas.size(); i++) {
-            Unit cur = datas.get(i).get(clickIndexs[0]);
-            canvas.drawCircle(cur.getXY().x, cur.getXY().y, 20f, hintPaint);
+            Unit unit = datas.get(i).get(clickIndexs[0]);
+            if (unit.isShowPoint())
+                canvas.drawCircle(unit.getXY().x, unit.getXY().y, 20f, selectPaint);
         }
-
-        if (mLineChartSelectItemListener != null && !datas.isEmpty()) {
-            Unit unit = datas.get(0).get(clickIndexs[0]);
-            mLineChartSelectItemListener.selectItem(clickIndexs[0], unit.getExtX());
-        }
-
-//        RectF bak = new RectF(hintArea);
-//        bak.offset(-offset, 0);
-//        canvas.drawRect(bak, hintPaint);
-//        if (!TextUtils.isEmpty(cur.getExtX())) {
-//            canvas.drawText("x : " + cur.getExtX(), bak.centerX(), bak.centerY() - 12, hintPaint);
-//        }
-//        canvas.drawText("y : " + cur.getValue(), bak.centerX(),
-//                bak.centerY() + 12 + Util.getTextHeight(hintPaint), hintPaint);
-
-//        canvas.drawLine(datas.get(clickIndexs[1]).get(suitEdge[0]).getXY().x, cur.getXY().y,
-//                datas.get(clickIndexs[1]).get(suitEdge[1]).getXY().x, cur.getXY().y, hintPaint);
-//
-//        canvas.drawLine(cur.getXY().x, linesArea.bottom,
-//                cur.getXY().x, linesArea.top, hintPaint);
-
-//        canvas.save();
-//        //点击焦点的下标
-//        canvas.translate(cur.getXY().x, cur.getXY().y);
-
-
-//        canvas.restore();
-//        scrollTo((int) cur.getXY().x, 0);
-
-
     }
 
     /**
@@ -886,56 +635,22 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
             if (TextUtils.isEmpty(extX)) {
                 continue;
             }
-//            if (i == startIndex && startIndex == 0) {
-//                xyPaint.setTextAlign(Paint.Align.LEFT);
-//            } else if (i == endIndex && endIndex == datas.get(0).size() - 1) {
-//                xyPaint.setTextAlign(Paint.Align.RIGHT);
-//            } else {
-//        }
             xyPaint.setTextAlign(Paint.Align.CENTER);
-            if (clickIndexs != null && i == clickIndexs[0]) {
-                xyPaint.setColor(Color.WHITE);
-                pointLinePaint.setColor(Color.WHITE);
+            if (i == clickIndexs[0]) {
+                xyPaint.setAlpha(255);
+                pointLinePaint.setAlpha(255);
             } else {
-                xyPaint.setColor(Color.parseColor("#F2A49C"));
-                pointLinePaint.setColor(Color.parseColor("#F2A49C"));
+                xyPaint.setAlpha((int) (255 * 0.6f));
+                pointLinePaint.setAlpha((int) (255 * 0.6f));
             }
 
             canvas.drawText(extX, datas.get(0).get(i).getXY().x, Util.calcTextSuitBaseY(xArea, xyPaint) + 20, xyPaint);
+            pointLinePaint.setPathEffect(new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0));
             canvas.drawLine(datas.get(0).get(i).getXY().x, linesArea.bottom, datas.get(0).get(i).getXY().x, linesArea.top, pointLinePaint);
         }
 
 //        canvas.drawLine(datas.get(0).get(startIndex).getXY().x, 50f,
 //                datas.get(0).get(endIndex).getXY().x, 50f, xyPaint);
-
-    }
-
-
-    private void drawY(Canvas canvas, int startIndex, int endIndex) {
-        if (yAreaBuffer == null) {
-            yAreaBuffer = Bitmap.createBitmap((int) yArea.width(), (int) yArea.height(), Bitmap.Config.ARGB_8888);
-            Rect yRect = new Rect(0, 0, yAreaBuffer.getWidth(), yAreaBuffer.getHeight());
-            Canvas yCanvas = new Canvas(yAreaBuffer);
-            yCanvas.drawLine(yRect.right, yRect.bottom, yRect.right, yRect.top, xyPaint);
-            for (int i = 0; i < countOfY; i++) {
-                xyPaint.setTextAlign(Paint.Align.RIGHT);
-                float extY;
-                float y;
-                if (i == 0) {
-                    extY = 0;
-                    y = yRect.bottom;
-                } else if (i == countOfY - 1) {
-                    extY = maxValueOfY;
-                    y = yRect.top + Util.getTextHeight(xyPaint) + 3;
-                } else {
-                    extY = maxValueOfY / (countOfY - 1) * i;
-                    y = yRect.bottom - yRect.height() / (countOfY - 1) * i + Util.getTextHeight(xyPaint) / 2;
-                }
-                yCanvas.drawText(new DecimalFormat("##.#").format(extY), yRect.right - basePadding, y, xyPaint);
-//                yCanvas.drawLine(yRect.right, y, xArea.left, y, xyPaint);
-            }
-        }
-        canvas.drawBitmap(yAreaBuffer, yArea.left, yArea.top, null);
 
     }
 
@@ -967,20 +682,14 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
 
 
     private void feedInternal(Map<Integer, List<Unit>> entry, List<Paint> entryPaints,
-                              boolean needAnim, Map<Integer, int[]> colors) {
-        cancelAllAnims();
+                              Map<Integer, int[]> colors) {
         reset(); // 该方法调用了datas.clear();
-
         if (entry.isEmpty()) {
             invalidate();
             return;
         }
-        if (entry.size() != entryPaints.size()) {
-            throw new IllegalArgumentException("线的数量应该和画笔数量对应");
-        } else {
-            paints.clear();
-            paints.addAll(entryPaints);
-        }
+        paints.clear();
+        paints.addAll(entryPaints);
         if (entry.size() != paths.size()) {
             paths.clear();
             for (int i = 0; i < entry.size(); i++) {
@@ -992,28 +701,22 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         calcAreas();
         calcUnitXY();
         forceToDraw = true;
-        invalidate();
-
         for (int i = 0; i < paints.size(); i++) {
             Paint paint = paints.get(i);
             paint.setColor(colors.get(0)[0]);
             paint.setShader(buildPaintColor(colors.get(i)));
         }
+        clickIndexs = new int[]{entry.get(0).size() - 1, 0};
+        notifyValueChange();
         invalidate();
 
-        clickIndexs = new int[]{entry.get(0).size() - 1, 0};
         postAction(new Runnable() {
             @Override
             public void run() {
-                scrollLast(-maxOffset);
+                scrollLast();
             }
         });
 
-        if (needAnim) {
-//            showWithAnims();
-        } else {
-
-        }
     }
 
     /**
@@ -1035,8 +738,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         // 最后排序，得到最大值
         Collections.sort(bakUnits);
         Unit maxUnit = bakUnits.get(bakUnits.size() - 1);
-        Unit minUnit = bakUnits.get(0);
-
+        minValueY = bakUnits.get(0).getValue();
         maxValueOfY = maxUnit.getValue();
     }
 
@@ -1044,19 +746,15 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      * 重新计算三个区域的大小
      */
     private void calcAreas() {
-        String baseY = "00";
-        if (maxValueOfY > 0) {
-            baseY = String.valueOf(maxValueOfY);
-        }
         RectF validArea = new RectF(getPaddingLeft() + basePadding, getPaddingTop() + basePadding,
                 getMeasuredWidth() - getPaddingRight() - basePadding, getMeasuredHeight() - getPaddingBottom());
         yArea = new RectF(validArea.left, validArea.top,
                 validArea.left,
                 validArea.bottom - Util.getTextHeight(xyPaint) - basePadding * 2);
         xArea = new RectF(validArea.left, yArea.top, validArea.right, validArea.top);
-        linesArea = new RectF(yArea.right, yArea.top, xArea.right, yArea.bottom);
-        hintArea = new RectF(linesArea.right - linesArea.right / 4, linesArea.top,
-                linesArea.right, linesArea.top + linesArea.height() / 4);
+
+        linesArea = new RectF(validArea.left, validArea.top, validArea.right, validArea.bottom);
+
     }
 
     /**
@@ -1070,170 +768,16 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
             for (int j = 0; j < datas.size(); j++) {
 
                 datas.get(j).get(i).setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
-                        linesArea.top + (linesArea.height() * 0.6f) * (1 - datas.get(j).get(i).getValue() / maxValueOfY + 0.2f)));
+                        linesArea.top + (linesArea.height() * (0.8f - spaceMin)) * (1 - datas.get(j).get(i).getValue() / maxValueOfY + spaceMax)));
 
                 if (i == datas.get(0).size() - 1) {
                     maxOffset = Math.abs(datas.get(j).get(i).getXY().x) - linesArea.width() * 0.5f - linesArea.left;
-//                    maxOffset = Math.abs(datas.get(j).get(i).getXY().x) - linesArea.left;
+                    maxOffset = -maxOffset;
                 }
             }
         }
     }
 
-    /**
-     * 取消所有正在执行的动画，若存在的话;
-     * 在 重新填充数据 / dettach-view 时调用
-     */
-    private void cancelAllAnims() {
-        // 不使用ViewRootImpl的getHandler()，否则影响其事件分发
-        handler.removeCallbacksAndMessages(null);
-        scroller.abortAnimation();
-        if (clickHintAnimator != null && clickHintAnimator.isRunning()) {
-            clickHintAnimator.removeAllUpdateListeners();
-            clickHintAnimator.cancel();
-            hintPaint.setAlpha(100);
-            clickHintAnimator = null;
-        }
-        if (!animators.isEmpty()) {
-            for (int i = 0; i < animators.size(); i++) {
-                animators.get(i).removeAllUpdateListeners();
-                if (animators.get(i).isRunning()) {
-                    animators.get(i).cancel();
-                }
-            }
-            animators.clear();
-        }
-        if (!datas.isEmpty()) {
-            for (List<Unit> line : datas.values()) {
-                for (int i = 0; i < line.size(); i++) {
-                    line.get(i).cancelToEndAnim();
-                }
-            }
-        }
-        for (int i = 0; i < paths.size(); i++) {
-            paths.get(i).reset();
-        }
-        invalidate();
-    }
-
-    // 每个1/x启动下一条line的动画
-    private int percentOfStartNextLineAnim = 3;
-
-    /**
-     * 约定每间隔一组数据遍历总时间的一半就启动下一组数据的遍历
-     *
-     * @return 遍历时间+最后一组数据的等待时间+最后一个点的动画时间+缓冲时间
-     */
-    private long calcTotalCost() {
-        if (datas.isEmpty() || datas.get(0).isEmpty()) return 0;
-        long oneLineCost = calcVisibleLineCost();
-        return oneLineCost + oneLineCost / percentOfStartNextLineAnim * (datas.size() - 1) + Unit.DURATION + 16;
-    }
-
-    /**
-     * 一条线遍历完的时间，
-     *
-     * @return
-     */
-    private long calcVisibleLineCost() {
-        if (intervalOfAnimCost > 0) {
-            if (maxOfVisible < datas.get(0).size()) {
-                return maxOfAnimCost;
-            }
-            long oneLineCost = intervalOfAnimCost * (datas.get(0).size() - 1);
-            oneLineCost = Math.min(maxOfAnimCost, oneLineCost);
-            return oneLineCost;
-        } else {
-            return 0;
-        }
-    }
-
-    private void showWithAnims() {
-        if (datas.isEmpty()) return;
-        curAnimLine = 0;
-        startTimeOfAnim = System.currentTimeMillis();
-        int[] suitEdge = findSuitEdgeInVisual();
-
-        // 重置所有可见点的percent
-        for (int i = suitEdge[0]; i <= suitEdge[1]; i++) {
-            for (List<Unit> item : datas.values()) {
-                item.get(i).setPercent(0);
-            }
-        }
-        startLinesAnimOrderly(suitEdge[0], suitEdge[1]);
-        autoInvalidate();
-    }
-
-    /**
-     * 开启自动刷新
-     */
-    private void autoInvalidate() {
-        isAniming = true;
-        invalidate();
-        if (System.currentTimeMillis() - startTimeOfAnim > calcTotalCost()) {
-            isAniming = false;
-            return;
-        }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                autoInvalidate();
-            }
-        }, 16);
-    }
-
-    /**
-     * 间隔指定时间依次启动每条线
-     */
-    private void startLinesAnimOrderly(final int startIndex, final int endIndex) {
-        startLineAnim(startIndex, endIndex);
-        if (curAnimLine >= datas.size() - 1) return;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                curAnimLine++;
-                startLinesAnimOrderly(startIndex, endIndex);
-            }
-        }, calcVisibleLineCost() / percentOfStartNextLineAnim);
-    }
-
-    /**
-     * 依次启动指定label的线的每个可见点的动画；
-     *
-     * @param startIndex
-     * @param endIndex
-     */
-    private void startLineAnim(final int startIndex, final int endIndex) {
-        final List<Unit> line = datas.get(curAnimLine);
-        long duration = calcVisibleLineCost();
-        if (duration > 0) {
-            ValueAnimator animator = ValueAnimator.ofInt(startIndex, endIndex);
-            animator.setDuration(duration);
-            animator.setInterpolator(linearInterpolator);
-            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    for (int i = startIndex; i <= (Integer) animation.getAnimatedValue(); i++) {
-                        line.get(i).startAnim(pointInterpolator);
-                    }
-                }
-            });
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    for (int i = startIndex; i <= endIndex; i++) {
-                        line.get(i).startAnim(pointInterpolator);
-                    }
-                }
-            });
-            animator.start();
-            animators.add(animator);
-        } else {
-            for (int i = startIndex; i <= endIndex; i++) {
-                line.get(i).startAnim(pointInterpolator);
-            }
-        }
-    }
 
     /**
      * 重置相关状态
@@ -1243,7 +787,6 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         offset = 0;
         realBetween = 0;
         suitEdge = null;
-        clickIndexs = null;
         datas.clear();
     }
 
@@ -1314,9 +857,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         this.hintColor = hintColor;
         hintPaint.setColor(hintColor);
         if (!datas.isEmpty()) {
-            if (clickIndexs != null) {
-                postInvalidate();
-            }
+            postInvalidate();
         }
     }
 
@@ -1389,17 +930,17 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
      *
      * @param isFill 默认为false
      */
-    public void setLineForm(int index, boolean isFill) {
-        if (isFill) {
-            basePaint.setStyle(Paint.Style.FILL);
-        } else {
-            basePaint.setStyle(Paint.Style.STROKE);
-        }
+    public void setLineForm(final int index, final boolean isFill) {
         if (!datas.isEmpty()) {
             // 同时更新当前已存在的paint
-            forceToDraw = true;
-            paints.get(index).setStyle(basePaint.getStyle());
-            postInvalidate();
+            postAction(new Runnable() {
+                @Override
+                public void run() {
+                    forceToDraw = true;
+                    paints.get(index % datas.size()).setStyle(isFill ? Paint.Style.FILL : Paint.Style.STROKE);
+                    postInvalidate();
+                }
+            });
         }
     }
 
@@ -1413,19 +954,23 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         basePaint.setPathEffect(lineStyle == DASHED ? new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
         if (!datas.isEmpty()) {
             // 同时更新当前已存在的paint
-            postAction(new Runnable() {
-                @Override
-                public void run() {
-                    forceToDraw = true;
-                    paints.get(index).setPathEffect(basePaint.getPathEffect());
-                    invalidate();
-                }
-            });
+            forceToDraw = true;
+            paints.get(index % datas.size()).setPathEffect(basePaint.getPathEffect());
+            postInvalidate();
         }
     }
 
     public boolean isLineDashed() {
         return basePaint.getPathEffect() != null;
+    }
+
+
+    /**
+     * 图形上下显示的区域
+     */
+    public void setSpaceMaxMin(float max, float min) {
+        this.spaceMax = max;
+        this.spaceMin = min;
     }
 
     /**
@@ -1456,54 +1001,16 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
         postInvalidate();
     }
 
-    public int[] getClickIndexs() {
-        return clickIndexs == null ? new int[]{} : clickIndexs;
+    /**
+     * 设置辅助线
+     */
+    public void setlimitLabels(Map<Float, String> limits) {
+        this.limits = limits;
+        invalidate();
     }
 
-
-    //    /**
-//     * 本方式仅支持一条线，若需要支持多条线，请采用Builder方式
-//     *
-//     * @param line
-//     */
-//    public void feedWithAnim(List<Unit> line) {
-//        if (line == null || line.isEmpty()) return;
-//        final Map<Integer, List<Unit>> entry = new HashMap<>();
-//        entry.put(0, line);
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                feedInternal(entry, Arrays.asList(buildNewPaint()), true);
-//            }
-//        });
-//    }
-//
-//    /**
-//     * 本方式仅支持一条线，若需要支持多条线，请采用Builder方式
-//     *
-//     * @param line
-//     */
-//    public void feed(List<Unit> line) {
-//        if (line == null || line.isEmpty()) return;
-//        final Map<Integer, List<Unit>> entry = new HashMap<>();
-//        entry.put(0, line);
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                feedInternal(entry, Arrays.asList(buildNewPaint()), false);
-//            }
-//        });
-//    }
-
-    public void anim() {
-        if (datas.isEmpty()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                cancelAllAnims();
-                showWithAnims();
-            }
-        });
+    public int[] getClickIndexs() {
+        return clickIndexs == null ? new int[]{} : clickIndexs;
     }
 
     public void postAction(Runnable runnable) {
@@ -1511,7 +1018,7 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
     }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 多条线的情况应该采用该构建方式
     public static class LineBuilder {
@@ -1554,14 +1061,14 @@ public class SuitLines extends View implements GestureDetector.OnGestureListener
             for (int i = 0; i < datas.size(); i++) {
                 Paint paint = suitLines.buildNewPaint();
                 paint.setPathEffect(datas.get(i).get(0).getLineStyle() == DASHED ? new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
+//                paint.setStyle(datas.get(i).get(0).isFill() ? Paint.Style.FILL : Paint.Style.STROKE);
                 tmpPaints.add(i, paint);
             }
 
             suitLines.postAction(new Runnable() {
                 @Override
                 public void run() {
-                    suitLines.feedInternal(datas, tmpPaints, needAnim, colors);
-
+                    suitLines.feedInternal(datas, tmpPaints, colors);
                 }
             });
         }

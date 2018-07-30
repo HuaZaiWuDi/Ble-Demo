@@ -34,6 +34,7 @@ public interface Key {
     String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";//跳转制定页面
 
     String BUNDLE_SPORTING_DATE = "BUNDLE_SPORTING_DATE";//运动的日期
+    String BUNDLE_WEIGHT_GID = "BUNDLE_SPORTING_DATE";//体重的GID
 
     String BUNDLE_IS_CONNECT = "BUNDLE_IS_CONNECT";//传递蓝牙的链接状态
 

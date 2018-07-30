@@ -69,6 +69,10 @@ public class SpalshActivity extends BaseActivity {
         initUserInfo();
         initData();
 
+//        Bundle bundle = new Bundle();
+//        bundle.putString(Key.BUNDLE_FRAGMENT, WeightAddFragment.class.getSimpleName());
+//        RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
+
     }
 
     private void initUserInfo() {

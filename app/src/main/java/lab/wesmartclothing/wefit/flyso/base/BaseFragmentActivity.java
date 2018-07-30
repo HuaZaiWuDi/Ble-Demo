@@ -15,6 +15,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 
 /**
@@ -44,7 +45,7 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         QMUIStatusBarHelper.translucent(this); // 沉浸式状态栏
-
+        QMUIStatusBarHelper.setStatusBarLightMode(this);
         mContext = this;
         mActivity = this;
         RxActivityUtils.addActivity(this);
@@ -61,6 +62,8 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
                 startFragment(WeightRecordFragment.getInstance());
             else if (fragmentName.equals(SmartClothingFragment.class.getSimpleName()))
                 startFragment(SmartClothingFragment.getInstance());
+            else if (fragmentName.equals(WeightAddFragment.class.getSimpleName()))
+                startFragment(WeightAddFragment.getInstance());
         }
     }
 

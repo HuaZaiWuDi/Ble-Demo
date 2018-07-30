@@ -254,22 +254,25 @@ public class Slimming2Fragment extends BaseAcFragment {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = new Gson().fromJson(string, UserInfo.class);
 
-        mTvUserName.setText(info.getUserName());
-        Glide.with(mActivity).load(info.getUserImg())
-                .asBitmap()
-                .placeholder(R.mipmap.userimg)
-                .into(mIvUserImg);
+        if (info != null) {
+            mTvUserName.setText(info.getUserName());
+            mTvUserName2.setText(info.getUserName());
+            Glide.with(mActivity).load(info.getUserImg())
+                    .asBitmap()
+                    .placeholder(R.mipmap.userimg)
+                    .into(mIvUserImg);
+
+            Glide.with(mActivity).load(info.getUserImg())
+                    .asBitmap()
+                    .placeholder(R.mipmap.userimg)
+                    .into(mIvUserImg2);
+        }
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
         if (!RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_clothingMAC))
                 && !RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutBind.setVisibility(View.GONE);
         }
 
-        Glide.with(mActivity).load(info.getUserImg())
-                .asBitmap()
-                .placeholder(R.mipmap.userimg)
-                .into(mIvUserImg2);
-        mTvUserName2.setText(info.getUserName());
         mCollapsingTopbarLayout.setScrimUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -281,7 +284,6 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void initChart(BarLineChartBase lineChartBase) {
         lineChartBase.setEnabled(false);
         lineChartBase.setTouchEnabled(false);//可以点击
-        lineChartBase.getDescription().setEnabled(false);
         lineChartBase.setMaxVisibleValueCount(60);
         lineChartBase.getLegend().setEnabled(false);
         lineChartBase.getDescription().setEnabled(false);
@@ -346,7 +348,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         if (bean != null && bean.getAthleticsInfoList().size() != 0) {
             List<FirstPageBean.AthleticsInfoListBean> list = bean.getAthleticsInfoList();
             calendar.setTimeInMillis(list.get(0).getAthlDate());
-            max = bean.getPeakValue() == 0 ? 3000 : bean.getPeakValue();
+            max = bean.getPeakValue() == 0 ? 3000 : (int) (bean.getPeakValue() * 1.3f);
             colors[6] = R.color.red;
             int size = list.size();
             for (int i = 6; i >= 0; i--) {
@@ -573,12 +575,11 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void notifyData(FirstPageBean bean) {
         setDefaultBarData(bean);
         setLineChartData(bean);
+
         mTvBreakfastKcal.setText(bean.getBreakfast() + "");
         mTvLunchKcal.setText(bean.getLunch() + "");
         mTvDinnerKcal.setText(bean.getDinner() + "");
         mTvMealKcal.setText(bean.getSnacks() + "");
-        mTvHeatTitle.setText(bean.getAbleIntake() >= 0 ? R.string.can_eatHeat : R.string.EatMore);
-        mTvKcal.setText(Math.abs(bean.getAbleIntake()) + "");
 
         mTvKcal.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mTvHeatUnit.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
@@ -601,28 +602,35 @@ public class Slimming2Fragment extends BaseAcFragment {
             if (bean.getWeightInfo().getBodyFat() != 0) {
                 mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
             }
+
+            mTvHeatTitle.setText(bean.getAbleIntake() >= 0 ? R.string.can_eatHeat : R.string.EatMore);
+            mTvKcal.setText(Math.abs(bean.getAbleIntake()) + "");
+
+            if (!RxDataUtils.isNullString(bean.getSickLevel())) {
+                mIvHealthyLevel.switchLevel(bean.getSickLevel());
+            }
+            if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
+                mTvRisk.setText(bean.getLevelDesc());
+            }
+
+            int targetProgress = (int) (bean.getComplete() * 100);
+            mProWeight.setProgress(targetProgress);
+            mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
+
+            if (bean.getInitialWeight() != 0) {
+                mTvWeightStart.setText(bean.getInitialWeight() + "kg");
+            }
+            if (bean.getTargetWeight() != 0) {
+                mTvWeightEnd.setText(bean.getTargetWeight() + "kg");
+            } else if (bean.getTargetWeight() == 0) {
+                //TODO 提示需要录入目标体重
+            }
         }
-        if (!RxDataUtils.isNullString(bean.getSickLevel())) {
-            mIvHealthyLevel.switchLevel(bean.getSickLevel());
-        }
-        if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
-            mTvRisk.setText(bean.getLevelDesc());
-        }
-        int targetProgress = (int) (bean.getComplete() * 100);
-        mProWeight.setProgress(targetProgress);
-        mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
 
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
         mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
 
-        if (bean.getInitialWeight() != 0) {
-            mTvWeightStart.setText(bean.getInitialWeight() + "kg");
-        }
-        if (bean.getTargetWeight() != 0) {
-            mTvWeightEnd.setText(bean.getTargetWeight() + "kg");
-        } else if (bean.getTargetWeight() == 0) {
-            //TODO 提示需要录入目标体重
-        }
+
         int heatProgress = (int) (bean.getIntakePercent() * 100);
         mCircleProgressBar.setProgress(heatProgress == 0 ? 1 : heatProgress);
         int size = bean.getAthleticsInfoList().size();

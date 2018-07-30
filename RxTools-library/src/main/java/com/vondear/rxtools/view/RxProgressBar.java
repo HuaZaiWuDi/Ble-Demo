@@ -144,9 +144,9 @@ public class RxProgressBar extends View implements Runnable {
         textRect = new Rect();
         bgRectf = new RectF(borderWidth, borderWidth, getMeasuredWidth() - borderWidth, getMeasuredHeight() - borderWidth);
 
-        if(isStop){
+        if (isStop) {
             progressColor = pauseColor;
-        } else{
+        } else {
             progressColor = loadingColor;
         }
 
@@ -171,7 +171,7 @@ public class RxProgressBar extends View implements Runnable {
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
         int height = 0;
-        switch (heightSpecMode){
+        switch (heightSpecMode) {
             case MeasureSpec.AT_MOST:
                 height = dp2px(DEFAULT_HEIGHT_DP);
                 break;
@@ -182,7 +182,7 @@ public class RxProgressBar extends View implements Runnable {
         }
         setMeasuredDimension(widthSpecSize, height);
 
-        if(pgBitmap == null){
+        if (pgBitmap == null) {
             init();
         }
 
@@ -198,7 +198,7 @@ public class RxProgressBar extends View implements Runnable {
         //进度
         drawProgress(canvas);
 
-         //进度text
+        //进度text
         drawProgressText(canvas);
 
         //变色处理
@@ -207,6 +207,7 @@ public class RxProgressBar extends View implements Runnable {
 
     /**
      * 边框
+     *
      * @param canvas
      */
     private void drawBackGround(Canvas canvas) {
@@ -227,7 +228,7 @@ public class RxProgressBar extends View implements Runnable {
         pgCanvas.drawColor(progressColor);
         pgCanvas.restore();
 
-        if(!isStop){
+        if (!isStop) {
             pgPaint.setXfermode(xfermode);
             pgCanvas.drawBitmap(flikerBitmap, flickerLeft, 0, pgPaint);
             pgPaint.setXfermode(null);
@@ -241,6 +242,7 @@ public class RxProgressBar extends View implements Runnable {
 
     /**
      * 进度提示文本
+     *
      * @param canvas
      */
     private void drawProgressText(Canvas canvas) {
@@ -256,6 +258,7 @@ public class RxProgressBar extends View implements Runnable {
 
     /**
      * 变色处理
+     *
      * @param canvas
      */
     private void drawColorProgressText(Canvas canvas) {
@@ -265,7 +268,7 @@ public class RxProgressBar extends View implements Runnable {
         float xCoordinate = (getMeasuredWidth() - tWidth) / 2;
         float yCoordinate = (getMeasuredHeight() + tHeight) / 2;
         float progressWidth = (progress / maxProgress) * getMeasuredWidth();
-        if(progressWidth > xCoordinate){
+        if (progressWidth > xCoordinate) {
             canvas.save(Canvas.CLIP_SAVE_FLAG);
             float right = Math.min(progressWidth, xCoordinate + tWidth * 1.1f);
             canvas.clipRect(xCoordinate, 0, right, getMeasuredHeight());
@@ -274,9 +277,9 @@ public class RxProgressBar extends View implements Runnable {
         }
     }
 
-    public void setProgress(float progress){
-        if(!isStop){
-            if(progress < maxProgress){
+    public void setProgress(float progress) {
+        if (!isStop) {
+            if (progress < maxProgress) {
                 this.progress = progress;
             } else {
                 this.progress = maxProgress;
@@ -288,7 +291,7 @@ public class RxProgressBar extends View implements Runnable {
 
     private void setFinish(boolean stop) {
         isStop = stop;
-        if(isStop){
+        if (isStop) {
             progressColor = finishColor;
             thread.interrupt();
         } else {
@@ -301,7 +304,7 @@ public class RxProgressBar extends View implements Runnable {
 
     public void setStop(boolean stop) {
         isStop = stop;
-        if(isStop){
+        if (isStop) {
             progressColor = pauseColor;
             thread.interrupt();
         } else {
@@ -317,9 +320,9 @@ public class RxProgressBar extends View implements Runnable {
         setFinish(true);
     }
 
-    public void toggle(){
-        if(!isFinish){
-            if(isStop){
+    public void toggle() {
+        if (!isFinish) {
+            if (isStop) {
                 setStop(false);
             } else {
                 setStop(true);
@@ -331,16 +334,16 @@ public class RxProgressBar extends View implements Runnable {
     public void run() {
         int width = flikerBitmap.getWidth();
         try {
-            while (!isStop && !thread.isInterrupted()){
+            while (!isStop && !thread.isInterrupted()) {
                 flickerLeft += dp2px(5);
                 float progressWidth = (progress / maxProgress) * getMeasuredWidth();
-                if(flickerLeft >= progressWidth){
+                if (flickerLeft >= progressWidth) {
                     flickerLeft = -width;
                 }
                 postInvalidate();
                 Thread.sleep(20);
             }
-        }catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -348,7 +351,7 @@ public class RxProgressBar extends View implements Runnable {
     /**
      * 重置
      */
-    public void reset(){
+    public void reset() {
         setStop(true);
         progress = 0;
         isFinish = false;
@@ -372,21 +375,21 @@ public class RxProgressBar extends View implements Runnable {
     }
 
     private String getProgressText() {
-        String text= "";
-        if(!isFinish){
-            if(!isStop){
+        String text = "";
+        if (!isFinish) {
+            if (!isStop) {
                 text = "下载中" + progress + "%";
             } else {
                 text = "继续";
             }
-        } else{
+        } else {
             text = "下载完成";
         }
 
         return text;
     }
 
-    private int dp2px(int dp){
+    private int dp2px(int dp) {
         float density = getContext().getResources().getDisplayMetrics().density;
         return (int) (dp * density);
     }

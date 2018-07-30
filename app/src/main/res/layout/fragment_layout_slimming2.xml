@@ -45,7 +45,7 @@
                     android:layout_marginBottom="26dp"
                     android:layout_marginLeft="@dimen/dimen_16"
                     android:layout_marginRight="@dimen/dimen_16"
-                    android:src="@mipmap/app_name"
+                    android:src="@mipmap/userimg"
                     app:qmui_corner_radius="@dimen/dimen_32"/>
 
 
@@ -178,7 +178,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_alignParentBottom="true"
-                    android:src="@mipmap/app_name"
+                    android:src="@mipmap/userimg"
                     app:qmui_is_circle="true"/>
 
 

@@ -32,7 +32,7 @@ public class DecimalScaleRulerView extends View {
     private float mMaxValue = 100;
     private float mMinValue = 0;
     private int mItemSpacing;
-    private int mPerSpanValue = 1;
+    private int mPerSpanValue = 1;//每个点的间隔倍数
     private int mMaxLineHeight;
     private int mMiddleLineHeight;
     private int mMinLineHeight;
@@ -53,7 +53,7 @@ public class DecimalScaleRulerView extends View {
     @ColorInt
     private int selectLineColor = 0X80222222;
 
-    private String label = "";
+    private String unit = "";
 
     private int mTotalLine;
     private int mMaxOffset;
@@ -61,6 +61,7 @@ public class DecimalScaleRulerView extends View {
     private int mLastX, mMove;
     private OnValueChangeListener mListener;
 
+    private boolean isDecimal = true;//是否显示小数
 
     public DecimalScaleRulerView(Context context) {
         this(context, null);
@@ -101,9 +102,12 @@ public class DecimalScaleRulerView extends View {
     }
 
     public void setTextLabel(String label) {
-        this.label = label;
+        this.unit = label;
     }
 
+    public void setDecimal(boolean equidistant) {
+        isDecimal = equidistant;
+    }
 
     public void setColor(@ColorInt int lineColor, @ColorInt int textColor, @ColorInt int selectLineColor) {
         mTextPaint.setColor(textColor);
@@ -180,8 +184,13 @@ public class DecimalScaleRulerView extends View {
             mLinePaint.setAlpha(alpha);
             canvas.drawLine(left, 0, left, height, mLinePaint);
 
-            if (i % 10 == 0) { // 大指标,要标注文字
-                value = String.valueOf((int) (mMinValue + i * mPerSpanValue / 10)) + label;
+            if (isDecimal && i % 10 == 0) { // 大指标,要标注文字
+                value = String.valueOf((int) (mMinValue + i * mPerSpanValue / 10)) + unit;
+                mTextPaint.setAlpha(alpha);
+                canvas.drawText(value, left - mTextPaint.measureText(value) / 2,
+                        height + mTextMarginTop + mTextHeight - DrawUtil.dip2px(3), mTextPaint);
+            } else if (!isDecimal) {
+                value = String.valueOf((int) (mMinValue + i * mPerSpanValue / 10)) + unit;
                 mTextPaint.setAlpha(alpha);
                 canvas.drawText(value, left - mTextPaint.measureText(value) / 2,
                         height + mTextMarginTop + mTextHeight - DrawUtil.dip2px(3), mTextPaint);

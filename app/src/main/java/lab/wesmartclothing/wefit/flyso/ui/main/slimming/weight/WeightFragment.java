@@ -358,7 +358,7 @@ public class WeightFragment extends BaseAcFragment {
 
                         List<WeightDataBean.WeightListBean.ListBean> list = bean.getWeightList().getList();
 
-                        tv_idealWeight.setText(bean.getTargetWeight() + "kg");
+//                        tv_idealWeight.setText(bean.getTargetWeight() + "kg");
 
                         if (list.size() <= 0) {
                             if (!bean.getWeightList().isHasNextPage()) {

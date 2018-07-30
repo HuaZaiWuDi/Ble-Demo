@@ -34,15 +34,41 @@ public class Unit implements Comparable<Unit>, Cloneable {
     private float value;
     // 当前点的额外信息（可选，x轴）
     private String extX;
+
+    /**
+     * 是否显示点
+     */
+    private boolean showPoint;
     /**
      * 当前点的坐标信息,都是相对的canvas而不是linesArea
      */
     private PointF xy;
 
+    /**
+     * 线条类型：曲线、线段
+     */
     private int lineType = SuitLines.SEGMENT;
 
+
+    /**
+     * 线条主题:实线、曲线
+     */
     private int lineStyle = SuitLines.SOLID;
 
+
+    /**
+     * 是否填充阴影
+     **/
+    private boolean isFill;
+
+
+    public boolean isFill() {
+        return isFill;
+    }
+
+    public void setFill(boolean fill) {
+        isFill = fill;
+    }
 
     public int getLineStyle() {
         return lineStyle;
@@ -68,6 +94,15 @@ public class Unit implements Comparable<Unit>, Cloneable {
 
     public void setLineType(int lineType) {
         this.lineType = lineType;
+    }
+
+
+    public boolean isShowPoint() {
+        return showPoint;
+    }
+
+    public void setShowPoint(boolean showPoint) {
+        this.showPoint = showPoint;
     }
 
     /**

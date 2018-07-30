@@ -121,6 +121,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         if (state == BluetoothAdapter.STATE_OFF) {
             checkStatus();
         } else if (state == BluetoothAdapter.STATE_ON) {
+            mLayoutStrongTip.setVisibility(View.GONE);
             //测试使用
             startFragment(SportingFragment.getInstance());
         }
@@ -246,7 +247,6 @@ public class SmartClothingFragment extends BaseAcFragment {
             mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mLayoutStrongTip.setVisibility(View.GONE);
                     BleTools.getBleManager().enableBluetooth();
                 }
             });
@@ -254,6 +254,8 @@ public class SmartClothingFragment extends BaseAcFragment {
     }
 
     private void initLineChart(final List<AthleticsInfo.PageInfoBean.ListBean> list) {
+
+
         SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
@@ -263,15 +265,21 @@ public class SmartClothingFragment extends BaseAcFragment {
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             unit_time.setLineStyle(SuitLines.DASHED);
+            unit_time.setShowPoint(true);
+            unit_heat.setShowPoint(true);
+
             lines_Heat.add(unit_heat);
             lines_Time.add(unit_time);
         }
         builder.add(lines_Heat, Color.parseColor("#F2A49C"));
         builder.add(lines_Time, Color.parseColor("#F2A49C"));
+
+        mSuitlines.setSpaceMaxMin(0.2f, 0.2f);
+
         builder.build(mSuitlines, false);
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
             @Override
-            public void selectItem(int valueX, String labelX) {
+            public void selectItem(int valueX) {
                 AthleticsInfo.PageInfoBean.ListBean bean = list.get(valueX);
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(bean.getCalorie() + "");

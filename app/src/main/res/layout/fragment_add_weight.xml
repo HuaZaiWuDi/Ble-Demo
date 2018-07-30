@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Gray"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dimen_70"
+        android:text="正在测量体重"
+        android:textColor="@color/white"
+        android:textSize="@dimen/dimen_15"/>
+
+
+    <RelativeLayout
+        android:id="@+id/layout_addWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="125dp">
+
+        <lab.wesmartclothing.wefit.flyso.view.RoundDisPlayView
+            android:id="@+id/mRoundDisPlayView"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_centerHorizontal="true"
+            tools:visibility="visible"
+            />
+
+        <TextView
+            android:id="@+id/tv_targetWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="69dp"
+            android:maxLength="5"
+            android:text="53.0"
+            android:textColor="@color/white"
+            android:textSize="48sp"
+            tools:text="53.0"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_targetWeight"
+            android:layout_marginBottom="@dimen/dimen_8"
+            android:layout_marginLeft="@dimen/dimen_8"
+            android:layout_toRightOf="@+id/tv_targetWeight"
+            android:text="kg"
+            android:textColor="@color/GrayWrite"
+            android:textSize="18sp"/>
+
+
+        <TextView
+            android:id="@+id/tv_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_targetWeight"
+            android:layout_centerHorizontal="true"
+            android:text="身体成分测量中…"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_36"
+        android:layout_below="@+id/layout_addWeight"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34dp"
+        android:gravity="center_vertical">
+
+
+        <View
+            android:layout_width="@dimen/dimen_35"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_centerVertical="true"
+            android:background="@color/GrayWrite"/>
+
+        <TextView
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:maxLines="2"
+            android:paddingLeft="@dimen/dimen_15"
+            android:paddingRight="@dimen/dimen_15"
+            android:text="请赤脚站在体脂称上，两脚自然分布两侧 确保脚底干净，避免过于潮湿"
+            android:textColor="@color/GrayWrite"
+            android:textSize="11sp"/>
+
+
+        <View
+            android:layout_width="@dimen/dimen_35"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@color/GrayWrite"/>
+    </RelativeLayout>
+
+
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/btn_forget"
+        android:layout_width="90dp"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="65dp"
+        android:text="放弃"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:qmui_backgroundColor="@color/GrayWrite"
+        app:qmui_borderColor="@color/GrayWrite"
+        app:qmui_radius="4dp"/>
+
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/btn_save"
+        android:layout_width="90dp"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="65dp"
+        android:text="储存体重"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:qmui_backgroundColor="@color/green_61D97F"
+        app:qmui_borderColor="@color/green_61D97F"
+        app:qmui_radius="@dimen/dimen_4"/>
+
+</RelativeLayout>

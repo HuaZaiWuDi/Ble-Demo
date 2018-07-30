@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/white"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/Gray"
+        tools:visibility="visible"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="139dp"
+        android:padding="16dp">
+
+
+        <TextView
+            android:id="@+id/tv_bodyFat"
+            android:layout_width="155dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:drawablePadding="8dp"
+            android:drawableTop="@mipmap/man_1_1"
+            android:gravity="center"
+            android:text="标准"
+            android:textColor="@color/Gray"
+            android:textSize="13sp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/tv_bodyFat"
+            android:gravity="left"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2018年07月08日 16:02"
+                android:textColor="@color/GrayWrite"
+                android:textSize="11sp"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/tv_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="56.2"
+                    android:textColor="@color/green_61D97F"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_weight"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/tv_weight"
+                    android:text="kg"
+                    android:textColor="@color/green_61D97F"
+                    android:textSize="13sp"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_Details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="体型判断通过分析身高、体重、体脂率等身体数据综合得出，仅供参考。"
+                android:textColor="@color/GrayWrite"
+                android:textSize="11sp"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/bg_F7F7F9"/>
+
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -2,33 +2,44 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listen.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Receiver;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,10 +49,17 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import tech.linjiang.suitlines.SuitLines;
+import tech.linjiang.suitlines.Unit;
 
 /**
  * Created by jk on 2018/7/26.
@@ -69,8 +87,8 @@ public class WeightRecordFragment extends BaseAcFragment {
     ImageView mIvBodyFat;
     @BindView(R.id.tv_bodyFatTitle)
     TextView mTvBodyFatTitle;
-    @BindView(R.id.tv_Heat_Kcal)
-    TextView mTvHeatKcal;
+    @BindView(R.id.tv_bodyFat)
+    TextView mTvBodyFat;
     @BindView(R.id.iv_bmi)
     ImageView mIvBmi;
     @BindView(R.id.tv_bmi_title)
@@ -94,7 +112,22 @@ public class WeightRecordFragment extends BaseAcFragment {
     Unbinder unbinder;
     @BindView(R.id.tv_settingTarget)
     TextView mTvSettingTarget;
+    @BindView(R.id.layout_Tips)
+    LinearLayout mLayoutTips;
+    @BindView(R.id.layout_weight)
+    LinearLayout mLayoutWeight;
 
+    //监听系统蓝牙开启
+    @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
+    void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
+        if (state == BluetoothAdapter.STATE_OFF) {
+            checkStatus();
+        } else if (state == BluetoothAdapter.STATE_ON) {
+            mLayoutStrongTip.setVisibility(View.GONE);
+            //测试使用
+            startFragment(SportingFragment.getInstance());
+        }
+    }
 
     @Bean
     QNBleTools mQNBleTools;
@@ -104,6 +137,7 @@ public class WeightRecordFragment extends BaseAcFragment {
     }
 
     private Button btn_Connect;
+    private String currentGid;
 
     @Override
     protected View onCreateView() {
@@ -113,10 +147,96 @@ public class WeightRecordFragment extends BaseAcFragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        initData();
+        super.onStart();
+    }
+
+    @Override
+    public void onDestroy() {
+        MyAPP.QNapi.setDataListener(null);
+        super.onDestroy();
+    }
+
     private void initView() {
         initTopBar();
         checkStatus();
         initBleCallBack();
+    }
+
+    private void initData() {
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightInfo(1, 20))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("加载数据：" + s);
+                        WeightDataBean bean = new Gson().fromJson(s, WeightDataBean.class);
+                        notifyData(bean);
+
+                    }
+
+                    @Override
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
+                    }
+                });
+    }
+
+    private void notifyData(WeightDataBean bean) {
+        RxLogUtils.d("是否有目标体重：" + bean.isTargetWeight());
+        //是否录入体重
+        mLayoutTips.setVisibility(!bean.isTargetWeight() ? View.GONE : View.VISIBLE);
+        mTvSettingTarget.setVisibility(!bean.isTargetWeight() ? View.GONE : View.VISIBLE);
+        mLayoutWeight.setVisibility(!bean.isTargetWeight() ? View.VISIBLE : View.GONE);
+
+        Map<Float, String> map = new HashMap<>();
+        map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
+        mSuitlines.setlimitLabels(map);
+
+        if (bean.getWeightList() != null) {
+            initLineChart(bean);
+        }
+    }
+
+
+    private void initLineChart(final WeightDataBean bean) {
+        final List<WeightDataBean.WeightListBean.ListBean> list = bean.getWeightList().getList();
+        SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
+        List<Unit> lines_Heat = new ArrayList<>();
+        List<Unit> lines_Time = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
+            RxLogUtils.d("体重数据：getWeight：" + itemBean.getWeight() + "getBodyFat：" + itemBean.getBodyFat());
+            Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
+            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat() * 0.5f, "");
+            unit_weight.setShowPoint(true);
+
+            unit_bodyFat.setShowPoint(false);
+            unit_bodyFat.setFill(true);
+            lines_Heat.add(unit_weight);
+            lines_Time.add(unit_bodyFat);
+        }
+        builder.add(lines_Heat, 0x7fffffff);
+        builder.add(lines_Time, 0x7fffffff);
+
+        mSuitlines.setSpaceMaxMin(0.3f, 0f);
+        builder.build(mSuitlines, false);
+        mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
+            @Override
+            public void selectItem(int valueX) {
+                mTvCurWeight.setText((float) list.get(valueX).getWeight() + "");
+                mTvBodyFat.setText((float) list.get(valueX).getBodyFat() + "");
+                mTvMuscle.setText((float) list.get(valueX).getMuscle() + "");
+                mTvBmi.setText((float) list.get(valueX).getBmi() + "");
+                mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
+                currentGid = list.get(valueX).getGid();
+            }
+        });
     }
 
     private void checkStatus() {
@@ -151,7 +271,7 @@ public class WeightRecordFragment extends BaseAcFragment {
             mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mLayoutStrongTip.setVisibility(View.GONE);
+
                     BleTools.getBleManager().enableBluetooth();
                 }
             });
@@ -165,23 +285,22 @@ public class WeightRecordFragment extends BaseAcFragment {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
                 RxLogUtils.d("体重秤实时重量：" + v);
+                startFragment(WeightAddFragment.getInstance());
             }
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-//                RxLogUtils.d("实时的稳定测量数据是否有效：" + qnScaleData.isValid());
+                RxLogUtils.d("实时的稳定测量数据是否有效：");
                 for (QNScaleItemData item : qnScaleData.getAllItem()) {
                     RxLogUtils.d("---------------------");
                     RxLogUtils.d("实时的稳定测量数据：" + item.getName());
                     RxLogUtils.d("实时的稳定测量数据：" + item.getType());
                     RxLogUtils.d("实时的稳定测量数据：" + item.getValue());
                 }
-
-//                isWeightValid(qnScaleData);
             }
 
             @Override
-            public void onGetStoredScale(QNBleDevice qnBleDevice, List<QNScaleStoreData> list) {
+            public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
                 RxLogUtils.d("历史数据：" + list.size());
                 if (list.size() > 0) {
                     mLayoutStrongTip.setVisibility(View.VISIBLE);
@@ -193,7 +312,11 @@ public class WeightRecordFragment extends BaseAcFragment {
                     mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            startFragment(SportingFragment.getInstance());
+                            String s = new Gson().toJson(list);
+                            RxLogUtils.d("体重信息:" + s);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
+                            RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
                         }
                     });
                 }
@@ -201,9 +324,16 @@ public class WeightRecordFragment extends BaseAcFragment {
         });
     }
 
-    @OnClick({R.id.layout_sportTip, R.id.tv_settingTarget})
+    @OnClick({R.id.layout_sportTip, R.id.tv_settingTarget, R.id.layout_sports})
     public void onViewClicked(View view) {
-        startFragment(SettingTargetFragment.getInstance());
+        if (view.getId() == R.id.layout_sports) {
+            Bundle args = new Bundle();
+            args.putString(Key.BUNDLE_WEIGHT_GID, currentGid);
+            QMUIFragment fragment = BodyDataFragment.getInstance();
+            fragment.setArguments(args);
+            startFragment(fragment);
+        } else
+            startFragment(SettingTargetFragment.getInstance());
     }
 
 

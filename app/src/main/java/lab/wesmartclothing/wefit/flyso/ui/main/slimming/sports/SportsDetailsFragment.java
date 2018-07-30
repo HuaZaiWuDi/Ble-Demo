@@ -106,8 +106,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
         JsonObject object = new JsonObject();
         object.addProperty("athlDate", currentTime + "");
 
-//        boolean isToday = RxFormat.setFormatDate(currentTime, RxFormat.Date).equals(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
-        boolean isToday = true;
+        boolean isToday = RxFormat.setFormatDate(currentTime, RxFormat.Date).equals(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.athleticsDetail(body))

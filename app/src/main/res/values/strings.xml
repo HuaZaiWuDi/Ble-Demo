@@ -27,7 +27,7 @@
 
     <string name="cancel" translatable="false">取消</string>
     <string name="ok" translatable="false">完成</string>
-
+    <string name="confirm">确认</string>
 
     <string name="unit_g" translatable="false">克</string>
     <string name="unit_kg" translatable="false">千克</string>
@@ -229,11 +229,36 @@
     </string-array>
 
 
+    <string-array name="bodyShape">
+        <item>隐形肥胖</item>
+        <item>偏胖</item>
+        <item>肥胖</item>
+        <item>缺乏运动</item>
+        <item>标准</item>
+        <item>体格强健</item>
+        <item>偏瘦</item>
+        <item>偏瘦肌肉</item>
+        <item>健美肌肉</item>
+
+    </string-array>
+
+
     <string-array name="sports_title">
         <item>运动时长</item>
         <item>消耗热量</item>
         <item>平均心率</item>
         <item>最高心率</item>
+    </string-array>
+
+    <string-array name="weightDatas">
+        <item>体脂率</item>
+        <item>BMI</item>
+        <item>内脏脂肪等级</item>
+        <item>肌肉量</item>
+        <item>基础代谢率</item>
+        <item>水分</item>
+        <item>骨量</item>
+        <item>身体年龄</item>
     </string-array>
 
 </resources>

@@ -276,7 +276,7 @@ public class AthleticsInfo {
             private long createTime;
             private int createUser;
             private int duration;
-            private int gid;
+            private String gid;
             private int kilometers;
             private int maxHeart;
             private int minHeart;
@@ -350,11 +350,11 @@ public class AthleticsInfo {
                 this.duration = duration;
             }
 
-            public int getGid() {
+            public String getGid() {
                 return gid;
             }
 
-            public void setGid(int gid) {
+            public void setGid(String gid) {
                 this.gid = gid;
             }
 

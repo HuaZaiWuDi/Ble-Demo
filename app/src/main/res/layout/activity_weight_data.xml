@@ -6,47 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_color"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".ui.main.slimming.weight.WeightDataActivity">
 
-
-    <RelativeLayout
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/barHeight"
-        android:background="@drawable/shape_bg_statu_bar"
-        android:paddingBottom="@dimen/d_30"
-        android:paddingTop="90px">
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/white"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/Gray"
+        tools:visibility="visible"
+        />
 
-
-        <LinearLayout
-            android:id="@+id/back"
-            android:layout_width="@dimen/d_200"
-            android:layout_height="match_parent"
-            android:gravity="bottom">
-
-            <ImageView
-                android:layout_width="@dimen/d_40"
-                android:layout_height="@dimen/d_80"
-                android:layout_marginLeft="@dimen/d_30"
-                android:layout_marginTop="@dimen/d_20"
-                android:src="@mipmap/back_icon"/>
-
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="bottom"
-            android:text="@string/weight_data"
-            android:textColor="@color/white"
-            android:textSize="@dimen/d_60"/>
-
-
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_receive"
@@ -65,21 +40,5 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/tv_received"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d_100"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/d_50"
-        android:text="已领取的体重数据（0）"
-        android:textColor="@color/textHeatColor"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/mRecycler_Received"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
-
-    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

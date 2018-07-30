@@ -14,7 +14,7 @@ public class WeightDataBean {
      */
 
     private WeightListBean weightList;
-    private double targetWeight;
+    private boolean targetWeight;
     private double normWeight;
 
     public WeightListBean getWeightList() {
@@ -25,11 +25,11 @@ public class WeightDataBean {
         this.weightList = weightList;
     }
 
-    public double getTargetWeight() {
+    public boolean isTargetWeight() {
         return targetWeight;
     }
 
-    public void setTargetWeight(double targetWeight) {
+    public void setTargetWeight(boolean targetWeight) {
         this.targetWeight = targetWeight;
     }
 
