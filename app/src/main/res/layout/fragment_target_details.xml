@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/iv_target"
-                android:text="距离目标"
+                android:text="目标"
                 android:textColor="@color/GrayWrite"/>
 
             <RelativeLayout
@@ -111,6 +111,7 @@
                     android:text="00"
                     android:textColor="@color/orange_FF7200"
                     android:textSize="24sp"
+                    android:textStyle="bold"
                     tools:text="53.0"/>
 
                 <TextView
@@ -161,6 +162,7 @@
                     android:text="00"
                     android:textColor="@color/orange_FF7200"
                     android:textSize="24sp"
+                    android:textStyle="bold"
                     tools:text="53.0"/>
 
                 <TextView

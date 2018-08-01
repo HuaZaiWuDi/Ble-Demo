@@ -16,16 +16,15 @@ public class BodyLevel0Bean extends AbstractExpandableItem<BodyLevel1Bean> imple
     private double bodyValue;
     private boolean status;
 
-    public BodyLevel0Bean(int bodyDataImg, String bodyData, String unit, double bodyValue, boolean status) {
+    public double getBodyValue() {
+        return bodyValue;
+    }
+
+    public BodyLevel0Bean(int bodyDataImg, String bodyData, String unit, double bodyValue) {
         this.bodyDataImg = bodyDataImg;
         this.bodyData = bodyData;
         this.unit = unit;
         this.bodyValue = bodyValue;
-        this.status = status;
-    }
-
-    public double getBodyValue() {
-        return bodyValue;
     }
 
     public void setBodyValue(double bodyValue) {
@@ -63,6 +62,7 @@ public class BodyLevel0Bean extends AbstractExpandableItem<BodyLevel1Bean> imple
     public void setStatus(boolean status) {
         this.status = status;
     }
+
 
     @Override
     public int getLevel() {

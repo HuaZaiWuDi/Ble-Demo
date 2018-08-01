@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.graphics.Typeface;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -63,6 +64,7 @@ public class BodyDataFragment extends BaseAcFragment {
         return new BodyDataFragment();
     }
 
+    private ExpandableItemAdapter adapter;
     private String gid;
 
     @Override
@@ -74,10 +76,14 @@ public class BodyDataFragment extends BaseAcFragment {
     }
 
     private void initView() {
+        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        mTvWeight.setTypeface(typeface);
         gid = getArguments() == null ? "" : getArguments().getString(Key.BUNDLE_WEIGHT_GID);
+        RxLogUtils.d("GID：" + gid);
         initTopBar();
         initRecyclerView();
         initData();
+
     }
 
     private void initData() {
@@ -86,7 +92,7 @@ public class BodyDataFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstCache()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -95,6 +101,8 @@ public class BodyDataFragment extends BaseAcFragment {
                         WeightDetailsBean detailsBean = new Gson().fromJson(s, WeightDetailsBean.class);
                         mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getWeightDate(), "yyyy年MM月dd日 HH:mm"));
                         mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
+                        WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
+                        notifyData(weightInfo);
                     }
 
                     @Override
@@ -105,34 +113,47 @@ public class BodyDataFragment extends BaseAcFragment {
     }
 
     private void initRecyclerView() {
-        notifyData();
 
         mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        ExpandableItemAdapter adapter = new ExpandableItemAdapter(multiItermLists);
-        View footerView = LayoutInflater.from(mContext).inflate( R.layout.footer_body_data, null);
-        LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
-        layoutDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteWeight();
-            }
-        });
-        adapter.addFooterView(footerView);
+        adapter = new ExpandableItemAdapter(multiItermLists);
         mMRecyclerView.setAdapter(adapter);
     }
 
-    private void notifyData() {
+
+    private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
         String[] titles = getResources().getStringArray(R.array.weightDatas);
+        String[] units = {"%", "", "级", "kg", "kcal", "%", "kg", "岁"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
                 R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
+        double[] bodyDatas = new double[8];
+        if (weightInfo != null) {
+            bodyDatas[0] = weightInfo.getBodyFat();
+            bodyDatas[1] = weightInfo.getBmi();
+            bodyDatas[2] = weightInfo.getVisfat();
+            bodyDatas[3] = weightInfo.getMuscle();
+            bodyDatas[4] = weightInfo.getBmr();
+            bodyDatas[5] = weightInfo.getWater();
+            bodyDatas[6] = weightInfo.getBone();
+            bodyDatas[7] = weightInfo.getBodyAge();
+
+            View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_body_data, null);
+            LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
+            layoutDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteWeight();
+                }
+            });
+            adapter.addFooterView(footerView);
+
+        }
 
         for (int i = 0; i < titles.length; i++) {
-            BodyLevel0Bean level0Bean = new BodyLevel0Bean(imgs[i], titles[i], "", 0f, i == 3);
-            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(0);
+            BodyLevel0Bean level0Bean = new BodyLevel0Bean(imgs[i], titles[i], units[i], bodyDatas[i]);
+            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean((float) bodyDatas[i]);
             level0Bean.addSubItem(bodyLevel1Bean);
             multiItermLists.add(level0Bean);
         }
-
     }
 
     private void deleteWeight() {

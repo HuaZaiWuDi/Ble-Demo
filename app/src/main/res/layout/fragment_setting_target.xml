@@ -79,10 +79,11 @@
 
 
     <TextView
+        android:id="@+id/tv_bestWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_16"
-        android:text="你的最佳体重：53-69 kg"
+        android:text="@string/bestWeight"
         android:textColor="@color/GrayWrite"
         android:textSize="13sp"/>
 

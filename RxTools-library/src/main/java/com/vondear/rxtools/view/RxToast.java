@@ -59,12 +59,12 @@ public class RxToast {
     private static long mExitTime;
     private static int gravity = Gravity.CENTER;//中间显示
 
-    public static void normal(@NonNull String message) {
-        normal(getContext(), message, Toast.LENGTH_SHORT, null, false).show();
-    }
-
     public static void normal(@NonNull String message, Drawable icon) {
         normal(getContext(), message, Toast.LENGTH_SHORT, icon, true).show();
+    }
+
+    public static void normal(@NonNull String message) {
+        normal(getContext(), message, Toast.LENGTH_SHORT, null, false).show();
     }
 
     public static void normal(@NonNull String message, int duration) {

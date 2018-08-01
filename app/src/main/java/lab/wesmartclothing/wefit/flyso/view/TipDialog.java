@@ -16,14 +16,9 @@ public class TipDialog {
     private QMUITipDialog tipDialog;
     private Handler mHandler = new Handler();
     private Context mContext;
-    private String Content;
 
     public TipDialog(Context mContext) {
         this.mContext = mContext;
-    }
-
-    public void setContent(String content) {
-        Content = content;
     }
 
 
@@ -59,7 +54,7 @@ public class TipDialog {
         tipDialog.show();
     }
 
-    public void showSuccess(String content) {
+    public void showSuccess(String content, long timeOut) {
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
                 .setTipWord(content)
@@ -68,7 +63,7 @@ public class TipDialog {
         tipDialog.show();
     }
 
-    public void showFail(String content) {
+    public void showFail(String content, long timeOut) {
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
                 .setTipWord(content)
@@ -77,12 +72,12 @@ public class TipDialog {
         tipDialog.show();
     }
 
-    public void showInfo(String content) {
+    public void showInfo(String content, long timeOut) {
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_INFO)
                 .setTipWord(content)
                 .create();
-        setDuration(defaultTimeout);
+        setDuration(timeOut);
         tipDialog.show();
     }
 

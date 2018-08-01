@@ -38,6 +38,16 @@ public interface Key {
 
     String BUNDLE_IS_CONNECT = "BUNDLE_IS_CONNECT";//传递蓝牙的链接状态
 
+    //设置体重目标传递参数
+    String BUNDLE_HAS_DAYS = "BUNDLE_HAS_DAYS";
+    String BUNDLE_INITIAL_WEIGHT = "BUNDLE_INITIAL_WEIGHT";
+    String BUNDLE_STILL_NEED = "BUNDLE_STILL_NEED";
+    String BUNDLE_TARGET_WEIGHT = "BUNDLE_TARGET_WEIGHT";
+
+    //最近一次上秤的真实体重
+    String BUNDLE_LAST_WEIGHT = "BUNDLE_LAST_WEIGHT";
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////
@@ -78,6 +88,7 @@ public interface Key {
     String LoginType_WEXIN = "WeChat";
     String LoginType_QQ = "QQ";
     String LoginType_WEIBO = "MicroBlog";
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY

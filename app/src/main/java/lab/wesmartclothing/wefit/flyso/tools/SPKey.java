@@ -23,7 +23,7 @@ public interface SPKey {
 
     String SP_clothingMAC = "SP_clothingMAC";
 
-    //真实体重
+    //真实体重(最近的一次称重的体重)
     String SP_realWeight = "SP_realWeight";
 
     //理想体重

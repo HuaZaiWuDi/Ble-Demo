@@ -44,15 +44,16 @@
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
         android:id="@+id/btn_status"
-        android:layout_width="36dp"
+        android:layout_width="wrap_content"
         android:layout_height="15dp"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/iv_switchLayout"
-        tools:text="偏高"
+        android:minWidth="36dp"
         android:textColor="@color/orange_FF7200"
         android:textSize="11sp"
         app:qmui_borderColor="@color/orange_FF7200"
-        app:qmui_radius="2dp"/>
+        app:qmui_radius="2dp"
+        tools:text="偏高"/>
 
 
     <ImageView
@@ -65,9 +66,9 @@
         tools:background="@mipmap/icon_down"/>
 
     <View
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
         android:background="@color/line"/>
 
 

@@ -41,6 +41,7 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -92,7 +93,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     @BindView(R.id.tv_weight_end)
     TextView mTvWeightEnd;
     @BindView(R.id.pro_weight)
-    QMUIProgressBar mProWeight;
+    RxRoundProgressBar mProWeight;
     @BindView(R.id.layout_progress)
     RelativeLayout mLayoutProgress;
     @BindView(R.id.iv_notify)
@@ -286,7 +287,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         lineChartBase.setTouchEnabled(false);//可以点击
         lineChartBase.setMaxVisibleValueCount(60);
         lineChartBase.getLegend().setEnabled(false);
-        lineChartBase.getDescription().setEnabled(false);
+        lineChartBase.getDescription().setText("");
         lineChartBase.setDrawGridBackground(false);
         lineChartBase.setBackgroundColor(getResources().getColor(R.color.gray_FBFBFC));
         XAxis xAxis = lineChartBase.getXAxis();
@@ -554,7 +555,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void getFirstPageData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.cacheAndRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

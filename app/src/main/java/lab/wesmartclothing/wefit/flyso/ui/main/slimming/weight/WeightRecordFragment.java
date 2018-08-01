@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -24,10 +25,10 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.yolanda.health.qnblesdk.listen.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
-import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -112,6 +113,14 @@ public class WeightRecordFragment extends BaseAcFragment {
     Unbinder unbinder;
     @BindView(R.id.tv_settingTarget)
     TextView mTvSettingTarget;
+    @BindView(R.id.tv_target)
+    TextView tvTarget;
+    @BindView(R.id.tv_startWeight)
+    TextView tvStartWeight;
+    @BindView(R.id.tv_endWeight)
+    TextView tvEndWeight;
+    @BindView(R.id.pro_limit)
+    RxRoundProgressBar proLimit;
     @BindView(R.id.layout_Tips)
     LinearLayout mLayoutTips;
     @BindView(R.id.layout_weight)
@@ -138,6 +147,13 @@ public class WeightRecordFragment extends BaseAcFragment {
 
     private Button btn_Connect;
     private String currentGid;
+    private boolean isSettingTargetWeight = false;
+    //传递数据给我目标详情界面
+    private double initialWeight = 0;
+    private double stillNeed = 0;
+    private double targetWeight = 0;
+    private int hasDays = 0;
+    private double lastWeight = 0;//最后一条体重数据
 
     @Override
     protected View onCreateView() {
@@ -160,6 +176,15 @@ public class WeightRecordFragment extends BaseAcFragment {
     }
 
     private void initView() {
+        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        mTvCurWeight.setTypeface(typeface);
+        mTvBodyFat.setTypeface(typeface);
+        mTvMuscle.setTypeface(typeface);
+        mTvBmi.setTypeface(typeface);
+        tvTarget.setTypeface(typeface);
+        tvStartWeight.setTypeface(typeface);
+        tvEndWeight.setTypeface(typeface);
+
         initTopBar();
         checkStatus();
         initBleCallBack();
@@ -176,7 +201,6 @@ public class WeightRecordFragment extends BaseAcFragment {
                         RxLogUtils.d("加载数据：" + s);
                         WeightDataBean bean = new Gson().fromJson(s, WeightDataBean.class);
                         notifyData(bean);
-
                     }
 
                     @Override
@@ -188,11 +212,30 @@ public class WeightRecordFragment extends BaseAcFragment {
     }
 
     private void notifyData(WeightDataBean bean) {
-        RxLogUtils.d("是否有目标体重：" + bean.isTargetWeight());
+        isSettingTargetWeight = bean.isTargetSet();
+        initialWeight = bean.getInitialWeight();
+        hasDays = bean.getHasDays();
+        stillNeed = bean.getStillNeed();
+        targetWeight = bean.getTargetWeight();
+        lastWeight = bean.getWeight();
+        RxLogUtils.d("是否有目标体重：" + bean.isTargetSet());
         //是否录入体重
-        mLayoutTips.setVisibility(!bean.isTargetWeight() ? View.GONE : View.VISIBLE);
-        mTvSettingTarget.setVisibility(!bean.isTargetWeight() ? View.GONE : View.VISIBLE);
-        mLayoutWeight.setVisibility(!bean.isTargetWeight() ? View.VISIBLE : View.GONE);
+        mLayoutTips.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
+        mTvSettingTarget.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
+        mLayoutWeight.setVisibility(bean.isTargetSet() ? View.VISIBLE : View.GONE);
+
+        RxTextUtils.getBuilder("需减 ")
+                .append((float) bean.getStillNeed() + "")
+                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
+                .setProportion(1.4f)
+                .append(" kg,剩余 ")
+                .append(bean.getHasDays() + "")
+                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
+                .setProportion(1.4f)
+                .append(" 天").into(tvTarget);
+        tvStartWeight.setText((float) bean.getInitialWeight() + "kg");
+        tvEndWeight.setText((float) bean.getTargetWeight() + "kg");
+        proLimit.setProgress((float) (bean.getComplete() * 100));
 
         Map<Float, String> map = new HashMap<>();
         map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
@@ -285,18 +328,16 @@ public class WeightRecordFragment extends BaseAcFragment {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
                 RxLogUtils.d("体重秤实时重量：" + v);
-                startFragment(WeightAddFragment.getInstance());
+                Bundle bundle = new Bundle();
+                bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
+                QMUIFragment instance = WeightAddFragment.getInstance();
+                instance.setArguments(bundle);
+                startFragment(instance);
             }
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：");
-                for (QNScaleItemData item : qnScaleData.getAllItem()) {
-                    RxLogUtils.d("---------------------");
-                    RxLogUtils.d("实时的稳定测量数据：" + item.getName());
-                    RxLogUtils.d("实时的稳定测量数据：" + item.getType());
-                    RxLogUtils.d("实时的稳定测量数据：" + item.getValue());
-                }
             }
 
             @Override
@@ -332,8 +373,31 @@ public class WeightRecordFragment extends BaseAcFragment {
             QMUIFragment fragment = BodyDataFragment.getInstance();
             fragment.setArguments(args);
             startFragment(fragment);
-        } else
-            startFragment(SettingTargetFragment.getInstance());
+
+        } else {
+            if (initialWeight == 0) {
+                RxToast.normal("请上称录入初始体重后再设置目标");
+                return;
+            }
+            if (isSettingTargetWeight) {
+                //传递目标体重信息
+                Bundle args = new Bundle();
+                args.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
+                args.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initialWeight);
+                args.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
+                args.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
+                QMUIFragment fragment = TargetDetailsFragment.getInstance();
+                fragment.setArguments(args);
+                startFragment(fragment);
+            } else {
+                //传递初始体重信息
+                Bundle args = new Bundle();
+                args.putDouble(Key.BUNDLE_INITIAL_WEIGHT, lastWeight);
+                QMUIFragment fragment = SettingTargetFragment.getInstance();
+                fragment.setArguments(args);
+                startFragment(fragment);
+            }
+        }
     }
 
 

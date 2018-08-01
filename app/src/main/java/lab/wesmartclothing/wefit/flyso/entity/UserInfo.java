@@ -26,7 +26,7 @@ public class UserInfo implements Serializable {
     private int height = 175;
     private String phone;
     private String scalesMacAddr;
-    private int sex = 1;
+    private int sex = 1;//1男2女0未知（未录入）
     private String signature;
     private int targetWeight;
     private String userImg;

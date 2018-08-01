@@ -86,33 +86,33 @@
                         android:textSize="8sp"/>
 
 
-                    <!--<com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar-->
-                    <!--android:id="@+id/pro_weight"-->
-                    <!--android:layout_width="110dp"-->
-                    <!--android:layout_height="6dp"-->
-                    <!--android:layout_below="@+id/tv_weight_start"-->
-                    <!--android:layout_marginTop="@dimen/dimen_3"-->
-                    <!--android:max="100"-->
-                    <!--android:progress="30"-->
-                    <!--app:rcBackgroundColor="@color/GrayWrite"-->
-                    <!--app:rcMax="100"-->
-                    <!--app:rcProgress="0"-->
-                    <!--app:rcProgressColor="@color/white"-->
-                    <!--app:rcRadius="3dp"-->
-                    <!--/>-->
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                    android:id="@+id/pro_weight"
+                    android:layout_width="110dp"
+                    android:layout_height="6dp"
+                    android:layout_below="@+id/tv_weight_start"
+                    android:layout_marginTop="@dimen/dimen_3"
+                    android:max="100"
+                    android:progress="30"
+                    app:rcBackgroundColor="@color/GrayWrite"
+                    app:rcMax="100"
+                    app:rcProgress="0"
+                    app:rcProgressColor="@color/white"
+                    app:rcRadius="3dp"
+                    />
 
-                    <com.qmuiteam.qmui.widget.QMUIProgressBar
-                        android:id="@+id/pro_weight"
-                        android:layout_width="110dp"
-                        android:layout_height="6dp"
-                        android:layout_below="@+id/tv_weight_start"
-                        android:layout_marginTop="@dimen/dimen_3"
-                        app:qmui_background_color="@color/GrayWrite"
-                        app:qmui_max_value="100"
-                        app:qmui_progress_color="@color/white"
-                        app:qmui_stroke_round_cap="true"
-                        app:qmui_type="type_rect"
-                        app:qmui_value="0"/>
+                    <!--<com.qmuiteam.qmui.widget.QMUIProgressBar-->
+                        <!--android:id="@+id/pro_weight"-->
+                        <!--android:layout_width="110dp"-->
+                        <!--android:layout_height="6dp"-->
+                        <!--android:layout_below="@+id/tv_weight_start"-->
+                        <!--android:layout_marginTop="@dimen/dimen_3"-->
+                        <!--app:qmui_background_color="@color/GrayWrite"-->
+                        <!--app:qmui_max_value="100"-->
+                        <!--app:qmui_progress_color="@color/white"-->
+                        <!--app:qmui_stroke_round_cap="true"-->
+                        <!--app:qmui_type="type_rect"-->
+                        <!--app:qmui_value="0"/>-->
 
 
                 </RelativeLayout>

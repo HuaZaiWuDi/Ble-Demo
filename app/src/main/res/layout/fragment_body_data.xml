@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:text="体型判断通过分析身高、体重、体脂率等身体数据综合得出，仅供参考。"
                 android:textColor="@color/GrayWrite"
-                android:textSize="11sp"/>
+                android:textSize="10sp"/>
 
 
         </LinearLayout>
@@ -104,8 +104,6 @@
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:background="@color/bg_F7F7F9"/>
-
-
 
 
     <android.support.v7.widget.RecyclerView

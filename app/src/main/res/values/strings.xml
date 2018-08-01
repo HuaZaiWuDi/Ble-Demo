@@ -188,6 +188,7 @@
     <string name="checkHistoryWeight">您有新的体重数据，点击领取</string>
     <string name="completeDaytarget">恭喜，今天的运动目标已经完成，要再接再厉呀！</string>
     <string name="gotoSporting">今天还差%1$d\tkcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。</string>
+    <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

@@ -1,13 +1,18 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listen.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
@@ -23,7 +28,17 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.flyso.view.RoundDisPlayView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/7/27.
@@ -50,6 +65,10 @@ public class WeightAddFragment extends BaseAcFragment {
         return new WeightAddFragment();
     }
 
+    //最近一次体重
+    private double lastWeight;
+    private QNScaleData mQnScaleData;
+
     @Override
     protected View onCreateView() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_add_weight, null);
@@ -60,12 +79,21 @@ public class WeightAddFragment extends BaseAcFragment {
 
     @Override
     public void onDestroy() {
+        mMRoundDisPlayView.stopAnimation();
         MyAPP.QNapi.setDataListener(null);
         super.onDestroy();
     }
 
     private void initView() {
+        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        mTvTargetWeight.setTypeface(typeface);
         initBleCallBack();
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            lastWeight = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
+        }
+
     }
 
 
@@ -83,18 +111,40 @@ public class WeightAddFragment extends BaseAcFragment {
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：");
-                mTvTargetWeight.setText((float) qnScaleData.getAllItem().get(1).getValue() + "");
+                final float realWeight = (float) qnScaleData.getAllItem().get(1).getValue();
+                mTvTargetWeight.setText(realWeight + "");
                 mTvTip.setText("身体成分测量中...");
+                mTvTitle.setText("正在测量身体成分");
                 mMRoundDisPlayView.startAnimation();
                 mMRoundDisPlayView.showPoint(true);
                 mMRoundDisPlayView.startAnim();
 
+                //强行延时三秒用来展示动画效果
+                mMRoundDisPlayView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTvTip.setVisibility(View.INVISIBLE);
+                        mBtnForget.setVisibility(View.VISIBLE);
+                        mBtnSave.setVisibility(View.VISIBLE);
+                        mMRoundDisPlayView.startAnimation();
+                        //TODO 这里暂时通过返回的数据的个数判断是否有效
+                        if (qnScaleData.getAllItem().size() < 5) {
+                            //无效
+                            mTvTitle.setText("测量身体成分失败");
+                        } else if (Math.abs(realWeight - lastWeight) > 2) {
+                            //无效
+                            mTvTitle.setText("测量数据和之前相差过大");
+                        } else {
+                            mQnScaleData = qnScaleData;
+                        }
+                    }
+                }, 3000);
 
                 for (QNScaleItemData item : qnScaleData.getAllItem()) {
                     RxLogUtils.d("---------------------");
-                    RxLogUtils.d("实时的稳定测量数据：" + item.getName());
-                    RxLogUtils.d("实时的稳定测量数据：" + item.getType());
-                    RxLogUtils.d("实时的稳定测量数据：" + item.getValue());
+                    RxLogUtils.d("实时的稳定测量数据：【名字】" + item.getName());
+                    RxLogUtils.d("实时的稳定测量数据：【类型】" + item.getType());
+                    RxLogUtils.d("实时的稳定测量数据：【值】" + item.getValue());
                 }
             }
 
@@ -110,15 +160,39 @@ public class WeightAddFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_forget:
-                mMRoundDisPlayView.stopAnimation();
-                mMRoundDisPlayView.showPoint(true);
-                mMRoundDisPlayView.startAnim();
+                popBackStack();
                 break;
             case R.id.btn_save:
-                mMRoundDisPlayView.stopAnimation();
-                mMRoundDisPlayView.showPoint(false);
-                mMRoundDisPlayView.stopAnimation();
+                saveWeight();
                 break;
         }
+    }
+
+    private void saveWeight() {
+        WeightAddBean bean = new WeightAddBean();
+        if (mQnScaleData == null) return;
+        for (QNScaleItemData item : mQnScaleData.getAllItem()) {
+            WeightTools.ble2Backstage(item, bean);
+        }
+
+        String s = new Gson().toJson(bean, WeightAddBean.class);
+
+        SPUtils.put(SPKey.SP_realWeight, (float) mQnScaleData.getItem(1).getValue());
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("添加体重：");
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+
     }
 }

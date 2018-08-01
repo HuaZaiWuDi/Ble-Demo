@@ -14,8 +14,31 @@ public class WeightDataBean {
      */
 
     private WeightListBean weightList;
-    private boolean targetWeight;
+    private double targetWeight;
     private double normWeight;
+    private double complete;
+    private int hasDays;
+    private double initialWeight;
+    private boolean targetSet;
+    private double stillNeed;
+    private double weight;
+
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public double getStillNeed() {
+        return stillNeed;
+    }
+
+    public void setStillNeed(double stillNeed) {
+        this.stillNeed = stillNeed;
+    }
 
     public WeightListBean getWeightList() {
         return weightList;
@@ -25,12 +48,44 @@ public class WeightDataBean {
         this.weightList = weightList;
     }
 
-    public boolean isTargetWeight() {
+    public double getTargetWeight() {
         return targetWeight;
     }
 
-    public void setTargetWeight(boolean targetWeight) {
+    public void setTargetWeight(double targetWeight) {
         this.targetWeight = targetWeight;
+    }
+
+    public double getComplete() {
+        return complete;
+    }
+
+    public void setComplete(double complete) {
+        this.complete = complete;
+    }
+
+    public int getHasDays() {
+        return hasDays;
+    }
+
+    public void setHasDays(int hasDays) {
+        this.hasDays = hasDays;
+    }
+
+    public double getInitialWeight() {
+        return initialWeight;
+    }
+
+    public void setInitialWeight(double initialWeight) {
+        this.initialWeight = initialWeight;
+    }
+
+    public boolean isTargetSet() {
+        return targetSet;
+    }
+
+    public void setTargetSet(boolean targetSet) {
+        this.targetSet = targetSet;
     }
 
     public double getNormWeight() {

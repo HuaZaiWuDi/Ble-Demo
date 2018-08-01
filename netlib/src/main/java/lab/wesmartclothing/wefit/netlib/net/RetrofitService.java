@@ -93,6 +93,9 @@ public interface RetrofitService {
     @POST("weight/setTargetWeight")
     Observable<String> setTargetWeight(@Body RequestBody body);
 
+    //设置目标体重
+    @POST("weight/fetchTargetWeight")
+    Observable<String> fetchTargetWeight();
 
     ///////////////////////////////////////////////////////////////////////////
     // 运动

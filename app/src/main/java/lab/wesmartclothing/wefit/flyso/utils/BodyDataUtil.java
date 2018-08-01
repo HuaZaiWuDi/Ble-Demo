@@ -1,47 +1,34 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import java.util.Map;
+
+import lab.wesmartclothing.wefit.flyso.entity.Healthy;
+
 /**
  * Created by jk on 2018/7/30.
  */
 public class BodyDataUtil {
 
+    private Map<Integer, Healthy> mHealthyMaps;
 
-    public BodyDataUtil() {
+    public BodyDataUtil(Map<Integer, Healthy> mHealthyMaps) {
+        this.mHealthyMaps = mHealthyMaps;
     }
 
 
-    public static int transformation(int index, double realValue) {
+    public int transformation(int index, double realValue) {
         int temp = 0;
-        switch (index) {
-            case 0:
-                temp = bmi(realValue, new double[]{21, 31, 36});
-                break;
-            case 1:
-                temp = bmi(realValue, new double[]{18.5, 25});
-                break;
-            case 2:
-                temp = bmi(realValue, new double[]{9, 11});
-                break;
-            case 3:
-                temp = bmi(realValue, new double[]{36.5, 42.5});
-                break;
-            case 4:
-                temp = (int) (realValue / (903 * 2) * 100);
-                break;
-            case 5:
-                temp = bmi(realValue, new double[]{45, 60});
-                break;
-            case 6:
-                temp = bmi(realValue, new double[]{2.0, 2.4});
-                break;
-            case 7:
-                temp = bmi(realValue, new double[]{20, 30, 40});
-                break;
+        if (index == 4) {
+            temp = (int) (realValue / (903 * 2) * 100);
+        } else {
+            temp = bmi(realValue, mHealthyMaps.get(index).getSections());
         }
+
         return temp;
     }
 
-    private static int bmi(double realValue, double[] section) {
+
+    private int bmi(double realValue, double[] section) {
 
         int temp = 0;
         if (section.length == 1)
@@ -75,5 +62,54 @@ public class BodyDataUtil {
         }
         return temp;
     }
+
+
+    public Object[] checkStatus(double realValue, int index) {
+        double[] section = mHealthyMaps.get(index).getSections();
+        String[] labels = mHealthyMaps.get(index).getLabels();
+        int[] colors = mHealthyMaps.get(index).getColors();
+
+        Object[] temps = new Object[2];
+        String temp = "";
+        int color = 0;
+        if (section.length == 1)
+            if (realValue < section[0]) {
+                temp = labels[0];
+                color = colors[0];
+            } else {
+                temp = labels[1];
+                color = colors[1];
+            }
+        else if (section.length == 2) {
+            if (realValue < section[0]) {
+                temp = labels[0];
+                color = colors[0];
+            } else if (realValue >= section[0] && realValue < section[1]) {
+                temp = labels[1];
+                color = colors[1];
+            } else {
+                temp = labels[2];
+                color = colors[2];
+            }
+        } else if (section.length == 3) {
+            if (realValue < section[0]) {
+                temp = labels[0];
+                color = colors[0];
+            } else if (realValue >= section[0] && realValue < section[1]) {
+                temp = labels[1];
+                color = colors[1];
+            } else if (realValue >= section[1] && realValue < section[2]) {
+                temp = labels[2];
+                color = colors[2];
+            } else {
+                color = colors[3];
+                temp = labels[3];
+            }
+        }
+        temps[0] = temp;
+        temps[1] = color;
+        return temps;
+    }
+
 
 }

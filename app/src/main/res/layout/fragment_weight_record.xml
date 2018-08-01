@@ -310,7 +310,6 @@
                             android:textStyle="bold"
                             tools:text="231.0"/>
 
-
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -428,7 +427,7 @@
                         android:layout_below="@+id/line"
                         android:layout_marginTop="@dimen/dimen_16"
                         android:orientation="vertical"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         tools:visibility="gone">
 
                         <TextView
@@ -455,13 +454,15 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/line"
                         android:layout_marginTop="@dimen/dimen_16"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
 
                         <TextView
+                            android:id="@+id/tv_target"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="需减 1.6 kg，剩余 18 天"
+                            android:text="需减 0.0 kg，剩余 0 天"
                             android:textColor="@color/Gray"
                             android:textSize="15dp"/>
 
