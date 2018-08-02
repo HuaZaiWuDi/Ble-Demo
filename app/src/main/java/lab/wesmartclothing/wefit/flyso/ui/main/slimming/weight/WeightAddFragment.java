@@ -77,23 +77,30 @@ public class WeightAddFragment extends BaseAcFragment {
         return view;
     }
 
+
     @Override
-    public void onDestroy() {
+    public void onStart() {
+        initBleCallBack();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
         mMRoundDisPlayView.stopAnimation();
         MyAPP.QNapi.setDataListener(null);
-        super.onDestroy();
+        super.onStop();
     }
+
 
     private void initView() {
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvTargetWeight.setTypeface(typeface);
-        initBleCallBack();
 
         Bundle bundle = getArguments();
         if (bundle != null) {
             lastWeight = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
         }
-
+        RxLogUtils.d("上一次体重数据：" + lastWeight);
     }
 
 
@@ -104,18 +111,26 @@ public class WeightAddFragment extends BaseAcFragment {
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
                 RxLogUtils.d("体重秤实时重量：" + v);
                 mTvTargetWeight.setText((float) v + "");
-                mTvTip.setText("称重中...");
-                mMRoundDisPlayView.startAnimation();
+
+                if (mTvTip.getVisibility() == View.INVISIBLE) {
+                    mTvTip.setVisibility(View.VISIBLE);
+                    mBtnForget.setVisibility(View.INVISIBLE);
+                    mBtnSave.setVisibility(View.INVISIBLE);
+
+                    mTvTip.setText("称重中...");
+                    mMRoundDisPlayView.showPoint(false);
+                    mMRoundDisPlayView.startAnimation();
+                }
             }
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：");
-                final float realWeight = (float) qnScaleData.getAllItem().get(1).getValue();
+                final float realWeight = (float) qnScaleData.getAllItem().get(0).getValue();
                 mTvTargetWeight.setText(realWeight + "");
                 mTvTip.setText("身体成分测量中...");
                 mTvTitle.setText("正在测量身体成分");
-                mMRoundDisPlayView.startAnimation();
+                mMRoundDisPlayView.stopAnimation();
                 mMRoundDisPlayView.showPoint(true);
                 mMRoundDisPlayView.startAnim();
 
@@ -126,17 +141,16 @@ public class WeightAddFragment extends BaseAcFragment {
                         mTvTip.setVisibility(View.INVISIBLE);
                         mBtnForget.setVisibility(View.VISIBLE);
                         mBtnSave.setVisibility(View.VISIBLE);
-                        mMRoundDisPlayView.startAnimation();
+                        mMRoundDisPlayView.stopAnimation();
                         //TODO 这里暂时通过返回的数据的个数判断是否有效
-                        if (qnScaleData.getAllItem().size() < 5) {
+                        if (qnScaleData.getItemValue(3) == 0) {
                             //无效
                             mTvTitle.setText("测量身体成分失败");
                         } else if (Math.abs(realWeight - lastWeight) > 2) {
                             //无效
                             mTvTitle.setText("测量数据和之前相差过大");
-                        } else {
-                            mQnScaleData = qnScaleData;
                         }
+                        mQnScaleData = qnScaleData;
                     }
                 }, 3000);
 
@@ -171,13 +185,13 @@ public class WeightAddFragment extends BaseAcFragment {
     private void saveWeight() {
         WeightAddBean bean = new WeightAddBean();
         if (mQnScaleData == null) return;
+        bean.setMeasureTime(System.currentTimeMillis() + "");
         for (QNScaleItemData item : mQnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);
         }
 
         String s = new Gson().toJson(bean, WeightAddBean.class);
-
-        SPUtils.put(SPKey.SP_realWeight, (float) mQnScaleData.getItem(1).getValue());
+        SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
@@ -186,6 +200,8 @@ public class WeightAddFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
+                        RxToast.normal("存储体重成功");
+                        popBackStack();
                     }
 
                     @Override

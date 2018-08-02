@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,79 +24,89 @@
         />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="目标体重"
-        android:textColor="@color/GrayWrite"/>
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_16">
-
-
-        <TextView
-            android:id="@+id/tv_targetWeight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLength="5"
-            android:text="00"
-            android:textColor="@color/orange_FF7200"
-            android:textSize="48sp"
-            tools:text="53.0"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_targetWeight"
-            android:layout_marginBottom="@dimen/dimen_8"
-            android:layout_marginLeft="@dimen/dimen_8"
-            android:layout_toRightOf="@+id/tv_targetWeight"
-            android:text="kg"
-            android:textColor="@color/GrayWrite"
-            android:textSize="18sp"/>
-
-    </RelativeLayout>
-
-    <com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView
-        android:id="@+id/ruler_weight"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="@dimen/dimen_40"/>
-
-
-    <TextView
-        android:id="@+id/tv_tips"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_40"
-        android:text="需减重 3.0 kg"
-        android:textColor="@color/GrayWrite"
-        android:textSize="15sp"/>
+        android:layout_below="@+id/QMUIAppBarLayout"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="目标体重"
+            android:textColor="@color/GrayWrite"/>
 
 
-    <TextView
-        android:id="@+id/tv_bestWeight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_16"
-        android:text="@string/bestWeight"
-        android:textColor="@color/GrayWrite"
-        android:textSize="13sp"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_16">
+
+
+            <TextView
+                android:id="@+id/tv_targetWeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="5"
+                android:text="00"
+                android:textColor="@color/orange_FF7200"
+                android:textSize="48sp"
+                tools:text="53.0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_targetWeight"
+                android:layout_marginBottom="@dimen/dimen_8"
+                android:layout_marginLeft="@dimen/dimen_8"
+                android:layout_toRightOf="@+id/tv_targetWeight"
+                android:text="kg"
+                android:textColor="@color/GrayWrite"
+                android:textSize="18sp"/>
+
+        </RelativeLayout>
+
+        <com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView
+            android:id="@+id/ruler_weight"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="@dimen/dimen_40"/>
+
+
+        <TextView
+            android:id="@+id/tv_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_40"
+            android:text="需减重 3.0 kg"
+            android:textColor="@color/GrayWrite"
+            android:textSize="15sp"/>
+
+
+        <TextView
+            android:id="@+id/tv_bestWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_16"
+            android:text="@string/bestWeight"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"/>
+    </LinearLayout>
 
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
         android:id="@+id/btn_nextStep"
         android:layout_width="195dp"
         android:layout_height="46dp"
-        android:layout_marginTop="145dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
         android:text="下一步"
         android:textColor="@color/white"
         android:textSize="18dp"
         app:qmui_backgroundColor="@color/orange_FF7200"
         app:qmui_borderColor="@color/orange_FF7200"/>
 
-</LinearLayout>
+</RelativeLayout>

@@ -44,6 +44,9 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
+//        //华为底部虚拟按键遮挡问题
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
         QMUIStatusBarHelper.translucent(this); // 沉浸式状态栏
         QMUIStatusBarHelper.setStatusBarLightMode(this);
         mContext = this;

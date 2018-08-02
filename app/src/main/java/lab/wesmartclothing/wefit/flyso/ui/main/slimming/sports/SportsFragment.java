@@ -55,7 +55,7 @@ import lab.wesmartclothing.wefit.flyso.entity.SportsListBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightInfoItem;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.ChartManager;
 import lab.wesmartclothing.wefit.flyso.view.SportsMarkerView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;

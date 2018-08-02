@@ -203,7 +203,7 @@ public class SuitLines extends View {
     /**
      * y轴的最小刻度值，保留一位小数
      */
-    private float minValueY;
+    private float minValueY = 0f;
 
     /**
      * 根据可见点数计算出的两点之间的距离
@@ -451,14 +451,14 @@ public class SuitLines extends View {
             //画线上的点
             drawPoint(canvas);
             drawClickHint(canvas);
-            Log.d("测试", "1111111111");
+//            Log.d("测试", "1111111111");
         } else if (!paths.isEmpty()) {
             // 因为手指或fling计算出的offset不是连续按1px递增/减的，即无法准确地确定当前suitEdge和linesArea之间的相对位置
             // 所以不适合直接加减suitEdge来划定数据区间
             drawLines(canvas, 0, datas.get(0).size() - 1);
             drawPoint(canvas);
             drawClickHint(canvas);
-            Log.d("测试", "22222222222");
+//            Log.d("测试", "22222222222");
         }
 
         // x 蓝色会稍增加
@@ -726,20 +726,24 @@ public class SuitLines extends View {
      */
     private void calcMaxUnit(Map<Integer, List<Unit>> datas) {
         // 先“扁平”
-        List<Unit> allUnits = new ArrayList<>();
+        List<Unit> allUnits_1 = new ArrayList<>();
+
         for (List<Unit> line : datas.values()) {
-            allUnits.addAll(line);
+            allUnits_1.addAll(line);
         }
+
         // 再拷贝，防止引用问题
-        List<Unit> bakUnits = new ArrayList<>();
-        for (int i = 0; i < allUnits.size(); i++) {
-            bakUnits.add(allUnits.get(i).clone());
+        List<Unit> bakUnits_1 = new ArrayList<>();
+
+        for (int i = 0; i < allUnits_1.size(); i++) {
+            bakUnits_1.add(allUnits_1.get(i).clone());
         }
+
         // 最后排序，得到最大值
-        Collections.sort(bakUnits);
-        Unit maxUnit = bakUnits.get(bakUnits.size() - 1);
-        minValueY = bakUnits.get(0).getValue();
-        maxValueOfY = maxUnit.getValue();
+        Collections.sort(bakUnits_1);
+
+        maxValueOfY = bakUnits_1.get(bakUnits_1.size() - 1).getValue();
+        minValueY = bakUnits_1.get(0).getValue();
     }
 
     /**
@@ -762,8 +766,8 @@ public class SuitLines extends View {
      * <br>同时得到了realBetween，maxOffset
      */
     private void calcUnitXY() {
-        int realNum = Math.min(datas.get(0).size(), maxOfVisible);
-        realBetween = linesArea.width() / (realNum - 1);
+//        int realNum = Math.min(datas.get(0).size(), maxOfVisible);
+        realBetween = linesArea.width() / maxOfVisible;
         for (int i = 0; i < datas.get(0).size(); i++) {
             for (int j = 0; j < datas.size(); j++) {
 

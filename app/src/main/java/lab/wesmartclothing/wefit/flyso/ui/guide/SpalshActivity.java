@@ -25,7 +25,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
-import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;

@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created by jk on 2018/7/27.
@@ -47,6 +49,10 @@ public class BodyFatFragment extends BaseAcFragment {
     }
 
     private void initView() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            lastIndex = bundle.getInt(Key.BUNDLE_BODY_INDEX);
+        }
         initTopBar();
         initRecyclerView();
         initData();

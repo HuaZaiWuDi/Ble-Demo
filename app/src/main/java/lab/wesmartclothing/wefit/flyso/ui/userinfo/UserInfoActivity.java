@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.ui.login;
+package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
 import android.graphics.Typeface;
 import android.os.Bundle;

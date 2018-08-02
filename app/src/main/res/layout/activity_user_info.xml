@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.login.UserInfoActivity">
+    tools:context=".ui.userinfo.UserInfoActivity">
 
 
     <com.qmuiteam.qmui.widget.QMUITopBar

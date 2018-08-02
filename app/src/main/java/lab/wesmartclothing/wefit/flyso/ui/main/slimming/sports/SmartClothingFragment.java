@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,21 +37,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
-import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import tech.linjiang.suitlines.SuitLines;
 import tech.linjiang.suitlines.Unit;
 
@@ -110,9 +105,30 @@ public class SmartClothingFragment extends BaseAcFragment {
         }
     }
 
+    //心率
+    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
+    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] heartRate) {
+        if (mLayoutStrongTip != null && mLayoutStrongTip.getVisibility() == View.GONE) {
+            mLayoutStrongTip.setVisibility(View.VISIBLE);
+            String checkSporting = getString(R.string.checkSporting);
+            SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
+                    .setForegroundColor(getResources().getColor(R.color.red))
+                    .setLength(9, checkSporting.length());
+            mBtnStrongTip.setText(builder);
+            mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startFragment(SportingFragment.getInstance());
+                }
+            });
+        }
+    }
+
+
     //监听系统蓝牙开启
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
     void CLOTHING_STOP() {
+        mLayoutStrongTip.setVisibility(View.GONE);
     }
 
     //监听系统蓝牙开启
@@ -122,8 +138,6 @@ public class SmartClothingFragment extends BaseAcFragment {
             checkStatus();
         } else if (state == BluetoothAdapter.STATE_ON) {
             mLayoutStrongTip.setVisibility(View.GONE);
-            //测试使用
-            startFragment(SportingFragment.getInstance());
         }
     }
 
@@ -149,7 +163,6 @@ public class SmartClothingFragment extends BaseAcFragment {
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvHeatKcal.setTypeface(typeface);
         mTvSportsTime.setTypeface(typeface);
-        initRxBus();
         checkStatus();
     }
 
@@ -164,7 +177,6 @@ public class SmartClothingFragment extends BaseAcFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RxBus.getInstance().unSubscribe(this);
     }
 
     private void initData() {
@@ -193,28 +205,6 @@ public class SmartClothingFragment extends BaseAcFragment {
                 });
     }
 
-    private void initRxBus() {
-        Disposable register = RxBus.getInstance().register(SportsDataTab.class, new Consumer<SportsDataTab>() {
-            @Override
-            public void accept(SportsDataTab sportsDataTab) throws Exception {
-                if (mLayoutStrongTip.getVisibility() == View.GONE) {
-                    mLayoutStrongTip.setVisibility(View.VISIBLE);
-                    String checkSporting = getString(R.string.checkSporting);
-                    SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
-                            .setForegroundColor(getResources().getColor(R.color.red))
-                            .setLength(9, checkSporting.length());
-                    mBtnStrongTip.setText(builder);
-                    mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startFragment(SportingFragment.getInstance());
-                        }
-                    });
-                }
-            }
-        });
-        RxBus.getInstance().addSubscription(this, register);
-    }
 
     private void checkStatus() {
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
@@ -254,8 +244,6 @@ public class SmartClothingFragment extends BaseAcFragment {
     }
 
     private void initLineChart(final List<AthleticsInfo.PageInfoBean.ListBean> list) {
-
-
         SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
@@ -263,7 +251,7 @@ public class SmartClothingFragment extends BaseAcFragment {
             AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
             RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "getDuration：" + bean.getDuration());
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
-            Unit unit_time = new Unit(bean.getDuration(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
+            Unit unit_time = new Unit(bean.getDuration() / 60, RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             unit_time.setLineStyle(SuitLines.DASHED);
             unit_time.setShowPoint(true);
             unit_heat.setShowPoint(true);
@@ -274,7 +262,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         builder.add(lines_Heat, Color.parseColor("#F2A49C"));
         builder.add(lines_Time, Color.parseColor("#F2A49C"));
 
-        mSuitlines.setSpaceMaxMin(0.2f, 0.2f);
+        mSuitlines.setSpaceMaxMin(0.2f, 0);
 
         builder.build(mSuitlines, false);
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
@@ -307,11 +295,13 @@ public class SmartClothingFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_sports:
-                Bundle args = new Bundle();
-                args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
-                QMUIFragment fragment = SportsDetailsFragment.getInstance();
-                fragment.setArguments(args);
-                startFragment(fragment);
+//                Bundle args = new Bundle();
+//                args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
+//                QMUIFragment fragment = SportsDetailsFragment.getInstance();
+//                fragment.setArguments(args);
+//                startFragment(fragment);
+
+                startFragment(SportingFragment.getInstance());
                 break;
         }
     }

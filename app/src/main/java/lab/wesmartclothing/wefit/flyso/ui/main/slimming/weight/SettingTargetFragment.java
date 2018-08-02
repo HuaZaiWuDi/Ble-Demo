@@ -99,7 +99,7 @@ public class SettingTargetFragment extends BaseAcFragment {
             //TODO 当前体重小于目标体重着
             tipDialog.showInfo("您当前体重小于标准体重，\n请设置目标体重~", 2000);
         }
-        String tips = "需减重 " + stillNeed + " kg";
+        String tips = "需减重 " + RxFormatValue.fromat4S5R(stillNeed, 1) + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                 .setProportion(1.4f)
@@ -108,11 +108,10 @@ public class SettingTargetFragment extends BaseAcFragment {
         mTvTips.setText(builder);
         tvBestWeight.setText(getString(R.string.bestWeight,
                 RxFormatValue.fromat4S5R(minWeight, 1), RxFormatValue.fromat4S5R(maxWeight, 1)));
-
     }
 
     private void initRuler(float weight) {
-        mTvTargetWeight.setText(weight + "");
+        mTvTargetWeight.setText(RxFormatValue.fromat4S5R(weight, 1) + "");
         mWeightRulerView.setTextLabel("kg");
         mWeightRulerView.setColor(getResources().getColor(R.color.GrayWrite),
                 getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.orange_FF7200));

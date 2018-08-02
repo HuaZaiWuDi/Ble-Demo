@@ -53,8 +53,7 @@ import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -133,9 +132,26 @@ public class WeightRecordFragment extends BaseAcFragment {
             checkStatus();
         } else if (state == BluetoothAdapter.STATE_ON) {
             mLayoutStrongTip.setVisibility(View.GONE);
-            //测试使用
-            startFragment(SportingFragment.getInstance());
+//            //测试使用
+//            startFragment(SportingFragment.getInstance());
         }
+    }
+
+    //体脂称连接状态
+    @Receiver(actions = Key.ACTION_SCALE_CONNECT)
+    void scaleIsConnect(@Receiver.Extra(Key.EXTRA_SCALE_CONNECT) boolean state) {
+        if (btn_Connect != null)
+            btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
+    }
+
+    //蓝牙秤状态改变(开始测量)
+    @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
+    void scaleStartMeasure() {
+        Bundle bundle = new Bundle();
+        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
+        QMUIFragment instance = WeightAddFragment.getInstance();
+        instance.setArguments(bundle);
+        startFragment(instance);
     }
 
     @Bean
@@ -166,14 +182,16 @@ public class WeightRecordFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         initData();
+        initBleCallBack();
         super.onStart();
     }
 
     @Override
-    public void onDestroy() {
+    public void onStop() {
         MyAPP.QNapi.setDataListener(null);
-        super.onDestroy();
+        super.onStop();
     }
+
 
     private void initView() {
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
@@ -187,8 +205,8 @@ public class WeightRecordFragment extends BaseAcFragment {
 
         initTopBar();
         checkStatus();
-        initBleCallBack();
     }
+
 
     private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -254,7 +272,6 @@ public class WeightRecordFragment extends BaseAcFragment {
         List<Unit> lines_Time = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
-            RxLogUtils.d("体重数据：getWeight：" + itemBean.getWeight() + "getBodyFat：" + itemBean.getBodyFat());
             Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
             Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat() * 0.5f, "");
             unit_weight.setShowPoint(true);
@@ -314,13 +331,11 @@ public class WeightRecordFragment extends BaseAcFragment {
             mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     BleTools.getBleManager().enableBluetooth();
                 }
             });
         }
     }
-
 
     //体脂称提取数据回调
     private void initBleCallBack() {
@@ -328,11 +343,6 @@ public class WeightRecordFragment extends BaseAcFragment {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
                 RxLogUtils.d("体重秤实时重量：" + v);
-                Bundle bundle = new Bundle();
-                bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
-                QMUIFragment instance = WeightAddFragment.getInstance();
-                instance.setArguments(bundle);
-                startFragment(instance);
             }
 
             @Override

@@ -10,7 +10,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.login.UserInfoActivity;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;

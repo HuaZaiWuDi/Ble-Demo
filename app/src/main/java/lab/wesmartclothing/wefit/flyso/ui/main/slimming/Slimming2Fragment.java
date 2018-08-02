@@ -62,11 +62,11 @@ import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.login.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -555,7 +555,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void getFirstPageData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

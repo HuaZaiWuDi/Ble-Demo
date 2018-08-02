@@ -96,8 +96,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     //MPAndroidChart图表控件
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    //轻牛体重秤SDK
-    implementation files('libs/qnsdk-0.2.1.jar')
+
     compile project(path: ':blelibrary')
     //https://github.com/gzu-liyujiang/AndroidPicker
     compile('cn.qqtheme.framework:WheelPicker:+') {
@@ -124,4 +123,6 @@ dependencies {
     // 此处以JPush 3.1.1 版本为例。
     compile 'cn.jiguang.sdk:jcore:1.2.1'
     compile project(path: ':lineChart')
+//    //轻牛体重秤SDK
+//    implementation files('libs/qnsdk-0.2.1.jar')
 }

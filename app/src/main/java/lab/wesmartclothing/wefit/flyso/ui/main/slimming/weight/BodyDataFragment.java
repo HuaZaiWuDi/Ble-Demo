@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -66,6 +68,11 @@ public class BodyDataFragment extends BaseAcFragment {
 
     private ExpandableItemAdapter adapter;
     private String gid;
+    private int[] bodyImgs = {R.mipmap.man_1_1, R.mipmap.man_1_2, R.mipmap.man_1_3,
+            R.mipmap.man_2_1, R.mipmap.man_2_2, R.mipmap.man_2_3,
+            R.mipmap.man_3_1, R.mipmap.man_3_2, R.mipmap.man_3_2,};
+    private int bodyIndex;
+    private String[] bodys;
 
     @Override
     protected View onCreateView() {
@@ -76,13 +83,14 @@ public class BodyDataFragment extends BaseAcFragment {
     }
 
     private void initView() {
+        bodys = getResources().getStringArray(R.array.bodyShape);
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvWeight.setTypeface(typeface);
         gid = getArguments() == null ? "" : getArguments().getString(Key.BUNDLE_WEIGHT_GID);
-        RxLogUtils.d("GID：" + gid);
         initTopBar();
         initRecyclerView();
         initData();
+
 
     }
 
@@ -101,8 +109,15 @@ public class BodyDataFragment extends BaseAcFragment {
                         WeightDetailsBean detailsBean = new Gson().fromJson(s, WeightDetailsBean.class);
                         mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getWeightDate(), "yyyy年MM月dd日 HH:mm"));
                         mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
+
+                        Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
+                        //一定要加这行！！！！！！！！！！！
+                        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                        mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
+                        mTvBodyFat.setText(bodys[(detailsBean.getBodyLevel() - 1) % 9]);
                         WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
                         notifyData(weightInfo);
+                        bodyIndex = detailsBean.getBodyLevel();
                     }
 
                     @Override
@@ -113,7 +128,6 @@ public class BodyDataFragment extends BaseAcFragment {
     }
 
     private void initRecyclerView() {
-
         mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new ExpandableItemAdapter(multiItermLists);
         mMRecyclerView.setAdapter(adapter);
@@ -122,7 +136,7 @@ public class BodyDataFragment extends BaseAcFragment {
 
     private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
         String[] titles = getResources().getStringArray(R.array.weightDatas);
-        String[] units = {"%", "", "级", "kg", "kcal", "%", "kg", "岁"};
+        String[] units = {"%", "", "级", "%", "kcal", "%", "%", "岁"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
                 R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
         double[] bodyDatas = new double[8];
@@ -145,9 +159,9 @@ public class BodyDataFragment extends BaseAcFragment {
                 }
             });
             adapter.addFooterView(footerView);
-
         }
 
+        multiItermLists.clear();
         for (int i = 0; i < titles.length; i++) {
             BodyLevel0Bean level0Bean = new BodyLevel0Bean(imgs[i], titles[i], units[i], bodyDatas[i]);
             BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean((float) bodyDatas[i]);
@@ -166,7 +180,8 @@ public class BodyDataFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("心率数据：" + s);
+                        RxToast.normal("删除成功");
+                        popBackStack();
                     }
 
                     @Override
@@ -188,6 +203,10 @@ public class BodyDataFragment extends BaseAcFragment {
 
     @OnClick(R.id.tv_bodyFat)
     public void onViewClicked() {
-        startFragment(BodyFatFragment.getInstance());
+        Bundle bundle = new Bundle();
+        bundle.putInt(Key.BUNDLE_BODY_INDEX, bodyIndex);
+        QMUIFragment instance = BodyFatFragment.getInstance();
+        instance.setArguments(bundle);
+        startFragment(instance);
     }
 }

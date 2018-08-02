@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,6 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
@@ -28,15 +28,12 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -51,7 +48,6 @@ public class WeightDataActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
     }
 
 
@@ -66,7 +62,6 @@ public class WeightDataActivity extends BaseActivity {
     String BUNDLE_WEIGHT_HISTORY;
 
 
-    private List<QNScaleStoreData> listReceives;
     private BaseQuickAdapter adapter_Receive;
 
     @Override
@@ -81,7 +76,7 @@ public class WeightDataActivity extends BaseActivity {
         QMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listReceives.size() > 0)
+                if (adapter_Receive.getItemCount() > 0)
                     showDialog();
                 else RxActivityUtils.finishActivity();
             }
@@ -91,12 +86,15 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void initRecyclerView() {
+        final Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mRecycler_Receive.setLayoutManager(new LinearLayoutManager(mContext));
 
         adapter_Receive = new BaseQuickAdapter<QNScaleStoreData, BaseViewHolder>(R.layout.item_weight_data) {
             @Override
             protected void convert(BaseViewHolder helper, QNScaleStoreData item) {
-                helper.setText(R.id.tv_weight, RxFormatValue.fromat4S5R(item.getWeight(), 2));
+
+                helper.setText(R.id.tv_weight, RxFormatValue.fromat4S5R(item.getWeight(), 2))
+                        .setTypeface(R.id.tv_weight, typeface);
                 helper.setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
                 helper.setVisible(R.id.btn_new, helper.getAdapterPosition() == 0);
                 helper.addOnClickListener(R.id.btn_receive);
@@ -116,13 +114,9 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void initData() {
-        listReceives = new Gson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleStoreData>>() {
+        List<QNScaleStoreData> listReceives = new Gson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleStoreData>>() {
         }.getType());
-        if (listReceives == null) {
-            listReceives = new ArrayList<>();
-            RxToast.error("获取异常");
-            return;
-        }
+
         adapter_Receive.setNewData(listReceives);
 
         tv_receive.setText(getString(R.string.receivedCount, "待", listReceives.size()));
@@ -130,11 +124,10 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void addWeightData(final int position) {
-        final QNScaleStoreData qnScaleData = listReceives.get(position);
+        final QNScaleStoreData qnScaleData = (QNScaleStoreData) adapter_Receive.getItem(position);
 
         WeightAddBean bean = new WeightAddBean();
-        bean.setUserId(SPUtils.getString(SPKey.SP_UserId));
-        bean.setMeasureTime(System.currentTimeMillis() + "");
+        bean.setMeasureTime(qnScaleData.getMeasureTime().getTime() + "");
         QNScaleData scaleData = qnScaleData.generateScaleData();
         if (scaleData != null)
             for (QNScaleItemData item : scaleData.getAllItem()) {
@@ -152,7 +145,7 @@ public class WeightDataActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：" + s);
                         adapter_Receive.remove(position);
-                        tv_receive.setText(getString(R.string.receivedCount, "待", listReceives.size()));
+                        tv_receive.setText(getString(R.string.receivedCount, "待", adapter_Receive.getItemCount()));
                     }
 
                     @Override
@@ -171,7 +164,7 @@ public class WeightDataActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
-            if (listReceives.size() > 0)
+            if (adapter_Receive.getItemCount() > 0)
                 showDialog();
             else RxActivityUtils.finishActivity();
         return true;
@@ -180,7 +173,6 @@ public class WeightDataActivity extends BaseActivity {
 
     private void showDialog() {
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvTitle().setBackgroundResource(R.mipmap.leave_icon);
         dialog.getTvContent().setText("你还有未领取的体重数据，\n离开后将全部被忽略\n？");
         dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
         dialog.setCancel(getString(R.string.btn_leave));

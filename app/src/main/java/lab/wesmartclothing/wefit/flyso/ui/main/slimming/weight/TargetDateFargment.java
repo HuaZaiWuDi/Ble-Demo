@@ -60,7 +60,7 @@ public class TargetDateFargment extends BaseAcFragment {
 
     private float stillNeed = 1, weeks;
     private Bundle bundle;
-    TipDialog tipDialog = new TipDialog(mActivity);
+    TipDialog tipDialog;
 
     @Override
     protected View onCreateView() {
@@ -71,6 +71,7 @@ public class TargetDateFargment extends BaseAcFragment {
     }
 
     private void initView() {
+        tipDialog = new TipDialog(mActivity);
         initTopBar();
         initRuler();
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
@@ -138,10 +139,15 @@ public class TargetDateFargment extends BaseAcFragment {
 
 
     private void settingTarget() {
+
+        double aDouble = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+        double aDouble1 = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
+
         JsonObject object = new JsonObject();
-        object.addProperty("count", weeks + "");
-        object.addProperty("initialWeight", bundle.get(Key.BUNDLE_INITIAL_WEIGHT) + "");
-        object.addProperty("targetWeight", bundle.get(Key.BUNDLE_TARGET_WEIGHT) + "");
+        object.addProperty("count", weeks);
+        object.addProperty("initialWeight", aDouble);
+        object.addProperty("targetWeight", aDouble1);
+
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.setTargetWeight(body))
@@ -152,8 +158,8 @@ public class TargetDateFargment extends BaseAcFragment {
                         RxLogUtils.d("心率数据：" + s);
                         //TODO 这里跳转目标不详，先跳转到体重首页
                         //关闭之前的设置目标体重和目标周期的界面
-                        ((QMUIFragmentActivity) mActivity).popBackStack(TargetDateFargment.class);
                         ((QMUIFragmentActivity) mActivity).popBackStack(SettingTargetFragment.class);
+                        popBackStack();
                     }
 
                     @Override

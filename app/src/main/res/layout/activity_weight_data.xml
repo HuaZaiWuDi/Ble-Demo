@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_color"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".ui.main.slimming.weight.WeightDataActivity">
@@ -27,6 +27,7 @@
         android:id="@+id/tv_receive"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_100"
+        android:background="@color/bg_F7F7F9"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/d_50"
         android:text="待领取的体重数据（0）"
@@ -36,7 +37,9 @@
         android:id="@+id/mRecycler_Receive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/bg_F7F7F9"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
     </android.support.v7.widget.RecyclerView>
 

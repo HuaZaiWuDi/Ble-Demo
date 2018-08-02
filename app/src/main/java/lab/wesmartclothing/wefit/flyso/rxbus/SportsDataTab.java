@@ -1,13 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.List;
 
 /**
  * Created icon_hide_password jk on 2018/6/14.
  */
-@EBean
 public class SportsDataTab {
 
     List<Integer> athlRecord_2;

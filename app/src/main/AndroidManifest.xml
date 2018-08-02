@@ -113,9 +113,9 @@
         </activity>
         <activity android:name=".ui.login.LoginActivity_">
         </activity>
-        <activity android:name=".ui.login.UserInfoActivity">
+        <activity android:name=".ui.userinfo.UserInfoActivity">
         </activity>
-        <activity android:name=".ui.login.AddDeviceActivity_">
+        <activity android:name=".ui.userinfo.AddDeviceActivity_">
         </activity>
         <activity android:name=".ui.WebActivity">
         </activity>

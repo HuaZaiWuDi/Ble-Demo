@@ -58,7 +58,7 @@ public class BodyDataUtil {
         }
 
         if (realValue <= 0) {
-            temp = 5;
+            temp = 2;
         }
         return temp;
     }

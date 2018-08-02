@@ -47,6 +47,8 @@ public interface Key {
     //最近一次上秤的真实体重
     String BUNDLE_LAST_WEIGHT = "BUNDLE_LAST_WEIGHT";
 
+    //传递体型类型
+    String BUNDLE_BODY_INDEX = "BUNDLE_BODY_INDEX";
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播
@@ -72,9 +74,13 @@ public interface Key {
     //体脂称连接状态
     String ACTION_SCALE_CONNECT = "ACTION_SCALE_CONNECT";
     String EXTRA_SCALE_CONNECT = "EXTRA_SCALE_CONNECT";
+    //蓝牙秤状态改变(开始测量)
+    String ACTION_STATE_START_MEASURE = "ACTION_STATE_START_MEASURE";
+
 
     String ACTION_CLOTHING_STOP = "ACTION_CLOTHING_STOP";
     String EXTRA_CLOTHING_STOP = "EXTRA_CLOTHING_STOP";
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK

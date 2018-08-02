@@ -88,8 +88,7 @@ public class BleService extends Service {
     HeartRateBean mHeartRateBean;
     @Bean
     HeartRateToKcal mHeartRateToKcal;
-    @Bean
-    SportsDataTab mSportsDataTab;
+
 
     //监听系统蓝牙开启
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
@@ -204,8 +203,6 @@ public class BleService extends Service {
                 if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
                     RxLogUtils.d("扫描到体脂称：" + device.getAddress());
                     byte[] bytes = result.getScanRecord().getBytes();
-                    RxLogUtils.d("广播数据：" + HexUtil.encodeHexStr(bytes));
-                    RxLogUtils.d("广播数据长度：" + bytes.length);
 
                     byte[] bleBytes = new byte[92];
                     System.arraycopy(bleBytes, 0, bytes, 0, bytes.length);
@@ -214,12 +211,13 @@ public class BleService extends Service {
                     QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);//转换对象
                     RxBus.getInstance().post(bleDevice);
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
-                        mQNBleTools.disConnectDevice(bleDevice.getMac());
+//                        mQNBleTools.disConnectDevice(bleDevice.getMac());
                         mQNBleTools.connectDevice(bleDevice);
                     }
                 } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
                     BleDevice bleDevice = new BleDevice(device);//转换对象
                     RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
+                    RxLogUtils.d("保存本地的MAC地址：" + SPUtils.getString(SPKey.SP_clothingMAC));
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)))
                         connectClothing(bleDevice);
                     RxBus.getInstance().post(bleDevice);
@@ -263,13 +261,19 @@ public class BleService extends Service {
         MyAPP.QNapi.setBleConnectionChangeListener(new QNBleConnectionChangeListener() {
             @Override
             public void onConnecting(QNBleDevice qnBleDevice) {
-
+                RxLogUtils.e("正在连接:");
             }
 
             @Override
             public void onConnected(QNBleDevice qnBleDevice) {
+                RxLogUtils.d("连接成功:");
+            }
+
+            @Override
+            public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
+                RxLogUtils.e("服务发现完成:");
+
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, true);
-                RxLogUtils.d("连接:");
 
                 DeviceLink deviceLink = new DeviceLink();
                 deviceLink.setMacAddr(qnBleDevice.getMac());
@@ -277,17 +281,11 @@ public class BleService extends Service {
                 deviceLink.deviceLink(deviceLink);
 
                 mQNBleTools.setConnect(true);
-
-            }
-
-            @Override
-            public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
-
             }
 
             @Override
             public void onDisconnecting(QNBleDevice qnBleDevice) {
-
+                RxLogUtils.e("正在断开连接:");
             }
 
             @Override
@@ -296,12 +294,7 @@ public class BleService extends Service {
                 RxLogUtils.e("断开连接:");
 
                 mQNBleTools.setConnect(false);
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        initBle();
-                    }
-                }, 5000);
+                initBle();
             }
 
             @Override
@@ -316,12 +309,26 @@ public class BleService extends Service {
                     public void run() {
                         initBle();
                     }
-                }, 5000);
+                }, 2000);
             }
 
             @Override
             public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("体重秤状态变化:" + i);
+                switch (i) {
+                    case 5://正在测量
+                        B.broadUpdate(BleService.this, Key.ACTION_STATE_START_MEASURE);
+                        break;
+                    case 6://正在测量试试体重
+                        break;
+                    case 7://正在测试生物阻抗
+                        break;
+                    case 8://正在测试心率
+                        break;
+                    case 9://测量完成
+                        break;
+
+                }
             }
         });
     }
@@ -332,7 +339,7 @@ public class BleService extends Service {
         BleTools.getBleManager().connect(device, new BleGattCallback() {
             @Override
             public void onStartConnect() {
-
+                RxLogUtils.e("开始连接瘦身衣：");
             }
 
             @Override
@@ -347,7 +354,7 @@ public class BleService extends Service {
                     public void run() {
                         initBle();
                     }
-                }, 5000);
+                }, 2000);
             }
 
             @Override
@@ -547,7 +554,7 @@ public class BleService extends Service {
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
                 minHeart = heartRate < minHeart ? heartRate : minHeart;
 
-
+                SportsDataTab mSportsDataTab = new SportsDataTab();
                 mSportsDataTab.setAthlRecord_2(athlRecord_2);
                 mSportsDataTab.setCurHeart(heartRate);
                 mSportsDataTab.setMaxHeart(maxHeart);

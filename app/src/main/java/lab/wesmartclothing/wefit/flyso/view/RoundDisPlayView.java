@@ -14,8 +14,6 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.vondear.rxtools.utils.RxLogUtils;
-
 /**
  * 项目名称：Ali_Sophix
  * 类描述：
@@ -37,6 +35,7 @@ public class RoundDisPlayView extends View {
 
     boolean isShowPoint = false;//是否显示点
     private int indexPoint = 0;//高亮的点
+    private boolean showProgress = true;
 
     public RoundDisPlayView(Context context) {
         this(context, null);
@@ -117,6 +116,7 @@ public class RoundDisPlayView extends View {
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
 
+
         drawRound3(canvas);
         //画中间的文字
 //        drawCentreText(canvas);
@@ -168,7 +168,8 @@ public class RoundDisPlayView extends View {
         RectF rectf3 = new RectF(-radius + lineWidth, -radius + lineWidth, radius - lineWidth, radius - lineWidth);
         canvas.drawArc(rectf3, 0, 360, false, paint1);
 
-        canvas.drawArc(rectf3, 0, 360, false, paint2);
+        if (showProgress)
+            canvas.drawArc(rectf3, 0, 360, false, paint2);
         canvas.restore();
     }
 
@@ -185,6 +186,7 @@ public class RoundDisPlayView extends View {
 
     public void startAnimation() {
         if (cgAnima1 == null) {
+
             cgAnima1 = ValueAnimator.ofInt(0, 360);
             cgAnima1.setInterpolator(new LinearInterpolator());
             cgAnima1.setDuration(2000);
@@ -193,19 +195,22 @@ public class RoundDisPlayView extends View {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     startAngle3 = (int) cgAnima1.getAnimatedValue();
-                    RxLogUtils.e("角度：" + startAngle3);
                     invalidate();
                 }
             });
-            cgAnima1.start();
         }
+        cgAnima1.start();
+        showProgress = true;
     }
 
     public void stopAnimation() {
         if (cgAnima1 != null) {
             cgAnima1.end();
         }
+        showProgress = false;
         removeCallbacks(animRunnable);
+        indexPoint = -1;
+        invalidate();
     }
 
     @Override
