@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ble;
 
+import android.bluetooth.BluetoothAdapter;
+
 import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -131,5 +133,7 @@ public class QNBleTools {
         return isConnect;
     }
 
-
+    public boolean isBind() {
+        return BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC));
+    }
 }

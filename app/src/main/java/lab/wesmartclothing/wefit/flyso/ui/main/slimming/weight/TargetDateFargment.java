@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
-import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -158,8 +157,8 @@ public class TargetDateFargment extends BaseAcFragment {
                         RxLogUtils.d("心率数据：" + s);
                         //TODO 这里跳转目标不详，先跳转到体重首页
                         //关闭之前的设置目标体重和目标周期的界面
-                        ((QMUIFragmentActivity) mActivity).popBackStack(SettingTargetFragment.class);
-                        popBackStack();
+                        //直接跳转到指定的Fragment（同时清栈）
+                        getBaseFragmentActivity().popBackStack(WeightRecordFragment_.class);
                     }
 
                     @Override

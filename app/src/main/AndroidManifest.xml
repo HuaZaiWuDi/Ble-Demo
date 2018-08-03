@@ -144,7 +144,9 @@
         </activity>
         <activity android:name=".ui.login.VerificationPhoneActivity">
         </activity>
-        <activity android:name=".base.BaseFragmentActivity"/>
+        <activity android:name=".ui.main.slimming.sports.BaseSportingActivity"/>
+        <activity android:name=".ui.main.slimming.heat.second.BaseHeatActivity"/>
+        <activity android:name=".ui.main.slimming.weight.BaseWeightActivity"/>
     </application>
 
 </manifest>

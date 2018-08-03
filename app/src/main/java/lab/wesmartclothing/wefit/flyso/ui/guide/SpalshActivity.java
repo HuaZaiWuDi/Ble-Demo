@@ -25,8 +25,9 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.BaseHeatActivity;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
@@ -61,12 +62,12 @@ public class SpalshActivity extends BaseActivity {
     @AfterViews
     public void initView() {
 
-//        RxActivityUtils.skipActivityAndFinish(this, MainActivity_.class);
+        RxActivityUtils.skipActivityAndFinish(this, BaseHeatActivity.class);
 
 //        //测试账号
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-        initUserInfo();
+//        initUserInfo();
         initData();
 
 //        Bundle bundle = new Bundle();

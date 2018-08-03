@@ -554,6 +554,14 @@ public class BleService extends Service {
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
                 minHeart = heartRate < minHeart ? heartRate : minHeart;
 
+                int sum = 0;
+                for (int heart : athlRecord_2) {
+                    sum += heart;
+                }
+
+                int avgHeart = sum / athlRecord_2.size();
+                RxLogUtils.d("平均心率：" + avgHeart);
+
                 SportsDataTab mSportsDataTab = new SportsDataTab();
                 mSportsDataTab.setAthlRecord_2(athlRecord_2);
                 mSportsDataTab.setCurHeart(heartRate);
@@ -561,7 +569,7 @@ public class BleService extends Service {
                 mSportsDataTab.setMinHeart(minHeart);
                 mSportsDataTab.setDuration(athlRecord_2.size() * 2);
                 mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
-                double calorie = mHeartRateToKcal.getCalorie(heartRate, athlRecord_2.size() * 2f / 3600);
+                double calorie = mHeartRateToKcal.getCalorie(avgHeart, athlRecord_2.size() * 2f / 3600);
                 mSportsDataTab.setKcal(calorie);
                 RxBus.getInstance().post(mSportsDataTab);
             }
@@ -569,7 +577,6 @@ public class BleService extends Service {
     }
 
     private void checkFirmwareVersion(JsonObject object) {
-
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getUpgradeInfo(body))

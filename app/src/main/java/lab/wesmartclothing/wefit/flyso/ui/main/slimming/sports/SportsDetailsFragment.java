@@ -117,7 +117,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         HeartRateBean heartRateBean = new Gson().fromJson(s, HeartRateBean.class);
-                        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1));
+                        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie() / 1000, 1));
                         mTvAvHeartRate.setText(heartRateBean.getAvgHeart() + "");
                         mTvMaxHeartRate.setText(heartRateBean.getMaxHeart() + "");
                         mTvSportsTime.setText(RxFormat.setSec2MS(heartRateBean.getDuration()));
@@ -155,7 +155,8 @@ public class SportsDetailsFragment extends BaseAcFragment {
     private void checkHeartRate(HeartRateBean.AthlList bean) {
         int heart = bean.getHeartRate();
         byte[] heartRates = BleKey.heartRates;
-        int heart_0 = heartRates[0] & 0xff;
+//        int heart_0 = heartRates[0] & 0xff;
+        int heart_0 = 0;//TODO 测试暂时归纳小于100的心率算热身心率
         int heart_1 = heartRates[1] & 0xff;
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;

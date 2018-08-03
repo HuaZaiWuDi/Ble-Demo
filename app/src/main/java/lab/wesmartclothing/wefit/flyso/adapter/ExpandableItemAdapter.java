@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.utils.RxFormatValue;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 
 import java.util.HashMap;
@@ -116,14 +117,23 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
     protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
         BodyDataUtil bodyDataUtil = new BodyDataUtil(mHealthyMaps);
 
+        int index = helper.getAdapterPosition();
+        int layoutPosition = helper.getLayoutPosition();
+        int oldPosition = helper.getOldPosition();
+        int position1 = helper.getPosition();
+
+        RxLogUtils.d("当前下标：index:" + index + "---layoutPosition:" + layoutPosition + "---oldPosition:" + oldPosition + "---position1:" + position1);
+
         switch (helper.getItemViewType()) {
             case TYPE_LEVEL_0:
                 final BodyLevel0Bean level0Bean = (BodyLevel0Bean) item;
+                int parentPosition = getParentPosition(level0Bean);
+                RxLogUtils.d("父类下标：(第一级)" + parentPosition);
                 helper.setImageResource(R.id.iv_switchLayout, level0Bean.isExpanded() ? R.mipmap.icon_up : R.mipmap.icon_down)
                         .setImageResource(R.id.iv_icon, level0Bean.getBodyDataImg())
                         .setText(R.id.tv_title, level0Bean.getBodyData());
 
-                int color = (int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), helper.getAdapterPosition())[1];
+                int color = (int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), parentPosition)[1];
                 Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/DIN-Regular.ttf");
                 TextView bodyValue = helper.getView(R.id.tv_bodyValue);
                 bodyValue.setTypeface(typeface);
@@ -139,7 +149,7 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
                 background.setStrokeData(1, ColorStateList.valueOf(color));
                 btn_status.setTextColor(color);
 
-                btn_status.setText((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), helper.getAdapterPosition())[0]);
+                btn_status.setText((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), parentPosition)[0]);
 
                 helper.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -156,63 +166,13 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
             case TYPE_LEVEL_1:
                 final BodyLevel1Bean level1Bean = (BodyLevel1Bean) item;
                 int position = getParentPosition(level1Bean);
-                int value = (int) (Math.random() * 100);
-                Healthy healthy = mHealthyMaps.get(position);
+                RxLogUtils.d("父类下标：(第二级)" + position);
+                Healthy healthy = mHealthyMaps.get(position % mHealthyMaps.size());
                 HealthyProgressView progressView_1 = helper.getView(R.id.mHealthyProgressView);
                 progressView_1.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
                 progressView_1.setColors(healthy.getColors());
                 progressView_1.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
 
-//                switch (position) {
-//                    case 0:
-//                        HealthyProgressView progressView_1 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_1.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_1.setColors(healthy.getColors());
-//                        progressView_1.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 1:
-//                        HealthyProgressView progressView_2 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_2.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_2.setColors(healthy.getColors());
-//                        progressView_2.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 2:
-//                        HealthyProgressView progressView_3 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_3.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_3.setColors(healthy.getColors());
-//                        progressView_3.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 3:
-//                        HealthyProgressView progressView_4 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_4.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_4.setColors(healthy.getColors());
-//                        progressView_4.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 4:
-//                        HealthyProgressView progressView_5 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_5.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_5.setColors(healthy.getColors());
-//                        progressView_5.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 5:
-//                        HealthyProgressView progressView_6 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_6.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_6.setColors(healthy.getColors());
-//                        progressView_6.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 6:
-//                        HealthyProgressView progressView_7 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_7.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_7.setColors(healthy.getColors());
-//                        progressView_7.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                    case 7:
-//                        HealthyProgressView progressView_8 = helper.getView(R.id.mHealthyProgressView);
-//                        progressView_8.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
-//                        progressView_8.setColors(healthy.getColors());
-//                        progressView_8.setProgress(bodyDataUtil.transformation(position, level1Bean.getValue()));
-//                        break;
-//                }
         }
     }
 

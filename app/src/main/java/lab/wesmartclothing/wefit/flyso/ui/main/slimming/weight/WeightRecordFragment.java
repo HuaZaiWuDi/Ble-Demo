@@ -124,6 +124,8 @@ public class WeightRecordFragment extends BaseAcFragment {
     LinearLayout mLayoutTips;
     @BindView(R.id.layout_weight)
     LinearLayout mLayoutWeight;
+    @BindView(R.id.tv_details)
+    TextView mTvDetails;
 
     //监听系统蓝牙开启
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
@@ -132,16 +134,15 @@ public class WeightRecordFragment extends BaseAcFragment {
             checkStatus();
         } else if (state == BluetoothAdapter.STATE_ON) {
             mLayoutStrongTip.setVisibility(View.GONE);
-//            //测试使用
-//            startFragment(SportingFragment.getInstance());
         }
     }
 
     //体脂称连接状态
     @Receiver(actions = Key.ACTION_SCALE_CONNECT)
     void scaleIsConnect(@Receiver.Extra(Key.EXTRA_SCALE_CONNECT) boolean state) {
-        if (btn_Connect != null)
-            btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
+        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)))
+            if (btn_Connect != null)
+                btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
     }
 
     //蓝牙秤状态改变(开始测量)
@@ -242,6 +243,15 @@ public class WeightRecordFragment extends BaseAcFragment {
         mTvSettingTarget.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
         mLayoutWeight.setVisibility(bean.isTargetSet() ? View.VISIBLE : View.GONE);
 
+
+        if (stillNeed <= 0) {
+            mTvDetails.setText("您的目标已完成，请前往设置新目标");
+        } else if (hasDays <= 0) {
+            mTvDetails.setText("坚持锻炼并设置新目标");
+        } else if (stillNeed > 0 && hasDays > 0) {
+            mTvDetails.setText("目标就在眼前，加油！");
+        }
+
         RxTextUtils.getBuilder("需减 ")
                 .append((float) bean.getStillNeed() + "")
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -273,7 +283,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         for (int i = 0; i < list.size(); i++) {
             WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
             Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
-            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat() * 0.5f, "");
+            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), "");
             unit_weight.setShowPoint(true);
 
             unit_bodyFat.setShowPoint(false);
@@ -321,6 +331,7 @@ public class WeightRecordFragment extends BaseAcFragment {
                         }
                     }).show();
         }
+
         if (!BleTools.getBleManager().isBlueEnable()) {
             mLayoutStrongTip.setVisibility(View.VISIBLE);
             String tipOpenBlueTooth = getString(R.string.tipOpenBlueTooth);
@@ -419,7 +430,8 @@ public class WeightRecordFragment extends BaseAcFragment {
             }
         });
         mQMUIAppBarLayout.setTitle("体重记录");
-        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+        btn_Connect = mQMUIAppBarLayout.addRightTextButton(
+                getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind : mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
     }

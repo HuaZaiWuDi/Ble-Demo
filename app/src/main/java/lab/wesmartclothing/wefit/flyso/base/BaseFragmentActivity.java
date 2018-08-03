@@ -11,18 +11,11 @@ import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.vondear.rxtools.activity.RxActivityUtils;
 
-import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
-
 /**
  * Created by cgspine on 2018/1/7.
  */
 
-public class BaseFragmentActivity extends QMUIFragmentActivity {
+public abstract class BaseFragmentActivity extends QMUIFragmentActivity {
 
 
     public Context mContext;
@@ -30,13 +23,7 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
 
 
     @Override
-    protected int getContextViewId() {
-        return R.id.qmuidemo;
-    }
-
-    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 //        //屏幕沉浸
 //        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         //设置为竖屏
@@ -44,10 +31,10 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-//        //华为底部虚拟按键遮挡问题
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
-        QMUIStatusBarHelper.translucent(this); // 沉浸式状态栏
+        super.onCreate(savedInstanceState);
+
+        QMUIStatusBarHelper.translucent(this);
         QMUIStatusBarHelper.setStatusBarLightMode(this);
         mContext = this;
         mActivity = this;
@@ -55,21 +42,7 @@ public class BaseFragmentActivity extends QMUIFragmentActivity {
 
         ScreenAdapter.setCustomDensity(this);
 
-
-        if (savedInstanceState == null) {
-            String fragmentName = getIntent().getStringExtra(Key.BUNDLE_FRAGMENT);
-
-            if (fragmentName.equals(HeatFragment.class.getSimpleName()))
-                startFragment(HeatFragment.getInstance());
-            else if (fragmentName.equals(WeightRecordFragment.class.getSimpleName()))
-                startFragment(WeightRecordFragment.getInstance());
-            else if (fragmentName.equals(SmartClothingFragment.class.getSimpleName()))
-                startFragment(SmartClothingFragment.getInstance());
-            else if (fragmentName.equals(WeightAddFragment.class.getSimpleName()))
-                startFragment(WeightAddFragment.getInstance());
-        }
     }
-
 
     @Override
     protected void onDestroy() {

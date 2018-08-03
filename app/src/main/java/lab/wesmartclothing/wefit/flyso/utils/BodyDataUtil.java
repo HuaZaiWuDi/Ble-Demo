@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 import java.util.Map;
 
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
@@ -21,7 +23,7 @@ public class BodyDataUtil {
         if (index == 4) {
             temp = (int) (realValue / (903 * 2) * 100);
         } else {
-            temp = bmi(realValue, mHealthyMaps.get(index).getSections());
+            temp = bmi(realValue, mHealthyMaps.get(index % mHealthyMaps.size()).getSections());
         }
 
         return temp;
@@ -63,11 +65,11 @@ public class BodyDataUtil {
         return temp;
     }
 
-
     public Object[] checkStatus(double realValue, int index) {
-        double[] section = mHealthyMaps.get(index).getSections();
-        String[] labels = mHealthyMaps.get(index).getLabels();
-        int[] colors = mHealthyMaps.get(index).getColors();
+
+        double[] section = mHealthyMaps.get(index % mHealthyMaps.size()).getSections();
+        String[] labels = mHealthyMaps.get(index % mHealthyMaps.size()).getLabels();
+        int[] colors = mHealthyMaps.get(index % mHealthyMaps.size()).getColors();
 
         Object[] temps = new Object[2];
         String temp = "";

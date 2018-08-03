@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
+import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.speech.tts.TextToSpeech;
@@ -22,7 +23,6 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -36,7 +36,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Receiver;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -50,7 +49,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
@@ -91,25 +89,25 @@ public class SportingFragment extends BaseAcFragment {
     TextToSpeech textToSpeech;
 
     private int currentTime = 0;
+    private int type = -1;//运动上一次状态
 
 
     //监听瘦身衣连接情况
     @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
     void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
-        if (state) {
-            btn_Connect.setText(R.string.connected);
-        } else {
-            btn_Connect.setText(R.string.disConnected);
-        }
+        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
+            if (state) {
+                btn_Connect.setText(R.string.connected);
+            } else {
+                btn_Connect.setText(R.string.disConnected);
+                stopSporting();
+            }
     }
 
     //监听系统蓝牙开启
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
     void CLOTHING_STOP() {
-        timer.stopTimer();
-        timer2.stopTimer();
-        if (!dialog.isShowing())
-            dialog.show();
+        stopSporting();
     }
 
 
@@ -171,7 +169,8 @@ public class SportingFragment extends BaseAcFragment {
             }
         });
         mQMUIAppBarLayout.setTitle("运动进行中");
-        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(
+                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
     }
@@ -275,10 +274,8 @@ public class SportingFragment extends BaseAcFragment {
         mMLineChart.moveViewTo(data.getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
     }
 
-    int type = -1;
 
     private void heartRate(int heart) {
-        if (textToSpeech == null) return;
 
         byte[] heartRates = BleKey.heartRates;
         int heart_0 = heartRates[0] & 0xff;
@@ -286,11 +283,12 @@ public class SportingFragment extends BaseAcFragment {
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;
         int heart_4 = heartRates[4] & 0xff;
-        RxLogUtils.d("心率区间：" + Arrays.toString(heartRates));
+//        RxLogUtils.d("心率区间：" + Arrays.toString(heartRates));
 
         if (heart_0 <= heart && heart <= heart_1) {
             if (type != 0) {
                 mTvSportsStatus.setText("热身");
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_warm), TextToSpeech.QUEUE_FLUSH, null);
                 type = 0;
@@ -298,13 +296,15 @@ public class SportingFragment extends BaseAcFragment {
         } else if (heart >= heart_1 && heart < heart_2) {
             if (type != 1) {
                 mTvSportsStatus.setText("燃脂");
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_grease), TextToSpeech.QUEUE_FLUSH, null);
                 type = 1;
             }
         } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 2) {
-                mTvSportsStatus.setText("耐力");
+                mTvSportsStatus.setText("有氧");
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
                 type = 2;
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_aerobic), TextToSpeech.QUEUE_FLUSH, null);
@@ -312,6 +312,7 @@ public class SportingFragment extends BaseAcFragment {
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 3) {
                 mTvSportsStatus.setText("无氧");
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
                 type = 3;
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_anaerobic), TextToSpeech.QUEUE_FLUSH, null);
@@ -319,6 +320,7 @@ public class SportingFragment extends BaseAcFragment {
         } else if (heart >= heart_4) {
             if (type != 4) {
                 mTvSportsStatus.setText("极限");
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
                 type = 4;
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_limit), TextToSpeech.QUEUE_FLUSH, null);
@@ -394,6 +396,15 @@ public class SportingFragment extends BaseAcFragment {
 
     }
 
+
+    //运动停止
+    private void stopSporting() {
+        timer.stopTimer();
+        timer2.stopTimer();
+        if (!dialog.isShowing())
+            dialog.show();
+    }
+
     RxDialogSureCancel dialog;
 
     private void showDialog() {
@@ -401,14 +412,14 @@ public class SportingFragment extends BaseAcFragment {
         dialog.setCanceledOnTouchOutside(false);
         dialog.getTvTitle().setVisibility(View.GONE);
         dialog.setContent("运动已结束，是否退出界面");
-        dialog.setCancel("去绑定").setCancelListener(new View.OnClickListener() {
+        dialog.setCancel("退出").setCancelListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                popBackStack();
             }
         })
-                .setSure("暂不绑定")
+                .setSure("取消")
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

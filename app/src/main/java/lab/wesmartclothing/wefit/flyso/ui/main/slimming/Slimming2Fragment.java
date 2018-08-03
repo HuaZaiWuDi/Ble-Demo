@@ -38,6 +38,7 @@ import com.smartclothing.module_wefit.activity.PersonalDataActivity;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -56,7 +57,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
-import lab.wesmartclothing.wefit.flyso.base.BaseFragmentActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -64,7 +64,10 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.BaseHeatActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.BaseSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.BaseWeightActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
@@ -339,7 +342,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         ArrayList<BarEntry> barEntry = new ArrayList<>();
 
         int max = 3000;
-        colors[6] = R.color.gray_ECEBF0;
+        colors[6] = R.color.red;
         for (int i = 0; i < 7; i++) {
             barXLists[6 - i] = RxFormat.setFormatDate(calendar, "MM/dd");
             calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -350,7 +353,6 @@ public class Slimming2Fragment extends BaseAcFragment {
             List<FirstPageBean.AthleticsInfoListBean> list = bean.getAthleticsInfoList();
             calendar.setTimeInMillis(list.get(0).getAthlDate());
             max = bean.getPeakValue() == 0 ? 3000 : (int) (bean.getPeakValue() * 1.3f);
-            colors[6] = R.color.red;
             int size = list.size();
             for (int i = 6; i >= 0; i--) {
                 size--;
@@ -359,7 +361,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                     barXLists[i] = RxFormat.setFormatDate(calendar, "MM/dd");
                     barEntry.set(i, new BarEntry(i, max * 0.1f));
                 } else {
-                    int calorie = list.get(size).getCalorie();
+                    float calorie = list.get(size).getCalorie();
                     calorie = calorie < max * 0.1f ? (int) (max * 0.1f) : calorie;
                     barEntry.set(i, new BarEntry(i, calorie));
                     barXLists[i] = RxFormat.setFormatDate(list.get(size).getAthlDate(), "MM/dd");
@@ -497,7 +499,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             case R.id.layout_heat:
                 //跳转热量记录
                 bundle.putString(Key.BUNDLE_FRAGMENT, HeatFragment.class.getSimpleName());
-                RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
+                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class);
                 break;
             case R.id.layout_breakfast:
                 bundle.putString(Key.ADD_FOOD_NAME, add_food[0]);
@@ -524,14 +526,14 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_sports:
                 bundle.putString(Key.BUNDLE_FRAGMENT, SmartClothingFragment.class.getSimpleName());
-                RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
+                RxActivityUtils.skipActivity(mActivity, BaseSportingActivity.class);
                 break;
             case R.id.btn_bind_scale:
                 mBtnBindScale.setVisibility(View.GONE);
                 break;
             case R.id.layout_weight:
                 bundle.putString(Key.BUNDLE_FRAGMENT, WeightRecordFragment.class.getSimpleName());
-                RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
+                RxActivityUtils.skipActivity(mActivity, BaseWeightActivity.class);
                 break;
             case R.id.btn_bind:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
@@ -631,13 +633,11 @@ public class Slimming2Fragment extends BaseAcFragment {
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
         mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
 
-
         int heatProgress = (int) (bean.getIntakePercent() * 100);
         mCircleProgressBar.setProgress(heatProgress == 0 ? 1 : heatProgress);
         int size = bean.getAthleticsInfoList().size();
         if (size != 0) {
-            mTvCurrentKcal.setText(bean.getAthleticsInfoList().get(size - 1).getCalorie() + "");
+            mTvCurrentKcal.setText(RxFormatValue.fromatUp(bean.getAthleticsInfoList().get(size - 1).getCalorie() / 1000, 0));
         }
     }
-
 }

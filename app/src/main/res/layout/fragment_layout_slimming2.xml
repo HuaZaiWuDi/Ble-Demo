@@ -87,32 +87,32 @@
 
 
                     <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                    android:id="@+id/pro_weight"
-                    android:layout_width="110dp"
-                    android:layout_height="6dp"
-                    android:layout_below="@+id/tv_weight_start"
-                    android:layout_marginTop="@dimen/dimen_3"
-                    android:max="100"
-                    android:progress="30"
-                    app:rcBackgroundColor="@color/GrayWrite"
-                    app:rcMax="100"
-                    app:rcProgress="0"
-                    app:rcProgressColor="@color/white"
-                    app:rcRadius="3dp"
-                    />
+                        android:id="@+id/pro_weight"
+                        android:layout_width="110dp"
+                        android:layout_height="6dp"
+                        android:layout_below="@+id/tv_weight_start"
+                        android:layout_marginTop="@dimen/dimen_3"
+                        android:max="100"
+                        android:progress="30"
+                        app:rcBackgroundColor="@color/GrayWrite"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/white"
+                        app:rcRadius="3dp"
+                        />
 
                     <!--<com.qmuiteam.qmui.widget.QMUIProgressBar-->
-                        <!--android:id="@+id/pro_weight"-->
-                        <!--android:layout_width="110dp"-->
-                        <!--android:layout_height="6dp"-->
-                        <!--android:layout_below="@+id/tv_weight_start"-->
-                        <!--android:layout_marginTop="@dimen/dimen_3"-->
-                        <!--app:qmui_background_color="@color/GrayWrite"-->
-                        <!--app:qmui_max_value="100"-->
-                        <!--app:qmui_progress_color="@color/white"-->
-                        <!--app:qmui_stroke_round_cap="true"-->
-                        <!--app:qmui_type="type_rect"-->
-                        <!--app:qmui_value="0"/>-->
+                    <!--android:id="@+id/pro_weight"-->
+                    <!--android:layout_width="110dp"-->
+                    <!--android:layout_height="6dp"-->
+                    <!--android:layout_below="@+id/tv_weight_start"-->
+                    <!--android:layout_marginTop="@dimen/dimen_3"-->
+                    <!--app:qmui_background_color="@color/GrayWrite"-->
+                    <!--app:qmui_max_value="100"-->
+                    <!--app:qmui_progress_color="@color/white"-->
+                    <!--app:qmui_stroke_round_cap="true"-->
+                    <!--app:qmui_type="type_rect"-->
+                    <!--app:qmui_value="0"/>-->
 
 
                 </RelativeLayout>
@@ -405,12 +405,15 @@
                 android:orientation="horizontal"
                 tools:visibility="visible">
 
-                <LinearLayout
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/white"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    app:qmui_backgroundColor="@color/white"
+                    app:qmui_borderColor="@color/white"
+                    app:qmui_radius="4dp">
 
                     <RelativeLayout
                         android:id="@+id/layout_heat"
@@ -515,7 +518,7 @@
                     </RelativeLayout>
 
 
-                </LinearLayout>
+                </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout>
 
 
                 <LinearLayout
@@ -526,14 +529,16 @@
                     android:orientation="vertical">
 
 
-                    <RelativeLayout
+                    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
                         android:id="@+id/layout_breakfast"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:layout_marginBottom="@dimen/dimen_8"
-                        android:background="@color/white"
                         android:paddingLeft="@dimen/dimen_16"
-                        android:paddingRight="@dimen/dimen_16">
+                        android:paddingRight="@dimen/dimen_16"
+                        app:qmui_backgroundColor="@color/white"
+                        app:qmui_borderColor="@color/white"
+                        app:qmui_radius="4dp">
 
                         <ImageView
                             android:id="@+id/iv_breakfast"
@@ -584,16 +589,18 @@
                             android:background="@mipmap/icon_add"/>
 
 
-                    </RelativeLayout>
+                    </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
 
-                    <RelativeLayout
+                    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
                         android:id="@+id/layout_lunch"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:layout_marginBottom="@dimen/dimen_8"
-                        android:background="@color/white"
                         android:paddingLeft="@dimen/dimen_16"
-                        android:paddingRight="@dimen/dimen_16">
+                        android:paddingRight="@dimen/dimen_16"
+                        app:qmui_backgroundColor="@color/white"
+                        app:qmui_borderColor="@color/white"
+                        app:qmui_radius="4dp">
 
                         <ImageView
                             android:id="@+id/iv_lunch"
@@ -644,16 +651,19 @@
                             android:background="@mipmap/icon_add"/>
 
 
-                    </RelativeLayout>
+                    </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
 
-                    <RelativeLayout
+                    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
                         android:id="@+id/layout_dinner"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:layout_marginBottom="@dimen/dimen_8"
                         android:background="@color/white"
                         android:paddingLeft="@dimen/dimen_16"
-                        android:paddingRight="@dimen/dimen_16">
+                        android:paddingRight="@dimen/dimen_16"
+                        app:qmui_backgroundColor="@color/white"
+                        app:qmui_borderColor="@color/white"
+                        app:qmui_radius="4dp">
 
                         <ImageView
                             android:id="@+id/iv_dinner"
@@ -703,15 +713,18 @@
                             android:background="@mipmap/icon_add"/>
 
 
-                    </RelativeLayout>
+                    </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
 
-                    <RelativeLayout
+                    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
                         android:id="@+id/layout_meal"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:background="@color/white"
                         android:paddingLeft="@dimen/dimen_16"
-                        android:paddingRight="@dimen/dimen_16">
+                        android:paddingRight="@dimen/dimen_16"
+                        app:qmui_backgroundColor="@color/white"
+                        app:qmui_borderColor="@color/white"
+                        app:qmui_radius="4dp">
 
                         <ImageView
                             android:id="@+id/iv_meal"
@@ -761,7 +774,7 @@
                             android:layout_centerVertical="true"
                             android:background="@mipmap/icon_add"/>
 
-                    </RelativeLayout>
+                    </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
                 </LinearLayout>
 
 

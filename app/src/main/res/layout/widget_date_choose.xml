@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="108px">
 
@@ -24,33 +26,15 @@
             android:text="Last"
             android:textColor="@color/colorFontWhite"/>
 
-        <LinearLayout
-            android:id="@+id/ll_date_container"
-            android:layout_width="350px"
-            android:layout_height="match_parent"
-            android:background="@drawable/shape_calender_bg"
-            android:gravity="center"
-            android:onClick="date"
-            android:orientation="horizontal"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp">
-
-            <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center"
-                android:text="4月28"
-                android:textColor="@color/colorFontWhite"
-                android:textSize="16sp"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/d_30"
-                android:src="@drawable/arrow_down_icon"/>
-        </LinearLayout>
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_date"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            app:qmui_radius="4dp"
+            android:textColor="@color/BrightGray"
+            app:qmui_backgroundColor="@color/black_312B36"
+            app:qmui_borderColor="@color/black_312B36"
+            tools:text="6月20日"/>
 
 
         <ImageView

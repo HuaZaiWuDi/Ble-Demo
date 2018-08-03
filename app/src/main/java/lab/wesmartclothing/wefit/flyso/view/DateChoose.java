@@ -9,13 +9,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.dateUtils.RxFormat;
 
 import java.util.Calendar;
@@ -30,8 +30,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 public class DateChoose extends RelativeLayout {
     ImageView mTvLast;
     ImageView mTvNext;
-    TextView mTvDate;
-    LinearLayout mLlDateContainer;
+    QMUIRoundButton mTvDate;
     AlertDialog.Builder Builder;
 
     private int month;
@@ -51,11 +50,10 @@ public class DateChoose extends RelativeLayout {
         mContext = context;
         mTvLast = inflate.findViewById(R.id.iv_last);
         mTvNext = inflate.findViewById(R.id.iv_next);
-        mTvDate = inflate.findViewById(R.id.tv_date);
-        mLlDateContainer = findViewById(R.id.ll_date_container);
+        mTvDate = inflate.findViewById(R.id.btn_date);
 
 
-        mLlDateContainer.setOnClickListener(new OnClickListener() {
+        mTvDate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 showCalendar();

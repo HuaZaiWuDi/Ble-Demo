@@ -50,8 +50,6 @@ public class BleTools {
     private static final String TAG = "【BleTools】";
 
     //燃脂衣主UUID
-
-
     public BleTools() {
 
     }
@@ -406,4 +404,8 @@ public class BleTools {
             bleManager.disconnect(bleDevice);
     }
 
+
+    public boolean isBind(String Mac) {
+        return BluetoothAdapter.checkBluetoothAddress(Mac);
+    }
 }

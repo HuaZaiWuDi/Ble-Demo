@@ -123,7 +123,7 @@ public class SonicJavaScriptInterface {
                     break;
 
                 case '\r':
-                    out.append("\\r");
+                    out.append("\\icon_date_right");
                     break;
 
                 case '\f':

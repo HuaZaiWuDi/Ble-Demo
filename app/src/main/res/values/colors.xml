@@ -37,8 +37,10 @@
     <color name="gray_FBFBFC">#FBFBFC</color>
     <color name="brown_ABA08E">#ABA08E</color>
     <color name="yellow_FFBC00">#FFBC00</color>
-
+    <color name="black_312B36">#312B36</color>
+    <color name="black_443C4A">#443C4A</color>
     <color name="bg_F7F7F9">#F7F7F9</color>
+
 
     <color name="color_material_Red_50">#FFEBEE</color>
     <color name="color_material_Red_100">#FFCDD2</color>

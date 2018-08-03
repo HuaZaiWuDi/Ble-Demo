@@ -104,6 +104,17 @@ public class WeightAddFragment extends BaseAcFragment {
     }
 
 
+    Runnable timeOut = new Runnable() {
+        @Override
+        public void run() {
+            mTvTip.setVisibility(View.INVISIBLE);
+            mBtnForget.setVisibility(View.VISIBLE);
+            mBtnSave.setVisibility(View.VISIBLE);
+            mMRoundDisPlayView.stopAnimation();
+
+        }
+    };
+
     //体脂称提取数据回调
     private void initBleCallBack() {
         MyAPP.QNapi.setDataListener(new QNDataListener() {
@@ -120,6 +131,7 @@ public class WeightAddFragment extends BaseAcFragment {
                     mTvTip.setText("称重中...");
                     mMRoundDisPlayView.showPoint(false);
                     mMRoundDisPlayView.startAnimation();
+                    mMRoundDisPlayView.postDelayed(timeOut, 8000);
                 }
             }
 
@@ -133,7 +145,7 @@ public class WeightAddFragment extends BaseAcFragment {
                 mMRoundDisPlayView.stopAnimation();
                 mMRoundDisPlayView.showPoint(true);
                 mMRoundDisPlayView.startAnim();
-
+                mMRoundDisPlayView.removeCallbacks(timeOut);
                 //强行延时三秒用来展示动画效果
                 mMRoundDisPlayView.postDelayed(new Runnable() {
                     @Override

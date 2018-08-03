@@ -165,7 +165,7 @@ public class RoundIndicatorView extends View {
         Rect r = new Rect();
 //        canvas.drawText(unit, v / 2, 0, paint_4);
 
-//        paint_4.getTextBounds(text_bottom, 0, text_bottom.length(), r);
+//        paint_4.getTextBounds(text_bottom, 0, text_bottom.length(), icon_date_right);
         canvas.drawText(text_top, -r.width() / 2, r.height() + 50, paint_4);
         canvas.drawText(text_bottom, -r.width() / 2, r.height() - 50, paint_4);
         canvas.restore();

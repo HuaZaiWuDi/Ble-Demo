@@ -268,7 +268,7 @@
             android:layout_width="match_parent"
             android:layout_height="190dp"
             android:layout_below="@+id/layout_sports"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:background="#443C4A"
             android:orientation="horizontal">
 

@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,11 +99,13 @@ public class SmartClothingFragment extends BaseAcFragment {
     //监听瘦身衣连接情况
     @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
     void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
-        if (state) {
-            btn_Connect.setText(R.string.connected);
-        } else {
-            btn_Connect.setText(R.string.disConnected);
-        }
+        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
+            if (state) {
+                btn_Connect.setText(R.string.connected);
+            } else {
+                btn_Connect.setText(R.string.disConnected);
+                mLayoutStrongTip.setVisibility(View.GONE);
+            }
     }
 
     //心率
@@ -192,7 +195,7 @@ public class SmartClothingFragment extends BaseAcFragment {
 
                         mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
                         //今日目标是否已经达成
-                        mTvTip.setText(bean.getNeedAthl() == 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, bean.getNeedAthl()));
+                        mTvTip.setText(bean.getNeedAthl() == 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, RxFormatValue.fromat4S5R(bean.getNeedAthl() / 1000f, 2)));
                         List<AthleticsInfo.PageInfoBean.ListBean> list = bean.getPageInfo().getList();
                         initLineChart(list);
                     }
@@ -249,7 +252,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         List<Unit> lines_Time = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
-            RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "getDuration：" + bean.getDuration());
+            RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "----getDuration：" + bean.getDuration());
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration() / 60, RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             unit_time.setLineStyle(SuitLines.DASHED);
@@ -270,7 +273,7 @@ public class SmartClothingFragment extends BaseAcFragment {
             public void selectItem(int valueX) {
                 AthleticsInfo.PageInfoBean.ListBean bean = list.get(valueX);
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
-                mTvHeatKcal.setText(bean.getCalorie() + "");
+                mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
                 mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() / 60, 0));
                 currentDate = bean.getAthlDate();
             }
@@ -285,7 +288,8 @@ public class SmartClothingFragment extends BaseAcFragment {
             }
         });
         mQMUIAppBarLayout.setTitle("运动记录");
-        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(
+                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
     }
@@ -295,13 +299,11 @@ public class SmartClothingFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_sports:
-//                Bundle args = new Bundle();
-//                args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
-//                QMUIFragment fragment = SportsDetailsFragment.getInstance();
-//                fragment.setArguments(args);
-//                startFragment(fragment);
-
-                startFragment(SportingFragment.getInstance());
+                Bundle args = new Bundle();
+                args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
+                QMUIFragment fragment = SportsDetailsFragment.getInstance();
+                fragment.setArguments(args);
+                startFragment(fragment);
                 break;
         }
     }

@@ -172,4 +172,6 @@ public class SettingTargetFragment extends BaseAcFragment {
     public void onViewClicked() {
         nextStep();
     }
+
+
 }
