@@ -315,9 +315,11 @@ public class BleService extends Service {
             @Override
             public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("体重秤状态变化:" + i);
+                if (i >= 5) {
+                    B.broadUpdate(BleService.this, Key.ACTION_STATE_START_MEASURE);
+                }
                 switch (i) {
                     case 5://正在测量
-                        B.broadUpdate(BleService.this, Key.ACTION_STATE_START_MEASURE);
                         break;
                     case 6://正在测量试试体重
                         break;

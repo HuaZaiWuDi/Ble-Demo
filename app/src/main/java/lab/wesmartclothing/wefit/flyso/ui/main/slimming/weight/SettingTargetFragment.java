@@ -26,7 +26,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
  * Created by jk on 2018/7/26.
@@ -147,7 +146,6 @@ public class SettingTargetFragment extends BaseAcFragment {
     }
 
     private void nextStep() {
-        TipDialog tipDialog = new TipDialog(mActivity);
         if (settingWeight > maxWeight) {
             tipDialog.showInfo("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);
             return;

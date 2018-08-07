@@ -26,7 +26,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -59,7 +58,6 @@ public class TargetDateFargment extends BaseAcFragment {
 
     private float stillNeed = 1, weeks;
     private Bundle bundle;
-    TipDialog tipDialog;
 
     @Override
     protected View onCreateView() {
@@ -70,7 +68,6 @@ public class TargetDateFargment extends BaseAcFragment {
     }
 
     private void initView() {
-        tipDialog = new TipDialog(mActivity);
         initTopBar();
         initRuler();
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");

@@ -97,11 +97,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name=".ui.main.slimming.heat.SearchHistoryActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="portrait">
-        </activity>
+        <!--<activity-->
+            <!--android:name=".ui.main.slimming.heat.SearchHistoryActivity_"-->
+            <!--android:configChanges="keyboardHidden|orientation|screenSize|locale"-->
+            <!--android:screenOrientation="portrait">-->
+        <!--</activity>-->
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

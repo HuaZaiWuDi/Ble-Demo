@@ -26,7 +26,7 @@ public class AddFoodItem {
      * }
      */
     private String userId;
-    private String addDate;
+    private long addDate;
     private int eatType;
     private List<intakeList> intakeList;
 
@@ -39,6 +39,11 @@ public class AddFoodItem {
         private String weight;
         private String weightType;
         private String gid;
+        private int unitCount;
+
+        public void setUnitCount(int unitCount) {
+            this.unitCount = unitCount;
+        }
 
         public void setFoodId(String foodId) {
             this.foodId = foodId;
@@ -86,7 +91,7 @@ public class AddFoodItem {
         this.userId = userId;
     }
 
-    public void setAddDate(String addDate) {
+    public void setAddDate(long addDate) {
         this.addDate = addDate;
     }
 

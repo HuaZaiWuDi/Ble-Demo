@@ -15,6 +15,7 @@ public interface Key {
     public static final String ADD_FOOD_DATE = "ADD_FOOD_DATE";
 
     public static final String ADD_FOOD_INFO = "ADD_FOOD_INFO";
+    String ADDED_FOOD_INFO = "ADDED_FOOD_INFO";//已经添加的书屋列表
 
     public static final String BUNDLE_WEIGHT_HISTORY = "BUNDLE_WEIGHT_HISTORY";//跳转体重信息
     public static final String BUNDLE_SPORTS_INFO = "BUNDLE_SPORTS_INFO";//跳转运动信息

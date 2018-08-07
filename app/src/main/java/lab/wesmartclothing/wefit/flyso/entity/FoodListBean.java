@@ -34,6 +34,24 @@ public class FoodListBean {
     private int calorie;
     private String createUser;
     private String unit;
+    private String remark;
+    private int unitCount;
+
+    public int getUnitCount() {
+        return unitCount;
+    }
+
+    public void setUnitCount(int unitCount) {
+        this.unitCount = unitCount;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public String getGid() {
         return gid;
@@ -153,5 +171,28 @@ public class FoodListBean {
 
     public void setUnit(String foodUnit) {
         this.unit = foodUnit;
+    }
+
+
+    @Override
+    public String toString() {
+        return "FoodListBean{" +
+                "gid='" + gid + '\'' +
+                ", heatDate=" + heatDate +
+                ", foodId='" + foodId + '\'' +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateTime=" + updateTime +
+                ", userId='" + userId + '\'' +
+                ", weightType='" + weightType + '\'' +
+                ", foodName='" + foodName + '\'' +
+                ", foodCount=" + foodCount +
+                ", eatType=" + eatType +
+                ", createTime=" + createTime +
+                ", foodImg='" + foodImg + '\'' +
+                ", calorie=" + calorie +
+                ", createUser='" + createUser + '\'' +
+                ", unit='" + unit + '\'' +
+                ", remark='" + remark + '\'' +
+                '}';
     }
 }

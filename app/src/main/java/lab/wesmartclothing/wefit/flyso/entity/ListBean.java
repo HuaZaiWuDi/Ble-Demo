@@ -44,7 +44,7 @@ public class ListBean {
     private Object userId;
     private String foodId;
     private int eatType;
-    private String heatDate;
+    private long heatDate;
     private String mGid;
 
     public String getUnit() {
@@ -64,11 +64,11 @@ public class ListBean {
     }
 
 
-    public String getHeatDate() {
+    public long getHeatDate() {
         return heatDate;
     }
 
-    public void setHeatDate(String heatDate) {
+    public void setHeatDate(long heatDate) {
         this.heatDate = heatDate;
     }
 

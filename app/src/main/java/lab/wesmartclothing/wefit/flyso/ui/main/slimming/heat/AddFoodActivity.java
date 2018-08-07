@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -21,7 +20,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -37,11 +35,10 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
+import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.ListBean;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
-import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -65,12 +62,9 @@ public class AddFoodActivity extends BaseActivity {
     @Extra
     String ADD_FOOD_NAME;
     @Extra
-    String ADD_FOOD_DATE;
+    long ADD_FOOD_DATE;
     @Extra
     int ADD_FOOD_TYPE;
-
-    @Bean
-    AddOrUpdateFoodDialog mAddOrUpdateFoodDialog;
 
 
     private BaseQuickAdapter adapter;
@@ -84,10 +78,10 @@ public class AddFoodActivity extends BaseActivity {
 
     @Click
     void tv_mSearchView() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(Key.ADD_FOOD_TYPE, ADD_FOOD_TYPE);
-        bundle.putString(Key.ADD_FOOD_DATE, ADD_FOOD_DATE);
-        RxActivityUtils.skipActivity(mContext, SearchHistoryActivity_.class, bundle);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(Key.ADD_FOOD_TYPE, ADD_FOOD_TYPE);
+//        bundle.putLong(Key.ADD_FOOD_DATE, ADD_FOOD_DATE);
+//        RxActivityUtils.skipActivity(mContext, SearchHistoryActivity_.class, bundle);
     }
 
     @Click
@@ -160,19 +154,19 @@ public class AddFoodActivity extends BaseActivity {
     private void showAddFoodDialog(final ListBean item) {
         item.setEatType(ADD_FOOD_TYPE);
         item.setHeatDate(ADD_FOOD_DATE);
-        mAddOrUpdateFoodDialog.setFoodInfo(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
-            @Override
-            public void complete(AddFoodItem.intakeList item) {
-                mIntakeLists.add(item);
-                mark.setVisibility(View.VISIBLE);
-                tv_mark.setText(mIntakeLists.size() + "");
-            }
-        });
+//        mAddOrUpdateFoodDialog.setFoodInfo(mContext, true, item, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+//            @Override
+//            public void complete(AddFoodItem.intakeList item) {
+//                mIntakeLists.add(item);
+//                mark.setVisibility(View.VISIBLE);
+//                tv_mark.setText(mIntakeLists.size() + "");
+//            }
+//        });
     }
 
     private void addFood() {
         AddFoodItem foodItem = new AddFoodItem();
-        foodItem.setAddDate(RxFormat.setFormatDate(Long.parseLong(ADD_FOOD_DATE), RxFormat.Date));
+        foodItem.setAddDate(ADD_FOOD_DATE);
         foodItem.setEatType(ADD_FOOD_TYPE);
         foodItem.setIntakeLists(mIntakeLists);
         String s = new Gson().toJson(foodItem);
@@ -196,10 +190,8 @@ public class AddFoodActivity extends BaseActivity {
     }
 
     private void initData() {
-        JsonObject jsonObject = new JsonObject();
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(body))
+        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo())
                 .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + ADD_FOOD_TYPE, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -207,7 +199,7 @@ public class AddFoodActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         FoodInfoItem item = new Gson().fromJson(s, FoodInfoItem.class);
-                        List<ListBean> beans = item.getList();
+                        List<FoodListBean> beans = item.getList();
                         adapter.setNewData(beans);
                     }
 

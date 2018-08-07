@@ -13,4 +13,5 @@
     <item name="iv_mnoftify" type="id"/>
     <item name="iv_muserImg" type="id"/>
     <item name="tv_connect" type="id"/>
+    <item name="id_search" type="id"/>
 </resources>

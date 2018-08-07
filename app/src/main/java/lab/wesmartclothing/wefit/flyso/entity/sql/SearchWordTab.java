@@ -39,17 +39,18 @@ public class SearchWordTab extends Model {
                 .execute();
     }
 
-    public static List<SearchWordTab> getKey(String searchKey) {
+    public static SearchWordTab getKey(String searchKey) {
         return new Select()
                 .from(SearchWordTab.class)
-                .where("searchKey", searchKey)
-                .execute();
+                .where("searchKey = ?", searchKey)
+                .orderBy("RANDOM()")
+                .executeSingle();
     }
 
-    public static void update(String addTime, String searchKey) {
+    public static void update(long addTime, String searchKey) {
         new Update(SearchWordTab.class)
-                .set("addTime", addTime)
-                .where("searchKey", searchKey)
+                .set("addTime = ?", addTime)
+                .where("searchKey = ?", searchKey)
                 .execute();
     }
 

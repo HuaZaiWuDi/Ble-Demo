@@ -20,14 +20,17 @@ public class OverlapLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-        return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
 
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         super.onLayoutChildren(recycler, state);
+        if (getItemCount() <= 0 || state.isPreLayout()) {
+            return;
+        }
         //1.如何实现层叠效果--cardView.layout(l,t,r,b)
         //2.如何让8个条目中的4个展示在RecylerView里面
         //1在布局layout之前，将所有的子View先全部detach掉，然后放到Scrap集合里面缓存。

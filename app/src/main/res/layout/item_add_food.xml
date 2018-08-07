@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="68dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    app:qmui_backgroundColor="@color/white"
+    app:qmui_borderColor="@color/white"
+    app:qmui_radius="4dp">
+
+
+    <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+        android:id="@+id/iv_foodImg"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        app:qmui_border_color="@color/bg_F7F7F9"
+        app:qmui_border_width="1dp"
+        app:qmui_is_circle="true"
+        tools:src="@drawable/eg"/>
+
+
+    <TextView
+        android:id="@+id/tv_foodName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/tv_foodKcal"
+        android:layout_toRightOf="@+id/iv_foodImg"
+        android:textColor="@color/Gray"
+        android:textSize="13sp"
+        tools:text="三文鱼"/>
+
+
+    <TextView
+        android:id="@+id/tv_foodKcal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/orange_FF7200"
+        android:textSize="18sp"
+        tools:text="116kcal/100g"/>
+
+
+</com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>

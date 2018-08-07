@@ -50,7 +50,7 @@ public class SearchListItem implements Serializable{
     private int navigateLastPage;
     private int lastPage;
     private int firstPage;
-    private List<ListBean> list;
+    private List<FoodListBean> list;
     private List<Integer> navigatepageNums;
 
     public int getPageNum() {
@@ -197,11 +197,11 @@ public class SearchListItem implements Serializable{
         this.firstPage = firstPage;
     }
 
-    public List<ListBean> getList() {
+    public List<FoodListBean> getList() {
         return list;
     }
 
-    public void setList(List<ListBean> list) {
+    public void setList(List<FoodListBean> list) {
         this.list = list;
     }
 

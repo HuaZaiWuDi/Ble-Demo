@@ -11,136 +11,122 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.google.gson.JsonObject;
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
 
-import org.androidannotations.annotations.EBean;
+import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
-import lab.wesmartclothing.wefit.flyso.entity.ListBean;
+import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 /**
  * Created icon_hide_password jk on 2018/5/14.
  */
-@EBean(scope = EBean.Scope.Singleton)//单例模式 传入的是using context.getApplicationContext()对象
 public class AddOrUpdateFoodDialog {
 
+    @BindView(R.id.tv_delete)
+    ImageView mTvDelete;
+    @BindView(R.id.img_food)
+    QMUIRadiusImageView mImgFood;
+    @BindView(R.id.tv_foodName)
+    TextView mTvFoodName;
+    @BindView(R.id.tv_heat)
+    TextView mTvHeat;
+    @BindView(R.id.tv_info)
+    TextView mTvInfo;
+    @BindView(R.id.et_food_g)
+    EditText mEtFoodG;
+    @BindView(R.id.layout_Text)
+    QMUIRoundRelativeLayout mLayoutText;
+    @BindView(R.id.tv_unit)
+    TextView mTvUnit;
+    @BindView(R.id.cancel)
+    TextView mCancel;
+    @BindView(R.id.ok)
+    TextView mOk;
+
     private Context mContext;
-    private boolean isAdd;
+    private boolean showDelete;//是否显示删除按钮
     private AddOrUpdateFoodListener addOrUpdateFoodListener;
+    private DeleteFoodListener mDeleteFoodListener;
     private AlertDialog dialog;
+    private FoodListBean listBean;
+    private int foodType;
+    private long currentTime;
 
-
-    public void setFoodInfo(Context context, boolean isAdd, ListBean listBean, AddOrUpdateFoodListener addOrUpdateFoodListener) {
+    public void setFoodInfo(Context context, boolean showDelete, int foodType, long currentTime, FoodListBean listBean) {
         mContext = context;
-        this.isAdd = isAdd;
-        this.addOrUpdateFoodListener = addOrUpdateFoodListener;
-        if (isAdd)
-            getAddedHeatInfo(listBean);
-        else showAddFoodDialog(listBean);
+        RxLogUtils.d("获取食物信息：" + listBean.toString());
+        this.showDelete = showDelete;
+        this.listBean = listBean;
+        this.foodType = foodType;
+        this.currentTime = currentTime;
+        getAddedHeatInfo();//添加：先请求是否添加过，未添加吧foodId赋值给Gid，添加过直接上传Gid
     }
 
 
-    private void showAddFoodDialog(final ListBean item) {
-
+    private void showAddFoodDialog() {
         View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
+        ButterKnife.bind(this, view);
 
         dialog = new AlertDialog.Builder(mContext)
                 .setView(view).create();
         dialog.show();
-        ImageView img_food = view.findViewById(R.id.img_food);
-        TextView tv_foodName = view.findViewById(R.id.tv_foodName);
-        TextView tv_foodInfo = view.findViewById(R.id.tv_info);
-        TextView tv_heat = view.findViewById(R.id.tv_heat);
-        final EditText et_food_g = view.findViewById(R.id.et_food_g);
-        TextView tv_unit = view.findViewById(R.id.tv_unit);
-        TextView cancel = view.findViewById(R.id.cancel);
-        TextView ok = view.findViewById(R.id.ok);
 
-        loadCricle(item.getFoodImg(), img_food);
-        if (!isAdd)
-            tv_foodInfo.setVisibility(View.GONE);
+        loadCricle(listBean.getFoodImg(), mImgFood);
+        if (!showDelete)
+            mTvDelete.setVisibility(View.INVISIBLE);
 
-        tv_foodName.setText(item.getFoodName());
-        tv_foodInfo.setText(item.getRemark());
-        tv_unit.setText(item.getFoodUnit());
+        mTvFoodName.setText(listBean.getFoodName());
+        mTvUnit.setText(listBean.getUnit());
 
-        et_food_g.setText(item.getFoodCount() + "");
+        if (listBean.getFoodCount() != 0)
+            mEtFoodG.setText(listBean.getFoodCount() + "");
 
-
-        RxTextUtils.getBuilder("")
-                .append(item.getCalorie() + mContext.getString(R.string.unit_kcal)).setForegroundColor(mContext.getResources().getColor(R.color.colorTheme))
-                .append(mContext.getString(R.string.unit_heat))
-                .into(tv_heat);
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String foodCount = et_food_g.getText().toString();
-                if (!"0".equals(foodCount) && !RxDataUtils.isNullString(foodCount)) {
-                    item.setFoodCount(Integer.parseInt(foodCount));
-                } else {
-                    RxToast.warning(mContext.getString(R.string.weightNoZero));
-                    return;
-                }
-                AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
-                intakeList.setFoodId(isAdd ? item.getGid() : item.getFoodId());
-                intakeList.setFoodName(item.getFoodName());
-                intakeList.setFoodCount(item.getFoodCount());
-                intakeList.setUnit(item.getFoodUnit());
-
-                intakeList.setGid(isAdd ? item.getMGid() : item.getGid());
-                //暂时不用传
-                intakeList.setWeight("");
-                intakeList.setWeightType("");
-
-                addOrUpdateFoodListener.complete(intakeList);
-                dialog.dismiss();
-            }
-        });
+        mTvHeat.setText(listBean.getCalorie() + "kcal/" + listBean.getUnitCount() + listBean.getUnit());
     }
 
 
-    private void getAddedHeatInfo(final ListBean item) {
-        RxLogUtils.i("食物信息：" + item.toString());
+    private void getAddedHeatInfo() {
         AddedHeatInfo heatInfo = new AddedHeatInfo();
-        listBean2Added(item, heatInfo);
+        listBean2Added(listBean, heatInfo);
 
         String s = new Gson().toJson(heatInfo, AddedHeatInfo.class);
-
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getAddedHeatInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        AddedHeatInfo addedHeatInfo = new Gson().fromJson(s, AddedHeatInfo.class);
-                        if ("".equals(addedHeatInfo.getGid())) {
-                            showAddFoodDialog(item);
-                        } else {
-                            item.setFoodCount(addedHeatInfo.getFoodCount());
-                            showAddFoodDialog(item);
-                            item.setMGid(addedHeatInfo.getGid());
-                        }
+                        FoodListBean addedHeatInfo = new Gson().fromJson(s, FoodListBean.class);
+                        listBean = addedHeatInfo;
+                        showAddFoodDialog();
+//                        if ("".equals(addedHeatInfo.getGid())) {
+//                            showAddFoodDialog();
+//                            listBean.setFoodId(listBean.getGid());
+//                        } else {
+//                            listBean.setFoodCount(addedHeatInfo.getFoodCount());//已经添加过，把后台的数量赋值给当前展示
+//                            listBean.setGid(addedHeatInfo.getGid());
+//                            showAddFoodDialog();
+//                        }
                     }
 
                     @Override
@@ -150,30 +136,103 @@ public class AddOrUpdateFoodDialog {
                 });
     }
 
-
-    private void listBean2Added(ListBean item, AddedHeatInfo heatInfo) {
+    private void listBean2Added(FoodListBean item, AddedHeatInfo heatInfo) {
         heatInfo.setCalorie(item.getCalorie());
-        heatInfo.setEatType(item.getEatType());
+        heatInfo.setEatType(foodType);
         heatInfo.setFoodCount(item.getFoodCount());
-        heatInfo.setFoodId(item.getGid());
         heatInfo.setFoodName(item.getFoodName());
-        heatInfo.setUnit(item.getFoodUnit());
-        heatInfo.setHeatDate(RxFormat.setFormatDate(Long.parseLong(item.getHeatDate()), RxFormat.Date));
+        heatInfo.setUnit(item.getUnit());
+        heatInfo.setHeatDate(currentTime);
         heatInfo.setRemark(item.getRemark());
+        heatInfo.setFoodId(item.getGid());
+        heatInfo.setGid(item.getFoodId());
+    }
+
+
+    @OnClick({R.id.tv_delete, R.id.cancel, R.id.ok})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_delete:
+                deleteData(listBean.getGid());
+                break;
+            case R.id.cancel:
+                dialog.dismiss();
+                break;
+            case R.id.ok:
+                String foodCount = mEtFoodG.getText().toString();
+                if (!"0".equals(foodCount) && !RxDataUtils.isNullString(foodCount)) {
+                    listBean.setFoodCount(Integer.parseInt(foodCount));
+                } else {
+                    RxToast.warning(mContext.getString(R.string.weightNoZero));
+                    return;
+                }
+
+                addOrUpdateFoodListener.complete(listBean);
+                dialog.dismiss();
+                break;
+        }
+    }
+
+
+    public int isExist(List<FoodListBean> addedLists, FoodListBean needFood) {
+        for (int i = 0; i < addedLists.size(); i++) {
+            if (addedLists.get(i).getGid().equals(needFood.getGid())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 
     public interface AddOrUpdateFoodListener {
-        void complete(AddFoodItem.intakeList item);
+        void complete(FoodListBean listBean);
     }
 
+    public interface DeleteFoodListener {
+        void deleteFood(FoodListBean listBean);
+    }
+
+    public void setDeleteFoodListener(DeleteFoodListener deleteFoodListener) {
+        mDeleteFoodListener = deleteFoodListener;
+    }
+
+
+    public void setAddOrUpdateFoodListener(AddOrUpdateFoodListener addOrUpdateFoodListener) {
+        this.addOrUpdateFoodListener = addOrUpdateFoodListener;
+    }
 
     public void loadCricle(String img_url, @NonNull ImageView img) {
         Glide.with(mContext)
                 .load(img_url)
-                .error(R.mipmap.ic_launcher)
+                .error(R.mipmap.group15)
                 .bitmapTransform(new CropCircleTransformation(mContext))//圆角图片
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(img);
     }
+
+    public void deleteData(String gid) {
+        JsonObject object = new JsonObject();
+        object.addProperty("gid", gid);
+
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.removeHeatInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束：" + s);
+                        if (mDeleteFoodListener != null)
+                            mDeleteFoodListener.deleteFood(listBean);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+
+                });
+    }
+
 }

@@ -28,7 +28,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
@@ -51,7 +50,6 @@ import lab.wesmartclothing.wefit.flyso.entity.section.HeatFoodSection;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.CircleMenuView;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
 import lab.wesmartclothing.wefit.flyso.view.RoundView;
@@ -90,9 +88,6 @@ public class HeatFragment extends BaseAcFragment {
     RoundView mRoundView;
 
 
-    @Bean
-    AddOrUpdateFoodDialog mAddOrUpdateFoodDialog;
-
     private int[] foodTypeRes_green = {R.mipmap.breakfast_green_icon, R.mipmap.lunch_green_icon,
             R.mipmap.dinner_green_icon, R.mipmap.midnight_snack_green_icon, R.mipmap.snack_green_icon};
     private int[] foodTypeRes_red = {R.mipmap.breakfast_red_icon, R.mipmap.lunch_red_icon,
@@ -100,7 +95,7 @@ public class HeatFragment extends BaseAcFragment {
 
 
     public boolean isComplete = false;
-    private String date;
+    private long date;
 
 
     public static HeatFragment getInstance() {
@@ -110,7 +105,7 @@ public class HeatFragment extends BaseAcFragment {
 
     @AfterViews
     public void initView() {
-        date = System.currentTimeMillis() + "";
+        date = System.currentTimeMillis();
         initDate();
         initRecycler();
         initMenu();
@@ -136,7 +131,7 @@ public class HeatFragment extends BaseAcFragment {
                 Bundle bundle = new Bundle();
                 bundle.putString(Key.ADD_FOOD_NAME, add_food[position]);
                 bundle.putInt(Key.ADD_FOOD_TYPE, position + 1);
-                bundle.putString(Key.ADD_FOOD_DATE, date);
+                bundle.putLong(Key.ADD_FOOD_DATE, date);
                 RxActivityUtils.skipActivity(mActivity, AddFoodActivity_.class, bundle);
             }
 
@@ -150,7 +145,7 @@ public class HeatFragment extends BaseAcFragment {
         mDateChoose.setOnDateChangeListener(new DateChoose.OnDateChangeListener() {
             @Override
             public void onDateChangeListener(int year, int month, int day, long millis) {
-                notifyData(millis + "");
+                notifyData(millis);
             }
         });
     }
@@ -200,7 +195,7 @@ public class HeatFragment extends BaseAcFragment {
                 });
     }
 
-    private void notifyData(String date) {
+    private void notifyData(long date) {
         this.date = date;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("heatDate", date);
@@ -350,12 +345,12 @@ public class HeatFragment extends BaseAcFragment {
                 bean.setHeatDate(date);
 
 
-                mAddOrUpdateFoodDialog.setFoodInfo(mActivity, false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
-                    @Override
-                    public void complete(AddFoodItem.intakeList item) {
-                        updateFood(foodListBean, item);
-                    }
-                });
+//                mAddOrUpdateFoodDialog.setFoodInfo(mActivity, false, bean, new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+//                    @Override
+//                    public void complete(AddFoodItem.intakeList item) {
+//                        updateFood(foodListBean, item);
+//                    }
+//                });
 
             }
         });

@@ -53,6 +53,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onDetach() {
+        tipDialog.dismiss();
         RxKeyboardUtils.hideSoftInput(mActivity);
         super.onDetach();
         mActivity = null;
@@ -136,8 +137,6 @@ public abstract class BaseAcFragment extends QMUIFragment {
         super.onSaveInstanceState(outState);
         outState.putBoolean("STATE_SAVE_IS_HIDDEN", isHidden());
     }
-
-
 
 
 }

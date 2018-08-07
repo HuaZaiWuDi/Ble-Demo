@@ -32,27 +32,30 @@ public interface RetrofitService {
     // 瘦身（热量）
     ///////////////////////////////////////////////////////////////////////////
 
-    @POST("slim/getSlimHistoryInfo")
+    @POST("heat/getSlimHistoryInfo")
     Observable<String> getHeatHistory(@Body RequestBody body);
 
-    @POST("slim/getFoodInfo")
-    Observable<String> getFoodInfo(@Body RequestBody body);
+    @POST("heat/getFoodInfo")
+    Observable<String> getFoodInfo();
 
     @FormUrlEncoded
-    @POST("slim/searchFoodInfo")
+    @POST("heat/searchFoodInfo")
     Observable<String> searchFoodInfo(@Field("foodName") String foodName);
 
-    @POST("slim/getKeyWord")
+    @POST("heat/getKeyWord")
     Observable<String> getKeyWord(@Body RequestBody body);
 
-    @POST("slim/addHeatInfo")
+    @POST("heat/addHeatInfo")
     Observable<String> addHeatInfo(@Body RequestBody body);
 
-    @POST("slim/removeHeatInfo")
+    @POST("heat/removeHeatInfo")
     Observable<String> removeHeatInfo(@Body RequestBody body);
 
-    @POST("slim/getAddedHeatInfo")
+    @POST("heat/getAddedHeatInfo")
     Observable<String> getAddedHeatInfo(@Body RequestBody body);
+
+    @POST("heat/fetchOneDayHeatInfo")
+    Observable<String> fetchOneDayHeatInfo(@Body RequestBody body);
 
     @FormUrlEncoded
     @POST("slim/indexInfo")
