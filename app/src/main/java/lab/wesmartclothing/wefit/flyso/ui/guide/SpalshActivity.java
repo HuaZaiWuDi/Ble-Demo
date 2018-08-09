@@ -25,7 +25,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -112,7 +112,7 @@ public class SpalshActivity extends BaseActivity {
         } else if (isSaveUserInfo)//
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
         else
-            RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity_.class);
+            RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
     }
 
 

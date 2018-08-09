@@ -75,8 +75,25 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
+        <!--极光通知广播-->
+        <receiver
+            android:name=".utils.jpush.MyJpushReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTRATION"/>
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/>
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/>
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/>
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>
+                <action android:name="cn.jpush.android.intent.CONNECTION"/>
+
+                <category android:name="lab.wesmartclothing.wefit.flyso"/>
+            </intent-filter>
+        </receiver>
+
         <activity
-            android:name=".ui.main.MainActivity_"
+            android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
@@ -98,9 +115,9 @@
             android:screenOrientation="portrait">
         </activity>
         <!--<activity-->
-            <!--android:name=".ui.main.slimming.heat.SearchHistoryActivity_"-->
-            <!--android:configChanges="keyboardHidden|orientation|screenSize|locale"-->
-            <!--android:screenOrientation="portrait">-->
+        <!--android:name=".ui.main.slimming.heat.SearchHistoryActivity_"-->
+        <!--android:configChanges="keyboardHidden|orientation|screenSize|locale"-->
+        <!--android:screenOrientation="portrait">-->
         <!--</activity>-->
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"

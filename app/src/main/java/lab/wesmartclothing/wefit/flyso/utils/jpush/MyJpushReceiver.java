@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.json.JSONException;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import cn.jpush.android.api.JPushInterface;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 
 /**
  * 自定义接收器
@@ -23,57 +25,65 @@ import cn.jpush.android.api.JPushInterface;
  * 1) 默认用户会打开主界面
  * 2) 接收不到自定义消息
  */
-public class MyReceiver extends BroadcastReceiver {
+public class MyJpushReceiver extends BroadcastReceiver {
     private static final String TAG = "JIGUANG-Example";
     public static final String MESSAGE_RECEIVED_ACTION = "com.example.jpushdemo.MESSAGE_RECEIVED_ACTION";
     public static final String KEY_TITLE = "title";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_EXTRAS = "extras";
 
+    public static final int TYPE_OPEN_APP = 1;
+    public static final int TYPE_OPEN_ACTIVITY = 2;
+    public static final int TYPE_OPEN_URL = 3;
+
+
+    public static final String ACTIVITY_SLIM = "slim";
+    public static final String ACTIVITY_FIND = "find";
+    public static final String ACTIVITY_SHOP = "shop";
+    public static final String ACTIVITY_USER = "user";
+    public static final String ACTIVITY_MESSAGE = "message";
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
             Bundle bundle = intent.getExtras();
-            RxLogUtils.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
-
+            RxLogUtils.d(TAG, "[MyJpushReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
             if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
                 String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
-                RxLogUtils.d(TAG, "[MyReceiver] 接收Registration Id : " + regId);
+                RxLogUtils.d(TAG, "[MyJpushReceiver] 接收Registration Id : " + regId);
                 //send the Registration Id to your server...
 
             } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
-                RxLogUtils.d(TAG, "[MyReceiver] 接收到推送下来的自定义消息: " + bundle.getString(JPushInterface.EXTRA_MESSAGE));
+                RxLogUtils.d(TAG, "[MyJpushReceiver] 接收到推送下来的自定义消息: " + bundle.getString(JPushInterface.EXTRA_MESSAGE));
                 processCustomMessage(context, bundle);
 
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
-                RxLogUtils.d(TAG, "[MyReceiver] 接收到推送下来的通知");
+                RxLogUtils.d(TAG, "[MyJpushReceiver] 接收到推送下来的通知");
                 int notifactionId = bundle.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);
-                RxLogUtils.d(TAG, "[MyReceiver] 接收到推送下来的通知的ID: " + notifactionId);
+                RxLogUtils.d(TAG, "[MyJpushReceiver] 接收到推送下来的通知的ID: " + notifactionId);
 
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
-                RxLogUtils.d(TAG, "[MyReceiver] 用户点击打开了通知");
+                RxLogUtils.d(TAG, "[MyJpushReceiver] 用户点击打开了通知");
 
-//				//打开自定义的Activity
-//				Intent i = new Intent(context, TestActivity.class);
-//				i.putExtras(bundle);
-//				//i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP );
-//				context.startActivity(i);
+                //打开自定义的Activity
+                RxActivityUtils.skipActivityTop(context,MainActivity.class,bundle);
 
             } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
-                RxLogUtils.d(TAG, "[MyReceiver] 用户收到到RICH PUSH CALLBACK: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
+                RxLogUtils.d(TAG, "[MyJpushReceiver] 用户收到到自定义图标的回调: " + bundle.getString(JPushInterface.EXTRA_EXTRA));
                 //在这里根据 JPushInterface.EXTRA_EXTRA 的内容处理代码，比如打开新的Activity， 打开一个网页等..
 
             } else if (JPushInterface.ACTION_CONNECTION_CHANGE.equals(intent.getAction())) {
                 boolean connected = intent.getBooleanExtra(JPushInterface.EXTRA_CONNECTION_CHANGE, false);
-                RxLogUtils.w(TAG, "[MyReceiver]" + intent.getAction() + " connected state change to " + connected);
+                RxLogUtils.w(TAG, "[MyJpushReceiver]" + intent.getAction() + " connected state change to " + connected);
             } else {
-                RxLogUtils.d(TAG, "[MyReceiver] Unhandled intent - " + intent.getAction());
+                RxLogUtils.d(TAG, "[MyJpushReceiver] Unhandled intent - " + intent.getAction());
             }
         } catch (Exception e) {
 
         }
     }
+
 
     // 打印所有的 intent extra 数据
     private static String printBundle(Bundle bundle) {
@@ -88,7 +98,6 @@ public class MyReceiver extends BroadcastReceiver {
                     RxLogUtils.i(TAG, "This message has no Extra data");
                     continue;
                 }
-
                 try {
                     JSONObject json = new JSONObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
                     Iterator<String> it = json.keys();
@@ -114,6 +123,7 @@ public class MyReceiver extends BroadcastReceiver {
     private void processCustomMessage(Context context, Bundle bundle) {
         RxLogUtils.e("接收到自定义广播：" + bundle.toString());
 
+        String title = bundle.getString(JPushInterface.EXTRA_TITLE);
         String message = bundle.getString(JPushInterface.EXTRA_MESSAGE);
         String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
         Intent msgIntent = new Intent(MESSAGE_RECEIVED_ACTION);

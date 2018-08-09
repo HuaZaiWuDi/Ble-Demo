@@ -38,6 +38,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -161,7 +162,8 @@ public class HeatDetailFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchOneDayHeatInfo(body))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo" + currentTime, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -348,35 +350,17 @@ public class HeatDetailFragment extends BaseAcFragment {
 
         QMUIFragment instance = null;
         switch (view.getId()) {
-            case R.id.recycler_breakfast://跳转食物详情
-
-                break;
             case R.id.layout_breakfast://跳转添加食物
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
                 instance = FoodDetailsFragment.getInstance();
-                break;
-            case R.id.recycler_lunch:
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
-                bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                instance = AddedFoodFragment.getInstance();
                 break;
             case R.id.layout_lunch:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
                 instance = FoodDetailsFragment.getInstance();
                 break;
-            case R.id.recycler_dinner:
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
-                bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                instance = AddedFoodFragment.getInstance();
-                break;
             case R.id.layout_dinner:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
                 instance = FoodDetailsFragment.getInstance();
-                break;
-            case R.id.recycler_meal:
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
-                bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                instance = AddedFoodFragment.getInstance();
                 break;
             case R.id.layout_meal:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);

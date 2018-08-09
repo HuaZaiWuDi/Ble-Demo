@@ -91,16 +91,14 @@ dependencies {
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
     compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
 
-    //    implementation "com.scwang.smartrefresh:SmartRefreshLayout:$rootProject.smartrefreshVersion"
-
-    //    implementation "com.scwang.smartrefresh:SmartRefreshHeader:$rootProject.smartrefreshVersion"
+    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5'
+//    compile 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.5'//没有使用特殊Header，可以不加这行
 
     //万能RecyclerView适配器
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.40'
 
     //图片加载
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
-
 
 }

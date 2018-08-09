@@ -10,6 +10,7 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 
+import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
@@ -19,7 +20,7 @@ import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 public abstract class BaseAcFragment extends QMUIFragment {
     public Activity mActivity;
     public Context mContext;
-
+    protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
 
     public BaseAcFragment() {
     }
@@ -32,6 +33,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onAttach(Context context) {
+        lifecycleSubject.onNext(LifeCycleEvent.ATTACH);
         super.onAttach(context);
         mContext = mActivity = getActivity();
         initDialog();
@@ -53,6 +55,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onDetach() {
+        lifecycleSubject.onNext(LifeCycleEvent.DETACH);
         tipDialog.dismiss();
         RxKeyboardUtils.hideSoftInput(mActivity);
         super.onDetach();
@@ -93,7 +96,34 @@ public abstract class BaseAcFragment extends QMUIFragment {
     }
 
     @Override
+    public void onPause() {
+        lifecycleSubject.onNext(LifeCycleEvent.STOP);
+        super.onPause();
+    }
+
+
+    @Override
+    public void onStop() {
+        lifecycleSubject.onNext(LifeCycleEvent.STOP);
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        lifecycleSubject.onNext(LifeCycleEvent.RESUME);
+        super.onResume();
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        lifecycleSubject.onNext(LifeCycleEvent.DESTROY_VIEW);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDestroy() {
+        lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
         super.onDestroy();
     }
 

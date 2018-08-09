@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,7 +23,9 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,10 +35,12 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.Healthy;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -73,6 +78,9 @@ public class BodyDataFragment extends BaseAcFragment {
             R.mipmap.man_3_1, R.mipmap.man_3_2, R.mipmap.man_3_2,};
     private int bodyIndex;
     private String[] bodys;
+    public Map<Integer, Healthy> mHealthyMaps = new HashMap<>();
+
+    private BodyDataUtil bodyDataUtil;
 
     @Override
     protected View onCreateView() {
@@ -90,7 +98,75 @@ public class BodyDataFragment extends BaseAcFragment {
         initTopBar();
         initRecyclerView();
         initData();
+        initWeightData();
 
+    }
+
+    private void initWeightData() {
+        Healthy healthy = new Healthy();
+        healthy.setSections(new double[]{11, 21, 26});
+        healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
+                Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
+        healthy.setSectionLabels(new String[]{"11.0%", "21.0%", "26.0%"});
+        healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
+        mHealthyMaps.put(0, healthy);
+
+        Healthy healthy2 = new Healthy();
+        healthy2.setSections(new double[]{18.5, 25});
+        healthy2.setSectionLabels(new String[]{"18.5%", "25.0%"});
+        healthy2.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
+                Color.parseColor("#FFBC00")});
+        healthy2.setLabels(new String[]{"偏低", "标准", "偏高"});
+        mHealthyMaps.put(1, healthy2);
+
+        Healthy healthy3 = new Healthy();
+        healthy3.setSections(new double[]{9, 14});
+        healthy3.setSectionLabels(new String[]{"9", "14"});
+        healthy3.setColors(new int[]{Color.parseColor("#61D97F"),
+                Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
+        healthy3.setLabels(new String[]{"标准", "偏高", "严重偏高"});
+        mHealthyMaps.put(2, healthy3);
+
+        Healthy healthy4 = new Healthy();
+        healthy4.setSections(new double[]{67, 80});
+        healthy4.setSectionLabels(new String[]{"67.0%", "80.0%"});
+        healthy4.setColors(new int[]{Color.parseColor("#61D97F"),
+                Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
+        healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
+        mHealthyMaps.put(3, healthy4);
+
+        Healthy healthy5 = new Healthy();
+        healthy5.setSections(new double[]{903});
+        healthy5.setSectionLabels(new String[]{"903kcal"});
+        healthy5.setColors(new int[]{Color.parseColor("#FF7200"),
+                Color.parseColor("#61D97F")});
+        healthy5.setLabels(new String[]{"未达标", "达标"});
+        mHealthyMaps.put(4, healthy5);
+
+        Healthy healthy6 = new Healthy();
+        healthy6.setSections(new double[]{55, 65});
+        healthy6.setSectionLabels(new String[]{"55.0%,65.0%"});
+        healthy6.setColors(new int[]{Color.parseColor("#FF7200"),
+                Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
+        healthy6.setLabels(new String[]{"偏低", "标准", "充足"});
+        mHealthyMaps.put(5, healthy6);
+
+        Healthy healthy7 = new Healthy();
+        healthy7.setSections(new double[]{3.7, 4.2});
+        healthy7.setSectionLabels(new String[]{"3.7%", "4.2%"});
+        healthy7.setColors(new int[]{Color.parseColor("#5A7BEE"),
+                Color.parseColor("#61D97F"), Color.parseColor("#FFBC00")});
+        healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});
+        mHealthyMaps.put(6, healthy7);
+
+        Healthy healthy8 = new Healthy();
+        healthy8.setSections(new double[]{20, 30, 40});
+        healthy8.setSectionLabels(new String[]{"20", "30", "40"});
+        healthy8.setColors(new int[]{Color.parseColor("#CFED00"), Color.parseColor("#61D97F"),
+                Color.parseColor("#17BD4F"), Color.parseColor("#FFBC00")});
+        healthy8.setLabels(new String[]{"青少年", "青年", "中年", "中老年"});
+        mHealthyMaps.put(7, healthy8);
+        bodyDataUtil = new BodyDataUtil(mHealthyMaps);
 
     }
 
@@ -100,6 +176,7 @@ public class BodyDataFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -107,7 +184,7 @@ public class BodyDataFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         WeightDetailsBean detailsBean = new Gson().fromJson(s, WeightDetailsBean.class);
-                        mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getWeightDate(), "yyyy年MM月dd日 HH:mm"));
+                        mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
                         mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
 
                         Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
@@ -128,9 +205,10 @@ public class BodyDataFragment extends BaseAcFragment {
     }
 
     private void initRecyclerView() {
-        mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new ExpandableItemAdapter(multiItermLists);
         mMRecyclerView.setAdapter(adapter);
+        mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
     }
 
 
@@ -139,16 +217,16 @@ public class BodyDataFragment extends BaseAcFragment {
         String[] units = {"%", "", "级", "%", "kcal", "%", "%", "岁"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
                 R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
-        double[] bodyDatas = new double[8];
+        double[] bodyValue = new double[8];
         if (weightInfo != null) {
-            bodyDatas[0] = weightInfo.getBodyFat();
-            bodyDatas[1] = weightInfo.getBmi();
-            bodyDatas[2] = weightInfo.getVisfat();
-            bodyDatas[3] = weightInfo.getMuscle();
-            bodyDatas[4] = weightInfo.getBmr();
-            bodyDatas[5] = weightInfo.getWater();
-            bodyDatas[6] = weightInfo.getBone();
-            bodyDatas[7] = weightInfo.getBodyAge();
+            bodyValue[0] = weightInfo.getBodyFat();
+            bodyValue[1] = weightInfo.getBmi();
+            bodyValue[2] = weightInfo.getVisfat();
+            bodyValue[3] = weightInfo.getMuscle();
+            bodyValue[4] = weightInfo.getBmr();
+            bodyValue[5] = weightInfo.getWater();
+            bodyValue[6] = weightInfo.getBone();
+            bodyValue[7] = weightInfo.getBodyAge();
 
             View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_body_data, null);
             LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
@@ -163,11 +241,26 @@ public class BodyDataFragment extends BaseAcFragment {
 
         multiItermLists.clear();
         for (int i = 0; i < titles.length; i++) {
-            BodyLevel0Bean level0Bean = new BodyLevel0Bean(imgs[i], titles[i], units[i], bodyDatas[i]);
-            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean((float) bodyDatas[i]);
+            BodyLevel0Bean level0Bean = new BodyLevel0Bean();
+            level0Bean.setUnit(units[i]);
+            level0Bean.setBodyValue(bodyValue[i]);
+            level0Bean.setBodyData(titles[i]);
+            level0Bean.setBodyDataImg(imgs[i]);
+            level0Bean.setStatus((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[0]);
+            level0Bean.setStatusColor((int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[1]);
+
+            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
+
+            Healthy healthy = mHealthyMaps.get(i % mHealthyMaps.size());
+            bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
+            bodyLevel1Bean.setLabels(healthy.getLabels());
+            bodyLevel1Bean.setColors(healthy.getColors());
+
             level0Bean.addSubItem(bodyLevel1Bean);
             multiItermLists.add(level0Bean);
         }
+        adapter.setNewData(multiItermLists);
+        adapter.expandAll();
     }
 
     private void deleteWeight() {
@@ -176,6 +269,7 @@ public class BodyDataFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeWeightInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

@@ -1,11 +1,17 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
+import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
 import com.activeandroid.app.Application;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.model.cache.ACache;
@@ -18,6 +24,7 @@ import com.zchu.rxcache.diskconverter.GsonDiskConverter;
 import java.io.File;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
@@ -34,6 +41,27 @@ public class MyAPP extends Application {
     public static QNBleApi QNapi;
     private static ACache aCache;
     private static RxCache rxCache;
+
+    //指定全局的上啦刷新，下拉加载的样式
+    static {
+        //设置全局的Header构建器
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
+            @Override
+            public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
+                layout.setPrimaryColorsId(R.color.Gray, android.R.color.white);//全局设置主题颜色
+                return new ClassicsHeader(context);//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
+            }
+        });
+//        //设置全局的Footer构建器
+//        SmartRefreshLayout.setDefaultRefreshFooterCreator(new DefaultRefreshFooterCreator() {
+//            @Override
+//            public RefreshFooter createRefreshFooter(Context context, RefreshLayout layout) {
+//                //指定为经典Footer，默认是 BallPulseFooter
+//                return new ClassicsFooter(context).setDrawableSize(20);
+//            }
+//        });
+    }
+
 
     @Override
     public void onCreate() {

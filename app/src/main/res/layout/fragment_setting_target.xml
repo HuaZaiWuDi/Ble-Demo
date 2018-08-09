@@ -76,6 +76,15 @@
 
 
         <TextView
+            android:id="@+id/tv_targetDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_16"
+            android:drawableBottom="@mipmap/icon_recommend"
+            android:gravity="center"
+            android:textColor="@color/GrayWrite"/>
+
+        <TextView
             android:id="@+id/tv_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

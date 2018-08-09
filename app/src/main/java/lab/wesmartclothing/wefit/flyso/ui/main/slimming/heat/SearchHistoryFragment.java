@@ -97,7 +97,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
     private boolean isStorage = false;
     private Disposable subscribe;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
-    private List<FoodListBean> addedLists = FoodDetailsFragment.addedLists;
 
     private int foodType = 0;
     private long currentTime = 0;
@@ -118,15 +117,20 @@ public class SearchHistoryFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         super.onStart();
-        List<Object> addedFoods = new ArrayList<>();
-        for (int i = 0; i < addedLists.size(); i++) {
-            addedFoods.add(addedLists.get(i).getFoodImg());
+        if (FoodDetailsFragment.addedLists.size() > 0) {
+            mLayoutAddFoods.setVisibility(View.VISIBLE);
+            List<Object> addedFoods = new ArrayList<>();
+            for (int i = 0; i < FoodDetailsFragment.addedLists.size(); i++) {
+                addedFoods.add(FoodDetailsFragment.addedLists.get(i).getFoodImg());
+            }
+            if (addedFoods.size() > 10) {
+                mBtnMark.setVisibility(View.VISIBLE);
+                mBtnMark.setText(FoodDetailsFragment.addedLists.size() + "");
+                addedFoods = addedFoods.subList(0, 10);
+                addedFoods.set(0, R.mipmap.icon_ellipsis);
+            }
+            adapterAddFoods.setNewData(addedFoods);
         }
-        if (addedFoods.size() > 10) {
-            addedFoods = addedFoods.subList(0, 10);
-            addedFoods.set(0, R.mipmap.icon_ellipsis);
-        }
-        adapterAddFoods.setNewData(addedFoods);
     }
 
 
@@ -258,18 +262,23 @@ public class SearchHistoryFragment extends BaseAcFragment {
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(FoodListBean listBean) {
-                int index = dialog.isExist(addedLists, listBean);
-                if (index > 0) {
-                    addedLists.remove(index);
+                int index = dialog.isExist(FoodDetailsFragment.addedLists, listBean);
+                if (index >= 0) {
+                    FoodDetailsFragment.addedLists.remove(index);
+                    adapterAddFoods.remove(index);
+                    adapterAddFoods.notifyDataSetChanged();
                 }
+                FoodDetailsFragment.addedLists.add(listBean);
                 mLayoutAddFoods.setVisibility(View.VISIBLE);
-                if (addedLists.size() <= 10) {
+                if (FoodDetailsFragment.addedLists.size() <= 10) {
                     mBtnMark.setVisibility(View.INVISIBLE);
                     adapterAddFoods.addData(listBean.getFoodImg());
                 } else {
                     mBtnMark.setVisibility(View.VISIBLE);
+                    mBtnMark.setText(FoodDetailsFragment.addedLists.size() + "");
+                    adapterAddFoods.remove(1);
+                    adapterAddFoods.addData(listBean.getFoodImg());
                     adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
-                    mBtnMark.setText(addedLists.size() + "");
                 }
             }
         });
@@ -342,6 +351,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         mlayoutSearchData.setVisibility(View.VISIBLE);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.searchFoodInfo(key))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -366,6 +376,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getKeyWord(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -385,7 +396,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
                         RxToast.error(error);
                     }
                 });
-
     }
 
     //添加食物
@@ -396,15 +406,19 @@ public class SearchHistoryFragment extends BaseAcFragment {
 
         List<AddFoodItem.intakeList> mIntakeLists = new ArrayList<>();
 
-        for (int i = 0; i < addedLists.size(); i++) {
-            FoodListBean foodListBean = addedLists.get(i);
+        for (int i = 0; i < FoodDetailsFragment.addedLists.size(); i++) {
+            FoodListBean foodListBean = FoodDetailsFragment.addedLists.get(i);
             AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
-            intakeList.setFoodId(foodListBean.getGid());
+            intakeList.setFoodId(foodListBean.getFoodId());
             intakeList.setFoodName(foodListBean.getFoodName());
             intakeList.setFoodCount(foodListBean.getFoodCount());
             intakeList.setUnit(foodListBean.getUnit());
+            intakeList.setGid(foodListBean.getGid());
             intakeList.setUnitCount(foodListBean.getUnitCount());
-//            intakeList.setGid(foodListBean.getGid());
+            intakeList.setFoodImg(foodListBean.getFoodImg());
+            intakeList.setRemark(foodListBean.getRemark());
+            intakeList.setCalorie(foodListBean.getCalorie());
+            intakeList.setHeatDate(currentTime);
             mIntakeLists.add(intakeList);
         }
         foodItem.setIntakeLists(mIntakeLists);
@@ -414,6 +428,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

@@ -177,7 +177,7 @@ public class DynamicTagFlowLayout extends ViewGroup {
                 tv.setBackgroundResource(R.mipmap.search_words_bg);
                 tv.setEllipsize(TextUtils.TruncateAt.END);
                 tv.setMaxLines(1);
-//                tv.setMaxWidth(250);
+                tv.setMaxWidth(250);
                 /*
                  * setPadding一定要在setBackgroundResource后面使用才有效！！！
                  * http://stackoverflow.com/questions/18327498/setting-padding-for-textview-not-working

@@ -20,7 +20,6 @@ import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.MiddlewareWebClientBase;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -33,11 +32,11 @@ import org.json.JSONObject;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
 import lab.wesmartclothing.wefit.flyso.view.SharePop;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
@@ -221,7 +220,8 @@ public class FindFragment extends BaseWebFragment {
                 super.onPageFinished(view, url);
 
                 RxLogUtils.i("加载网页地址：" + url);
-                B.broadUpdate(mActivity, Key.ACTION_SWITCH_BOTTOM_TAB, Key.EXTRA_SWITCH_BOTTOM_TAB, getUrl().equals(url));
+                RxBus.getInstance().post(url);
+//                B.broadUpdate(mActivity, Key.ACTION_SWITCH_BOTTOM_TAB, Key.EXTRA_SWITCH_BOTTOM_TAB, getUrl().equals(url));
                 mAgentWeb.getJsAccessEntrace().quickCallJs("getUserId", SPUtils.getString(SPKey.SP_UserId));
             }
 

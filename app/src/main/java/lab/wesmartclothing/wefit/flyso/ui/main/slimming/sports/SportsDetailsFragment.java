@@ -30,6 +30,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -95,7 +96,6 @@ public class SportsDetailsFragment extends BaseAcFragment {
         return view;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -110,6 +110,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.athleticsDetail(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail" + RxFormat.setFormatDate(currentTime, RxFormat.Date), String.class, isToday ? CacheStrategy.firstRemote() : CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -117,7 +118,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         HeartRateBean heartRateBean = new Gson().fromJson(s, HeartRateBean.class);
-                        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie() / 1000, 1));
+                        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie() , 1));
                         mTvAvHeartRate.setText(heartRateBean.getAvgHeart() + "");
                         mTvMaxHeartRate.setText(heartRateBean.getMaxHeart() + "");
                         mTvSportsTime.setText(RxFormat.setSec2MS(heartRateBean.getDuration()));

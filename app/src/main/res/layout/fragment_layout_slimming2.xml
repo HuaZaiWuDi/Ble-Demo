@@ -508,7 +508,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom"
                                 android:layout_marginBottom="@dimen/dimen_2"
-                                android:text=" kcal"
+                                android:text=" cal"
                                 android:textColor="@color/green_61D97F"
                                 android:textSize="13sp"/>
 
@@ -875,7 +875,7 @@
                         android:layout_marginBottom="@dimen/dimen_2"
                         android:layout_marginRight="24dp"
                         android:layout_marginTop="24dp"
-                        android:text=" kcal"
+                        android:text=" cal"
                         android:textColor="@color/red"
                         android:textSize="15sp"/>
 

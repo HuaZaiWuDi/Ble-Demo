@@ -59,6 +59,7 @@ public class TipDialog {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
                 .setTipWord(content)
                 .create();
+        tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
         tipDialog.show();
     }
@@ -68,6 +69,7 @@ public class TipDialog {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
                 .setTipWord(content)
                 .create();
+        tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
         tipDialog.show();
     }
@@ -77,6 +79,7 @@ public class TipDialog {
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_INFO)
                 .setTipWord(content)
                 .create();
+        tipDialog.setCanceledOnTouchOutside(true);
         setDuration(timeOut);
         tipDialog.show();
     }
@@ -85,6 +88,7 @@ public class TipDialog {
         tipDialog = new QMUITipDialog.CustomBuilder(mContext)
                 .setContent(resId)
                 .create();
+        tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
         tipDialog.show();
     }

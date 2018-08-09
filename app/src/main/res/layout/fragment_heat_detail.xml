@@ -237,7 +237,7 @@
                 android:id="@+id/recycler_breakfast"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@+id/tv_breakfast"/>
 
@@ -306,7 +306,7 @@
                 android:id="@+id/recycler_lunch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@+id/tv_lunch"/>
 
@@ -375,7 +375,7 @@
                 android:id="@+id/recycler_dinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@+id/tv_dinner"/>
 
@@ -444,7 +444,7 @@
                 android:id="@+id/recycler_meal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
                 android:layout_toRightOf="@+id/tv_meal"/>
 

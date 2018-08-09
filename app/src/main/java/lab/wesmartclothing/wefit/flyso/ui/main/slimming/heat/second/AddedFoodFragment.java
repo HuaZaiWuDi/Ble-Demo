@@ -51,6 +51,8 @@ public class AddedFoodFragment extends BaseAcFragment {
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.mRecyclerView)
     RecyclerView mMRecyclerView;
+    @BindView(R.id.tv_addedNoData)
+    TextView mTvAddedNoData;
     Unbinder unbinder;
 
     public static QMUIFragment getInstance() {
@@ -78,16 +80,21 @@ public class AddedFoodFragment extends BaseAcFragment {
         dialog.setDeleteFoodListener(new AddOrUpdateFoodDialog.DeleteFoodListener() {
             @Override
             public void deleteFood(FoodListBean listBean) {
-                int position = adapter.getData().indexOf(listBean);
-                adapter.remove(position);
+                int exist = dialog.isExist(adapter.getData(), listBean);
+                RxLogUtils.d("下标：" + exist);
+                if (exist >= 0)
+                    adapter.remove(exist);
+                mTvAddedNoData.setVisibility(adapter.getData().isEmpty() ? View.VISIBLE : View.GONE);
             }
         });
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(FoodListBean listBean) {
-                int position = adapter.getData().indexOf(listBean);
-                adapter.setData(position, listBean);
-                updateFood(listBean);
+                int exist = dialog.isExist(adapter.getData(), listBean);
+                if (exist >= 0) {
+                    adapter.setData(exist, listBean);
+                    updateFood(listBean);
+                }
             }
         });
     }
@@ -99,24 +106,27 @@ public class AddedFoodFragment extends BaseAcFragment {
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
             String heatData = bundle.getString(Key.ADD_FOOD_INFO);
             FetchHeatInfoBean bean = new Gson().fromJson(heatData, FetchHeatInfoBean.class);
-            List<FoodListBean> list = null;
-            switch (foodType) {
-                case HeatDetailFragment.TYPE_BREAKFAST:
-                    list = bean.getBreakfast().getFoodList();
-                    break;
-                case HeatDetailFragment.TYPE_LUNCH:
-                    list = bean.getLunch().getFoodList();
-                    break;
-                case HeatDetailFragment.TYPE_DINNER:
-                    list = bean.getDinner().getFoodList();
-                    break;
-                case HeatDetailFragment.TYPED_MEAL:
-                    list = bean.getSnacks().getFoodList();
-                    break;
+            if (bean == null) {
+                adapter.setNewData(FoodDetailsFragment.addedLists);
+            } else {
+                List<FoodListBean> list = null;
+                switch (foodType) {
+                    case HeatDetailFragment.TYPE_BREAKFAST:
+                        list = bean.getBreakfast().getFoodList();
+                        break;
+                    case HeatDetailFragment.TYPE_LUNCH:
+                        list = bean.getLunch().getFoodList();
+                        break;
+                    case HeatDetailFragment.TYPE_DINNER:
+                        list = bean.getDinner().getFoodList();
+                        break;
+                    case HeatDetailFragment.TYPED_MEAL:
+                        list = bean.getSnacks().getFoodList();
+                        break;
+                }
+                adapter.setNewData(list);
             }
-            adapter.setNewData(list);
-        } else {
-            adapter.setNewData(FoodDetailsFragment.addedLists);
+            mTvAddedNoData.setVisibility(adapter.getData().isEmpty() ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -135,7 +145,7 @@ public class AddedFoodFragment extends BaseAcFragment {
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                         .append(RxFormat.setFormatNum(item.getUnitCount(), "0.0") + item.getUnit())
                         .setProportion(0.6f)
-                        .setForegroundColor(getResources().getColor(R.color.BrightGray))
+                        .setForegroundColor(getResources().getColor(R.color.GrayWrite))
                         .into(foodKcal);
             }
         };
@@ -155,7 +165,7 @@ public class AddedFoodFragment extends BaseAcFragment {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //显示删除
-                dialog.setFoodInfo(mContext, true,foodType,currentTime, (FoodListBean) adapter.getData().get(position));
+                dialog.setFoodInfo(mContext, true, foodType, currentTime, (FoodListBean) adapter.getData().get(position));
             }
         });
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
@@ -169,8 +179,7 @@ public class AddedFoodFragment extends BaseAcFragment {
                     @Override
                     public void onClick(View v) {
                         deleteDialog.dismiss();
-                        dialog.deleteData(((FoodListBean) adapter.getItem(position)).getGid());
-                        adapter.remove(position);
+                        dialog.deleteData(mContext, ((FoodListBean) adapter.getItem(position)));
                     }
                 })
                         .setSure(getString(R.string.cancel))
@@ -216,6 +225,11 @@ public class AddedFoodFragment extends BaseAcFragment {
         intakeList.setFoodCount(foodListBean.getFoodCount());
         intakeList.setUnit(foodListBean.getUnit());
         intakeList.setGid(foodListBean.getGid());
+        intakeList.setUnitCount(foodListBean.getUnitCount());
+        intakeList.setFoodImg(foodListBean.getFoodImg());
+        intakeList.setRemark(foodListBean.getRemark());
+        intakeList.setCalorie(foodListBean.getCalorie());
+        intakeList.setHeatDate(currentTime);
 
         AddFoodItem foodItem = new AddFoodItem();
         foodItem.setAddDate(currentTime);
@@ -228,6 +242,7 @@ public class AddedFoodFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

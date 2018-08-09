@@ -2,6 +2,10 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.app.Dialog;
 
+import com.zchu.rxcache.utils.LogUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.reactivestreams.Publisher;
 
 import io.reactivex.Flowable;
@@ -15,6 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -102,6 +107,69 @@ public class RxThreadUtils {
                 }
             }
         });
+    }
+
+    /**
+     * 对结果进行预处理
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> ObservableTransformer<T, T> handleResult() {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.flatMap(new Function<T, ObservableSource<T>>() {
+                    @Override
+                    public ObservableSource<T> apply(T t) throws Exception {
+                        if (t instanceof String) {
+                            JSONObject object = null;
+                            try {
+                                object = new JSONObject((String) t);
+                                int code = object.getInt("code");
+                                String msg = object.getString("msg");
+                                if (code == 0) {
+                                    String data = object.getString("data");
+                                    return createData((T) data);
+                                } else {
+                                    return Observable.error(new Throwable(msg));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                return Observable.error(e);
+                            }
+                        }
+                        return Observable.error(new Throwable("error"));
+                    }
+                });
+            }
+        };
+    }
+
+    /**
+     * 对结果进行预处理
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
+        return new ObservableTransformer<HttpResult<T>, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
+                return upstream.flatMap(new Function<HttpResult<T>, ObservableSource<T>>() {
+                    @Override
+                    public ObservableSource<T> apply(HttpResult<T> t) throws Exception {
+                        LogUtils.debug(t.getCode() + "");
+                        if (t.getCode() == 0) {
+                            return createData(t.getData());
+                        } else {
+                            return Observable.error(new Throwable(t.getMessage()));
+                        }
+
+                    }
+                });
+            }
+        };
     }
 
 }

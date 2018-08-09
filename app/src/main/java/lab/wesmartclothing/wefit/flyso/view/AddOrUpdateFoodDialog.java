@@ -72,7 +72,6 @@ public class AddOrUpdateFoodDialog {
 
     public void setFoodInfo(Context context, boolean showDelete, int foodType, long currentTime, FoodListBean listBean) {
         mContext = context;
-        RxLogUtils.d("获取食物信息：" + listBean.toString());
         this.showDelete = showDelete;
         this.listBean = listBean;
         this.foodType = foodType;
@@ -117,7 +116,9 @@ public class AddOrUpdateFoodDialog {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         FoodListBean addedHeatInfo = new Gson().fromJson(s, FoodListBean.class);
+                        String foodImg = listBean.getFoodImg();
                         listBean = addedHeatInfo;
+                        listBean.setFoodImg(foodImg);
                         showAddFoodDialog();
 //                        if ("".equals(addedHeatInfo.getGid())) {
 //                            showAddFoodDialog();
@@ -144,8 +145,8 @@ public class AddOrUpdateFoodDialog {
         heatInfo.setUnit(item.getUnit());
         heatInfo.setHeatDate(currentTime);
         heatInfo.setRemark(item.getRemark());
-        heatInfo.setFoodId(item.getGid());
-        heatInfo.setGid(item.getFoodId());
+        heatInfo.setFoodId(RxDataUtils.isNullString(item.getFoodId()) ? item.getGid() : item.getFoodId());
+        heatInfo.setGid(RxDataUtils.isNullString(item.getGid()) ? item.getFoodId() : item.getGid());
     }
 
 
@@ -153,7 +154,7 @@ public class AddOrUpdateFoodDialog {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_delete:
-                deleteData(listBean.getGid());
+                deleteData(mContext, listBean);
                 break;
             case R.id.cancel:
                 dialog.dismiss();
@@ -176,7 +177,7 @@ public class AddOrUpdateFoodDialog {
 
     public int isExist(List<FoodListBean> addedLists, FoodListBean needFood) {
         for (int i = 0; i < addedLists.size(); i++) {
-            if (addedLists.get(i).getGid().equals(needFood.getGid())) {
+            if (addedLists.get(i).getFoodId().equals(needFood.getFoodId())) {
                 return i;
             }
         }
@@ -210,21 +211,22 @@ public class AddOrUpdateFoodDialog {
                 .into(img);
     }
 
-    public void deleteData(String gid) {
+    public void deleteData(Context context, final FoodListBean listBean) {
         JsonObject object = new JsonObject();
-        object.addProperty("gid", gid);
+        object.addProperty("gid", listBean.getGid());
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeHeatInfo(body))
-                .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
+                .compose(RxComposeUtils.<String>showDialog(new TipDialog(context)))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         if (mDeleteFoodListener != null)
                             mDeleteFoodListener.deleteFood(listBean);
-                        dialog.dismiss();
+                        if (dialog != null)
+                            dialog.dismiss();
                     }
 
                     @Override

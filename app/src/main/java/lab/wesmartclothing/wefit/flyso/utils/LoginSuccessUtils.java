@@ -10,8 +10,8 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -54,14 +54,6 @@ public class LoginSuccessUtils {
                         JsonParser parser = new JsonParser();
                         JsonObject object = (JsonObject) parser.parse(s);
                         int sex = object.get("sex").getAsInt();
-//                        int height = object.get("height").getAsInt();
-//                        int targetWeight = object.get("targetWeight").getAsInt();
-//                        String birthday;
-//                        JsonElement jsonElement = object.get("birthday");
-//                        if (!jsonElement.isJsonNull()) {
-//                            birthday = jsonElement.getAsString();
-//                        } else
-//                            birthday = "631233300000";
 
                         String clothesMacAddr = object.get("clothesMacAddr").getAsString();
                         String scalesMacAddr = object.get("scalesMacAddr").getAsString();
@@ -71,7 +63,7 @@ public class LoginSuccessUtils {
                         if (sex == 0) {
                             RxActivityUtils.skipActivityAndFinishAll(mContext, UserInfoActivity.class);
                         } else {
-                            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
+                            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
                         }
                     }
 

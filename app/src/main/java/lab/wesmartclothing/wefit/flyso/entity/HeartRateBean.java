@@ -2,12 +2,12 @@ package lab.wesmartclothing.wefit.flyso.entity;
 
 import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 
 import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -55,24 +55,14 @@ public class HeartRateBean {
 
     public void saveHeartRate(HeartRateBean heartRateBean, HeartRateToKcal mHeartRateToKcal) {
         List<AthlList> athlList = heartRateBean.getAthlList();
-        int duration = 0;
 
-        int sum = 0;
+        double kcalTotal = 0;
+
         for (AthlList heart : athlList) {
-            sum += heart.getHeartRate();
-            duration += heart.getStepTime();
+            kcalTotal += mHeartRateToKcal.getCalorie(avgHeart, heart.getStepTime() / 3600);
         }
-
-        int avgHeart = sum / athlList.size();
-        RxLogUtils.d("平均心率：" + avgHeart);
-
-        double hour = duration / 3600f;
-        RxLogUtils.d("持续时间(小时)：" + hour);
-
-        double calorie = mHeartRateToKcal.getCalorie(avgHeart, hour);
-        RxLogUtils.d("卡路里（千卡）：" + calorie);
-
-        heartRateBean.setCalorie((int) (calorie * 1000));
+        RxLogUtils.d("运动卡路里数据：" + kcalTotal);
+        heartRateBean.setCalorie((int) (kcalTotal * 1000));
 
         String s = new Gson().toJson(heartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
@@ -81,8 +71,8 @@ public class HeartRateBean {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("添加心率：保存成功删除本地缓存" + s);
-                        MyAPP.getRxCache().remove(Key.CACHE_ATHL_RECORD);
+                        SPUtils.remove(Key.CACHE_ATHL_RECORD);
+                        RxLogUtils.d("添加心率：保存成功删除本地缓存：");
                     }
                 });
     }

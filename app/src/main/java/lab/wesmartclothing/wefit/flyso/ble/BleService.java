@@ -33,13 +33,13 @@ import com.smartclothing.module_wefit.bean.Device;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.zchu.rxcache.CacheTarget;
-import com.zchu.rxcache.data.CacheResult;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
@@ -92,14 +92,14 @@ public class BleService extends Service {
 
     //监听系统蓝牙开启
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
-    void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
+    void bluetoothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
         if (state == BluetoothAdapter.STATE_OFF) {
         } else if (state == BluetoothAdapter.STATE_ON) {
             initBle();
         }
     }
 
-    //监听系统蓝牙开启
+    //DFU升级会断开连接，这个时候不要判断版本数据
     @Receiver(actions = BleKey.ACTION_DFU_STARTING)
     void dfuStarting(@Receiver.Extra(BleKey.EXTRA_DFU_STARTING) boolean state) {
         dfuStarting = state;
@@ -131,43 +131,36 @@ public class BleService extends Service {
 
     //判断本地是否有之前保存的心率数据：有则上传
     private void uploadHistoryData() {
-        if (MyAPP.getRxCache().containsKey(Key.CACHE_ATHL_RECORD))
-            MyAPP.getRxCache().<String>load(Key.CACHE_ATHL_RECORD, String.class)
-                    .map(new CacheResult.MapFunc<String>())
-                    .subscribe(new Consumer<String>() {
-                        @Override
-                        public void accept(String value) throws Exception {
-                            RxLogUtils.i("保存本地的心率数据：" + value);
-                            List<HeartRateBean.AthlList> lists = new Gson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
-                            }.getType());
-                            if (lists != null && lists.size() > 0) {
-                                mHeartRateBean.setAthlList(lists);
-                                mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-                            }
-                        }
-                    });
+        RxLogUtils.i("保存本地的心率数据：" + MyAPP.getRxCache().containsKey(Key.CACHE_ATHL_RECORD));
+        String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
+        if (!RxDataUtils.isNullString(value)) {
+            RxLogUtils.i("保存本地的心率数据：" + value);
+            List<HeartRateBean.AthlList> lists = new Gson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
+            }.getType());
+            if (lists != null && lists.size() > 0) {
+                mHeartRateBean.setAthlList(lists);
+                mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+            }
+        }
     }
 
     private void initBus() {
-        Disposable device = RxBus.getInstance().register(Device.class, new Consumer<Device>() {
-            @Override
-            public void accept(Device device) throws Exception {
-                RxLogUtils.d(":删除绑定");
-                if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
-                    //删除绑定
-                    mQNBleTools.disConnectDevice(device.getMacAddr());
-                } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                    BleTools.getInstance().disConnect();
-                }
-            }
-        });
+        Disposable device = RxBus.getInstance()
+                .register(Device.class, new Consumer<Device>() {
+                    @Override
+                    public void accept(Device device) throws Exception {
+                        RxLogUtils.d(":删除绑定");
+                        if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
+                            //删除绑定
+                            mQNBleTools.disConnectDevice(device.getMacAddr());
+                        } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
+                            BleTools.getInstance().disConnect();
+                        }
+                    }
+                });
         RxBus.getInstance().addSubscription(this, device);
     }
 
-    private void initJPush() {
-//        IntentFilter intentFilter = new IntentFilter();
-//        registerReceiver(new MyJPushMessageReceiver(), intentFilter);
-    }
 
     @Override
     public void onDestroy() {
@@ -388,7 +381,6 @@ public class BleService extends Service {
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
 
                 initBle();
-
                 if (athlHistoryRecord.size() > 0) {
                     mHeartRateBean.setAthlList(athlHistoryRecord);
                     mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
@@ -446,7 +438,6 @@ public class BleService extends Service {
                 public void callBack(byte[] data) {
                     RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
                     //021309 010203000400050607090a0b0c10111213
-
                     JsonObject object = new JsonObject();
                     object.addProperty("category", data[3]);//设备类型
                     object.addProperty("modelNo", data[4]);//待定
@@ -519,6 +510,7 @@ public class BleService extends Service {
 
     private int maxHeart = 0;//最大心率
     private int minHeart = 0;//最小心率
+    private double kcalTotal = 0;//总卡路里
 
     private void initHeartRate() {
         BleTools.getInstance().setBleCallBack(new BleCallBack() {
@@ -542,9 +534,7 @@ public class BleService extends Service {
                 athlRecord_2.add(heartRate);
                 //添加本地缓存
                 String athlData = new Gson().toJson(athlHistoryRecord);
-                MyAPP.getRxCache().save(Key.CACHE_ATHL_RECORD, athlData, CacheTarget.Memory)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe();
+                SPUtils.put(Key.CACHE_ATHL_RECORD, athlData);
 
 
                 RxLogUtils.d("时间：" + RxFormat.setFormatDate(time, RxFormat.Date_Date_CH) +
@@ -556,14 +546,6 @@ public class BleService extends Service {
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
                 minHeart = heartRate < minHeart ? heartRate : minHeart;
 
-                int sum = 0;
-                for (int heart : athlRecord_2) {
-                    sum += heart;
-                }
-
-                int avgHeart = sum / athlRecord_2.size();
-                RxLogUtils.d("平均心率：" + avgHeart);
-
                 SportsDataTab mSportsDataTab = new SportsDataTab();
                 mSportsDataTab.setAthlRecord_2(athlRecord_2);
                 mSportsDataTab.setCurHeart(heartRate);
@@ -571,8 +553,9 @@ public class BleService extends Service {
                 mSportsDataTab.setMinHeart(minHeart);
                 mSportsDataTab.setDuration(athlRecord_2.size() * 2);
                 mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
-                double calorie = mHeartRateToKcal.getCalorie(avgHeart, athlRecord_2.size() * 2f / 3600);
-                mSportsDataTab.setKcal(calorie);
+                //卡路里累加计算
+                kcalTotal += mHeartRateToKcal.getCalorie(heartRate, 2f / 3600);
+                mSportsDataTab.setKcal(kcalTotal * 1000);//统一使用卡为基本热量单位
                 RxBus.getInstance().post(mSportsDataTab);
             }
         });

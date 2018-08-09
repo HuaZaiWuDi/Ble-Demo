@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 
 //网页
 public class WebActivity extends BaseWebActivity {
@@ -19,8 +18,8 @@ public class WebActivity extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_software_protocol_activiy);
         parent = findViewById(R.id.parent);
-        //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+//        //屏幕沉浸
+//        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
 
         initWebView(parent);
     }

@@ -39,7 +39,6 @@
 
 
         <TextView
-            android:textStyle="bold"
             android:id="@+id/tv_kcal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,6 +49,7 @@
             android:text="00"
             android:textColor="@color/white"
             android:textSize="72sp"
+            android:textStyle="bold"
             tools:text="68.7"/>
 
         <TextView
@@ -58,7 +58,7 @@
             android:layout_alignBottom="@+id/tv_kcal"
             android:layout_marginBottom="20dp"
             android:layout_toRightOf="@+id/tv_kcal"
-            android:text="kcal"
+            android:text="cal"
             android:textColor="@color/GrayWrite"
             android:textSize="18sp"/>
 
@@ -245,7 +245,7 @@
                     android:layout_toLeftOf="@+id/tv_limit_time"
                     app:rcBackgroundColor="#312B36"
                     app:rcMax="100"
-                    app:rcProgress="30"
+                    app:rcProgress="0"
                     app:rcProgressColor="@color/red">
 
                 </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
@@ -286,7 +286,7 @@
                     android:layout_toLeftOf="@+id/tv_anaerobic_time"
                     app:rcBackgroundColor="#312B36"
                     app:rcMax="100"
-                    app:rcProgress="50"
+                    app:rcProgress="0"
                     app:rcProgressColor="@color/orange_FF7200">
 
                 </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
@@ -327,7 +327,7 @@
                     android:layout_toLeftOf="@+id/tv_aerobic_time"
                     app:rcBackgroundColor="#312B36"
                     app:rcMax="100"
-                    app:rcProgress="70"
+                    app:rcProgress="0"
                     app:rcProgressColor="@color/green_61D97F">
 
                 </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
@@ -368,7 +368,7 @@
                     android:layout_toLeftOf="@+id/tv_grease_time"
                     app:rcBackgroundColor="#312B36"
                     app:rcMax="100"
-                    app:rcProgress="90"
+                    app:rcProgress="0"
                     app:rcProgressColor="@color/yellow_FFBC00">
 
                 </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
@@ -409,7 +409,7 @@
                     android:layout_toLeftOf="@+id/tv_warm_time"
                     app:rcBackgroundColor="#312B36"
                     app:rcMax="100"
-                    app:rcProgress="100"
+                    app:rcProgress="0"
                     app:rcProgressColor="@color/brown_ABA08E">
 
                 </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>

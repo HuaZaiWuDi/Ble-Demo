@@ -82,6 +82,7 @@ public class TargetDateFargment extends BaseAcFragment {
         }
 
         weeks = stillNeed / 0.5f;
+        mTvTargetDays.setText((int) (weeks * 7) + "");
         String tips = "每周减重目标 " + 0.5 + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -109,6 +110,11 @@ public class TargetDateFargment extends BaseAcFragment {
                         .setLength(7, tips.length() - 3);
                 mTvTips.setText(builder);
                 mTvTargetDays.setText((int) (weeks * 7) + "");
+                mTvTargetDays.setCompoundDrawables(null, null, null, null);
+
+                if ((stillNeed / weeks) >= 1) {
+                    RxToast.normal("每周减重过多可能会导致健康问题，建议您健康减重哦～", 2000);
+                }
             }
         });
     }
@@ -126,10 +132,6 @@ public class TargetDateFargment extends BaseAcFragment {
 
     @OnClick(R.id.btn_confirm)
     public void onViewClicked() {
-        if ((stillNeed / weeks) >= 1) {
-            tipDialog.showInfo("每周减重过多可能会导致健康问题，建议您健康减重哦～", 2000);
-            return;
-        }
         settingTarget();
     }
 
@@ -147,6 +149,7 @@ public class TargetDateFargment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.setTargetWeight(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

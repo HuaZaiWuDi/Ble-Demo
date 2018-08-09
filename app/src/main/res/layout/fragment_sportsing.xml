@@ -91,7 +91,7 @@
             android:layout_alignBottom="@+id/tv_kcal"
             android:layout_marginBottom="20dp"
             android:layout_toRightOf="@+id/tv_kcal"
-            android:text="kcal"
+            android:text="cal"
             android:textColor="@color/GrayWrite"
             android:textSize="18sp"/>
 

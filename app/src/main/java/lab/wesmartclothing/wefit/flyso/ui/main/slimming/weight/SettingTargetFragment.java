@@ -14,6 +14,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
 
@@ -41,6 +42,8 @@ public class SettingTargetFragment extends BaseAcFragment {
     TextView mTvTips;
     @BindView(R.id.tv_bestWeight)
     TextView tvBestWeight;
+    @BindView(R.id.tv_targetDays)
+    TextView tv_targetDays;
     @BindView(R.id.ruler_weight)
     DecimalScaleRulerView mWeightRulerView;
     @BindView(R.id.btn_nextStep)
@@ -130,6 +133,12 @@ public class SettingTargetFragment extends BaseAcFragment {
                         .setProportion(1.4f)
                         .setLength(4, tips.length() - 3);
                 mTvTips.setText(builder);
+
+                if (settingWeight > maxWeight) {
+                    RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);
+                } else if (settingWeight < minWeight) {
+                    RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～", 2000);
+                }
             }
         });
     }
@@ -146,13 +155,7 @@ public class SettingTargetFragment extends BaseAcFragment {
     }
 
     private void nextStep() {
-        if (settingWeight > maxWeight) {
-            tipDialog.showInfo("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);
-            return;
-        } else if (settingWeight < minWeight) {
-            tipDialog.showInfo("您设定的体重目标有点低哦，\n可能会影响到身体健康～", 2000);
-            return;
-        } else if (settingWeight > initWeight) {
+        if (settingWeight > initWeight) {
             tipDialog.showInfo("您设定的目标体重超过当前体重，\n请重新设置~", 2000);
             return;
         }

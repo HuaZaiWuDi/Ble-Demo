@@ -3,9 +3,6 @@ package lab.wesmartclothing.wefit.netlib.rx;
 import android.content.Context;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import lab.wesmartclothing.wefit.netlib.utils.RxHttpException;
@@ -45,30 +42,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
 
     @Override
     public void onNext(T t) {
-        if (t instanceof String) {
-            JSONObject object = null;
-            try {
-                object = new JSONObject((String) t);
-                String retCode = object.getString("code");
-                String msg = object.getString("msg");
-                int status = Integer.parseInt(retCode);
-                if (status == 0) {
-                    String data = object.getString("data");
-                    if (data != null)
-                        _onNext((T) data);
-                    else {
-                        _onNext((T) msg);
-                    }
-                } else {
-                    _onError(msg);
-                    _onError(msg, status);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                onError(e);
-            }
-        }
-        Log.v(TAG, "onNext: " + t);
+        _onNext(t);
     }
 
     protected abstract void _onNext(T t);

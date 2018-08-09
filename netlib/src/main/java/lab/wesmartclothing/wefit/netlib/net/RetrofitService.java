@@ -35,8 +35,9 @@ public interface RetrofitService {
     @POST("heat/getSlimHistoryInfo")
     Observable<String> getHeatHistory(@Body RequestBody body);
 
+    @FormUrlEncoded
     @POST("heat/getFoodInfo")
-    Observable<String> getFoodInfo();
+    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
     @FormUrlEncoded
     @POST("heat/searchFoodInfo")

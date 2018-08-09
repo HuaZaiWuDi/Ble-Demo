@@ -209,7 +209,6 @@
                             android:layout_marginLeft="24dp"
                             android:layout_marginTop="@dimen/dimen_8"
                             android:layout_toRightOf="@+id/iv_heatKacl"
-                            android:maxLength="5"
                             android:maxLines="1"
                             android:text="--"
                             android:textColor="@color/orange_FF7200"
@@ -222,7 +221,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/tv_Heat_Kcal"
                             android:layout_toRightOf="@+id/tv_Heat_Kcal"
-                            android:text=" kcal"
+                            android:text=" cal"
                             android:textColor="@color/orange_FF7200"
                             android:textSize="13sp"/>
 
@@ -324,7 +323,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/line"
                         android:layout_marginTop="@dimen/dimen_16"
-                        android:text="今天还差300kcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。"
+                        android:text="今天还差300cal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。"
                         android:textColor="@color/GrayWrite"/>
 
                 </RelativeLayout>

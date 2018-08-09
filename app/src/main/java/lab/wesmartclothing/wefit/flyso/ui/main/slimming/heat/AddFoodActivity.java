@@ -13,11 +13,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.zchu.rxcache.data.CacheResult;
-import com.zchu.rxcache.stategy.CacheStrategy;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -32,10 +29,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
-import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
-import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.ListBean;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
@@ -190,24 +184,24 @@ public class AddFoodActivity extends BaseActivity {
     }
 
     private void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo())
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + ADD_FOOD_TYPE, String.class, CacheStrategy.firstRemote()))
-                .map(new CacheResult.MapFunc<String>())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
-                        FoodInfoItem item = new Gson().fromJson(s, FoodInfoItem.class);
-                        List<FoodListBean> beans = item.getList();
-                        adapter.setNewData(beans);
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
-                    }
-                });
+//        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+//        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo())
+//                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + ADD_FOOD_TYPE, String.class, CacheStrategy.firstRemote()))
+//                .map(new CacheResult.MapFunc<String>())
+//                .subscribe(new RxNetSubscriber<String>() {
+//                    @Override
+//                    protected void _onNext(String s) {
+//                        RxLogUtils.d("结束：" + s);
+//                        FoodInfoItem item = new Gson().fromJson(s, FoodInfoItem.class);
+//                        List<FoodListBean> beans = item.getList();
+//                        adapter.setNewData(beans);
+//                    }
+//
+//                    @Override
+//                    protected void _onError(String error) {
+//                        RxToast.normal(error);
+//                    }
+//                });
     }
 
 }

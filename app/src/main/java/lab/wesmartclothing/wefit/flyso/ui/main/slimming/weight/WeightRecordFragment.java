@@ -20,6 +20,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -54,6 +55,7 @@ import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -212,6 +214,7 @@ public class WeightRecordFragment extends BaseAcFragment {
     private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightInfo(1, 20))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -243,9 +246,9 @@ public class WeightRecordFragment extends BaseAcFragment {
         mTvSettingTarget.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
         mLayoutWeight.setVisibility(bean.isTargetSet() ? View.VISIBLE : View.GONE);
 
-
         if (stillNeed <= 0) {
             mTvDetails.setText("您的目标已完成，请前往设置新目标");
+            stillNeed = 0;
         } else if (hasDays <= 0) {
             mTvDetails.setText("坚持锻炼并设置新目标");
         } else if (stillNeed > 0 && hasDays > 0) {
@@ -253,7 +256,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         }
 
         RxTextUtils.getBuilder("需减 ")
-                .append((float) bean.getStillNeed() + "")
+                .append(RxFormatValue.fromat4S5R(stillNeed, 1) + "")
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                 .setProportion(1.4f)
                 .append(" kg,剩余 ")
@@ -374,6 +377,7 @@ public class WeightRecordFragment extends BaseAcFragment {
                     mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            mLayoutStrongTip.setVisibility(View.GONE);
                             String s = new Gson().toJson(list);
                             RxLogUtils.d("体重信息:" + s);
                             Bundle bundle = new Bundle();

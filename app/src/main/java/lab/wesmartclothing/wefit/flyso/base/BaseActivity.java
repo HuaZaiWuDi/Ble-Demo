@@ -20,6 +20,7 @@ import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
 
+import io.reactivex.subjects.BehaviorSubject;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
@@ -33,11 +34,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public Context mContext;
     public Activity mActivity;
-
+    protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
     public TipDialog tipDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        lifecycleSubject.onNext(LifeCycleEvent.CREATE);
         super.onCreate(savedInstanceState);
         //设置为横屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -55,6 +57,36 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         ScreenAdapter.setCustomDensity(this);
         initDialog();
+    }
+
+    @Override
+    protected void onStart() {
+        lifecycleSubject.onNext(LifeCycleEvent.START);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        lifecycleSubject.onNext(LifeCycleEvent.STOP);
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        lifecycleSubject.onNext(LifeCycleEvent.PAUSE);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        lifecycleSubject.onNext(LifeCycleEvent.RESUME);
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        lifecycleSubject.onNext(LifeCycleEvent.RESTART);
+        super.onRestart();
     }
 
 
@@ -75,15 +107,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onPause() {
-        if (tipDialog != null) {
-            tipDialog.dismiss();
-        }
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
+        lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
         tipDialog.dismiss();
         tipDialog = null;
         RxActivityUtils.removeActivity(this);

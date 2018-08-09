@@ -139,6 +139,7 @@ public class WeightDataActivity extends BaseActivity {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -173,6 +174,7 @@ public class WeightDataActivity extends BaseActivity {
 
     private void showDialog() {
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+        dialog.getTvTitle().setVisibility(View.GONE);
         dialog.getTvContent().setText("你还有未领取的体重数据，\n离开后将全部被忽略\n？");
         dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
         dialog.setCancel(getString(R.string.btn_leave));

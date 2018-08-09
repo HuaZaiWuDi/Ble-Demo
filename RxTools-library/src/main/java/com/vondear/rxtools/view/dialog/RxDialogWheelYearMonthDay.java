@@ -6,14 +6,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.vondear.rxtools.R;
 import com.vondear.rxtools.dateUtils.RxTimeUtils;
-import com.vondear.rxtools.view.dialog.dialogWheel.DateArrayAdapter;
+import com.vondear.rxtools.view.dialog.dialogWheel.ArrayWheelAdapter;
 import com.vondear.rxtools.view.dialog.dialogWheel.NumericWheelAdapter;
 import com.vondear.rxtools.view.dialog.dialogWheel.OnWheelChangedListener;
 import com.vondear.rxtools.view.dialog.dialogWheel.WheelView;
@@ -30,8 +27,8 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
     private int curDay;
     private TextView tv_sure;
     private TextView tv_cancle;
-    private CheckBox checkBox_day;
     private Calendar calendar;
+    private Typeface mTypeface;
     private String months[] = new String[]{"01", "02", "03",
             "04", "05", "06", "07", "08", "09", "10", "11", "12"};
     private String days[] = new String[]{"01", "02", "03", "04", "05", "06", "07",
@@ -117,7 +114,7 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         year.setViewAdapter(new DateNumericAdapter(context, beginYear, endYear, endYear - beginYear));
         year.setCurrentItem(endYear - beginYear);
         year.addChangingListener(listener);
-
+        year.setVisibleItems(3);
 
         // month
         month = (WheelView) dialogView1
@@ -130,7 +127,7 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         month.setViewAdapter(new DateArrayAdapter(context, months, curMonth));
         month.setCurrentItem(curMonth);
         month.addChangingListener(listener);
-
+        month.setVisibleItems(3);
 
         //day
         day = (WheelView) dialogView1.findViewById(R.id.wheelView_day);
@@ -141,25 +138,13 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         day.setWheelBackground(R.drawable.transparent_bg);
         day.setWheelForeground(R.drawable.wheel_val_holo);
         day.setShadowColor(0xFFDADCDB, 0x88DADCDB, 0x00DADCDB);
+        day.setVisibleItems(3);
 
         tv_sure = (TextView) dialogView1.findViewById(R.id.tv_sure);
         tv_cancle = (TextView) dialogView1.findViewById(R.id.tv_cancel);
 
-        checkBox_day = (CheckBox) dialogView1.findViewById(R.id.checkBox_day);
-        checkBox_day.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // TODO Auto-generated method stub
-                if (isChecked) {
-                    day.setVisibility(View.VISIBLE);
-                } else {
-                    day.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        getLayoutParams().gravity = Gravity.CENTER;
+        getLayoutParams().gravity = Gravity.BOTTOM;
+        setFullScreenWidth();
         setContentView(dialogView1);
     }
 
@@ -172,9 +157,6 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         return curDay;
     }
 
-    public CheckBox getCheckBox_day() {
-        return checkBox_day;
-    }
 
     public WheelView getYear() {
         return year;
@@ -220,6 +202,14 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         return getDays()[getDay().getCurrentItem()];
     }
 
+    public Typeface getTypeface() {
+        return mTypeface;
+    }
+
+    public void setTypeface(Typeface typeface) {
+        mTypeface = typeface;
+    }
+
     /**
      * Updates day wheel. Sets max days according to selected month and year
      */
@@ -231,8 +221,6 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         day.setViewAdapter(new DateNumericAdapter(context, 1, maxDays, calendar.get(Calendar.DAY_OF_MONTH) - 1));
         int curDay = Math.min(maxDays, day.getCurrentItem() + 1);
         day.setCurrentItem(curDay - 1, true);
-
-
     }
 
     /**
@@ -250,7 +238,7 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
         public DateNumericAdapter(Context context, int minValue, int maxValue, int current) {
             super(context, minValue, maxValue);
             this.currentValue = current;
-            setTextSize(16);
+            setTextSize(24);
         }
 
         @Override
@@ -259,7 +247,7 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
             /*if (currentItem == currentValue) {
                 view.setTextColor(0xFF0000F0);
 			}*/
-            view.setTypeface(Typeface.SANS_SERIF);
+            view.setTypeface(mTypeface);
         }
 
         @Override
@@ -268,4 +256,36 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
             return super.getItem(index, cachedView, parent);
         }
     }
+
+    public class DateArrayAdapter extends ArrayWheelAdapter<String> {
+        // Index of current item
+        int currentItem;
+        // Index of item to be highlighted
+        int currentValue;
+
+        /**
+         * Constructor
+         */
+        public DateArrayAdapter(Context context, String[] items, int current) {
+            super(context, items);
+            this.currentValue = current;
+            setTextSize(24);
+        }
+
+        @Override
+        protected void configureTextView(TextView view) {
+            super.configureTextView(view);
+		/*if (currentItem == currentValue) {
+			view.setTextColor(0xFF0000F0);
+		}*/
+            view.setTypeface(mTypeface);
+        }
+
+        @Override
+        public View getItem(int index, View cachedView, ViewGroup parent) {
+            currentItem = index;
+            return super.getItem(index, cachedView, parent);
+        }
+    }
+
 }

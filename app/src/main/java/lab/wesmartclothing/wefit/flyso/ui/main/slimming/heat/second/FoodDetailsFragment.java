@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,9 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -68,6 +72,8 @@ public class FoodDetailsFragment extends BaseAcFragment {
     ImageView mIvComplete;
     @BindView(R.id.layout_addFoods)
     RelativeLayout mLayoutAddFoods;
+    @BindView(R.id.smartRefreshLayout)
+    SmartRefreshLayout smartRefreshLayout;
 
     public static QMUIFragment getInstance() {
         return new FoodDetailsFragment();
@@ -75,6 +81,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
 
     private int foodType = 0;
     private long currentTime = 0;
+    private int pageNum = 0;//页码
     private Bundle bundle;
     private BaseQuickAdapter adapter;
     private BaseQuickAdapter adapterAddFoods;
@@ -92,22 +99,26 @@ public class FoodDetailsFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         super.onStart();
-        List<Object> addedFoods = new ArrayList<>();
-        for (int i = 0; i < addedLists.size(); i++) {
-            addedFoods.add(addedLists.get(i).getFoodImg());
+        if (addedLists.size() > 0) {
+            mLayoutAddFoods.setVisibility(View.VISIBLE);
+            List<Object> addedFoods = new ArrayList<>();
+            for (int i = 0; i < addedLists.size(); i++) {
+                addedFoods.add(addedLists.get(i).getFoodImg());
+            }
+            if (addedFoods.size() > 10) {
+                mBtnMark.setVisibility(View.VISIBLE);
+                mBtnMark.setText(addedLists.size() + "");
+                addedFoods = addedFoods.subList(0, 10);
+                addedFoods.set(0, R.mipmap.icon_ellipsis);
+            }
+            adapterAddFoods.setNewData(addedFoods);
         }
-        if (addedFoods.size() > 10) {
-            addedFoods = addedFoods.subList(0, 10);
-            addedFoods.set(0, R.mipmap.icon_ellipsis);
-        }
-        adapterAddFoods.setNewData(addedFoods);
     }
 
     private void initView() {
         initBundle();
         initTopBar();
         initRecyclerView();
-        initData();
         initAddFoodRecyclerView();
 
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
@@ -118,6 +129,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
                 if (index >= 0) {
                     addedLists.remove(index);
                     adapterAddFoods.remove(index);
+                    adapterAddFoods.notifyDataSetChanged();
                 }
                 addedLists.add(listBean);
                 mLayoutAddFoods.setVisibility(View.VISIBLE);
@@ -150,7 +162,16 @@ public class FoodDetailsFragment extends BaseAcFragment {
             }
         };
         mRecyclerAddFoods.setAdapter(adapterAddFoods);
-
+        adapterAddFoods.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                QMUIFragment instance = AddedFoodFragment.getInstance();
+                bundle.putInt(Key.ADD_FOOD_TYPE, foodType);
+                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                instance.setArguments(bundle);
+                startFragment(instance);
+            }
+        });
     }
 
     private void initBundle() {
@@ -162,7 +183,6 @@ public class FoodDetailsFragment extends BaseAcFragment {
     }
 
     private void initRecyclerView() {
-        mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new BaseQuickAdapter<FoodListBean, BaseViewHolder>(R.layout.item_add_food) {
 
             @Override
@@ -184,11 +204,22 @@ public class FoodDetailsFragment extends BaseAcFragment {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-                dialog.setFoodInfo(mActivity, false,foodType,currentTime, (FoodListBean) adapter.getItem(position));
+                dialog.setFoodInfo(mActivity, false, foodType, currentTime, (FoodListBean) adapter.getItem(position));
             }
         });
         mMRecyclerView.setAdapter(adapter);
+        mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+        smartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                pageNum++;
+                initData(pageNum);
+            }
+        });
+        smartRefreshLayout.autoLoadMore();
+        smartRefreshLayout.setEnableLoadMore(true);
+        smartRefreshLayout.setEnableRefresh(false);
     }
 
 
@@ -214,25 +245,32 @@ public class FoodDetailsFragment extends BaseAcFragment {
     }
 
 
-    private void initData() {
+    private void initData(final int pageNum) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo())
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + foodType, String.class, CacheStrategy.firstRemote()))
+        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 20))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
+                        RxLogUtils.d("历史数据：" + s);
                         FoodInfoItem item = new Gson().fromJson(s, FoodInfoItem.class);
                         List<FoodListBean> beans = item.getList();
-                        adapter.setNewData(beans);
+                        if (pageNum == 1) {
+                            adapter.setNewData(beans);
+                        } else {
+                            adapter.addData(beans);
+                        }
+                        smartRefreshLayout.finishLoadMore(true);
+                        smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
+                        RxLogUtils.d("结束：");
                     }
 
                     @Override
                     protected void _onError(String error, int errorCode) {
                         RxToast.normal(error);
-                        if (errorCode != 0 && MyAPP.getRxCache().containsKey("getFoodInfo" + foodType))
-                            MyAPP.getRxCache().remove("getFoodInfo" + foodType);
+                        smartRefreshLayout.finishLoadMore(false);
                     }
                 });
     }
@@ -248,11 +286,16 @@ public class FoodDetailsFragment extends BaseAcFragment {
         for (int i = 0; i < addedLists.size(); i++) {
             FoodListBean foodListBean = addedLists.get(i);
             AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
-            intakeList.setFoodId(foodListBean.getGid());
+            intakeList.setFoodId(foodListBean.getFoodId());
             intakeList.setFoodName(foodListBean.getFoodName());
             intakeList.setFoodCount(foodListBean.getFoodCount());
             intakeList.setUnit(foodListBean.getUnit());
-//            intakeList.setGid(foodListBean.getGid());
+            intakeList.setGid(foodListBean.getGid());
+            intakeList.setUnitCount(foodListBean.getUnitCount());
+            intakeList.setFoodImg(foodListBean.getFoodImg());
+            intakeList.setRemark(foodListBean.getRemark());
+            intakeList.setCalorie(foodListBean.getCalorie());
+            intakeList.setHeatDate(currentTime);
             mIntakeLists.add(intakeList);
         }
         foodItem.setIntakeLists(mIntakeLists);
@@ -262,6 +305,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

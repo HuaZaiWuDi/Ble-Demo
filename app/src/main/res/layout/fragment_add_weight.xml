@@ -43,7 +43,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="69dp"
             android:maxLength="5"
-            android:text="53.0"
+            android:text="0.0"
             android:textColor="@color/white"
             android:textSize="48sp"
             tools:text="53.0"/>
@@ -61,7 +61,6 @@
 
 
         <TextView
-            android:visibility="invisible"
             android:id="@+id/tv_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +68,8 @@
             android:layout_centerHorizontal="true"
             android:text="身体成分测量中…"
             android:textColor="@color/GrayWrite"
-            android:textSize="13sp"/>
+            android:textSize="13sp"
+            android:visibility="invisible"/>
 
     </RelativeLayout>
 

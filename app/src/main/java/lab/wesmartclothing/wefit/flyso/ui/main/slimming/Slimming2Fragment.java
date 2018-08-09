@@ -62,14 +62,14 @@ import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.AddFoodActivity_;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.BaseHeatActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.BaseSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.BaseWeightActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -220,7 +220,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         View rootView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_layout_slimming2, null);
         unbinder = ButterKnife.bind(this, rootView);
         initView();
-
         return rootView;
     }
 
@@ -243,6 +242,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvBodyFat.setTypeface(typeface);
         initChart(mMBarChart);
         initChart(mMLineChart);
+        setDefaultBarData(null);
+        setLineChartData(null);
     }
 
 
@@ -406,7 +407,7 @@ public class Slimming2Fragment extends BaseAcFragment {
 
         ArrayList<Entry> lineEntry = new ArrayList<>();
         int max = 100;
-        colors[6] = R.color.gray_ECEBF0;
+        colors[6] = R.color.green_61D97F;
         for (int i = 0; i < 7; i++) {
             lineXLists[6 - i] = RxFormat.setFormatDate(calendar, "MM/dd");
             calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -414,7 +415,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         }
 
         if (bean != null && bean.getWeightInfoList().size() != 0) {
-            colors[6] = R.color.green_61D97F;
             List<FirstPageBean.WeightInfoListBean> list = bean.getWeightInfoList();
             calendar.setTimeInMillis(list.get(0).getWeightDate());
             int size = list.size();
@@ -474,16 +474,10 @@ public class Slimming2Fragment extends BaseAcFragment {
     }
 
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
     @OnClick({R.id.iv_userImg2, R.id.layout_notify2, R.id.iv_userImg, R.id.layout_notify, R.id.layout_Healthy, R.id.layout_heat, R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal, R.id.btn_bind_clothing, R.id.layout_sports, R.id.btn_bind_scale, R.id.layout_weight, R.id.btn_bind})
     public void onViewClicked(View view) {
         Bundle bundle = new Bundle();
-        bundle.putString(Key.ADD_FOOD_DATE, System.currentTimeMillis() + "");
+        bundle.putLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
         switch (view.getId()) {
             case R.id.iv_userImg:
                 //跳转个人主页
@@ -498,28 +492,23 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_heat:
                 //跳转热量记录
-                bundle.putString(Key.BUNDLE_FRAGMENT, HeatFragment.class.getSimpleName());
                 RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class);
                 break;
             case R.id.layout_breakfast:
-                bundle.putString(Key.ADD_FOOD_NAME, add_food[0]);
-                bundle.putInt(Key.ADD_FOOD_TYPE, 1);
-                RxActivityUtils.skipActivity(mActivity, AddFoodActivity_.class, bundle);
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);
+                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
                 break;
             case R.id.layout_lunch:
-                bundle.putString(Key.ADD_FOOD_NAME, add_food[1]);
-                bundle.putInt(Key.ADD_FOOD_TYPE, 2);
-                RxActivityUtils.skipActivity(mActivity, AddFoodActivity_.class, bundle);
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_LUNCH);
+                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
                 break;
             case R.id.layout_dinner:
-                bundle.putString(Key.ADD_FOOD_NAME, add_food[2]);
-                bundle.putInt(Key.ADD_FOOD_TYPE, 3);
-                RxActivityUtils.skipActivity(mActivity, AddFoodActivity_.class, bundle);
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_DINNER);
+                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
                 break;
             case R.id.layout_meal:
-                bundle.putString(Key.ADD_FOOD_NAME, add_food[4]);
-                bundle.putInt(Key.ADD_FOOD_TYPE, 5);
-                RxActivityUtils.skipActivity(mActivity, AddFoodActivity_.class, bundle);
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPED_MEAL);
+                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
                 break;
             case R.id.btn_bind_clothing:
                 mBtnBindClothing.setVisibility(View.GONE);
@@ -549,7 +538,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         }
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
     // 接口
     ///////////////////////////////////////////////////////////////////////////
@@ -557,7 +545,8 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void getFirstPageData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.cacheAndRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -637,7 +626,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         mCircleProgressBar.setProgress(heatProgress == 0 ? 1 : heatProgress);
         int size = bean.getAthleticsInfoList().size();
         if (size != 0) {
-            mTvCurrentKcal.setText(RxFormatValue.fromatUp(bean.getAthleticsInfoList().get(size - 1).getCalorie() / 1000, 0));
+            mTvCurrentKcal.setText(RxFormatValue.fromatUp(bean.getAthleticsInfoList().get(size - 1).getCalorie(), 0));
         }
     }
 }

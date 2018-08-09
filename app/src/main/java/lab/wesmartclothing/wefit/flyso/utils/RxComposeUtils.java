@@ -13,7 +13,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.base.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
@@ -104,5 +107,28 @@ public class RxComposeUtils {
             }
         });
     }
+
+    /**
+     * 绑定生命周期，在AC和Fragment在销毁时结束网络请求
+     *
+     * @param <T> 指定的泛型类型
+     * @return Observable
+     * <p>
+     * takeUtil，很显然，observable.takUtil(condition)，当condition == true时终止，且包含临界条件的item
+     */
+    public static <T> ObservableTransformer<T, T> bindLife(final BehaviorSubject<LifeCycleEvent> subject) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.takeUntil(subject.skipWhile(new Predicate<LifeCycleEvent>() {
+                    @Override
+                    public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
+                        return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH;
+                    }
+                }));
+            }
+        };
+    }
+
 
 }

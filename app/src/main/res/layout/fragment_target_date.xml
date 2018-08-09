@@ -82,6 +82,7 @@
             android:layout_marginTop="@dimen/dimen_16"
             android:drawableBottom="@mipmap/icon_recommend"
             android:drawablePadding="@dimen/dimen_9"
+            android:gravity="center"
             android:text="40天"
             android:textColor="@color/GrayWrite"/>
 

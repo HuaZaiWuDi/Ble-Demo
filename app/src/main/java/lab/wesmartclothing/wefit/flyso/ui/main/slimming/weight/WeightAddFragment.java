@@ -111,7 +111,7 @@ public class WeightAddFragment extends BaseAcFragment {
             mBtnForget.setVisibility(View.VISIBLE);
             mBtnSave.setVisibility(View.VISIBLE);
             mMRoundDisPlayView.stopAnimation();
-
+            mTvTitle.setText("测量超时，请正确使用体脂称");
         }
     };
 
@@ -176,7 +176,6 @@ public class WeightAddFragment extends BaseAcFragment {
 
             @Override
             public void onGetStoredScale(QNBleDevice qnBleDevice, List<QNScaleStoreData> list) {
-                RxLogUtils.d("历史数据：" + list.size());
             }
         });
     }
@@ -207,6 +206,7 @@ public class WeightAddFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

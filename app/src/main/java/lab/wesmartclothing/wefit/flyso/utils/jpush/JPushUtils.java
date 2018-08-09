@@ -38,7 +38,6 @@ public class JPushUtils {
         tagAliasBean.isAliasAction = true;
         tagAliasBean.alias = SPUtils.getString(SPKey.SP_UserId);
 
-//        JPushInterface.getAllTags(application, 2);
         TagAliasOperatorHelper.getInstance().handleAction(application, 0, tagAliasBean);
     }
 

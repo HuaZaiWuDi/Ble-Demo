@@ -203,10 +203,10 @@ public class SportingFragment extends BaseAcFragment {
             @Override
             public void accept(SportsDataTab sportsDataTab) throws Exception {
                 RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
                 if (currentTime == 0) {
-                    if (dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
                     currentTime = sportsDataTab.getDuration();
                     timer.startTimer();
                     timer2.startTimer();
@@ -276,7 +276,6 @@ public class SportingFragment extends BaseAcFragment {
 
 
     private void heartRate(int heart) {
-
         byte[] heartRates = BleKey.heartRates;
         int heart_0 = heartRates[0] & 0xff;
         int heart_1 = heartRates[1] & 0xff;

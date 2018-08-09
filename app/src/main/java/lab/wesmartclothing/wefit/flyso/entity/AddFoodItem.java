@@ -40,6 +40,27 @@ public class AddFoodItem {
         private String weightType;
         private String gid;
         private int unitCount;
+        private String remark;
+        private int calorie;
+        private String foodImg;
+        private long heatDate;
+
+
+        public void setRemark(String remark) {
+            this.remark = remark;
+        }
+
+        public void setCalorie(int calorie) {
+            this.calorie = calorie;
+        }
+
+        public void setFoodImg(String foodImg) {
+            this.foodImg = foodImg;
+        }
+
+        public void setHeatDate(long heatDate) {
+            this.heatDate = heatDate;
+        }
 
         public void setUnitCount(int unitCount) {
             this.unitCount = unitCount;

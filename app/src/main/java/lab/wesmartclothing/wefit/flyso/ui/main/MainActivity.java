@@ -8,11 +8,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.smartclothing.module_wefit.activity.MessageActivity;
 import com.smartclothing.module_wefit.widget.dialog.AboutUpdateDialog;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -22,14 +26,12 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Receiver;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import cn.jpush.android.api.JPushInterface;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -41,6 +43,7 @@ import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
@@ -48,22 +51,35 @@ import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
-@EActivity(R.layout.activity_main)
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_FIND;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_MESSAGE;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_SHOP;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_SLIM;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_USER;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_APP;
+import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_URL;
+
+//@EActivity(R.layout.activity_main)
 public class MainActivity extends BaseALocationActivity {
 
-    @ViewById
+    @BindView(R.id.mFrameLayout)
+    FrameLayout mMFrameLayout;
+    @BindView(R.id.mCommonTabLayout)
     CommonTabLayout mCommonTabLayout;
-    @ViewById
+    @BindView(R.id.bottom_tab)
     RelativeLayout bottom_tab;
-
+    @BindView(R.id.parent)
+    RelativeLayout mParent;
 
     private Intent bleIntent;
 
+//    @Receiver(actions = Key.ACTION_SWITCH_BOTTOM_TAB)
+//    void switchBottomTab(@Receiver.Extra(Key.EXTRA_SWITCH_BOTTOM_TAB) boolean isVisible) {
+//        bottom_tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+//    }
+//
 
-    @Receiver(actions = Key.ACTION_SWITCH_BOTTOM_TAB)
-    void switchBottomTab(@Receiver.Extra(Key.EXTRA_SWITCH_BOTTOM_TAB) boolean isVisible) {
-        bottom_tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-    }
 
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
@@ -72,11 +88,12 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        initView();
     }
 
     @Override
-    @AfterViews
     public void initView() {
 
         initBottomTab();
@@ -89,16 +106,83 @@ public class MainActivity extends BaseALocationActivity {
 
         RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
+
     }
+
+
+    /**
+     * {
+     * "operation":1,      // 通知操作。1-打开应用，2-打开应用内指定页面，3-APP内打开url
+     * "openTarget":""      //operation：2（ slim-瘦身首页，find-发现首页，shop-商城首页，user-我的首页，message-站内信,url）
+     * }
+     */
+    private void initReceiverPush() {
+        Bundle bundle = getIntent().getExtras();
+        RxLogUtils.d("点击通知：" + bundle);
+        if (bundle == null) return;
+        String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
+        JsonParser parser = new JsonParser();
+        JsonObject object = (JsonObject) parser.parse(extra);
+        RxLogUtils.d("点击通知：" + object.toString());
+        String openTarget = object.get("openTarget").getAsString();
+        int type = object.get("operation").getAsInt();
+        switch (type) {
+            case TYPE_OPEN_APP:
+                break;
+            case TYPE_OPEN_ACTIVITY:
+                openActivity(openTarget);
+                break;
+            case TYPE_OPEN_URL:
+                //打开URL
+                bundle.putString(Key.BUNDLE_WEB_URL, openTarget);
+                RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
+                break;
+        }
+    }
+
+    private void openActivity(String openTarget) {
+        switch (openTarget) {
+            case ACTIVITY_SLIM:
+                mCommonTabLayout.setCurrentTab(0);
+                switchFragment(mFragments.get(0));
+                break;
+            case ACTIVITY_FIND:
+                mCommonTabLayout.setCurrentTab(1);
+                switchFragment(mFragments.get(1));
+                break;
+            case ACTIVITY_SHOP:
+                mCommonTabLayout.setCurrentTab(2);
+                switchFragment(mFragments.get(2));
+                break;
+            case ACTIVITY_USER:
+                mCommonTabLayout.setCurrentTab(3);
+                switchFragment(mFragments.get(3));
+                break;
+            case ACTIVITY_MESSAGE:
+                //跳转消息通知
+                RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
+                break;
+        }
+    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
+        initReceiverPush();
         bleIntent = new Intent(mContext, BleService_.class);
         startService(bleIntent);
     }
 
     private void initRxBus() {
+//        RxBus.getInstance().register(String.class, new Consumer<String>() {
+//            @Override
+//            public void accept(String s) throws Exception {
+//                if (s.equals(ServiceAPI.FIND_Addr)) {
+//                    bottom_tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+//                }
+//            }
+//        });
         Disposable register = RxBus.getInstance().register(SlimmingTab.class, new Consumer<SlimmingTab>() {
             @Override
             public void accept(SlimmingTab slimmingTab) throws Exception {

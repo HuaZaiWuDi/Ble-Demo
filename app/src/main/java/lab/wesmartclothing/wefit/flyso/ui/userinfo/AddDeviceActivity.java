@@ -53,7 +53,7 @@ import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.view.ScanView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -159,7 +159,7 @@ public class AddDeviceActivity extends BaseActivity {
                 public void run() {
                     //跳转主页
                     if (!BUNDLE_FORCE_BIND) {
-                        RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
+                        RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
                     } else {
                         RxActivityUtils.finishActivity();
                     }
@@ -172,7 +172,7 @@ public class AddDeviceActivity extends BaseActivity {
     void tv_skip() {
         //跳转主页
         if (!BUNDLE_FORCE_BIND)
-            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity_.class);
+            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
         else
             RxActivityUtils.finishActivity();
     }
