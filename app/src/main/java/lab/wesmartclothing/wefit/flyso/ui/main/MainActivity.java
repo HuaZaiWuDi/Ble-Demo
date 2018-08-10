@@ -45,7 +45,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.mine.MineFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -233,7 +233,7 @@ public class MainActivity extends BaseALocationActivity {
         mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(FindFragment.getInstance());
         mFragments.add(StoreFragment.getInstance());
-        mFragments.add(MineFragment.getInstance());
+        mFragments.add(MeFragment.getInstance());
     }
 
     private void initBottomTab() {

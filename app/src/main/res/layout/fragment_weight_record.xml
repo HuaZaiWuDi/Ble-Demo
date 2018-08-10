@@ -149,6 +149,7 @@
                         android:layout_marginLeft="@dimen/dimen_10"
                         android:layout_toRightOf="@+id/iv_sports"
                         android:text="2018年7月8日"
+                        android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"/>
 

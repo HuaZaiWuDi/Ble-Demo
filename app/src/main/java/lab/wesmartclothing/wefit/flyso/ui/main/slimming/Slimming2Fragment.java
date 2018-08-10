@@ -489,6 +489,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_Healthy:
                 //点击健康评级
+
                 break;
             case R.id.layout_heat:
                 //跳转热量记录

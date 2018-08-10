@@ -164,6 +164,7 @@
         <activity android:name=".ui.main.slimming.sports.BaseSportingActivity"/>
         <activity android:name=".ui.main.slimming.heat.second.BaseHeatActivity"/>
         <activity android:name=".ui.main.slimming.weight.BaseWeightActivity"/>
+        <activity android:name=".ui.main.mine.BaseMeActivity"/>
     </application>
 
 </manifest>

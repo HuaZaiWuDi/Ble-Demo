@@ -2,13 +2,12 @@ package com.vondear.rxtools.utils;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
-import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -88,10 +87,13 @@ public class RxUtils {
         timer.start();
     }
 
-    public static int dp2px(float dp) {
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return Math.round(px);
+    public static int dp2px(float dpValue) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
+    }
+
+    public static int sp2px(int spValue) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP, spValue, context.getResources().getDisplayMetrics());
     }
 
     //==============================================================================================延时任务封装 end

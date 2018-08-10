@@ -295,7 +295,7 @@ public class SportingFragment extends BaseAcFragment {
         } else if (heart >= heart_1 && heart < heart_2) {
             if (type != 1) {
                 mTvSportsStatus.setText("燃脂");
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_grease), TextToSpeech.QUEUE_FLUSH, null);
                 type = 1;
@@ -311,7 +311,7 @@ public class SportingFragment extends BaseAcFragment {
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 3) {
                 mTvSportsStatus.setText("无氧");
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
                 type = 3;
                 if (mSwMusic.isOpened())
                     textToSpeech.speak(getString(R.string.speech_anaerobic), TextToSpeech.QUEUE_FLUSH, null);

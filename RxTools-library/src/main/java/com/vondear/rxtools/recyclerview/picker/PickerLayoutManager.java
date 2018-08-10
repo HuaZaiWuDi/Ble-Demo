@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 /**
  * Created by 钉某人
  * github: https://github.com/DingMouRen
@@ -65,9 +67,12 @@ public class PickerLayoutManager extends LinearLayoutManager {
      */
     @Override
     public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
-        if (getItemCount() != 0 && mItemCount != 0) {
+        RxLogUtils.e("getItemCount()：" + getItemCount());
+        RxLogUtils.e("mItemCount()：" + mItemCount);
+        if (getItemCount() != 0 && mItemCount !=0) {
 
             View view = recycler.getViewForPosition(0);
+            if (view == null) return;
             measureChildWithMargins(view, widthSpec, heightSpec);
 
             mItemViewWidth = view.getMeasuredWidth();

@@ -8,44 +8,37 @@ import java.io.Serializable;
 
 public class UserCenterBean implements Serializable{
 
+
     /**
-     * imgUrl : https://wesmart-image.oss-cn-shenzhen.aliyuncs.com/upload/user/2018/4/25/data/user/0/com.smartclothing.module_wefit/cache/cropped_1527244188024.jpg
-     * userName : 哈哈哈哈
-     * signature : 这可能是一段很长的签名这可能是一段很长的签名这可能是一段很长的签名hjnx
-     * bindCount : 1
-     * collectCount : 6
-     * unreadCount : 1
+     * athlDays : 0
+     * bindCount : 0
+     * calorie : 0
+     * collectCount : 0
+     * duration : 0
+     * imgUrl : string
+     * maxHeart : 0
+     * signature : string
+     * unreadCount : 0
+     * userName : string
      */
 
-    private String imgUrl;
-    private String userName;
-    private String signature;
+    private int athlDays;
     private int bindCount;
+    private int calorie;
     private int collectCount;
+    private int duration;
+    private String imgUrl;
+    private int maxHeart;
+    private String signature;
     private int unreadCount;
+    private String userName;
 
-    public String getImgUrl() {
-        return imgUrl;
+    public int getAthlDays() {
+        return athlDays;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
+    public void setAthlDays(int athlDays) {
+        this.athlDays = athlDays;
     }
 
     public int getBindCount() {
@@ -56,6 +49,14 @@ public class UserCenterBean implements Serializable{
         this.bindCount = bindCount;
     }
 
+    public int getCalorie() {
+        return calorie;
+    }
+
+    public void setCalorie(int calorie) {
+        this.calorie = calorie;
+    }
+
     public int getCollectCount() {
         return collectCount;
     }
@@ -64,11 +65,51 @@ public class UserCenterBean implements Serializable{
         this.collectCount = collectCount;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public int getMaxHeart() {
+        return maxHeart;
+    }
+
+    public void setMaxHeart(int maxHeart) {
+        this.maxHeart = maxHeart;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
     public int getUnreadCount() {
         return unreadCount;
     }
 
     public void setUnreadCount(int unreadCount) {
         this.unreadCount = unreadCount;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

@@ -53,6 +53,7 @@ import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout;
@@ -132,7 +133,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
             adapterAddFoods.setNewData(addedFoods);
         }
     }
-
 
     public void initView() {
         subscribe = new RxPermissions(mActivity)
@@ -433,6 +433,9 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        RxToast.success("添加成功");
+                        FoodDetailsFragment.addedLists.clear();
+                        getBaseFragmentActivity().popBackStack(HeatDetailFragment.class);
                     }
 
                     @Override

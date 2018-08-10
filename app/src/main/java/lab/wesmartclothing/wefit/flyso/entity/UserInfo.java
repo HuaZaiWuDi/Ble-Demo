@@ -34,18 +34,22 @@ public class UserInfo implements Serializable {
     private String city;
     private String country;
     private String province;
+    private boolean isChange = false;
 
 
     public void setCity(String city) {
         this.city = city;
+        isChange = true;
     }
 
     public void setCountry(String country) {
         this.country = country;
+        isChange = true;
     }
 
     public void setProvince(String province) {
         this.province = province;
+        isChange = true;
     }
 
     public String getCity() {
@@ -54,6 +58,7 @@ public class UserInfo implements Serializable {
 
     public String getCountry() {
         return country;
+
     }
 
     public String getProvince() {
@@ -66,6 +71,7 @@ public class UserInfo implements Serializable {
 
     public void setBirthday(long birthday) {
         this.birthday = birthday;
+        isChange = true;
     }
 
     public String getClothesMacAddr() {
@@ -83,6 +89,7 @@ public class UserInfo implements Serializable {
     }
 
     public void setHeight(int height) {
+        isChange = true;
         this.height = height;
     }
 
@@ -103,10 +110,12 @@ public class UserInfo implements Serializable {
     }
 
     public int getSex() {
+
         return sex;
     }
 
     public void setSex(int sex) {
+        isChange = true;
         this.sex = sex;
     }
 
@@ -115,6 +124,7 @@ public class UserInfo implements Serializable {
     }
 
     public void setSignature(String signature) {
+        isChange = true;
         this.signature = signature;
     }
 
@@ -123,6 +133,7 @@ public class UserInfo implements Serializable {
     }
 
     public void setTargetWeight(int targetWeight) {
+        isChange = true;
         this.targetWeight = targetWeight;
     }
 
@@ -131,6 +142,7 @@ public class UserInfo implements Serializable {
     }
 
     public void setUserImg(String userImg) {
+        isChange = true;
         this.userImg = userImg;
     }
 
@@ -139,6 +151,7 @@ public class UserInfo implements Serializable {
     }
 
     public void setUserName(String userName) {
+        isChange = true;
         this.userName = userName;
     }
 

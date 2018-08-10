@@ -12,12 +12,11 @@
         android:layout_height="150dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingLeft="56dp"
-        android:paddingRight="56dp">
+        >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerYear"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="100dp">
 
         </android.support.v7.widget.RecyclerView>
@@ -25,12 +24,11 @@
         <View
             android:layout_width="8dp"
             android:layout_height="1dp"
-            android:layout_margin="8dp"
             android:background="#D9D8E1"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerMonth"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="100dp">
 
         </android.support.v7.widget.RecyclerView>
@@ -38,12 +36,11 @@
         <View
             android:layout_width="8dp"
             android:layout_height="1dp"
-            android:layout_margin="8dp"
             android:background="@color/linen"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerDay"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="100dp">
 
         </android.support.v7.widget.RecyclerView>

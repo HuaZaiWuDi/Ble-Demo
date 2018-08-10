@@ -101,19 +101,6 @@
                         app:rcRadius="3dp"
                         />
 
-                    <!--<com.qmuiteam.qmui.widget.QMUIProgressBar-->
-                    <!--android:id="@+id/pro_weight"-->
-                    <!--android:layout_width="110dp"-->
-                    <!--android:layout_height="6dp"-->
-                    <!--android:layout_below="@+id/tv_weight_start"-->
-                    <!--android:layout_marginTop="@dimen/dimen_3"-->
-                    <!--app:qmui_background_color="@color/GrayWrite"-->
-                    <!--app:qmui_max_value="100"-->
-                    <!--app:qmui_progress_color="@color/white"-->
-                    <!--app:qmui_stroke_round_cap="true"-->
-                    <!--app:qmui_type="type_rect"-->
-                    <!--app:qmui_value="0"/>-->
-
 
                 </RelativeLayout>
 
@@ -436,6 +423,7 @@
                             android:layout_marginLeft="@dimen/dimen_10"
                             android:layout_toRightOf="@+id/iv_heat"
                             android:text="热量记录"
+                            android:textColor="@color/Gray"
                             android:textSize="15sp"
                             android:textStyle="bold"/>
 
@@ -824,6 +812,7 @@
                         android:layout_marginLeft="@dimen/dimen_10"
                         android:layout_toRightOf="@+id/iv_sports"
                         android:text="运动记录"
+                        android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"/>
 
@@ -930,6 +919,7 @@
                         android:layout_marginLeft="@dimen/dimen_10"
                         android:layout_toRightOf="@+id/iv_weight"
                         android:text="体重记录"
+                        android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"/>
 

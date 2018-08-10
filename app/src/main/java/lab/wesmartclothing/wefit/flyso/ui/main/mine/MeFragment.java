@@ -1,0 +1,242 @@
+package lab.wesmartclothing.wefit.flyso.ui.main.mine;
+
+import android.graphics.Typeface;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
+import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
+import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
+import com.smartclothing.module_wefit.bean.UserCenterBean;
+import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+
+/**
+ * Created by jk on 2018/8/9.
+ */
+public class MeFragment extends BaseAcFragment {
+
+    @BindView(R.id.iv_userImg)
+    QMUIRadiusImageView mIvUserImg;
+    @BindView(R.id.tv_userName)
+    TextView mTvUserName;
+    @BindView(R.id.tv_sign)
+    TextView mTvSign;
+    @BindView(R.id.iv_setting)
+    ImageView mIvSetting;
+    @BindView(R.id.iv_notify)
+    ImageView mIvNotify;
+    @BindView(R.id.tv_sportingTime)
+    TextView mTvSportingTime;
+    @BindView(R.id.tv_totalHeat)
+    TextView mTvTotalHeat;
+    @BindView(R.id.tv_totalDays)
+    TextView mTvTotalDays;
+    @BindView(R.id.tv_MaxHeartRate)
+    TextView mTvMaxHeartRate;
+    @BindView(R.id.groupListView)
+    QMUIGroupListView mGroupListView;
+    Unbinder unbinder;
+
+    public static QMUIFragment getInstance() {
+        return new MeFragment();
+    }
+
+    private QMUICommonListItemView deivceItem, collectionItem;
+
+    @Override
+    protected View onCreateView() {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_me, null);
+        unbinder = ButterKnife.bind(this, view);
+        initView();
+        return view;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initMineData();
+    }
+
+    private void initView() {
+        groupList();
+        initTypeface();
+
+        RxTextUtils.getBuilder("--")
+                .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("--")
+                .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .into(mTvSportingTime);
+    }
+
+    private void initTypeface() {
+        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        mTvSportingTime.setTypeface(typeface);
+        mTvTotalHeat.setTypeface(typeface);
+        mTvTotalDays.setTypeface(typeface);
+        mTvMaxHeartRate.setTypeface(typeface);
+    }
+
+    private void SportingTime(long time) {
+        int totalMin = (int) (time / 60);
+        int hour = (totalMin / 60);
+        int min = totalMin % 60;
+        RxTextUtils.getBuilder(hour + "")
+                .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append(min + "")
+                .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .into(mTvSportingTime);
+    }
+
+    private void groupList() {
+        //设置
+        deivceItem = mGroupListView.createItemView(
+                getResources().getDrawable(R.mipmap.icon_device), "我的设备", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        deivceItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        deivceItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        collectionItem = mGroupListView.createItemView(
+                getResources().getDrawable(R.mipmap.icon_collection), "我的收藏", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        collectionItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        collectionItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        QMUICommonListItemView orderItem = mGroupListView.createItemView(
+                getResources().getDrawable(R.mipmap.icon_order), "我的订单", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        orderItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        orderItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        QMUICommonListItemView shoppingItem = mGroupListView.createItemView(
+                getResources().getDrawable(R.mipmap.icon_shopping), "我的购物车", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        shoppingItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        shoppingItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+
+        //关于我的
+        QMUICommonListItemView problemItem = mGroupListView.createItemView(
+                getResources().getDrawable(R.mipmap.icon_problem), "问题与建议", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        problemItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        problemItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        QMUICommonListItemView aboutUsItem = mGroupListView.createItemView(
+                getResources().getDrawable(R.mipmap.icon_about_us), "关于我们", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        aboutUsItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        aboutUsItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+
+        QMUIGroupListView.newSection(getContext())
+                .addItemView(deivceItem, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })
+                .addItemView(collectionItem, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })
+                .addItemView(orderItem, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })
+                .addItemView(shoppingItem, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })
+                .setUseTitleViewForSectionSpace(false)
+                .addTo(mGroupListView);
+
+        QMUIGroupListView.newSection(getContext())
+                .addItemView(problemItem, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })
+                .addItemView(aboutUsItem, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                })
+                .addTo(mGroupListView);
+
+    }
+
+
+    @OnClick({R.id.iv_userImg, R.id.iv_setting, R.id.iv_notify})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_userImg:
+                RxActivityUtils.skipActivity(mContext, BaseMeActivity.class);
+                break;
+            case R.id.iv_setting:
+                break;
+            case R.id.iv_notify:
+                break;
+        }
+    }
+
+    private void initMineData() {
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.userCenter())
+                .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        Gson gson = new Gson();
+                        UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
+
+                        mTvUserName.setText(user.getUserName());
+                        deivceItem.setDetailText(user.getBindCount() == 0 ? "" : user.getBindCount() + "");
+                        collectionItem.setDetailText(user.getCollectCount() == 0 ? "" : user.getCollectCount() + "");
+
+                        Glide.with(mActivity)
+                                .load(user.getImgUrl())
+                                .placeholder(R.mipmap.userimg)
+                                .bitmapTransform(new CropCircleTransformation(mActivity))//圆角图片
+                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                .into(mIvUserImg);//
+
+                        //更新消息未读状态
+                        mIvNotify.setImageResource(user.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
+                        mTvSign.setText(RxDataUtils.isNullString(user.getSignature()) ? "他什么也没留下" : user.getSignature());
+                        SportingTime(user.getDuration());
+                        mTvTotalHeat.setText(user.getCalorie() + "");
+                        mTvTotalDays.setText(user.getAthlDays() + "");
+                        mTvMaxHeartRate.setText(user.getMaxHeart() + "");
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
+
+}

@@ -445,8 +445,8 @@ public class WheelView extends View {
      * @param resource
      */
     public void setWheelBackground(int resource) {
-        wheelBackground = resource;
-        setBackgroundResource(wheelBackground);
+//        wheelBackground = resource;
+//        setBackgroundResource(wheelBackground);
     }
 
     /**
@@ -455,8 +455,8 @@ public class WheelView extends View {
      * @param resource
      */
     public void setWheelForeground(int resource) {
-        wheelForeground = resource;
-        centerDrawable = getContext().getResources().getDrawable(wheelForeground);
+//        wheelForeground = resource;
+//        centerDrawable = getContext().getResources().getDrawable(wheelForeground);
     }
 
     /**
@@ -483,9 +483,9 @@ public class WheelView extends View {
      * Initializes resources
      */
     private void initResourcesIfNecessary() {
-        if (centerDrawable == null && wheelForeground != 0) {
-            centerDrawable = getContext().getResources().getDrawable(wheelForeground);
-        }
+//        if (centerDrawable == null && wheelForeground != 0) {
+//            centerDrawable = getContext().getResources().getDrawable(wheelForeground);
+//        }
 
         if (topShadow == null) {
             topShadow = new GradientDrawable(Orientation.TOP_BOTTOM, SHADOWS_COLORS);
@@ -494,8 +494,8 @@ public class WheelView extends View {
         if (bottomShadow == null) {
             bottomShadow = new GradientDrawable(Orientation.BOTTOM_TOP, SHADOWS_COLORS);
         }
-        if (wheelBackground != 0)
-            setBackgroundResource(wheelBackground);
+//        if (wheelBackground != 0)
+//            setBackgroundResource(wheelBackground);
     }
 
     /**
@@ -617,11 +617,11 @@ public class WheelView extends View {
             updateView();
 
             drawItems(canvas);
-            if(centerDrawable!=null)
-            drawCenterRect(canvas);
+//            if (centerDrawable != null)
+//                drawCenterRect(canvas);
         }
 
-        if (drawShadows) drawShadows(canvas);
+//        if (drawShadows) drawShadows(canvas);
     }
 
     /**
@@ -851,22 +851,22 @@ public class WheelView extends View {
     }
 
     /**
-     * Updates view. Rebuilds items and label if necessary, recalculate items sizes.
-     */
-    private void updateView() {
-        if (rebuildItems()) {
-            calculateLayoutWidth(getWidth(), MeasureSpec.EXACTLY);
-            layout(getWidth(), getHeight());
-        }
-    }
-
-    /**
      * Creates item layouts if necessary
      */
     private void createItemsLayout() {
         if (itemsLayout == null) {
             itemsLayout = new LinearLayout(getContext());
             itemsLayout.setOrientation(LinearLayout.VERTICAL);
+        }
+    }
+
+    /**
+     * Updates view. Rebuilds items and label if necessary, recalculate items sizes.
+     */
+    private void updateView() {
+        if (rebuildItems()) {
+            calculateLayoutWidth(getWidth(), MeasureSpec.EXACTLY);
+            layout(getWidth(), getHeight());
         }
     }
 

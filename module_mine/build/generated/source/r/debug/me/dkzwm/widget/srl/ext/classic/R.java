@@ -8,17 +8,17 @@ package me.dkzwm.widget.srl.ext.classic;
 
 public final class R {
     public static final class attr {
-        public static int sr_style = 0x7f04033b;
+        public static int sr_style = 0x7f040348;
     }
     public static final class drawable {
         public static int sr_classic_arrow_icon = 0x7f09010f;
     }
     public static final class id {
-        public static int sr_classic_arrow = 0x7f0c01bb;
-        public static int sr_classic_last_update = 0x7f0c01bc;
-        public static int sr_classic_progress = 0x7f0c01bd;
-        public static int sr_classic_text_container = 0x7f0c01be;
-        public static int sr_classic_title = 0x7f0c01bf;
+        public static int sr_classic_arrow = 0x7f0c01bf;
+        public static int sr_classic_last_update = 0x7f0c01c0;
+        public static int sr_classic_progress = 0x7f0c01c1;
+        public static int sr_classic_text_container = 0x7f0c01c2;
+        public static int sr_classic_title = 0x7f0c01c3;
     }
     public static final class string {
         public static int sr_hours_ago = 0x7f150070;
@@ -40,7 +40,7 @@ public final class R {
         public static int sr_seconds_ago = 0x7f150080;
     }
     public static final class styleable {
-        public static int[] AbsClassicRefreshView = { 0x7f04033b };
+        public static int[] AbsClassicRefreshView = { 0x7f040348 };
         public static int AbsClassicRefreshView_sr_style = 0;
     }
 }

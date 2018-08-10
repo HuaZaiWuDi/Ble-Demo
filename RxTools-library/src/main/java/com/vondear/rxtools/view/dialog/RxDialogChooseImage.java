@@ -119,7 +119,6 @@ public class RxDialogChooseImage extends RxDialog {
                 break;
         }
 
-
         mTvCamera = (TextView) dialog_view.findViewById(R.id.tv_camera);
         mTvFile = (TextView) dialog_view.findViewById(R.id.tv_file);
         mTvCancel = (TextView) dialog_view.findViewById(R.id.tv_cancel);
@@ -170,6 +169,7 @@ public class RxDialogChooseImage extends RxDialog {
         });
         setContentView(dialog_view);
         mLayoutParams.gravity = Gravity.BOTTOM;
+        setFullScreenWidth();
     }
 
     private void initView(final Fragment fragment) {
@@ -222,6 +222,7 @@ public class RxDialogChooseImage extends RxDialog {
 
         setContentView(dialog_view);
         mLayoutParams.gravity = Gravity.BOTTOM;
+        setFullScreenWidth();
     }
 
     public enum LayoutType {

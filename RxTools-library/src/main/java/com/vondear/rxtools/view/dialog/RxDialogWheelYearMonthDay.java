@@ -107,10 +107,10 @@ public class RxDialogWheelYearMonthDay extends RxDialog {
 
         //year
         year = (WheelView) dialogView1.findViewById(R.id.wheelView_year);
-        year.setBackgroundResource(R.drawable.transparent_bg);
+        year.setBackgroundResource(0);
         year.setWheelBackground(R.drawable.transparent_bg);
-        year.setWheelForeground(R.drawable.wheel_val_holo);
-        year.setShadowColor(0xFFDADCDB, 0x88DADCDB, 0x00DADCDB);
+//        year.setWheelForeground(R.drawable.wheel_val_holo);
+//        year.setShadowColor(0xFFDADCDB, 0x88DADCDB, 0x00DADCDB);
         year.setViewAdapter(new DateNumericAdapter(context, beginYear, endYear, endYear - beginYear));
         year.setCurrentItem(endYear - beginYear);
         year.addChangingListener(listener);
