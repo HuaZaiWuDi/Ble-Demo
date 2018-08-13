@@ -750,7 +750,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
  * */
 
 
-public abstract class BaseALocationActivity extends BaseActivity {
+public abstract class BaseALocationActivity extends BaseFragmentActivity {
 
     public static AMapLocation aMapLocation = null;//定位信息
 

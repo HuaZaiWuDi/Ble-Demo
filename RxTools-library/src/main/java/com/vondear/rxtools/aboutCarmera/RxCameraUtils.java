@@ -214,7 +214,6 @@ public class RxCameraUtils {
      * @param imgPath 图片路径
      */
     public static void NotifyAlbum(Context context, String imgPath) {
-
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri uri = Uri.fromFile(new File(imgPath));
         intent.setData(uri);

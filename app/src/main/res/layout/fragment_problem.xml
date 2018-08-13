@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Gray"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/Gray"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        tools:visibility="visible"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_F7F7F9"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_type"
+            android:layout_width="160dp"
+            android:layout_height="44dp"
+            android:drawableRight="@mipmap/icon_down"
+            android:gravity="left|center_vertical"
+            android:padding="8dp"
+            android:text="反馈类型"
+            android:textColor="@color/BrightGray"
+            android:textSize="15sp"
+            app:qmui_backgroundColor="@color/white"
+            app:qmui_borderColor="@color/BrightGray"
+            app:qmui_radius="4dp"/>
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_times"
+            android:layout_width="160dp"
+            android:layout_height="44dp"
+            android:layout_alignParentRight="true"
+            android:drawableRight="@mipmap/icon_down"
+            android:gravity="left|center_vertical"
+            android:padding="8dp"
+            android:text="出现频率"
+            android:textColor="@color/BrightGray"
+            android:textSize="15sp"
+            app:qmui_backgroundColor="@color/white"
+            app:qmui_borderColor="@color/BrightGray"
+            app:qmui_radius="4dp"/>
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
+            android:id="@+id/layout_problem"
+            android:layout_width="match_parent"
+            android:layout_height="176dp"
+            android:layout_below="@+id/btn_type"
+            android:layout_marginTop="16dp"
+            app:qmui_backgroundColor="@color/white"
+            app:qmui_borderColor="@color/BrightGray"
+            app:qmui_radius="4dp">
+
+            <EditText
+                android:id="@+id/edit_proble"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:gravity="left"
+                android:hint="请您详细描述问题发生的场景和现象，并添加截图，这将有助于我们快速解决您的问题。"
+                android:maxLength="500"
+                android:padding="8dp"
+                android:textColor="@color/Gray"
+                android:textColorHint="@color/BrightGray"
+                android:textSize="15sp"/>
+
+
+            <TextView
+                android:id="@+id/tv_InputCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="8dp"
+                android:text="500"
+                android:textColor="@color/BrightGray"
+                android:textSize="13sp"/>
+
+        </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
+            android:id="@+id/layout_phone"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_below="@+id/layout_problem"
+            android:layout_marginTop="16dp"
+            app:qmui_backgroundColor="@color/white"
+            app:qmui_borderColor="@color/BrightGray"
+            app:qmui_radius="4dp">
+
+            <EditText
+                android:id="@+id/edit_phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:hint="请留下您的联系方式（电话或邮箱）"
+                android:inputType="phone|textEmailAddress"
+                android:maxLength="11"
+                android:padding="8dp"
+                android:textColor="@color/Gray"
+                android:textColorHint="@color/BrightGray"
+                android:textSize="15sp"/>
+
+
+        </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tv_imgs_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_phone"
+            android:layout_marginTop="16dp"
+            android:text="添加截图（最多添加4张）"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_imgs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_imgs_title">
+
+        </android.support.v7.widget.RecyclerView>
+
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_submit"
+            android:layout_width="195dp"
+            android:layout_height="46dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="提交"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:qmui_backgroundColor="@color/red"
+            app:qmui_borderColor="@color/red"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

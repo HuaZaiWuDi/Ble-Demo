@@ -101,6 +101,7 @@ public class SettingTargetFragment extends BaseAcFragment {
             //TODO 当前体重小于目标体重着
             tipDialog.showInfo("您当前体重小于标准体重，\n请设置目标体重~", 2000);
         }
+
         String tips = "需减重 " + RxFormatValue.fromat4S5R(stillNeed, 1) + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -127,7 +128,7 @@ public class SettingTargetFragment extends BaseAcFragment {
                 mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
 
                 stillNeed = initWeight - settingWeight;
-                String tips = "需减重 " + RxFormatValue.fromat4S5R(stillNeed, 1) + " kg";
+                String tips = (stillNeed < 0 ? "需增重" : "需减重 ") + RxFormatValue.fromat4S5R(stillNeed, 1) + " kg";
                 SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                         .setProportion(1.4f)

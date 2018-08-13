@@ -19,6 +19,8 @@
         app:qmui_topbar_bg_color="@color/Gray"
         app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
         app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_text_btn_color_state_list="@color/white"
+        app:qmui_topbar_text_btn_text_size="13sp"
         app:qmui_topbar_title_color="@color/white"
         tools:visibility="visible"
         />
@@ -30,11 +32,12 @@
         android:background="@color/bg_F7F7F9"
         android:orientation="vertical"
         >
-
+        <!--android:background="?attr/selectableItemBackground"-->
         <RelativeLayout
             android:id="@+id/layout_userImg"
             android:layout_width="match_parent"
             android:layout_height="96dp"
+            android:background="@drawable/selector_ripple_bg_"
             android:padding="16dp">
 
             <TextView
@@ -43,16 +46,17 @@
                 android:layout_centerVertical="true"
                 android:text="头像"
                 android:textColor="@color/Gray"
-                android:textSize="15sp"/>
+                android:textSize="15sp"
+                android:textStyle="bold"/>
 
 
             <com.qmuiteam.qmui.widget.QMUIRadiusImageView
                 android:id="@+id/iv_userImg"
                 android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                tools:background="@mipmap/app_name"
-                app:qmui_is_circle="true"/>
+                app:qmui_is_circle="true"
+                tools:background="@mipmap/app_name"/>
 
         </RelativeLayout>
 

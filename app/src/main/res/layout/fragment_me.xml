@@ -14,9 +14,9 @@
     <!--title-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="126dp"
+        android:layout_height="96dp"
         android:background="@color/Gray"
-        android:paddingTop="36dp"
+        android:padding="16dp"
         tools:visibility="visible">
 
 
@@ -24,10 +24,7 @@
             android:id="@+id/iv_userImg"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="26dp"
-            android:layout_marginLeft="@dimen/dimen_16"
-            android:layout_marginRight="@dimen/dimen_16"
+            android:layout_centerVertical="true"
             android:src="@mipmap/userimg"
             app:qmui_corner_radius="@dimen/dimen_32"/>
 
@@ -44,6 +41,7 @@
             android:id="@+id/tv_userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_toRightOf="@+id/iv_userImg"
             android:text="我是用户名"
             android:textColor="@color/white"
@@ -55,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_userName"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_toRightOf="@+id/iv_userImg"
             android:text="请到体重记录页设定小目标哟！ ^-^"
@@ -76,7 +75,6 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
             android:paddingBottom="30dp"
             android:src="@mipmap/icon_email_white"/>
 

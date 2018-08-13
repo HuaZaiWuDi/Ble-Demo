@@ -35,7 +35,7 @@
                 android:layout_marginBottom="@dimen/dimen_15"
                 android:layout_marginLeft="@dimen/dimen_10"
                 android:layout_marginRight="@dimen/dimen_10"
-                android:src="@mipmap/left_back"/>
+                android:src="@mipmap/back"/>
         </LinearLayout>
 
 

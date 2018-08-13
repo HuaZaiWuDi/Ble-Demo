@@ -1,30 +1,65 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxPhotoUtils;
+import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.view.dialog.RxDialogChooseImage;
+import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import cn.qqtheme.framework.entity.City;
+import cn.qqtheme.framework.entity.County;
+import cn.qqtheme.framework.entity.Province;
+import cn.qqtheme.framework.picker.AddressPicker;
+import cn.qqtheme.framework.picker.DatePicker;
+import cn.qqtheme.framework.picker.DateTimePicker;
+import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.AddressInitTask;
+import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/8/9.
@@ -43,6 +78,9 @@ public class UserInfofragment extends BaseAcFragment {
 
     private QMUICommonListItemView userNameItem, sexItem, birthItem, heightItem, weightItem, cityItem, signItem;
     private UserInfo info;
+    public static final int RESULT_CODE = 500;
+    public static final int REQUEST_CODE = 501;
+    public static final int IMAGE_PICKER = 503;
 
     public static QMUIFragment getInstance() {
         return new UserInfofragment();
@@ -57,24 +95,61 @@ public class UserInfofragment extends BaseAcFragment {
     }
 
     private void initView() {
+        initTopBar();
         groupList();
+        initImagePicker();
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         info = new Gson().fromJson(string, UserInfo.class);
         notifyData(info);
     }
 
+
+    private void initImagePicker() {
+        ImagePicker imagePicker = ImagePicker.getInstance();
+        imagePicker.setImageLoader(new PicassoImageLoader());   //设置图片加载器
+        imagePicker.setShowCamera(true);//显示拍照按钮
+        imagePicker.setMultiMode(false);
+        imagePicker.setCrop(true);        //允许裁剪（单选才有效）
+        imagePicker.setSaveRectangle(true); //是否按矩形区域保存
+        imagePicker.setSelectLimit(1);    //选中数量限制
+        imagePicker.setStyle(CropImageView.Style.RECTANGLE);  //裁剪框的形状
+        imagePicker.setFocusWidth(800);   //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setFocusHeight(800);  //裁剪框的高度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setOutPutX(1000);//保存文件的宽度。单位像素
+        imagePicker.setOutPutY(1000);//保存文件的高度。单位像素
+    }
+
+    private void initTopBar() {
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popBackStack();
+            }
+        });
+        mQMUIAppBarLayout.setTitle("个人资料");
+        mQMUIAppBarLayout.addRightTextButton("保存", R.id.btn_save)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+    }
+
     private void notifyData(UserInfo info) {
-        Glide.with(mActivity).load(info.getUserImg())
+        Glide.with(mActivity).load(info.getImgUrl())
                 .asBitmap()
                 .placeholder(R.mipmap.userimg)
                 .into(mIvUserImg);
         userNameItem.setDetailText(info.getUserName());
         sexItem.setDetailText(info.getSex() == 1 ? "男" : "女");
         birthItem.setDetailText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
-        heightItem.setDetailText(info.getHeight() + "");
-        weightItem.setDetailText(info.getTargetWeight() + "");
-        cityItem.setDetailText(info.getProvince() + "," + info.getCity());
-        signItem.setDetailText(info.getSignature());
+        heightItem.setDetailText(info.getHeight() + "\tcm");
+        weightItem.setDetailText(info.getTargetWeight() + "\tkg");
+        if (!RxDataUtils.isNullString(info.getProvince()) && !RxDataUtils.isNullString(info.getCity()))
+            cityItem.setDetailText(info.getProvince() + "," + info.getCity());
+        if (!RxDataUtils.isNullString(info.getSignature()))
+            signItem.setDetailText(info.getSignature());
     }
 
     private void groupList() {
@@ -100,25 +175,34 @@ public class UserInfofragment extends BaseAcFragment {
 
         cityItem = mGroupListView.createItemView("所在城市");
         cityItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
+        cityItem.setDetailText("未知");
         setItemView(cityItem);
 
         signItem = mGroupListView.createItemView("签名");
         signItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
+        signItem.setDetailText("签名限制20字，这边显示不全…");
+        TextView textView = signItem.getDetailTextView();
+        textView.setMaxLines(1);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
         setItemView(signItem);
-
 
         QMUIGroupListView.newSection(mActivity)
                 .setUseTitleViewForSectionSpace(false)
                 .addItemView(userNameItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_TITLE, "昵称");
+                        bundle.putString(Key.BUNDLE_DATA, info.getUserName());
+                        QMUIFragment instance = EditFragment.getInstance();
+                        instance.setArguments(bundle);
+                        startFragmentForResult(instance, UserInfofragment.RESULT_CODE);
                     }
                 })
                 .addItemView(sexItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showSex();
                     }
                 })
                 .addTo(mGroupListView);
@@ -128,19 +212,19 @@ public class UserInfofragment extends BaseAcFragment {
                 .addItemView(birthItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showDate();
                     }
                 })
                 .addItemView(heightItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showHeight();
                     }
                 })
                 .addItemView(weightItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showWeight();
                     }
                 })
                 .addTo(mGroupListView);
@@ -150,17 +234,21 @@ public class UserInfofragment extends BaseAcFragment {
                 .addItemView(cityItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showAddress();
                     }
                 })
                 .addItemView(signItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_TITLE, signItem.getText().toString());
+                        bundle.putString(Key.BUNDLE_DATA, signItem.getDetailText().toString());
+                        QMUIFragment instance = EditFragment.getInstance();
+                        instance.setArguments(bundle);
+                        startFragmentForResult(instance, UserInfofragment.RESULT_CODE);
                     }
                 })
                 .addTo(mGroupListView);
-
 
     }
 
@@ -174,31 +262,211 @@ public class UserInfofragment extends BaseAcFragment {
 
     @OnClick(R.id.layout_userImg)
     public void onViewClicked() {
-        RxDialogChooseImage dialogChooseImage = new RxDialogChooseImage(UserInfofragment.this);
-        dialogChooseImage.show();
+        Intent intent = new Intent(mContext, ImageGridActivity.class);
+        startActivityForResult(intent, IMAGE_PICKER);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case RxPhotoUtils.GET_IMAGE_FROM_PHONE://选择相册之后的处理
-                if (resultCode == RESULT_OK) {
-                    RxPhotoUtils.cropImage(UserInfofragment.this, data.getData());// 裁剪图片
-                }
-                break;
-            case RxPhotoUtils.GET_IMAGE_BY_CAMERA://选择照相机之后的处理
-                if (resultCode == RESULT_OK) {
-                    /* data.getExtras().get("data");*/
-                    RxPhotoUtils.cropImage(UserInfofragment.this, RxPhotoUtils.imageUriFromCamera);// 裁剪图片
-                }
-                break;
-            case RxPhotoUtils.CROP_IMAGE://普通裁剪后的处理
-//                RxPhotoUtils.cropImageUri;
-                Glide.with(mActivity).load(RxPhotoUtils.cropImageUri)
-                        .asBitmap().placeholder(R.mipmap.userimg).into(mIvUserImg);
-                break;
-        }
+        RxLogUtils.d("requestCode：" + requestCode);
+        RxLogUtils.d("resultCode：" + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == IMAGE_PICKER) {
+                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                Glide.with(mActivity).load(images.get(0).path)
+                        .asBitmap()
+                        .placeholder(R.mipmap.userimg)
+                        .into(mIvUserImg);
+                uploadImage(images.get(0).path);
+            } else {
+                Toast.makeText(mActivity, "没有数据", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
+
+
+    private void showDate() {
+        Calendar calendar = Calendar.getInstance();
+        final DatePicker picker = new DatePicker(mActivity, DateTimePicker.YEAR_MONTH_DAY);
+        picker.setGravity(Gravity.BOTTOM);
+        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
+        picker.setTopLineVisible(false);
+        picker.setCycleDisable(false);
+        picker.setDividerConfig(null);
+        picker.setCancelTextColor(getResources().getColor(R.color.Gray));
+        picker.setSubmitTextColor(getResources().getColor(R.color.red));
+        picker.setTextColor(getResources().getColor(R.color.Gray));
+        picker.setOffset(2);//偏移量
+        picker.setRangeStart(1940, 01, 01);
+        picker.setRangeEnd(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        calendar.setTimeInMillis(info.getBirthday());
+        picker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        picker.setTextSize(21);
+        picker.setLabel("-", "-", "");
+        picker.setOnDatePickListener(new DatePicker.OnYearMonthDayPickListener() {
+            @Override
+            public void onDatePicked(String year, String month, String day) {
+                RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
+                birthItem.setDetailText(year + "-" + month + "-" + day);
+                Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
+                info.setBirthday(date.getTime());
+            }
+        });
+        picker.show();
+    }
+
+    private void showAddress() {
+        new AddressInitTask(mActivity, new AddressInitTask.InitCallback() {
+            @Override
+            public void onDataInitFailure() {
+                RxLogUtils.d("加载失败");
+            }
+
+            @Override
+            public void onDataInitSuccess(ArrayList<Province> provinces) {
+                AddressPicker picker = new AddressPicker(mActivity, provinces);
+                picker.setOnAddressPickListener(new AddressPicker.OnAddressPickListener() {
+                    @Override
+                    public void onAddressPicked(Province province, City city, County county) {
+                        cityItem.setDetailText(province.getName() + "," + city.getName());
+                    }
+                });
+                picker.show();
+            }
+        });
+    }
+
+    public void showHeight() {
+        NumberPicker picker = new NumberPicker(mActivity);
+        picker.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
+        picker.setTopLineVisible(false);
+        picker.setCycleDisable(false);
+        picker.setDividerConfig(null);
+        picker.setCancelTextColor(getResources().getColor(R.color.Gray));
+        picker.setSubmitTextColor(getResources().getColor(R.color.red));
+        picker.setTextColor(getResources().getColor(R.color.Gray));
+        picker.setOffset(2);//偏移量
+        picker.setRange(120, 200, 1);//数字范围
+        picker.setSelectedItem(info.getHeight());
+        picker.setTextSize(21);
+        picker.setLabel("cm");
+        picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
+            @Override
+            public void onNumberPicked(int index, Number item) {
+                RxLogUtils.d("身高：" + item);
+                heightItem.setDetailText(item + "cm");
+                info.setHeight((int) item);
+            }
+        });
+        picker.show();
+    }
+
+    public void showWeight() {
+        NumberPicker picker = new NumberPicker(mActivity);
+        picker.setGravity(Gravity.BOTTOM);
+        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
+        picker.setCycleDisable(false);
+        picker.setDividerConfig(null);
+        picker.setOffset(2);//偏移量
+        picker.setRange(35, 90, 1);//数字范围
+        picker.setSelectedItem(info.getTargetWeight());
+        picker.setTextSize(25);
+        picker.setLabel("kg");
+        picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
+            @Override
+            public void onNumberPicked(int index, Number item) {
+                RxLogUtils.d("体重：" + item);
+                weightItem.setDetailText(item + "kg");
+                SPUtils.put(SPKey.SP_weight, (int) item);
+                info.setTargetWeight((int) item);
+            }
+        });
+        picker.show();
+    }
+
+
+    private void showSex() {
+        new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
+                .addItem("男")
+                .addItem("女")
+                .setCheckedIndex(info.getSex() - 1)
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                        dialog.dismiss();
+                        sexItem.setDetailText(tag);
+                        info.setSex(position + 1);
+                    }
+                })
+                .build()
+                .show();
+    }
+
+    private void uploadImage(String cropImagePath) {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(cropImagePath));
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", cropImagePath, requestFile);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.uploadUserImg(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束" + s);
+                        RxToast.success("保存成功", 2000);
+                        //成功后将本地图片设置到imageView中，并在退回到个人中心时，刷新贴图url
+                        info.setImgUrl(s);
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
+
+    @Override
+    protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        super.onFragmentResult(requestCode, resultCode, data);
+        if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
+            Bundle bundle = data.getExtras();
+            String title = bundle.getString(Key.BUNDLE_TITLE);
+            if (title.equals(userNameItem.getText().toString())) {
+                userNameItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+            } else {
+                signItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+            }
+
+        }
+    }
+
+    @Override
+    protected void popBackStack() {
+        if (info.isChange()) {
+            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.getTvTitle().setVisibility(View.GONE);
+            dialog.setContent("您已经修改信息\n是否退出？");
+            dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
+            dialog.setCancel("退出").setCancelListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    getBaseFragmentActivity().popBackStack();
+                }
+            })
+                    .setSure("留下")
+                    .setSureListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+        } else
+            super.popBackStack();
+    }
+
 
 }

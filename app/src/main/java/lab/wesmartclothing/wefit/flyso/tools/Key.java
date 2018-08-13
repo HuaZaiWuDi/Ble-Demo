@@ -27,10 +27,13 @@ public interface Key {
     public static final String BUNDLE_WEB_URL = "BUNDLE_WEB_URL";//跳转网页URL
 
     public static final String BUNDLE_RELOGIN = "BUNDLE_RELOGIN";//重新登录
-    public static final String BUNDLE_TITLE = "BUNDLE_TITLE";//重新登录
-    String BUNDLE_VOLTAGE = "BUNDLE_VOLTAGE";//电压容量
-    String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
+    //标题
+    String BUNDLE_TITLE = "BUNDLE_TITLE";
+
+    String BUNDLE_DATA = "BUNDLE_DATA";
+
+    String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
     String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";//跳转制定页面
 
@@ -53,6 +56,7 @@ public interface Key {
 
     //是否结束前一个Fragment
     String BUNDLE_FINISH_FRAGMENT = "BUNDLE_FINISH_FRAGMENT";
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播

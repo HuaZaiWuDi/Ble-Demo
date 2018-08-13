@@ -10,8 +10,10 @@ import android.view.WindowManager;
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
  * Created by cgspine on 2018/1/7.
@@ -23,12 +25,12 @@ public abstract class BaseFragmentActivity extends QMUIFragmentActivity {
     public Context mContext;
     public Activity mActivity;
     protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
+    public TipDialog tipDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         lifecycleSubject.onNext(LifeCycleEvent.CREATE);
 //        //屏幕沉浸
-//        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         //设置为竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //输入框被遮挡问题
@@ -42,7 +44,9 @@ public abstract class BaseFragmentActivity extends QMUIFragmentActivity {
         mActivity = this;
         RxActivityUtils.addActivity(this);
 
+        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         ScreenAdapter.setCustomDensity(this);
+        tipDialog = new TipDialog(mContext);
     }
 
 
@@ -78,6 +82,7 @@ public abstract class BaseFragmentActivity extends QMUIFragmentActivity {
 
     @Override
     protected void onDestroy() {
+        if (tipDialog != null) tipDialog.dismiss();
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
         RxActivityUtils.removeActivity(this);
         super.onDestroy();

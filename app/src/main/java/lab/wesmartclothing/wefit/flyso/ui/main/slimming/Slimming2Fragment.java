@@ -33,8 +33,6 @@ import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-import com.smartclothing.module_wefit.activity.MessageActivity;
-import com.smartclothing.module_wefit.activity.PersonalDataActivity;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -62,6 +60,8 @@ import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.BaseHeatActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.BaseSportingActivity;
@@ -258,16 +258,16 @@ public class Slimming2Fragment extends BaseAcFragment {
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = new Gson().fromJson(string, UserInfo.class);
-
+        RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
             mTvUserName2.setText(info.getUserName());
-            Glide.with(mActivity).load(info.getUserImg())
+            Glide.with(mActivity).load(info.getImgUrl())
                     .asBitmap()
                     .placeholder(R.mipmap.userimg)
                     .into(mIvUserImg);
 
-            Glide.with(mActivity).load(info.getUserImg())
+            Glide.with(mActivity).load(info.getImgUrl())
                     .asBitmap()
                     .placeholder(R.mipmap.userimg)
                     .into(mIvUserImg2);
@@ -481,15 +481,14 @@ public class Slimming2Fragment extends BaseAcFragment {
         switch (view.getId()) {
             case R.id.iv_userImg:
                 //跳转个人主页
-                RxActivityUtils.skipActivity(mActivity, PersonalDataActivity.class);
+                startFragment(UserInfofragment.getInstance());
                 break;
             case R.id.layout_notify:
                 //跳转消息通知
-                RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
+                startFragment(MessageFragment.getInstance());
                 break;
             case R.id.layout_Healthy:
                 //点击健康评级
-
                 break;
             case R.id.layout_heat:
                 //跳转热量记录
@@ -530,11 +529,11 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_notify2:
                 //跳转消息通知
-                RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
+                startFragment(MessageFragment.getInstance());
                 break;
             case R.id.iv_userImg2:
                 //跳转个人主页
-                RxActivityUtils.skipActivity(mActivity, PersonalDataActivity.class);
+                startFragment(UserInfofragment.getInstance());
                 break;
         }
     }

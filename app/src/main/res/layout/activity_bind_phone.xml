@@ -12,6 +12,12 @@
         android:id="@+id/QMUIAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/white"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/Gray"
+        tools:visibility="visible"
         />
 
 
@@ -22,9 +28,9 @@
         android:background="@color/white"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/dimen_35"
-        android:paddingRight="@dimen/dimen_35"
-        android:paddingTop="@dimen/dimen_20">
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:paddingTop="20dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +45,7 @@
             android:id="@+id/edit_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_40"
+            android:layout_marginTop="40dp"
             android:background="@null"
             android:drawableLeft="@mipmap/icon_phone"
             android:drawablePadding="10dp"
@@ -49,14 +55,14 @@
             android:maxLines="1"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"
-            android:textSize="@dimen/dimen_15"
+            android:textSize="15dp"
             tools:text="我是输入框"/>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_1"
+            android:layout_height="1dp"
             android:layout_below="@+id/edit_phone"
-            android:layout_marginTop="@dimen/dimen_15"
+            android:layout_marginTop="15dp"
             android:background="@color/BrightGray"/>
 
 

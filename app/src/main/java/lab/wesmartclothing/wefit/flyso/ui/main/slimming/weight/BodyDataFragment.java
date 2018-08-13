@@ -130,8 +130,8 @@ public class BodyDataFragment extends BaseAcFragment {
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{67, 80});
         healthy4.setSectionLabels(new String[]{"67.0%", "80.0%"});
-        healthy4.setColors(new int[]{Color.parseColor("#61D97F"),
-                Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
+        healthy4.setColors(new int[]{Color.parseColor("#FF7200"),
+                Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
         mHealthyMaps.put(3, healthy4);
 

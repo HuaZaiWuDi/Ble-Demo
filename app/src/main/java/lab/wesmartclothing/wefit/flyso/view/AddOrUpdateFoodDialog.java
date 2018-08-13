@@ -76,7 +76,7 @@ public class AddOrUpdateFoodDialog {
         this.listBean = listBean;
         this.foodType = foodType;
         this.currentTime = currentTime;
-        getAddedHeatInfo();//添加：先请求是否添加过，未添加吧foodId赋值给Gid，添加过直接上传Gid
+        getAddedHeatInfo();//icon_add_white：先请求是否添加过，未添加吧foodId赋值给Gid，添加过直接上传Gid
     }
 
 

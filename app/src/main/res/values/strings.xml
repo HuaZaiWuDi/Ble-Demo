@@ -47,7 +47,7 @@
     <string name="inputRightFoodName" translatable="false">请输入正确的食物名字</string>
     <string name="weightNoZero" translatable="false">重量不能为0</string>
 
-    <string name="no_data" translatable="false">还没添加任何食物现在添加吧</string>
+    <string name="no_data" translatable="false">您还未收藏任何内容</string>
     <string name="no_search_data" translatable="false">没有搜索到食物</string>
     <string name="addBreakfast" translatable="false">添加早餐</string>
     <string name="addLunch" translatable="false">添加午餐</string>
@@ -190,6 +190,7 @@
     <string name="gotoSporting">今天还差%1$s\tkcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。</string>
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
     <string name="search_noData">没有搜索到关于%1$s的食物哦，请您重新输入食物的关键字 ^-^</string>
+    <string name="must_input">最多可以输入%1$d字</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>
@@ -260,6 +261,21 @@
         <item>水分</item>
         <item>骨量</item>
         <item>身体年龄</item>
+    </string-array>
+
+
+    <string-array name="problemType">
+        <item>产品反馈</item>
+        <item>使用资询</item>
+        <item>产品建议</item>
+        <item>其它</item>
+    </string-array>
+
+    <string-array name="problemTimes">
+        <item>很少出现</item>
+        <item>一天一次</item>
+        <item>一天多次</item>
+        <item>始终出现</item>
     </string-array>
 
 </resources>

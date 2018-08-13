@@ -29,7 +29,6 @@ import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
-import com.smartclothing.module_wefit.bean.Device;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -48,8 +47,6 @@ import org.androidannotations.annotations.Receiver;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -103,6 +100,9 @@ public class BleService extends Service {
     @Receiver(actions = BleKey.ACTION_DFU_STARTING)
     void dfuStarting(@Receiver.Extra(BleKey.EXTRA_DFU_STARTING) boolean state) {
         dfuStarting = state;
+        if (dfuStarting) {
+            initBle();
+        }
     }
 
     //监听系统蓝牙开启
@@ -125,7 +125,6 @@ public class BleService extends Service {
         super.onCreate();
         initHeartRate();
         connectScaleCallBack();
-        initBus();
         uploadHistoryData();
     }
 
@@ -142,23 +141,6 @@ public class BleService extends Service {
                 mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
             }
         }
-    }
-
-    private void initBus() {
-        Disposable device = RxBus.getInstance()
-                .register(Device.class, new Consumer<Device>() {
-                    @Override
-                    public void accept(Device device) throws Exception {
-                        RxLogUtils.d(":删除绑定");
-                        if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
-                            //删除绑定
-                            mQNBleTools.disConnectDevice(device.getMacAddr());
-                        } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                            BleTools.getInstance().disConnect();
-                        }
-                    }
-                });
-        RxBus.getInstance().addSubscription(this, device);
     }
 
 
@@ -181,7 +163,6 @@ public class BleService extends Service {
     }
 
     private void initBle() {
-
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_QN_SCALE, BleKey.UUID_Servie)
                 .setScanTimeOut(0)
@@ -205,6 +186,7 @@ public class BleService extends Service {
                     RxBus.getInstance().post(bleDevice);
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
 //                        mQNBleTools.disConnectDevice(bleDevice.getMac());
+
                         mQNBleTools.connectDevice(bleDevice);
                     }
                 } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
@@ -357,7 +339,7 @@ public class BleService extends Service {
                 RxLogUtils.d("瘦身衣连接成功");
 
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
-                if (dfuStarting) return;
+                if (!dfuStarting) return;
 
                 //设备统计
                 DeviceLink deviceLink = new DeviceLink();

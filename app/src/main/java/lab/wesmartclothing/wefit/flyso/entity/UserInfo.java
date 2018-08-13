@@ -29,7 +29,7 @@ public class UserInfo implements Serializable {
     private int sex = 1;//1男2女0未知（未录入）
     private String signature;
     private int targetWeight;
-    private String userImg;
+    private String imgUrl;
     private String userName;
     private String city;
     private String country;
@@ -137,13 +137,12 @@ public class UserInfo implements Serializable {
         this.targetWeight = targetWeight;
     }
 
-    public String getUserImg() {
-        return userImg;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
-    public void setUserImg(String userImg) {
-        isChange = true;
-        this.userImg = userImg;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getUserName() {
@@ -156,6 +155,14 @@ public class UserInfo implements Serializable {
     }
 
 
+    public boolean isChange() {
+        return isChange;
+    }
+
+    public void setChange(boolean change) {
+        isChange = change;
+    }
+
     @Override
     public String toString() {
         return "UserInfo{" +
@@ -167,7 +174,7 @@ public class UserInfo implements Serializable {
                 ", sex=" + sex +
                 ", signature='" + signature + '\'' +
                 ", targetWeight=" + targetWeight +
-                ", userImg='" + userImg + '\'' +
+                ", userImg='" + imgUrl + '\'' +
                 ", userName='" + userName + '\'' +
                 ", city='" + city + '\'' +
                 ", country='" + country + '\'' +

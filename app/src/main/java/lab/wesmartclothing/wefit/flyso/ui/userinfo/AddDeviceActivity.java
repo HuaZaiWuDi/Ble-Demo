@@ -60,7 +60,6 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import okhttp3.RequestBody;
 
 @EActivity(R.layout.activity_add_device)
@@ -104,8 +103,8 @@ public class AddDeviceActivity extends BaseActivity {
     RelativeLayout layout_bind;
     @ViewById
     RecyclerView mRecyclerView;
-    @ViewById
-    SmoothRefreshLayout refresh;
+//    @ViewById
+//    SmoothRefreshLayout refresh;
     @ViewById
     RelativeLayout layout_notDevice;
     @ViewById

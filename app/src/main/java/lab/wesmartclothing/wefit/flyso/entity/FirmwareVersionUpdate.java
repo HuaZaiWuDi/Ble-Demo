@@ -15,6 +15,15 @@ public class FirmwareVersionUpdate {
     private String fileUrl;
     private boolean hasNewVersion;
     private int mustUpgrade;//是否强制升级  0非强制，1强制
+    private String firmwareVersion;//版本号
+
+    public String getFirmwareVersion() {
+        return firmwareVersion;
+    }
+
+    public void setFirmwareVersion(String firmwareVersion) {
+        this.firmwareVersion = firmwareVersion;
+    }
 
     public String getFileUrl() {
         return fileUrl;

@@ -140,6 +140,11 @@ public class UserInfoActivity extends BaseALocationActivity {
 
 
     @Override
+    protected int getContextViewId() {
+        return 0;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
@@ -147,7 +152,6 @@ public class UserInfoActivity extends BaseALocationActivity {
         initView();
     }
 
-    @Override
     public void initView() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         mUserInfo = new Gson().fromJson(string, UserInfo.class);

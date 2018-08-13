@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="66dp"
+    android:layout_margin="8dp"
+    android:padding="16dp"
+    app:qmui_backgroundColor="@color/white"
+    app:qmui_borderColor="@color/white"
+    app:qmui_radius="4dp">
+
+
+    <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+        android:id="@+id/iv_img"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginRight="8dp"
+        app:qmui_is_circle="true"
+        tools:src="@mipmap/app_name"/>
+
+
+    <ImageView
+        android:id="@+id/iv_redDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/iv_img"
+        android:layout_toLeftOf="@+id/iv_img"
+        android:background="@drawable/shape_red_dot"/>
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/iv_img"
+        android:textColor="@color/Gray"
+        android:textSize="13sp"
+        tools:text="张钧甯就是美丽又动人"/>
+
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/BrightGray"
+        android:textSize="11sp"
+        tools:text="Timetofit\t\t\t3.6w 次阅读"/>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_date"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@+id/iv_img"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/GrayWrite"
+        android:textSize="13sp"
+        tools:text="我是内容我是内容我是内容我是我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容"/>
+
+
+</com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>

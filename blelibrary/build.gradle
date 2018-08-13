@@ -23,7 +23,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-annotations:25.1.0'
     //蓝牙库
     compile 'com.clj.fastble:FastBleLib:2.3.2'
+    compile 'no.nordicsemi.android:dfu:1.6.1'
 }

@@ -92,10 +92,18 @@
             </intent-filter>
         </receiver>
 
+        <!--DUF服务-->
+        <activity
+            android:name=".ble.dfu.NotificationActivity"/>
+
+        <service
+            android:name=".ble.dfu.DfuService"
+            android:exported="true"/>
+
+        <!--android:launchMode="singleTop"-->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
         <activity
@@ -114,11 +122,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:screenOrientation="portrait">
         </activity>
-        <!--<activity-->
-        <!--android:name=".ui.main.slimming.heat.SearchHistoryActivity_"-->
-        <!--android:configChanges="keyboardHidden|orientation|screenSize|locale"-->
-        <!--android:screenOrientation="portrait">-->
-        <!--</activity>-->
+
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

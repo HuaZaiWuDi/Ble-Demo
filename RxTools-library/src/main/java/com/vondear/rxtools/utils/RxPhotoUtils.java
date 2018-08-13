@@ -135,7 +135,7 @@ public class RxPhotoUtils {
         // return-data为true时,会直接返回bitmap数据,但是大图裁剪时会出现问题,推荐下面为false时的方式
         // return-data为false时,不会返回bitmap,但需要指定一个MediaStore.EXTRA_OUTPUT保存图片uri
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cropImageUri);
-        intent.putExtra("return-data", true);
+        intent.putExtra("return-data", false);
 
         fragment.startActivityForResult(intent, CROP_IMAGE);
     }

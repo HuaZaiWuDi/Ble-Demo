@@ -19,17 +19,18 @@ import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.MiddlewareWebClientBase;
+import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -44,36 +45,28 @@ import me.shaohui.shareutil.share.SharePlatform;
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
-@EFragment(R.layout.fragment_find)
 public class FindFragment extends BaseWebFragment {
 
-    public static FindFragment getInstance() {
-        return new FindFragment_();
+    @BindView(R.id.parent)
+    RelativeLayout mParent;
+    Unbinder unbinder;
+
+    public static QMUIFragment getInstance() {
+        return new FindFragment();
     }
 
-    @Override
-    public void initData() {
-        RxLogUtils.d("加载：【FindFragment】");
-    }
-
-    @ViewById
-    RelativeLayout parent;
 
     private BridgeWebView mBridgeWebView;
 
-    @Override
-    @AfterViews
     public void initView() {
         initWebView();
-
-
     }
 
     private void initWebView() {
         mBridgeWebView = new BridgeWebView(mActivity);
 
         mAgentWeb = AgentWeb.with(this)//
-                .setAgentWebParent(parent, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//
+                .setAgentWebParent(mParent, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//
                 .useDefaultIndicator(-1, 2)//
                 .setWebViewClient(new BridgeWebViewClient(mBridgeWebView))
                 .setWebView(mBridgeWebView)
@@ -162,7 +155,7 @@ public class FindFragment extends BaseWebFragment {
     public void showShareDialog(final String imgUrl, final String title, final String desc, final String url) {
         SharePop sharePop = new SharePop(mActivity);
         sharePop.initPop();
-        sharePop.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
+        sharePop.showAtLocation(mParent, Gravity.BOTTOM, 0, 0);
         sharePop.setShareLinstener(new SharePop.ShareLinstener() {
             @Override
             public void shareType(int type) {
@@ -243,6 +236,14 @@ public class FindFragment extends BaseWebFragment {
     @Override
     protected String getUrl() {
         return ServiceAPI.FIND_Addr;
+    }
+
+    @Override
+    protected View onCreateView() {
+        View view = View.inflate(mContext, R.layout.fragment_find, null);
+        unbinder = ButterKnife.bind(this, view);
+        initView();
+        return view;
     }
 
 }

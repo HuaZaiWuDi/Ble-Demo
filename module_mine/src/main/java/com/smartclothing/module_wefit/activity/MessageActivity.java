@@ -113,7 +113,7 @@ public class MessageActivity extends BaseActivity implements View.OnClickListene
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
-        RxManager.getInstance().doNetSubscribe(dxyService.readedAll(msgType))
+        RxManager.getInstance().doNetSubscribe(dxyService.readedAll())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

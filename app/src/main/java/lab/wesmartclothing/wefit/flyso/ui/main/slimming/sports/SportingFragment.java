@@ -91,7 +91,6 @@ public class SportingFragment extends BaseAcFragment {
     private int currentTime = 0;
     private int type = -1;//运动上一次状态
 
-
     //监听瘦身衣连接情况
     @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
     void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {

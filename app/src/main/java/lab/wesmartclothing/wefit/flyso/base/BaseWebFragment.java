@@ -31,7 +31,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 /**
  * Created icon_hide_password jk on 2018/5/24.
  */
-public abstract class BaseWebFragment extends BaseFragment implements FragmentKeyDown {
+public abstract class BaseWebFragment extends BaseAcFragment implements FragmentKeyDown {
 
 
     public AgentWeb mAgentWeb;

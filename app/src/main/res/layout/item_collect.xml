@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:layout_margin="8dp"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    app:qmui_backgroundColor="@color/white"
+    app:qmui_borderColor="@color/white"
+    app:qmui_radius="4dp">
+
+
+    <ImageView
+        android:id="@+id/iv_img"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginRight="8dp"
+        tools:background="@color/c"/>
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/iv_img"
+        android:textColor="@color/Gray"
+        android:textSize="18sp"
+        tools:text="张钧甯就是美丽又动人"/>
+
+
+    <TextView
+        android:id="@+id/tv_readCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/iv_img"
+        android:textColor="@color/BrightGray"
+        android:textSize="11sp"
+        tools:text="Timetofit\t\t\t3.6w 次阅读"/>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_readCount"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/iv_img"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/GrayWrite"
+        android:textSize="13sp"
+        tools:text="我是内容我是内容我是内容我是我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容"/>
+
+
+</com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>

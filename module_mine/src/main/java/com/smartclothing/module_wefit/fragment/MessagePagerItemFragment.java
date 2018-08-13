@@ -121,7 +121,7 @@ public class MessagePagerItemFragment extends BaseFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
-        RxManager.getInstance().doNetSubscribe(dxyService.message(msgType, pageNumber, pageSize))
+        RxManager.getInstance().doNetSubscribe(dxyService.message( pageNumber, pageSize))
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
@@ -174,7 +174,7 @@ public class MessagePagerItemFragment extends BaseFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
-        RxManager.getInstance().doNetSubscribe(dxyService.message(msgType, pageNumber, pageSize))
+        RxManager.getInstance().doNetSubscribe(dxyService.message( pageNumber, pageSize))
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {

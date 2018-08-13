@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragmentActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 
 /**
  * Created by jk on 2018/8/2.
@@ -15,9 +16,7 @@ public class BaseMeActivity extends BaseFragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            startFragment(UserInfofragment.getInstance());
-        }
+
     }
 
     @Override

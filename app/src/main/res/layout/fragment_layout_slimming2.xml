@@ -10,7 +10,7 @@
 
     <com.qmuiteam.qmui.widget.QMUIAppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="126dp"
+        android:layout_height="106dp"
         android:fitsSystemWindows="true">
 
         <com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout
@@ -27,11 +27,11 @@
             <!--title-->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="126dp"
+                android:layout_height="106dp"
                 android:background="@color/Gray"
                 android:contentDescription="@string/app_name"
                 android:fitsSystemWindows="false"
-                android:paddingTop="36dp"
+                android:padding="16dp"
                 app:qmui_layout_collapseMode="parallax"
                 app:qmui_layout_collapseParallaxMultiplier="0.7"
                 tools:visibility="visible">
@@ -41,9 +41,7 @@
                     android:id="@+id/iv_userImg"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="26dp"
-                    android:layout_marginLeft="@dimen/dimen_16"
+                    android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/dimen_16"
                     android:src="@mipmap/userimg"
                     app:qmui_corner_radius="@dimen/dimen_32"/>
@@ -64,7 +62,7 @@
                     android:layout_width="110dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_userName"
-                    android:layout_marginTop="@dimen/dimen_16"
+                    android:layout_marginTop="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_userImg">
 
 

@@ -51,6 +51,18 @@ android {
                 JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
         ]
 
+        //强制指定一个版本
+        configurations.all {
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                def requested = details.requested
+                if (requested.group == "com.android.support") {
+                    if (!requested.name.startsWith("multidex")) {
+                        details.useVersion '27.1.1'
+                    }
+                }
+            }
+        }
+
 
     }
     buildTypes {
@@ -72,11 +84,11 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //注解
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     implementation "org.androidannotations:androidannotations-api:$AAVersion"
@@ -111,7 +123,7 @@ dependencies {
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
     //日历控件
     implementation 'com.github.prolificinteractive:material-calendarview:1.6.1'
-    compile project(path: ':module_mine')
+    compile project(path: ':imagepicker')
     //高德定位SDK
     compile 'com.amap.api:location:latest.integration'
     compile project(path: ':shareutil')
@@ -125,4 +137,7 @@ dependencies {
     compile project(path: ':lineChart')
 //    //轻牛体重秤SDK
 //    implementation files('libs/qnsdk-0.2.1.jar')
+
+//    compile 'com.lzy.widget:imagepicker:0.6.1'  //指定版本
+
 }

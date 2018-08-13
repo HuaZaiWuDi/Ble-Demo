@@ -44,7 +44,7 @@ public class RegisterActivity extends BaseActivity {
     private String vCode;
     private String password;
 
-    @BindView(R.id.mQMUIAppBarLayout)
+    @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mMQMUIAppBarLayout;
     @BindView(R.id.edit_phone)
     EditText mEditPhone;
@@ -85,7 +85,7 @@ public class RegisterActivity extends BaseActivity {
         mTvClause.setText(spannableStringBuilder);
 
         switchEnable(false);
-        mMQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.btn_back).setOnClickListener(new View.OnClickListener() {
+        mMQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RxActivityUtils.finishActivity();

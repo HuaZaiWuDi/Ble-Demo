@@ -5,7 +5,6 @@ import android.content.Intent;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -61,7 +60,7 @@ public class SpalshActivity extends BaseActivity {
     @AfterViews
     public void initView() {
 
-//        RxActivityUtils.skipActivityAndFinish(this, BaseHeatActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(this, TestBleScanActivity.class);
 
 //        //测试账号
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
@@ -106,6 +105,7 @@ public class SpalshActivity extends BaseActivity {
 
 
     private void gotoMain() {
+        RxLogUtils.d("跳转");
         //通过验证是否保存userId来判断是否登录
         if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
@@ -118,14 +118,11 @@ public class SpalshActivity extends BaseActivity {
 
     private void initPromissions() {
         subscribe = new RxPermissions(this)
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new Consumer<Permission>() {
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void accept(Permission permission) throws Exception {
-                        if (!permission.granted) {
-                            RxLogUtils.d("没有给定位权限");
-                        }
+                    public void accept(Boolean aBoolean) throws Exception {
                         gotoMain();
                     }
                 });
@@ -189,12 +186,12 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-
-    //不退出app，而是隐藏当前的app
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(false);
-        super.onBackPressed();
-    }
+//
+//    //不退出app，而是隐藏当前的app
+//    @Override
+//    public void onBackPressed() {
+//        moveTaskToBack(false);
+//        super.onBackPressed();
+//    }
 
 }

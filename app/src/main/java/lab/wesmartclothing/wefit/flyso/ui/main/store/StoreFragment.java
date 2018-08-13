@@ -1,14 +1,15 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.store;
 
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.vondear.rxtools.utils.RxLogUtils;
+import com.qmuiteam.qmui.arch.QMUIFragment;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -16,24 +17,21 @@ import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
-@EFragment(R.layout.fragment_shore)
 public class StoreFragment extends BaseWebFragment {
 
-    public static StoreFragment getInstance() {
-        return new StoreFragment_();
-    }
-
-
-    @ViewById
+    @BindView(R.id.img_no_data)
+    ImageView mImgNoData;
+    @BindView(R.id.layout_web_error)
+    RelativeLayout mLayoutWebError;
+    @BindView(R.id.parent)
     RelativeLayout parent;
+    Unbinder unbinder;
 
-    @Override
-    public void initData() {
-        RxLogUtils.d("加载：【StoreFragment】");
+    public static QMUIFragment getInstance() {
+        return new StoreFragment();
     }
 
 
-    @AfterViews
     public void initView() {
         initWebView(parent);
     }
@@ -45,5 +43,13 @@ public class StoreFragment extends BaseWebFragment {
         return ServiceAPI.Store_Addr;
     }
 
+
+    @Override
+    protected View onCreateView() {
+        View view = View.inflate(mContext, R.layout.fragment_shore, null);
+        unbinder = ButterKnife.bind(this, view);
+        initView();
+        return view;
+    }
 
 }

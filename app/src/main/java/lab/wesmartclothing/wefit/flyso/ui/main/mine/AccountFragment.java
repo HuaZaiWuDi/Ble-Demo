@@ -84,25 +84,27 @@ public class AccountFragment extends BaseAcFragment {
         phoneItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
         setItemView(phoneItem);
 
-        final ImageView view = new ImageView(mContext);
-
+        final ImageView iv_wechat = new ImageView(mContext);
+        final ImageView iv_QQ = new ImageView(mContext);
+        final ImageView iv_weibo = new ImageView(mContext);
 
         wechatItem = mGroupListView.createItemView("微信");
         wechatItem.setImageDrawable(getResources().getDrawable(R.mipmap.icon_login_wechat));
         wechatItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
         wechatItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
         wechatItem.setDetailText("");
-        view.setImageResource(wechatIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-        wechatItem.addAccessoryCustomView(view);
+        iv_wechat.setImageResource(wechatIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+        wechatItem.addAccessoryCustomView(iv_wechat);
         setItemView(wechatItem);
+
 
         QQItem = mGroupListView.createItemView("QQ");
         QQItem.setImageDrawable(getResources().getDrawable(R.mipmap.icon_login_qq));
         QQItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
         QQItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
         QQItem.setDetailText("");
-        view.setImageResource(QQIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-        wechatItem.addAccessoryCustomView(view);
+        iv_QQ.setImageResource(QQIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+        QQItem.addAccessoryCustomView(iv_QQ);
         setItemView(QQItem);
 
         weiboItem = mGroupListView.createItemView("微博");
@@ -110,8 +112,8 @@ public class AccountFragment extends BaseAcFragment {
         weiboItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
         weiboItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
         weiboItem.setDetailText("");
-        view.setImageResource(weiboIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-        wechatItem.addAccessoryCustomView(view);
+        iv_weibo.setImageResource(weiboIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+        weiboItem.addAccessoryCustomView(iv_weibo);
         setItemView(weiboItem);
 
         QMUIGroupListView.newSection(mContext)
@@ -128,8 +130,8 @@ public class AccountFragment extends BaseAcFragment {
                             @Override
                             public void complete(String result) {
                                 wechatIsBind = !wechatIsBind;
-                                view.setImageResource(wechatIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-                                wechatItem.addAccessoryCustomView(view);
+                                iv_wechat.setImageResource(wechatIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+                                wechatItem.addAccessoryCustomView(iv_wechat);
                             }
                         });
                     }
@@ -141,8 +143,8 @@ public class AccountFragment extends BaseAcFragment {
                             @Override
                             public void complete(String result) {
                                 QQIsBind = !QQIsBind;
-                                view.setImageResource(QQIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-                                wechatItem.addAccessoryCustomView(view);
+                                iv_QQ.setImageResource(QQIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+                                wechatItem.addAccessoryCustomView(iv_QQ);
                             }
                         });
                     }
@@ -154,8 +156,8 @@ public class AccountFragment extends BaseAcFragment {
                             @Override
                             public void complete(String result) {
                                 weiboIsBind = !weiboIsBind;
-                                view.setImageResource(weiboIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-                                wechatItem.addAccessoryCustomView(view);
+                                iv_weibo.setImageResource(weiboIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+                                wechatItem.addAccessoryCustomView(iv_weibo);
                             }
                         });
                     }

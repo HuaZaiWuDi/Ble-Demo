@@ -215,8 +215,20 @@ public class RxDialogChooseImage extends RxDialog {
 
             @Override
             public void onClick(View arg0) {
-                RxPhotoUtils.openLocalImage(fragment);
-                cancel();
+                RxPermissionsUtils.requestReadExternalStorage(mContext, new onRequestPermissionsListener() {
+                    @Override
+                    public void onRequestBefore() {
+                        cancel();
+                        RxToast.error("请先获取读取SDCard权限");
+                        return;
+                    }
+
+                    @Override
+                    public void onRequestLater() {
+                        RxPhotoUtils.openLocalImage(fragment);
+                        cancel();
+                    }
+                });
             }
         });
 

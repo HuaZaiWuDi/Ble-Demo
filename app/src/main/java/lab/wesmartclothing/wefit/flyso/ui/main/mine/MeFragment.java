@@ -7,14 +7,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
-import com.smartclothing.module_wefit.bean.UserCenterBean;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -25,10 +22,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -145,13 +142,13 @@ public class MeFragment extends BaseAcFragment {
                 .addItemView(deivceItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        startFragment(DeviceFragment.getInstance());
                     }
                 })
                 .addItemView(collectionItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        startFragment(CollectFragment.getInstance());
                     }
                 })
                 .addItemView(orderItem, new View.OnClickListener() {
@@ -173,29 +170,30 @@ public class MeFragment extends BaseAcFragment {
                 .addItemView(problemItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        startFragment(ProblemFragemnt.getInstance());
                     }
                 })
                 .addItemView(aboutUsItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        startFragment(AboutFragment.getInstance());
                     }
                 })
                 .addTo(mGroupListView);
 
     }
 
-
     @OnClick({R.id.iv_userImg, R.id.iv_setting, R.id.iv_notify})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_userImg:
-                RxActivityUtils.skipActivity(mContext, BaseMeActivity.class);
+                startFragment(UserInfofragment.getInstance());
                 break;
             case R.id.iv_setting:
+                startFragment(Settingfragment.getInstance());
                 break;
             case R.id.iv_notify:
+                startFragment(MessageFragment.getInstance());
                 break;
         }
     }
@@ -211,16 +209,15 @@ public class MeFragment extends BaseAcFragment {
                         Gson gson = new Gson();
                         UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
 
+                        Glide.with(mContext)
+                                .load(user.getImgUrl())
+                                .asBitmap()
+                                .placeholder(R.mipmap.userimg)
+                                .into(mIvUserImg);//
+
                         mTvUserName.setText(user.getUserName());
                         deivceItem.setDetailText(user.getBindCount() == 0 ? "" : user.getBindCount() + "");
                         collectionItem.setDetailText(user.getCollectCount() == 0 ? "" : user.getCollectCount() + "");
-
-                        Glide.with(mActivity)
-                                .load(user.getImgUrl())
-                                .placeholder(R.mipmap.userimg)
-                                .bitmapTransform(new CropCircleTransformation(mActivity))//圆角图片
-                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                .into(mIvUserImg);//
 
                         //更新消息未读状态
                         mIvNotify.setImageResource(user.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);

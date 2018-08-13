@@ -1,7 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 /**
- * Created icon_hide_password jk on 2018/6/14.
+ * Created by jk on 2018/6/14.
  */
 public class VoltageToPower {
 
@@ -30,7 +32,7 @@ public class VoltageToPower {
      * @return 电池容量 （%）
      */
 
-    public double getBatteryCapacity(double Voltage) {
+    public int getBatteryCapacity(double Voltage) {
         int batteryCapacity = 0;
         if (Voltage >= 4.2) {
             batteryCapacity = 100;
@@ -59,7 +61,7 @@ public class VoltageToPower {
         } else if (Voltage < 3.5) {
             batteryCapacity = 0;
         }
-        return batteryCapacity / 100f;
+        return batteryCapacity;
     }
 
 
@@ -72,8 +74,9 @@ public class VoltageToPower {
      */
 
     public double canUsedTime(double Voltage, boolean isHeating) {
-        double time;
-        double batteryCapacity = getBatteryCapacity(Voltage) * 2200;
+        double time = 0;
+        double batteryCapacity = getBatteryCapacity(Voltage) / 100f * 2200;
+        RxLogUtils.d("电池：" + batteryCapacity);
         if (isHeating) {
             time = batteryCapacity / 1000f;
         } else {

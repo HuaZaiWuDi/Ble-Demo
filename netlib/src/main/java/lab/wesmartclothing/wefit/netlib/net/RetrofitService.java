@@ -199,22 +199,29 @@ public interface RetrofitService {
     /*我的收藏*/
     @FormUrlEncoded
     @POST("user/collectionList")
-    Observable<String> collectionList(@Field("infoType") int infoType, @Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+    Observable<String> collectionList(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
     /*消息*/
     @FormUrlEncoded
     @POST("user/message")
-    Observable<String> message(@Field("msgType") int msgType, @Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+    Observable<String> message(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
     /*查看并更新已读*/
     @FormUrlEncoded
     @POST("user/readed")
     Observable<String> readed(@Field("gid") String gid);
 
+    /**
+     * 通知栏推送已读
+     */
+    @FormUrlEncoded
+    @POST("user/pushMessageReaded")
+    Observable<String> pushMessageReaded(@Field("gid") String gid);
+
     /*全部更新已读*/
     @FormUrlEncoded
     @POST("user/readedAll")
-    Observable<String> readedAll(@Field("msgType") int msgType);
+    Observable<String> readedAll();
 
     /*获取用户绑定设备信息列表*/
     @POST("user/deviceList")

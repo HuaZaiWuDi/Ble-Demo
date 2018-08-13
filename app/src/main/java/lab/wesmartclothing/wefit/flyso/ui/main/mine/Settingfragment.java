@@ -83,7 +83,7 @@ public class Settingfragment extends BaseAcFragment {
                 .addItemView(changePasswordItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RxActivityUtils.skipActivityAndFinishAll(mActivity, VerificationPhoneActivity.class);
+                        RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class);
                     }
                 })
                 .addItemView(clearCacheItem, new View.OnClickListener() {

@@ -20,9 +20,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
 import lab.wesmartclothing.wefit.flyso.rxbus.SlimmingTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.HeatFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportsFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightFragment;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
@@ -31,9 +28,9 @@ import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 @EFragment(R.layout.fragment_slimming)
 public class SlimmingFragment extends BaseFragment {
 
-    public static SlimmingFragment getInstance() {
-        return new SlimmingFragment_();
-    }
+//    public static SlimmingFragment getInstance() {
+//        return new SlimmingFragment_();
+//    }
 
     //    @ViewById
 //    MagicIndicator magicIndicator;
@@ -106,9 +103,9 @@ public class SlimmingFragment extends BaseFragment {
     private void initTitleTab() {
         mFragments.clear();
         titleStrings = mActivity.getResources().getStringArray(R.array.tab_Slimming);
-        mFragments.add(HeatFragment.getInstance());
-        mFragments.add(WeightFragment.getInstance());
-        mFragments.add(SportsFragment.getInstance());
+//        mFragments.add(HeatFragment.getInstance());
+//        mFragments.add(WeightFragment.getInstance());
+//        mFragments.add(SportsFragment.getInstance());
 
         mViewPager.setOffscreenPageLimit(2);
         mViewPager.setAdapter(new FragmentPagerAdapter(mActivity.getSupportFragmentManager()) {
