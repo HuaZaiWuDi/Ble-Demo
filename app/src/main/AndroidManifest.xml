@@ -20,14 +20,16 @@
     <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <application
         android:name=".base.MyAPP"
         android:allowBackup="true"
         android:icon="@mipmap/app_name"
-        android:label="@string/app_name"
+        android:label="@string/appName"
         android:roundIcon="@mipmap/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="label,icon,roundIcon">
 
         <!-- 屏幕适配 -->
         <meta-data

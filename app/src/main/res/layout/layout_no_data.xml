@@ -55,6 +55,7 @@
         android:id="@+id/btn_find"
         android:layout_width="195dp"
         android:layout_height="46dp"
+        android:layout_marginBottom="16dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="324dp"
         android:text="去 发 现"

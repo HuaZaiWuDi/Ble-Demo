@@ -34,7 +34,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.qqtheme.framework.picker.DatePicker;
-import cn.qqtheme.framework.picker.DateTimePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
@@ -43,6 +42,8 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
+import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -270,23 +271,13 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     private void showDate() {
         Calendar calendar = Calendar.getInstance();
-        final DatePicker picker = new DatePicker(this, DateTimePicker.YEAR_MONTH_DAY);
-        picker.setGravity(Gravity.BOTTOM);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setTopLineVisible(false);
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setCancelTextColor(getResources().getColor(R.color.Gray));
-        picker.setSubmitTextColor(getResources().getColor(R.color.red));
-        picker.setTextColor(getResources().getColor(R.color.Gray));
-        picker.setOffset(2);//偏移量
-        picker.setRangeStart(1940, 01, 01);
-        picker.setRangeEnd(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        CustomDatePicker datePicker = new CustomDatePicker(mActivity);
+        datePicker.setRangeStart(1940, 01, 01);
+        datePicker.setRangeEnd(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         calendar.setTimeInMillis(mUserInfo.getBirthday());
-        picker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-        picker.setTextSize(21);
-        picker.setLabel("-", "-", "");
-        picker.setOnDatePickListener(new DatePicker.OnYearMonthDayPickListener() {
+        datePicker.setTextColor(getResources().getColor(R.color.Gray));
+        datePicker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        datePicker.setOnDatePickListener(new DatePicker.OnYearMonthDayPickListener() {
             @Override
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
@@ -295,24 +286,15 @@ public class UserInfoActivity extends BaseALocationActivity {
                 mUserInfo.setBirthday(date.getTime());
             }
         });
-        picker.show();
+        datePicker.show();
     }
 
     public void showHeight() {
-        NumberPicker picker = new NumberPicker(this);
-        picker.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setTopLineVisible(false);
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setCancelTextColor(getResources().getColor(R.color.Gray));
-        picker.setSubmitTextColor(getResources().getColor(R.color.red));
-        picker.setTextColor(getResources().getColor(R.color.Gray));
-        picker.setOffset(2);//偏移量
+        CustomNumberPicker picker = new CustomNumberPicker(mActivity);
         picker.setRange(120, 200, 1);//数字范围
         picker.setSelectedItem(mUserInfo.getHeight());
-        picker.setTextSize(21);
         picker.setLabel("cm");
+        picker.setLabelTextColor(getResources().getColor(R.color.Gray));
         picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
             @Override
             public void onNumberPicked(int index, Number item) {
@@ -322,6 +304,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             }
         });
         picker.show();
+
     }
 
     public void showWeight() {
@@ -378,13 +361,5 @@ public class UserInfoActivity extends BaseALocationActivity {
                     }
                 });
     }
-
-
-//    //不退出app，而是隐藏当前的app
-//    @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(true);
-//        super.onBackPressed();
-//    }
 
 }

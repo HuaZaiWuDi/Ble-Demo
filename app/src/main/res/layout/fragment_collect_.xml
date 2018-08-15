@@ -31,8 +31,7 @@
             android:id="@+id/rv_collect"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/bg_F7F7F9"
-            android:overScrollMode="never"/>
+            android:background="@color/bg_F7F7F9"/>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 

@@ -26,6 +26,19 @@ public class OverlapLayoutManager extends RecyclerView.LayoutManager {
 
 
     @Override
+    public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+        if (getItemCount() != 0) {
+            View view = recycler.getViewForPosition(0);
+            measureChildWithMargins(view, widthSpec, heightSpec);
+
+            int mItemViewWidth = view.getMeasuredWidth();
+            int mItemViewHeight = view.getMeasuredHeight();
+            setMeasuredDimension((int) (mItemViewWidth * getItemCount() - (mItemViewWidth - SCALE_GAP) * (getItemCount() - 1)), mItemViewHeight);
+        } else
+            super.onMeasure(recycler, state, widthSpec, heightSpec);
+    }
+
+    @Override
     public void onLayoutCompleted(RecyclerView.State state) {
         super.onLayoutCompleted(state);
     }

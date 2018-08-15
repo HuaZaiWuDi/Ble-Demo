@@ -53,8 +53,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/clothing"
                 android:textColor="@color/Gray"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textSize="18sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -101,8 +100,7 @@
                 android:layout_marginTop="8dp"
                 android:text="智裳科技APP"
                 android:textColor="@color/Gray"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textSize="18sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -117,14 +115,14 @@
 
 
     <TextView
-        android:textColor="@color/Gray"
-        android:textSize="11sp"
         android:id="@+id/tv_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
+        android:textColor="@color/Gray"
+        android:textSize="11sp"
         tools:text="智裳科技 服务条款和隐私条款"/>
 
 

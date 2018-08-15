@@ -55,6 +55,7 @@ public class DynamicTagFlowLayout extends ViewGroup {
         int childViewHeightSpace = 0;
 
         int count = getChildCount();
+
         MarginLayoutParams layoutParams;
 
         for (int i = 0; i < count; i++) {
@@ -68,6 +69,10 @@ public class DynamicTagFlowLayout extends ViewGroup {
 
                 childViewWidthSpace = child.getMeasuredWidth() + layoutParams.leftMargin + layoutParams.rightMargin;
                 childViewHeightSpace = child.getMeasuredHeight() + layoutParams.topMargin + layoutParams.bottomMargin;
+
+                if (i == 0) {
+                    totalHeight = childViewHeightSpace;
+                }
 
                 if (currentLineWidth + childViewWidthSpace > widthSize) {//表示如果当前行再加上现在这个子View，就会超出总的规定宽度，需要另起一行
                     totalHeight += lineMaxHeight;
@@ -198,6 +203,7 @@ public class DynamicTagFlowLayout extends ViewGroup {
                 addView(tv);
             }
             requestLayout();
+            invalidate();
         }
     }
 

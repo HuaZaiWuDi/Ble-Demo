@@ -74,7 +74,7 @@ public class BodyFatFragment extends BaseAcFragment {
                 R.mipmap.man_2_1, R.mipmap.man_2_2, R.mipmap.man_2_3,
                 R.mipmap.man_3_1, R.mipmap.man_3_2, R.mipmap.man_3_2,};
         for (int i = 0; i < bodys.length; i++) {
-            adapter.addData(new BodyFat(bodyImgs[i], bodys[i], i == lastIndex));
+            adapter.addData(new BodyFat(bodyImgs[i], bodys[i], i == (lastIndex - 1)));
         }
     }
 

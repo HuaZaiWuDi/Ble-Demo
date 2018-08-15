@@ -150,11 +150,15 @@ public class WeightRecordFragment extends BaseAcFragment {
     //蓝牙秤状态改变(开始测量)
     @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
     void scaleStartMeasure() {
-        Bundle bundle = new Bundle();
-        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
-        QMUIFragment instance = WeightAddFragment.getInstance();
-        instance.setArguments(bundle);
-        startFragment(instance);
+        if (isVisible()) {
+            RxLogUtils.d("显示：WeightRecordFragment");
+
+            QMUIFragment instance = WeightAddFragment.getInstance();
+            instance.setArguments(bundle);
+            startFragment(instance);
+        } else {
+            RxLogUtils.d("隐藏：WeightRecordFragment");
+        }
     }
 
     @Bean
@@ -168,11 +172,11 @@ public class WeightRecordFragment extends BaseAcFragment {
     private String currentGid;
     private boolean isSettingTargetWeight = false;
     //传递数据给我目标详情界面
-    private double initialWeight = 0;
     private double stillNeed = 0;
-    private double targetWeight = 0;
     private int hasDays = 0;
     private double lastWeight = 0;//最后一条体重数据
+    private List<WeightDataBean.WeightListBean.ListBean> list;
+    private Bundle bundle = new Bundle();
 
     @Override
     protected View onCreateView() {
@@ -235,11 +239,11 @@ public class WeightRecordFragment extends BaseAcFragment {
 
     private void notifyData(WeightDataBean bean) {
         isSettingTargetWeight = bean.isTargetSet();
-        initialWeight = bean.getInitialWeight();
         hasDays = bean.getHasDays();
         stillNeed = bean.getStillNeed();
-        targetWeight = bean.getTargetWeight();
         lastWeight = bean.getWeight();
+
+        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
         RxLogUtils.d("是否有目标体重：" + bean.isTargetSet());
         //是否录入体重
         mLayoutTips.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
@@ -279,7 +283,7 @@ public class WeightRecordFragment extends BaseAcFragment {
 
 
     private void initLineChart(final WeightDataBean bean) {
-        final List<WeightDataBean.WeightListBean.ListBean> list = bean.getWeightList().getList();
+        list = bean.getWeightList().getList();
         SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
@@ -380,7 +384,6 @@ public class WeightRecordFragment extends BaseAcFragment {
                             mLayoutStrongTip.setVisibility(View.GONE);
                             String s = new Gson().toJson(list);
                             RxLogUtils.d("体重信息:" + s);
-                            Bundle bundle = new Bundle();
                             bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
                             RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
                         }
@@ -393,33 +396,24 @@ public class WeightRecordFragment extends BaseAcFragment {
     @OnClick({R.id.layout_sportTip, R.id.tv_settingTarget, R.id.layout_sports})
     public void onViewClicked(View view) {
         if (view.getId() == R.id.layout_sports) {
-            Bundle args = new Bundle();
-            args.putString(Key.BUNDLE_WEIGHT_GID, currentGid);
+            if (list == null || list.size() == 0) return;
+            bundle.putString(Key.BUNDLE_WEIGHT_GID, currentGid);
             QMUIFragment fragment = BodyDataFragment.getInstance();
-            fragment.setArguments(args);
+            fragment.setArguments(bundle);
             startFragment(fragment);
-
         } else {
-            if (initialWeight == 0) {
-                RxToast.normal("请上称录入初始体重后再设置目标");
+            //上一次体重为0则表示用户没有上称
+            if (lastWeight == 0) {
+                RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
                 return;
             }
             if (isSettingTargetWeight) {
                 //传递目标体重信息
-                Bundle args = new Bundle();
-                args.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
-                args.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initialWeight);
-                args.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
-                args.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
-                QMUIFragment fragment = TargetDetailsFragment.getInstance();
-                fragment.setArguments(args);
-                startFragment(fragment);
+                startFragment(TargetDetailsFragment.getInstance());
             } else {
                 //传递初始体重信息
-                Bundle args = new Bundle();
-                args.putDouble(Key.BUNDLE_INITIAL_WEIGHT, lastWeight);
                 QMUIFragment fragment = SettingTargetFragment.getInstance();
-                fragment.setArguments(args);
+                fragment.setArguments(bundle);
                 startFragment(fragment);
             }
         }

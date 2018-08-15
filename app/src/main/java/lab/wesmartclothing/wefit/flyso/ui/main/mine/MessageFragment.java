@@ -1,21 +1,23 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -59,7 +61,7 @@ public class MessageFragment extends BaseAcFragment {
     }
 
     private BaseQuickAdapter adapter;
-    private int pageNum = 0;
+    private int pageNum = 1;
     private View emptyView;
 
     @Override
@@ -78,27 +80,29 @@ public class MessageFragment extends BaseAcFragment {
 
     private void initRecycler() {
         /*侧滑删除*/
+        mRvCollect.setLayoutManager(new LinearLayoutManager(mContext));
         mRvCollect.setSwipeItemClickListener(mItemClickListener);
         mRvCollect.setSwipeMenuCreator(mSwipeMenuCreator);
         mRvCollect.setSwipeMenuItemClickListener(mMenuItemClickListener);
-        adapter = new BaseQuickAdapter<MessageBean.ListBean, BaseViewHolder>(R.layout.item_collect) {
+        adapter = new BaseQuickAdapter<MessageBean.ListBean, BaseViewHolder>(R.layout.item_message) {
 
             @Override
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
-                Glide.with(mActivity).load(R.mipmap.app_name)
-                        .asBitmap().placeholder(R.mipmap.group15).into((ImageView) helper.getView(R.id.iv_img));
+                Glide.with(mActivity).load(R.mipmap.icon_app)
+                        .asBitmap().placeholder(R.mipmap.icon_placeholder).into((QMUIRadiusImageView) helper.getView(R.id.iv_img));
 
-                helper.setText(R.id.tv_title, item.getTitle())
-                        .setText(R.id.tv_content, item.getContent())
-                        .setText(R.id.tv_readCount, RxFormat.setFormatDate(item.getPushTime(), RxFormat.Date_Date));
+                helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
+                        .setText(R.id.tv_title, item.getTitle())
+                        .setText(R.id.tv_date, RxFormat.setFormatDate(item.getPushTime(), RxFormat.Date_Date))
+                        .setText(R.id.tv_content, item.getContent());
             }
         };
         emptyView = View.inflate(mContext, R.layout.layout_no_message, null);
+        adapter.setEmptyView(emptyView);
         mRvCollect.setAdapter(adapter);
         smartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshLayout) {
-                pageNum++;
                 initData();
             }
 
@@ -109,7 +113,7 @@ public class MessageFragment extends BaseAcFragment {
             }
         });
 
-        smartRefreshLayout.autoLoadMore();
+        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
 
@@ -125,7 +129,7 @@ public class MessageFragment extends BaseAcFragment {
             int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
             if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
                 int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-//                deleteItemById(((MessageBean.ListBean) adapter.getData().get(0)).getGid(), adapterPosition);
+                deleteItemById(adapterPosition);
             }
         }
     };
@@ -139,7 +143,7 @@ public class MessageFragment extends BaseAcFragment {
             if (viewType == EMPTY_VIEW) {
                 return;
             }
-            int width = 52;
+            int width = RxUtils.dp2px(52);
             // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
             // 2. 指定具体的高，比如80;
             // 3. WRAP_CONTENT，自身高度，不推荐;
@@ -161,6 +165,7 @@ public class MessageFragment extends BaseAcFragment {
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
             readed(position);
+
         }
     };
 
@@ -184,10 +189,9 @@ public class MessageFragment extends BaseAcFragment {
 
 
     public void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.message(pageNum, 10))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -198,15 +202,13 @@ public class MessageFragment extends BaseAcFragment {
                         } else {
                             adapter.addData(list);
                         }
-                        if (adapter.getData().size() == 0) {
-                            adapter.setNewData(null);
-                            adapter.setEmptyView(emptyView);
-                        }
-
-                        if (smartRefreshLayout.isLoading())
+                        if (smartRefreshLayout.isLoading()) {
+                            pageNum++;
                             smartRefreshLayout.finishLoadMore(true);
-                        if (smartRefreshLayout.isRefreshing())
+                        }
+                        if (smartRefreshLayout.isRefreshing()) {
                             smartRefreshLayout.finishRefresh(true);
+                        }
                         smartRefreshLayout.setEnableLoadMore(bean.isHasNextPage());
                     }
 
@@ -216,10 +218,6 @@ public class MessageFragment extends BaseAcFragment {
                             smartRefreshLayout.finishLoadMore(false);
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(false);
-                        if (adapter.getData().size() == 0) {
-                            adapter.setNewData(null);
-                            adapter.setEmptyView(emptyView);
-                        }
                     }
                 });
     }
@@ -230,6 +228,7 @@ public class MessageFragment extends BaseAcFragment {
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.readedAll())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -252,11 +251,13 @@ public class MessageFragment extends BaseAcFragment {
     //查看了Message，更新
     private void readed(final int position) {
         final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
+        if (item.getReadState() == 1) return;
         String gid = item.getGid();
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.readed(gid))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -268,6 +269,29 @@ public class MessageFragment extends BaseAcFragment {
                     @Override
                     public void _onError(String e) {
                         RxToast.showToast(e);
+                    }
+                });
+    }
+
+    private void deleteItemById(final int position) {
+        String gid = ((MessageBean.ListBean) adapter.getData().get(position)).getGid();
+        RetrofitService dxyService = NetManager.getInstance().createString(
+                RetrofitService.class
+        );
+        RxManager.getInstance().doNetSubscribe(dxyService.removeAppMessage(gid))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束" + s);
+                        //如果成功，刷新列表，不加载数据
+                        adapter.remove(position);
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
                     }
                 });
     }

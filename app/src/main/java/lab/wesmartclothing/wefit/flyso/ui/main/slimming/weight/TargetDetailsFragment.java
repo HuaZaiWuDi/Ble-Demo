@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +21,11 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 /**
  * Created by jk on 2018/7/27.
@@ -44,7 +52,7 @@ public class TargetDetailsFragment extends BaseAcFragment {
         return new TargetDetailsFragment();
     }
 
-    private Bundle bundle;
+    private Bundle bundle = new Bundle();
 
     @Override
     protected View onCreateView() {
@@ -55,25 +63,14 @@ public class TargetDetailsFragment extends BaseAcFragment {
     }
 
     private void initView() {
+        targetWeight();
         initTopBar();
-        initData();
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvTargetDays.setTypeface(typeface);
         mTvTargetWeight.setTypeface(typeface);
         mTvDistanceTarget.setTypeface(typeface);
     }
 
-    private void initData() {
-        bundle = getArguments();
-        if (bundle != null) {
-            int hasDays = bundle.getInt(Key.BUNDLE_HAS_DAYS);
-            double aDouble = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
-            double still = bundle.getDouble(Key.BUNDLE_STILL_NEED);
-            mTvTargetDays.setText(hasDays + "");
-            mTvTargetWeight.setText((float) aDouble + "");
-            mTvDistanceTarget.setText((float) still + "");
-        }
-    }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
@@ -92,4 +89,36 @@ public class TargetDetailsFragment extends BaseAcFragment {
         fragment.setArguments(bundle);
         startFragmentAndDestroyCurrent(fragment);
     }
+
+    private void targetWeight() {
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.fetchTargetWeight())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        JsonObject object = (JsonObject) new JsonParser().parse(s);
+                        int hasDays = object.get("hasDays").getAsInt();
+                        double targetWeight = object.get("targetWeight").getAsDouble();
+                        double stillNeed = object.get("stillNeed").getAsDouble();
+                        double initialWeight = object.get("initialWeight").getAsDouble();
+
+                        mTvTargetDays.setText(hasDays + "");
+                        mTvTargetWeight.setText(targetWeight + "");
+                        mTvDistanceTarget.setText(stillNeed + "");
+
+                        bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
+                        bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initialWeight);
+                        bundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
+                        bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
 }

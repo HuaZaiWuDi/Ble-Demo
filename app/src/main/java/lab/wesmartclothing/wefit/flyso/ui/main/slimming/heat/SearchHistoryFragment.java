@@ -26,6 +26,7 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -81,6 +82,8 @@ public class SearchHistoryFragment extends BaseAcFragment {
     LinearLayout mLayoutHistory;
     @BindView(R.id.layout_searchData)
     LinearLayout mlayoutSearchData;
+    @BindView(R.id.layout_searchKey)
+    LinearLayout mlayoutSearchKey;
     @BindView(R.id.mRecyclerView)
     RecyclerView mMRecyclerView;
     @BindView(R.id.recyclerAddFoods)
@@ -92,7 +95,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
     @BindView(R.id.layout_addFoods)
     RelativeLayout mLayoutAddFoods;
 
-    private List<String> latelyLists = new ArrayList<>();
     private List<String> hotLists = new ArrayList<>();
     private BaseQuickAdapter searchListAdapter, adapterAddFoods;
     private boolean isStorage = false;
@@ -131,6 +133,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 addedFoods.set(0, R.mipmap.icon_ellipsis);
             }
             adapterAddFoods.setNewData(addedFoods);
+            adapterAddFoods.notifyDataSetChanged();
         }
     }
 
@@ -195,7 +198,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 Glide.with(mContext).load(item.getFoodImg()).asBitmap().into(foodImg);
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
-                RxTextUtils.getBuilder(item.getCalorie() + "")
+                RxTextUtils.getBuilder(item.getUnitCalorie() + "")
                         .append("kacl/")
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -212,14 +215,8 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 if (RxUtils.isFastClick(1000)) return;
                 FoodListBean listBean = (FoodListBean) adapter.getData().get(position);
                 String foodName = listBean.getFoodName();
-                if (!SearchWordTab.isExist(foodName)) {
-                    if (isStorage) {
-                        SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), foodName);
-                        keyTab.save();
-                    }
-                    latelyLists.add(foodName);
-                    mTagFlowLayoutLately.setTags(latelyLists);
-                }
+
+                addSearchKey(foodName);
                 showAddFoodDialog(listBean);
             }
         });
@@ -266,7 +263,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 if (index >= 0) {
                     FoodDetailsFragment.addedLists.remove(index);
                     adapterAddFoods.remove(index);
-                    adapterAddFoods.notifyDataSetChanged();
                 }
                 FoodDetailsFragment.addedLists.add(listBean);
                 mLayoutAddFoods.setVisibility(View.VISIBLE);
@@ -280,6 +276,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                     adapterAddFoods.addData(listBean.getFoodImg());
                     adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
                 }
+                adapterAddFoods.notifyDataSetChanged();
             }
         });
     }
@@ -308,20 +305,13 @@ public class SearchHistoryFragment extends BaseAcFragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //TODO 处理Text的。防止输入特殊文字
-                if (!RxDataUtils.isNullString(query) && query.length() <= 20)
-                    initSearchData(query);
-                else RxToast.warning(getString(R.string.inputRightFoodName));
+                if (!RxDataUtils.isNullString(query) && query.length() <= 20) {
 
-                if (isStorage) {
-                    if (SearchWordTab.getKey(query) == null) {
-                        SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), query);
-                        keyTab.save();
-                    } else {
-                        SearchWordTab.update(System.currentTimeMillis(), query);
-                    }
-                }
-                latelyLists.add(query);
-                mTagFlowLayoutLately.setTags(latelyLists);
+                    addSearchKey(query);
+
+                    initSearchData(query);
+                } else RxToast.warning(getString(R.string.inputRightFoodName));
+
                 return false;
             }
 
@@ -337,15 +327,34 @@ public class SearchHistoryFragment extends BaseAcFragment {
 
         if (!isStorage) return;
 
-        List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
-
-        latelyLists.clear();
-        for (int i = 0; i < all.size(); i++) {
-            latelyLists.add(all.get(i).searchKey);
-        }
-        mTagFlowLayoutLately.setTags(latelyLists);
-
+        notifySearchKey();
     }
+
+    private void addSearchKey(String query) {
+        if (isStorage) {
+            RxLogUtils.d("是否包含：" + query + "---" + SearchWordTab.getKey(query));
+            if (SearchWordTab.getKey(query) == null) {
+                SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), query);
+                keyTab.save();
+            } else {
+                SearchWordTab.update(System.currentTimeMillis(), query);
+            }
+        }
+
+        notifySearchKey();
+    }
+
+    private void notifySearchKey() {
+        List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
+        List<String> list = new ArrayList<>();
+
+        for (int i = 0; i < all.size(); i++) {
+            list.add(all.get(i).searchKey);
+        }
+        mTagFlowLayoutLately.setTags(list);
+        mlayoutSearchKey.setVisibility(list.size() == 0 ? View.GONE : View.VISIBLE);
+    }
+
 
     private void initSearchData(final String key) {
         mlayoutSearchData.setVisibility(View.VISIBLE);
@@ -419,6 +428,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
             intakeList.setRemark(foodListBean.getRemark());
             intakeList.setCalorie(foodListBean.getCalorie());
             intakeList.setHeatDate(currentTime);
+            intakeList.setUnitCalorie(foodListBean.getUnitCalorie());
             mIntakeLists.add(intakeList);
         }
         foodItem.setIntakeLists(mIntakeLists);
@@ -449,8 +459,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
     @OnClick(R.id.tv_delete)
     public void onViewClicked() {
         SearchWordTab.deleteAll();
-        latelyLists.clear();
-        mTagFlowLayoutLately.setTags(latelyLists);
+        notifySearchKey();
     }
 
     @OnClick(R.id.iv_complete)
@@ -458,35 +467,4 @@ public class SearchHistoryFragment extends BaseAcFragment {
         addFood();
     }
 
-
-//    //判断返回
-//    @Override
-//    protected void popBackStack() {
-////        super.popBackStack();
-//
-//        if (addedLists.size() == 0) {
-//            super.popBackStack();
-//            return;
-//        }
-//
-//        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-//        dialog.setCanceledOnTouchOutside(false);
-//        dialog.getTvTitle().setVisibility(View.GONE);
-//        dialog.setContent("已添加的食物还未确认，您确定要返回么？");
-//        dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.orange_FF7200));
-//        dialog.setCancel("确认").setCancelListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//                getBaseFragmentActivity().popBackStack();
-//            }
-//        })
-//                .setSure("取消")
-//                .setSureListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//                    }
-//                }).show();
-//    }
 }

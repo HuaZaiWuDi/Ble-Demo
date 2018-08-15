@@ -127,6 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layout_phone"
+            android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
             android:text="添加截图（最多添加4张）"
             android:textColor="@color/GrayWrite"

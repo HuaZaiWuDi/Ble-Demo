@@ -39,36 +39,46 @@ public class ScanSettings implements Parcelable {
     public static final long MATCH_LOST_TASK_INTERVAL_DEFAULT = 10000L; // [ms]
 
     /**
+     * //被动让其他应用扫描设备给自己
      * A special Bluetooth LE scan mode. Applications using this scan mode will passively listen for
      * other scan results without starting BLE scans themselves.
      */
     public static final int SCAN_MODE_OPPORTUNISTIC = -1;
 
     /**
+     * 在低功耗模式下执行蓝牙LE扫描。这是默认扫描模式，因为它消耗最少的功率。
      * Perform Bluetooth LE scan in low power mode. This is the default scan mode as it consumes the
      * least power.
      */
     public static final int SCAN_MODE_LOW_POWER = 0;
 
     /**
+     * 在平衡电源模式下执行蓝牙LE扫描。扫描结果以如下速率返回
+     * 提供了良好的扫描频率和功耗之间的权衡。
      * Perform Bluetooth LE scan in balanced power mode. Scan results are returned at a rate that
      * provides a good trade-off between scan frequency and power consumption.
      */
     public static final int SCAN_MODE_BALANCED = 1;
 
     /**
+     * 扫描使用最高占空比。建议在应用程序在前台运行时只使用此模式。
+     * <p>
      * Scan using highest duty cycle. It's recommended to only use this mode when the application is
      * running in the foreground.
      */
     public static final int SCAN_MODE_LOW_LATENCY = 2;
 
     /**
+     *
+     * 触发与匹配筛选标准匹配的每一个蓝牙广告的回调。如果没有过滤器是活动的，所有的广告包被报告。
      * Trigger a callback for every Bluetooth advertisement found that matches the filter criteria.
      * If no filter is active, all advertisement packets are reported.
      */
     public static final int CALLBACK_TYPE_ALL_MATCHES = 1;
 
     /**
+     *
+     * 结果回调只针对与过滤准则匹配的第一个广告包被触发。
      * A result callback is only triggered for the first advertisement packet received that matches
      * the filter criteria.
      */
@@ -296,7 +306,7 @@ public class ScanSettings implements Parcelable {
     public static final class Builder {
         private int mScanMode = SCAN_MODE_LOW_POWER;
         private int mCallbackType = CALLBACK_TYPE_FIRST_MATCH;
-        private long mReportDelayMillis = 0;
+        private long mReportDelayMillis = 1000;
         private int mMatchMode = MATCH_MODE_AGGRESSIVE;
         private int mNumOfMatchesPerFilter = MATCH_NUM_MAX_ADVERTISEMENT;
         private boolean mUseHardwareFilteringIfSupported = true;
@@ -349,6 +359,7 @@ public class ScanSettings implements Parcelable {
         }
 
         /**
+         * //为蓝牙LE扫描设置报告延迟时间戳。
          * Set report delay timestamp for Bluetooth LE scan.
          *
          * @param reportDelayMillis Delay of report in milliseconds. Set to 0 to be notified of

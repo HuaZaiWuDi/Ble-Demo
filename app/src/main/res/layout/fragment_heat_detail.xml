@@ -187,7 +187,9 @@
             android:layout_width="match_parent"
             android:layout_height="68dp"
             android:layout_marginBottom="@dimen/dimen_8"
-            android:padding="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             app:qmui_backgroundColor="@color/white"
             app:qmui_borderColor="@color/white"
             app:qmui_radius="4dp">
@@ -235,19 +237,21 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_breakfast"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
+                android:layout_marginRight="50dp"
                 android:layout_toRightOf="@+id/tv_breakfast"/>
 
 
             <ImageView
-                android:layout_width="@dimen/dimen_20"
-                android:layout_height="@dimen/dimen_20"
+                android:id="@+id/iv_addBreakfast"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@mipmap/icon_add"/>
+                android:padding="8dp"
+                android:src="@mipmap/icon_add"/>
 
 
         </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
@@ -257,7 +261,9 @@
             android:layout_width="match_parent"
             android:layout_height="68dp"
             android:layout_marginBottom="@dimen/dimen_8"
-            android:padding="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             app:qmui_backgroundColor="@color/white"
             app:qmui_borderColor="@color/white"
             app:qmui_radius="4dp">
@@ -304,18 +310,20 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_lunch"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
+                android:layout_marginRight="50dp"
                 android:layout_toRightOf="@+id/tv_lunch"/>
 
             <ImageView
-                android:layout_width="@dimen/dimen_20"
-                android:layout_height="@dimen/dimen_20"
+                android:id="@+id/iv_addLunch"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@mipmap/icon_add"/>
+                android:padding="8dp"
+                android:src="@mipmap/icon_add"/>
 
 
         </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
@@ -326,7 +334,9 @@
             android:layout_height="68dp"
             android:layout_marginBottom="@dimen/dimen_8"
             android:background="@color/white"
-            android:padding="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             app:qmui_backgroundColor="@color/white"
             app:qmui_borderColor="@color/white"
             app:qmui_radius="4dp">
@@ -373,18 +383,20 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_dinner"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
+                android:layout_marginRight="50dp"
                 android:layout_toRightOf="@+id/tv_dinner"/>
 
             <ImageView
-                android:layout_width="@dimen/dimen_20"
-                android:layout_height="@dimen/dimen_20"
+                android:id="@+id/iv_addDinner"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@mipmap/icon_add"/>
+                android:padding="8dp"
+                android:src="@mipmap/icon_add"/>
 
 
         </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
@@ -394,7 +406,9 @@
             android:layout_width="match_parent"
             android:layout_height="68dp"
             android:background="@color/white"
-            android:padding="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
             app:qmui_backgroundColor="@color/white"
             app:qmui_borderColor="@color/white"
             app:qmui_radius="4dp">
@@ -442,21 +456,22 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_meal"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="50dp"
                 android:layout_marginLeft="30dp"
+                android:layout_marginRight="50dp"
                 android:layout_toRightOf="@+id/tv_meal"/>
 
             <ImageView
-                android:layout_width="@dimen/dimen_20"
-                android:layout_height="@dimen/dimen_20"
+                android:id="@+id/iv_addMeal"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@mipmap/icon_add"/>
+                android:padding="8dp"
+                android:src="@mipmap/icon_add"/>
 
         </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
     </LinearLayout>
-
 
 </RelativeLayout>

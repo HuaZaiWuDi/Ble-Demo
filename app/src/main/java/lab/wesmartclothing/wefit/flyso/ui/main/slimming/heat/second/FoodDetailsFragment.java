@@ -127,9 +127,8 @@ public class FoodDetailsFragment extends BaseAcFragment {
                 int index = dialog.isExist(addedLists, listBean);
                 RxLogUtils.d("添加的下标：" + index);
                 if (index >= 0) {
-                    addedLists.remove(index);
-                    adapterAddFoods.remove(index);
-                    adapterAddFoods.notifyDataSetChanged();
+                    addedLists.remove(index % addedLists.size());
+                    adapterAddFoods.remove(index % adapterAddFoods.getData().size());
                 }
                 addedLists.add(listBean);
                 mLayoutAddFoods.setVisibility(View.VISIBLE);
@@ -143,6 +142,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     adapterAddFoods.addData(listBean.getFoodImg());
                     adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
                 }
+                adapterAddFoods.notifyDataSetChanged();
             }
         });
     }
@@ -184,14 +184,13 @@ public class FoodDetailsFragment extends BaseAcFragment {
 
     private void initRecyclerView() {
         adapter = new BaseQuickAdapter<FoodListBean, BaseViewHolder>(R.layout.item_add_food) {
-
             @Override
             protected void convert(BaseViewHolder helper, FoodListBean item) {
                 QMUIRadiusImageView foodImg = helper.getView(R.id.iv_foodImg);
                 Glide.with(mContext).load(item.getFoodImg()).asBitmap().into(foodImg);
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
-                RxTextUtils.getBuilder(item.getCalorie() + "")
+                RxTextUtils.getBuilder(item.getUnitCalorie() + "")
                         .append("kacl/")
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -296,6 +295,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
             intakeList.setRemark(foodListBean.getRemark());
             intakeList.setCalorie(foodListBean.getCalorie());
             intakeList.setHeatDate(currentTime);
+            intakeList.setUnitCalorie(foodListBean.getUnitCalorie());
             mIntakeLists.add(intakeList);
         }
         foodItem.setIntakeLists(mIntakeLists);
@@ -312,7 +312,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         addedLists.clear();
-                        popBackStack();
+                        getBaseFragmentActivity().popBackStack(HeatDetailFragment.class);
                     }
 
                     @Override

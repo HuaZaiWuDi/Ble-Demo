@@ -41,7 +41,7 @@ public class CollectWebActivity extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_interactive);
         //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
+        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.Gray)).process();
         initView();
     }
 

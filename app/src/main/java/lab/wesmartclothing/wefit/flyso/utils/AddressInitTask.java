@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.annotation.WorkerThread;
 
@@ -22,7 +21,6 @@ import cn.qqtheme.framework.util.ConvertUtils;
  */
 public class AddressInitTask extends AsyncTask<Void, Void, ArrayList<Province>> {
     private WeakReference<Activity> activityReference;// 2018/2/1 StaticFieldLeak
-    private ProgressDialog dialog;
     private InitCallback callback;
     private ArrayList<Province> provinces;
 
@@ -33,10 +31,6 @@ public class AddressInitTask extends AsyncTask<Void, Void, ArrayList<Province>> 
 
     @Override
     protected void onPreExecute() {
-        Activity activity = activityReference.get();
-        if (activity != null) {
-            dialog = ProgressDialog.show(activity, null, "正在初始化数据...", true, true);
-        }
     }
 
     @Override
@@ -56,9 +50,6 @@ public class AddressInitTask extends AsyncTask<Void, Void, ArrayList<Province>> 
 
     @Override
     protected void onPostExecute(ArrayList<Province> result) {
-        if (dialog != null) {
-            dialog.dismiss();
-        }
         if (result == null || result.size() == 0) {
             callback.onDataInitFailure();
         } else {

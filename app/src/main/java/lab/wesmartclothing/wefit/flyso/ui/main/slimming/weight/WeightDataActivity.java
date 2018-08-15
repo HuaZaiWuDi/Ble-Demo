@@ -61,6 +61,8 @@ public class WeightDataActivity extends BaseActivity {
     @Extra
     String BUNDLE_WEIGHT_HISTORY;
 
+    @Extra
+    double BUNDLE_LAST_WEIGHT;
 
     private BaseQuickAdapter adapter_Receive;
 
@@ -125,8 +127,9 @@ public class WeightDataActivity extends BaseActivity {
 
     private void addWeightData(final int position) {
         final QNScaleStoreData qnScaleData = (QNScaleStoreData) adapter_Receive.getItem(position);
-
         WeightAddBean bean = new WeightAddBean();
+
+
         bean.setMeasureTime(qnScaleData.getMeasureTime().getTime() + "");
         QNScaleData scaleData = qnScaleData.generateScaleData();
         if (scaleData != null)

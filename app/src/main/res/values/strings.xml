@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Timetofit</string>
+    <string name="appName">Timetofit</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard" translatable="false">Dashboard</string>
@@ -189,7 +189,7 @@
     <string name="completeDaytarget">恭喜，今天的运动目标已经完成，要再接再厉呀！</string>
     <string name="gotoSporting">今天还差%1$s\tkcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。</string>
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
-    <string name="search_noData">没有搜索到关于%1$s的食物哦，请您重新输入食物的关键字 ^-^</string>
+    <string name="search_noData">没有搜索到关于 " %1$s " 的食物哦，请您重新输入食物的关键字 ^-^</string>
     <string name="must_input">最多可以输入%1$d字</string>
 
     <string-array name="tab_text">

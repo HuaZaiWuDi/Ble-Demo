@@ -4,6 +4,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        //华为底部虚拟按键遮挡问题
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 //        //屏幕沉浸
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+        StatusBarUtils.from(this).setStatusBarColor(Color.WHITE).process();
 
         mContext = this;
         mActivity = this;

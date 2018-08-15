@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Function;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.FileDownLoadObserver;
@@ -81,7 +82,7 @@ public class AboutUpdateDialog extends RxDialog {
         mMRxTextRoundProgressBar.setMax(100);
         mMRxTextRoundProgressBar.setProgressText("正在升级");
         mMRxTextRoundProgressBar.setTextProgressSize(dp2px(10));
-
+        mTvUpdateTip.setTypeface(MyAPP.typeface);
 
         //下载文件固件升级文件
         if (!RxDataUtils.isNullString(filePath))
@@ -194,7 +195,7 @@ public class AboutUpdateDialog extends RxDialog {
             super.onDfuProcessStarting(deviceAddress);
             RxLogUtils.d("onDfuProcessStarting");
             mTvUpdateTip.setText("正在升级，请稍后...");
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, true);
         }
 
         @Override
@@ -212,7 +213,7 @@ public class AboutUpdateDialog extends RxDialog {
         @Override
         public void onDfuCompleted(String deviceAddress) {
             super.onDfuCompleted(deviceAddress);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, true);
+            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
             RxLogUtils.d("onDfuCompleted");
             mTvUpdateTip.setText("升级完成");
             setCanceledOnTouchOutside(true);
@@ -236,7 +237,7 @@ public class AboutUpdateDialog extends RxDialog {
         public void onError(String deviceAddress, int error, int errorType, String message) {
             super.onError(deviceAddress, error, errorType, message);
             RxLogUtils.e("onError:" + message);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, true);
+            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
             mTvUpdateTip.setText("升级失败,请重试");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)

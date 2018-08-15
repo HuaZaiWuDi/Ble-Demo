@@ -36,6 +36,15 @@ public class FoodListBean {
     private String unit;
     private String remark;
     private int unitCount;
+    private int unitCalorie;
+
+    public int getUnitCalorie() {
+        return unitCalorie;
+    }
+
+    public void setUnitCalorie(int unitCalorie) {
+        this.unitCalorie = unitCalorie;
+    }
 
     public int getUnitCount() {
         return unitCount;

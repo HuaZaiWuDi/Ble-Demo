@@ -81,6 +81,7 @@ public class WeightAddFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         initBleCallBack();
+        mMRoundDisPlayView.postDelayed(timeOut, 8000);
         super.onStart();
     }
 
@@ -122,13 +123,12 @@ public class WeightAddFragment extends BaseAcFragment {
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
                 RxLogUtils.d("体重秤实时重量：" + v);
                 mTvTargetWeight.setText((float) v + "");
-
+                mTvTip.setText("称重中...");
+                mTvTitle.setText("正在测量体重");
                 if (mTvTip.getVisibility() == View.INVISIBLE) {
                     mTvTip.setVisibility(View.VISIBLE);
                     mBtnForget.setVisibility(View.INVISIBLE);
                     mBtnSave.setVisibility(View.INVISIBLE);
-
-                    mTvTip.setText("称重中...");
                     mMRoundDisPlayView.showPoint(false);
                     mMRoundDisPlayView.startAnimation();
                     mMRoundDisPlayView.postDelayed(timeOut, 8000);
@@ -195,7 +195,10 @@ public class WeightAddFragment extends BaseAcFragment {
 
     private void saveWeight() {
         WeightAddBean bean = new WeightAddBean();
-        if (mQnScaleData == null) return;
+        if (mQnScaleData == null) {
+            RxToast.normal("体重测量失败");
+            return;
+        }
         bean.setMeasureTime(System.currentTimeMillis() + "");
         for (QNScaleItemData item : mQnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);

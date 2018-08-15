@@ -3,12 +3,10 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -41,18 +39,19 @@ import butterknife.Unbinder;
 import cn.qqtheme.framework.entity.City;
 import cn.qqtheme.framework.entity.County;
 import cn.qqtheme.framework.entity.Province;
-import cn.qqtheme.framework.picker.AddressPicker;
 import cn.qqtheme.framework.picker.DatePicker;
-import cn.qqtheme.framework.picker.DateTimePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.utils.AddressInitTask;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.view.picker.AddressPickTask;
+import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
+import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -131,7 +130,7 @@ public class UserInfofragment extends BaseAcFragment {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        requestSaveUserInfo();
                     }
                 });
     }
@@ -196,7 +195,7 @@ public class UserInfofragment extends BaseAcFragment {
                         bundle.putString(Key.BUNDLE_DATA, info.getUserName());
                         QMUIFragment instance = EditFragment.getInstance();
                         instance.setArguments(bundle);
-                        startFragmentForResult(instance, UserInfofragment.RESULT_CODE);
+                        startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
                     }
                 })
                 .addItemView(sexItem, new View.OnClickListener() {
@@ -224,7 +223,11 @@ public class UserInfofragment extends BaseAcFragment {
                 .addItemView(weightItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showWeight();
+                        if (info.getTargetWeight() >= 0) {
+                            RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
+                            return;
+                        }
+                        startFragment(TargetDetailsFragment.getInstance());
                     }
                 })
                 .addTo(mGroupListView);
@@ -245,7 +248,7 @@ public class UserInfofragment extends BaseAcFragment {
                         bundle.putString(Key.BUNDLE_DATA, signItem.getDetailText().toString());
                         QMUIFragment instance = EditFragment.getInstance();
                         instance.setArguments(bundle);
-                        startFragmentForResult(instance, UserInfofragment.RESULT_CODE);
+                        startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
                     }
                 })
                 .addTo(mGroupListView);
@@ -279,8 +282,6 @@ public class UserInfofragment extends BaseAcFragment {
                         .placeholder(R.mipmap.userimg)
                         .into(mIvUserImg);
                 uploadImage(images.get(0).path);
-            } else {
-                Toast.makeText(mActivity, "没有数据", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -288,23 +289,13 @@ public class UserInfofragment extends BaseAcFragment {
 
     private void showDate() {
         Calendar calendar = Calendar.getInstance();
-        final DatePicker picker = new DatePicker(mActivity, DateTimePicker.YEAR_MONTH_DAY);
-        picker.setGravity(Gravity.BOTTOM);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setTopLineVisible(false);
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setCancelTextColor(getResources().getColor(R.color.Gray));
-        picker.setSubmitTextColor(getResources().getColor(R.color.red));
-        picker.setTextColor(getResources().getColor(R.color.Gray));
-        picker.setOffset(2);//偏移量
-        picker.setRangeStart(1940, 01, 01);
-        picker.setRangeEnd(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        CustomDatePicker datePicker = new CustomDatePicker(mActivity);
+        datePicker.setRangeStart(1940, 01, 01);
+        datePicker.setRangeEnd(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         calendar.setTimeInMillis(info.getBirthday());
-        picker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-        picker.setTextSize(21);
-        picker.setLabel("-", "-", "");
-        picker.setOnDatePickListener(new DatePicker.OnYearMonthDayPickListener() {
+        datePicker.setTextColor(getResources().getColor(R.color.Gray));
+        datePicker.setSelectedItem(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+        datePicker.setOnDatePickListener(new DatePicker.OnYearMonthDayPickListener() {
             @Override
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
@@ -313,74 +304,41 @@ public class UserInfofragment extends BaseAcFragment {
                 info.setBirthday(date.getTime());
             }
         });
-        picker.show();
+        datePicker.show();
+
     }
 
     private void showAddress() {
-        new AddressInitTask(mActivity, new AddressInitTask.InitCallback() {
+        AddressPickTask task = new AddressPickTask(mActivity);
+        task.setHideCounty(true);
+        task.setCallback(new AddressPickTask.Callback() {
             @Override
-            public void onDataInitFailure() {
-                RxLogUtils.d("加载失败");
+            public void onAddressInitFailed() {
+                RxLogUtils.e("数据初始化失败");
             }
 
             @Override
-            public void onDataInitSuccess(ArrayList<Province> provinces) {
-                AddressPicker picker = new AddressPicker(mActivity, provinces);
-                picker.setOnAddressPickListener(new AddressPicker.OnAddressPickListener() {
-                    @Override
-                    public void onAddressPicked(Province province, City city, County county) {
-                        cityItem.setDetailText(province.getName() + "," + city.getName());
-                    }
-                });
-                picker.show();
+            public void onAddressPicked(Province province, City city, County county) {
+                cityItem.setDetailText(province.getName() + "," + city.getName());
             }
         });
+        task.execute(RxDataUtils.isNullString(info.getProvince()) ? "" : info.getProvince(),
+                RxDataUtils.isNullString(info.getCity()) ? "" : info.getCity());
     }
 
     public void showHeight() {
-        NumberPicker picker = new NumberPicker(mActivity);
-        picker.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setTopLineVisible(false);
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setCancelTextColor(getResources().getColor(R.color.Gray));
-        picker.setSubmitTextColor(getResources().getColor(R.color.red));
+        CustomNumberPicker picker = new CustomNumberPicker(mActivity);
         picker.setTextColor(getResources().getColor(R.color.Gray));
-        picker.setOffset(2);//偏移量
         picker.setRange(120, 200, 1);//数字范围
         picker.setSelectedItem(info.getHeight());
-        picker.setTextSize(21);
         picker.setLabel("cm");
+        picker.setLabelTextColor(getResources().getColor(R.color.Gray));
         picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
             @Override
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("身高：" + item);
                 heightItem.setDetailText(item + "cm");
                 info.setHeight((int) item);
-            }
-        });
-        picker.show();
-    }
-
-    public void showWeight() {
-        NumberPicker picker = new NumberPicker(mActivity);
-        picker.setGravity(Gravity.BOTTOM);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setOffset(2);//偏移量
-        picker.setRange(35, 90, 1);//数字范围
-        picker.setSelectedItem(info.getTargetWeight());
-        picker.setTextSize(25);
-        picker.setLabel("kg");
-        picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
-            @Override
-            public void onNumberPicked(int index, Number item) {
-                RxLogUtils.d("体重：" + item);
-                weightItem.setDetailText(item + "kg");
-                SPUtils.put(SPKey.SP_weight, (int) item);
-                info.setTargetWeight((int) item);
             }
         });
         picker.show();
@@ -409,6 +367,7 @@ public class UserInfofragment extends BaseAcFragment {
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", cropImagePath, requestFile);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.uploadUserImg(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -426,19 +385,45 @@ public class UserInfofragment extends BaseAcFragment {
                 });
     }
 
+    /*保存按钮，提交用户数据*/
+    private void requestSaveUserInfo() {
+        final String gson = new Gson().toJson(info, UserInfo.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束" + s);
+                        RxToast.success("保存成功", 2000);
+                        SPUtils.put(SPKey.SP_UserInfo, gson);
+                        getBaseFragmentActivity().popBackStack();
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
+    }
+
 
     @Override
     protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
         super.onFragmentResult(requestCode, resultCode, data);
+        RxLogUtils.d("返回:requestCode:" + requestCode + "---resultCode" + resultCode + "---Intent:" + data.toString());
         if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
             Bundle bundle = data.getExtras();
             String title = bundle.getString(Key.BUNDLE_TITLE);
             if (title.equals(userNameItem.getText().toString())) {
                 userNameItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+                info.setUserName(bundle.getString(Key.BUNDLE_DATA));
             } else {
                 signItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+                info.setSignature(bundle.getString(Key.BUNDLE_DATA));
             }
-
         }
     }
 

@@ -82,6 +82,7 @@ public class SettingTargetFragment extends BaseAcFragment {
         bundle = getArguments();
         if (bundle != null) {
             initWeight = (float) bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+            if (initWeight <= 0) initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         }
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo userInfo = new Gson().fromJson(string, UserInfo.class);

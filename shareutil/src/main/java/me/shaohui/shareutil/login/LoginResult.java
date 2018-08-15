@@ -17,6 +17,7 @@ public class LoginResult implements Serializable {
 
     private int mPlatform;
 
+
     public LoginResult(int platform, BaseToken token) {
         mPlatform = platform;
         mToken = token;
@@ -27,8 +28,6 @@ public class LoginResult implements Serializable {
         mToken = token;
         mUserInfo = userInfo;
     }
-
-
 
     public int getPlatform() {
         return mPlatform;

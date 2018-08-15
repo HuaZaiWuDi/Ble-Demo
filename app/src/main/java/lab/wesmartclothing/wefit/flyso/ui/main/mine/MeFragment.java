@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -26,7 +28,11 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -119,11 +125,11 @@ public class MeFragment extends BaseAcFragment {
                 getResources().getDrawable(R.mipmap.icon_collection), "我的收藏", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         collectionItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         collectionItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
-        QMUICommonListItemView orderItem = mGroupListView.createItemView(
+        final QMUICommonListItemView orderItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_order), "我的订单", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         orderItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         orderItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
-        QMUICommonListItemView shoppingItem = mGroupListView.createItemView(
+        final QMUICommonListItemView shoppingItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_shopping), "我的购物车", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         shoppingItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         shoppingItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
@@ -154,13 +160,21 @@ public class MeFragment extends BaseAcFragment {
                 .addItemView(orderItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        //服务协议
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
+                        bundle.putString(Key.BUNDLE_TITLE, orderItem.getText().toString());
+                        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
                     }
                 })
                 .addItemView(shoppingItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        //服务协议
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Shopping_Address);
+                        bundle.putString(Key.BUNDLE_TITLE, shoppingItem.getText().toString());
+                        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
                     }
                 })
                 .setUseTitleViewForSectionSpace(false)
@@ -201,6 +215,7 @@ public class MeFragment extends BaseAcFragment {
     private void initMineData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userCenter())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {

@@ -44,7 +44,12 @@ public class AddFoodItem {
         private int calorie;
         private String foodImg;
         private long heatDate;
+        private int unitCalorie;
 
+
+        public void setUnitCalorie(int unitCalorie) {
+            this.unitCalorie = unitCalorie;
+        }
 
         public void setRemark(String remark) {
             this.remark = remark;

@@ -81,6 +81,7 @@ public class BodyDataFragment extends BaseAcFragment {
     public Map<Integer, Healthy> mHealthyMaps = new HashMap<>();
 
     private BodyDataUtil bodyDataUtil;
+    private double[] bodyValue = new double[8];
 
     @Override
     protected View onCreateView() {
@@ -145,7 +146,7 @@ public class BodyDataFragment extends BaseAcFragment {
 
         Healthy healthy6 = new Healthy();
         healthy6.setSections(new double[]{55, 65});
-        healthy6.setSectionLabels(new String[]{"55.0%,65.0%"});
+        healthy6.setSectionLabels(new String[]{"55.0%","65.0%"});
         healthy6.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy6.setLabels(new String[]{"偏低", "标准", "充足"});
@@ -217,7 +218,7 @@ public class BodyDataFragment extends BaseAcFragment {
         String[] units = {"%", "", "级", "%", "kcal", "%", "%", "岁"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
                 R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
-        double[] bodyValue = new double[8];
+
         if (weightInfo != null) {
             bodyValue[0] = weightInfo.getBodyFat();
             bodyValue[1] = weightInfo.getBmi();
@@ -249,8 +250,8 @@ public class BodyDataFragment extends BaseAcFragment {
             level0Bean.setStatus((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[0]);
             level0Bean.setStatusColor((int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[1]);
 
-            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
 
+            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
             Healthy healthy = mHealthyMaps.get(i % mHealthyMaps.size());
             bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
             bodyLevel1Bean.setLabels(healthy.getLabels());
@@ -260,8 +261,9 @@ public class BodyDataFragment extends BaseAcFragment {
             multiItermLists.add(level0Bean);
         }
         adapter.setNewData(multiItermLists);
-        adapter.expandAll();
+//        adapter.expandAll();
     }
+
 
     private void deleteWeight() {
         JsonObject object = new JsonObject();

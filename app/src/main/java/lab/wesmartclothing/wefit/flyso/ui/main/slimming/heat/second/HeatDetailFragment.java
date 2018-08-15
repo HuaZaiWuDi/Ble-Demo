@@ -44,6 +44,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 /**
@@ -113,6 +114,14 @@ public class HeatDetailFragment extends BaseAcFragment {
     RecyclerView mRecyclerDinner;
     @BindView(R.id.recycler_meal)
     RecyclerView mRecyclerMeal;
+    @BindView(R.id.iv_addBreakfast)
+    ImageView mIvAddBreakfast;
+    @BindView(R.id.iv_addLunch)
+    ImageView mIvAddLunch;
+    @BindView(R.id.iv_addDinner)
+    ImageView mIvAddDinner;
+    @BindView(R.id.iv_addMeal)
+    ImageView mIvAddMeal;
 
     public static QMUIFragment getInstance() {
         return new HeatDetailFragment();
@@ -159,7 +168,7 @@ public class HeatDetailFragment extends BaseAcFragment {
     private void initData() {
         JsonObject object = new JsonObject();
         object.addProperty("heatDate", currentTime);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchOneDayHeatInfo(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -345,35 +354,6 @@ public class HeatDetailFragment extends BaseAcFragment {
         mRecyclerMeal.setAdapter(adapterMeal);
     }
 
-    @OnClick({R.id.recycler_breakfast, R.id.layout_breakfast, R.id.recycler_lunch, R.id.layout_lunch, R.id.recycler_dinner, R.id.layout_dinner, R.id.recycler_meal, R.id.layout_meal})
-    public void onViewClicked(View view) {
-
-        QMUIFragment instance = null;
-        switch (view.getId()) {
-            case R.id.layout_breakfast://跳转添加食物
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
-                instance = FoodDetailsFragment.getInstance();
-                break;
-            case R.id.layout_lunch:
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
-                instance = FoodDetailsFragment.getInstance();
-                break;
-            case R.id.layout_dinner:
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
-                instance = FoodDetailsFragment.getInstance();
-                break;
-            case R.id.layout_meal:
-                bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
-                instance = FoodDetailsFragment.getInstance();
-                break;
-            default:
-                break;
-        }
-        bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-        instance.setArguments(bundle);
-        startFragment(instance);
-    }
-
     public static int FOOD_TYPE(int type) {
         switch (type) {
             case TYPE_BREAKFAST:
@@ -389,4 +369,53 @@ public class HeatDetailFragment extends BaseAcFragment {
     }
 
 
+    @OnClick({R.id.iv_addBreakfast, R.id.layout_breakfast, R.id.iv_addLunch, R.id.layout_lunch, R.id.iv_addDinner, R.id.layout_dinner, R.id.iv_addMeal, R.id.layout_meal})
+    public void onViewClicked(View view) {
+        QMUIFragment instance = null;
+        switch (view.getId()) {
+            case R.id.iv_addBreakfast:
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
+                instance = FoodDetailsFragment.getInstance();
+                break;
+            case R.id.layout_breakfast:
+                instance = AddedFoodFragment.getInstance();
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
+                bundle.putString(Key.ADD_FOOD_INFO, heatData);
+                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                break;
+            case R.id.iv_addLunch:
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
+                instance = FoodDetailsFragment.getInstance();
+                break;
+            case R.id.layout_lunch:
+                instance = AddedFoodFragment.getInstance();
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
+                bundle.putString(Key.ADD_FOOD_INFO, heatData);
+                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                break;
+            case R.id.iv_addDinner:
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
+                instance = FoodDetailsFragment.getInstance();
+                break;
+            case R.id.layout_dinner:
+                instance = AddedFoodFragment.getInstance();
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
+                bundle.putString(Key.ADD_FOOD_INFO, heatData);
+                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                break;
+            case R.id.iv_addMeal:
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
+                instance = FoodDetailsFragment.getInstance();
+                break;
+            case R.id.layout_meal:
+                instance = AddedFoodFragment.getInstance();
+                bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
+                bundle.putString(Key.ADD_FOOD_INFO, heatData);
+                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                break;
+        }
+        bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+        instance.setArguments(bundle);
+        startFragment(instance);
+    }
 }

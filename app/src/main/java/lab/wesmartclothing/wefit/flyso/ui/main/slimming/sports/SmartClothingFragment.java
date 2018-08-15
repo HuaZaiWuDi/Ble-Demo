@@ -153,6 +153,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         return new SmartClothingFragment_();
     }
 
+    private List<AthleticsInfo.PageInfoBean.ListBean> list;
 
     @Override
     protected View onCreateView() {
@@ -198,7 +199,7 @@ public class SmartClothingFragment extends BaseAcFragment {
                         mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
                         //今日目标是否已经达成
                         mTvTip.setText(bean.getNeedAthl() == 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, RxFormatValue.fromat4S5R(bean.getNeedAthl() / 1000f, 2)));
-                        List<AthleticsInfo.PageInfoBean.ListBean> list = bean.getPageInfo().getList();
+                        list = bean.getPageInfo().getList();
                         initLineChart(list);
                     }
 
@@ -254,7 +255,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         List<Unit> lines_Time = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
-            RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "----getDuration：" + bean.getDuration());
+//            RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "----getDuration：" + bean.getDuration());
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration() / 60, RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             unit_time.setLineStyle(SuitLines.DASHED);
@@ -301,6 +302,7 @@ public class SmartClothingFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_sports:
+                if (list == null || list.size() == 0) return;
                 Bundle args = new Bundle();
                 args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
                 QMUIFragment fragment = SportsDetailsFragment.getInstance();

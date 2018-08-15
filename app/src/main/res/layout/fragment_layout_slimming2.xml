@@ -391,6 +391,7 @@
                 tools:visibility="visible">
 
                 <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout
+                    android:id="@+id/layout_heat"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -401,7 +402,6 @@
                     app:qmui_radius="4dp">
 
                     <RelativeLayout
-                        android:id="@+id/layout_heat"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:gravity="center_vertical"
@@ -783,14 +783,14 @@
 
             <!--运动记录-->
             <LinearLayout
+                android:id="@+id/layout_sports"
                 android:layout_width="match_parent"
                 android:layout_height="228dp"
-                android:background="@color/white"
+                android:background="@drawable/selector_ripple_bg_"
                 android:orientation="vertical"
                 tools:visibility="visible">
 
                 <RelativeLayout
-                    android:id="@+id/layout_sports"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:gravity="center_vertical"
@@ -888,16 +888,16 @@
 
             <!--体重记录-->
             <LinearLayout
+                android:id="@+id/layout_weight"
                 android:layout_width="match_parent"
                 android:layout_height="228dp"
                 android:layout_marginBottom="@dimen/dimen_8"
                 android:layout_marginTop="@dimen/dimen_8"
-                android:background="@color/white"
+                android:background="@drawable/selector_ripple_bg_"
                 android:orientation="vertical"
                 tools:visibility="visible">
 
                 <RelativeLayout
-                    android:id="@+id/layout_weight"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:gravity="center_vertical"

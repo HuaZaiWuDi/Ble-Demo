@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,9 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -32,8 +36,11 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -54,8 +61,8 @@ public class CollectFragment extends BaseAcFragment {
     Unbinder unbinder;
 
     private BaseQuickAdapter adapter;
-    private int pageNum = 0;
-    private  View emptyView;
+    private int pageNum = 1;
+    private View emptyView;
 
     public static QMUIFragment getInstance() {
         return new CollectFragment();
@@ -76,6 +83,7 @@ public class CollectFragment extends BaseAcFragment {
 
     private void initRecycler() {
         /*侧滑删除*/
+        mRvCollect.setLayoutManager(new LinearLayoutManager(mContext));
         mRvCollect.setSwipeItemClickListener(mItemClickListener);
         mRvCollect.setSwipeMenuCreator(mSwipeMenuCreator);
         mRvCollect.setSwipeMenuItemClickListener(mMenuItemClickListener);
@@ -84,13 +92,13 @@ public class CollectFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, CollectBean.ListBean item) {
                 Glide.with(mActivity).load(item.getCoverPicture())
-                        .asBitmap().placeholder(R.mipmap.group15).into((ImageView) helper.getView(R.id.iv_img));
+                        .asBitmap().placeholder(R.mipmap.icon_placeholder).into((ImageView) helper.getView(R.id.iv_img));
                 helper.setText(R.id.tv_title, item.getArticleName())
                         .setText(R.id.tv_content, item.getSummary())
                         .setText(R.id.tv_readCount, "Timetofit\t\t\t" + "w\t次阅读");
             }
         };
-         emptyView = View.inflate(mContext, R.layout.layout_no_data, null);
+        emptyView = View.inflate(mContext, R.layout.layout_no_data, null);
         emptyView.findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +111,6 @@ public class CollectFragment extends BaseAcFragment {
         smartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshLayout) {
-                pageNum++;
                 initData();
             }
 
@@ -114,10 +121,9 @@ public class CollectFragment extends BaseAcFragment {
             }
         });
 
-        smartRefreshLayout.autoLoadMore();
+        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
-
     }
 
     private void initTopBar() {
@@ -141,7 +147,7 @@ public class CollectFragment extends BaseAcFragment {
             int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
             if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
                 int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                deleteItemById(((CollectBean.ListBean) adapter.getData().get(0)).getGid(), adapterPosition);
+                deleteItemById(adapterPosition);
             }
         }
     };
@@ -155,7 +161,7 @@ public class CollectFragment extends BaseAcFragment {
             if (viewType == EMPTY_VIEW) {
                 return;
             }
-            int width = 52;
+            int width = RxUtils.dp2px(52);
             // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
             // 2. 指定具体的高，比如80;
             // 3. WRAP_CONTENT，自身高度，不推荐;
@@ -176,16 +182,23 @@ public class CollectFragment extends BaseAcFragment {
         @Override
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
+            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position);
+            Bundle bundle = new Bundle();
+            //打开URL
+            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
+            RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
         }
     };
 
 
-    private void deleteItemById(String gid, final int position) {
+    private void deleteItemById(final int position) {
+        String gid = ((CollectBean.ListBean) adapter.getData().get(0)).getGid();
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.removeCollection(gid))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -206,25 +219,26 @@ public class CollectFragment extends BaseAcFragment {
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.collectionList(pageNum, 10))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         CollectBean collectBean = new Gson().fromJson(s, CollectBean.class);
                         List<CollectBean.ListBean> list = collectBean.getList();
+                        RxLogUtils.d("收藏信息：" + list.size());
+                        RxLogUtils.d("页码：" + pageNum);
                         if (pageNum == 1) {
                             adapter.setNewData(list);
                         } else {
                             adapter.addData(list);
                         }
-                        if (smartRefreshLayout.isLoading())
+                        if (smartRefreshLayout.isLoading()) {
+                            pageNum++;
                             smartRefreshLayout.finishLoadMore(true);
+                        }
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(true);
                         smartRefreshLayout.setEnableLoadMore(collectBean.isHasNextPage());
-                        if (adapter.getData().size() == 0) {
-                            adapter.setNewData(null);
-                            adapter.setEmptyView(emptyView);
-                        }
                     }
 
                     @Override
@@ -234,10 +248,6 @@ public class CollectFragment extends BaseAcFragment {
                             smartRefreshLayout.finishLoadMore(false);
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(false);
-                        if (adapter.getData().size() == 0) {
-                            adapter.setNewData(null);
-                            adapter.setEmptyView(emptyView);
-                        }
                     }
                 });
     }

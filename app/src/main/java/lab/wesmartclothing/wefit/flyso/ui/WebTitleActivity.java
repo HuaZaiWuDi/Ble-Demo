@@ -3,40 +3,42 @@ package lab.wesmartclothing.wefit.flyso.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.activity.RxActivityUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 
 public class WebTitleActivity extends BaseWebActivity {
-    RelativeLayout parent;
+    @BindView(R.id.parent)
+    RelativeLayout mParent;
+    @BindView(R.id.QMUIAppBarLayout)
+    QMUITopBar mQMUIAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_title);
-        //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
-        TextView tv_title = findViewById(R.id.tv_title);
-        LinearLayout iv_back = findViewById(R.id.iv_back);
-        iv_back.setOnClickListener(new View.OnClickListener() {
+        ButterKnife.bind(this);
+
+        initWebView(mParent);
+
+        initTopBar();
+    }
+
+    private void initTopBar() {
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                RxActivityUtils.finishActivity();
             }
         });
-
-        parent = findViewById(R.id.parent);
-
-        initWebView(parent);
-
-        String extra = getIntent().getStringExtra(Key.BUNDLE_TITLE);
-        if (extra != null)
-            tv_title.setText(extra);
+        mQMUIAppBarLayout.setTitle(getIntent().getStringExtra(Key.BUNDLE_TITLE));
     }
 
     @Override

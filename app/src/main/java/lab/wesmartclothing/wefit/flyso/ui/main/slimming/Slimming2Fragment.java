@@ -33,6 +33,7 @@ import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -126,7 +127,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     @BindView(R.id.iv_heat)
     ImageView mIvHeat;
     @BindView(R.id.layout_heat)
-    RelativeLayout mLayoutHeat;
+    QMUIRoundLinearLayout mLayoutHeat;
     @BindView(R.id.circleProgressBar)
     QMUIProgressBar mCircleProgressBar;
     @BindView(R.id.tv_heat_title)
@@ -170,13 +171,13 @@ public class Slimming2Fragment extends BaseAcFragment {
     @BindView(R.id.iv_sports)
     ImageView mIvSports;
     @BindView(R.id.layout_sports)
-    RelativeLayout mLayoutSports;
+    LinearLayout mLayoutSports;
     @BindView(R.id.btn_bind_scale)
     QMUIRoundButton mBtnBindScale;
     @BindView(R.id.iv_weight)
     ImageView mIvWeight;
     @BindView(R.id.layout_weight)
-    RelativeLayout mLayoutWeight;
+    LinearLayout mLayoutWeight;
     @BindView(R.id.btn_bind)
     QMUIRoundButton mBtnBind;
     Unbinder unbinder;
@@ -212,8 +213,6 @@ public class Slimming2Fragment extends BaseAcFragment {
     private int[] colors = {R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0,
             R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0};
     public String[] add_food;
-    private TextView tvUserName;
-    private QMUIRadiusImageView ivUserImg, ivNotify;
 
     @Override
     protected View onCreateView() {
@@ -573,6 +572,13 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvDinnerKcal.setText(bean.getDinner() + "");
         mTvMealKcal.setText(bean.getSnacks() + "");
 
+        int heatProgress = (int) (bean.getIntakePercent() * 100);
+        mCircleProgressBar.setProgress(heatProgress == 0 ? 1 : heatProgress);
+
+        mTvHeatTitle.setText(bean.getAbleIntake() >= 0 ? R.string.can_eatHeat : R.string.EatMore);
+        RxLogUtils.d("热量：" + bean.getAbleIntake());
+        mTvKcal.setText(Math.abs(bean.getAbleIntake()) + "");
+
         mTvKcal.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mTvHeatUnit.setTextColor(getResources().getColor(bean.isWarning() ? R.color.orange_FF7200 : R.color.green_61D97F));
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
@@ -595,8 +601,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                 mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
             }
 
-            mTvHeatTitle.setText(bean.getAbleIntake() >= 0 ? R.string.can_eatHeat : R.string.EatMore);
-            mTvKcal.setText(Math.abs(bean.getAbleIntake()) + "");
+
 
             if (!RxDataUtils.isNullString(bean.getSickLevel())) {
                 mIvHealthyLevel.switchLevel(bean.getSickLevel());
@@ -622,8 +627,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
         mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
 
-        int heatProgress = (int) (bean.getIntakePercent() * 100);
-        mCircleProgressBar.setProgress(heatProgress == 0 ? 1 : heatProgress);
+
         int size = bean.getAthleticsInfoList().size();
         if (size != 0) {
             mTvCurrentKcal.setText(RxFormatValue.fromatUp(bean.getAthleticsInfoList().get(size - 1).getCalorie(), 0));

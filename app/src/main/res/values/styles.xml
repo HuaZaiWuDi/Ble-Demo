@@ -13,7 +13,7 @@
 
     <style name="StartTheme" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowBackground">@drawable/img_transition_default</item>
+        <item name="android:windowBackground">@drawable/start_up</item>
 
     </style>
 

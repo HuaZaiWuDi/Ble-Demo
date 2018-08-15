@@ -72,7 +72,6 @@ public class PickerLayoutManager extends LinearLayoutManager {
         if (getItemCount() != 0 && mItemCount !=0) {
 
             View view = recycler.getViewForPosition(0);
-            if (view == null) return;
             measureChildWithMargins(view, widthSpec, heightSpec);
 
             mItemViewWidth = view.getMeasuredWidth();

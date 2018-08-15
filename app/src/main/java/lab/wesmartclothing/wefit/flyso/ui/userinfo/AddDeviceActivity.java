@@ -103,7 +103,7 @@ public class AddDeviceActivity extends BaseActivity {
     RelativeLayout layout_bind;
     @ViewById
     RecyclerView mRecyclerView;
-//    @ViewById
+    //    @ViewById
 //    SmoothRefreshLayout refresh;
     @ViewById
     RelativeLayout layout_notDevice;
@@ -117,9 +117,9 @@ public class AddDeviceActivity extends BaseActivity {
     QNBleTools mQNBleTools;
 
     @Extra
-    boolean BUNDLE_FORCE_BIND;
+    boolean BUNDLE_FORCE_BIND = true;//是否强制绑定
     @Extra
-    String BUNDLE_BIND_TYPE = "all";
+    String BUNDLE_BIND_TYPE = "all";//设置扫描类型，all为全部扫描
 
 
     private int stepState = 0;
@@ -421,10 +421,14 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
+        if (!filterDevice(bean.getMac())) {
+            return;
+        }
         mHandler.removeCallbacks(scanTimeout);
         btn_scan.setEnabled(true);
         img_scan.stopAnimation();
-        initStep(1);
+        if (stepState != 2)
+            initStep(1);
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
@@ -442,15 +446,13 @@ public class AddDeviceActivity extends BaseActivity {
                             initStep(2);
                         }
                         bean.setBind("true".equals(s));
-                        if (filterDevice(bean.getMac()))
-                            adapter.addData(bean);
+                        adapter.addData(bean);
                     }
 
                     @Override
                     protected void _onError(String error) {
                         //网络获取异常不可用
-                        if (filterDevice(bean.getMac()))
-                            adapter.addData(bean);
+                        adapter.addData(bean);
                     }
                 });
     }

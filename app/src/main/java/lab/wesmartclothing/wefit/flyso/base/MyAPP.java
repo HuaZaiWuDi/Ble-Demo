@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -41,6 +42,7 @@ public class MyAPP extends Application {
     public static QNBleApi QNapi;
     private static ACache aCache;
     private static RxCache rxCache;
+    public static Typeface typeface;
 
     //指定全局的上啦刷新，下拉加载的样式
     static {
@@ -52,7 +54,7 @@ public class MyAPP extends Application {
                 return new ClassicsHeader(context);//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
             }
         });
-        
+
 //        //设置全局的Footer构建器
 //        SmartRefreshLayout.setDefaultRefreshFooterCreator(new DefaultRefreshFooterCreator() {
 //            @Override
@@ -78,6 +80,9 @@ public class MyAPP extends Application {
         initShareLogin();
         ScreenAdapter.init(this);
         JPushUtils.init(this);
+
+        typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
+
     }
 
 

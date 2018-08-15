@@ -18,10 +18,8 @@ public class WebActivity extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_software_protocol_activiy);
         parent = findViewById(R.id.parent);
-//        //屏幕沉浸
-//        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.colorTheme)).process();
-
         initWebView(parent);
+        initView();
     }
 
     @Override

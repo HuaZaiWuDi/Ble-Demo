@@ -67,9 +67,6 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
 
 
-//    @POST("slim/getWeightList")
-//    Observable<String> getWeightList(@Body RequestBody body);
-
     @FormUrlEncoded
     @POST("weight/fetchWeightList")
     Observable<String> getWeightList(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
@@ -219,7 +216,6 @@ public interface RetrofitService {
     Observable<String> pushMessageReaded(@Field("gid") String gid);
 
     /*全部更新已读*/
-    @FormUrlEncoded
     @POST("user/readedAll")
     Observable<String> readedAll();
 
@@ -246,11 +242,32 @@ public interface RetrofitService {
     @POST("user/removeCollection")
     Observable<String> removeCollection(@Field("gid") String gid);
 
+    /*删除指定id的通知消息*/
+    @FormUrlEncoded
+    @POST("user/removeAppMessage")
+    Observable<String> removeAppMessage(@Field("gid") String gid);
+
 
     //下载文件
     @Streaming //防止大文件被写进内存
     @GET
     Observable<ResponseBody> downLoadFile(@Url String fileUrl);
+
+    //绑定第三方
+    @FormUrlEncoded
+    @POST("user/bindingOuterInfo")
+    Observable<String> bindingOuterInfo(@Field("imgUrl") String imgUrl, @Field("userName") String userName,
+                                        @Field("outerId") String outerId, @Field("userType") String userType);
+
+    //解绑第三方
+    @FormUrlEncoded
+    @POST("user/unbindingOuterInfo")
+    Observable<String> unbindingOuterInfo( @Field("userType") String userType);
+
+    //查询第三方绑定接口
+    @POST("user/fetchBindingOuterInfo")
+    Observable<String> fetchBindingOuterInfo();
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 数据统计

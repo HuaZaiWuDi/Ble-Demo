@@ -72,6 +72,11 @@ public class AddOrUpdateFoodDialog {
 
     public void setFoodInfo(Context context, boolean showDelete, int foodType, long currentTime, FoodListBean listBean) {
         mContext = context;
+        View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
+        ButterKnife.bind(this, view);
+        dialog = new AlertDialog.Builder(mContext)
+                .setView(view).create();
+
         this.showDelete = showDelete;
         this.listBean = listBean;
         this.foodType = foodType;
@@ -81,13 +86,6 @@ public class AddOrUpdateFoodDialog {
 
 
     private void showAddFoodDialog() {
-        View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
-        ButterKnife.bind(this, view);
-
-        dialog = new AlertDialog.Builder(mContext)
-                .setView(view).create();
-        dialog.show();
-
         loadCricle(listBean.getFoodImg(), mImgFood);
         if (!showDelete)
             mTvDelete.setVisibility(View.INVISIBLE);
@@ -98,7 +96,9 @@ public class AddOrUpdateFoodDialog {
         if (listBean.getFoodCount() != 0)
             mEtFoodG.setText(listBean.getFoodCount() + "");
 
-        mTvHeat.setText(listBean.getCalorie() + "kcal/" + listBean.getUnitCount() + listBean.getUnit());
+        mTvHeat.setText(listBean.getUnitCalorie() + "kcal/" + listBean.getUnitCount() + listBean.getUnit());
+
+        dialog.show();
     }
 
 
@@ -160,16 +160,17 @@ public class AddOrUpdateFoodDialog {
                 dialog.dismiss();
                 break;
             case R.id.ok:
+                dialog.dismiss();
                 String foodCount = mEtFoodG.getText().toString();
                 if (!"0".equals(foodCount) && !RxDataUtils.isNullString(foodCount)) {
-                    listBean.setFoodCount(Integer.parseInt(foodCount));
+                    int count = Integer.parseInt(foodCount);
+                    listBean.setCalorie(listBean.getUnitCalorie() / listBean.getUnitCount() * count);
+                    listBean.setFoodCount(count);
                 } else {
                     RxToast.warning(mContext.getString(R.string.weightNoZero));
                     return;
                 }
-
                 addOrUpdateFoodListener.complete(listBean);
-                dialog.dismiss();
                 break;
         }
     }

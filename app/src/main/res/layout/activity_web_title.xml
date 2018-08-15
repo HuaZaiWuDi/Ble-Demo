@@ -3,10 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/Gray"
+    android:fitsSystemWindows="true"
     tools:context=".ui.WebTitleActivity">
+
 
     <RelativeLayout
         android:id="@+id/parent"
@@ -15,43 +17,17 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_title_bar"
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_50"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="#ffffff">
-
-        <LinearLayout
-            android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="@dimen/dimen_15"
-                android:layout_marginLeft="@dimen/dimen_10"
-                android:layout_marginRight="@dimen/dimen_10"
-                android:src="@mipmap/back"/>
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/dimen_10"
-            android:text=""
-            android:textColor="#212121"
-            android:textSize="@dimen/dimen_18"
-            android:textStyle="bold"/>
-
-    </RelativeLayout>
-
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/Gray"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        tools:visibility="visible"
+        />
 
 </RelativeLayout>

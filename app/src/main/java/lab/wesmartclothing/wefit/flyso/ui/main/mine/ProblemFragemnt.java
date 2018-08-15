@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -13,6 +14,10 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -24,6 +29,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogScaleView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,6 +42,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -44,6 +51,8 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+
+import static lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment.IMAGE_PICKER;
 
 /**
  * Created by jk on 2018/8/10.
@@ -79,7 +88,8 @@ public class ProblemFragemnt extends BaseAcFragment {
     }
 
     private List<String> problemType, problemTimes;
-    private ArrayList<String> imageList = new ArrayList<>();
+
+    private ArrayList<ImageItem> imageLists = new ArrayList<>();
     private QMUIRoundButtonDrawable mBtnTimesDrawable, mBtntypeDrawable, problemDrawable, phoneDrawable;
     private BaseQuickAdapter adapter;
 
@@ -92,8 +102,10 @@ public class ProblemFragemnt extends BaseAcFragment {
     }
 
     private void initView() {
+        initImagePicker();
         initTopBar();
         initRecycler();
+        listener();
         problemType = Arrays.asList(getResources().getStringArray(R.array.problemType));
         problemTimes = Arrays.asList(getResources().getStringArray(R.array.problemTimes));
 
@@ -102,6 +114,9 @@ public class ProblemFragemnt extends BaseAcFragment {
         problemDrawable = (QMUIRoundButtonDrawable) mLayoutProblem.getBackground();
         phoneDrawable = (QMUIRoundButtonDrawable) mLayoutPhone.getBackground();
 
+    }
+
+    private void listener() {
         mEditProble.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -138,16 +153,48 @@ public class ProblemFragemnt extends BaseAcFragment {
         });
     }
 
+    private void initImagePicker() {
+        ImagePicker imagePicker = ImagePicker.getInstance();
+        imagePicker.setImageLoader(new PicassoImageLoader());   //设置图片加载器
+        imagePicker.setShowCamera(false);//显示拍照按钮
+        imagePicker.setMultiMode(true);
+        imagePicker.setCrop(false);        //允许裁剪（单选才有效）
+        imagePicker.setSaveRectangle(true); //是否按矩形区域保存
+        imagePicker.setSelectLimit(4);    //选中数量限制
+        imagePicker.setStyle(CropImageView.Style.RECTANGLE);  //裁剪框的形状
+        imagePicker.setFocusWidth(800);   //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setFocusHeight(800);  //裁剪框的高度。单位像素（圆形自动取宽高最小值）
+        imagePicker.setOutPutX(1000);//保存文件的宽度。单位像素
+        imagePicker.setOutPutY(1000);//保存文件的高度。单位像素
+    }
+
     private void initRecycler() {
         mRecyclerImgs.setLayoutManager(new GridLayoutManager(mContext, 4));
         adapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_choose_img) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                Glide.with(mActivity).load(item).asBitmap()
+                Glide.with(mActivity).load(item instanceof ImageItem ? ((ImageItem) item).path : item).asBitmap()
                         .placeholder(R.mipmap.group15).into((QMUIRadiusImageView) helper.getView(R.id.iv_img));
             }
         };
         mRecyclerImgs.setAdapter(adapter);
+        adapter.addData(R.mipmap.icon_add_white);
+
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Object img = adapter.getData().get(position);
+                if (img instanceof ImageItem) {
+                    ImageItem imageItem = (ImageItem) img;
+                    RxDialogScaleView scaleView = new RxDialogScaleView(mActivity);
+                    scaleView.setImagePath(imageItem.path);
+                    scaleView.show();
+                } else if (img instanceof Integer) {
+                    Intent intent = new Intent(mContext, ImageGridActivity.class);
+                    startActivityForResult(intent, IMAGE_PICKER);
+                }
+            }
+        });
     }
 
     private void initTopBar() {
@@ -171,7 +218,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                 break;
             case R.id.btn_submit:
                 if (checkData()) {
-                    if (imageList.size() > 0) {
+                    if (imageLists.size() > 0) {
                         feedbackImg();
                     } else {
                         commitData("");
@@ -204,17 +251,6 @@ public class ProblemFragemnt extends BaseAcFragment {
     }
 
     public void problemType() {
-//        SinglePicker<String> picker = new SinglePicker(mActivity, problemType);
-//        picker.setOnItemPickListener(new SinglePicker.OnItemPickListener<String>() {
-//            @Override
-//            public void onItemPicked(int index, String item) {
-//                mBtnType.setText(item);
-//                mBtnType.setTextColor(getResources().getColor(R.color.GrayWrite));
-//                mBtntypeDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
-//            }
-//        });
-//        picker.show();
-
         new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
                 .addItem(problemType.get(0))
                 .addItem(problemType.get(1))
@@ -231,23 +267,9 @@ public class ProblemFragemnt extends BaseAcFragment {
                 })
                 .build()
                 .show();
-
-
     }
 
     public void problemTimes() {
-//        SinglePicker<String> picker = new SinglePicker(mActivity, problemTimes);
-//        picker.setOnItemPickListener(new SinglePicker.OnItemPickListener<String>() {
-//            @Override
-//            public void onItemPicked(int index, String item) {
-//                mBtnTimes.setText(item);
-//                mBtnTimes.setTextColor(getResources().getColor(R.color.GrayWrite));
-//                mBtnTimesDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
-//            }
-//        });
-//        picker.show();
-
-
         new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
                 .addItem(problemTimes.get(0))
                 .addItem(problemTimes.get(1))
@@ -264,7 +286,25 @@ public class ProblemFragemnt extends BaseAcFragment {
                 })
                 .build()
                 .show();
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        RxLogUtils.d("requestCode：" + requestCode);
+        RxLogUtils.d("resultCode：" + resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == IMAGE_PICKER) {
+                imageLists = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                ArrayList<Object> images = new ArrayList<>();
+                images.addAll(0, imageLists);
+                images.add(R.mipmap.icon_add_white);
+                if (images.size() == 5) {
+                    images.remove(4);
+                }
+                adapter.setNewData(images);
+            }
+        }
     }
 
     /*提交反馈，文字部分*/
@@ -282,6 +322,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.feedback(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -300,14 +341,15 @@ public class ProblemFragemnt extends BaseAcFragment {
     /*上传图片*/
     public void feedbackImg() {
         List<File> files = new ArrayList<>();
-        for (int i = 0; i < imageList.size(); i++) {
-            File file = new File(imageList.get(i));
+        for (int i = 0; i < imageLists.size(); i++) {
+            File file = new File(imageLists.get(i).path);
             files.add(file);
         }
 
         List<MultipartBody.Part> body = filesToMultipartBodyParts(files);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.feedbackImg(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

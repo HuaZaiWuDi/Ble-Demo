@@ -94,7 +94,7 @@ public class EditFragment extends BaseAcFragment {
             bundle.putString(Key.BUNDLE_DATA, name);
             Intent intent = new Intent();
             intent.putExtras(bundle);
-            setFragmentResult(UserInfofragment.REQUEST_CODE, intent);
+            setFragmentResult(UserInfofragment.RESULT_CODE, intent);
             popBackStack();
         } else {
             if (RxDataUtils.isNullString(name.trim())) {
@@ -105,7 +105,7 @@ public class EditFragment extends BaseAcFragment {
             bundle.putString(Key.BUNDLE_DATA, name);
             Intent intent = new Intent();
             intent.putExtras(bundle);
-            setFragmentResult(UserInfofragment.REQUEST_CODE, intent);
+            setFragmentResult(UserInfofragment.RESULT_CODE, intent);
             popBackStack();
         }
 

@@ -232,7 +232,7 @@ public class MessageBean {
 
         private String content;
         private long createTime;
-        private int createUser;
+        private String createUser;
         private String gid;
         private String msgId;
         private int msgType;
@@ -242,7 +242,7 @@ public class MessageBean {
         private int status;
         private String title;
         private long updateTime;
-        private int updateUser;
+        private String updateUser;
         private String userId;
 
         public String getContent() {
@@ -261,11 +261,11 @@ public class MessageBean {
             this.createTime = createTime;
         }
 
-        public int getCreateUser() {
+        public String getCreateUser() {
             return createUser;
         }
 
-        public void setCreateUser(int createUser) {
+        public void setCreateUser(String createUser) {
             this.createUser = createUser;
         }
 
@@ -341,11 +341,11 @@ public class MessageBean {
             this.updateTime = updateTime;
         }
 
-        public int getUpdateUser() {
+        public String getUpdateUser() {
             return updateUser;
         }
 
-        public void setUpdateUser(int updateUser) {
+        public void setUpdateUser(String updateUser) {
             this.updateUser = updateUser;
         }
 

@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
 def AAVersion = '4.4.0'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     signingConfigs {
         debug {
@@ -63,6 +67,29 @@ android {
             }
         }
 
+        //修改apk名字
+        applicationVariants.all { variant ->
+            if (variant.buildType.name == "release") {
+                variant.outputs.all { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // apk_渠道名-版本号-版本名称-编译时间.apk
+                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-release.apk"
+
+                        outputFileName = fileName
+                    }
+                }
+            } else if (variant.buildType.name == "debug") {
+                variant.outputs.all { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // apk_渠道名-版本号-版本名称-编译时间.apk
+                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-debug.apk"
+                        outputFileName = fileName
+                    }
+                }
+            }
+        }
 
     }
     buildTypes {

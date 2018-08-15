@@ -34,6 +34,7 @@ import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -131,13 +132,15 @@ public class DeviceFragment extends BaseAcFragment {
                 RetrofitService.class
         );
         RxManager.getInstance().doNetSubscribe(dxyService.deviceList())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
 
                         DeviceListbean deviceListbean = new Gson().fromJson(s, DeviceListbean.class);
-                        notifyData(deviceListbean);
+                        beanList = deviceListbean.getList();
+                        notifyData();
                     }
 
                     @Override
@@ -147,10 +150,12 @@ public class DeviceFragment extends BaseAcFragment {
                 });
     }
 
-    private void notifyData(DeviceListbean deviceListbean) {
-        beanList = deviceListbean.getList();
-        if (beanList.size() > 0) mTvNoDeviceTip.setVisibility(View.GONE);
-        if (beanList.size() > 1) mBtnBind.setVisibility(View.GONE);
+    private void notifyData() {
+        mTvNoDeviceTip.setVisibility(beanList.size() > 0 ? View.GONE : View.VISIBLE);
+        mBtnBind.setVisibility(beanList.size() == 2 ? View.GONE : View.VISIBLE);
+        mLayoutScale.setVisibility(View.GONE);
+        mLayoutClothing.setVisibility(View.GONE);
+
         for (int i = 0; i < beanList.size(); i++) {
             DeviceListbean.ListBean device = beanList.get(i);
             if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
@@ -184,6 +189,8 @@ public class DeviceFragment extends BaseAcFragment {
     private void deleteDeviceById(final int position) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeBind(beanList.get(position).getGid()))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -197,6 +204,7 @@ public class DeviceFragment extends BaseAcFragment {
                             SPUtils.remove(SPKey.SP_clothingMAC);
                             BleTools.getInstance().disConnect();
                         }
+                        initData();
                     }
 
                     @Override

@@ -336,8 +336,9 @@ public class BleTools {
         Log.d("bleManager", "开始扫描");
         BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
         ScanSettings scanSettings = new ScanSettings.Builder()
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)//仅回调第一个
+                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//仅回调第一个
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
+                .setReportDelay(1000)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
         List<ScanFilter> filters = new ArrayList<>();
@@ -369,17 +370,16 @@ public class BleTools {
                 }
             }
         }, timeOut);
-
     }
-
 
     public void stopScanByM() {
         Log.d("bleManager", "结束扫描");
         if (isScanning) {
             final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
-            if (scanCallback != null)
+            if (scanCallback != null && scanner != null) {
                 scanner.stopScan(scanCallback);
-            isScanning = false;
+                isScanning = false;
+            }
         }
     }
 
@@ -396,7 +396,13 @@ public class BleTools {
 
     public boolean isConnect() {
         if (bleManager == null || bleDevice == null) return false;
+
         return bleManager.isConnected(bleDevice);
+    }
+
+    public boolean connectedState() {
+        if (bleManager == null || bleDevice == null) return false;
+        return bleManager.getConnectState(bleDevice) == 1 || bleManager.getConnectState(bleDevice) == 2;
     }
 
     public void disConnect() {

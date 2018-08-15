@@ -143,7 +143,7 @@ public class AddedFoodFragment extends BaseAcFragment {
                         .append("kacl/")
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
-                        .append(RxFormat.setFormatNum(item.getUnitCount(), "0.0") + item.getUnit())
+                        .append(RxFormat.setFormatNum(item.getFoodCount(), "0.0") + item.getUnit())
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.GrayWrite))
                         .into(foodKcal);
@@ -205,7 +205,7 @@ public class AddedFoodFragment extends BaseAcFragment {
                 popBackStack();
             }
         });
-        mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)]);
+        mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)].substring(2, 4));
         mQMUIAppBarLayout.addRightImageButton(R.mipmap.icon_search, R.id.id_search)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -230,6 +230,7 @@ public class AddedFoodFragment extends BaseAcFragment {
         intakeList.setRemark(foodListBean.getRemark());
         intakeList.setCalorie(foodListBean.getCalorie());
         intakeList.setHeatDate(currentTime);
+        intakeList.setUnitCalorie(foodListBean.getUnitCalorie());
 
         AddFoodItem foodItem = new AddFoodItem();
         foodItem.setAddDate(currentTime);

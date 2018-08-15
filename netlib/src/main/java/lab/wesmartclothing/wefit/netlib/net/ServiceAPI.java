@@ -37,7 +37,7 @@ public class ServiceAPI {
     //服务协议
     public static String Term_Service = "file:///android_asset/TermService.html";
 
-
+    //收藏地址
     public static String Detail = "http://39.108.152.50:8088/find/detail.html?gid=";
 
 

@@ -52,6 +52,10 @@ public class FoodInfoItem {
     private List<FoodListBean> list;
     private List<Integer> navigatepageNums;
 
+
+
+
+
     public int getPageNum() {
         return pageNum;
     }

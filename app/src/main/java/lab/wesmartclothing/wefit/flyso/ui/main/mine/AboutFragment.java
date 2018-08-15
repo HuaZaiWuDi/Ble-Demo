@@ -19,6 +19,7 @@ import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.vondear.rxtools.aboutByte.ByteUtil;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -32,6 +33,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -88,6 +90,8 @@ public class AboutFragment extends BaseAcFragment {
                 .setForegroundColor(getResources().getColor(R.color.red))
                 .setUnderline()
                 .into(mTvTip);
+        mTvAppVersion.setText("软件版本号 v" + RxDeviceUtils.getAppVersionName());
+        mTvClothingVersion.setText("固件版本号 v--");
     }
 
     private void initTopBar() {
@@ -126,6 +130,7 @@ public class AboutFragment extends BaseAcFragment {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getUpgradeInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
