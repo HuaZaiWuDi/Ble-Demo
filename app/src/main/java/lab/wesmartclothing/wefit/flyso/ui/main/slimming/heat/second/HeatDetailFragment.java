@@ -24,7 +24,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -232,10 +231,10 @@ public class HeatDetailFragment extends BaseAcFragment {
         for (int i = (listBreakfast.size() > 4 ? 4 : listBreakfast.size()) - 1; i >= 0; i--) {
             imgs.add(listBreakfast.get(i).getFoodImg());
         }
-        if (listBreakfast.size() > 4) {
-            imgs.set(0, R.mipmap.icon_ellipsis);
-        }
-        RxLogUtils.d("添加食物图片：" + Arrays.asList(imgs));
+//        if (listBreakfast.size() > 4) {
+//            imgs.set(0, R.mipmap.icon_ellipsis);
+//        }
+//        RxLogUtils.d("添加食物图片：" + Arrays.asList(imgs));
         return imgs;
     }
 

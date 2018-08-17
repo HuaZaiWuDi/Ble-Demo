@@ -51,6 +51,7 @@ public class TipDialog {
                 .setTipWord(mContext.getString(R.string.tv_loading))
                 .create();
         setDuration(defaultTimeout);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
@@ -61,6 +62,7 @@ public class TipDialog {
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
@@ -71,6 +73,7 @@ public class TipDialog {
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
@@ -81,6 +84,7 @@ public class TipDialog {
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(timeOut);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
@@ -90,6 +94,7 @@ public class TipDialog {
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 

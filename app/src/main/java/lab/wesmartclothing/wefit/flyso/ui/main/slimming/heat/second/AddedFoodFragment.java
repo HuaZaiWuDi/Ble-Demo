@@ -106,9 +106,8 @@ public class AddedFoodFragment extends BaseAcFragment {
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
             String heatData = bundle.getString(Key.ADD_FOOD_INFO);
             FetchHeatInfoBean bean = new Gson().fromJson(heatData, FetchHeatInfoBean.class);
-            if (bean == null) {
-                adapter.setNewData(FoodDetailsFragment.addedLists);
-            } else {
+            RxLogUtils.d("加载食材：" + bean);
+            if (bean != null) {
                 List<FoodListBean> list = null;
                 switch (foodType) {
                     case HeatDetailFragment.TYPE_BREAKFAST:
@@ -126,6 +125,14 @@ public class AddedFoodFragment extends BaseAcFragment {
                 }
                 adapter.setNewData(list);
             }
+
+            if (FoodDetailsFragment.addedLists.size() > 0) {
+                if (adapter.getData().isEmpty()) {
+                    adapter.setNewData(FoodDetailsFragment.addedLists);
+                } else
+                    adapter.addData(FoodDetailsFragment.addedLists);
+            }
+
             mTvAddedNoData.setVisibility(adapter.getData().isEmpty() ? View.VISIBLE : View.GONE);
         }
     }

@@ -78,6 +78,7 @@ public class TargetDateFargment extends BaseAcFragment {
     private void initRuler() {
         bundle = getArguments();
         if (bundle != null) {
+            RxLogUtils.d("BUNDLE：" + bundle);
             stillNeed = (float) bundle.getDouble(Key.BUNDLE_STILL_NEED);
         }
 
@@ -137,7 +138,6 @@ public class TargetDateFargment extends BaseAcFragment {
 
 
     private void settingTarget() {
-
         double aDouble = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
         double aDouble1 = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
 

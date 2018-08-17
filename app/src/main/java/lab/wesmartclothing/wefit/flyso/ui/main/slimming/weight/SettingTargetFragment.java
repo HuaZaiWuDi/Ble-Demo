@@ -165,6 +165,7 @@ public class SettingTargetFragment extends BaseAcFragment {
         Bundle mBundle = new Bundle(bundle);
         mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, settingWeight);
         mBundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
+        mBundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
         QMUIFragment instance = TargetDateFargment.getInstance();
         instance.setArguments(mBundle);
         startFragment(instance);

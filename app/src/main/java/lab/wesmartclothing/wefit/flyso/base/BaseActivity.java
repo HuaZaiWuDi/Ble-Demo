@@ -50,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        //华为底部虚拟按键遮挡问题
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 //        //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(Color.WHITE).process();
+        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.white)).process();
 
         mContext = this;
         mActivity = this;

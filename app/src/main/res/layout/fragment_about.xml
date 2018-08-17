@@ -70,8 +70,8 @@
                 android:text="升级"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                app:qmui_backgroundColor="@color/GrayWrite"
-                app:qmui_borderColor="@color/GrayWrite"/>
+                app:qmui_backgroundColor="@color/BrightGray"
+                app:qmui_borderColor="@color/BrightGray"/>
 
 
         </LinearLayout>

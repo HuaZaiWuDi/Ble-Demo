@@ -19,7 +19,6 @@ import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.MiddlewareWebClientBase;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -51,7 +50,7 @@ public class FindFragment extends BaseWebFragment {
     RelativeLayout mParent;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
+    public static FindFragment getInstance() {
         return new FindFragment();
     }
 
@@ -90,6 +89,10 @@ public class FindFragment extends BaseWebFragment {
 
         if (mAgentWeb != null)
             mAgentWeb.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(mAgentWeb, mActivity));
+
+
+        if (mBridgeWebView.canGoBack())
+            mBridgeWebView.goBack();
 
         mBridgeWebView.registerHandler("shareEvent", new BridgeHandler() {
 

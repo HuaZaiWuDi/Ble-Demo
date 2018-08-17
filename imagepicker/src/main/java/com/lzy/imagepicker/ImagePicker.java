@@ -39,8 +39,8 @@ import java.util.Locale;
  * 2017-03-20
  *
  * @author nanchen
- *         采用单例和弱引用解决Intent传值限制导致的异常
- *         ================================================
+ * 采用单例和弱引用解决Intent传值限制导致的异常
+ * ================================================
  */
 public class ImagePicker {
 
@@ -212,6 +212,7 @@ public class ImagePicker {
     }
 
     public ArrayList<ImageItem> getCurrentImageFolderItems() {
+        Log.e("文件夹个数：", mImageFolders.size() + "");
         return mImageFolders.get(mCurrentImageFolderPosition).images;
     }
 
@@ -256,7 +257,8 @@ public class ImagePicker {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePictureIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-            if (Utils.existSDCard()) takeImageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/camera/");
+            if (Utils.existSDCard())
+                takeImageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/camera/");
             else takeImageFile = Environment.getDataDirectory();
             takeImageFile = createFile(takeImageFile, "IMG_", ".jpg");
             if (takeImageFile != null) {

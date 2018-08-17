@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -15,6 +16,7 @@ import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 
@@ -89,12 +91,12 @@ public class CollectWebActivity extends BaseWebActivity {
                         final String desc = object.getString("desc");
                         final String url = object.getString("url");
 
-                        showShareDialog(img, title, desc, url);
+//                        showShareDialog(img, title, desc, url);
+                        showSimpleBottomSheetGrid(img, title, desc, url);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
             }
         });
 
@@ -106,6 +108,40 @@ public class CollectWebActivity extends BaseWebActivity {
                 onBackPressed();
             }
         });
+    }
+
+    private void showSimpleBottomSheetGrid(final String imgUrl, final String title, final String desc, final String url) {
+        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
+        builder.addItem(R.mipmap.icon_more_operation_share_friend, "分享到微信", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_moment, "分享到朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_weibo, "分享到微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "分享到QQ", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.icon_more_operation_share_friend, "分享到QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
+                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView) {
+                        dialog.dismiss();
+                        int tag = (int) itemView.getTag();
+                        switch (tag) {
+                            case 1:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.WX, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 2:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.WX_TIMELINE, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 3:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.WEIBO, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 4:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.QQ, title, desc, url, imgUrl, shareListener);
+                                break;
+                            case 5:
+                                ShareUtil.shareMedia(mActivity, SharePlatform.QZONE, title, desc, url, imgUrl, shareListener);
+                                break;
+
+                        }
+                    }
+                }).build().show();
     }
 
 

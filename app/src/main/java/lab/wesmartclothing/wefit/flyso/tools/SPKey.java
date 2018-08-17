@@ -30,4 +30,7 @@ public interface SPKey {
     String SP_TargetWeight = "SP_TargetWeight";
 
     String SP_UserInfo = "SP_UserInfo";
+
+    String SP_BSER_URL="SP_BSER_URL";
+
 }

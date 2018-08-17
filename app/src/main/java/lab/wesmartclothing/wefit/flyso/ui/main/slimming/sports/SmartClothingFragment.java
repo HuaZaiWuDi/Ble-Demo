@@ -168,6 +168,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvHeatKcal.setTypeface(typeface);
         mTvSportsTime.setTypeface(typeface);
+        mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
         checkStatus();
     }
 
@@ -257,7 +258,7 @@ public class SmartClothingFragment extends BaseAcFragment {
             AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
 //            RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "----getDuration：" + bean.getDuration());
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
-            Unit unit_time = new Unit(bean.getDuration() / 60, RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
+            Unit unit_time = new Unit(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, "");
             unit_time.setLineStyle(SuitLines.DASHED);
             unit_time.setShowPoint(true);
             unit_heat.setShowPoint(true);
@@ -277,7 +278,7 @@ public class SmartClothingFragment extends BaseAcFragment {
                 AthleticsInfo.PageInfoBean.ListBean bean = list.get(valueX);
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
-                mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() / 60, 0));
+                mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
                 currentDate = bean.getAthlDate();
             }
         });

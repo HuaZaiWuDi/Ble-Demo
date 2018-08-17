@@ -143,9 +143,12 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 .subscribe(new Consumer<Permission>() {
                     @Override
                     public void accept(Permission permission) throws Exception {
+                        RxToast.error("请先获取读取SDCard权限:" + permission.toString());
                         isStorage = permission.granted;
                     }
                 });
+
+
         initBundle();
         init();
         initTopBar();
@@ -260,21 +263,23 @@ public class SearchHistoryFragment extends BaseAcFragment {
             @Override
             public void complete(FoodListBean listBean) {
                 int index = dialog.isExist(FoodDetailsFragment.addedLists, listBean);
-                if (index >= 0) {
+                int index2 = adapterAddFoods.getData().indexOf(listBean.getFoodImg());
+                if (index >= 0 && index2 >= 0) {
                     FoodDetailsFragment.addedLists.remove(index);
-                    adapterAddFoods.remove(index);
+                    adapterAddFoods.remove(index2);
                 }
                 FoodDetailsFragment.addedLists.add(listBean);
+                adapterAddFoods.addData(listBean.getFoodImg());
                 mLayoutAddFoods.setVisibility(View.VISIBLE);
                 if (FoodDetailsFragment.addedLists.size() <= 10) {
                     mBtnMark.setVisibility(View.INVISIBLE);
-                    adapterAddFoods.addData(listBean.getFoodImg());
                 } else {
                     mBtnMark.setVisibility(View.VISIBLE);
                     mBtnMark.setText(FoodDetailsFragment.addedLists.size() + "");
-                    adapterAddFoods.remove(1);
                     adapterAddFoods.addData(listBean.getFoodImg());
-                    adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
+                    if (index2 < 0)
+                        adapterAddFoods.remove(0);
+//                    adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
                 }
                 adapterAddFoods.notifyDataSetChanged();
             }
@@ -325,8 +330,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
             }
         });
 
-        if (!isStorage) return;
-
         notifySearchKey();
     }
 
@@ -345,14 +348,16 @@ public class SearchHistoryFragment extends BaseAcFragment {
     }
 
     private void notifySearchKey() {
-        List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
-        List<String> list = new ArrayList<>();
+        if (isStorage) {
+            List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
+            List<String> list = new ArrayList<>();
 
-        for (int i = 0; i < all.size(); i++) {
-            list.add(all.get(i).searchKey);
+            for (int i = 0; i < all.size(); i++) {
+                list.add(all.get(i).searchKey);
+            }
+            mTagFlowLayoutLately.setTags(list);
+            mlayoutSearchKey.setVisibility(list.size() == 0 ? View.GONE : View.VISIBLE);
         }
-        mTagFlowLayoutLately.setTags(list);
-        mlayoutSearchKey.setVisibility(list.size() == 0 ? View.GONE : View.VISIBLE);
     }
 
 

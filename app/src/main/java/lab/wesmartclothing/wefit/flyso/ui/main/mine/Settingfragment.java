@@ -22,6 +22,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -164,9 +165,10 @@ public class Settingfragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-
+                        String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
                         BaseALocationActivity.aMapLocation = null;
                         SPUtils.clear();
+                        SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
                         MyAPP.getACache().clear();
                         MyAPP.getRxCache().clear();
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);

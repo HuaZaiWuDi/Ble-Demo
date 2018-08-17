@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/search_noData"/>
+        android:text="@string/search_noData"
+        android:textColor="@color/GrayWrite"
+        android:textSize="13sp"/>
 
 </RelativeLayout>

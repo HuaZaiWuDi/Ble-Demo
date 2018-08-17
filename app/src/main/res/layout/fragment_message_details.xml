@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/white"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/Gray"
+        tools:visibility="visible"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Gray"
+            android:textSize="18sp"
+            tools:text="少年郎，该锻炼了"/>
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            tools:text="2018-04-05"
+            android:textColor="@color/BrightGray"
+            android:textSize="11sp"/>
+
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"
+            tools:text="球闻名遐迩的迪士尼，全称为The Walt Disney Company，取名自其创始人华特·迪士尼，是总部设在美国伯班克的大型跨国公司，主要业务包括娱乐节目制作，主题公园，玩具，图书，电子游戏和传媒网络。 皮克斯动画工作室（PIXAR Animation Studio）、惊奇漫画公司（Marvel Entertainment Inc）、试金石电影公司（Touchstone Pictures）、米拉麦克斯（Miramax）电影公司、博伟影视公司（Buena Vista Home Entertainment）、好莱坞电影公司（Hollywood Pictures）、ESPN体育，美国广播公司（ABC）都是其旗下的公司（品牌）。迪士尼于2012年11月收购了卢卡斯影业。2017年6月，《2017年BrandZ最具价值全球品牌100强》公布，迪士尼排名第18位。"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

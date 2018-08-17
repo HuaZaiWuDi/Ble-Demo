@@ -20,7 +20,8 @@
     <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+
     <application
         android:name=".base.MyAPP"
         android:allowBackup="true"
@@ -93,6 +94,15 @@
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
+
+
+        <receiver android:name=".utils.jpush.MyJPushMessageReceiver">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
+                <category android:name="lab.wesmartclothing.wefit.flyso"/>
+            </intent-filter>
+        </receiver>
+
 
         <!--DUF服务-->
         <activity

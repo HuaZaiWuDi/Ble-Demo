@@ -9,10 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.lzy.imagepicker.util.BitmapUtil;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
 import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.util.BitmapUtil;
 import com.lzy.imagepicker.view.CropImageView;
 
 import java.io.File;
@@ -99,7 +99,7 @@ public class ImageCropActivity extends ImageBaseActivity implements View.OnClick
         int id = v.getId();
         if (id == R.id.btn_back) {
             setResult(RESULT_CANCELED);
-            finish();
+            onBackPressed();
         } else if (id == R.id.btn_ok) {
             mCropImageView.saveBitmapToFile(imagePicker.getCropCacheFolder(this), mOutputX, mOutputY, mIsSaveRectangle);
         }
@@ -118,7 +118,7 @@ public class ImageCropActivity extends ImageBaseActivity implements View.OnClick
         Intent intent = new Intent();
         intent.putExtra(ImagePicker.EXTRA_RESULT_ITEMS, mImageItems);
         setResult(ImagePicker.RESULT_CODE_ITEMS, intent);   //单选不需要裁剪，返回数据
-        finish();
+        onBackPressed();
     }
 
     @Override

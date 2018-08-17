@@ -9,10 +9,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.vondear.rxtools.utils.RxLogUtils;
 
@@ -90,15 +88,15 @@ public class ExampleUtil {
     }
 
     public static void showToast(final String toast, final Context context) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                Looper.prepare();
-                Toast.makeText(context, toast, Toast.LENGTH_SHORT).show();
-                Looper.loop();
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+//                Toast.makeText(context, toast, Toast.LENGTH_SHORT).show();
+//                Looper.loop();
+//            }
+//        }).start();
     }
 
     public static boolean isConnected(Context context) {

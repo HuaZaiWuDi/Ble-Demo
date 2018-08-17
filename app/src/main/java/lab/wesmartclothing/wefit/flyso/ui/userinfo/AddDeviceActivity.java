@@ -39,7 +39,9 @@ import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -126,6 +128,7 @@ public class AddDeviceActivity extends BaseActivity {
     private BaseQuickAdapter adapter;
     private Handler mHandler = new Handler();
     private List<BindDeviceItem.DeviceListBean> mDeviceLists = new ArrayList<>();
+    private Map<String, BindDeviceBean> scanDevice = new HashMap<>();
 
     @Click
     void back() {
@@ -211,7 +214,7 @@ public class AddDeviceActivity extends BaseActivity {
         }
 
         mDeviceLists.clear();
-
+        scanDevice.clear();
         startService(new Intent(mContext, BleService_.class));
         img_scan.startAnimation();
         btn_scan.setEnabled(false);
@@ -233,7 +236,6 @@ public class AddDeviceActivity extends BaseActivity {
     private void initRxBus() {
         //瘦身衣
         Disposable device = RxBus.getInstance().register(BleDevice.class, new Consumer<BleDevice>() {
-
             @Override
             public void accept(BleDevice device) throws Exception {
                 if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
@@ -244,7 +246,6 @@ public class AddDeviceActivity extends BaseActivity {
         });
         //体脂称
         Disposable QNDevice = RxBus.getInstance().register(QNBleDevice.class, new Consumer<QNBleDevice>() {
-
             @Override
             public void accept(QNBleDevice device) throws Exception {
                 if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
@@ -254,15 +255,6 @@ public class AddDeviceActivity extends BaseActivity {
             }
         });
         RxBus.getInstance().addSubscription(this, QNDevice, device);
-    }
-
-
-    private boolean filterDevice(String mac) {
-        List<BindDeviceBean> data = adapter.getData();
-        for (int i = 0; i < data.size(); i++) {
-            if (mac.equals(data.get(i).getMac())) return false;
-        }
-        return true;
     }
 
 
@@ -316,15 +308,22 @@ public class AddDeviceActivity extends BaseActivity {
                     RxLogUtils.d("点击了绑定");
 
                     final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
+                    if (item.getDeivceType() == 0 && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                        RxToast.normal("已绑定体脂称");
+                        return;
+                    }
+                    if (item.getDeivceType() == 1 && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                        RxToast.normal("已绑定瘦身衣");
+                        return;
+                    }
                     List<BindDeviceBean> data = adapter.getData();
                     for (int i = 0; i < data.size(); i++) {
                         if (data.get(i).getDeivceType() == item.getDeivceType()) {
                             data.get(i).setBind(false);
-                            adapter.setData(i, data.get(i));
                         }
                     }
                     item.setBind(true);
-                    adapter.setData(position, item);
+                    adapter.notifyDataSetChanged();
                     initStep(2);
                 }
             }
@@ -421,9 +420,11 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
-        if (!filterDevice(bean.getMac())) {
+        if (scanDevice.containsKey(bean.getMac())) {
             return;
         }
+        scanDevice.put(bean.getMac(), bean);
+
         mHandler.removeCallbacks(scanTimeout);
         btn_scan.setEnabled(true);
         img_scan.stopAnimation();
@@ -442,7 +443,6 @@ public class AddDeviceActivity extends BaseActivity {
                             } else {
                                 SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
                             }
-
                             initStep(2);
                         }
                         bean.setBind("true".equals(s));

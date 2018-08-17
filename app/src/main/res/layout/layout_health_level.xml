@@ -12,77 +12,83 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:layout_marginBottom="4dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right">
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_Healthy_level_f"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/health_level_f"/>
+                android:background="@mipmap/health_level_f"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginBottom="4dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right">
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_Healthy_level_c"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/health_level_c"/>
+                android:background="@mipmap/health_level_c"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginBottom="4dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right">
 
             <ImageView
-                android:visibility="gone"
+
                 android:id="@+id/iv_Healthy_level_b"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/health_level_b"/>
+                android:background="@mipmap/health_level_b"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginBottom="4dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right">
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_Healthy_level_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/health_level_a"/>
+                android:background="@mipmap/health_level_a"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginBottom="4dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right">
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_Healthy_level_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/health_level_s"/>
+                android:background="@mipmap/health_level_s"
+                android:visibility="gone"/>
 
         </LinearLayout>
 

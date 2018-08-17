@@ -161,7 +161,8 @@ public class WeightAddFragment extends BaseAcFragment {
                         } else if (Math.abs(realWeight - lastWeight) > 2) {
                             //无效
                             mTvTitle.setText("测量数据和之前相差过大");
-                        }
+                        } else
+                            mTvTitle.setText("测量身体成分成功");
                         mQnScaleData = qnScaleData;
                     }
                 }, 3000);

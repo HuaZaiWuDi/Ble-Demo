@@ -52,6 +52,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/iv_userImg"
+                    android:ellipsize="end"
+                    android:maxLength="16"
                     android:text="我是用户名"
                     android:textColor="@color/white"
                     android:textSize="15sp"/>
@@ -119,7 +121,7 @@
                     android:layout_width="@dimen/dimen_50"
                     android:layout_height="@dimen/dimen_50"
                     android:layout_alignParentRight="true"
-                    android:gravity="top|center_horizontal">
+                    android:gravity="top|right">
 
 
                     <ImageView
@@ -494,7 +496,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom"
                                 android:layout_marginBottom="@dimen/dimen_2"
-                                android:text=" cal"
+                                android:text=" kcal"
                                 android:textColor="@color/green_61D97F"
                                 android:textSize="13sp"/>
 
@@ -862,7 +864,7 @@
                         android:layout_marginBottom="@dimen/dimen_2"
                         android:layout_marginRight="24dp"
                         android:layout_marginTop="24dp"
-                        android:text=" cal"
+                        android:text=" kcal"
                         android:textColor="@color/red"
                         android:textSize="15sp"/>
 

@@ -223,7 +223,7 @@ public class UserInfofragment extends BaseAcFragment {
                 .addItemView(weightItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (info.getTargetWeight() >= 0) {
+                        if (info.getTargetWeight() == 0) {
                             RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
                             return;
                         }
@@ -320,6 +320,8 @@ public class UserInfofragment extends BaseAcFragment {
             @Override
             public void onAddressPicked(Province province, City city, County county) {
                 cityItem.setDetailText(province.getName() + "," + city.getName());
+                info.setProvince(province.getName());
+                info.setCity(city.getName());
             }
         });
         task.execute(RxDataUtils.isNullString(info.getProvince()) ? "" : info.getProvince(),
@@ -413,7 +415,6 @@ public class UserInfofragment extends BaseAcFragment {
     @Override
     protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
         super.onFragmentResult(requestCode, resultCode, data);
-        RxLogUtils.d("返回:requestCode:" + requestCode + "---resultCode" + resultCode + "---Intent:" + data.toString());
         if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
             Bundle bundle = data.getExtras();
             String title = bundle.getString(Key.BUNDLE_TITLE);
@@ -429,6 +430,7 @@ public class UserInfofragment extends BaseAcFragment {
 
     @Override
     protected void popBackStack() {
+        RxLogUtils.d("用户数据：" + info.toString());
         if (info.isChange()) {
             final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
             dialog.setCanceledOnTouchOutside(false);

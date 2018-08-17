@@ -213,7 +213,7 @@ public interface RetrofitService {
      */
     @FormUrlEncoded
     @POST("user/pushMessageReaded")
-    Observable<String> pushMessageReaded(@Field("gid") String gid);
+    Observable<String> pushMessageReaded(@Field("msgId") String gid);
 
     /*全部更新已读*/
     @POST("user/readedAll")
@@ -261,8 +261,8 @@ public interface RetrofitService {
 
     //解绑第三方
     @FormUrlEncoded
-    @POST("user/unbindingOuterInfo")
-    Observable<String> unbindingOuterInfo( @Field("userType") String userType);
+    @POST("user/unbindOuterInfo")
+    Observable<String> unbindingOuterInfo(@Field("userType") String userType);
 
     //查询第三方绑定接口
     @POST("user/fetchBindingOuterInfo")

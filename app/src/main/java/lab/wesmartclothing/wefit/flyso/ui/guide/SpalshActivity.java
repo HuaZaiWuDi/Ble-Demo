@@ -3,29 +3,39 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 import android.Manifest;
 import android.content.Intent;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
+
+import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
@@ -40,6 +50,10 @@ public class SpalshActivity extends BaseActivity {
     private Disposable subscribe;
     private boolean isSaveUserInfo = false;
 
+    @Bean
+    HeartRateBean mHeartRateBean;
+    @Bean
+    HeartRateToKcal mHeartRateToKcal;
 
     @Receiver(actions = Intent.ACTION_PACKAGE_REPLACED)
     void replaced(Intent intent) {
@@ -59,6 +73,9 @@ public class SpalshActivity extends BaseActivity {
     @Override
     @AfterViews
     public void initView() {
+        String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
+        if (!RxDataUtils.isNullString(baseUrl))
+            ServiceAPI.switchURL(baseUrl);
 
 //        RxActivityUtils.skipActivityAndFinish(this, TestBleScanActivity.class);
 
@@ -145,6 +162,7 @@ public class SpalshActivity extends BaseActivity {
         getStoreAddr();
         getOrderUrl();
         getShoppingAddress();
+        uploadHistoryData();
     }
 
     //获取商城地址
@@ -185,6 +203,22 @@ public class SpalshActivity extends BaseActivity {
                     }
                 });
     }
+
+    //判断本地是否有之前保存的心率数据：有则上传
+    @Background
+    public void uploadHistoryData() {
+        String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
+        if (!RxDataUtils.isNullString(value)) {
+            List<HeartRateBean.AthlList> lists = new Gson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
+            }.getType());
+            RxLogUtils.i("保存本地的心率数据：" + lists.size());
+            if (lists != null && lists.size() > 0) {
+                mHeartRateBean.setAthlList(lists);
+                mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+            }
+        }
+    }
+
 
 //
 //    //不退出app，而是隐藏当前的app

@@ -147,17 +147,15 @@ public class WeightRecordFragment extends BaseAcFragment {
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
     }
 
+
     //蓝牙秤状态改变(开始测量)
     @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
     void scaleStartMeasure() {
         if (isVisible()) {
             RxLogUtils.d("显示：WeightRecordFragment");
-
             QMUIFragment instance = WeightAddFragment.getInstance();
             instance.setArguments(bundle);
             startFragment(instance);
-        } else {
-            RxLogUtils.d("隐藏：WeightRecordFragment");
         }
     }
 
@@ -212,6 +210,7 @@ public class WeightRecordFragment extends BaseAcFragment {
 
         initTopBar();
         checkStatus();
+        mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
     }
 
 

@@ -119,30 +119,24 @@ public class MeFragment extends BaseAcFragment {
         //设置
         deivceItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_device), "我的设备", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        deivceItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        deivceItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        setItemView(deivceItem);
         collectionItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_collection), "我的收藏", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        collectionItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        collectionItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        setItemView(collectionItem);
         final QMUICommonListItemView orderItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_order), "我的订单", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        orderItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        orderItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        setItemView(orderItem);
         final QMUICommonListItemView shoppingItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_shopping), "我的购物车", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        shoppingItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        shoppingItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        setItemView(shoppingItem);
 
         //关于我的
         QMUICommonListItemView problemItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_problem), "问题与建议", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        problemItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        problemItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        setItemView(problemItem);
         QMUICommonListItemView aboutUsItem = mGroupListView.createItemView(
                 getResources().getDrawable(R.mipmap.icon_about_us), "关于我们", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        aboutUsItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        aboutUsItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        setItemView(aboutUsItem);
 
         QMUIGroupListView.newSection(getContext())
                 .addItemView(deivceItem, new View.OnClickListener() {
@@ -195,6 +189,13 @@ public class MeFragment extends BaseAcFragment {
                 })
                 .addTo(mGroupListView);
 
+    }
+
+    private void setItemView(QMUICommonListItemView item) {
+        item.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        item.getTextView().setTextSize(15);
+        item.getTextView().getPaint().setFakeBoldText(true);
+        item.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
     }
 
     @OnClick({R.id.iv_userImg, R.id.iv_setting, R.id.iv_notify})

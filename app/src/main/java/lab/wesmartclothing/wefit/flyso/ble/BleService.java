@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.support.v4.app.ActivityCompat;
@@ -17,7 +16,6 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleScanConfig;
@@ -31,8 +29,8 @@ import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
@@ -76,7 +74,6 @@ public class BleService extends Service {
 
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
 
-    private Handler mHandler = new Handler();
 
     private final int heartDeviation = 10;//心率误差值
 
@@ -96,6 +93,19 @@ public class BleService extends Service {
             initBle();
         }
     }
+
+    @Receiver(actions = RxSystemBroadcastUtil.SCREEN_ON)
+    void screenOn() {
+        RxLogUtils.d("亮屏");
+        initBle();
+    }
+
+    @Receiver(actions = RxSystemBroadcastUtil.SCREEN_OFF)
+    void screenOff() {
+        RxLogUtils.d("息屏");
+        BleTools.getInstance().stopScanByM();
+    }
+
 
 //    //DFU升级会断开连接，这个时候不要判断版本数据
 //    @Receiver(actions = BleKey.ACTION_DFU_STARTING)
@@ -122,23 +132,10 @@ public class BleService extends Service {
         super.onCreate();
         initHeartRate();
         connectScaleCallBack();
-        uploadHistoryData();
+        initBle();
     }
 
-    //判断本地是否有之前保存的心率数据：有则上传
-    private void uploadHistoryData() {
-        RxLogUtils.i("保存本地的心率数据：" + MyAPP.getRxCache().containsKey(Key.CACHE_ATHL_RECORD));
-        String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
-        if (!RxDataUtils.isNullString(value)) {
-            RxLogUtils.i("保存本地的心率数据：" + value);
-            List<HeartRateBean.AthlList> lists = new Gson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
-            }.getType());
-            if (lists != null && lists.size() > 0) {
-                mHeartRateBean.setAthlList(lists);
-                mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-            }
-        }
-    }
+
 
 
     @Override
@@ -155,7 +152,7 @@ public class BleService extends Service {
             RxToast.warning(getString(R.string.open_loaction));
         }
 
-        initBle();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -236,14 +233,14 @@ public class BleService extends Service {
             @Override
             public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
                 super.onBatchScanResults(results);
-                RxLogUtils.d("扫描扫描结果：" + results.size());
 
                 for (int i = 0; i < results.size(); i++) {
+//                    RxLogUtils.d("扫描扫描结果：" + results.get(0).toString());
                     com.smartclothing.blelibrary.scanner.ScanResult result = results.get(0);
                     BluetoothDevice device = result.getDevice();
 
                     if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
-                        RxLogUtils.d("扫描到体脂称：" + device.getAddress());
+//                        RxLogUtils.d("扫描到体脂称：" + device.getAddress());
                         QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
                         RxBus.getInstance().post(bleDevice);
                         if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
@@ -251,10 +248,9 @@ public class BleService extends Service {
                             mQNBleTools.connectDevice(bleDevice);
                             mQNBleTools.setDevice(bleDevice);
                         }
-
                     } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
                         BleDevice bleDevice = new BleDevice(device);//转换对象
-                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
+//                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
                         if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
                                 !BleTools.getInstance().connectedState())//判断是否正在连接，或者已经连接则不在连接
                             connectClothing(bleDevice);
@@ -532,9 +528,9 @@ public class BleService extends Service {
                     lastHeartRate = heartRate;
                 }
                 if (lastHeartRate - heartRate > heartDeviation) {
-                    heartRate = heartRate + heartDeviation;
+                    heartRate = lastHeartRate - heartDeviation;
                 } else if (lastHeartRate - heartRate < -heartDeviation) {
-                    heartRate = heartRate - heartDeviation;
+                    heartRate = lastHeartRate + heartDeviation;
                 }
                 lastHeartRate = heartRate;
 

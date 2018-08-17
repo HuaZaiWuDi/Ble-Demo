@@ -37,7 +37,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -186,7 +186,7 @@ public class CollectFragment extends BaseAcFragment {
             Bundle bundle = new Bundle();
             //打开URL
             bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
-            RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
+            RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
         }
     };
 

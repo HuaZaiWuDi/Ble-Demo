@@ -27,7 +27,7 @@ public class CustomAddressPicker extends AddressPicker {
         setDividerConfig(null);
         setTextSize(24);
         setLabel("-", "-", "");
-        setUseWeight(false);
+        setUseWeight(true);
         setTextColor(activity.getResources().getColor(R.color.Gray));
 
     }

@@ -108,7 +108,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
             if (addedFoods.size() > 10) {
                 mBtnMark.setVisibility(View.VISIBLE);
                 mBtnMark.setText(addedLists.size() + "");
-                addedFoods = addedFoods.subList(0, 10);
+                addedFoods = addedFoods.subList(addedFoods.size() - 10, addedFoods.size());
                 addedFoods.set(0, R.mipmap.icon_ellipsis);
             }
             adapterAddFoods.setNewData(addedFoods);
@@ -125,23 +125,25 @@ public class FoodDetailsFragment extends BaseAcFragment {
             @Override
             public void complete(FoodListBean listBean) {
                 int index = dialog.isExist(addedLists, listBean);
+                int index2 = adapterAddFoods.getData().indexOf(listBean.getFoodImg());
                 RxLogUtils.d("添加的下标：" + index);
-                if (index >= 0) {
+                if (index >= 0 && index2 >= 0) {
                     addedLists.remove(index % addedLists.size());
-                    adapterAddFoods.remove(index % adapterAddFoods.getData().size());
+                    adapterAddFoods.remove(index2 % adapterAddFoods.getData().size());
                 }
                 addedLists.add(listBean);
+                adapterAddFoods.addData(listBean.getFoodImg());
                 mLayoutAddFoods.setVisibility(View.VISIBLE);
                 if (addedLists.size() <= 10) {
                     mBtnMark.setVisibility(View.INVISIBLE);
-                    adapterAddFoods.addData(listBean.getFoodImg());
                 } else {
                     mBtnMark.setVisibility(View.VISIBLE);
                     mBtnMark.setText(addedLists.size() + "");
-                    adapterAddFoods.remove(1);
-                    adapterAddFoods.addData(listBean.getFoodImg());
-                    adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
+//                    adapterAddFoods.setData(0, R.mipmap.icon_ellipsis);
+                    if (index2 < 0)
+                        adapterAddFoods.remove(0);
                 }
+
                 adapterAddFoods.notifyDataSetChanged();
             }
         });

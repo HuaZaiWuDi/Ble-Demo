@@ -140,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_10"
                         android:layout_toRightOf="@+id/iv_sports"
-                        android:text="2018年7月8日"
+                        android:text="----年--月--日"
                         android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"/>
@@ -222,7 +222,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/tv_Heat_Kcal"
                             android:layout_toRightOf="@+id/tv_Heat_Kcal"
-                            android:text=" cal"
+                            android:text=" kcal"
                             android:textColor="@color/orange_FF7200"
                             android:textSize="13sp"/>
 

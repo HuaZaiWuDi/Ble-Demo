@@ -18,7 +18,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleKey;
@@ -36,6 +35,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Receiver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -90,6 +91,7 @@ public class SportingFragment extends BaseAcFragment {
 
     private int currentTime = 0;
     private int type = -1;//运动上一次状态
+    private LineDataSet set;
 
     //监听瘦身衣连接情况
     @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
@@ -209,11 +211,22 @@ public class SportingFragment extends BaseAcFragment {
                     currentTime = sportsDataTab.getDuration();
                     timer.startTimer();
                     timer2.startTimer();
-                    for (int heartRate : sportsDataTab.getAthlRecord_2()) {
-                        setHeartRateData(heartRate);
+
+                    List<Entry> heartValues = new ArrayList<>();
+                    for (int i = 0; i < sportsDataTab.getAthlRecord_2().size(); i++) {
+                        heartValues.add(new Entry(i, sportsDataTab.getAthlRecord_2().get(i)));
                     }
+                    set.setValues(heartValues);
+                    mMLineChart.getData().notifyDataChanged();
+                    mMLineChart.notifyDataSetChanged();
+                    mMLineChart.setVisibleXRangeMaximum(15);
+                    mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
                 } else {
-                    setHeartRateData(sportsDataTab.getCurHeart());
+                    mMLineChart.getData().addEntry(new Entry(mMLineChart.getData().getDataSetByIndex(0).getEntryCount(), sportsDataTab.getCurHeart()), 0);
+                    mMLineChart.getData().notifyDataChanged();
+                    mMLineChart.notifyDataSetChanged();
+                    mMLineChart.setVisibleXRangeMaximum(15);
+                    mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
                 }
 
                 heartRate(sportsDataTab.getCurHeart());
@@ -252,13 +265,9 @@ public class SportingFragment extends BaseAcFragment {
         x.setSpaceMin(14f);
         lineChartBase.setData(new LineData());
         addLimitLine2Y(lineChartBase, new float[]{120f, 140f, 160f, 180f}, new String[]{"", "", "", ""});
-        lineChartBase.invalidate();
 
-    }
-
-    private void setHeartRateData(int heartRate) {
         LineData data = mMLineChart.getData();
-        ILineDataSet set = data.getDataSetByIndex(0);
+        set = (LineDataSet) data.getDataSetByIndex(0);
         // set.addEntry(...); // can be called as well
 
         if (set == null) {
@@ -266,11 +275,7 @@ public class SportingFragment extends BaseAcFragment {
             data.addDataSet(set);
         }
 
-        data.addEntry(new Entry(data.getDataSetByIndex(0).getEntryCount(), heartRate), 0);
-        data.notifyDataChanged();
-        mMLineChart.notifyDataSetChanged();
-        mMLineChart.setVisibleXRangeMaximum(15);
-        mMLineChart.moveViewTo(data.getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
+        lineChartBase.invalidate();
     }
 
 

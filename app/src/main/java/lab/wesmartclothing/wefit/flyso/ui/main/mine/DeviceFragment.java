@@ -177,7 +177,7 @@ public class DeviceFragment extends BaseAcFragment {
                 int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
                 RxLogUtils.d("电压：" + voltage);
                 VoltageToPower toPower = new VoltageToPower();
-                int capacity = toPower.getBatteryCapacity(voltage);
+                int capacity = toPower.getBatteryCapacity(voltage / 1000);
                 double time = toPower.canUsedTime(voltage, false);
                 RxLogUtils.d("capacity:" + capacity + "time：" + time);
                 mTvClothingUseTime.setText(capacity + "");
@@ -188,7 +188,7 @@ public class DeviceFragment extends BaseAcFragment {
 
     private void deleteDeviceById(final int position) {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeBind(beanList.get(position).getGid()))
+        RxManager.getInstance().doNetSubscribe(dxyService.removeBind(beanList.get(position % beanList.size()).getGid()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {

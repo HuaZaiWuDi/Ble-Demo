@@ -44,8 +44,8 @@ import java.util.List;
  * 2017-03-17
  *
  * @author nanchen
- *         新增可直接传递是否裁剪参数，以及直接拍照
- *         ================================================
+ * 新增可直接传递是否裁剪参数，以及直接拍照
+ * ================================================
  */
 public class ImageGridActivity extends ImageBaseActivity implements ImageDataSource.OnImagesLoadedListener, OnImageItemClickListener, ImagePicker.OnImageSelectedListener, View.OnClickListener {
 
@@ -87,9 +87,10 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_grid);
 
+
         imagePicker = ImagePicker.getInstance();
-        imagePicker.clear();
         imagePicker.addOnImageSelectedListener(this);
+        imagePicker.clear();
 
         Intent data = getIntent();
         // 新增可直接拍照
@@ -129,9 +130,15 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         mImageFolderAdapter = new ImageFolderAdapter(this, null);
         mRecyclerAdapter = new ImageRecyclerAdapter(this, null);
 
+        mRecyclerAdapter.setOnImageItemClickListener(this);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, Utils.dp2px(this, 2), false));
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+
+
         onImageSelected(0, null, false);
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 new ImageDataSource(this, null, this);
             } else {
@@ -160,8 +167,10 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
         }
     }
 
+
     @Override
     protected void onDestroy() {
+        Log.i("ImageGridActivity", "onDestroy");
         imagePicker.removeOnImageSelectedListener(this);
         super.onDestroy();
     }
@@ -175,7 +184,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
             setResult(ImagePicker.RESULT_CODE_ITEMS, intent);  //多选不允许裁剪裁剪，返回数据
             finish();
         } else if (id == R.id.ll_dir) {
-            if (mImageFolders == null) {
+            if (mImageFolders == null || mImageFolders.size() == 0) {
                 Log.i("ImageGridActivity", "您的手机没有图片");
                 return;
             }
@@ -228,22 +237,15 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
 
     @Override
     public void onImagesLoaded(List<ImageFolder> imageFolders) {
-        this.mImageFolders = imageFolders;
-        imagePicker.setImageFolders(imageFolders);
-        if (imageFolders.size() == 0) {
-//            mImageGridAdapter.refreshData(null);
-            mRecyclerAdapter.refreshData(null);
-        } else {
-//            mImageGridAdapter.refreshData(imageFolders.get(0).images);
+
+        if (imageFolders.size() > 0) {
+            this.mImageFolders = imageFolders;
+            imagePicker.setImageFolders(imageFolders);
             mRecyclerAdapter.refreshData(imageFolders.get(0).images);
+            mImageFolderAdapter.refreshData(imageFolders);
         }
-//        mImageGridAdapter.setOnImageItemClickListener(this);
-        mRecyclerAdapter.setOnImageItemClickListener(this);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, Utils.dp2px(this, 2), false));
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-        mImageFolderAdapter.refreshData(imageFolders);
     }
+
 
     @Override
     public void onImageItemClick(View view, ImageItem imageItem, int position) {
@@ -325,6 +327,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                     //说明是从裁剪页面过来的数据，直接返回就可以
                     setResult(ImagePicker.RESULT_CODE_ITEMS, data);
                 }
+                Log.e("ImageGridActivity", "directPhoto:" + resultCode);
                 finish();
             }
         } else {
@@ -364,9 +367,11 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
                     Intent intent = new Intent();
                     intent.putExtra(ImagePicker.EXTRA_RESULT_ITEMS, imagePicker.getSelectedImages());
                     setResult(ImagePicker.RESULT_CODE_ITEMS, intent);   //单选不需要裁剪，返回数据
+                    Log.e("ImageGridActivity", "directPhoto:" + intent.toString());
                     finish();
                 }
             } else if (directPhoto) {
+                Log.e("ImageGridActivity", "directPhoto:" + directPhoto);
                 finish();
             }
         }

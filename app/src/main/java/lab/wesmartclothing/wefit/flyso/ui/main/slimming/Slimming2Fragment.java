@@ -601,8 +601,6 @@ public class Slimming2Fragment extends BaseAcFragment {
                 mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
             }
 
-
-
             if (!RxDataUtils.isNullString(bean.getSickLevel())) {
                 mIvHealthyLevel.switchLevel(bean.getSickLevel());
             }

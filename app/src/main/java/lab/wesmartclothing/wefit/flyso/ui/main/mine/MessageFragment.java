@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -164,8 +166,15 @@ public class MessageFragment extends BaseAcFragment {
         @Override
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
+            final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
             readed(position);
-
+            QMUIFragment instance = MessageDetailsFragment.getInstance();
+            Bundle bundle = new Bundle();
+            bundle.putString(Key.BUNDLE_TITLE, item.getTitle());
+            bundle.putString(Key.BUNDLE_DATA, item.getContent());
+            bundle.putLong(Key.ADD_FOOD_DATE, item.getPushTime());
+            instance.setArguments(bundle);
+            startFragment(instance);
         }
     };
 
@@ -243,7 +252,7 @@ public class MessageFragment extends BaseAcFragment {
 
                     @Override
                     public void _onError(String e) {
-                        RxToast.showToast(e);
+                        RxToast.normal(e);
                     }
                 });
     }
@@ -268,7 +277,7 @@ public class MessageFragment extends BaseAcFragment {
 
                     @Override
                     public void _onError(String e) {
-                        RxToast.showToast(e);
+                        RxToast.normal(e);
                     }
                 });
     }
@@ -291,7 +300,7 @@ public class MessageFragment extends BaseAcFragment {
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+                        RxToast.normal(error);
                     }
                 });
     }

@@ -57,6 +57,10 @@ public class NetManager {
      * @return
      */
     public <S> S createString(Class<S> service) {
+        Log.d("默认网址", "");
+        Log.d("默认网址", getBaseUrl(service));
+
+        //在请求头添加参数
         Interceptor NetInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -74,7 +78,7 @@ public class NetManager {
             }
         };
 
-        //添加全局请求体
+        //添加全局请求体参数
         Interceptor publicParamInterceptor = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -117,12 +121,14 @@ public class NetManager {
         builder.addInterceptor(NetInterceptor);
 //        builder.addInterceptor(publicParamInterceptor);
 
+
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(builder.build())
                 .baseUrl(getBaseUrl(service))
                 .build();
+
         return retrofit.create(service);
     }
 

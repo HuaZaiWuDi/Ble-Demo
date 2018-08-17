@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="280dp"
-              android:layout_height="180dp"
-              android:background="@drawable/shape_round_white"
-              android:gravity="center"
-              android:orientation="vertical"
+<com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:qmui_backgroundColor="@color/white"
+    app:qmui_borderColor="@color/white"
+    app:qmui_radius="4dp"
     >
 
     <ImageView
@@ -21,12 +23,12 @@
 
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:background="@drawable/logo"
+        android:visibility="gone"
         tools:visibility="gone"/>
 
     <TextView
@@ -52,9 +54,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/shape_round_white"
+        android:layout_height="50dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -86,4 +86,4 @@
             android:textColor="@color/white"
             android:textSize="16dp"/>
     </LinearLayout>
-</LinearLayout>
+</com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout>

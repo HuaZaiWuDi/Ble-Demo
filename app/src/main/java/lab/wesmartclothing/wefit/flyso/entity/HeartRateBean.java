@@ -54,7 +54,7 @@ public class HeartRateBean {
 
 
     public void saveHeartRate(HeartRateBean heartRateBean, HeartRateToKcal mHeartRateToKcal) {
-        List<AthlList> athlList = heartRateBean.getAthlList();
+        final List<AthlList> athlList = heartRateBean.getAthlList();
 
         double kcalTotal = 0;
 
@@ -71,6 +71,8 @@ public class HeartRateBean {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        athlList.clear();
+
                         SPUtils.remove(Key.CACHE_ATHL_RECORD);
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
                     }

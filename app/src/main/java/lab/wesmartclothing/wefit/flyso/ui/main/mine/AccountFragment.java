@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -15,11 +16,14 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -94,7 +98,7 @@ public class AccountFragment extends BaseAcFragment {
         dialog.getTvContent().setText("解绑后将不能作为登录方式，确定解除微信账号绑定么？");
         dialog.setCancel("解除绑定");
         dialog.setSure("取消");
-        dialog.setCancelListener(new View.OnClickListener() {
+        dialog.setSureListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -116,7 +120,7 @@ public class AccountFragment extends BaseAcFragment {
         this.switchBindListener = switchBindListener;
         if (isBind) {
             //解绑
-            dialog.setSureListener(new View.OnClickListener() {
+            dialog.setCancelListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     unbindOther(type);
@@ -258,6 +262,37 @@ public class AccountFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
+                        /**
+                         * {
+                         "outerId": "string",
+                         "userName": "string",
+                         "userType": "string"
+                         }
+                         * */
+                        //类型擦除
+                        List<OtherLoginBean> beans = new Gson().fromJson(s, new TypeToken<List<OtherLoginBean>>() {
+                        }.getType());
+
+                        for (int i = 0; i < beans.size(); i++) {
+                            OtherLoginBean loginBean = beans.get(i);
+                            switch (loginBean.getUserType()) {
+                                case Key.LoginType_WEXIN:
+                                    wechatIsBind = true;
+                                    mTvWechatName.setText(loginBean.getUserName());
+                                    mIvWechatState.setImageResource(R.mipmap.icon_bind);
+                                    break;
+                                case Key.LoginType_QQ:
+                                    QQIsBind = true;
+                                    mTvQQName.setText(loginBean.getUserName());
+                                    mIvQQState.setImageResource(R.mipmap.icon_bind);
+                                    break;
+                                case Key.LoginType_WEIBO:
+                                    weiboIsBind = true;
+                                    mTvWeiboName.setText(loginBean.getUserName());
+                                    mIvWeiboState.setImageResource(R.mipmap.icon_bind);
+                                    break;
+                            }
+                        }
                     }
 
                     @Override

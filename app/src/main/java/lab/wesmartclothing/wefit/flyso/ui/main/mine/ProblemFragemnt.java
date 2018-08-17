@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -29,7 +30,6 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.dialog.RxDialogScaleView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -72,7 +73,7 @@ public class ProblemFragemnt extends BaseAcFragment {
     @BindView(R.id.layout_problem)
     QMUIRoundRelativeLayout mLayoutProblem;
     @BindView(R.id.edit_phone)
-    EditText mEditPhone;
+    EditText mEditPhoneEmail;
     @BindView(R.id.layout_phone)
     QMUIRoundRelativeLayout mLayoutPhone;
     @BindView(R.id.tv_imgs_title)
@@ -135,7 +136,7 @@ public class ProblemFragemnt extends BaseAcFragment {
             }
         });
 
-        mEditPhone.addTextChangedListener(new TextWatcher() {
+        mEditPhoneEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -186,9 +187,14 @@ public class ProblemFragemnt extends BaseAcFragment {
                 Object img = adapter.getData().get(position);
                 if (img instanceof ImageItem) {
                     ImageItem imageItem = (ImageItem) img;
-                    RxDialogScaleView scaleView = new RxDialogScaleView(mActivity);
-                    scaleView.setImagePath(imageItem.path);
-                    scaleView.show();
+//                    RxDialogScaleView scaleView = new RxDialogScaleView(mActivity);
+//                    scaleView.setImagePath(imageItem.path);
+//                    scaleView.show();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList(Key.BUNDLE_DATA, imageLists);
+                    QMUIFragment instance = PhotoDetailsFragment.getInstance();
+                    instance.setArguments(bundle);
+                    startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
                 } else if (img instanceof Integer) {
                     Intent intent = new Intent(mContext, ImageGridActivity.class);
                     startActivityForResult(intent, IMAGE_PICKER);
@@ -243,7 +249,7 @@ public class ProblemFragemnt extends BaseAcFragment {
             problemDrawable.setStroke(1, getResources().getColor(R.color.red));
             return false;
         }
-        if (!RxRegUtils.isMobileExact(mEditPhone.getText().toString())) {
+        if (!RxRegUtils.isMobileExact(mEditPhoneEmail.getText().toString()) && !RxRegUtils.isEmail(mEditPhoneEmail.getText().toString())) {
             phoneDrawable.setStroke(1, getResources().getColor(R.color.red));
             return false;
         }
@@ -311,7 +317,7 @@ public class ProblemFragemnt extends BaseAcFragment {
     private void commitData(String imgUrl) {
         JsonObject object = new JsonObject();
         object.addProperty("ariseFreq", problemTimes.indexOf(mBtnTimes.getText().toString()));
-        object.addProperty("contactInfo", mEditPhone.getText().toString());
+        object.addProperty("contactInfo", mEditPhoneEmail.getText().toString());
         object.addProperty("dealStatus", problemType.indexOf(mBtnType.getText().toString()));
         object.addProperty("feedbackDesc", mEditProble.getText().toString());
         object.addProperty("feedbackImg", imgUrl);

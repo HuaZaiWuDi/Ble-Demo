@@ -3,6 +3,8 @@ package com.vondear.rxtools.view.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.FloatRange;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -92,6 +94,7 @@ public class RxDialog extends Dialog {
         window.setAttributes(lp);
     }
 
+
     /**
      * 设置宽度match_parent
      */
@@ -105,6 +108,20 @@ public class RxDialog extends Dialog {
     }
 
     /**
+     * 设置宽度match_parent
+     */
+    public void setFullScreenWidth(@FloatRange(from = 0, to = 1) float f) {
+        Window window = getWindow();
+        WindowManager m = window.getWindowManager();
+        Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
+        window.getDecorView().setPadding(0, 0, 0, 0);
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.width = (int) (d.getWidth() * f);
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        window.setAttributes(lp);
+    }
+
+    /**
      * 设置高度为match_parent
      */
     public void setFullScreenHeight() {
@@ -113,6 +130,21 @@ public class RxDialog extends Dialog {
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.height = WindowManager.LayoutParams.FILL_PARENT;
+        window.setAttributes(lp);
+    }
+
+    /**
+     * 设置高度为match_parent
+     */
+    public void setFullScreenHeight(@FloatRange(from = 0, to = 1) float f) {
+        Window window = getWindow();
+        WindowManager m = window.getWindowManager();
+        Display d = m.getDefaultDisplay(); // 获取屏幕宽、高用
+        window.getDecorView().setPadding(0, 0, 0, 0);
+        WindowManager.LayoutParams lp = window.getAttributes();
+
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = (int) (d.getHeight() * f);
         window.setAttributes(lp);
     }
 

@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -19,13 +20,19 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
+import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
 import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
@@ -43,6 +50,26 @@ public class MainActivity extends BaseALocationActivity {
 //
 
 
+    //检测到运动强制跳转界面
+
+//    //蓝牙秤状态改变(开始测量)
+//    @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
+//    void scaleStartMeasure() {
+//        Bundle bundle = new Bundle();
+//        RxLogUtils.d("显示：WeightRecordFragment");
+//        QMUIFragment instance = WeightAddFragment.getInstance();
+//        instance.setArguments(bundle);
+//        startFragment(instance);
+//    }
+//
+//    //心率
+//    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
+//    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] heartRate) {
+//
+//        startFragment(SportingFragment.getInstance());
+//    }
+
+
     @Override
     protected int getContextViewId() {
         return R.id.main;
@@ -55,6 +82,8 @@ public class MainActivity extends BaseALocationActivity {
         if (savedInstanceState == null) {
             startFragment(MainFragment.getInstance());
         }
+        bleIntent = new Intent(mContext, BleService_.class);
+        startService(bleIntent);
     }
 
     public void initView() {
@@ -76,21 +105,24 @@ public class MainActivity extends BaseALocationActivity {
      * "openTarget":""      //operation：2（ slim-瘦身首页，find-发现首页，shop-商城首页，user-我的首页，message-站内信,url）
      * }
      */
+
     private void initReceiverPush() {
         Bundle bundle = getIntent().getExtras();
         RxLogUtils.d("点击通知：" + bundle);
         if (bundle == null) return;
+
         String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
         JsonParser parser = new JsonParser();
         JsonObject object = (JsonObject) parser.parse(extra);
         RxLogUtils.d("点击通知：" + object.toString());
         String openTarget = object.get("openTarget").getAsString();
         int type = object.get("operation").getAsInt();
+        String msgId = object.get("msgId").getAsString();
         switch (type) {
             case TYPE_OPEN_APP:
                 break;
             case TYPE_OPEN_ACTIVITY:
-                openActivity(openTarget);
+                RxBus.getInstance().post(openTarget);
                 break;
             case TYPE_OPEN_URL:
                 //打开URL
@@ -98,39 +130,15 @@ public class MainActivity extends BaseALocationActivity {
                 RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
                 break;
         }
+        pushMessageReaded(msgId);
     }
 
-    private void openActivity(String openTarget) {
-        switch (openTarget) {
-//            case ACTIVITY_SLIM:
-//                mCommonTabLayout.setCurrentTab(0);
-//                switchFragment(mFragments.get(0));
-//                break;
-//            case ACTIVITY_FIND:
-//                mCommonTabLayout.setCurrentTab(1);
-//                switchFragment(mFragments.get(1));
-//                break;
-//            case ACTIVITY_SHOP:
-//                mCommonTabLayout.setCurrentTab(2);
-//                switchFragment(mFragments.get(2));
-//                break;
-//            case ACTIVITY_USER:
-//                mCommonTabLayout.setCurrentTab(3);
-//                switchFragment(mFragments.get(3));
-//                break;
-//            case ACTIVITY_MESSAGE:
-//                //跳转消息通知
-//                RxActivityUtils.skipActivity(mActivity, MessageActivity.class);
-//                break;
-        }
-    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
         initReceiverPush();
-        bleIntent = new Intent(mContext, BleService_.class);
-        startService(bleIntent);
     }
 
     private void initRxBus() {
@@ -174,43 +182,42 @@ public class MainActivity extends BaseALocationActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode != KeyEvent.KEYCODE_BACK) return super.onKeyDown(keyCode, event);
-//        FragmentKeyDown mStoreFragment = (StoreFragment) mFragments.get(2);
-//        FragmentKeyDown mFindFragment = (FindFragment) mFragments.get(1);
-//
-//        if (mStoreFragment != null) {
-//            if (mStoreFragment.onFragmentKeyDown(keyCode, event)) {
-//                return true;
-//            } else {
+        FragmentKeyDown mStoreFragment = StoreFragment.getInstance();
+        FragmentKeyDown mFindFragment = FindFragment.getInstance();
+
+        if (mStoreFragment != null) {
+            RxLogUtils.e("mStoreFragment:" + mStoreFragment);
+            if (mStoreFragment.onFragmentKeyDown(keyCode, event)) {
+                return true;
+            }
+//            else {
 //                if (!RxUtils.isFastClick(2000)) {
 //                    RxLogUtils.d("mStoreFragment:再按一次");
 //                    RxToast.success("再按一次退出");
 //                    return true;
 //                }
 //            }
-//        }
-//        if (mFindFragment != null) {
-//            if (mFindFragment.onFragmentKeyDown(keyCode, event)) {
-//                return true;
-//            } else {
-//                if (!RxUtils.isFastClick(2000)) {
-//                    RxLogUtils.d("mFindFragment:再按一次");
-//                    RxToast.success("再按一次退出");
-//                    return true;
-//                }
-//            }
-//        }
-
+        }
+        if (mFindFragment != null) {
+            RxLogUtils.d("mFindFragment:" + mFindFragment);
+            if (mFindFragment.onFragmentKeyDown(keyCode, event)) {
+                return true;
+            }
+        }
         return super.onKeyDown(keyCode, event);
     }
 
-//    //不退出app，而是隐藏当前的app
-//    @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(false);
-//        super.onBackPressed();
-//    }
-
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
+            moveTaskToBack(true);
+        } else {
+            QMUIFragment fragment = getCurrentFragment();
+            if (fragment != null) {
+                popBackStack();
+            }
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -220,4 +227,15 @@ public class MainActivity extends BaseALocationActivity {
     }
 
 
+    //通知栏推送已读
+    private void pushMessageReaded(String msgId) {
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.pushMessageReaded(msgId))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("结束：" + s);
+                    }
+                });
+    }
 }

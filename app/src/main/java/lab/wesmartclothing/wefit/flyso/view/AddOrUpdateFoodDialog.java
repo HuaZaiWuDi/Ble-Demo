@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialog;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class AddOrUpdateFoodDialog {
     private boolean showDelete;//是否显示删除按钮
     private AddOrUpdateFoodListener addOrUpdateFoodListener;
     private DeleteFoodListener mDeleteFoodListener;
-    private AlertDialog dialog;
+    private RxDialog dialog;
     private FoodListBean listBean;
     private int foodType;
     private long currentTime;
@@ -74,8 +74,10 @@ public class AddOrUpdateFoodDialog {
         mContext = context;
         View view = View.inflate(mContext, R.layout.dialogfragment_add_food, null);
         ButterKnife.bind(this, view);
-        dialog = new AlertDialog.Builder(mContext)
-                .setView(view).create();
+
+        dialog = new RxDialog(mContext);
+        dialog.setContentView(view);
+        dialog.setFullScreenWidth(0.9f);
 
         this.showDelete = showDelete;
         this.listBean = listBean;
@@ -164,7 +166,7 @@ public class AddOrUpdateFoodDialog {
                 String foodCount = mEtFoodG.getText().toString();
                 if (!"0".equals(foodCount) && !RxDataUtils.isNullString(foodCount)) {
                     int count = Integer.parseInt(foodCount);
-                    listBean.setCalorie(listBean.getUnitCalorie() / listBean.getUnitCount() * count);
+                    listBean.setCalorie((int) (listBean.getUnitCalorie() * 1f / listBean.getUnitCount() * count));
                     listBean.setFoodCount(count);
                 } else {
                     RxToast.warning(mContext.getString(R.string.weightNoZero));
@@ -178,7 +180,7 @@ public class AddOrUpdateFoodDialog {
 
     public int isExist(List<FoodListBean> addedLists, FoodListBean needFood) {
         for (int i = 0; i < addedLists.size(); i++) {
-            if (addedLists.get(i).getFoodId().equals(needFood.getFoodId())) {
+            if (needFood.getFoodId().equals(addedLists.get(i).getFoodId())) {
                 return i;
             }
         }
