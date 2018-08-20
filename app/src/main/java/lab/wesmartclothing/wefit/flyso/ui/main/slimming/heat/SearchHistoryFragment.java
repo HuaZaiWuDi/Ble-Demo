@@ -143,7 +143,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 .subscribe(new Consumer<Permission>() {
                     @Override
                     public void accept(Permission permission) throws Exception {
-                        RxToast.error("请先获取读取SDCard权限:" + permission.toString());
+//                        RxToast.error("请先获取读取SDCard权限:" + permission.toString());
                         isStorage = permission.granted;
                     }
                 });

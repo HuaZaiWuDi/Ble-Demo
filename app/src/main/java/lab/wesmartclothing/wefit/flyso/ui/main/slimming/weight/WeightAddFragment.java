@@ -155,15 +155,18 @@ public class WeightAddFragment extends BaseAcFragment {
                         mBtnSave.setVisibility(View.VISIBLE);
                         mMRoundDisPlayView.stopAnimation();
                         //TODO 这里暂时通过返回的数据的个数判断是否有效
+                        mQnScaleData = qnScaleData;
                         if (qnScaleData.getItemValue(3) == 0) {
                             //无效
                             mTvTitle.setText("测量身体成分失败");
                         } else if (Math.abs(realWeight - lastWeight) > 2) {
                             //无效
                             mTvTitle.setText("测量数据和之前相差过大");
-                        } else
+                        } else if (realWeight >= 35) {//身体成分成功直接跳转回去
                             mTvTitle.setText("测量身体成分成功");
-                        mQnScaleData = qnScaleData;
+                            saveWeight();
+                        }
+
                     }
                 }, 3000);
 

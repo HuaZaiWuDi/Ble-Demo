@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.qmuiteam.qmui.widget.QMUIWindowInsetLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context=".ui.userinfo.UserInfoActivity">
 
 
     <com.qmuiteam.qmui.widget.QMUITopBar
         android:id="@+id/mQMUITopBar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/topBarHeight">
+        android:layout_height="@dimen/topBarHeight"
+        app:qmui_topbar_need_separator="false">
 
     </com.qmuiteam.qmui.widget.QMUITopBar>
 
@@ -199,4 +201,4 @@
     </RelativeLayout>
 
 
-</com.qmuiteam.qmui.widget.QMUIWindowInsetLayout>
+</FrameLayout>

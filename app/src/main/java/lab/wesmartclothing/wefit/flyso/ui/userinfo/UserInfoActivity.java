@@ -156,7 +156,7 @@ public class UserInfoActivity extends BaseALocationActivity {
     public void initView() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         mUserInfo = new Gson().fromJson(string, UserInfo.class);
-        if (mUserInfo.getSex() == 0) mUserInfo.setSex(1);
+        if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
         switchView(viewState);
@@ -164,7 +164,6 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     private void initTab() {
         ArrayList<CustomTabEntity> sexTabs = new ArrayList<>();
-
         sexTabs.add(new BottomTabItem(R.mipmap.icon_men_select, R.mipmap.icon_men, ""));
         sexTabs.add(new BottomTabItem(R.mipmap.icon_women_select, R.mipmap.icon_women, ""));
         mCommonTabLayout.setTabData(sexTabs);

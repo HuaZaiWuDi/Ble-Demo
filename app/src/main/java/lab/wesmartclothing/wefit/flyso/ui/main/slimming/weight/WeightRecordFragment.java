@@ -242,7 +242,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         stillNeed = bean.getStillNeed();
         lastWeight = bean.getWeight();
 
-        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
+        bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, lastWeight);
         RxLogUtils.d("是否有目标体重：" + bean.isTargetSet());
         //是否录入体重
         mLayoutTips.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
@@ -428,7 +428,8 @@ public class WeightRecordFragment extends BaseAcFragment {
         });
         mQMUIAppBarLayout.setTitle("体重记录");
         btn_Connect = mQMUIAppBarLayout.addRightTextButton(
-                getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind : mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+                getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
+                        mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
     }

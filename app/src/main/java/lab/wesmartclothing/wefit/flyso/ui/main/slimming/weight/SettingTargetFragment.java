@@ -103,7 +103,7 @@ public class SettingTargetFragment extends BaseAcFragment {
             tipDialog.showInfo("您当前体重小于标准体重，\n请设置目标体重~", 2000);
         }
 
-        String tips = "需减重 " + RxFormatValue.fromat4S5R(stillNeed, 1) + " kg";
+        String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                 .setProportion(1.4f)
@@ -129,12 +129,14 @@ public class SettingTargetFragment extends BaseAcFragment {
                 mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
 
                 stillNeed = initWeight - settingWeight;
-                String tips = (stillNeed < 0 ? "需增重" : "需减重 ") + RxFormatValue.fromat4S5R(stillNeed, 1) + " kg";
+                String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
                 SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                         .setProportion(1.4f)
                         .setLength(4, tips.length() - 3);
                 mTvTips.setText(builder);
+
+                tv_targetDays.setCompoundDrawables(null, null, null, null);
 
                 if (settingWeight > maxWeight) {
                     RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);

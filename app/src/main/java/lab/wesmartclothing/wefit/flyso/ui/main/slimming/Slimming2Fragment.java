@@ -466,7 +466,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             addXLabel(mMLineChart, lineXLists);
         }
         set1.setCircleColors(colors, mActivity);
-        if (bean != null)
+        if (bean != null && bean.getNormWeight() != 0)
             addLimitLine2Y(mMLineChart, (float) bean.getNormWeight(), bean.getNormWeight() + "kg");
         mMLineChart.invalidate();
         mMLineChart.setVisibleXRangeMaximum(7);
@@ -584,43 +584,55 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
         mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
-        if (bean.getWeightInfo() != null) {
-            mTvBody.setText(RxDataUtils.isNullString(bean.getBodyType()) ? "--.--" : bean.getBodyType());
-            mTvDate.setText(RxFormat.setFormatDate(bean.getWeightInfo().getWeightDate(), RxFormat.Date));
-            if (bean.getWeightInfo().getWeight() != 0) {
-                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
-            }
-            if (bean.getWeightInfo().getWeight() != 0) {
-                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
-                mTvCurrentkg.setText(bean.getWeightInfo().getWeight() + "");
-            }
-            if (bean.getWeightInfo().getBmi() != 0) {
-                mTvBMI.setText(bean.getWeightInfo().getBmi() + "");
-            }
-            if (bean.getWeightInfo().getBodyFat() != 0) {
-                mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
-            }
 
-            if (!RxDataUtils.isNullString(bean.getSickLevel())) {
-                mIvHealthyLevel.switchLevel(bean.getSickLevel());
-            }
-            if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
-                mTvRisk.setText(bean.getLevelDesc());
-            }
+        mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
+        mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
+        mTvCurrentkg.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
+        mTvBMI.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getBmi() + "");
+        mTvBodyFat.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getBodyFat() + "");
+        mIvHealthyLevel.switchLevel(bean.getWeightInfo() == null ? "" : bean.getSickLevel());
+        mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
 
-            int targetProgress = (int) (bean.getComplete() * 100);
-            mProWeight.setProgress(targetProgress);
-            mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
+        int targetProgress = (int) (bean.getComplete() * 100);
+        mProWeight.setProgress(targetProgress);
+        mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
 
-            if (bean.getInitialWeight() != 0) {
-                mTvWeightStart.setText(bean.getInitialWeight() + "kg");
-            }
-            if (bean.getTargetWeight() != 0) {
-                mTvWeightEnd.setText(bean.getTargetWeight() + "kg");
-            } else if (bean.getTargetWeight() == 0) {
-                //TODO 提示需要录入目标体重
-            }
+        if (bean.getInitialWeight() != 0) {
+            mTvWeightStart.setText(bean.getInitialWeight() + "kg");
         }
+        if (bean.getTargetWeight() != 0) {
+            mTvWeightEnd.setText(bean.getTargetWeight() + "kg");
+        } else if (bean.getTargetWeight() == 0) {
+            //TODO 提示需要录入目标体重
+        }
+
+
+//        if (bean.getWeightInfo() != null) {
+//            mTvDate.setText(RxFormat.setFormatDate(bean.getWeightInfo().getWeightDate(), RxFormat.Date));
+//
+//
+//            if (bean.getWeightInfo().getWeight() != 0) {
+//                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
+//            }
+//            if (bean.getWeightInfo().getWeight() != 0) {
+//                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
+//                mTvCurrentkg.setText(bean.getWeightInfo().getWeight() + "");
+//            }
+//            if (bean.getWeightInfo().getBmi() != 0) {
+//                mTvBMI.setText(bean.getWeightInfo().getBmi() + "");
+//            }
+//            if (bean.getWeightInfo().getBodyFat() != 0) {
+//                mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
+//            }
+//
+//            if (!RxDataUtils.isNullString(bean.getSickLevel())) {
+//                mIvHealthyLevel.switchLevel(bean.getSickLevel());
+//            }
+//            if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
+//                mTvRisk.setText(bean.getLevelDesc());
+//            }
+//
+//        }
 
         mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
         mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);

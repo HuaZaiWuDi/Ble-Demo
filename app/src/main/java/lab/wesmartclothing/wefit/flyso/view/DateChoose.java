@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -119,9 +118,7 @@ public class DateChoose extends RelativeLayout {
             }
         });
 
-        TextView reToday = view.findViewById(R.id.reToday);
-
-        reToday.setOnClickListener(new OnClickListener() {
+        view.findViewById(R.id.reToday).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 isToday = true;

@@ -39,12 +39,14 @@
 
         <TextView
             android:id="@+id/tv_userName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            android:layout_toLeftOf="@+id/iv_setting"
             android:layout_toRightOf="@+id/iv_userImg"
             android:ellipsize="end"
             android:maxLength="16"
+            android:maxLines="1"
             android:text="我是用户名"
             android:textColor="@color/white"
             android:textSize="15sp"/>
@@ -67,19 +69,19 @@
             android:id="@+id/iv_setting"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:paddingLeft="22dp"
             android:layout_toLeftOf="@+id/iv_notify"
             android:paddingBottom="30dp"
+            android:paddingLeft="22dp"
             android:src="@mipmap/icon_setting"/>
 
 
         <ImageView
-            android:paddingLeft="22dp"
             android:id="@+id/iv_notify"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:paddingBottom="30dp"
+            android:paddingLeft="22dp"
             android:src="@mipmap/icon_email_white"/>
 
 

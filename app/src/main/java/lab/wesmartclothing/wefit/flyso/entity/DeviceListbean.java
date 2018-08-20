@@ -248,6 +248,15 @@ public class DeviceListbean {
         private long bindTime;
         private int onlineDuration;
         private long lastOnlineTime;
+        private boolean isConnect;
+
+        public boolean isConnect() {
+            return isConnect;
+        }
+
+        public void setConnect(boolean connect) {
+            isConnect = connect;
+        }
 
         public String getGid() {
             return gid;

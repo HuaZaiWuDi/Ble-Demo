@@ -43,7 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         lifecycleSubject.onNext(LifeCycleEvent.CREATE);
         super.onCreate(savedInstanceState);
         //设置为横屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 

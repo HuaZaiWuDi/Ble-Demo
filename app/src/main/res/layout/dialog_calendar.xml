@@ -10,23 +10,22 @@
         android:id="@+id/mCalendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:mcv_arrowColor="@color/colorTheme"
+        app:mcv_arrowColor="@color/orange_FF7200"
         app:mcv_calendarMode="month"
-        app:mcv_selectionColor="@color/colorTheme"
+        app:mcv_selectionColor="@color/orange_FF7200"
         app:mcv_titleAnimationOrientation="horizontal"/>
 
 
-    <TextView
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
         android:id="@+id/reToday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/mCalendarView"
+        android:layout_width="145dp"
+        android:layout_height="38dp"
+        android:layout_below="@+id/mCalendarView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/d_30"
-        android:layout_marginTop="@dimen/d_20"
-        android:background="@mipmap/delete_button"
-        android:gravity="center"
+        android:layout_marginBottom="16dp"
         android:text="回到今天"
-        android:textColor="@color/colorTheme"/>
+        android:textColor="@color/orange_FF7200"
+        android:textSize="15sp"
+        app:qmui_borderColor="@color/orange_FF7200"/>
 
 </RelativeLayout>

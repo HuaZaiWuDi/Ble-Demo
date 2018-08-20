@@ -112,6 +112,7 @@
             android:name=".ble.dfu.DfuService"
             android:exported="true"/>
 
+
         <!--android:launchMode="singleTop"-->
         <activity
             android:name=".ui.main.MainActivity"
@@ -121,7 +122,7 @@
         <activity
             android:name=".ui.guide.SpalshActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="portrait"
+            android:screenOrientation="nosensor"
             android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -129,30 +130,31 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.main.slimming.heat.AddFoodActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="portrait">
-        </activity>
 
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="portrait">
+            android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.main.slimming.sports.SportsDetailsActivity_"
-            android:screenOrientation="portrait">
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.login.LoginActivity_">
+        <activity
+            android:name=".ui.userinfo.UserInfoActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.userinfo.UserInfoActivity">
+        <activity
+            android:name=".ui.userinfo.AddDeviceActivity_"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.userinfo.AddDeviceActivity_">
+        <activity
+            android:name=".ui.WebActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.WebActivity">
-        </activity>
-        <activity android:name=".ui.WebTitleActivity">
+        <activity
+            android:name=".ui.WebTitleActivity"
+            android:screenOrientation="nosensor">
         </activity>
 
         <service
@@ -161,26 +163,50 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".ui.login.LoginRegisterActivity"/>
+        <activity
+            android:name=".ui.login.LoginRegisterActivity"
+            android:screenOrientation="nosensor"/>
 
-        <activity android:name=".ui.main.CollectWebActivity">
+        <activity
+            android:name=".ui.main.CollectWebActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.main.slimming.sports.TempActivity_">
+        <activity
+            android:name=".ui.main.slimming.sports.TempActivity_"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".TestBleScanActivity">
+        <activity
+            android:name=".TestBleScanActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.login.RegisterActivity">
+        <activity
+            android:name=".ui.login.RegisterActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.login.BindPhoneActivity">
+        <activity
+            android:name=".ui.login.BindPhoneActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.login.ForgetPasswordActivity">
+        <activity
+            android:name=".ui.login.ForgetPasswordActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.login.VerificationPhoneActivity">
+        <activity
+            android:name=".ui.login.VerificationPhoneActivity"
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".ui.main.slimming.sports.BaseSportingActivity"/>
-        <activity android:name=".ui.main.slimming.heat.second.BaseHeatActivity"/>
-        <activity android:name=".ui.main.slimming.weight.BaseWeightActivity"/>
-        <activity android:name=".ui.main.mine.BaseMeActivity"/>
+        <activity
+            android:name=".ui.main.slimming.sports.BaseSportingActivity"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.BaseHeatActivity"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.BaseWeightActivity"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.BaseMeActivity"
+            android:screenOrientation="nosensor"/>
     </application>
 
 </manifest>

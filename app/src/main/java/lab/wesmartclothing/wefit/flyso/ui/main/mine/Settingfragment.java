@@ -172,6 +172,7 @@ public class Settingfragment extends BaseAcFragment {
                         MyAPP.getACache().clear();
                         MyAPP.getRxCache().clear();
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
+                        mActivity.finish();
                     }
 
                     @Override

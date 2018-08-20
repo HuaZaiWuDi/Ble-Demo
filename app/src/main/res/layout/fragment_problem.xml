@@ -111,7 +111,6 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:hint="请留下您的联系方式（电话或邮箱）"
-                android:inputType="phone|textEmailAddress"
                 android:padding="8dp"
                 android:textColor="@color/Gray"
                 android:textColorHint="@color/BrightGray"

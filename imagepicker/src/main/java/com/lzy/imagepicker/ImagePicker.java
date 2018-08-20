@@ -212,7 +212,6 @@ public class ImagePicker {
     }
 
     public ArrayList<ImageItem> getCurrentImageFolderItems() {
-        Log.e("文件夹个数：", mImageFolders.size() + "");
         return mImageFolders.get(mCurrentImageFolderPosition).images;
     }
 

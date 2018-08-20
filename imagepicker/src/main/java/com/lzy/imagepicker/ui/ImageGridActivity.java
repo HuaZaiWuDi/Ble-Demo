@@ -286,6 +286,7 @@ public class ImageGridActivity extends ImageBaseActivity implements ImageDataSou
     @SuppressLint("StringFormatMatches")
     @Override
     public void onImageSelected(int position, ImageItem item, boolean isAdd) {
+        Log.e("ImageGridActivity", "点击图片：" + position);
         if (imagePicker.getSelectImageCount() > 0) {
             mBtnOk.setText(getString(R.string.ip_select_complete, imagePicker.getSelectImageCount(), imagePicker.getSelectLimit()));
             mBtnOk.setEnabled(true);

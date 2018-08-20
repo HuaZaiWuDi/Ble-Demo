@@ -20,7 +20,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
  * email: naildingmouren@gmail.com
  */
 
-public  class BannerLayoutManager extends LinearLayoutManager {
+public class BannerLayoutManager extends LinearLayoutManager {
     private static final String TAG = "BannerLayoutManager";
     private LinearSnapHelper mLinearSnapHelper;
     private RecyclerView mRecyclerView;
@@ -32,16 +32,18 @@ public  class BannerLayoutManager extends LinearLayoutManager {
     private int mOrientation;
     private float mTimeSmooth = 150f;
 
-    public BannerLayoutManager(Context context, RecyclerView recyclerView , int realCount) {
+    public BannerLayoutManager(Context context, RecyclerView recyclerView, boolean timeDelayed, int realCount) {
         super(context);
         this.mLinearSnapHelper = new LinearSnapHelper();
         this.mRealCount = realCount;
-        this.mHandler = new TaskHandler(this);
+        if (timeDelayed)
+            this.mHandler = new TaskHandler(this);
         this.mRecyclerView = recyclerView;
         setOrientation(HORIZONTAL);
         this.mOrientation = HORIZONTAL;
     }
-    public BannerLayoutManager(Context context, RecyclerView recyclerView , int realCount, int orientation) {
+
+    public BannerLayoutManager(Context context, RecyclerView recyclerView, boolean timeDelayed, int realCount, int orientation) {
         super(context);
         this.mLinearSnapHelper = new LinearSnapHelper();
         this.mRealCount = realCount;
@@ -82,24 +84,26 @@ public  class BannerLayoutManager extends LinearLayoutManager {
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
-        if (state == RecyclerView.SCROLL_STATE_IDLE){//滑动停止
-            if ( mLinearSnapHelper != null) {
+        if (state == RecyclerView.SCROLL_STATE_IDLE) {//滑动停止
+            if (mLinearSnapHelper != null) {
 
                 View view = mLinearSnapHelper.findSnapView(this);
                 mCurrentPosition = getPosition(view);
 
-                if (mOnSelectedViewListener != null)mOnSelectedViewListener.onSelectedView(view,mCurrentPosition % mRealCount);
+                if (mOnSelectedViewListener != null)
+                    mOnSelectedViewListener.onSelectedView(view, mCurrentPosition % mRealCount);
 
-
-                mHandler.setSendMsg(true);
-                Message msg = Message.obtain();
-                mCurrentPosition++;
-                msg.what = mCurrentPosition;
-                mHandler.sendMessageDelayed(msg,mTimeDelayed);
-
+                if (mHandler != null) {
+                    mHandler.setSendMsg(true);
+                    Message msg = Message.obtain();
+                    mCurrentPosition++;
+                    msg.what = mCurrentPosition;
+                    mHandler.sendMessageDelayed(msg, mTimeDelayed);
+                }
             }
-        }else if (state == SCROLL_STATE_DRAGGING){//拖动
-            mHandler.setSendMsg(false);
+        } else if (state == SCROLL_STATE_DRAGGING) {//拖动
+            if (mHandler != null)
+                mHandler.setSendMsg(false);
         }
     }
 
@@ -107,28 +111,29 @@ public  class BannerLayoutManager extends LinearLayoutManager {
         this.mTimeDelayed = timeDelayed;
     }
 
-    public void setTimeSmooth(float timeSmooth){
+    public void setTimeSmooth(float timeSmooth) {
         this.mTimeSmooth = timeSmooth;
     }
+
 
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         super.onLayoutChildren(recycler, state);
-        mHandler.setSendMsg(true);
-        Message msg = Message.obtain();
-        msg.what = mCurrentPosition + 1;
-        mHandler.sendMessageDelayed(msg,mTimeDelayed);
+        if (mHandler != null) {
+            mHandler.setSendMsg(true);
+            Message msg = Message.obtain();
+            msg.what = mCurrentPosition + 1;
+            mHandler.sendMessageDelayed(msg, mTimeDelayed);
+        }
     }
 
     public void setOnSelectedViewListener(OnSelectedViewListener listener) {
         this.mOnSelectedViewListener = listener;
     }
 
-    public RecyclerView getRecyclerView(){
+    public RecyclerView getRecyclerView() {
         return mRecyclerView;
     }
-
-
 
 
     /**
@@ -138,10 +143,11 @@ public  class BannerLayoutManager extends LinearLayoutManager {
         void onSelectedView(View view, int position);
     }
 
-    private static class TaskHandler extends Handler{
+    private static class TaskHandler extends Handler {
         private WeakReference<BannerLayoutManager> mWeakBanner;
         private boolean mSendMsg;
-        public TaskHandler(BannerLayoutManager bannerLayoutManager){
+
+        public TaskHandler(BannerLayoutManager bannerLayoutManager) {
             this.mWeakBanner = new WeakReference<BannerLayoutManager>(bannerLayoutManager);
         }
 
@@ -149,16 +155,16 @@ public  class BannerLayoutManager extends LinearLayoutManager {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            if (msg != null && mSendMsg){
+            if (msg != null && mSendMsg) {
                 int position = msg.what;
                 BannerLayoutManager bannerLayoutManager = mWeakBanner.get();
-                if (bannerLayoutManager != null){
+                if (bannerLayoutManager != null) {
                     bannerLayoutManager.getRecyclerView().smoothScrollToPosition(position);
                 }
             }
         }
 
-        public void setSendMsg(boolean sendMsg){
+        public void setSendMsg(boolean sendMsg) {
             this.mSendMsg = sendMsg;
         }
 

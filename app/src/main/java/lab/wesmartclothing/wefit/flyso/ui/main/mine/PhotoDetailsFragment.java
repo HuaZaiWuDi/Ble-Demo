@@ -1,22 +1,21 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.recyclerview.banner.BannerLayoutManager;
 import com.vondear.rxtools.view.scaleimage.ImageSource;
 import com.vondear.rxtools.view.scaleimage.RxScaleImageView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,16 +30,17 @@ public class PhotoDetailsFragment extends BaseAcFragment {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
-    @BindView(R.id.viewPager)
-    ViewPager mViewPager;
+    @BindView(R.id.banner)
+    RecyclerView banner;
 
 
     public static QMUIFragment getInstance() {
         return new PhotoDetailsFragment();
     }
 
-    private List<RxScaleImageView> mViews = new ArrayList<>();
-
+    private BaseQuickAdapter adapter;
+    private ArrayList<ImageItem> list;
+    private int current = 0;
 
     @Override
     protected View onCreateView() {
@@ -52,63 +52,58 @@ public class PhotoDetailsFragment extends BaseAcFragment {
 
     private void initView() {
         initTopBar();
-
-        Bundle bundle = getArguments();
-        ArrayList<ImageItem> list = bundle.getParcelableArrayList(Key.BUNDLE_DATA);
-
-        for (int i = 0; i < list.size(); i++) {
-            RxScaleImageView view = new RxScaleImageView(mContext);
-            LinearLayout.MarginLayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.MarginLayoutParams.MATCH_PARENT,
-                    LinearLayout.MarginLayoutParams.MATCH_PARENT
-            );
-            view.setLayoutParams(params);
-            view.setImage(ImageSource.uri(list.get(i).path));
-        }
-        mViewPager.setAdapter(imageAdapter);
-
+        initRecycler();
     }
 
+    private void initRecycler() {
+        Bundle bundle = getArguments();
+        list = bundle.getParcelableArrayList(Key.BUNDLE_DATA);
 
-    final PagerAdapter imageAdapter = new PagerAdapter() {
-        @Override
-        public int getCount() {
-            return mViews.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view == object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            RxScaleImageView view = mViews.get(position);
-            container.addView(view);
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(mViews.get(position));
-        }
-
-    };
-
+        mQMUIAppBarLayout.setTitle(1 + "/" + list.size());
+        BannerLayoutManager bannerLayoutManager = new BannerLayoutManager(mContext, banner, false, list.size());
+        banner.setLayoutManager(bannerLayoutManager);
+        adapter = new BaseQuickAdapter<ImageItem, BaseViewHolder>(R.layout.item_photo, list) {
+            @Override
+            protected void convert(BaseViewHolder helper, ImageItem item) {
+                ((RxScaleImageView) helper.getView(R.id.iv_scale)).setImage(ImageSource.uri(item.path));
+            }
+        };
+        banner.setAdapter(adapter);
+        bannerLayoutManager.setOnSelectedViewListener(new BannerLayoutManager.OnSelectedViewListener() {
+            @Override
+            public void onSelectedView(View view, int position) {
+                mQMUIAppBarLayout.setTitle((position + 1) + "/" + list.size());
+                current = position;
+            }
+        });
+    }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent();
+                bundle.putParcelableArrayList(Key.BUNDLE_DATA, list);
+                intent.putExtras(bundle);
+                setFragmentResult(UserInfofragment.RESULT_CODE, intent);
                 popBackStack();
             }
         });
-        mQMUIAppBarLayout.setTitle("1/3");
+
         mQMUIAppBarLayout.addRightImageButton(R.mipmap.icon_delete_write, R.id.tv_delete)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        adapter.remove(current);
+                        if (adapter.getData().size() == 0) {
+                            Bundle bundle = new Bundle();
+                            Intent intent = new Intent();
+                            bundle.putParcelableArrayList(Key.BUNDLE_DATA, list);
+                            intent.putExtras(bundle);
+                            setFragmentResult(UserInfofragment.RESULT_CODE, intent);
+                            popBackStack();
+                        }
                     }
                 });
     }

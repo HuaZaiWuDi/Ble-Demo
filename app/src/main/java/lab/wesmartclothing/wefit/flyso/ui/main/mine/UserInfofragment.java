@@ -260,6 +260,7 @@ public class UserInfofragment extends BaseAcFragment {
         item.getTextView().setTextSize(15);
         item.getTextView().getPaint().setFakeBoldText(true);
         item.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+        item.getDetailTextView().setEllipsize(TextUtils.TruncateAt.END);
     }
 
 

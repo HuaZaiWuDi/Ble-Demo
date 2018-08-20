@@ -151,8 +151,7 @@ public class AboutFragment extends BaseAcFragment {
                             buttonDrawable.setStroke(1, getResources().getColor(R.color.red));
                             mBtnUpdate.setEnabled(true);
                         } else {
-                            RxToast.normal("当前固件版本 v1.0 已经是最新版本，");
-
+                            RxToast.normal("当前固件版本 v" + currentVersion + " 已经是最新版本，");
                         }
                     }
 

@@ -26,7 +26,6 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -313,6 +312,25 @@ public class ProblemFragemnt extends BaseAcFragment {
         }
     }
 
+
+    @Override
+    protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        super.onFragmentResult(requestCode, resultCode, data);
+        if (requestCode == UserInfofragment.REQUEST_CODE && resultCode == UserInfofragment.RESULT_CODE) {
+            if (data != null) {
+                imageLists = data.getParcelableArrayListExtra(Key.BUNDLE_DATA);
+
+                ArrayList<Object> images = new ArrayList<>();
+                images.addAll(0, imageLists);
+                images.add(R.mipmap.icon_add_white);
+                if (images.size() == 5) {
+                    images.remove(4);
+                }
+                adapter.setNewData(images);
+            }
+        }
+    }
+
     /*提交反馈，文字部分*/
     private void commitData(String imgUrl) {
         JsonObject object = new JsonObject();
@@ -334,7 +352,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        RxActivityUtils.finishActivity();
+                        getBaseFragmentActivity().popBackStack();
                     }
 
                     @Override

@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.bluetooth.BluetoothAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -22,6 +23,10 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Receiver;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,6 +37,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -44,6 +50,7 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 /**
  * Created by jk on 2018/8/10.
  */
+@EFragment
 public class DeviceFragment extends BaseAcFragment {
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -76,8 +83,25 @@ public class DeviceFragment extends BaseAcFragment {
     QMUIRoundLinearLayout mBtnBind;
     Unbinder unbinder;
 
+    @Bean
+    QNBleTools mQNBleTools;
+
+    //体脂称连接状态
+    @Receiver(actions = Key.ACTION_SCALE_CONNECT)
+    void scaleIsConnect(@Receiver.Extra(Key.EXTRA_SCALE_CONNECT) boolean state) {
+        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)))
+            mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
+    }
+
+    //监听瘦身衣连接情况
+    @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
+    void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
+        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
+            mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
+    }
+
     public static QMUIFragment getInstance() {
-        return new DeviceFragment();
+        return new DeviceFragment_();
     }
 
     private List<DeviceListbean.ListBean> beanList;
@@ -163,10 +187,11 @@ public class DeviceFragment extends BaseAcFragment {
                 mTvScaleId.setText(device.getMacAddr());
                 int hour = device.getOnlineDuration() / 3600;
                 mTvScaleUseTime.setText((hour <= 0 ? 1 : hour) + "");
-
+                mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
             } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
                 mLayoutClothing.setVisibility(View.VISIBLE);
                 mTvClothingId.setText(device.getMacAddr());
+                mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
             }
         }
 

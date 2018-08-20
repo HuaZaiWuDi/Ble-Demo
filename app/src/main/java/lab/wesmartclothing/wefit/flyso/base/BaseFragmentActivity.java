@@ -32,7 +32,7 @@ public abstract class BaseFragmentActivity extends QMUIFragmentActivity {
         lifecycleSubject.onNext(LifeCycleEvent.CREATE);
 //        //屏幕沉浸
         //设置为竖屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 

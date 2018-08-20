@@ -26,11 +26,12 @@ public interface SPKey {
     //真实体重(最近的一次称重的体重)
     String SP_realWeight = "SP_realWeight";
 
-    //理想体重
-    String SP_TargetWeight = "SP_TargetWeight";
+    //标准体重
+    String SP_standardWeight = "SP_standardWeight";
 
     String SP_UserInfo = "SP_UserInfo";
 
-    String SP_BSER_URL="SP_BSER_URL";
+    String SP_BSER_URL = "SP_BSER_URL";
+
 
 }

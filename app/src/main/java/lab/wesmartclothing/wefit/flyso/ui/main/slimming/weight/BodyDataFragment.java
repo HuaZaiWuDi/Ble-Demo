@@ -18,6 +18,7 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -36,10 +37,12 @@ import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
@@ -128,9 +131,25 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy3.setLabels(new String[]{"标准", "偏高", "严重偏高"});
         mHealthyMaps.put(2, healthy3);
 
+        /**
+         * 肌肉量
+         * 偏低=小于标准体重*67%
+         标准=在标准体重*67%-标准体重*80%之间
+         充足=大于标准体重*80%
+         *
+         * */
+
+        UserInfo userInfo = new Gson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        int standardWeight = 0;
+        if (userInfo.getSex() == 1) {
+            standardWeight = (int) ((userInfo.getHeight() - 80) * 0.7);
+        } else if (userInfo.getSex() == 2)
+            standardWeight = (int) ((userInfo.getHeight() - 70) * 0.6);
+        float value1 = standardWeight * 0.67f;
+        float value2 = standardWeight * 0.80f;
         Healthy healthy4 = new Healthy();
-        healthy4.setSections(new double[]{67, 80});
-        healthy4.setSectionLabels(new String[]{"67.0%", "80.0%"});
+        healthy4.setSections(new double[]{value1, value2});
+        healthy4.setSectionLabels(new String[]{value1 + "kg", value2 + "kg"});
         healthy4.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
@@ -146,7 +165,7 @@ public class BodyDataFragment extends BaseAcFragment {
 
         Healthy healthy6 = new Healthy();
         healthy6.setSections(new double[]{55, 65});
-        healthy6.setSectionLabels(new String[]{"55.0%","65.0%"});
+        healthy6.setSectionLabels(new String[]{"55.0%", "65.0%"});
         healthy6.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy6.setLabels(new String[]{"偏低", "标准", "充足"});
@@ -215,7 +234,7 @@ public class BodyDataFragment extends BaseAcFragment {
 
     private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
         String[] titles = getResources().getStringArray(R.array.weightDatas);
-        String[] units = {"%", "", "级", "%", "kcal", "%", "%", "岁"};
+        String[] units = {"%", "", "级", "kg", "kcal", "%", "%", "岁"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
                 R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
 
