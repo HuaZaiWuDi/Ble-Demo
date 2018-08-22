@@ -1,9 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -53,12 +52,12 @@ public class DeviceLink {
     public void deviceLink(DeviceLink deviceLink) {
         if (deviceLink == null) return;
         deviceLink.setLinkStatus(1);
-        if (BaseALocationActivity.aMapLocation != null) {
-            deviceLink.setCity(BaseALocationActivity.aMapLocation.getCity());
-            deviceLink.setCountry(BaseALocationActivity.aMapLocation.getCountry());
-            deviceLink.setProvince(BaseALocationActivity.aMapLocation.getProvince());
+        if (MyAPP.aMapLocation != null) {
+            deviceLink.setCity(MyAPP.aMapLocation.getCity());
+            deviceLink.setCountry(MyAPP.aMapLocation.getCountry());
+            deviceLink.setProvince(MyAPP.aMapLocation.getProvince());
         }
-        String s = new Gson().toJson(deviceLink, DeviceLink.class);
+        String s = MyAPP.getGson().toJson(deviceLink, DeviceLink.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.deviceLink(body))

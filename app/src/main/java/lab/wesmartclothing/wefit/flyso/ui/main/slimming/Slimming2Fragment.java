@@ -28,7 +28,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.gson.Gson;
+import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -63,11 +63,9 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.BaseHeatActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.BaseSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.BaseWeightActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -256,7 +254,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         getFirstPageData();
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = new Gson().fromJson(string, UserInfo.class);
+        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
         RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
@@ -477,6 +475,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         Bundle bundle = new Bundle();
         bundle.putLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
+        bundle.putBoolean(Key.ADD_FOOD_NAME, true);//是否是主页跳转的
         switch (view.getId()) {
             case R.id.iv_userImg:
                 //跳转个人主页
@@ -491,37 +490,43 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_heat:
                 //跳转热量记录
-                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class);
+                startFragment(HeatDetailFragment.getInstance());
                 break;
             case R.id.layout_breakfast:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);
-                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
+                QMUIFragment breakfast = FoodDetailsFragment.getInstance();
+                breakfast.setArguments(bundle);
+                startFragment(breakfast);
                 break;
             case R.id.layout_lunch:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_LUNCH);
-                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
+                QMUIFragment lunch = FoodDetailsFragment.getInstance();
+                lunch.setArguments(bundle);
+                startFragment(lunch);
                 break;
             case R.id.layout_dinner:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_DINNER);
-                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
+                QMUIFragment dinner = FoodDetailsFragment.getInstance();
+                dinner.setArguments(bundle);
+                startFragment(dinner);
                 break;
             case R.id.layout_meal:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPED_MEAL);
-                RxActivityUtils.skipActivity(mActivity, BaseHeatActivity.class, bundle);
+                QMUIFragment meal = FoodDetailsFragment.getInstance();
+                meal.setArguments(bundle);
+                startFragment(meal);
                 break;
             case R.id.btn_bind_clothing:
                 mBtnBindClothing.setVisibility(View.GONE);
                 break;
             case R.id.layout_sports:
-                bundle.putString(Key.BUNDLE_FRAGMENT, SmartClothingFragment.class.getSimpleName());
-                RxActivityUtils.skipActivity(mActivity, BaseSportingActivity.class);
+                startFragment(SmartClothingFragment.getInstance());
                 break;
             case R.id.btn_bind_scale:
                 mBtnBindScale.setVisibility(View.GONE);
                 break;
             case R.id.layout_weight:
-                bundle.putString(Key.BUNDLE_FRAGMENT, WeightRecordFragment.class.getSimpleName());
-                RxActivityUtils.skipActivity(mActivity, BaseWeightActivity.class);
+                startFragment(WeightRecordFragment.getInstance());
                 break;
             case R.id.btn_bind:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
@@ -551,7 +556,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("加载数据：" + s);
-                        FirstPageBean bean = new Gson().fromJson(s, FirstPageBean.class);
+                        FirstPageBean bean = MyAPP.getGson().fromJson(s, FirstPageBean.class);
                         notifyData(bean);
                     }
 

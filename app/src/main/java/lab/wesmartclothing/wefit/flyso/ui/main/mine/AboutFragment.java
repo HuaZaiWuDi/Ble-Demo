@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -30,6 +29,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
@@ -80,6 +80,12 @@ public class AboutFragment extends BaseAcFragment {
 
         initView();
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        BleAPI.readDeviceInfo(null);
+        super.onDestroyView();
     }
 
     private void initView() {
@@ -136,7 +142,7 @@ public class AboutFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("获取固件版本：" + s);
 
-                        FirmwareVersionUpdate firmwareVersionUpdate = new Gson().fromJson(s, FirmwareVersionUpdate.class);
+                        FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
                             updateURL = firmwareVersionUpdate.getFileUrl();
@@ -186,7 +192,6 @@ public class AboutFragment extends BaseAcFragment {
                         buttonDrawable.setStroke(1, getResources().getColor(R.color.GrayWrite));
                         mBtnUpdate.setEnabled(false);
                     }
-
                     @Override
                     public void fail() {
                         mLayoutUpdateFail.setVisibility(View.VISIBLE);

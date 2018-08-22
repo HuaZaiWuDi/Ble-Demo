@@ -196,6 +196,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                     startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
                 } else if (img instanceof Integer) {
                     Intent intent = new Intent(mContext, ImageGridActivity.class);
+                    intent.putExtra(ImageGridActivity.EXTRAS_IMAGES, imageLists);
                     startActivityForResult(intent, IMAGE_PICKER);
                 }
             }

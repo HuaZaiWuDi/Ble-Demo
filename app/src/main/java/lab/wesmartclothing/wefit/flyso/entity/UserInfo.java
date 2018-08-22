@@ -143,6 +143,7 @@ public class UserInfo implements Serializable {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+        isChange = true;
     }
 
     public String getUserName() {

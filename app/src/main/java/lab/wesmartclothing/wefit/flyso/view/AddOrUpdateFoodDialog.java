@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
@@ -25,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -108,7 +108,7 @@ public class AddOrUpdateFoodDialog {
         AddedHeatInfo heatInfo = new AddedHeatInfo();
         listBean2Added(listBean, heatInfo);
 
-        String s = new Gson().toJson(heatInfo, AddedHeatInfo.class);
+        String s = MyAPP.getGson().toJson(heatInfo, AddedHeatInfo.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getAddedHeatInfo(body))
@@ -117,7 +117,7 @@ public class AddOrUpdateFoodDialog {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        FoodListBean addedHeatInfo = new Gson().fromJson(s, FoodListBean.class);
+                        FoodListBean addedHeatInfo = MyAPP.getGson().fromJson(s, FoodListBean.class);
                         String foodImg = listBean.getFoodImg();
                         listBean = addedHeatInfo;
                         listBean.setFoodImg(foodImg);

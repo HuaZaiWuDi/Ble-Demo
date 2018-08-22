@@ -14,6 +14,7 @@ public class RxVibrateUtils {
 
     /**
      * 简单震动
+     *
      * @param context     调用震动的Context
      * @param millisecond 震动的时间，毫秒
      */
@@ -25,15 +26,14 @@ public class RxVibrateUtils {
 
     /**
      * 复杂的震动
+     *
      * @param context 调用震动的Context
      * @param pattern 震动形式
      *                数组参数意义：
-     *                      第一个参数为等待指定时间后开始震动，
-     *                      震动时间为第二个参数。
-     *                      后边的参数依次为等待震动和震动的时间
+     *                第一个参数为等待指定时间后开始震动，
+     *                震动时间为第二个参数。
+     *                后边的参数依次为等待震动和震动的时间
      * @param repeate 震动的次数，-1不重复，非-1为从pattern的指定下标开始重复 0为一直震动
-     *
-     *
      */
     @SuppressWarnings("static-access")
     public static void vibrateComplicated(Context context, long[] pattern, int repeate) {

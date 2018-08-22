@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
@@ -26,6 +25,8 @@ import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -35,7 +36,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
-import com.zchu.rxcache.CacheTarget;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
@@ -44,7 +44,7 @@ import org.androidannotations.annotations.Receiver;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.schedulers.Schedulers;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
@@ -136,12 +136,15 @@ public class BleService extends Service {
     }
 
 
-
-
     @Override
     public void onDestroy() {
         BleTools.getInstance().disConnect();
         RxBus.getInstance().unSubscribe(this);
+        if (BuildConfig.DEBUG) {
+            RefWatcher refWatcher = LeakCanary.installedRefWatcher();
+// We expect schrodingerCat to be gone soon (or not), let's watch it.
+            refWatcher.watch(this);
+        }
         super.onDestroy();
     }
 
@@ -495,10 +498,8 @@ public class BleService extends Service {
 
                     athlHistoryRecord.add(bean);
                     //添加本地缓存
-                    String athlData = new Gson().toJson(athlHistoryRecord);
-                    MyAPP.getRxCache().save(Key.CACHE_ATHL_RECORD, athlData, CacheTarget.Memory)
-                            .subscribeOn(Schedulers.io())
-                            .subscribe();
+                    String athlData = MyAPP.getGson().toJson(athlHistoryRecord);
+                    SPUtils.put(Key.CACHE_ATHL_RECORD, athlData);
                 }
 
                 BleAPI.syncData(bytes);
@@ -512,6 +513,7 @@ public class BleService extends Service {
     private int minHeart = 0;//最小心率
     private double kcalTotal = 0;//总卡路里
     private int lastHeartRate = 0;//上一次的心率值
+    private int realHeartRate = 0;//真实心率
 
     private void initHeartRate() {
         BleTools.getInstance().setBleCallBack(new BleCallBack() {
@@ -522,7 +524,7 @@ public class BleService extends Service {
                 B.broadUpdate(BleService.this, Key.ACTION_HEART_RATE_CHANGED, Key.EXTRA_HEART_RATE_CHANGED, data);
                 if (data.length < 17) return;
 
-                int heartRate = data[8] & 0xff;
+                int heartRate = realHeartRate = data[8] & 0xff;
 
                 if (lastHeartRate == 0) {
                     lastHeartRate = heartRate;
@@ -544,7 +546,7 @@ public class BleService extends Service {
                 athlHistoryRecord.add(bean);
                 athlRecord_2.add(heartRate);
                 //添加本地缓存
-                String athlData = new Gson().toJson(athlHistoryRecord);
+                String athlData = MyAPP.getGson().toJson(athlHistoryRecord);
                 SPUtils.put(Key.CACHE_ATHL_RECORD, athlData);
 
 
@@ -562,6 +564,7 @@ public class BleService extends Service {
                 mSportsDataTab.setCurHeart(heartRate);
                 mSportsDataTab.setMaxHeart(maxHeart);
                 mSportsDataTab.setMinHeart(minHeart);
+                mSportsDataTab.setRealHeart(realHeartRate);
                 mSportsDataTab.setDuration(athlRecord_2.size() * 2);
                 mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
                 //卡路里累加计算
@@ -592,7 +595,7 @@ public class BleService extends Service {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FirmwareVersionUpdate firmwareVersionUpdate = new Gson().fromJson(s, FirmwareVersionUpdate.class);
+                        FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
                             RxBus.getInstance().post(firmwareVersionUpdate);

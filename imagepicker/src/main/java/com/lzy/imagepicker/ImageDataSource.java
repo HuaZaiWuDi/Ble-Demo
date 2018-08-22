@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 
 import com.lzy.imagepicker.bean.ImageFolder;
 import com.lzy.imagepicker.bean.ImageItem;
@@ -77,10 +76,7 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (imageFolders.size() != 0) {
-            return;
-        }
-        Log.e("文件夹", "imageFolders:" + data);
+        if (imageFolders.size() != 0) return;
         if (data != null) {
             ArrayList<ImageItem> allImages = new ArrayList<>();   //所有图片的集合,不分文件夹
             while (data.moveToNext()) {
@@ -137,11 +133,9 @@ public class ImageDataSource implements LoaderManager.LoaderCallbacks<Cursor> {
             }
         }
 
-        if (imageFolders.size() > 0) {
-            //回调接口，通知图片数据准备完成
-            ImagePicker.getInstance().setImageFolders(imageFolders);
-            loadedListener.onImagesLoaded(imageFolders);
-        }
+        //回调接口，通知图片数据准备完成
+        ImagePicker.getInstance().setImageFolders(imageFolders);
+        loadedListener.onImagesLoaded(imageFolders);
     }
 
     @Override

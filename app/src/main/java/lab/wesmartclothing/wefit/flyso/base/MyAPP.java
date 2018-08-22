@@ -8,12 +8,15 @@ import android.util.Log;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
 import com.activeandroid.app.Application;
+import com.amap.api.location.AMapLocation;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
+import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.model.cache.ACache;
 import com.vondear.rxtools.utils.RxUtils;
@@ -43,6 +46,8 @@ public class MyAPP extends Application {
     private static ACache aCache;
     private static RxCache rxCache;
     public static Typeface typeface;
+    private static Gson sGson;
+    public static AMapLocation aMapLocation = null;//定位信息
 
     //指定全局的上啦刷新，下拉加载的样式
     static {
@@ -80,7 +85,7 @@ public class MyAPP extends Application {
         initShareLogin();
         ScreenAdapter.init(this);
         JPushUtils.init(this);
-
+        initLeakCanary();
         typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
 
     }
@@ -119,6 +124,13 @@ public class MyAPP extends Application {
         return rxCache;
     }
 
+    public static Gson getGson() {
+        if (sGson == null) {
+            sGson = new Gson();
+        }
+        return sGson;
+    }
+
     private void initQN() {
         QNapi = QNBleApi.getInstance(this);
         //加密文件
@@ -140,6 +152,29 @@ public class MyAPP extends Application {
                 .setDatabaseVersion(1);
 
         ActiveAndroid.initialize(builder.create());
+    }
+
+
+    /**
+     * 内存泄露
+     */
+    private void initLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+    }
+
+    /**
+     * oppo (Android4.4.4 , api19) 手机上运行项目,一直闪退 ,
+     * 可能是添加MultiDex分包，但未初始化的原因，在Application中重写attachBaseContext函数，对MultiDex初始化即可。
+     */
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(base);
     }
 
 

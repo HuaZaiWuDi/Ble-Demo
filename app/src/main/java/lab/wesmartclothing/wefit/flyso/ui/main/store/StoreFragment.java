@@ -1,13 +1,16 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.store;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
-import com.just.agentweb.MiddlewareWebClientBase;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxLogUtils;
 
@@ -33,6 +36,11 @@ public class StoreFragment extends BaseWebFragment {
     }
 
 
+    @Override
+    public void initData() {
+
+    }
+
     public void initView() {
         initTopBar();
         initWebView(mParent);
@@ -40,7 +48,6 @@ public class StoreFragment extends BaseWebFragment {
 
 
     private void initTopBar() {
-
         mQMUIAppBarLayout.setTitle("商城");
     }
 
@@ -51,10 +58,10 @@ public class StoreFragment extends BaseWebFragment {
     }
 
 
-    @NonNull
+    @Nullable
     @Override
-    protected MiddlewareWebClientBase getMiddleWareWebClient() {
-        return new MiddlewareWebClientBase() {
+    protected WebViewClient getWebViewClient() {
+        return new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -64,8 +71,6 @@ public class StoreFragment extends BaseWebFragment {
             @Override
             public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
-                RxLogUtils.d("页面显示");
-                tipDialog.dismiss();
                 if (url.equals(getUrl())) {
                     mQMUIAppBarLayout.removeAllLeftViews();
                 } else {
@@ -73,7 +78,7 @@ public class StoreFragment extends BaseWebFragment {
                         @Override
                         public void onClick(View v) {
                             if (!mAgentWeb.back()) {
-                                popBackStack();
+//                                popBackStack();
                             }
                         }
                     });
@@ -84,20 +89,19 @@ public class StoreFragment extends BaseWebFragment {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 RxLogUtils.d("页面开始");
-                if (url.equals(getUrl())) {
-                    tipDialog.show();
-                }
             }
         };
     }
 
 
+    @Nullable
     @Override
-    protected View onCreateView() {
-        View view = View.inflate(mContext, R.layout.fragment_shore, null);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = View.inflate(getContext(), R.layout.fragment_shore, null);
         ButterKnife.bind(this, view);
         initView();
         return view;
     }
+
 
 }

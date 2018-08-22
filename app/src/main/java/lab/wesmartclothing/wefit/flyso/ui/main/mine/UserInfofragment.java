@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -43,6 +42,7 @@ import cn.qqtheme.framework.picker.DatePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -98,7 +98,7 @@ public class UserInfofragment extends BaseAcFragment {
         groupList();
         initImagePicker();
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        info = new Gson().fromJson(string, UserInfo.class);
+        info = MyAPP.getGson().fromJson(string, UserInfo.class);
         notifyData(info);
     }
 
@@ -379,6 +379,9 @@ public class UserInfofragment extends BaseAcFragment {
                         RxToast.success("保存成功", 2000);
                         //成功后将本地图片设置到imageView中，并在退回到个人中心时，刷新贴图url
                         info.setImgUrl(s);
+                        UserInfo myInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+                        myInfo.setImgUrl(s);
+                        SPUtils.put(SPKey.SP_UserInfo, MyAPP.getGson().toJson(myInfo));
                     }
 
                     @Override
@@ -390,7 +393,7 @@ public class UserInfofragment extends BaseAcFragment {
 
     /*保存按钮，提交用户数据*/
     private void requestSaveUserInfo() {
-        final String gson = new Gson().toJson(info, UserInfo.class);
+        final String gson = MyAPP.getGson().toJson(info, UserInfo.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))

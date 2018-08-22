@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -112,7 +111,7 @@ public class WeightAddFragment extends BaseAcFragment {
             mBtnForget.setVisibility(View.VISIBLE);
             mBtnSave.setVisibility(View.VISIBLE);
             mMRoundDisPlayView.stopAnimation();
-            mTvTitle.setText("测量超时，请正确使用体脂称");
+            mTvTitle.setText("测量超时，请再试一次");
         }
     };
 
@@ -131,7 +130,7 @@ public class WeightAddFragment extends BaseAcFragment {
                     mBtnSave.setVisibility(View.INVISIBLE);
                     mMRoundDisPlayView.showPoint(false);
                     mMRoundDisPlayView.startAnimation();
-                    mMRoundDisPlayView.postDelayed(timeOut, 8000);
+                    mMRoundDisPlayView.postDelayed(timeOut, 10000);
                 }
             }
 
@@ -208,7 +207,7 @@ public class WeightAddFragment extends BaseAcFragment {
             WeightTools.ble2Backstage(item, bean);
         }
 
-        String s = new Gson().toJson(bean, WeightAddBean.class);
+        String s = MyAPP.getGson().toJson(bean, WeightAddBean.class);
         SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

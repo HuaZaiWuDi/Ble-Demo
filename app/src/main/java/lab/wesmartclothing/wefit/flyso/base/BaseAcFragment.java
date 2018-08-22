@@ -8,9 +8,12 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
@@ -125,6 +128,11 @@ public abstract class BaseAcFragment extends QMUIFragment {
     public void onDestroy() {
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
         super.onDestroy();
+        if (BuildConfig.DEBUG) {
+            RefWatcher refWatcher = LeakCanary.installedRefWatcher();
+// We expect schrodingerCat to be gone soon (or not), let's watch it.
+            refWatcher.watch(this);
+        }
     }
 
 
@@ -137,6 +145,11 @@ public abstract class BaseAcFragment extends QMUIFragment {
     }
 
     protected void onInvisible() {
+    }
+
+    @Override
+    protected boolean canDragBack() {
+        return true;
     }
 
 

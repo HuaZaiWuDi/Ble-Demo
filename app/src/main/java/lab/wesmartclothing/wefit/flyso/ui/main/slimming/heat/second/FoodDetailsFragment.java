@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -44,6 +43,7 @@ import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
@@ -52,6 +52,7 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import okhttp3.RequestBody;
+
 
 /**
  * Created by jk on 2018/8/3.
@@ -82,6 +83,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
     private int foodType = 0;
     private long currentTime = 0;
     private int pageNum = 0;//页码
+    private boolean SlimmingPage = false;
     private Bundle bundle;
     private BaseQuickAdapter adapter;
     private BaseQuickAdapter adapterAddFoods;
@@ -181,6 +183,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
+            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
         }
     }
 
@@ -256,7 +259,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("历史数据：" + s);
-                        FoodInfoItem item = new Gson().fromJson(s, FoodInfoItem.class);
+                        FoodInfoItem item = MyAPP.getGson().fromJson(s, FoodInfoItem.class);
                         List<FoodListBean> beans = item.getList();
                         if (pageNum == 1) {
                             adapter.setNewData(beans);
@@ -302,7 +305,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
         }
         foodItem.setIntakeLists(mIntakeLists);
 
-        String s = new Gson().toJson(foodItem);
+        String s = MyAPP.getGson().toJson(foodItem);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -314,7 +317,8 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         addedLists.clear();
-                        getBaseFragmentActivity().popBackStack(HeatDetailFragment.class);
+
+                        getBaseFragmentActivity().popBackStack(SlimmingPage ? MainFragment.class : HeatDetailFragment.class);
                     }
 
                     @Override

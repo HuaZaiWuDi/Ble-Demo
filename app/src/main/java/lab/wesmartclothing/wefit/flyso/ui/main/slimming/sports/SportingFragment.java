@@ -103,6 +103,8 @@ public class SportingFragment extends BaseAcFragment {
                 btn_Connect.setText(R.string.disConnected);
                 stopSporting();
             }
+        if (mSwMusic.isOpened())
+            textToSpeech.speak(getString(state ? R.string.connected : R.string.disConnected), TextToSpeech.QUEUE_FLUSH, null);
     }
 
     //监听系统蓝牙开启

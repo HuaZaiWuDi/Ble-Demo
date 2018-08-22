@@ -138,7 +138,7 @@ public class TargetDateFargment extends BaseAcFragment {
 
 
     private void settingTarget() {
-        double aDouble = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+        double aDouble = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
         double aDouble1 = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
 
         JsonObject object = new JsonObject();

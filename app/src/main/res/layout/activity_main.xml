@@ -10,10 +10,10 @@
                 tools:context="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity">
 
     <FrameLayout
-        android:fitsSystemWindows="true"
         android:id="@+id/mFrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
     </FrameLayout>
 
@@ -22,7 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_padding"
         android:layout_alignParentBottom="true">
-
 
 
         <com.flyco.tablayout.CommonTabLayout
@@ -37,11 +36,6 @@
             app:tl_textUnselectColor="@color/colorTabText"
             app:tl_textsize="@dimen/d_35"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/d_2"
-            android:background="@color/lineColor"/>
     </RelativeLayout>
-
 
 </RelativeLayout>

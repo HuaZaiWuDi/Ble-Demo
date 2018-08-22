@@ -90,6 +90,7 @@
             <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                 android:id="@+id/btn_getVCode"
                 android:layout_width="85dp"
+                android:textSize="13sp"
                 android:layout_height="36dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/dimen_35"

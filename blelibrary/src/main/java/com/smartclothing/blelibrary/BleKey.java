@@ -20,7 +20,7 @@ public interface BleKey {
      * 极限 180-200
      */
     //心率阈值
-    //60-75-90-105-130
+    //100-120-140-160-180
     byte[] heartRates = new byte[]{0x64, 0x78, (byte) 0x8c, (byte) 0xa0, (byte) 0xb4};
 
 

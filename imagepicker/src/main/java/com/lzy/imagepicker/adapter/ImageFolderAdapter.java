@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.R;
-import com.lzy.imagepicker.util.Utils;
 import com.lzy.imagepicker.bean.ImageFolder;
+import com.lzy.imagepicker.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

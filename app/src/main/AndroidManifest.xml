@@ -207,6 +207,8 @@
         <activity
             android:name=".ui.main.mine.BaseMeActivity"
             android:screenOrientation="nosensor"/>
+        <activity android:name=".ui.toolui.SportingActivity"/>
+
     </application>
 
 </manifest>

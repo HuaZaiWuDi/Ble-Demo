@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -224,7 +223,7 @@ public class WeightRecordFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("加载数据：" + s);
-                        WeightDataBean bean = new Gson().fromJson(s, WeightDataBean.class);
+                        WeightDataBean bean = MyAPP.getGson().fromJson(s, WeightDataBean.class);
                         notifyData(bean);
                     }
 
@@ -242,7 +241,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         stillNeed = bean.getStillNeed();
         lastWeight = bean.getWeight();
 
-        bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, lastWeight);
+        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
         RxLogUtils.d("是否有目标体重：" + bean.isTargetSet());
         //是否录入体重
         mLayoutTips.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
@@ -381,7 +380,7 @@ public class WeightRecordFragment extends BaseAcFragment {
                         @Override
                         public void onClick(View v) {
                             mLayoutStrongTip.setVisibility(View.GONE);
-                            String s = new Gson().toJson(list);
+                            String s = MyAPP.getGson().toJson(list);
                             RxLogUtils.d("体重信息:" + s);
                             bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
                             RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);

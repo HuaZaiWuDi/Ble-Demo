@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 import android.Manifest;
 import android.content.Intent;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -23,11 +22,10 @@ import org.androidannotations.annotations.Receiver;
 
 import java.util.List;
 
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -36,18 +34,19 @@ import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 @EActivity(R.layout.activity_spalsh)
 public class SpalshActivity extends BaseActivity {
 
 
-    private Disposable subscribe;
     private boolean isSaveUserInfo = false;
 
     @Bean
@@ -84,10 +83,6 @@ public class SpalshActivity extends BaseActivity {
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
         initUserInfo();
         initData();
-
-//        Bundle bundle = new Bundle();
-//        bundle.putString(Key.BUNDLE_FRAGMENT, WeightAddFragment.class.getSimpleName());
-//        RxActivityUtils.skipActivity(mActivity, BaseFragmentActivity.class, bundle);
 
     }
 
@@ -134,12 +129,14 @@ public class SpalshActivity extends BaseActivity {
 
 
     private void initPromissions() {
-        subscribe = new RxPermissions(this)
+        RxPermissions permissions = new RxPermissions(mActivity);
+        permissions
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new Consumer<Boolean>() {
+                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Boolean>() {
                     @Override
-                    public void accept(Boolean aBoolean) throws Exception {
+                    protected void _onNext(Boolean aBoolean) {
                         gotoMain();
                     }
                 });
@@ -147,8 +144,6 @@ public class SpalshActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (subscribe != null)
-            subscribe.dispose();
         super.onDestroy();
     }
 
@@ -208,8 +203,9 @@ public class SpalshActivity extends BaseActivity {
     @Background
     public void uploadHistoryData() {
         String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
+        RxLogUtils.i("保存本地的心率数据：" + value);
         if (!RxDataUtils.isNullString(value)) {
-            List<HeartRateBean.AthlList> lists = new Gson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
+            List<HeartRateBean.AthlList> lists = MyAPP.getGson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
             }.getType());
             RxLogUtils.i("保存本地的心率数据：" + lists.size());
             if (lists != null && lists.size() > 0) {

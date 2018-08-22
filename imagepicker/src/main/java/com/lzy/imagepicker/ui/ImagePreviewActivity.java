@@ -123,6 +123,7 @@ public class ImagePreviewActivity extends ImagePreviewBaseActivity implements Im
     }
 
 
+
     /**
      * 图片添加成功后，修改当前图片的选中数量
      * 当调用 addSelectedImageItem 或 deleteSelectedImageItem 都会触发当前回调

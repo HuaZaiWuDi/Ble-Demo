@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -122,12 +121,12 @@ public class SmartClothingFragment extends BaseAcFragment {
             mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mLayoutStrongTip.setVisibility(View.GONE);
                     startFragment(SportingFragment.getInstance());
                 }
             });
         }
     }
-
 
     //监听系统蓝牙开启
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
@@ -195,7 +194,7 @@ public class SmartClothingFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("加载数据：" + s);
-                        AthleticsInfo bean = new Gson().fromJson(s, AthleticsInfo.class);
+                        AthleticsInfo bean = MyAPP.getGson().fromJson(s, AthleticsInfo.class);
 
                         mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
                         //今日目标是否已经达成

@@ -13,7 +13,6 @@ import com.amap.api.location.AMapLocation;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
@@ -37,6 +36,7 @@ import cn.qqtheme.framework.picker.DatePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -155,7 +155,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     public void initView() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        mUserInfo = new Gson().fromJson(string, UserInfo.class);
+        mUserInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
@@ -210,7 +210,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
 
     private void initLocation() {
-        checkNextWay(aMapLocation != null);
+        checkNextWay(MyAPP.aMapLocation != null);
         Button button = mMQMUITopBar.addRightTextButton(R.string.skip, R.id.tv_skip);
         button.setTextColor(getResources().getColor(R.color.Gray));
         button.setOnClickListener(new View.OnClickListener() {
@@ -337,7 +337,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             mUserInfo.setCity("");
         }
 
-        String s = new Gson().toJson(mUserInfo, UserInfo.class);
+        String s = MyAPP.getGson().toJson(mUserInfo, UserInfo.class);
         SPUtils.put(SPKey.SP_UserInfo, s);
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);

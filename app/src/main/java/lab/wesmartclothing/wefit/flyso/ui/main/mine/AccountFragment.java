@@ -7,7 +7,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -23,6 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -89,7 +89,7 @@ public class AccountFragment extends BaseAcFragment {
         initTopBar();
         initMyDialog();
         otherData();
-        String phone = new Gson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class).getPhone();
+        String phone = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class).getPhone();
         mTvPhone.setText(phone);
     }
 
@@ -270,7 +270,7 @@ public class AccountFragment extends BaseAcFragment {
                          }
                          * */
                         //类型擦除
-                        List<OtherLoginBean> beans = new Gson().fromJson(s, new TypeToken<List<OtherLoginBean>>() {
+                        List<OtherLoginBean> beans = MyAPP.getGson().fromJson(s, new TypeToken<List<OtherLoginBean>>() {
                         }.getType());
 
                         for (int i = 0; i < beans.size(); i++) {

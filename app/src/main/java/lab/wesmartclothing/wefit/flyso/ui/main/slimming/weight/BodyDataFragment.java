@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -139,7 +138,7 @@ public class BodyDataFragment extends BaseAcFragment {
          *
          * */
 
-        UserInfo userInfo = new Gson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {
             standardWeight = (int) ((userInfo.getHeight() - 80) * 0.7);
@@ -203,7 +202,7 @@ public class BodyDataFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
-                        WeightDetailsBean detailsBean = new Gson().fromJson(s, WeightDetailsBean.class);
+                        WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
                         mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
                         mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
 

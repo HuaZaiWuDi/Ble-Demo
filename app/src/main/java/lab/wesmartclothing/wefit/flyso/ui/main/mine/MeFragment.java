@@ -15,6 +15,7 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
@@ -84,6 +85,15 @@ public class MeFragment extends BaseAcFragment {
         super.onStart();
         initMineData();
     }
+
+
+    @Override
+    protected void onVisible() {
+        super.onVisible();
+        RxLogUtils.d("显示：MeFragment");
+        initMineData();
+    }
+
 
     private void initView() {
         groupList();
@@ -222,7 +232,7 @@ public class MeFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Gson gson = new Gson();
+                        Gson gson = MyAPP.getGson();
                         UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
 
                         Glide.with(mContext)

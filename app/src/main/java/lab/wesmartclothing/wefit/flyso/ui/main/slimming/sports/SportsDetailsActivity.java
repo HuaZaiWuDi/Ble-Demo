@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -223,8 +222,6 @@ public class SportsDetailsActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加心率：" + s);
-                        HeartRateBean heartRateBean = new Gson().fromJson(s, HeartRateBean.class);
-//                        mHeartRateView.offileData(heartRateBean.getAthlList(), heartRateBean.getDuration());
                     }
 
                     @Override

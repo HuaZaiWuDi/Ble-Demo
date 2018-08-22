@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
@@ -8,6 +7,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -64,7 +64,7 @@ public class HeartRateBean {
         RxLogUtils.d("运动卡路里数据：" + kcalTotal);
         heartRateBean.setCalorie((int) (kcalTotal * 1000));
 
-        String s = new Gson().toJson(heartRateBean, HeartRateBean.class);
+        String s = MyAPP.getGson().toJson(heartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addAthleticsInfo(body))

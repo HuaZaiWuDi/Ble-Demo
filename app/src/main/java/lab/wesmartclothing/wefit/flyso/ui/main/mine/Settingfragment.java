@@ -19,12 +19,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -80,6 +80,11 @@ public class Settingfragment extends BaseAcFragment {
         accountItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         accountItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
+        QMUICommonListItemView clothing = mGroupListView.createItemView("瘦身衣");
+        clothing.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        clothing.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        clothing.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+
         QMUIGroupListView.newSection(mContext)
                 .addItemView(changePasswordItem, new View.OnClickListener() {
                     @Override
@@ -116,6 +121,12 @@ public class Settingfragment extends BaseAcFragment {
                     @Override
                     public void onClick(View v) {
                         startFragment(AccountFragment.getInstance());
+                    }
+                })
+                .addItemView(clothing, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RxActivityUtils.skipActivity(mContext, TempActivity_.class);
                     }
                 })
                 .setUseTitleViewForSectionSpace(false)
@@ -166,13 +177,11 @@ public class Settingfragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
-                        BaseALocationActivity.aMapLocation = null;
+                        MyAPP.aMapLocation = null;
                         SPUtils.clear();
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
-                        MyAPP.getACache().clear();
                         MyAPP.getRxCache().clear();
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
-                        mActivity.finish();
                     }
 
                     @Override

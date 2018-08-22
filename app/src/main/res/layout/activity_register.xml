@@ -102,6 +102,7 @@
                 android:enabled="false"
                 android:text="@string/getVCode"
                 android:textColor="@color/GrayWrite"
+                android:textSize="13sp"
                 app:qmui_borderColor="@color/GrayWrite"
                 app:qmui_radius="@dimen/dimen_4"/>
 

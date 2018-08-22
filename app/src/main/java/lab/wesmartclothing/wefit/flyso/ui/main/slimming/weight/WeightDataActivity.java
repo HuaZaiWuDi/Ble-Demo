@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -32,6 +31,7 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
@@ -116,7 +116,7 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void initData() {
-        List<QNScaleStoreData> listReceives = new Gson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleStoreData>>() {
+        List<QNScaleStoreData> listReceives = MyAPP.getGson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleStoreData>>() {
         }.getType());
 
         adapter_Receive.setNewData(listReceives);
@@ -137,7 +137,7 @@ public class WeightDataActivity extends BaseActivity {
                 WeightTools.ble2Backstage(item, bean);
             }
         bean.setWeight(qnScaleData.getWeight());
-        String s = new Gson().toJson(bean, WeightAddBean.class);
+        String s = MyAPP.getGson().toJson(bean, WeightAddBean.class);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

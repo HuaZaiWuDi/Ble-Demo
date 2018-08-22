@@ -124,7 +124,7 @@ public class MainFragment extends BaseAcFragment {
                 R.mipmap.icon_shopping_unselect, R.mipmap.icon_mine_unselect};
         int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_find_select,
                 R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
-
+        mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
             mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }

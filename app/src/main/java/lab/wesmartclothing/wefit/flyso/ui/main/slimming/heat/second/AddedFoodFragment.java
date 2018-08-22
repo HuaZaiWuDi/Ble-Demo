@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -28,6 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
@@ -105,7 +105,7 @@ public class AddedFoodFragment extends BaseAcFragment {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
             String heatData = bundle.getString(Key.ADD_FOOD_INFO);
-            FetchHeatInfoBean bean = new Gson().fromJson(heatData, FetchHeatInfoBean.class);
+            FetchHeatInfoBean bean = MyAPP.getGson().fromJson(heatData, FetchHeatInfoBean.class);
             RxLogUtils.d("加载食材：" + bean);
             if (bean != null) {
                 List<FoodListBean> list = null;
@@ -245,7 +245,7 @@ public class AddedFoodFragment extends BaseAcFragment {
         ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();
         lists.add(intakeList);
         foodItem.setIntakeLists(lists);
-        String s = new Gson().toJson(foodItem);
+        String s = MyAPP.getGson().toJson(foodItem);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.support.annotation.IntDef;
 
 import com.clj.fastble.data.BleDevice;
-import com.google.gson.Gson;
 import com.qingniu.qnble.scanner.c;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -95,7 +94,7 @@ public class QNBleTools {
 
     public QNUser creatUser() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = new Gson().fromJson(string, UserInfo.class);
+        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return null;

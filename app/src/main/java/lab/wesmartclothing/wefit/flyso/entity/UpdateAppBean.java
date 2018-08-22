@@ -1,8 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -48,7 +48,7 @@ public class UpdateAppBean {
     //APP升级监听
     public void addDeviceVersion(UpdateAppBean updateApp) {
 
-        String s = new Gson().toJson(updateApp, UpdateAppBean.class);
+        String s = MyAPP.getGson().toJson(updateApp, UpdateAppBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addDeviceVersion(body))

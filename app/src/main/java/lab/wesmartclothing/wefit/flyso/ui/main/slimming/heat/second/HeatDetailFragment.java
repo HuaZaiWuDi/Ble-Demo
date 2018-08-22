@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
@@ -178,7 +177,7 @@ public class HeatDetailFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("加载数据：" + s);
                         heatData = s;
-                        FetchHeatInfoBean bean = new Gson().fromJson(s, FetchHeatInfoBean.class);
+                        FetchHeatInfoBean bean = MyAPP.getGson().fromJson(s, FetchHeatInfoBean.class);
                         refreshData(bean);
                     }
 

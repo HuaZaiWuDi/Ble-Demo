@@ -28,6 +28,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
  * Created icon_hide_password jk on 2018/5/31.
@@ -110,6 +111,7 @@ public abstract class BaseWebActivity extends BaseActivity {
         @Override
         public boolean intercept(String url, String[] permissions, String action) {
             new RxPermissions(mActivity).requestEach(permissions)
+                    .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
                     .subscribe(new Consumer<Permission>() {
                         @Override
                         public void accept(Permission permission) throws Exception {

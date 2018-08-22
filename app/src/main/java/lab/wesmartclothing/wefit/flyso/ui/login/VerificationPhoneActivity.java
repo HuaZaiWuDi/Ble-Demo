@@ -57,7 +57,7 @@ public class VerificationPhoneActivity extends BaseActivity {
         mQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               RxActivityUtils.finishActivity();
+                RxActivityUtils.finishActivity();
             }
         });
 

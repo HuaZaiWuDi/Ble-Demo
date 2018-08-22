@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -24,6 +23,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -81,11 +81,11 @@ public class SettingTargetFragment extends BaseAcFragment {
     private void bestWeight() {
         bundle = getArguments();
         if (bundle != null) {
-            initWeight = (float) bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+            initWeight = (float) bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
             if (initWeight <= 0) initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         }
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo userInfo = new Gson().fromJson(string, UserInfo.class);
+        UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
         float standardWeight = 0;
         if (userInfo.getSex() == 1) {
             standardWeight = (userInfo.getHeight() - 80) * 0.7f;
@@ -167,7 +167,7 @@ public class SettingTargetFragment extends BaseAcFragment {
         Bundle mBundle = new Bundle(bundle);
         mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, settingWeight);
         mBundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
-        mBundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
+        mBundle.putDouble(Key.BUNDLE_LAST_WEIGHT, initWeight);
         QMUIFragment instance = TargetDateFargment.getInstance();
         instance.setArguments(mBundle);
         startFragment(instance);

@@ -14,6 +14,15 @@ public class SportsDataTab {
     int maxHeart;
     int minHeart;
     int curHeart;
+    int realHeart;
+
+    public int getRealHeart() {
+        return realHeart;
+    }
+
+    public void setRealHeart(int realHeart) {
+        this.realHeart = realHeart;
+    }
 
     public List<Integer> getAthlRecord_2() {
         return athlRecord_2;

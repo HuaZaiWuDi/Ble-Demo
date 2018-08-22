@@ -31,7 +31,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 /**
  * Created icon_hide_password jk on 2018/5/24.
  */
-public abstract class BaseWebFragment extends BaseAcFragment implements FragmentKeyDown {
+public abstract class BaseWebFragment extends BaseFragment implements FragmentKeyDown {
 
 
     public AgentWeb mAgentWeb;
@@ -62,13 +62,14 @@ public abstract class BaseWebFragment extends BaseAcFragment implements Fragment
 
         AgentWebConfig.debug();
 
+
         // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
-        mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+//        mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         WebSettings webSettings = mAgentWeb.getWebCreator().getWebView().getSettings();
+//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 //        设置默认加载的可视范围是大视野范围
         webSettings.setLoadWithOverviewMode(true);
 //                自适应屏幕(导致活动页面显示出错了)
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webSettings.setUseWideViewPort(true);
     }
 
@@ -87,11 +88,12 @@ public abstract class BaseWebFragment extends BaseAcFragment implements Fragment
         super.onPause();
     }
 
+
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         if (mAgentWeb != null)
             mAgentWeb.getWebLifeCycle().onDestroy();
-        super.onDestroyView();
+        super.onDestroy();
     }
 
     protected PermissionInterceptor mPermissionInterceptor = new PermissionInterceptor() {

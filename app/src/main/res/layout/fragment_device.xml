@@ -32,7 +32,6 @@
             android:id="@+id/layout_scale"
             android:layout_width="match_parent"
             android:layout_height="205dp"
-            android:background="@drawable/selector_ripple_bg_"
             android:orientation="vertical"
             android:visibility="gone"
             tools:visibility="visible">

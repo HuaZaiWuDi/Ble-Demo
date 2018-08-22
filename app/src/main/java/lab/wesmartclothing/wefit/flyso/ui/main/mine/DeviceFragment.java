@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -35,6 +34,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -125,6 +125,12 @@ public class DeviceFragment extends BaseAcFragment {
         initData();
     }
 
+    @Override
+    public void onDestroy() {
+        BleAPI.getVoltage(null);
+        super.onDestroy();
+    }
+
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,7 +168,7 @@ public class DeviceFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
 
-                        DeviceListbean deviceListbean = new Gson().fromJson(s, DeviceListbean.class);
+                        DeviceListbean deviceListbean = MyAPP.getGson().fromJson(s, DeviceListbean.class);
                         beanList = deviceListbean.getList();
                         notifyData();
                     }

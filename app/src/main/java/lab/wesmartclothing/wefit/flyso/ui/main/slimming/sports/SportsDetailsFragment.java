@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -117,11 +116,11 @@ public class SportsDetailsFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
-                        HeartRateBean heartRateBean = new Gson().fromJson(s, HeartRateBean.class);
-                        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie() , 1));
+                        HeartRateBean heartRateBean = MyAPP.getGson().fromJson(s, HeartRateBean.class);
+                        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1));
                         mTvAvHeartRate.setText(heartRateBean.getAvgHeart() + "");
                         mTvMaxHeartRate.setText(heartRateBean.getMaxHeart() + "");
-                        mTvSportsTime.setText(RxFormat.setSec2MS(heartRateBean.getDuration()));
+
                         heartRateStatistics(heartRateBean.getAthlList(), heartRateBean.getDuration());
                     }
 
@@ -144,6 +143,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
         mProAnaerobic.setProgress(anaerobicTime * 100 / totalTime);
         mProLimit.setProgress(limitTime * 100 / totalTime);
 
+        mTvSportsTime.setText(RxFormat.setSec2MS(totalTime));
         mTvWarmTime.setText(RxFormat.setSec2MS(warmTime));
         mTvGreaseTime.setText(RxFormat.setSec2MS(greaseTime));
         mTvAerobicTime.setText(RxFormat.setSec2MS(aerobicTime));

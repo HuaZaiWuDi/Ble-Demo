@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
-import com.google.gson.Gson;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
@@ -8,6 +7,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.Calendar;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
@@ -39,7 +39,7 @@ public class HeartRateToKcal {
      */
     public double getCalorie(int HR, double T) {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = new Gson().fromJson(string, UserInfo.class);
+        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return 0;

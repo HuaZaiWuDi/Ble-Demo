@@ -46,14 +46,12 @@ import java.util.Map;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.view.ScanView;
@@ -382,10 +380,10 @@ public class AddDeviceActivity extends BaseActivity {
         for (BindDeviceBean bean : beans) {
             if (bean.isBind()) {
                 BindDeviceItem.DeviceListBean deviceList = new BindDeviceItem.DeviceListBean();
-                if (BaseALocationActivity.aMapLocation != null) {
-                    deviceList.setCity(BaseALocationActivity.aMapLocation.getCity());
-                    deviceList.setCountry(BaseALocationActivity.aMapLocation.getCountry());
-                    deviceList.setProvince(BaseALocationActivity.aMapLocation.getProvince());
+                if (MyAPP.aMapLocation != null) {
+                    deviceList.setCity(MyAPP.aMapLocation.getCity());
+                    deviceList.setCountry(MyAPP.aMapLocation.getCountry());
+                    deviceList.setProvince(MyAPP.aMapLocation.getProvince());
                 }
                 deviceList.setMacAddr(bean.getMac());
                 deviceList.setDeviceNo(bean.getDeivceType() == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
@@ -401,7 +399,6 @@ public class AddDeviceActivity extends BaseActivity {
         mBindDeviceItem.setDeviceList(mDeviceLists);
 
         String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
-        MyAPP.getACache().put(Key.CACHE_BIND_INFO, s);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

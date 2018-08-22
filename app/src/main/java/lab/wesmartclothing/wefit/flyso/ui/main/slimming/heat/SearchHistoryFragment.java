@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -369,7 +368,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        SearchListItem item = new Gson().fromJson(s, SearchListItem.class);
+                        SearchListItem item = MyAPP.getGson().fromJson(s, SearchListItem.class);
                         List<FoodListBean> beans = item.getList();
                         searchListAdapter.setNewData(beans);
                         if (beans.size() == 0) {
@@ -396,7 +395,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        HotKeyItem item = new Gson().fromJson(s, HotKeyItem.class);
+                        HotKeyItem item = MyAPP.getGson().fromJson(s, HotKeyItem.class);
                         hotLists.clear();
                         List<HotKeyItem.ListBean> list = item.getList();
                         for (HotKeyItem.ListBean bean : list) {
@@ -438,7 +437,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         }
         foodItem.setIntakeLists(mIntakeLists);
 
-        String s = new Gson().toJson(foodItem);
+        String s = MyAPP.getGson().toJson(foodItem);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

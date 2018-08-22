@@ -67,6 +67,18 @@ android {
             }
         }
 
+        //关闭内存泄露检测
+        // Ensure the no-op dependency is always used in JVM tests.
+        configurations.all { config ->
+            if (config.name.contains('UnitTest')) {
+                config.resolutionStrategy.eachDependency { details ->
+                    if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
+                        details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
+                    }
+                }
+            }
+        }
+
         //修改apk名字
         applicationVariants.all { variant ->
             if (variant.buildType.name == "release") {
@@ -150,11 +162,11 @@ dependencies {
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
     //日历控件
     implementation 'com.github.prolificinteractive:material-calendarview:1.6.1'
-    compile project(path: ':imagepicker')
+
     //高德定位SDK
     compile 'com.amap.api:location:latest.integration'
     compile project(path: ':shareutil')
-    implementation 'com.qmuiteam:arch:0.1.1'
+    implementation 'com.qmuiteam:arch:0.1.3'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     //极光推送
@@ -166,5 +178,11 @@ dependencies {
 //    implementation files('libs/qnsdk-0.2.1.jar')
 
 //    compile 'com.lzy.widget:imagepicker:0.6.1'  //指定版本
+    compile project(path: ':imagepicker')
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
 
 }
