@@ -32,6 +32,7 @@
             android:id="@+id/layout_scale"
             android:layout_width="match_parent"
             android:layout_height="205dp"
+            android:background="@drawable/selector_ripple_bg_"
             android:orientation="vertical"
             android:visibility="gone"
             tools:visibility="visible">
@@ -343,11 +344,11 @@
 
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout
-            android:layout_marginTop="8dp"
             android:id="@+id/btn_bind"
             android:layout_width="328dp"
             android:layout_height="56dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             app:qmui_backgroundColor="@color/white"
             app:qmui_borderColor="@color/white"

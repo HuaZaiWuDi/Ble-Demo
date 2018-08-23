@@ -28,7 +28,7 @@ public class UserInfo implements Serializable {
     private String scalesMacAddr;
     private int sex = 2;//1男2女0未知（未录入）
     private String signature;
-    private int targetWeight;
+    private double targetWeight;
     private String imgUrl;
     private String userName;
     private String city;
@@ -128,11 +128,11 @@ public class UserInfo implements Serializable {
         this.signature = signature;
     }
 
-    public int getTargetWeight() {
+    public double getTargetWeight() {
         return targetWeight;
     }
 
-    public void setTargetWeight(int targetWeight) {
+    public void setTargetWeight(double targetWeight) {
         isChange = true;
         this.targetWeight = targetWeight;
     }

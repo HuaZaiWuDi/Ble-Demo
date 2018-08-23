@@ -94,9 +94,10 @@ public class WeiboLoginInstance extends LoginInstance {
                         new Request.Builder().url(buildUserInfoUrl(token, USER_INFO)).build();
                 try {
                     Response response = client.newCall(request).execute();
-                    ShareLogger.e("微博用户信息：" + response.body().string());
+                    //响应的Body只能被使用一次，之后就会被销毁
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     WeiboUser user = WeiboUser.parse(jsonObject);
+                    ShareLogger.e("WeiboUser：" + user.toString());
                     emitter.onNext(user);
                 } catch (IOException | JSONException e) {
                     ShareLogger.e(INFO.FETCH_USER_INOF_ERROR);
@@ -118,6 +119,7 @@ public class WeiboLoginInstance extends LoginInstance {
 
                     @Override
                     public void onError(Throwable e) {
+                        ShareLogger.e("onError：" + e.toString());
                         mLoginListener.loginFailure(new Exception(e));
                     }
 

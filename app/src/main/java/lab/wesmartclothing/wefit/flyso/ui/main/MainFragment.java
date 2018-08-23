@@ -29,6 +29,7 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
@@ -79,6 +80,12 @@ public class MainFragment extends BaseAcFragment {
         initBottomTab();
         setDefaultFragment();
         initRxBus();
+        mBottomTab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void initRxBus() {
@@ -89,7 +96,14 @@ public class MainFragment extends BaseAcFragment {
                 openActivity(openTarget);
             }
         });
-        RxBus.getInstance().addSubscription(this, register);
+        Disposable goToFind = RxBus.getInstance().register(GoToFind.class, new Consumer<GoToFind>() {
+            @Override
+            public void accept(GoToFind goToFind) throws Exception {
+                mCommonTabLayout.setCurrentTab(1);
+                switchFragment(mFragments.get(1));
+            }
+        });
+        RxBus.getInstance().addSubscription(this, register, goToFind);
     }
 
     private void openActivity(String openTarget) {

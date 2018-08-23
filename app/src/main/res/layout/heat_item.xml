@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d_200"
-    android:background="@color/colorWhite">
+    android:layout_height="58dp"
+    android:background="@color/colorWhite"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
-    <ImageView
+    <com.qmuiteam.qmui.widget.QMUIRadiusImageView
         android:id="@+id/img_food"
-        android:layout_width="@dimen/d_100"
-        android:layout_height="@dimen/d_100"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/d_50"
-        android:layout_marginRight="@dimen/d_20"
-        android:src="@drawable/energy_green_bg"/>
+        app:qmui_is_circle="true"
+        tools:src="@drawable/energy_green_bg"/>
 
     <TextView
         android:id="@+id/tv_foodName"
-        android:layout_width="@dimen/d_300"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/tv_kcal"
         android:layout_toRightOf="@+id/img_food"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="麦片"
-        android:textColor="@color/textColor"/>
-
-
-    <TextView
-        android:id="@+id/tv_foodWeight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
-        android:text="70.0g"
-        android:textColor="@color/textHeatColor"/>
+        android:textColor="@color/Gray"
+        android:textSize="13sp"
+        tools:text="麦片"/>
 
 
     <TextView
@@ -42,13 +39,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/d_80"
-        android:text="620千卡"
-        android:textColor="@color/textHeatColor"/>
+        android:textColor="@color/orange_FF7200"
+        android:textSize="18sp"
+        tools:text="620千卡"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_1"
-        android:background="@color/lineColor"/>
+        android:background="@color/line"/>
 
 </RelativeLayout>

@@ -179,7 +179,7 @@ public class UserInfofragment extends BaseAcFragment {
 
         signItem = mGroupListView.createItemView("签名");
         signItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        signItem.setDetailText("签名限制20字，这边显示不全…");
+        signItem.setDetailText("请输入个性签名");
         TextView textView = signItem.getDetailTextView();
         textView.setMaxLines(1);
         textView.setEllipsize(TextUtils.TruncateAt.END);

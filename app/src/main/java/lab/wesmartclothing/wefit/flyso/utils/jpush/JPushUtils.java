@@ -29,16 +29,20 @@ public class JPushUtils {
         mApplication = application;
         JPushInterface.setDebugMode(BuildConfig.DEBUG);
         JPushInterface.init(application);
-        tags.add("test1");
-        tags.add("test2");
 
+    }
+
+    public static void setAliasOrTags(String... tag) {
+        if (tag != null)
+            for (String t : tag) {
+                tags.add(t);
+            }
         TagAliasOperatorHelper.TagAliasBean tagAliasBean = new TagAliasOperatorHelper.TagAliasBean();
         tagAliasBean.action = TagAliasOperatorHelper.ACTION_SET;
         tagAliasBean.tags = tags;
-        tagAliasBean.isAliasAction = true;
+        tagAliasBean.isAliasAction = !SPUtils.getBoolean(SPKey.SP_PUSH_ALIAS);
         tagAliasBean.alias = SPUtils.getString(SPKey.SP_UserId);
-
-        TagAliasOperatorHelper.getInstance().handleAction(application, 0, tagAliasBean);
+        TagAliasOperatorHelper.getInstance().handleAction(mApplication, sequence, tagAliasBean);
     }
 
 

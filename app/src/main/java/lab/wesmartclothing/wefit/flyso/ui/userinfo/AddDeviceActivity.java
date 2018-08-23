@@ -185,8 +185,6 @@ public class AddDeviceActivity extends BaseActivity {
             img_scan.stopAnimation();
             RxToast.warning(getString(R.string.checkBle));
             initStep(3);
-        } else if (state == BluetoothAdapter.STATE_ON) {
-            startScan();
         }
     }
 
@@ -236,6 +234,7 @@ public class AddDeviceActivity extends BaseActivity {
         Disposable device = RxBus.getInstance().register(BleDevice.class, new Consumer<BleDevice>() {
             @Override
             public void accept(BleDevice device) throws Exception {
+                if (!img_scan.isAnim()) return;
                 if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
                     isBind(bean);
@@ -246,6 +245,7 @@ public class AddDeviceActivity extends BaseActivity {
         Disposable QNDevice = RxBus.getInstance().register(QNBleDevice.class, new Consumer<QNBleDevice>() {
             @Override
             public void accept(QNBleDevice device) throws Exception {
+                if (!img_scan.isAnim()) return;
                 if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
                     isBind(bean);

@@ -6,12 +6,14 @@ import android.os.Message;
 import android.util.SparseArray;
 
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 
 import java.util.Locale;
 import java.util.Set;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * 处理tagalias相关的逻辑
@@ -319,6 +321,8 @@ public class TagAliasOperatorHelper {
             setActionCache.remove(sequence);
             String logs = getActionStr(tagAliasBean.action) + " alias success";
             RxLogUtils.i(TAG, logs);
+            //设置别名成功以后不再需要设置
+            SPUtils.put(SPKey.SP_PUSH_ALIAS, true);
             ExampleUtil.showToast(logs, context);
         } else {
             String logs = "Failed to " + getActionStr(tagAliasBean.action) + " alias, errorCode:" + jPushMessage.getErrorCode();

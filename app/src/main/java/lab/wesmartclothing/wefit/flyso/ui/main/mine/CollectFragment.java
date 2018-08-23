@@ -26,6 +26,8 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.List;
 
@@ -36,6 +38,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -44,6 +47,7 @@ import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
@@ -95,7 +99,8 @@ public class CollectFragment extends BaseAcFragment {
                         .asBitmap().placeholder(R.mipmap.icon_placeholder).into((ImageView) helper.getView(R.id.iv_img));
                 helper.setText(R.id.tv_title, item.getArticleName())
                         .setText(R.id.tv_content, item.getSummary())
-                        .setText(R.id.tv_readCount, "Timetofit\t\t\t" + "w\t次阅读");
+//                        .setText(R.id.tv_readCount, "Timetofit\t\t\t" + "w\t次阅读")
+                ;
             }
         };
         emptyView = View.inflate(mContext, R.layout.layout_no_data, null);
@@ -103,7 +108,8 @@ public class CollectFragment extends BaseAcFragment {
             @Override
             public void onClick(View v) {
                 //去发现
-                RxToast.normal("去发现");
+                RxBus.getInstance().post(new GoToFind());
+                popBackStack();
             }
         });
 
@@ -221,6 +227,8 @@ public class CollectFragment extends BaseAcFragment {
         );
         RxManager.getInstance().doNetSubscribe(dxyService.collectionList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("collectionList", String.class, CacheStrategy.cacheAndRemote()))
+                .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming;
 
 import android.animation.ValueAnimator;
+import android.bluetooth.BluetoothAdapter;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,10 +35,10 @@ import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -64,6 +66,7 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
@@ -80,8 +83,6 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
  */
 public class Slimming2Fragment extends BaseAcFragment {
 
-    @BindView(R.id.layout_bind)
-    RelativeLayout mLayoutBind;
     @BindView(R.id.tv_currentKcal)
     TextView mTvCurrentKcal;
     @BindView(R.id.tv_currentkg)
@@ -164,20 +165,14 @@ public class Slimming2Fragment extends BaseAcFragment {
     TextView mTvMealKcal;
     @BindView(R.id.layout_meal)
     RelativeLayout mLayoutMeal;
-    @BindView(R.id.btn_bind_clothing)
-    QMUIRoundButton mBtnBindClothing;
     @BindView(R.id.iv_sports)
     ImageView mIvSports;
     @BindView(R.id.layout_sports)
     LinearLayout mLayoutSports;
-    @BindView(R.id.btn_bind_scale)
-    QMUIRoundButton mBtnBindScale;
     @BindView(R.id.iv_weight)
     ImageView mIvWeight;
     @BindView(R.id.layout_weight)
     LinearLayout mLayoutWeight;
-    @BindView(R.id.btn_bind)
-    QMUIRoundButton mBtnBind;
     Unbinder unbinder;
     @BindView(R.id.tv_target)
     TextView mTvTarget;
@@ -201,6 +196,18 @@ public class Slimming2Fragment extends BaseAcFragment {
     LinearLayout mLayoutNotify2;
     @BindView(R.id.layout_title2)
     RelativeLayout mLayoutTitle2;
+    @BindView(R.id.iv_foodRecommend)
+    ImageView mIvFoodRecommend;
+    @BindView(R.id.btn_goBind_clothing)
+    QMUIRoundButton mBtnGoBindClothing;
+    @BindView(R.id.layout_clothing_default)
+    LinearLayout mLayoutClothingDefault;
+    @BindView(R.id.btn_goBind_scale)
+    QMUIRoundButton mBtnGoBindScale;
+    @BindView(R.id.layout_scale_default)
+    LinearLayout mLayoutScaleDefault;
+    @BindView(R.id.layout_food_recommend)
+    LinearLayout mLayoutFoodRecommend;
 
     public static Fragment getInstance() {
         return new Slimming2Fragment();
@@ -270,10 +277,6 @@ public class Slimming2Fragment extends BaseAcFragment {
                     .into(mIvUserImg2);
         }
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
-        if (!RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_clothingMAC))
-                && !RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_scaleMAC))) {
-            mLayoutBind.setVisibility(View.GONE);
-        }
 
         mCollapsingTopbarLayout.setScrimUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -471,7 +474,9 @@ public class Slimming2Fragment extends BaseAcFragment {
     }
 
 
-    @OnClick({R.id.iv_userImg2, R.id.layout_notify2, R.id.iv_userImg, R.id.layout_notify, R.id.layout_Healthy, R.id.layout_heat, R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal, R.id.btn_bind_clothing, R.id.layout_sports, R.id.btn_bind_scale, R.id.layout_weight, R.id.btn_bind})
+    @OnClick({R.id.iv_userImg2, R.id.layout_notify2, R.id.iv_userImg, R.id.layout_notify, R.id.layout_Healthy, R.id.layout_heat,
+            R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal, R.id.layout_sports, R.id.layout_weight,
+            R.id.btn_goBind_clothing, R.id.btn_goBind_scale, R.id.layout_food_recommend})
     public void onViewClicked(View view) {
         Bundle bundle = new Bundle();
         bundle.putLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
@@ -516,19 +521,17 @@ public class Slimming2Fragment extends BaseAcFragment {
                 meal.setArguments(bundle);
                 startFragment(meal);
                 break;
-            case R.id.btn_bind_clothing:
-                mBtnBindClothing.setVisibility(View.GONE);
-                break;
+
             case R.id.layout_sports:
                 startFragment(SmartClothingFragment.getInstance());
-                break;
-            case R.id.btn_bind_scale:
-                mBtnBindScale.setVisibility(View.GONE);
                 break;
             case R.id.layout_weight:
                 startFragment(WeightRecordFragment.getInstance());
                 break;
-            case R.id.btn_bind:
+            case R.id.btn_goBind_clothing:
+                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                break;
+            case R.id.btn_goBind_scale:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
                 break;
             case R.id.layout_notify2:
@@ -538,6 +541,10 @@ public class Slimming2Fragment extends BaseAcFragment {
             case R.id.iv_userImg2:
                 //跳转个人主页
                 startFragment(UserInfofragment.getInstance());
+                break;
+            case R.id.layout_food_recommend:
+                //跳转推荐食材
+                startFragment(FoodRecommend.getInstance());
                 break;
         }
     }
@@ -612,35 +619,44 @@ public class Slimming2Fragment extends BaseAcFragment {
         }
 
 
-//        if (bean.getWeightInfo() != null) {
-//            mTvDate.setText(RxFormat.setFormatDate(bean.getWeightInfo().getWeightDate(), RxFormat.Date));
-//
-//
-//            if (bean.getWeightInfo().getWeight() != 0) {
-//                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
-//            }
-//            if (bean.getWeightInfo().getWeight() != 0) {
-//                mTvWeight.setText(bean.getWeightInfo().getWeight() + "");
-//                mTvCurrentkg.setText(bean.getWeightInfo().getWeight() + "");
-//            }
-//            if (bean.getWeightInfo().getBmi() != 0) {
-//                mTvBMI.setText(bean.getWeightInfo().getBmi() + "");
-//            }
-//            if (bean.getWeightInfo().getBodyFat() != 0) {
-//                mTvBodyFat.setText(bean.getWeightInfo().getBodyFat() + "");
-//            }
-//
-//            if (!RxDataUtils.isNullString(bean.getSickLevel())) {
-//                mIvHealthyLevel.switchLevel(bean.getSickLevel());
-//            }
-//            if (!RxDataUtils.isNullString(bean.getLevelDesc())) {
-//                mTvRisk.setText(bean.getLevelDesc());
-//            }
-//
-//        }
+        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+            mLayoutClothingDefault.setVisibility(View.VISIBLE);
+            QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
+            background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
+            background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
+            mBtnGoBindClothing.setText(R.string.goBind);
+        } else {
+            boolean clothingIsEmpty = bean.getAthleticsInfoList().size() == 1 && bean.getAthleticsInfoList().get(0).getCalorie() == 0;
+            mLayoutClothingDefault.setVisibility(clothingIsEmpty ? View.VISIBLE : View.GONE);
+            if (clothingIsEmpty) {
+                QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
+                background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));
+                background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
+                mBtnGoBindClothing.setText("去运动");
+            }
+            mBtnGoBindClothing.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startFragment(SmartClothingFragment.getInstance());
+                }
+            });
+        }
 
-        mBtnBindClothing.setVisibility(bean.getAthleticsInfoList().size() == 0 ? View.VISIBLE : View.GONE);
-        mBtnBindScale.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
+        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
+            mLayoutScaleDefault.setVisibility(View.VISIBLE);
+            mBtnGoBindClothing.setText(R.string.goBind);
+        } else {
+            mLayoutScaleDefault.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
+            if (bean.getWeightInfoList().size() == 0) {
+                mBtnGoBindScale.setText("去称重");
+            }
+            mBtnGoBindScale.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startFragment(WeightRecordFragment.getInstance());
+                }
+            });
+        }
 
 
         int size = bean.getAthleticsInfoList().size();
@@ -648,4 +664,5 @@ public class Slimming2Fragment extends BaseAcFragment {
             mTvCurrentKcal.setText(RxFormatValue.fromatUp(bean.getAthleticsInfoList().get(size - 1).getCalorie(), 0));
         }
     }
+
 }

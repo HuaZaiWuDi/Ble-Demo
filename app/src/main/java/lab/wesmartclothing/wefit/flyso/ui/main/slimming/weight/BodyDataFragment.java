@@ -101,11 +101,11 @@ public class BodyDataFragment extends BaseAcFragment {
         initTopBar();
         initRecyclerView();
         initData();
-        initWeightData();
+
 
     }
 
-    private void initWeightData() {
+    private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
         Healthy healthy = new Healthy();
         healthy.setSections(new double[]{11, 21, 26});
         healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
@@ -146,6 +146,7 @@ public class BodyDataFragment extends BaseAcFragment {
             standardWeight = (int) ((userInfo.getHeight() - 70) * 0.6);
         float value1 = standardWeight * 0.67f;
         float value2 = standardWeight * 0.80f;
+
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{value1, value2});
         healthy4.setSectionLabels(new String[]{value1 + "kg", value2 + "kg"});
@@ -170,9 +171,18 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy6.setLabels(new String[]{"偏低", "标准", "充足"});
         mHealthyMaps.put(5, healthy6);
 
+        /**
+         * 骨量
+         偏低=小于体重*3.7%
+         标准=在体重*3.7%-体重*4.2%之间
+         偏高=大于体重*4.2%
+         * */
+        double start = (weightInfo.getWeight() * 0.037f);
+        double end = (weightInfo.getWeight() * 0.042f);
+
         Healthy healthy7 = new Healthy();
-        healthy7.setSections(new double[]{3.7, 4.2});
-        healthy7.setSectionLabels(new String[]{"3.7%", "4.2%"});
+        healthy7.setSections(new double[]{start, end});
+        healthy7.setSectionLabels(new String[]{start + "kg", end + "kg"});
         healthy7.setColors(new int[]{Color.parseColor("#5A7BEE"),
                 Color.parseColor("#61D97F"), Color.parseColor("#FFBC00")});
         healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});
@@ -232,8 +242,9 @@ public class BodyDataFragment extends BaseAcFragment {
 
 
     private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
+        initWeightData(weightInfo);
         String[] titles = getResources().getStringArray(R.array.weightDatas);
-        String[] units = {"%", "", "级", "kg", "kcal", "%", "%", "岁"};
+        String[] units = {"%", "", "级", "kg", "kcal", "%", "kg", "岁"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
                 R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
 

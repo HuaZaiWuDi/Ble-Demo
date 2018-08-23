@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +18,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -192,7 +191,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, FoodListBean item) {
                 QMUIRadiusImageView foodImg = helper.getView(R.id.iv_foodImg);
-                Glide.with(mContext).load(item.getFoodImg()).asBitmap().into(foodImg);
+                Glide.with(mContext).load(item.getFoodImg()).asBitmap().placeholder(R.mipmap.group15).into(foodImg);
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getUnitCalorie() + "")
@@ -214,16 +213,24 @@ public class FoodDetailsFragment extends BaseAcFragment {
         mMRecyclerView.setAdapter(adapter);
         mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        smartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+        smartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+            public void onLoadMore(RefreshLayout refreshLayout) {
                 pageNum++;
-                initData(pageNum);
+                initData();
+            }
+
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                pageNum = 1;
+                initData();
             }
         });
-        smartRefreshLayout.autoLoadMore();
+
+
+        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
-        smartRefreshLayout.setEnableRefresh(false);
+        smartRefreshLayout.setEnableRefresh(true);
     }
 
 
@@ -249,7 +256,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
     }
 
 
-    private void initData(final int pageNum) {
+    private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 20))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -266,15 +273,24 @@ public class FoodDetailsFragment extends BaseAcFragment {
                         } else {
                             adapter.addData(beans);
                         }
-                        smartRefreshLayout.finishLoadMore(true);
+                        if (smartRefreshLayout.isLoading()) {
+                            pageNum++;
+                            smartRefreshLayout.finishLoadMore(true);
+                        }
+                        if (smartRefreshLayout.isRefreshing())
+                            smartRefreshLayout.finishRefresh(true);
                         smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
-                        RxLogUtils.d("结束：");
                     }
 
                     @Override
                     protected void _onError(String error, int errorCode) {
                         RxToast.normal(error);
-                        smartRefreshLayout.finishLoadMore(false);
+                        if (smartRefreshLayout.isLoading()) {
+                            pageNum++;
+                            smartRefreshLayout.finishLoadMore(false);
+                        }
+                        if (smartRefreshLayout.isRefreshing())
+                            smartRefreshLayout.finishRefresh(false);
                     }
                 });
     }

@@ -37,7 +37,6 @@ public class ScanView extends ImageView {
         mPaintSector.setAntiAlias(true);
         mPaintSector.setStyle(Paint.Style.FILL);
 
-
     }
 
     private Matrix matrix;
@@ -91,12 +90,28 @@ public class ScanView extends ImageView {
         animate.start();
     }
 
+    public boolean isAnim() {
+        if (animate != null)
+            return animate.isRunning();
+        return false;
+    }
+
     public void stopAnimation() {
         if (animate != null)
             animate.end();
     }
 
-//    @Override
+    @Override
+    protected void onDetachedFromWindow() {
+        if (animate != null) {
+            animate.cancel();
+            animate = null;
+        }
+
+        super.onDetachedFromWindow();
+    }
+
+    //    @Override
 //    public void onWindowFocusChanged(boolean hasWindowFocus) {
 //        super.onWindowFocusChanged(hasWindowFocus);
 //        startAnimation(-1, 360);

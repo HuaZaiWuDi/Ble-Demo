@@ -1,8 +1,11 @@
 package me.shaohui.shareutil.login.result;
 
 import android.text.TextUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import me.shaohui.shareutil.ShareLogger;
 
 /**
  * Created by shaohui on 2016/12/1.
@@ -66,6 +69,7 @@ public class WeiboUser extends BaseUser {
      */
 
     public static WeiboUser parse(JSONObject jsonObject) throws JSONException {
+        ShareLogger.e("parse：" + jsonObject.toString());
         WeiboUser user = new WeiboUser();
         user.setOpenId(String.valueOf(jsonObject.getInt("id")));
         user.setNickname(jsonObject.getString("screen_name"));
@@ -119,5 +123,15 @@ public class WeiboUser extends BaseUser {
 
     public void setHeadimgurl_hd(String headimgurl_hd) {
         this.headimgurl_hd = headimgurl_hd;
+    }
+
+    @Override
+    public String toString() {
+        return "WeiboUser{" +
+                "language='" + language + '\'' +
+                ", city='" + city + '\'' +
+                ", province='" + province + '\'' +
+                ", headimgurl_hd='" + headimgurl_hd + '\'' +
+                '}';
     }
 }

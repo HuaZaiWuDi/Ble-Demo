@@ -93,6 +93,12 @@ public class AccountFragment extends BaseAcFragment {
         mTvPhone.setText(phone);
     }
 
+    @Override
+    public void onDestroy() {
+        listener = null;
+        super.onDestroy();
+    }
+
     private void initMyDialog() {
         dialog = new RxDialogSureCancel(mActivity);
         dialog.getTvContent().setText("解绑后将不能作为登录方式，确定解除微信账号绑定么？");
@@ -185,7 +191,7 @@ public class AccountFragment extends BaseAcFragment {
     }
 
 
-    final LoginListener listener = new LoginListener() {
+    LoginListener listener = new LoginListener() {
         @Override
         public void loginSuccess(LoginResult result) {
             //登录成功， 如果你选择了获取用户信息，可以通过
@@ -195,7 +201,7 @@ public class AccountFragment extends BaseAcFragment {
 
         @Override
         public void loginFailure(Exception e) {
-            RxLogUtils.e("登录失败");
+            RxLogUtils.e("登录失败:" + e.getMessage());
             RxToast.error("登录失败");
         }
 

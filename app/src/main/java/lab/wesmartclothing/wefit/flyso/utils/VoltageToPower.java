@@ -32,8 +32,9 @@ public class VoltageToPower {
      * @return 电池容量 （%）
      */
 
-    public int getBatteryCapacity(double Voltage) {
-        int batteryCapacity = 0;
+    public  int getBatteryCapacity(double Voltage) {
+        System.out.print(Voltage);
+        int batteryCapacity = -1;
         if (Voltage >= 4.2) {
             batteryCapacity = 100;
         } else if (Voltage >= 4.08 && Voltage < 4.2) {
@@ -84,5 +85,6 @@ public class VoltageToPower {
         }
         return time;
     }
+
 
 }

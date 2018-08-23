@@ -3,48 +3,42 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/selector_ripple_bg_"
     android:layout_height="wrap_content">
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_50"
+        android:layout_height="8dp"
         android:background="@color/bg_color"/>
 
     <RelativeLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_120"
-        android:layout_below="@+id/view">
+        android:layout_height="56dp"
+        android:layout_below="@+id/view"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
 
         <ImageView
             android:id="@+id/img"
-            android:layout_width="@dimen/d_50"
-            android:layout_height="@dimen/d_50"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/d_50"
-            android:layout_marginRight="@dimen/d_10"
-            android:src="@drawable/energy_green_bg"/>
+            tools:src="@mipmap/icon_breakfast"/>
 
         <TextView
+            android:textSize="15sp"
+            android:textStyle="bold"
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/img"
             android:textColor="@color/textColor"
             tools:text="早餐"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/d_10"
-            android:layout_toLeftOf="@+id/tv_kcal"
-            android:text="@string/ingestioned"
-            android:textColor="@color/textHeatColor"/>
 
 
         <TextView
@@ -53,11 +47,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/d_30"
-            android:text="620千卡"
-            android:textColor="@color/colorTheme"/>
-
-
+            android:textColor="@color/orange_FF7200"
+            android:textSize="20sp"
+            tools:text="620千卡"/>
 
 
     </RelativeLayout>

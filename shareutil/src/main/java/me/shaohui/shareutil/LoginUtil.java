@@ -3,6 +3,7 @@ package me.shaohui.shareutil;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+
 import me.shaohui.shareutil.login.LoginListener;
 import me.shaohui.shareutil.login.LoginPlatform;
 import me.shaohui.shareutil.login.LoginResult;
@@ -31,12 +32,12 @@ public class LoginUtil {
     static final int TYPE = 799;
 
     public static void login(Context context, @LoginPlatform.Platform int platform,
-            LoginListener listener) {
+                             LoginListener listener) {
         login(context, platform, listener, true);
     }
 
     public static void login(Context context, @LoginPlatform.Platform int platform,
-            LoginListener listener, boolean fetchUserInfo) {
+                             LoginListener listener, boolean fetchUserInfo) {
         mPlatform = platform;
         mLoginListener = new LoginListenerProxy(listener);
         isFetchUserInfo = fetchUserInfo;
@@ -94,7 +95,7 @@ public class LoginUtil {
 
         @Override
         public void loginFailure(Exception e) {
-            ShareLogger.i(INFO.LOGIN_FAIl);
+            ShareLogger.i(INFO.LOGIN_FAIl + e.getMessage());
             mListener.loginFailure(e);
             recycle();
         }
@@ -108,7 +109,7 @@ public class LoginUtil {
 
         @Override
         public void beforeFetchUserInfo(BaseToken token) {
-            ShareLogger.i(INFO.LOGIN_AUTH_SUCCESS);
+            ShareLogger.i(INFO.LOGIN_AUTH_SUCCESS + token.toString());
             mListener.beforeFetchUserInfo(token);
         }
     }

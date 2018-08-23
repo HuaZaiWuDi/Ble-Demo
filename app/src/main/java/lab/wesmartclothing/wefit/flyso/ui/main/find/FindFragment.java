@@ -73,7 +73,6 @@ public class FindFragment extends BaseWebFragment {
             @Override
             public void handler(final String data, CallBackFunction function) {
                 RxLogUtils.i("传递参数：" + data);
-
                 if (!RxUtils.isFastClick(1000)) {
                     try {
                         JSONObject object = new JSONObject(data);

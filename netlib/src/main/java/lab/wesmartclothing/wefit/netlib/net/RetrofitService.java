@@ -62,6 +62,9 @@ public interface RetrofitService {
     @POST("slim/indexInfo")
     Observable<String> indexInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
+    @POST("heat/fetchFoodPlan")
+    Observable<String> fetchFoodPlan();
+
     ///////////////////////////////////////////////////////////////////////////
     // 体重
     ///////////////////////////////////////////////////////////////////////////

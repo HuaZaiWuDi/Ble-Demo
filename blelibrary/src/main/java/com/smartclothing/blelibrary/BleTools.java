@@ -56,6 +56,9 @@ public class BleTools {
 
 
     public static BleManager getBleManager() {
+        if (bleManager == null) {
+            bleManager = BleManager.getInstance();
+        }
         return bleManager;
     }
 
