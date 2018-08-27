@@ -214,6 +214,9 @@ public class WeightRecordFragment extends BaseAcFragment {
 
 
     private void initData() {
+        btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
+                mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected));
+
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightInfo(1, 20))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -306,7 +309,7 @@ public class WeightRecordFragment extends BaseAcFragment {
             public void selectItem(int valueX) {
                 mTvCurWeight.setText((float) list.get(valueX).getWeight() + "");
                 mTvBodyFat.setText((float) list.get(valueX).getBodyFat() + "");
-                mTvMuscle.setText((float) list.get(valueX).getMuscle() + "");
+                mTvMuscle.setText((float) (list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100) + "");
                 mTvBmi.setText((float) list.get(valueX).getBmi() + "");
                 mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
                 currentGid = list.get(valueX).getGid();

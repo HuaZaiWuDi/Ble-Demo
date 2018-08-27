@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 
 public class TestBleScanActivity extends AppCompatActivity {
 
@@ -53,7 +53,7 @@ public class TestBleScanActivity extends AppCompatActivity {
 
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new PicassoImageLoader());   //设置图片加载器
+        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
         imagePicker.setShowCamera(true);//显示拍照按钮
         imagePicker.setMultiMode(false);
         imagePicker.setCrop(true);        //允许裁剪（单选才有效）

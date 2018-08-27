@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -235,11 +234,8 @@ public class MeFragment extends BaseAcFragment {
                         Gson gson = MyAPP.getGson();
                         UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
 
-                        Glide.with(mContext)
-                                .load(user.getImgUrl())
-                                .asBitmap()
-                                .placeholder(R.mipmap.userimg)
-                                .into(mIvUserImg);//
+                        MyAPP.getImageLoader().displayImage(mActivity, user.getImgUrl(), R.mipmap.userimg, mIvUserImg);
+
 
                         mTvUserName.setText(user.getUserName());
                         deivceItem.setDetailText(user.getBindCount() == 0 ? "" : user.getBindCount() + "");

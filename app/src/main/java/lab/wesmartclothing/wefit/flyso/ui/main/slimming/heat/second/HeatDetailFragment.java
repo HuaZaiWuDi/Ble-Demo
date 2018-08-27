@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
@@ -275,7 +274,7 @@ public class HeatDetailFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
                 QMUIRadiusImageView view = helper.getView(R.id.img_food);
-                Glide.with(mActivity).load(item).asBitmap().placeholder(R.mipmap.group15).into(view);
+                MyAPP.getImageLoader().displayImage(mActivity, item, view);
             }
         };
         adapterBreakfast.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -294,7 +293,7 @@ public class HeatDetailFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
                 QMUIRadiusImageView view = helper.getView(R.id.img_food);
-                Glide.with(mActivity).load(item).asBitmap().placeholder(R.mipmap.group15).into(view);
+                MyAPP.getImageLoader().displayImage(mActivity, item, view);
             }
         };
         adapterLunch.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -313,7 +312,7 @@ public class HeatDetailFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
                 QMUIRadiusImageView view = helper.getView(R.id.img_food);
-                Glide.with(mActivity).load(item).asBitmap().placeholder(R.mipmap.group15).into(view);
+                MyAPP.getImageLoader().displayImage(mActivity, item, view);
             }
         };
         adapterDinner.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -331,7 +330,8 @@ public class HeatDetailFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
                 QMUIRadiusImageView view = helper.getView(R.id.img_food);
-                Glide.with(mActivity).load(item).asBitmap().placeholder(R.mipmap.group15).into(view);
+                MyAPP.getImageLoader().displayImage(mActivity, item, view);
+
             }
         };
         adapterMeal.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

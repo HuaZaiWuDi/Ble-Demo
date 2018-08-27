@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -47,7 +46,7 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
-import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.picker.AddressPickTask;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
@@ -99,13 +98,14 @@ public class UserInfofragment extends BaseAcFragment {
         initImagePicker();
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        info.setChange(false);
         notifyData(info);
     }
 
 
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new PicassoImageLoader());   //设置图片加载器
+        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
         imagePicker.setShowCamera(true);//显示拍照按钮
         imagePicker.setMultiMode(false);
         imagePicker.setCrop(true);        //允许裁剪（单选才有效）
@@ -136,10 +136,9 @@ public class UserInfofragment extends BaseAcFragment {
     }
 
     private void notifyData(UserInfo info) {
-        Glide.with(mActivity).load(info.getImgUrl())
-                .asBitmap()
-                .placeholder(R.mipmap.userimg)
-                .into(mIvUserImg);
+
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
+
         userNameItem.setDetailText(info.getUserName());
         sexItem.setDetailText(info.getSex() == 1 ? "男" : "女");
         birthItem.setDetailText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
@@ -272,16 +271,11 @@ public class UserInfofragment extends BaseAcFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        RxLogUtils.d("requestCode：" + requestCode);
-        RxLogUtils.d("resultCode：" + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             if (data != null && requestCode == IMAGE_PICKER) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
-                Glide.with(mActivity).load(images.get(0).path)
-                        .asBitmap()
-                        .placeholder(R.mipmap.userimg)
-                        .into(mIvUserImg);
+
                 uploadImage(images.get(0).path);
             }
         }
@@ -365,7 +359,7 @@ public class UserInfofragment extends BaseAcFragment {
                 .show();
     }
 
-    private void uploadImage(String cropImagePath) {
+    private void uploadImage(final String cropImagePath) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(cropImagePath));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", cropImagePath, requestFile);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -375,6 +369,8 @@ public class UserInfofragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        MyAPP.getImageLoader().displayImage(mActivity, cropImagePath, R.mipmap.userimg, mIvUserImg);
+
                         RxLogUtils.d("结束" + s);
                         RxToast.success("保存成功", 2000);
                         //成功后将本地图片设置到imageView中，并在退回到个人中心时，刷新贴图url

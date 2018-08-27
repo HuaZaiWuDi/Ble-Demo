@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -77,6 +76,7 @@ public class AddedFoodFragment extends BaseAcFragment {
         initRecyclerView();
         initData();
         initTopBar();
+        dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setDeleteFoodListener(new AddOrUpdateFoodDialog.DeleteFoodListener() {
             @Override
             public void deleteFood(FoodListBean listBean) {
@@ -143,7 +143,9 @@ public class AddedFoodFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, FoodListBean item) {
                 QMUIRadiusImageView foodImg = helper.getView(R.id.iv_foodImg);
-                Glide.with(mContext).load(item.getFoodImg()).asBitmap().into(foodImg);
+
+                MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), foodImg);
+
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getCalorie() + "")

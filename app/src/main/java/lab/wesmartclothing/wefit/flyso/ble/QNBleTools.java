@@ -75,6 +75,7 @@ public class QNBleTools {
         config.setAllowDuplicates(false);
         config.setUnit(0);
         MyAPP.QNapi.startBleDeviceDiscovery(config, mQNResultCallback);
+        stopScan();
     }
 
 
@@ -162,7 +163,8 @@ public class QNBleTools {
     }
 
 
-    public void disConnectDevice(String mac) {
+    public void disConnectDevice() {
+        String mac = SPUtils.getString(SPKey.SP_scaleMAC);
         MyAPP.QNapi.disconnectDevice(mac, new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {

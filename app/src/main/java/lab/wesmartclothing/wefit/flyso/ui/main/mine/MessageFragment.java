@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -92,8 +91,8 @@ public class MessageFragment extends BaseAcFragment {
 
             @Override
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
-                Glide.with(mActivity).load(R.mipmap.icon_app)
-                        .asBitmap().placeholder(R.mipmap.icon_placeholder).into((QMUIRadiusImageView) helper.getView(R.id.iv_img));
+
+                MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
 
                 helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
                         .setText(R.id.tv_title, item.getTitle())

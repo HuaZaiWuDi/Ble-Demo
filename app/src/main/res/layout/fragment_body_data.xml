@@ -69,9 +69,10 @@
                     android:id="@+id/tv_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="56.2"
+                    android:text="--"
                     android:textColor="@color/green_61D97F"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp"
+                    tools:text="56.2"/>
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -2,18 +2,11 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
@@ -95,6 +88,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        isLoad = true;
+        onVisible();
     }
 
     public TipDialog tipDialog;
@@ -103,15 +98,6 @@ public abstract class BaseFragment extends Fragment {
     private void initDialog() {
 
         tipDialog = new TipDialog(mActivity);
-    }
-
-    public void loadCricle(String img_url, @NonNull ImageView img) {
-        Glide.with(mActivity)
-                .load(img_url)
-                .error(R.mipmap.group15)
-                .bitmapTransform(new CropCircleTransformation(mActivity))//圆角图片
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(img);
     }
 
 
@@ -188,9 +174,9 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        isLoad = true;
-        onVisible();
+
     }
+
 
     protected void onVisible() {
         lazyLoad();

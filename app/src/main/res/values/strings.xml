@@ -1,95 +1,50 @@
 <resources>
     <string name="appName">Timetofit</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard" translatable="false">Dashboard</string>
-    <string name="title_notifications" translatable="false">Notifications</string>
 
 
     <string name="nav_slimming" translatable="false">瘦身</string>
     <string name="nav_find" translatable="false">发现</string>
     <string name="nav_store" translatable="false">商城</string>
     <string name="nav_me" translatable="false">我的</string>
-    <string name="action_settings" translatable="false">Settings</string>
-    <string name="section_format" translatable="false">Hello World from section: %1$d</string>
 
 
     <string name="heat">热量</string>
     <string name="weight" translatable="false">体重</string>
     <string name="sports" translatable="false">运动</string>
-    <string name="heatRate" translatable="false">心率</string>
     <string name="sportsTime" translatable="false">时长</string>
-
-    <string name="consume" translatable="false">消耗</string>
-    <string name="Ingestion" translatable="false">摄入</string>
-
-    <string name="inputFoodName" translatable="false">请输入食物名字</string>
 
     <string name="cancel" translatable="false">取消</string>
     <string name="ok" translatable="false">完成</string>
     <string name="confirm">确认</string>
 
-    <string name="unit_g" translatable="false">克</string>
-    <string name="unit_kg" translatable="false">千克</string>
-
-    <string name="Year" translatable="false">年</string>
-    <string name="Month" translatable="false">月</string>
-    <string name="Day" translatable="false">日</string>
-
-    <string name="delete" translatable="false">删除</string>
-
-    <string name="unit_heat" translatable="false">/100.0克</string>
     <string name="unit_kcal" translatable="false">kcal</string>
     <string name="unit_k" translatable="false">cal</string>
-    <string name="unit_kcal2" translatable="false">单位：kcal</string>
     <string name="unit_kcal3" translatable="false">--kcal</string>
 
     <string name="inputRightFoodName" translatable="false">请输入正确的食物名字</string>
     <string name="weightNoZero" translatable="false">重量不能为0</string>
 
     <string name="no_data" translatable="false">您还未收藏任何内容</string>
-    <string name="no_search_data" translatable="false">没有搜索到食物</string>
     <string name="addBreakfast" translatable="false">添加早餐</string>
     <string name="addLunch" translatable="false">添加午餐</string>
     <string name="addDinner" translatable="false">添加晚餐</string>
-    <string name="addMidnight" translatable="false">添加宵夜</string>
     <string name="addSnack" translatable="false">添加加餐</string>
 
     <string name="breakfast" translatable="false">早餐</string>
     <string name="lunch" translatable="false">午餐</string>
     <string name="dinner" translatable="false">晚餐</string>
-    <string name="midnight" translatable="false">宵夜</string>
-    <string name="snack" translatable="false">加餐</string>
-    <string name="ingestioned" translatable="false">已摄入:</string>
 
     <string name="clearHistoryData" translatable="false">清空历史数据</string>
 
     <string name="can_eatHeat" translatable="false">还可以摄入热量</string>
     <string name="EatMore" translatable="false">多吃了</string>
 
-    <string name="weigh_info" translatable="false">身体信息</string>
-    <string name="details" translatable="false">查看详情</string>
-
-    <string name="currentWeight" translatable="false">当前体重</string>
-    <string name="targetWeight" translatable="false">目标体重</string>
-
-    <string name="weight_data" translatable="false">体重数据</string>
     <string name="btn_leave" translatable="false">离开</string>
     <string name="btn_continue" translatable="false">继续领取</string>
 
     <string name="receivedCount" translatable="false">%1$s领取的体重数据（%2$d）</string>
 
-    <string name="unbindDevice" translatable="false">还未绑定设备，</string>
     <string name="goBind" translatable="false">去绑定</string>
-
-    <string name="connectBle" translatable="false">你还未连接设备，请打开</string>
-    <string name="phoneBle" translatable="false">手机蓝牙</string>
-
-    <string name="newWeight" translatable="false">你有新的体重数据，</string>
-    <string name="waitReceive" translatable="false">等待领取</string>
-
-    <string name="bodyAge" translatable="false">岁</string>
-    <string name="level" translatable="false">级</string>
 
     <string name="disConnected" translatable="false">未连接</string>
     <string name="connected" translatable="false">已连接</string>
@@ -101,22 +56,16 @@
     <string name="startSports" translatable="false">开始运动</string>
     <string name="sportsDetails" translatable="false">运动详情</string>
     <string name="consumeHeat" translatable="false">消耗热量</string>
-    <string name="startSlimming" translatable="false">开始热身</string>
 
     <string name="warm" translatable="false">热身</string>
     <string name="grease" translatable="false">燃脂</string>
     <string name="aerobic" translatable="false">有氧</string>
     <string name="anaerobic" translatable="false">无氧</string>
     <string name="limit" translatable="false">极限</string>
-    <string name="sportsToSee" translatable="false">检查到您正在运动，请点击查看</string>
 
 
     <!--登录信息录入-->
-    <string name="login" translatable="false">登\t\t录</string>
-    <string name="phone" translatable="false">手机</string>
-    <string name="VCode" translatable="false">验证码</string>
     <string name="getVCode" translatable="false">获取验证码</string>
-    <string name="inputPhone" translatable="false">请输入手机号码</string>
     <string name="inputVCode" translatable="false">请输入短信验证码</string>
     <string name="login_clause" translatable="false">注册即表示同意软件 服务条款和隐私条款</string>
     <string name="chooseSex" translatable="false">请选择您的性别</string>
@@ -132,7 +81,6 @@
     <string name="info_about" translatable="false">我们需要一些你的信息来为您定制瘦身计划，这些信息都是经过高度加密的。</string>
     <string name="Location_about" translatable="false">为了给您推送优质的资讯，我们将要获得您的位置信息。</string>
     <string name="device_about" translatable="false">请添加您最近购买的智能设备</string>
-    <string name="inputUserInfo" translatable="false">填写资料</string>
 
     <string name="doing" translatable="false">进行中</string>
     <string name="doingSubtitle" translatable="false">扫描附近的设备</string>
@@ -156,7 +104,6 @@
     <string name="checkBle">请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试</string>
     <string name="tip_nodata">还未上传数据哦！</string>
     <string name="tv_loading">正在加载</string>
-    <string name="open_GPS">未开启GPS定位，部分手机可能搜索不到蓝牙设备</string>
     <string name="open_loaction">未给予定位权限，无法搜索到蓝牙设备</string>
     <string name="connectError">连接瘦身衣异常，请开关蓝牙后再连接</string>
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
@@ -165,16 +112,11 @@
     <string name="passwordError">密码不合理（请输入不少于6位字母或数字）</string>
     <string name="VCodeError">验证码不正确</string>
     <string name="SMSSended">短信已发送</string>
-    <string name="not_locationAddr">未获取地理位置</string>
-    <string name="myOrder">我的订单</string>
-    <string name="shopping">购物车</string>
     <string name="please_input_phone">请输入手机号码</string>
     <string name="pleaseInputPassword">请输入密码</string>
-    <string name="passwordCheck">请输入不少于6位字符密码</string>
     <string name="complete">完成</string>
     <string name="password_not_same">两次输入的密码不一致</string>
     <string name="settingPasswordSuccess">密码设置成功</string>
-    <string name="receive">领取</string>
 
     <string name="speech_warm">您已进入热身心率区间，合理的热身运动可以避免运动损伤，建议热身5到10分钟</string>
     <string name="speech_grease">您已进入燃脂心率区间，该状态为高效燃脂，建议保持20分钟以上以达到最佳效果，请注意心率控制在120-140之间。</string>
@@ -182,7 +124,6 @@
     <string name="speech_anaerobic">您已进入无氧运动心率区间，建议您适当的降低运动强度。</string>
     <string name="speech_limit"> 您的心率太快了，建议马上停止运动。</string>
     <string name="speech_currentKcal">您当前运动消耗%1$s千卡</string>
-    <string name="speech_totalKcal">本次运动结束，共消耗%1$s千卡</string>
     <string name="tipOpenBlueTooth">检测到您未开启手机蓝牙，开启蓝牙</string>
     <string name="checkSporting">检测到您正在运动，点击查看</string>
     <string name="checkHistoryWeight">您有新的体重数据，点击领取</string>
@@ -213,24 +154,6 @@
     </string-array>
 
 
-    <string-array name="weight_title">
-        <item>身体年龄</item>
-        <item>体脂率</item>
-        <item>基础代谢</item>
-        <item>体型</item>
-        <item>去脂体重</item>
-        <item>体重</item>
-        <item>骨骼肌率</item>
-        <item>肌肉</item>
-        <item>蛋白质</item>
-        <item>水份</item>
-        <item>皮下脂肪率</item>
-        <item>骨量</item>
-        <item>内脏脂肪等级</item>
-        <item>BMI</item>
-    </string-array>
-
-
     <string-array name="bodyShape">
         <item>隐形肥胖</item>
         <item>偏胖</item>
@@ -244,13 +167,6 @@
 
     </string-array>
 
-
-    <string-array name="sports_title">
-        <item>运动时长</item>
-        <item>消耗热量</item>
-        <item>平均心率</item>
-        <item>最高心率</item>
-    </string-array>
 
     <string-array name="weightDatas">
         <item>体脂率</item>

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -18,6 +17,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -40,6 +40,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -95,8 +96,8 @@ public class CollectFragment extends BaseAcFragment {
 
             @Override
             protected void convert(BaseViewHolder helper, CollectBean.ListBean item) {
-                Glide.with(mActivity).load(item.getCoverPicture())
-                        .asBitmap().placeholder(R.mipmap.icon_placeholder).into((ImageView) helper.getView(R.id.iv_img));
+                MyAPP.getImageLoader().displayImage(mActivity, item.getCoverPicture(), (ImageView) helper.getView(R.id.iv_img));
+
                 helper.setText(R.id.tv_title, item.getArticleName())
                         .setText(R.id.tv_content, item.getSummary())
 //                        .setText(R.id.tv_readCount, "Timetofit\t\t\t" + "w\t次阅读")
@@ -113,7 +114,7 @@ public class CollectFragment extends BaseAcFragment {
             }
         });
 
-        adapter.setEmptyView(emptyView);
+
         mRvCollect.setAdapter(adapter);
         smartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
@@ -192,14 +193,14 @@ public class CollectFragment extends BaseAcFragment {
             CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position);
             Bundle bundle = new Bundle();
             //打开URL
-            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
+            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&userId=" + SPUtils.getString(SPKey.SP_UserId) + "&isgo=1");
             RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
         }
     };
 
 
     private void deleteItemById(final int position) {
-        String gid = ((CollectBean.ListBean) adapter.getData().get(0)).getGid();
+        String gid = ((CollectBean.ListBean) adapter.getData().get(position)).getGid();
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
         );
@@ -212,6 +213,9 @@ public class CollectFragment extends BaseAcFragment {
                         RxLogUtils.d("结束" + s);
                         //如果成功，刷新列表，不加载数据
                         adapter.remove(position);
+                        if (adapter.getData().size() == 0) {
+                            adapter.setEmptyView(emptyView);
+                        }
                     }
 
                     @Override
@@ -248,6 +252,9 @@ public class CollectFragment extends BaseAcFragment {
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(true);
                         smartRefreshLayout.setEnableLoadMore(collectBean.isHasNextPage());
+                        if (adapter.getData().size() == 0) {
+                            adapter.setEmptyView(emptyView);
+                        }
                     }
 
                     @Override

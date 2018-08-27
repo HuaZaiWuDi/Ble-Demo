@@ -933,6 +933,7 @@
                             android:src="@mipmap/icon_weight_default"/>
 
                         <TextView
+                            android:id="@+id/tv_clothing_tip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
@@ -1067,6 +1068,7 @@
                             android:src="@mipmap/icon_clothing_default"/>
 
                         <TextView
+                            android:id="@+id/tv_weight_tip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"

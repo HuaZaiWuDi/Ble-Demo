@@ -11,6 +11,7 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
@@ -23,6 +24,7 @@ import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 public abstract class BaseAcFragment extends QMUIFragment {
     public Activity mActivity;
     public Context mContext;
+    public String TGA = "";
     protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
 
     public BaseAcFragment() {
@@ -36,6 +38,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onAttach(Context context) {
+        RxLogUtils.i(TGA + "：onAttach");
         lifecycleSubject.onNext(LifeCycleEvent.ATTACH);
         super.onAttach(context);
         mContext = mActivity = getActivity();
@@ -44,25 +47,20 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        RxLogUtils.i(TGA + "：onActivityCreated");
         super.onActivityCreated(savedInstanceState);
     }
 
     public TipDialog tipDialog;
 
 
+    public void setTGA(String TGA) {
+        this.TGA = TGA;
+    }
+
     private void initDialog() {
 
         tipDialog = new TipDialog(mActivity);
-    }
-
-
-    @Override
-    public void onDetach() {
-        lifecycleSubject.onNext(LifeCycleEvent.DETACH);
-        tipDialog.dismiss();
-        RxKeyboardUtils.hideSoftInput(mActivity);
-        super.onDetach();
-        mActivity = null;
     }
 
 
@@ -100,6 +98,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onPause() {
+        RxLogUtils.i(TGA + "：onPause");
         lifecycleSubject.onNext(LifeCycleEvent.STOP);
         super.onPause();
     }
@@ -107,12 +106,14 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onStop() {
+        RxLogUtils.i(TGA + "：onStop");
         lifecycleSubject.onNext(LifeCycleEvent.STOP);
         super.onStop();
     }
 
     @Override
     public void onResume() {
+        RxLogUtils.i(TGA + "：onResume");
         lifecycleSubject.onNext(LifeCycleEvent.RESUME);
         super.onResume();
     }
@@ -120,12 +121,17 @@ public abstract class BaseAcFragment extends QMUIFragment {
 
     @Override
     public void onDestroyView() {
+        if (tipDialog != null) {
+            tipDialog.dismiss();
+        }
+        RxLogUtils.i(TGA + "：onDestroyView");
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY_VIEW);
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
+        RxLogUtils.i(TGA + "：onDestroy");
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
         super.onDestroy();
         if (BuildConfig.DEBUG) {
@@ -135,9 +141,21 @@ public abstract class BaseAcFragment extends QMUIFragment {
         }
     }
 
+    @Override
+    public void onDetach() {
+        RxLogUtils.i(TGA + "：onDetach");
+        lifecycleSubject.onNext(LifeCycleEvent.DETACH);
+        tipDialog.dismiss();
+        RxKeyboardUtils.hideSoftInput(mActivity);
+        super.onDetach();
+        mActivity = null;
+    }
+
 
     @Override
     public void onStart() {
+        lifecycleSubject.onNext(LifeCycleEvent.START);
+        RxLogUtils.i(TGA + "：onStart");
         super.onStart();
     }
 
@@ -161,6 +179,7 @@ public abstract class BaseAcFragment extends QMUIFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RxLogUtils.i(TGA + "：onCreate");
         if (savedInstanceState != null) {
 
             boolean aBoolean = savedInstanceState.getBoolean("STATE_SAVE_IS_HIDDEN");

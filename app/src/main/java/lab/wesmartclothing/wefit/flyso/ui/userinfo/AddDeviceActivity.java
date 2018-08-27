@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,7 +47,6 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
@@ -154,17 +152,6 @@ public class AddDeviceActivity extends BaseActivity {
             startScan();
         } else if (stepState == 2) {
             bindDevice();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //跳转主页
-                    if (!BUNDLE_FORCE_BIND) {
-                        RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
-                    } else {
-                        RxActivityUtils.finishActivity();
-                    }
-                }
-            }, 800);
         }
     }
 
@@ -196,7 +183,6 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void startScan() {
-
         if (!BleTools.getBleManager().isBlueEnable()) {
             RxToast.warning(getString(R.string.open_BLE));
             BleTools.getBleManager().enableBluetooth();
@@ -211,11 +197,12 @@ public class AddDeviceActivity extends BaseActivity {
 
         mDeviceLists.clear();
         scanDevice.clear();
-        startService(new Intent(mContext, BleService_.class));
         img_scan.startAnimation();
         btn_scan.setEnabled(false);
 
         mHandler.postDelayed(scanTimeout, 15000);
+
+        initRxBus();
     }
 
     private Runnable scanTimeout = new Runnable() {
@@ -234,7 +221,6 @@ public class AddDeviceActivity extends BaseActivity {
         Disposable device = RxBus.getInstance().register(BleDevice.class, new Consumer<BleDevice>() {
             @Override
             public void accept(BleDevice device) throws Exception {
-                if (!img_scan.isAnim()) return;
                 if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
                     isBind(bean);
@@ -245,7 +231,6 @@ public class AddDeviceActivity extends BaseActivity {
         Disposable QNDevice = RxBus.getInstance().register(QNBleDevice.class, new Consumer<QNBleDevice>() {
             @Override
             public void accept(QNBleDevice device) throws Exception {
-                if (!img_scan.isAnim()) return;
                 if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
                     BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
                     isBind(bean);
@@ -261,7 +246,6 @@ public class AddDeviceActivity extends BaseActivity {
     public void initView() {
         initStep(0);
         initRecycler();
-        initRxBus();
         if (BUNDLE_FORCE_BIND)
             tv_skip.setVisibility(View.GONE);
 
@@ -407,6 +391,12 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加绑定设备：" + s);
+                        //跳转主页
+                        if (!BUNDLE_FORCE_BIND) {
+                            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
+                        } else {
+                            RxActivityUtils.finishActivity();
+                        }
                     }
 
                     @Override
@@ -425,15 +415,16 @@ public class AddDeviceActivity extends BaseActivity {
         mHandler.removeCallbacks(scanTimeout);
         btn_scan.setEnabled(true);
         img_scan.stopAnimation();
-        if (stepState != 2)
-            initStep(1);
-
+        
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
+                        if (stepState != 2)
+                            initStep(1);
+
                         if ("true".equals(s)) {
                             if (bean.getDeivceType() == 0) {
                                 SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
@@ -444,6 +435,8 @@ public class AddDeviceActivity extends BaseActivity {
                         }
                         bean.setBind("true".equals(s));
                         adapter.addData(bean);
+
+
                     }
 
                     @Override

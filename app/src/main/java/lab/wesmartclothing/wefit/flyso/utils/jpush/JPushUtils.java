@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.utils.jpush;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
-import android.widget.Toast;
 
 import com.vondear.rxtools.utils.SPUtils;
 
@@ -30,6 +29,7 @@ public class JPushUtils {
         JPushInterface.setDebugMode(BuildConfig.DEBUG);
         JPushInterface.init(application);
 
+//        setAliasOrTags(null);
     }
 
     public static void setAliasOrTags(String... tag) {
@@ -40,7 +40,7 @@ public class JPushUtils {
         TagAliasOperatorHelper.TagAliasBean tagAliasBean = new TagAliasOperatorHelper.TagAliasBean();
         tagAliasBean.action = TagAliasOperatorHelper.ACTION_SET;
         tagAliasBean.tags = tags;
-        tagAliasBean.isAliasAction = !SPUtils.getBoolean(SPKey.SP_PUSH_ALIAS);
+        tagAliasBean.isAliasAction = true;
         tagAliasBean.alias = SPUtils.getString(SPKey.SP_UserId);
         TagAliasOperatorHelper.getInstance().handleAction(mApplication, sequence, tagAliasBean);
     }
@@ -55,7 +55,6 @@ public class JPushUtils {
         builder.notificationFlags = Notification.FLAG_AUTO_CANCEL;  //设置为点击后自动消失
         builder.notificationDefaults = Notification.DEFAULT_SOUND;  //设置为铃声（ Notification.DEFAULT_SOUND）或者震动（ Notification.DEFAULT_VIBRATE）
         JPushInterface.setPushNotificationBuilder(1, builder);
-        Toast.makeText(activity, "Basic Builder - 1", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -67,7 +66,6 @@ public class JPushUtils {
         builder.layoutIconDrawable = R.mipmap.app_name;
         builder.developerArg0 = "developerArg2";
         JPushInterface.setPushNotificationBuilder(2, builder);
-        Toast.makeText(activity, "Custom Builder - 2", Toast.LENGTH_SHORT).show();
     }
 
 

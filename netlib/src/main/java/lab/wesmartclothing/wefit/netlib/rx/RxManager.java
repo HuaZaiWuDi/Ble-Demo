@@ -76,4 +76,10 @@ public class RxManager {
                 .compose(RxThreadUtils.<String>rxThreadHelper());
     }
 
+    public <String> Observable<String> doLoadDownSubscribe(Observable<String> observable) {
+        return observable
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .compose(RxThreadUtils.<String>rxThreadHelper());
+    }
+
 }

@@ -1,11 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.flyco.tablayout.CommonTabLayout;
@@ -17,12 +16,18 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.data.JPushLocalNotification;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
@@ -36,22 +41,17 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-
-import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_FIND;
-import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_MESSAGE;
-import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_SHOP;
-import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_SLIM;
-import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.ACTIVITY_USER;
 
 /**
  * Created by jk on 2018/8/10.
  */
 public class MainFragment extends BaseAcFragment {
 
-    @BindView(R.id.mFrameLayout)
-    FrameLayout mMFrameLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewpager;
     @BindView(R.id.mCommonTabLayout)
     CommonTabLayout mCommonTabLayout;
     @BindView(R.id.bottom_tab)
@@ -75,10 +75,16 @@ public class MainFragment extends BaseAcFragment {
         return view;
     }
 
+
+    @Override
+    protected boolean canDragBack() {
+        return false;
+    }
+
     private void initView() {
+        RxLogUtils.i("MainFragment 创建");
         initMyViewPager();
         initBottomTab();
-        setDefaultFragment();
         initRxBus();
         mBottomTab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,8 +105,7 @@ public class MainFragment extends BaseAcFragment {
         Disposable goToFind = RxBus.getInstance().register(GoToFind.class, new Consumer<GoToFind>() {
             @Override
             public void accept(GoToFind goToFind) throws Exception {
-                mCommonTabLayout.setCurrentTab(1);
-                switchFragment(mFragments.get(1));
+                mViewpager.setCurrentItem(1, true);
             }
         });
         RxBus.getInstance().addSubscription(this, register, goToFind);
@@ -108,23 +113,19 @@ public class MainFragment extends BaseAcFragment {
 
     private void openActivity(String openTarget) {
         switch (openTarget) {
-            case ACTIVITY_SLIM:
-                mCommonTabLayout.setCurrentTab(0);
-                switchFragment(mFragments.get(0));
+            case MyJpushReceiver.ACTIVITY_SLIM:
+                mViewpager.setCurrentItem(0, true);
                 break;
-            case ACTIVITY_FIND:
-                mCommonTabLayout.setCurrentTab(1);
-                switchFragment(mFragments.get(1));
+            case MyJpushReceiver.ACTIVITY_FIND:
+                mViewpager.setCurrentItem(1, true);
                 break;
-            case ACTIVITY_SHOP:
-                mCommonTabLayout.setCurrentTab(2);
-                switchFragment(mFragments.get(2));
+            case MyJpushReceiver.ACTIVITY_SHOP:
+                mViewpager.setCurrentItem(2, true);
                 break;
-            case ACTIVITY_USER:
-                mCommonTabLayout.setCurrentTab(3);
-                switchFragment(mFragments.get(3));
+            case MyJpushReceiver.ACTIVITY_USER:
+                mViewpager.setCurrentItem(3, true);
                 break;
-            case ACTIVITY_MESSAGE:
+            case MyJpushReceiver.ACTIVITY_MESSAGE:
                 //跳转消息通知
                 startFragment(MessageFragment.getInstance());
                 break;
@@ -150,7 +151,7 @@ public class MainFragment extends BaseAcFragment {
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                switchFragment(mFragments.get(position));
+                mViewpager.setCurrentItem(position, true);
             }
 
             @Override
@@ -173,10 +174,29 @@ public class MainFragment extends BaseAcFragment {
                             })
                             .build()
                             .show();
+//                    showLocalNotify();
+
                 }
             }
         });
     }
+
+    private void showLocalNotify() {
+        JPushLocalNotification ln = new JPushLocalNotification();
+        ln.setBuilderId(1);
+        ln.setContent("hhhfff");
+        ln.setTitle("lnfff");
+        ln.setNotificationId(11111111);
+        ln.setBroadcastTime(System.currentTimeMillis() + 1000 * 60 * 10);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name", "jpush");
+        map.put("test", "111");
+        JSONObject json = new JSONObject(map);
+        ln.setExtras(json.toString());
+        JPushInterface.addLocalNotification(mContext.getApplicationContext(), ln);
+    }
+
 
     private void initMyViewPager() {
         mFragments.clear();
@@ -185,31 +205,63 @@ public class MainFragment extends BaseAcFragment {
         mFragments.add(FindFragment.getInstance());
         mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());
-    }
 
-    private FragmentManager fm;
-    private Fragment mFragmentNow;
-
-    private void setDefaultFragment() {
-        fm = getChildFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.mFrameLayout, mFragments.get(0));
-        transaction.commit();
-        mFragmentNow = mFragments.get(0);
-    }
-
-
-    private void switchFragment(Fragment to) {
-        if (mFragmentNow != to) {
-            FragmentTransaction transaction = fm.beginTransaction();
-            if (!to.isAdded()) {    // 先判断是否被add过
-                transaction.hide(mFragmentNow).add(R.id.mFrameLayout, to).commitAllowingStateLoss(); // 隐藏当前的fragment，add下一个到Activity中
-            } else {
-                transaction.hide(mFragmentNow).show(to).commitAllowingStateLoss(); // 隐藏当前的fragment，显示下一个
+        mViewpager.setOffscreenPageLimit(4);
+        mViewpager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return mFragments.get(position);
             }
-            mFragmentNow = to;
-        }
+
+            @Override
+            public int getCount() {
+                return mFragments.size();
+            }
+        });
+
+        mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mCommonTabLayout.setCurrentTab(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
     }
+
+//    private FragmentManager fm;
+//    private Fragment mFragmentNow;
+
+//    private void setDefaultFragment() {
+//        fm = getChildFragmentManager();
+//        FragmentTransaction transaction = fm.beginTransaction();
+//        transaction.add(R.id.mFrameLayout, mFragments.get(0));
+//        transaction.commit();
+//        mFragmentNow = mFragments.get(0);
+//    }
+//
+//
+//    private void switchFragment(Fragment to) {
+//        if (mFragmentNow != to) {
+//            FragmentTransaction transaction = fm.beginTransaction();
+//            if (!to.isAdded()) {    // 先判断是否被add过
+//                transaction.hide(mFragmentNow).add(R.id.mFrameLayout, to).commitAllowingStateLoss(); // 隐藏当前的fragment，add下一个到Activity中
+//            } else {
+//                transaction.hide(mFragmentNow).show(to).commitAllowingStateLoss(); // 隐藏当前的fragment，显示下一个
+//            }
+//            mFragmentNow = to;
+//        }
+//    }
 
     @Override
     public void onDestroy() {

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -74,7 +73,8 @@ public class FoodRecommend extends BaseAcFragment {
         RxManager.getInstance().doNetSubscribe(dxyService.fetchFoodPlan())
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan", String.class, CacheStrategy.firstCache()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
+                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -115,7 +115,6 @@ public class FoodRecommend extends BaseAcFragment {
         }
         sectionQuickAdapter.setNewData(mBeans);
 
-
         RxTextUtils.getBuilder("总计：\t\t")
                 .append("" + total)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -139,10 +138,9 @@ public class FoodRecommend extends BaseAcFragment {
         sectionQuickAdapter = new BaseSectionQuickAdapter<HeatFoodSection, BaseViewHolder>(R.layout.heat_item, R.layout.heat_item_title, mBeans) {
             @Override
             protected void convert(BaseViewHolder helper, HeatFoodSection item) {
-                Glide.with(mContext)
-                        .load(item.t.getFoodImg())
-                        .asBitmap()
-                        .into((QMUIRadiusImageView) helper.getView(R.id.img_food));
+
+                MyAPP.getImageLoader().displayImage(mActivity, item.t.getFoodImg(), (QMUIRadiusImageView) helper.getView(R.id.img_food));
+
                 helper.setText(R.id.tv_foodName, item.t.getFoodName());
                 RxTextUtils.getBuilder(item.t.getUnitCalorie() + "")
                         .append("kacl/")

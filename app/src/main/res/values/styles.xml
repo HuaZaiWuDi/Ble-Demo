@@ -18,9 +18,6 @@
     </style>
 
     <!-- Application theme. -->
-    <style name="recyclerDivider" parent="AppTheme">
-        <item name="android:listDivider">@drawable/divider_bg</item>
-    </style>
 
 
     <style name="QDTopBar" parent="QMUI.TopBar">

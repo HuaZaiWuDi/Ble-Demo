@@ -8,11 +8,15 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
+import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +25,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
@@ -180,7 +185,14 @@ public class Settingfragment extends BaseAcFragment {
                         MyAPP.aMapLocation = null;
                         SPUtils.clear();
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
-                        MyAPP.getRxCache().clear();
+                        try {
+                            MyAPP.getRxCache().clear2();
+                        } catch (IOException e) {
+                            RxLogUtils.e(e.getMessage());
+                            e.printStackTrace();
+                        }
+                        BleTools.getInstance().disConnect();
+                        new QNBleTools().disConnectDevice();
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
                     }
 

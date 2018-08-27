@@ -61,6 +61,7 @@ public abstract class BaseWebActivity extends BaseActivity {
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//
                 .go(getUrl());
+        RxLogUtils.e("加载的URL：" + getUrl());
 
         AgentWebConfig.debug();
 

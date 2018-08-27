@@ -46,6 +46,7 @@ public class SportingActivity extends AppCompatActivity {
     }
 
 
+
     private void initChart(LineChart lineChartBase) {
         lineChartBase.setMaxVisibleValueCount(60);
         lineChartBase.getLegend().setEnabled(false);

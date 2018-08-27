@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -182,7 +183,7 @@ public class BodyDataFragment extends BaseAcFragment {
 
         Healthy healthy7 = new Healthy();
         healthy7.setSections(new double[]{start, end});
-        healthy7.setSectionLabels(new String[]{start + "kg", end + "kg"});
+        healthy7.setSectionLabels(new String[]{RxFormatValue.fromat4S5R(start, 1) + "kg", RxFormatValue.fromat4S5R(end, 1) + "kg"});
         healthy7.setColors(new int[]{Color.parseColor("#5A7BEE"),
                 Color.parseColor("#61D97F"), Color.parseColor("#FFBC00")});
         healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});

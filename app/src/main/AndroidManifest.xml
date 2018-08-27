@@ -74,7 +74,7 @@
         <!-- 高德地图KEY -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="838e8b0162a88fd56a539bd1e786ef93"/>
+            android:value="20cc8510855f543b2bf4c59d647852e2"/>
 
         <service android:name="com.amap.api.location.APSService"/>
 
@@ -90,6 +90,11 @@
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/>
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>
                 <action android:name="cn.jpush.android.intent.CONNECTION"/>
+
+                <!-- 接收网络变化 连接/断开 since 1.6.3 -->
+                <action android:name="cn.jpush.android.intent.CONNECTION" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/><!--开机广播-->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/><!--网络状态改变广播-->
 
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>

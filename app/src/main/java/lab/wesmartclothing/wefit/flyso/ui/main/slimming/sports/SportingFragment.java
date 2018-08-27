@@ -86,7 +86,6 @@ public class SportingFragment extends BaseAcFragment {
     }
 
     private Button btn_Connect;
-
     TextToSpeech textToSpeech;
 
     private int currentTime = 0;
@@ -99,12 +98,13 @@ public class SportingFragment extends BaseAcFragment {
         if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
             if (state) {
                 btn_Connect.setText(R.string.connected);
+                mSwMusic.removeCallbacks(reConnectTimeOut);
             } else {
                 btn_Connect.setText(R.string.disConnected);
-                stopSporting();
+                mSwMusic.postDelayed(reConnectTimeOut, 9000);
             }
         if (mSwMusic.isOpened())
-            textToSpeech.speak(getString(state ? R.string.connected : R.string.disConnected), TextToSpeech.QUEUE_FLUSH, null);
+            textToSpeech.speak(state ? "设备已连接" : "设备连接已断开", TextToSpeech.QUEUE_FLUSH, null);
     }
 
     //监听系统蓝牙开启
@@ -112,6 +112,14 @@ public class SportingFragment extends BaseAcFragment {
     void CLOTHING_STOP() {
         stopSporting();
     }
+
+
+    Runnable reConnectTimeOut = new Runnable() {
+        @Override
+        public void run() {
+            stopSporting();
+        }
+    };
 
 
     @Override
@@ -408,6 +416,8 @@ public class SportingFragment extends BaseAcFragment {
         timer2.stopTimer();
         if (!dialog.isShowing())
             dialog.show();
+        if (mSwMusic.isOpened())
+            textToSpeech.speak("运动已结束", TextToSpeech.QUEUE_FLUSH, null);
     }
 
     RxDialogSureCancel dialog;

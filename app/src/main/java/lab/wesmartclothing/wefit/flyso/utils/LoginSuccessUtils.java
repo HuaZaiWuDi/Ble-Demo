@@ -52,7 +52,7 @@ public class LoginSuccessUtils {
                         RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
-                        JPushUtils.setAliasOrTags(null);
+                        JPushUtils.setAliasOrTags("");
 
                         JsonParser parser = new JsonParser();
                         JsonObject object = (JsonObject) parser.parse(s);

@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -16,7 +17,6 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
-import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.model.cache.ACache;
 import com.vondear.rxtools.utils.RxUtils;
@@ -25,12 +25,11 @@ import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.diskconverter.GsonDiskConverter;
 
-import java.io.File;
-
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
@@ -48,6 +47,7 @@ public class MyAPP extends Application {
     public static Typeface typeface;
     private static Gson sGson;
     public static AMapLocation aMapLocation = null;//定位信息
+    public static GlideImageLoader sImageLoader;
 
     //指定全局的上啦刷新，下拉加载的样式
     static {
@@ -81,13 +81,18 @@ public class MyAPP extends Application {
         MultiDex.install(this);
         initQN();
         BleTools.initBLE(this);
-        initCache();
         initShareLogin();
         ScreenAdapter.init(this);
         JPushUtils.init(this);
         initLeakCanary();
         typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
+    }
 
+    public static GlideImageLoader getImageLoader() {
+        if (sImageLoader == null) {
+            sImageLoader = new GlideImageLoader();
+        }
+        return sImageLoader;
     }
 
 
@@ -104,23 +109,18 @@ public class MyAPP extends Application {
     }
 
 
-    private void initCache() {
-        aCache = ACache.get(this);
-        rxCache = new RxCache.Builder()
-                .appVersion(1)//当版本号改变,缓存路径下存储的所有数据都会被清除掉
-                .diskDir(new File(getCacheDir().getPath() + File.separator + "Timetofit-cache"))
-                .diskConverter(new GsonDiskConverter())//支持Serializable、Json(GsonDiskConverter)
-                .memoryMax(10 * 1024 * 1024)
-                .diskMax(50 * 1024 * 1024)
-                .build();
-
-    }
-
-    public static ACache getACache() {
-        return aCache;
-    }
-
     public static RxCache getRxCache() {
+        if (rxCache == null) {
+//            rxCache = RxCache.getDefault();
+//
+            rxCache = new RxCache.Builder()
+                    .appVersion(1)//当版本号改变,缓存路径下存储的所有数据都会被清除掉
+                    .diskDir(Environment.getDownloadCacheDirectory())
+                    .diskConverter(new GsonDiskConverter())//支持Serializable、Json(GsonDiskConverter)
+                    .memoryMax(10 * 1024 * 1024)
+                    .diskMax(0)
+                    .build();
+        }
         return rxCache;
     }
 
@@ -159,12 +159,12 @@ public class MyAPP extends Application {
      * 内存泄露
      */
     private void initLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
     }
 
     /**

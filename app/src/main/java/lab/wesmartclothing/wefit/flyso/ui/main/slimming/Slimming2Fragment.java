@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
@@ -208,6 +207,10 @@ public class Slimming2Fragment extends BaseAcFragment {
     LinearLayout mLayoutScaleDefault;
     @BindView(R.id.layout_food_recommend)
     LinearLayout mLayoutFoodRecommend;
+    @BindView(R.id.tv_clothing_tip)
+    TextView mTvClothingTip;
+    @BindView(R.id.tv_weight_tip)
+    TextView mTvWeightTip;
 
     public static Fragment getInstance() {
         return new Slimming2Fragment();
@@ -248,6 +251,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         initChart(mMLineChart);
         setDefaultBarData(null);
         setLineChartData(null);
+
+        setTGA(this.getClass().getSimpleName());
     }
 
 
@@ -266,15 +271,10 @@ public class Slimming2Fragment extends BaseAcFragment {
         if (info != null) {
             mTvUserName.setText(info.getUserName());
             mTvUserName2.setText(info.getUserName());
-            Glide.with(mActivity).load(info.getImgUrl())
-                    .asBitmap()
-                    .placeholder(R.mipmap.userimg)
-                    .into(mIvUserImg);
 
-            Glide.with(mActivity).load(info.getImgUrl())
-                    .asBitmap()
-                    .placeholder(R.mipmap.userimg)
-                    .into(mIvUserImg2);
+            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
+            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg2);
+
         }
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
 
@@ -625,7 +625,9 @@ public class Slimming2Fragment extends BaseAcFragment {
             background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             mBtnGoBindClothing.setText(R.string.goBind);
+            mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
         } else {
+            mTvClothingTip.setText("请穿上燃脂衣开始运动吧");
             boolean clothingIsEmpty = bean.getAthleticsInfoList().size() == 1 && bean.getAthleticsInfoList().get(0).getCalorie() == 0;
             mLayoutClothingDefault.setVisibility(clothingIsEmpty ? View.VISIBLE : View.GONE);
             if (clothingIsEmpty) {
@@ -645,7 +647,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
             mBtnGoBindClothing.setText(R.string.goBind);
+            mTvWeightTip.setText("请绑定您的体脂称");
         } else {
+            mTvWeightTip.setText("请开始管理体重吧");
             mLayoutScaleDefault.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
             if (bean.getWeightInfoList().size() == 0) {
                 mBtnGoBindScale.setText("去称重");

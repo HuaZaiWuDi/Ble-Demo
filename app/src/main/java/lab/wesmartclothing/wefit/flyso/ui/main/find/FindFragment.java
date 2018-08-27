@@ -58,10 +58,17 @@ public class FindFragment extends BaseWebFragment {
     }
 
     public void initView() {
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mBridgeWebView = new BridgeWebView(mActivity);
         initWebView(mParent);
         initWebView();
     }
+
 
     private void initWebView() {
 

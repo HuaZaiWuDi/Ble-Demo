@@ -158,12 +158,14 @@ public class WeightAddFragment extends BaseAcFragment {
                         if (qnScaleData.getItemValue(3) == 0) {
                             //无效
                             mTvTitle.setText("测量身体成分失败");
-                        } else if (Math.abs(realWeight - lastWeight) > 2) {
+                        } else if (lastWeight != 0 && (Math.abs(realWeight - lastWeight) > 2)) {
                             //无效
                             mTvTitle.setText("测量数据和之前相差过大");
-                        } else if (realWeight >= 35) {//身体成分成功直接跳转回去
+                        } else if (lastWeight == 0 || realWeight >= 35) {//身体成分成功直接跳转回去
                             mTvTitle.setText("测量身体成分成功");
                             saveWeight();
+                        } else {
+                            mTvTitle.setText("测量体重失败");
                         }
 
                     }

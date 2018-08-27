@@ -48,7 +48,7 @@ public abstract class FileDownLoadObserver<T> extends DefaultObserver<T> {
     public File saveFile(ResponseBody responseBody, String destFileDir, String destFileName) throws IOException {
         final String dirName = Environment.getExternalStorageDirectory() + destFileDir;
         InputStream is = null;
-        byte[] buf = new byte[2048];
+        byte[] buf = new byte[1024];
         int len = 0;
         FileOutputStream fos = null;
         try {
@@ -61,9 +61,6 @@ public abstract class FileDownLoadObserver<T> extends DefaultObserver<T> {
                 dir.mkdirs();
             }
             File file = new File(dir, destFileName);
-            if (file.exists())//文件已经存在则删除
-                file.delete();
-
             fos = new FileOutputStream(file);
             while ((len = is.read(buf)) != -1) {
                 sum += len;
@@ -73,7 +70,6 @@ public abstract class FileDownLoadObserver<T> extends DefaultObserver<T> {
                 onProgress((int) (finalSum * 100 / total), total);
             }
             fos.flush();
-
             return file;
 
         } finally {

@@ -95,14 +95,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         tipDialog = new TipDialog(mContext);
     }
 
-    public void loadCricle(String img_url, @NonNull ImageView img) {
-        Glide.with(mContext)
-                .load(img_url)
-                .placeholder(R.mipmap.group15)
-                .bitmapTransform(new CropCircleTransformation(mContext))//圆角图片
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(img);
-    }
 
     public abstract void initView();
 

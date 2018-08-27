@@ -52,7 +52,7 @@ public class AboutUpdateDialog extends RxDialog {
     private Context mContext;
     private boolean mustUpdate;
     private final String Dir = "/Timetofit/";
-    private final String fileName = "weSmartClothing" + ".zip";
+    private String fileName = "weSmartClothing" + ".zip";
 
     private BLEUpdateListener mBLEUpdateListener;
 
@@ -80,7 +80,7 @@ public class AboutUpdateDialog extends RxDialog {
 
 
         mMRxTextRoundProgressBar.setMax(100);
-        mMRxTextRoundProgressBar.setProgressText("正在升级");
+        mMRxTextRoundProgressBar.setProgressText("");
         mMRxTextRoundProgressBar.setTextProgressSize(dp2px(10));
         mTvUpdateTip.setTypeface(MyAPP.typeface);
 
@@ -101,8 +101,12 @@ public class AboutUpdateDialog extends RxDialog {
     }
 
     private void downLoadFile(String filePath) {
+        int lastIndexOf = filePath.lastIndexOf("/");
+        fileName = filePath.substring(lastIndexOf + 1, filePath.length());
+        RxLogUtils.i("文件名：" + fileName);
+
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.downLoadFile(filePath))
+        RxManager.getInstance().doLoadDownSubscribe(dxyService.downLoadFile(filePath))
                 .map(new Function<ResponseBody, File>() {
                     @Override
                     public File apply(ResponseBody body) throws Exception {
@@ -123,6 +127,7 @@ public class AboutUpdateDialog extends RxDialog {
         @Override
         public void onDownLoadFail(Throwable throwable) {
             mTvUpdateTip.setText("下载文件失败:" + throwable.toString());
+            RxLogUtils.e(throwable.toString());
         }
 
         @Override
@@ -256,6 +261,7 @@ public class AboutUpdateDialog extends RxDialog {
             RxLogUtils.d("onProgressChanged:" + "percent:" + percent + "----" + speed + "----avgSpeed:" + avgSpeed + "-----currentPart:" + currentPart + "------prtsTotal:" + partsTotal);
             mMRxTextRoundProgressBar.setProgress(percent);
             mMRxTextRoundProgressBar.setProgressText((int) mMRxTextRoundProgressBar.getProgress() + "%");
+            mTvProgress.setText((int) mMRxTextRoundProgressBar.getProgress() + "%");
         }
     };
 

@@ -51,19 +51,19 @@ public class BleAPI {
 
         //心率阈值
         bytes[3] = 0x01;
-        System.arraycopy(BleKey.heartRates, 0, bytes, 4, 5);
+        System.arraycopy(BleKey.heartRates2, 0, bytes, 4, BleKey.heartRates2.length);
 
         if (heat >= 0) {
-            bytes[9] = 0x02;
-            bytes[10] = (byte) heat;
+            bytes[7] = 0x02;
+            bytes[8] = (byte) heat;
         }
         if (LED >= 0) {
-            bytes[11] = 0x03;
-            bytes[12] = (byte) LED;
+            bytes[9] = 0x03;
+            bytes[10] = (byte) LED;
         }
         if (heatState >= 0) {
-            bytes[13] = 0x04;
-            bytes[14] = (byte) heatState;
+            bytes[11] = 0x04;
+            bytes[12] = (byte) heatState;
         }
 
         Log.d("【写配置】", HexUtil.encodeHexStr(bytes));

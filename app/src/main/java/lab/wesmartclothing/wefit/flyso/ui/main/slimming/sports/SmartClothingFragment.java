@@ -185,6 +185,9 @@ public class SmartClothingFragment extends BaseAcFragment {
     }
 
     private void initData() {
+        btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ?
+                R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected));
+
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsInfo(1, 20))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -198,7 +201,7 @@ public class SmartClothingFragment extends BaseAcFragment {
 
                         mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
                         //今日目标是否已经达成
-                        mTvTip.setText(bean.getNeedAthl() == 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, RxFormatValue.fromat4S5R(bean.getNeedAthl() / 1000f, 2)));
+                        mTvTip.setText(bean.getNeedAthl() <= 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, RxFormatValue.fromat4S5R(Math.abs(bean.getNeedAthl() / 1000f), 2)));
                         list = bean.getPageInfo().getList();
                         initLineChart(list);
                     }
@@ -291,8 +294,8 @@ public class SmartClothingFragment extends BaseAcFragment {
             }
         });
         mQMUIAppBarLayout.setTitle("运动记录");
-        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(
-                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+        btn_Connect = mQMUIAppBarLayout.addRightTextButton(
+                getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
     }

@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="37dp"
             android:background="@null"
+            android:maxLines="1"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"
             android:textSize="15sp"

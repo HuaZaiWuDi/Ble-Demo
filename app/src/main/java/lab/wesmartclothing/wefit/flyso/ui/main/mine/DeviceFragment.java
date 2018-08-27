@@ -229,7 +229,7 @@ public class DeviceFragment extends BaseAcFragment {
                         //添加绑定设备，这里实在不会
                         if (position == 0) {
                             //删除绑定
-                            new QNBleTools().disConnectDevice(SPUtils.getString(SPKey.SP_scaleMAC));
+                            new QNBleTools().disConnectDevice();
                             SPUtils.remove(SPKey.SP_scaleMAC);
                         } else {
                             SPUtils.remove(SPKey.SP_clothingMAC);

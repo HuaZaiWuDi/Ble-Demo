@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.service.PushService;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 
 /**
@@ -47,6 +48,9 @@ public class MyJpushReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
+            Intent pushintent = new Intent(context, PushService.class);//启动极光推送的服务
+            context.startService(pushintent);
+
             Bundle bundle = intent.getExtras();
             RxLogUtils.d(TAG, "[MyJpushReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
             if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {

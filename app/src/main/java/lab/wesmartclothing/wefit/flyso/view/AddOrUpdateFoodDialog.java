@@ -1,14 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
@@ -22,8 +19,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
@@ -69,6 +67,7 @@ public class AddOrUpdateFoodDialog {
     private FoodListBean listBean;
     private int foodType;
     private long currentTime;
+    private BehaviorSubject<LifeCycleEvent> lifecycleSubject;//传入生命周期限制
 
     public void setFoodInfo(Context context, boolean showDelete, int foodType, long currentTime, FoodListBean listBean) {
         mContext = context;
@@ -86,9 +85,12 @@ public class AddOrUpdateFoodDialog {
         getAddedHeatInfo();//icon_add_white：先请求是否添加过，未添加吧foodId赋值给Gid，添加过直接上传Gid
     }
 
+    public void setLifecycleSubject(BehaviorSubject<LifeCycleEvent> lifecycleSubject) {
+        this.lifecycleSubject = lifecycleSubject;
+    }
 
     private void showAddFoodDialog() {
-        loadCricle(listBean.getFoodImg(), mImgFood);
+        MyAPP.getImageLoader().displayImage(mContext, listBean.getFoodImg(), mImgFood);
         if (!showDelete)
             mTvDelete.setVisibility(View.INVISIBLE);
 
@@ -113,6 +115,7 @@ public class AddOrUpdateFoodDialog {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getAddedHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -205,14 +208,6 @@ public class AddOrUpdateFoodDialog {
         this.addOrUpdateFoodListener = addOrUpdateFoodListener;
     }
 
-    public void loadCricle(String img_url, @NonNull ImageView img) {
-        Glide.with(mContext)
-                .load(img_url)
-                .error(R.mipmap.group15)
-                .bitmapTransform(new CropCircleTransformation(mContext))//圆角图片
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(img);
-    }
 
     public void deleteData(Context context, final FoodListBean listBean) {
         JsonObject object = new JsonObject();
@@ -222,6 +217,7 @@ public class AddOrUpdateFoodDialog {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(context)))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

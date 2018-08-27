@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
@@ -41,8 +40,9 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.PicassoImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -155,7 +155,7 @@ public class ProblemFragemnt extends BaseAcFragment {
 
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new PicassoImageLoader());   //设置图片加载器
+        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
         imagePicker.setShowCamera(false);//显示拍照按钮
         imagePicker.setMultiMode(true);
         imagePicker.setCrop(false);        //允许裁剪（单选才有效）
@@ -173,13 +173,11 @@ public class ProblemFragemnt extends BaseAcFragment {
         adapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_choose_img) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                Glide.with(mActivity).load(item instanceof ImageItem ? ((ImageItem) item).path : item).asBitmap()
-                        .placeholder(R.mipmap.group15).into((QMUIRadiusImageView) helper.getView(R.id.iv_img));
+                MyAPP.getImageLoader().displayImage(mActivity, item, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
             }
         };
         mRecyclerImgs.setAdapter(adapter);
         adapter.addData(R.mipmap.icon_add_white);
-
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -353,7 +351,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        getBaseFragmentActivity().popBackStack();
+                        popBackStack();
                     }
 
                     @Override
@@ -375,7 +373,6 @@ public class ProblemFragemnt extends BaseAcFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.feedbackImg(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -52,6 +51,7 @@ import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -99,7 +99,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
     private boolean isStorage = false;
     private Disposable subscribe;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
-
+    private boolean SlimmingPage = false;
     private int foodType = 0;
     private long currentTime = 0;
     private Bundle bundle;
@@ -125,18 +125,18 @@ public class SearchHistoryFragment extends BaseAcFragment {
             for (int i = 0; i < FoodDetailsFragment.addedLists.size(); i++) {
                 addedFoods.add(FoodDetailsFragment.addedLists.get(i).getFoodImg());
             }
+            mBtnMark.setVisibility(addedFoods.size() > 10 ? View.VISIBLE : View.GONE);
             if (addedFoods.size() > 10) {
-                mBtnMark.setVisibility(View.VISIBLE);
                 mBtnMark.setText(FoodDetailsFragment.addedLists.size() + "");
                 addedFoods = addedFoods.subList(0, 10);
                 addedFoods.set(0, R.mipmap.icon_ellipsis);
             }
             adapterAddFoods.setNewData(addedFoods);
-            adapterAddFoods.notifyDataSetChanged();
         }
     }
 
     public void initView() {
+        dialog.setLifecycleSubject(lifecycleSubject);
         subscribe = new RxPermissions(mActivity)
                 .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(new Consumer<Permission>() {
@@ -160,6 +160,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
+            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
         }
     }
 
@@ -178,12 +179,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         adapterAddFoods = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_food_img) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                if (item instanceof String) {
-                    QMUIRadiusImageView view = helper.getView(R.id.img_food);
-                    Glide.with(mActivity).load(item).asBitmap().placeholder(R.mipmap.group15).into(view);
-                } else if (item instanceof Integer) {
-                    helper.setImageResource(R.id.img_food, (Integer) item);
-                }
+                MyAPP.getImageLoader().displayImage(mActivity, item, (QMUIRadiusImageView) helper.getView(R.id.img_food));
             }
         };
         mRecyclerAddFoods.setAdapter(adapterAddFoods);
@@ -197,7 +193,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, FoodListBean item) {
                 QMUIRadiusImageView foodImg = helper.getView(R.id.iv_foodImg);
-                Glide.with(mContext).load(item.getFoodImg()).asBitmap().into(foodImg);
+                MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), foodImg);
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getUnitCalorie() + "")
@@ -449,7 +445,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         FoodDetailsFragment.addedLists.clear();
-                        getBaseFragmentActivity().popBackStack(HeatDetailFragment.class);
+                        getBaseFragmentActivity().popBackStack(SlimmingPage ? MainFragment.class : HeatDetailFragment.class);
                     }
 
                     @Override

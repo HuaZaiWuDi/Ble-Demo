@@ -63,6 +63,7 @@ public class CollectWebActivity extends BaseWebActivity {
                 .createAgentWeb()//
                 .ready()//
                 .go(getUrl());
+        RxLogUtils.e("加载的URL：" + getUrl());
 
         AgentWebConfig.debug();
 

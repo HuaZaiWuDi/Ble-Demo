@@ -136,10 +136,10 @@ public class RxThreadUtils {
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                return Observable.error(e);
+                                return Observable.error(new Throwable("数据异常"));
                             }
                         }
-                        return Observable.error(new Throwable("error"));
+                        return Observable.error(new Throwable("数据异常"));
                     }
                 });
             }

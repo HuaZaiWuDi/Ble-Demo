@@ -198,6 +198,7 @@ public class BleService extends Service {
 
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_QN_SCALE, BleKey.UUID_Servie)
+//                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
                 .setScanTimeOut(0)
                 .build();
         BleTools.getInstance().startScan(config, new ScanCallback() {
@@ -579,7 +580,8 @@ public class BleService extends Service {
     private void shopSporting() {
         lastHeartRate = 0;
         RxLogUtils.d("数据同步结束");
-        RxToast.success("运动结束");
+        if (BuildConfig.DEBUG)
+            RxToast.success("运动结束");
         if (athlHistoryRecord.size() > 0) {
             mHeartRateBean.setAthlList(athlHistoryRecord);
             mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);

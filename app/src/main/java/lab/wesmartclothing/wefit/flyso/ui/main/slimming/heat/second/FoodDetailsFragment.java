@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -106,12 +105,13 @@ public class FoodDetailsFragment extends BaseAcFragment {
             for (int i = 0; i < addedLists.size(); i++) {
                 addedFoods.add(addedLists.get(i).getFoodImg());
             }
+            mBtnMark.setVisibility(addedFoods.size() > 10 ? View.VISIBLE : View.GONE);
             if (addedFoods.size() > 10) {
-                mBtnMark.setVisibility(View.VISIBLE);
                 mBtnMark.setText(addedLists.size() + "");
                 addedFoods = addedFoods.subList(addedFoods.size() - 10, addedFoods.size());
-                addedFoods.set(0, R.mipmap.icon_ellipsis);
+//                addedFoods.set(0, R.mipmap.icon_ellipsis);
             }
+
             adapterAddFoods.setNewData(addedFoods);
         }
     }
@@ -122,6 +122,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
         initRecyclerView();
         initAddFoodRecyclerView();
 
+        dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
             public void complete(FoodListBean listBean) {
@@ -156,12 +157,8 @@ public class FoodDetailsFragment extends BaseAcFragment {
         adapterAddFoods = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_food_img) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                if (item instanceof String) {
-                    QMUIRadiusImageView view = helper.getView(R.id.img_food);
-                    Glide.with(mActivity).load(item).asBitmap().placeholder(R.mipmap.group15).into(view);
-                } else if (item instanceof Integer) {
-                    helper.setImageResource(R.id.img_food, (Integer) item);
-                }
+                MyAPP.getImageLoader().displayImage(mActivity, item, (QMUIRadiusImageView) helper.getView(R.id.img_food));
+
             }
         };
         mRecyclerAddFoods.setAdapter(adapterAddFoods);
@@ -191,7 +188,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, FoodListBean item) {
                 QMUIRadiusImageView foodImg = helper.getView(R.id.iv_foodImg);
-                Glide.with(mContext).load(item.getFoodImg()).asBitmap().placeholder(R.mipmap.group15).into(foodImg);
+                MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), foodImg);
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getUnitCalorie() + "")

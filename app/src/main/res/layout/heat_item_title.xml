@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/selector_ripple_bg_"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_ripple_bg_">
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:background="@color/bg_color"/>
+        android:background="@color/bg_F7F7F9"/>
 
     <RelativeLayout
         android:id="@+id/layout_title"
@@ -29,8 +29,6 @@
             tools:src="@mipmap/icon_breakfast"/>
 
         <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,6 +36,8 @@
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/img"
             android:textColor="@color/textColor"
+            android:textSize="15sp"
+            android:textStyle="bold"
             tools:text="早餐"/>
 
 
