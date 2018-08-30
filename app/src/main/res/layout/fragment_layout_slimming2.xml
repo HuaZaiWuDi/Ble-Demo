@@ -825,7 +825,7 @@
                     android:text="通过你的身体各项数据，为你量身定制的饮食计划，快来看看吧！"
                     android:textColor="@color/GrayWrite"
                     android:textSize="13sp"
-                    android:textStyle="bold"/>
+                    />
 
             </LinearLayout>
 

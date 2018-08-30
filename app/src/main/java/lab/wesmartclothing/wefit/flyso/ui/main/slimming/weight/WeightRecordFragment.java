@@ -180,25 +180,29 @@ public class WeightRecordFragment extends BaseAcFragment {
         View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_weight_record, null);
         unbinder = ButterKnife.bind(this, view);
         initView();
+        initBleCallBack();
         return view;
     }
 
     @Override
     public void onStart() {
         initData();
-        initBleCallBack();
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        MyAPP.QNapi.setDataListener(null);
         super.onStop();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        MyAPP.QNapi.setDataListener(null);
+    }
 
     private void initView() {
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvCurWeight.setTypeface(typeface);
         mTvBodyFat.setTypeface(typeface);
         mTvMuscle.setTypeface(typeface);

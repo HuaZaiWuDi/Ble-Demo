@@ -143,7 +143,7 @@ public class FoodRecommend extends BaseAcFragment {
 
                 helper.setText(R.id.tv_foodName, item.t.getFoodName());
                 RxTextUtils.getBuilder(item.t.getUnitCalorie() + "")
-                        .append("kacl/")
+                        .append("kcal/")
                         .setProportion(0.6f)
                         .append(RxFormat.setFormatNum(item.t.getUnitCount(), "0.0") + item.t.getUnit())
                         .setProportion(0.6f)

@@ -84,7 +84,7 @@ public class BodyDataFragment extends BaseAcFragment {
     public Map<Integer, Healthy> mHealthyMaps = new HashMap<>();
 
     private BodyDataUtil bodyDataUtil;
-    private double[] bodyValue = new double[8];
+    private double[] bodyValue = new double[12];
 
     @Override
     protected View onCreateView() {
@@ -103,10 +103,10 @@ public class BodyDataFragment extends BaseAcFragment {
         initRecyclerView();
         initData();
 
-
     }
 
     private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
+        //体脂率
         Healthy healthy = new Healthy();
         healthy.setSections(new double[]{11, 21, 26});
         healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
@@ -115,6 +115,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
         mHealthyMaps.put(0, healthy);
 
+        //BMI
         Healthy healthy2 = new Healthy();
         healthy2.setSections(new double[]{18.5, 25});
         healthy2.setSectionLabels(new String[]{"18.5%", "25.0%"});
@@ -123,6 +124,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy2.setLabels(new String[]{"偏低", "标准", "偏高"});
         mHealthyMaps.put(1, healthy2);
 
+        //内脏脂肪等级
         Healthy healthy3 = new Healthy();
         healthy3.setSections(new double[]{9, 14});
         healthy3.setSectionLabels(new String[]{"9", "14"});
@@ -148,6 +150,7 @@ public class BodyDataFragment extends BaseAcFragment {
         float value1 = standardWeight * 0.67f;
         float value2 = standardWeight * 0.80f;
 
+        //肌肉量
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{value1, value2});
         healthy4.setSectionLabels(new String[]{value1 + "kg", value2 + "kg"});
@@ -156,6 +159,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
         mHealthyMaps.put(3, healthy4);
 
+        //基础代谢
         Healthy healthy5 = new Healthy();
         healthy5.setSections(new double[]{903});
         healthy5.setSectionLabels(new String[]{"903kcal"});
@@ -164,6 +168,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy5.setLabels(new String[]{"未达标", "达标"});
         mHealthyMaps.put(4, healthy5);
 
+        //水分
         Healthy healthy6 = new Healthy();
         healthy6.setSections(new double[]{55, 65});
         healthy6.setSectionLabels(new String[]{"55.0%", "65.0%"});
@@ -189,13 +194,41 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});
         mHealthyMaps.put(6, healthy7);
 
+        //身体年龄
         Healthy healthy8 = new Healthy();
-        healthy8.setSections(new double[]{20, 30, 40});
-        healthy8.setSectionLabels(new String[]{"20", "30", "40"});
-        healthy8.setColors(new int[]{Color.parseColor("#CFED00"), Color.parseColor("#61D97F"),
-                Color.parseColor("#17BD4F"), Color.parseColor("#FFBC00")});
-        healthy8.setLabels(new String[]{"青少年", "青年", "中年", "中老年"});
         mHealthyMaps.put(7, healthy8);
+
+        //去脂体重
+        Healthy healthy9 = new Healthy();
+        mHealthyMaps.put(8, healthy9);
+
+        //皮下脂肪率
+        Healthy healthy10 = new Healthy();
+        healthy10.setSections(new double[]{18.5, 26.7});
+        healthy10.setSectionLabels(new String[]{"18.5%", "26.7%"});
+        healthy10.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
+                Color.parseColor("#FFBC00")});
+        healthy10.setLabels(new String[]{"偏低", "标准", "偏高"});
+        mHealthyMaps.put(9, healthy10);
+
+        //骨骼肌率
+        Healthy healthy11 = new Healthy();
+        healthy11.setSections(new double[]{40, 50});
+        healthy11.setSectionLabels(new String[]{"40.0%", "50.0%"});
+        healthy11.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
+                Color.parseColor("#FFBC00")});
+        healthy11.setLabels(new String[]{"偏低", "标准", "偏高"});
+        mHealthyMaps.put(10, healthy11);
+
+        //蛋白质
+        Healthy healthy12 = new Healthy();
+        healthy12.setSections(new double[]{14.0f, 16.0});
+        healthy12.setSectionLabels(new String[]{"14.0%", "16.0%"});
+        healthy12.setColors(new int[]{Color.parseColor("#FF7200"), Color.parseColor("#61D97F"),
+                Color.parseColor("#17BD4F")});
+        healthy12.setLabels(new String[]{"不足", "标准", "优秀"});
+        mHealthyMaps.put(11, healthy12);
+
         bodyDataUtil = new BodyDataUtil(mHealthyMaps);
 
     }
@@ -245,9 +278,10 @@ public class BodyDataFragment extends BaseAcFragment {
     private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
         initWeightData(weightInfo);
         String[] titles = getResources().getStringArray(R.array.weightDatas);
-        String[] units = {"%", "", "级", "kg", "kcal", "%", "kg", "岁"};
+        String[] units = {"%", "", "级", "kg", "kcal", "%", "kg", "岁", "kg", "%", "%", "%"};
         int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
-                R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age};
+                R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age,
+                R.mipmap.icon_lean_body_weight, R.mipmap.icon_subcutaneous_fat, R.mipmap.icon_muscle_rate, R.mipmap.icon_protein};
 
         if (weightInfo != null) {
             bodyValue[0] = weightInfo.getBodyFat();
@@ -258,8 +292,12 @@ public class BodyDataFragment extends BaseAcFragment {
             bodyValue[5] = weightInfo.getWater();
             bodyValue[6] = weightInfo.getBone();
             bodyValue[7] = weightInfo.getBodyAge();
+            bodyValue[8] = weightInfo.getBodyFfm();
+            bodyValue[9] = weightInfo.getSubfat();
+            bodyValue[10] = weightInfo.getMuscle();
+            bodyValue[11] = weightInfo.getProtein();
 
-            View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_body_data, null);
+            View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_delete_data, null);
             LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
             layoutDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -277,21 +315,27 @@ public class BodyDataFragment extends BaseAcFragment {
             level0Bean.setBodyValue(bodyValue[i]);
             level0Bean.setBodyData(titles[i]);
             level0Bean.setBodyDataImg(imgs[i]);
-            level0Bean.setStatus((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[0]);
-            level0Bean.setStatusColor((int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[1]);
 
+            if (i == 7 || i == 8) {
+                level0Bean.setStatus("标准");
+                level0Bean.setStatusColor(Color.parseColor("#61D97F"));
+                level0Bean.setCanExpanded(false);
+            } else {
 
-            BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
-            Healthy healthy = mHealthyMaps.get(i % mHealthyMaps.size());
-            bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
-            bodyLevel1Bean.setLabels(healthy.getLabels());
-            bodyLevel1Bean.setColors(healthy.getColors());
+                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
+                Healthy healthy = mHealthyMaps.get(i % mHealthyMaps.size());
+                bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
+                bodyLevel1Bean.setLabels(healthy.getLabels());
+                bodyLevel1Bean.setColors(healthy.getColors());
+                level0Bean.addSubItem(bodyLevel1Bean);
 
-            level0Bean.addSubItem(bodyLevel1Bean);
+                level0Bean.setStatus((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[0]);
+                level0Bean.setStatusColor((int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[1]);
+            }
+
             multiItermLists.add(level0Bean);
         }
         adapter.setNewData(multiItermLists);
-//        adapter.expandAll();
     }
 
 

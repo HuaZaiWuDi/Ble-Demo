@@ -194,7 +194,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getUnitCalorie() + "")
-                        .append("kacl/")
+                        .append("kcal/")
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                         .append(RxFormat.setFormatNum(item.getUnitCount(), "0.0") + item.getUnit())
@@ -216,7 +216,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
             }
         });
         searchListAdapter.bindToRecyclerView(mMRecyclerView);
-        searchListAdapter.setEmptyView(R.layout.layout_search_no_data);
+
 
     }
 
@@ -363,6 +363,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
                         List<FoodListBean> beans = item.getList();
                         searchListAdapter.setNewData(beans);
                         if (beans.size() == 0) {
+                            searchListAdapter.setEmptyView(R.layout.layout_search_no_data);
                             TextView noData = searchListAdapter.getEmptyView().findViewById(R.id.tv_noData);
                             noData.setText(getString(R.string.search_noData, key));
                         }

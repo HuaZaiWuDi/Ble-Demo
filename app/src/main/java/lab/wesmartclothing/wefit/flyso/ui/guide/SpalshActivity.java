@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
 import android.content.Intent;
-import android.speech.tts.TextToSpeech;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,7 +21,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.List;
-import java.util.Locale;
 
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -121,6 +119,11 @@ public class SpalshActivity extends BaseActivity {
 
     private void gotoMain() {
         RxLogUtils.d("跳转");
+        if (!SPUtils.getBoolean(SPKey.SP_GUIDE)) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
+            SPUtils.put(SPKey.SP_GUIDE, true);
+            return;
+        }
         //通过验证是否保存userId来判断是否登录
         if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
@@ -216,30 +219,6 @@ public class SpalshActivity extends BaseActivity {
                 mHeartRateBean.setAthlList(lists);
                 mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
             }
-        }
-    }
-
-    @Background
-    public void openVoice() {
-        if (MyAPP.getmTextToSpeech() == null) {
-            MyAPP.setmTextToSpeech(new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    RxLogUtils.e("语音合成：" + status);
-                    // 判断是否转化成功
-                    if (status == TextToSpeech.SUCCESS) {
-                        //默认设定语言为中文，原生的android貌似不支持中文。
-                        int result = MyAPP.getmTextToSpeech().setLanguage(Locale.CHINESE);
-                        RxLogUtils.e("支持中文:" + result);
-                        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                            RxLogUtils.e("支持中文");
-                        } else {
-                            //不支持中文就将语言设置为英文
-                            MyAPP.getmTextToSpeech().setLanguage(Locale.US);
-                        }
-                    }
-                }
-            }));
         }
     }
 

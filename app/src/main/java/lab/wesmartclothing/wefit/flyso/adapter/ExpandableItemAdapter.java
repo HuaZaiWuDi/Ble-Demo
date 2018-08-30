@@ -53,7 +53,9 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
                 final BodyLevel0Bean level0Bean = (BodyLevel0Bean) item;
                 helper.setImageResource(R.id.iv_switchLayout, level0Bean.isExpanded() ? R.mipmap.icon_up : R.mipmap.icon_down)
                         .setImageResource(R.id.iv_icon, level0Bean.getBodyDataImg())
-                        .setText(R.id.tv_title, level0Bean.getBodyData());
+                        .setText(R.id.tv_title, level0Bean.getBodyData())
+                        .setVisible(R.id.btn_status, level0Bean.isCanExpanded())
+                        .setVisible(R.id.iv_switchLayout, level0Bean.isCanExpanded());
 
                 int color = level0Bean.getStatusColor();
                 TextView bodyValue = helper.getView(R.id.tv_bodyValue);
@@ -64,13 +66,14 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
                         .setForegroundColor(color)
                         .setProportion(0.6f)
                         .into(bodyValue);
-
                 QMUIRoundButton btn_status = helper.getView(R.id.btn_status);
+
                 QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) btn_status.getBackground();
                 background.setStrokeData(1, ColorStateList.valueOf(color));
                 btn_status.setTextColor(color);
 
                 btn_status.setText(level0Bean.getStatus());
+
 
                 helper.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

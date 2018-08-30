@@ -31,6 +31,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
@@ -88,15 +89,9 @@ public class MyAPP extends Application {
         JPushUtils.init(this);
         initLeakCanary();
         typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
+        TextSpeakUtils.init(this);
     }
 
-    public static void setmTextToSpeech(TextToSpeech mTextToSpeech) {
-        MyAPP.mTextToSpeech = mTextToSpeech;
-    }
-
-    public static TextToSpeech getmTextToSpeech() {
-        return mTextToSpeech;
-    }
 
     public static GlideImageLoader getImageLoader() {
         if (sImageLoader == null) {
@@ -191,6 +186,8 @@ public class MyAPP extends Application {
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
+        TextSpeakUtils.getInstance().shutdown();
 //        ActiveAndroid.dispose();
     }
+
 }

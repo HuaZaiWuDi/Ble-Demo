@@ -35,4 +35,5 @@ public interface SPKey {
 
     String SP_PUSH_ALIAS = "SP_PUSH_ALIAS";//极光推送别名设置
 
+    String SP_GUIDE = "SP_GUIDE";//引导页
 }

@@ -29,6 +29,7 @@ import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -82,15 +83,16 @@ public class MainActivity extends BaseALocationActivity {
         super.onCreate(savedInstanceState);
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
 //        startFragment(MainFragment.getInstance());
-        //防止后台杀掉APP出现白屏问题
-        startFragmentAndDestroyCurrent(MainFragment.getInstance(), false);
 
         initView();
-//        if (savedInstanceState == null) {
-//            startFragment(MainFragment.getInstance());
-//        } else {
-//            RxLogUtils.e("savedInstanceState:" + savedInstanceState);
-//        }
+        if (savedInstanceState == null) {
+            startFragment(MainFragment.getInstance());
+        } else {
+            RxLogUtils.e("savedInstanceState:" + savedInstanceState);
+            //防止后台杀掉APP出现白屏问题
+            startFragmentAndDestroyCurrent(MainFragment.getInstance(), false);
+        }
+
         bleIntent = new Intent(mContext, BleService_.class);
         startService(bleIntent);
     }
@@ -103,6 +105,7 @@ public class MainActivity extends BaseALocationActivity {
 
         RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
+        TextSpeakUtils.speakFlush("主人！我想你了");
     }
 
 
@@ -152,7 +155,7 @@ public class MainActivity extends BaseALocationActivity {
                     @Override
                     protected void _onNext(final FirmwareVersionUpdate firmwareVersionUpdate) {
                         final boolean isMust = firmwareVersionUpdate.getMustUpgrade() != 0;
-                        //差值大于2kg，体重数据不合理
+
                         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
                         TextView tvTitle = dialog.getTvTitle();
                         tvTitle.setVisibility(View.VISIBLE);
@@ -168,7 +171,8 @@ public class MainActivity extends BaseALocationActivity {
                             }
                         });
                         dialog.setSure(isMust ? "退出" : "取消");
-                        dialog.show();
+                        if (isMust)
+                            dialog.show();
                         dialog.setCanceledOnTouchOutside(false);
                         dialog.setSureListener(new View.OnClickListener() {
                             @Override

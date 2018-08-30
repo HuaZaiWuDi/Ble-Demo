@@ -12,7 +12,7 @@ public class ServiceAPI {
     //一期
 //    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
     public static final String BASE_URL_192 = "http://10.10.11.192:15112";//德人服务器
-//    public static final String BASE_URL = "http://10.10.11.208:15112/mix/";
+    public static final String BASE_URL_208_ = "http://10.10.11.208:15112/mix/";//牛耕测试环境
 
     //二期
     public static final String BASE_URL_208 = "http://10.10.11.208:15112";
@@ -20,7 +20,12 @@ public class ServiceAPI {
     public static final String BASE_URL_mix = "http://10.10.11.208:15101/mix/";//网关
 
 
-    public static String BASE_URL = BASE_URL_125;
+    //上线
+    public static final String BASE_RELEASE = "https://api.wesmartclothing.com/";//上线版本
+    public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/";//测试版本
+
+
+    public static String BASE_URL = BASE_DEBUG;
 
 
     public static void switchURL(String baseUrl) {

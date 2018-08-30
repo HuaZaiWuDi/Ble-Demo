@@ -96,7 +96,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public abstract void initView();
+    public void initView() {
+
+    }
+
 
 
     @Override

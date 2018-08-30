@@ -87,8 +87,8 @@ public class CollectFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (smartRefreshLayout != null)
-            smartRefreshLayout.autoRefresh();
+        pageNum = 1;
+        initData();
     }
 
     private void initRecycler() {
@@ -134,7 +134,6 @@ public class CollectFragment extends BaseAcFragment {
             }
         });
 
-        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
     }

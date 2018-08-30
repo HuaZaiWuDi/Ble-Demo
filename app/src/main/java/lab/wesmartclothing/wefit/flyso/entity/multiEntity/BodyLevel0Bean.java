@@ -16,6 +16,7 @@ public class BodyLevel0Bean extends AbstractExpandableItem<BodyLevel1Bean> imple
     private double bodyValue;
     private String status;
     private int statusColor;
+    private boolean canExpanded = true;
 
     public double getBodyValue() {
         return bodyValue;
@@ -27,6 +28,15 @@ public class BodyLevel0Bean extends AbstractExpandableItem<BodyLevel1Bean> imple
 //        this.unit = unit;
 //        this.bodyValue = bodyValue;
 //    }
+
+
+    public boolean isCanExpanded() {
+        return canExpanded;
+    }
+
+    public void setCanExpanded(boolean canExpanded) {
+        this.canExpanded = canExpanded;
+    }
 
     public void setBodyValue(double bodyValue) {
         this.bodyValue = bodyValue;

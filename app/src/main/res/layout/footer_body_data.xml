@@ -1,28 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="@color/bg_F7F7F9"/>
 
-    <LinearLayout
-        android:id="@+id/layoutDelete"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/white"
-        android:gravity="center">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
-        <TextView
+
+        <ImageView
+            android:id="@+id/iv_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@mipmap/icon_delete"
-            android:drawablePadding="8dp"
-            android:text="删除此次数据"/>
-    </LinearLayout>
+            android:layout_centerVertical="true"
+            tools:background="@mipmap/icon_bodyfat"/>
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/iv_icon"
+            android:textColor="@color/Gray"
+            android:textSize="15sp"
+            tools:text="体脂率"/>
+
+
+        <TextView
+            android:id="@+id/tv_bodyValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="17dp"
+            android:layout_toLeftOf="@+id/btn_status"
+            android:gravity="right"
+            android:textColor="@color/orange_FF7200"
+            android:textSize="18sp"
+            tools:text="223332222"/>
+
+
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btn_status"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/iv_switchLayout"
+            android:minWidth="36dp"
+            android:textColor="@color/orange_FF7200"
+            android:textSize="11sp"
+            app:qmui_borderColor="@color/orange_FF7200"
+            app:qmui_radius="2dp"
+            tools:text="偏高"/>
+
+
+        <ImageView
+            android:id="@+id/iv_switchLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:visibility="invisible"
+            tools:background="@mipmap/icon_down"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line"/>
+
+
+    </RelativeLayout>
+
 
 </LinearLayout>

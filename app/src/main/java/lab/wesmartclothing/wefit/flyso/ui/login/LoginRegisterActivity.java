@@ -206,6 +206,7 @@ public class LoginRegisterActivity extends BaseActivity {
         }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.login(phone, code))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -234,6 +235,7 @@ public class LoginRegisterActivity extends BaseActivity {
         }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.pwdLogin(phone, RxEncryptUtils.encryptMD5ToString(password)))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -305,6 +307,7 @@ public class LoginRegisterActivity extends BaseActivity {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.outerLogin(openId, nickname, imageUrl, userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

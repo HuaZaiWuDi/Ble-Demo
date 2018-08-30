@@ -121,6 +121,9 @@ public class FoodDetailsFragment extends BaseAcFragment {
         initTopBar();
         initRecyclerView();
         initAddFoodRecyclerView();
+        pageNum = 1;
+        initData();
+
 
         dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
@@ -223,8 +226,6 @@ public class FoodDetailsFragment extends BaseAcFragment {
             }
         });
 
-
-        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
     }

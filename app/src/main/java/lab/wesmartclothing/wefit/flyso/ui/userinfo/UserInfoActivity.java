@@ -344,6 +344,7 @@ public class UserInfoActivity extends BaseALocationActivity {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

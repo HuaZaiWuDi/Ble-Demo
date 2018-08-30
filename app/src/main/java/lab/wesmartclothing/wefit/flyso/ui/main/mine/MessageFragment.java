@@ -84,13 +84,13 @@ public class MessageFragment extends BaseAcFragment {
     private void initView() {
         initTopBar();
         initRecycler();
+        pageNum = 1;
+        initData();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (smartRefreshLayout != null)
-            smartRefreshLayout.autoRefresh();
     }
 
     private void initRecycler() {
@@ -126,8 +126,6 @@ public class MessageFragment extends BaseAcFragment {
                 initData();
             }
         });
-
-        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
 

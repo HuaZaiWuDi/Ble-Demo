@@ -19,15 +19,14 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
         android:name=".base.MyAPP"
         android:allowBackup="true"
-        android:icon="@mipmap/app_name"
+        android:icon="@mipmap/icon_app"
         android:label="@string/appName"
-        android:roundIcon="@mipmap/app_name"
+        android:roundIcon="@mipmap/icon_app"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label,icon,roundIcon">
@@ -78,7 +77,7 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
-        <!--极光通知广播-->
+        <!-- 极光通知广播 -->
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -92,33 +91,29 @@
                 <action android:name="cn.jpush.android.intent.CONNECTION"/>
 
                 <!-- 接收网络变化 连接/断开 since 1.6.3 -->
-                <action android:name="cn.jpush.android.intent.CONNECTION" />
-                <action android:name="android.intent.action.BOOT_COMPLETED"/><!--开机广播-->
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/><!--网络状态改变广播-->
+                <action android:name="cn.jpush.android.intent.CONNECTION"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/> <!-- 开机广播 -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/> <!-- 网络状态改变广播 -->
 
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
-
-
         <receiver android:name=".utils.jpush.MyJPushMessageReceiver">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
+
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
 
-
-        <!--DUF服务-->
-        <activity
-            android:name=".ble.dfu.NotificationActivity"/>
+        <!-- DUF服务 -->
+        <activity android:name=".ble.dfu.NotificationActivity"/>
 
         <service
             android:name=".ble.dfu.DfuService"
             android:exported="true"/>
 
-
-        <!--android:launchMode="singleTop"-->
+        <!-- android:launchMode="singleTop" -->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -135,7 +130,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -171,7 +165,6 @@
         <activity
             android:name=".ui.login.LoginRegisterActivity"
             android:screenOrientation="nosensor"/>
-
         <activity
             android:name=".ui.main.CollectWebActivity"
             android:screenOrientation="nosensor">
@@ -213,7 +206,8 @@
             android:name=".ui.main.mine.BaseMeActivity"
             android:screenOrientation="nosensor"/>
         <activity android:name=".ui.toolui.SportingActivity"/>
-
+        <activity android:name=".ui.guide.GuideActivity">
+        </activity>
     </application>
 
 </manifest>

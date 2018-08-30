@@ -87,6 +87,7 @@ public class VoltageToPower {
     public double canUsedTime(double Voltage, boolean isHeating) {
         double time = 0;
         double batteryCapacity = getBatteryCapacity(Voltage) / 100f * 2200;
+        RxLogUtils.d("电池：" + getBatteryCapacity(Voltage));
         RxLogUtils.d("电池：" + batteryCapacity);
         if (isHeating) {
             time = batteryCapacity / 1000f;
