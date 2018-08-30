@@ -258,4 +258,8 @@ public class MeFragment extends BaseAcFragment {
     }
 
 
+    @Override
+    protected boolean canDragBack() {
+        return false;
+    }
 }

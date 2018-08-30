@@ -11,12 +11,9 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +32,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/8/9.
@@ -185,15 +183,17 @@ public class Settingfragment extends BaseAcFragment {
                         MyAPP.aMapLocation = null;
                         SPUtils.clear();
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
-                        try {
-                            MyAPP.getRxCache().clear2();
-                        } catch (IOException e) {
-                            RxLogUtils.e(e.getMessage());
-                            e.printStackTrace();
-                        }
-                        BleTools.getInstance().disConnect();
-                        new QNBleTools().disConnectDevice();
-                        RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
+
+                        MyAPP.getRxCache().clear()
+                                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                                .subscribe(new RxSubscriber<Boolean>() {
+                                    @Override
+                                    protected void _onNext(Boolean aBoolean) {
+                                        BleTools.getInstance().disConnect();
+                                        new QNBleTools().disConnectDevice();
+                                        RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
+                                    }
+                                });
                     }
 
                     @Override

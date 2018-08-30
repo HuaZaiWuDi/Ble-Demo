@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -136,7 +137,8 @@ public class VerificationPhoneActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("验证码：" + s);
-                        mEditVcode.setText(s);
+                        if (BuildConfig.DEBUG)
+                            mEditVcode.setText(s);
                         RxToast.success(getString(R.string.SMSSended));
                     }
 

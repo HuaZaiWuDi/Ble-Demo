@@ -69,6 +69,8 @@ public class TargetDetailsFragment extends BaseAcFragment {
         mTvTargetDays.setTypeface(typeface);
         mTvTargetWeight.setTypeface(typeface);
         mTvDistanceTarget.setTypeface(typeface);
+
+        bundle = getArguments();
     }
 
 
@@ -109,7 +111,6 @@ public class TargetDetailsFragment extends BaseAcFragment {
                         mTvDistanceTarget.setText(stillNeed + "");
 
                         bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
-                        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, initialWeight);
                         bundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
                         bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
                     }

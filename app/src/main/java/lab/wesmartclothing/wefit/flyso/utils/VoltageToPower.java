@@ -32,36 +32,46 @@ public class VoltageToPower {
      * @return 电池容量 （%）
      */
 
-    public  int getBatteryCapacity(double Voltage) {
+//    public int getBatteryCapacity(double Voltage) {
+//        System.out.print(Voltage);
+//        int batteryCapacity = -1;
+//        if (Voltage >= 4.2) {
+//            batteryCapacity = 100;
+//        } else if (Voltage >= 4.08 && Voltage < 4.2) {
+//            batteryCapacity = 90;
+//        } else if (Voltage >= 4 && Voltage < 4.08) {
+//            batteryCapacity = 80;
+//        } else if (Voltage >= 3.93 && Voltage < 4) {
+//            batteryCapacity = 70;
+//        } else if (Voltage >= 3.87 && Voltage < 3.93) {
+//            batteryCapacity = 60;
+//        } else if (Voltage >= 3.82 && Voltage < 3.87) {
+//            batteryCapacity = 50;
+//        } else if (Voltage >= 3.79 && Voltage < 3.82) {
+//            batteryCapacity = 40;
+//        } else if (Voltage >= 3.77 && Voltage < 3.79) {
+//            batteryCapacity = 30;
+//        } else if (Voltage >= 3.73 && Voltage < 3.77) {
+//            batteryCapacity = 20;
+//        } else if (Voltage >= 3.7 && Voltage < 3.73) {
+//            batteryCapacity = 15;
+//        } else if (Voltage >= 3.68 && Voltage < 3.7) {
+//            batteryCapacity = 10;
+//        } else if (Voltage >= 3.5 && Voltage < 3.68) {
+//            batteryCapacity = 5;
+//        } else if (Voltage < 3.5) {
+//            batteryCapacity = 0;
+//        }
+//        return batteryCapacity;
+//    }
+
+
+//    电池电压区间7.2-8.2
+    public int getBatteryCapacity(double Voltage) {
         System.out.print(Voltage);
-        int batteryCapacity = -1;
-        if (Voltage >= 4.2) {
-            batteryCapacity = 100;
-        } else if (Voltage >= 4.08 && Voltage < 4.2) {
-            batteryCapacity = 90;
-        } else if (Voltage >= 4 && Voltage < 4.08) {
-            batteryCapacity = 80;
-        } else if (Voltage >= 3.93 && Voltage < 4) {
-            batteryCapacity = 70;
-        } else if (Voltage >= 3.87 && Voltage < 3.93) {
-            batteryCapacity = 60;
-        } else if (Voltage >= 3.82 && Voltage < 3.87) {
-            batteryCapacity = 50;
-        } else if (Voltage >= 3.79 && Voltage < 3.82) {
-            batteryCapacity = 40;
-        } else if (Voltage >= 3.77 && Voltage < 3.79) {
-            batteryCapacity = 30;
-        } else if (Voltage >= 3.73 && Voltage < 3.77) {
-            batteryCapacity = 20;
-        } else if (Voltage >= 3.7 && Voltage < 3.73) {
-            batteryCapacity = 15;
-        } else if (Voltage >= 3.68 && Voltage < 3.7) {
-            batteryCapacity = 10;
-        } else if (Voltage >= 3.5 && Voltage < 3.68) {
-            batteryCapacity = 5;
-        } else if (Voltage < 3.5) {
-            batteryCapacity = 0;
-        }
+        int batteryCapacity = (int) ((Voltage - 7.2) * 100f);
+        if (batteryCapacity > 100) batteryCapacity = 100;
+        if (batteryCapacity < 0) batteryCapacity = 0;
         return batteryCapacity;
     }
 

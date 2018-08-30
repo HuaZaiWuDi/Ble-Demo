@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
 import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
@@ -151,7 +152,8 @@ public class VCodeLoginFragment extends BaseFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("验证码：" + s);
-                        mEditVcode.setText(s);
+                        if (BuildConfig.DEBUG)
+                            mEditVcode.setText(s);
                         RxToast.success(getString(R.string.SMSSended));
                     }
 

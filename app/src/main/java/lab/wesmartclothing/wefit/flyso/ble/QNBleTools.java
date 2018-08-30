@@ -1,16 +1,14 @@
 package lab.wesmartclothing.wefit.flyso.ble;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.support.annotation.IntDef;
 
 import com.clj.fastble.data.BleDevice;
-import com.qingniu.qnble.scanner.c;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.yolanda.health.qnblesdk.listen.QNBleDeviceDiscoveryListener;
-import com.yolanda.health.qnblesdk.listen.QNDataListener;
-import com.yolanda.health.qnblesdk.listen.QNResultCallback;
+import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
+import com.yolanda.health.qnblesdk.listener.QNDataListener;
+import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNConfig;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
@@ -68,14 +66,26 @@ public class QNBleTools {
         QNBleTools.device = device;
     }
 
-    public void scanBle(int duration) {
-        QNConfig config = new QNConfig();
-        config.setDuration(duration);
+    public void scanBle() {
+        saveUserInfo();
+        stopScan();
+        MyAPP.QNapi.startBleDeviceDiscovery(mQNResultCallback);
+    }
+
+    public void saveUserInfo() {
+        QNConfig config = MyAPP.QNapi.getConfig();
+        config.setDuration(5000);
         config.setOnlyScreenOn(false);
         config.setAllowDuplicates(false);
+        config.setScanOutTime(10000);
         config.setUnit(0);
-        MyAPP.QNapi.startBleDeviceDiscovery(config, mQNResultCallback);
-        stopScan();
+
+        config.save(new QNResultCallback() {
+            @Override
+            public void onResult(int i, String s) {
+                RxLogUtils.d("轻牛SDK ：保存用户信息" + i + "----" + s);
+            }
+        });
     }
 
 
@@ -137,20 +147,25 @@ public class QNBleTools {
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice qnBleDevice) {
-
+                RxLogUtils.d("轻牛SDK ：发现设备" + qnBleDevice.getName());
             }
 
             @Override
             public void onStartScan() {
-
+                RxLogUtils.d("轻牛SDK ：开始扫描");
             }
 
             @Override
             public void onStopScan() {
+                RxLogUtils.d("轻牛SDK ：停止扫描");
+            }
 
+            @Override
+            public void onScanFail(int i) {
+                RxLogUtils.d("轻牛SDK ：扫描失败");
             }
         });
-        scanBle(1 * 1000);
+        scanBle();
         MyAPP.QNapi.connectDevice(device, creatUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
@@ -183,25 +198,21 @@ public class QNBleTools {
     }
 
     public QNBleDevice bleDevice2QNDevice(com.smartclothing.blelibrary.scanner.ScanResult result) {
-        BluetoothDevice device = result.getDevice();
-        byte[] bytes = result.getScanRecord().getBytes();
-        byte[] bleBytes = new byte[92];
-        System.arraycopy(bleBytes, 0, bytes, 0, bytes.length);
-
-        com.qingniu.qnble.scanner.ScanResult scanResult = new com.qingniu.qnble.scanner.ScanResult(device, new c(bleBytes), result.getRssi());
-        QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);//转换对象
-        return bleDevice;
+        return MyAPP.QNapi.buildDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes(), new QNResultCallback() {
+            @Override
+            public void onResult(int i, String s) {
+                RxLogUtils.d("轻牛SDK ：构建BleDevice" + i + "----" + s);
+            }
+        });
     }
 
     public QNBleDevice bleDevice2QNDevice(BleDevice result) {
-        BluetoothDevice device = result.getDevice();
-        byte[] bytes = result.getScanRecord();
-        byte[] bleBytes = new byte[92];
-        System.arraycopy(bleBytes, 0, bytes, 0, bytes.length);
-
-        com.qingniu.qnble.scanner.ScanResult scanResult = new com.qingniu.qnble.scanner.ScanResult(device, new c(bleBytes), result.getRssi());
-        QNBleDevice bleDevice = new QNBleDevice().getBleDevice(scanResult);//转换对象
-        return bleDevice;
+        return MyAPP.QNapi.buildDevice(result.getDevice(), result.getRssi(), result.getScanRecord(), new QNResultCallback() {
+            @Override
+            public void onResult(int i, String s) {
+                RxLogUtils.d("轻牛SDK ：构建BleDevice" + i + "----" + s);
+            }
+        });
     }
 
 

@@ -14,6 +14,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -37,12 +38,17 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
+import lab.wesmartclothing.wefit.flyso.entity.ReadedBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
@@ -80,6 +86,12 @@ public class MessageFragment extends BaseAcFragment {
         initRecycler();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (smartRefreshLayout != null)
+            smartRefreshLayout.autoRefresh();
+    }
 
     private void initRecycler() {
         /*侧滑删除*/
@@ -93,10 +105,9 @@ public class MessageFragment extends BaseAcFragment {
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
 
                 MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
-
                 helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
                         .setText(R.id.tv_title, item.getTitle())
-                        .setText(R.id.tv_date, RxFormat.setFormatDate(item.getPushTime(), RxFormat.Date_Date))
+                        .setText(R.id.tv_date, RxFormat.setFormatDate(item.getPushTime(), RxFormat.Date_Date2))
                         .setText(R.id.tv_content, item.getContent());
             }
         };
@@ -169,13 +180,7 @@ public class MessageFragment extends BaseAcFragment {
             RxLogUtils.d("收藏：" + position);
             final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
             readed(position);
-            QMUIFragment instance = MessageDetailsFragment.getInstance();
-            Bundle bundle = new Bundle();
-            bundle.putString(Key.BUNDLE_TITLE, item.getTitle());
-            bundle.putString(Key.BUNDLE_DATA, item.getContent());
-            bundle.putLong(Key.ADD_FOOD_DATE, item.getPushTime());
-            instance.setArguments(bundle);
-            startFragment(instance);
+
         }
     };
 
@@ -263,7 +268,7 @@ public class MessageFragment extends BaseAcFragment {
     //查看了Message，更新
     private void readed(final int position) {
         final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
-        if (item.getReadState() == 1) return;
+        if (item == null) return;
         String gid = item.getGid();
         RetrofitService dxyService = NetManager.getInstance().createString(
                 RetrofitService.class
@@ -276,6 +281,25 @@ public class MessageFragment extends BaseAcFragment {
                         RxLogUtils.d("结束" + s);
                         item.setReadState(1);
                         adapter.setData(position, item);
+                        ReadedBean readedBean = MyAPP.getGson().fromJson(s, ReadedBean.class);
+                        if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_ACTIVITY) {
+                            RxBus.getInstance().post(readedBean.getOpenTarget());
+                            getBaseFragmentActivity().popBackStack(MainFragment.class);
+                        } else if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_URL) {
+                            //打开URL
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Key.BUNDLE_WEB_URL, readedBean.getOpenTarget());
+                            bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());
+                            RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                        } else {
+                            QMUIFragment instance = MessageDetailsFragment.getInstance();
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());
+                            bundle.putString(Key.BUNDLE_DATA, readedBean.getAppContent());
+                            bundle.putLong(Key.ADD_FOOD_DATE, readedBean.getEditDate());
+                            instance.setArguments(bundle);
+                            startFragment(instance);
+                        }
                     }
 
                     @Override

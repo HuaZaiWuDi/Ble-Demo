@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
@@ -16,9 +18,11 @@ import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
+import com.just.agentweb.MiddlewareWebClientBase;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +30,7 @@ import org.json.JSONObject;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.SharePop;
@@ -184,6 +189,25 @@ public class CollectWebActivity extends BaseWebActivity {
         }
 
     };
+
+    @NonNull
+    @Override
+    protected MiddlewareWebClientBase getMiddleWareWebClient() {
+        return new MiddlewareWebClientBase() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                RxLogUtils.i("加载网页地址：" + url);
+                mAgentWeb.getJsAccessEntrace().quickCallJs("getUserId", SPUtils.getString(SPKey.SP_UserId));
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+            }
+        };
+    }
 
 
     @Nullable

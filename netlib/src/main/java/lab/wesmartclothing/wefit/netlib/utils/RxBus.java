@@ -2,7 +2,9 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
@@ -79,6 +81,20 @@ public class RxBus {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(consumer);
     }
+
+
+    /**
+     * 注册，传递tClass的时候最好创建一个封装的类。这对数据的传递作用
+     * 新更改仅仅抛出生成类和解析
+     * 返回一个订阅者，然后可以绑定生命周期或者做一些其他的事情
+     */
+    public <T> Observable<T> register2(Class<T> tClass) {
+        return mBus.ofType(tClass)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 
     /**
      * 确定接收消息的类型

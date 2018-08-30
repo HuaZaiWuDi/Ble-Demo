@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
@@ -44,6 +42,7 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import me.shaohui.shareutil.LoginUtil;
 import me.shaohui.shareutil.login.LoginListener;
 import me.shaohui.shareutil.login.LoginPlatform;
@@ -121,19 +120,22 @@ public class LoginRegisterActivity extends BaseActivity {
     }
 
     private void initRxBus() {
-        Disposable register = RxBus.getInstance().register(PasswordLoginBus.class, new Consumer<PasswordLoginBus>() {
-            @Override
-            public void accept(PasswordLoginBus passwordLoginBus) throws Exception {
-                checkRegister(passwordLoginBus.phone, passwordLoginBus.password);
-            }
-        });
-        Disposable register1 = RxBus.getInstance().register(VCodeBus.class, new Consumer<VCodeBus>() {
-            @Override
-            public void accept(VCodeBus vCodeBus) throws Exception {
-                checkRegister(vCodeBus.phone, vCodeBus.vCode);
-            }
-        });
-        RxBus.getInstance().addSubscription(this, register, register1);
+        RxBus.getInstance().register2(PasswordLoginBus.class)
+                .compose(RxComposeUtils.<PasswordLoginBus>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<PasswordLoginBus>() {
+                    @Override
+                    protected void _onNext(PasswordLoginBus passwordLoginBus) {
+                        checkRegister(passwordLoginBus.phone, passwordLoginBus.password);
+                    }
+                });
+        RxBus.getInstance().register2(VCodeBus.class)
+                .compose(RxComposeUtils.<VCodeBus>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<VCodeBus>() {
+                    @Override
+                    protected void _onNext(VCodeBus vCodeBus) {
+                        checkRegister(vCodeBus.phone, vCodeBus.vCode);
+                    }
+                });
     }
 
 
@@ -338,7 +340,6 @@ public class LoginRegisterActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
 }

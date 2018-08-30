@@ -158,20 +158,19 @@ public class FoodDetailsFragment extends BaseAcFragment {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
                 MyAPP.getImageLoader().displayImage(mActivity, item, (QMUIRadiusImageView) helper.getView(R.id.img_food));
-
             }
         };
         mRecyclerAddFoods.setAdapter(adapterAddFoods);
-        adapterAddFoods.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QMUIFragment instance = AddedFoodFragment.getInstance();
-                bundle.putInt(Key.ADD_FOOD_TYPE, foodType);
-                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-                instance.setArguments(bundle);
-                startFragment(instance);
-            }
-        });
+//        adapterAddFoods.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                QMUIFragment instance = AddedFoodFragment.getInstance();
+//                bundle.putInt(Key.ADD_FOOD_TYPE, foodType);
+//                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+//                instance.setArguments(bundle);
+//                startFragment(instance);
+//            }
+//        });
     }
 
     private void initBundle() {
@@ -192,7 +191,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getUnitCalorie() + "")
-                        .append("kacl/")
+                        .append("kcal/")
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                         .append(RxFormat.setFormatNum(item.getUnitCount(), "0.0") + item.getUnit())

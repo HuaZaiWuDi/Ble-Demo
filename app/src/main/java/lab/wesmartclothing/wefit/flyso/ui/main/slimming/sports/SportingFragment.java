@@ -43,14 +43,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/7/19.
@@ -103,7 +103,7 @@ public class SportingFragment extends BaseAcFragment {
                 btn_Connect.setText(R.string.disConnected);
                 mSwMusic.postDelayed(reConnectTimeOut, 9000);
             }
-        if (mSwMusic.isOpened())
+        if (mSwMusic.isOpened() && textToSpeech != null)
             textToSpeech.speak(state ? "设备已连接" : "设备连接已断开", TextToSpeech.QUEUE_FLUSH, null);
     }
 
@@ -145,7 +145,6 @@ public class SportingFragment extends BaseAcFragment {
         mTvAvHeartRate.setTypeface(typeface);
         mTvMaxHeartRate.setTypeface(typeface);
         mTvSportsTime.setTypeface(typeface);
-
     }
 
     private void initSwitch() {
@@ -155,6 +154,7 @@ public class SportingFragment extends BaseAcFragment {
                 openVoice();
                 mSwMusic.setOpened(true);
                 SPUtils.put(SPKey.SP_VoiceTip, true);
+                type = -1;
             }
 
             @Override
@@ -210,42 +210,44 @@ public class SportingFragment extends BaseAcFragment {
     }
 
     private void initRxBus() {
-        Disposable register = RxBus.getInstance().register(SportsDataTab.class, new Consumer<SportsDataTab>() {
-            @Override
-            public void accept(SportsDataTab sportsDataTab) throws Exception {
-                RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-                if (currentTime == 0) {
-                    currentTime = sportsDataTab.getDuration();
-                    timer.startTimer();
-                    timer2.startTimer();
+        RxBus.getInstance().register2(SportsDataTab.class)
+                .compose(RxComposeUtils.<SportsDataTab>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<SportsDataTab>() {
+                    @Override
+                    protected void _onNext(SportsDataTab sportsDataTab) {
+                        RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                        if (currentTime == 0) {
+                            currentTime = sportsDataTab.getDuration();
+                            timer.startTimer();
+                            timer2.startTimer();
 
-                    List<Entry> heartValues = new ArrayList<>();
-                    for (int i = 0; i < sportsDataTab.getAthlRecord_2().size(); i++) {
-                        heartValues.add(new Entry(i, sportsDataTab.getAthlRecord_2().get(i)));
+                            List<Entry> heartValues = new ArrayList<>();
+                            for (int i = 0; i < sportsDataTab.getAthlRecord_2().size(); i++) {
+                                heartValues.add(new Entry(i, sportsDataTab.getAthlRecord_2().get(i)));
+                            }
+                            set.setValues(heartValues);
+                            mMLineChart.getData().notifyDataChanged();
+                            mMLineChart.notifyDataSetChanged();
+                            mMLineChart.setVisibleXRangeMaximum(15);
+                            mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
+                        } else {
+                            mMLineChart.getData().addEntry(new Entry(mMLineChart.getData().getDataSetByIndex(0).getEntryCount(), sportsDataTab.getCurHeart()), 0);
+                            mMLineChart.getData().notifyDataChanged();
+                            mMLineChart.notifyDataSetChanged();
+                            mMLineChart.setVisibleXRangeMaximum(15);
+                            mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
+                        }
+
+                        heartRate(sportsDataTab.getCurHeart());
+                        mTvKcal.setText(RxFormatValue.fromatUp(sportsDataTab.getKcal(), 1));
+                        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
+                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
                     }
-                    set.setValues(heartValues);
-                    mMLineChart.getData().notifyDataChanged();
-                    mMLineChart.notifyDataSetChanged();
-                    mMLineChart.setVisibleXRangeMaximum(15);
-                    mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
-                } else {
-                    mMLineChart.getData().addEntry(new Entry(mMLineChart.getData().getDataSetByIndex(0).getEntryCount(), sportsDataTab.getCurHeart()), 0);
-                    mMLineChart.getData().notifyDataChanged();
-                    mMLineChart.notifyDataSetChanged();
-                    mMLineChart.setVisibleXRangeMaximum(15);
-                    mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
-                }
+                });
 
-                heartRate(sportsDataTab.getCurHeart());
-                mTvKcal.setText(RxFormatValue.fromatUp(sportsDataTab.getKcal(), 1));
-                mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
-                mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
-            }
-        });
-        RxBus.getInstance().addSubscription(this, register);
     }
 
     private void initChart(LineChart lineChartBase) {
@@ -296,13 +298,11 @@ public class SportingFragment extends BaseAcFragment {
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;
         int heart_4 = heartRates[4] & 0xff;
-//        RxLogUtils.d("心率区间：" + Arrays.toString(heartRates));
-
         if (heart_0 <= heart && heart <= heart_1) {
             if (type != 0) {
                 mTvSportsStatus.setText("热身");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && textToSpeech != null)
                     textToSpeech.speak(getString(R.string.speech_warm), TextToSpeech.QUEUE_FLUSH, null);
                 type = 0;
             }
@@ -310,7 +310,7 @@ public class SportingFragment extends BaseAcFragment {
             if (type != 1) {
                 mTvSportsStatus.setText("燃脂");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && textToSpeech != null)
                     textToSpeech.speak(getString(R.string.speech_grease), TextToSpeech.QUEUE_FLUSH, null);
                 type = 1;
             }
@@ -319,7 +319,7 @@ public class SportingFragment extends BaseAcFragment {
                 mTvSportsStatus.setText("有氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
                 type = 2;
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && textToSpeech != null)
                     textToSpeech.speak(getString(R.string.speech_aerobic), TextToSpeech.QUEUE_FLUSH, null);
             }
         } else if (heart >= heart_3 && heart < heart_4) {
@@ -327,7 +327,7 @@ public class SportingFragment extends BaseAcFragment {
                 mTvSportsStatus.setText("无氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
                 type = 3;
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && textToSpeech != null)
                     textToSpeech.speak(getString(R.string.speech_anaerobic), TextToSpeech.QUEUE_FLUSH, null);
             }
         } else if (heart >= heart_4) {
@@ -335,7 +335,7 @@ public class SportingFragment extends BaseAcFragment {
                 mTvSportsStatus.setText("极限");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
                 type = 4;
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && textToSpeech != null)
                     textToSpeech.speak(getString(R.string.speech_limit), TextToSpeech.QUEUE_FLUSH, null);
             }
         }
@@ -382,8 +382,8 @@ public class SportingFragment extends BaseAcFragment {
     MyTimer timer2 = new MyTimer(2 * 60 * 1000, 2 * 60 * 1000, new MyTimerListener() {
         @Override
         public void enterTimer() {
-            if (mSwMusic.isOpened())
-                textToSpeech.speak(getString(R.string.speech_currentKcal, mTvKcal.getText()), TextToSpeech.QUEUE_FLUSH, null);
+            if (mSwMusic.isOpened() && textToSpeech != null)
+                textToSpeech.speak(getString(R.string.speech_currentKcal, mTvKcal.getText()), TextToSpeech.QUEUE_ADD, null);
         }
     });
 
@@ -400,7 +400,6 @@ public class SportingFragment extends BaseAcFragment {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
-        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
 
@@ -409,14 +408,14 @@ public class SportingFragment extends BaseAcFragment {
 
     }
 
-
     //运动停止
     private void stopSporting() {
         timer.stopTimer();
         timer2.stopTimer();
+        currentTime = 0;
         if (!dialog.isShowing())
             dialog.show();
-        if (mSwMusic.isOpened())
+        if (mSwMusic.isOpened() && textToSpeech != null)
             textToSpeech.speak("运动已结束", TextToSpeech.QUEUE_FLUSH, null);
     }
 

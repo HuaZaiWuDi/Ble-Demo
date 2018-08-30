@@ -77,7 +77,6 @@ public class AboutFragment extends BaseAcFragment {
     protected View onCreateView() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_about, null);
         unbinder = ButterKnife.bind(this, view);
-
         initView();
         return view;
     }
@@ -192,6 +191,7 @@ public class AboutFragment extends BaseAcFragment {
                         buttonDrawable.setStroke(1, getResources().getColor(R.color.GrayWrite));
                         mBtnUpdate.setEnabled(false);
                     }
+
                     @Override
                     public void fail() {
                         mLayoutUpdateFail.setVisibility(View.VISIBLE);

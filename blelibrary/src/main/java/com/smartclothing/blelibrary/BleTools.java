@@ -214,6 +214,12 @@ public class BleTools {
             public void onNotifyFailure(BleException exception) {
                 Log.e(TAG, "打开通知失败:" + exception.toString());
                 if (mBleOpenNotifyCallBack != null) mBleOpenNotifyCallBack.success(false);
+                TimeOut.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        openNotify(mBleOpenNotifyCallBack);
+                    }
+                }, timeOut);
             }
 
             @Override
@@ -321,7 +327,6 @@ public class BleTools {
     private ScanCallback scanCallback;
 
     public void startScan(BleScanConfig config, ScanCallback scanCallback) {
-
         this.scanCallback = scanCallback;
         final long timeOut = config.getScanTimeOut();
 
@@ -341,7 +346,7 @@ public class BleTools {
         ScanSettings scanSettings = new ScanSettings.Builder()
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//仅回调第一个
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
-                .setReportDelay(1000)
+                .setReportDelay(500)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
         List<ScanFilter> filters = new ArrayList<>();

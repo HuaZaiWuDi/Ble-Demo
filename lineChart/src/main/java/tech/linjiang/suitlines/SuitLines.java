@@ -479,8 +479,9 @@ public class SuitLines extends View {
             Set<Float> integers = limits.keySet();
             for (float value : integers) {
                 String text = limits.get(value);
-                value = value > maxValueOfY ? maxValueOfY : value;
-                value = value < minValueY ? minValueY : value;
+                maxValueOfY = value > maxValueOfY ? value : maxValueOfY;
+                minValueY = value < minValueY ? value : minValueY;
+
                 float y = linesArea.top + (linesArea.height() * (0.8f - spaceMin)) * (1 - value / maxValueOfY + spaceMax);
 
                 xyPaint.setTextAlign(Paint.Align.LEFT);
@@ -744,6 +745,15 @@ public class SuitLines extends View {
 
         maxValueOfY = bakUnits_1.get(bakUnits_1.size() - 1).getValue();
         minValueY = bakUnits_1.get(0).getValue();
+
+        if (limits != null && limits.size() > 0) {
+            Set<Float> integers = limits.keySet();
+            for (float value : integers) {
+                maxValueOfY = value > maxValueOfY ? value : maxValueOfY;
+                minValueY = value < minValueY ? value : minValueY;
+            }
+        }
+
     }
 
     /**

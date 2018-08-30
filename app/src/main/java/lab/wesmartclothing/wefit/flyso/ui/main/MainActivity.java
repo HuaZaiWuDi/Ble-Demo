@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -12,12 +13,11 @@ import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import cn.jpush.android.api.JPushInterface;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
@@ -28,12 +28,14 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_APP;
@@ -78,24 +80,29 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
+//        startFragment(MainFragment.getInstance());
+        //防止后台杀掉APP出现白屏问题
+        startFragmentAndDestroyCurrent(MainFragment.getInstance(), false);
+
         initView();
-        if (savedInstanceState == null) {
-            startFragment(MainFragment.getInstance());
-        }
+//        if (savedInstanceState == null) {
+//            startFragment(MainFragment.getInstance());
+//        } else {
+//            RxLogUtils.e("savedInstanceState:" + savedInstanceState);
+//        }
         bleIntent = new Intent(mContext, BleService_.class);
         startService(bleIntent);
     }
 
     public void initView() {
-
+        initReceiverPush();
         initRxBus();
-
         startLocation(null);
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 
         RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
-
     }
 
 
@@ -105,7 +112,6 @@ public class MainActivity extends BaseALocationActivity {
      * "openTarget":""      //operation：2（ slim-瘦身首页，find-发现首页，shop-商城首页，user-我的首页，message-站内信,url）
      * }
      */
-
     private void initReceiverPush() {
         Bundle bundle = getIntent().getExtras();
         RxLogUtils.d("点击通知：" + bundle);
@@ -134,49 +140,48 @@ public class MainActivity extends BaseALocationActivity {
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
-        initReceiverPush();
     }
 
     private void initRxBus() {
-        Disposable disposable = RxBus.getInstance().register(FirmwareVersionUpdate.class, new Consumer<FirmwareVersionUpdate>() {
-            @Override
-            public void accept(final FirmwareVersionUpdate firmwareVersionUpdate) throws Exception {
-                final boolean isMust = firmwareVersionUpdate.getMustUpgrade() != 0;
-                //差值大于2kg，体重数据不合理
-                final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-                dialog.getTvTitle().setBackgroundResource(R.mipmap.slice);
-                dialog.getTvContent().setText("是否升级到最新的版本");
-                dialog.setCancel("升级");
-                dialog.setCancelListener(new View.OnClickListener() {
+        RxBus.getInstance().register2(FirmwareVersionUpdate.class)
+                .compose(RxComposeUtils.<FirmwareVersionUpdate>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<FirmwareVersionUpdate>() {
                     @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        AboutUpdateDialog updatedialog = new AboutUpdateDialog(mActivity, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
-                        updatedialog.show();
+                    protected void _onNext(final FirmwareVersionUpdate firmwareVersionUpdate) {
+                        final boolean isMust = firmwareVersionUpdate.getMustUpgrade() != 0;
+                        //差值大于2kg，体重数据不合理
+                        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+                        TextView tvTitle = dialog.getTvTitle();
+                        tvTitle.setVisibility(View.VISIBLE);
+                        tvTitle.setText("固件升级");
+                        dialog.getTvContent().setText("是否升级到最新的版本");
+                        dialog.setCancel("升级");
+                        dialog.setCancelListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                AboutUpdateDialog updatedialog = new AboutUpdateDialog(mActivity, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                                updatedialog.show();
+                            }
+                        });
+                        dialog.setSure(isMust ? "退出" : "取消");
+                        dialog.show();
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.setSureListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                if (isMust) {
+                                    RxActivityUtils.AppExit(mContext);
+                                    finish();
+                                }
+                            }
+                        });
                     }
                 });
-                dialog.setSure(isMust ? "退出" : "取消");
-                dialog.show();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.setSureListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        if (isMust) {
-                            RxActivityUtils.AppExit(mContext);
-                            finish();
-                        }
-                    }
-                });
-
-            }
-        });
-
-        RxBus.getInstance().addSubscription(this, disposable);
     }
 
 
@@ -209,6 +214,9 @@ public class MainActivity extends BaseALocationActivity {
 
     @Override
     public void onBackPressed() {
+        if (RxUtils.isFastClick(500)) {
+            return;
+        }
         if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             moveTaskToBack(true);
         } else {
@@ -222,7 +230,6 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     protected void onDestroy() {
         stopService(bleIntent);
-        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
 

@@ -27,7 +27,7 @@ public class GlideImageLoader implements ImageLoader {
 
     public void displayImage(Context activity, Object path, @DrawableRes int defaultImg, ImageView imageView) {
         Glide.with(activity)
-                .load(path instanceof String ? Uri.fromFile(new File((String) path)) : path)
+                .load(path)
                 .placeholder(defaultImg)
                 .centerCrop()
                 .crossFade(500)

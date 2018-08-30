@@ -17,7 +17,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -40,7 +39,6 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -84,6 +82,13 @@ public class CollectFragment extends BaseAcFragment {
     private void initView() {
         initTopBar();
         initRecycler();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (smartRefreshLayout != null)
+            smartRefreshLayout.autoRefresh();
     }
 
     private void initRecycler() {
@@ -193,7 +198,7 @@ public class CollectFragment extends BaseAcFragment {
             CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position);
             Bundle bundle = new Bundle();
             //打开URL
-            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&userId=" + SPUtils.getString(SPKey.SP_UserId) + "&isgo=1");
+            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
             RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
         }
     };

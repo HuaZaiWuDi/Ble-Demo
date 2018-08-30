@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="这里还没有添加任何食物哦，请您添加或者搜索输录入您的饮食 ^-^"
+            android:text="这里还没有添加任何食物哦，请您添加或者搜索录入您的饮食 ^-^"
             android:textColor="@color/GrayWrite"
             android:textSize="13sp"/>
 

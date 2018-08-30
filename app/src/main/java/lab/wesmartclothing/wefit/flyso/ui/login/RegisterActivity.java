@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -172,7 +173,8 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("验证码：" + s);
-                        mEditVcode.setText(s);
+                        if (BuildConfig.DEBUG)
+                            mEditVcode.setText(s);
                         RxToast.success(getString(R.string.SMSSended));
                     }
 

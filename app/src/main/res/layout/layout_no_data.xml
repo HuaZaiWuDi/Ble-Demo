@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:src="@mipmap/empty_view"/>
+        android:src="@mipmap/icon_empty"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -55,8 +55,8 @@
         android:id="@+id/btn_find"
         android:layout_width="195dp"
         android:layout_height="46dp"
-        android:layout_marginBottom="16dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="324dp"
         android:text="去 发 现"
         android:textColor="@color/white"

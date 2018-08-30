@@ -28,8 +28,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.data.JPushLocalNotification;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
@@ -41,9 +39,11 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/8/10.
@@ -95,20 +95,23 @@ public class MainFragment extends BaseAcFragment {
     }
 
     private void initRxBus() {
-        Disposable register = RxBus.getInstance().register(String.class, new Consumer<String>() {
-            @Override
-            public void accept(String openTarget) throws Exception {
-                RxLogUtils.d("点击通知栏执行操作：" + openTarget);
-                openActivity(openTarget);
-            }
-        });
-        Disposable goToFind = RxBus.getInstance().register(GoToFind.class, new Consumer<GoToFind>() {
-            @Override
-            public void accept(GoToFind goToFind) throws Exception {
-                mViewpager.setCurrentItem(1, true);
-            }
-        });
-        RxBus.getInstance().addSubscription(this, register, goToFind);
+        RxBus.getInstance().register2(String.class)
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("点击通知栏执行操作：" + s);
+                        openActivity(s);
+                    }
+                });
+        RxBus.getInstance().register2(GoToFind.class)
+                .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<GoToFind>() {
+                    @Override
+                    protected void _onNext(GoToFind s) {
+                        mViewpager.setCurrentItem(1, true);
+                    }
+                });
     }
 
     private void openActivity(String openTarget) {
@@ -175,7 +178,6 @@ public class MainFragment extends BaseAcFragment {
                             .build()
                             .show();
 //                    showLocalNotify();
-
                 }
             }
         });
@@ -265,7 +267,6 @@ public class MainFragment extends BaseAcFragment {
 
     @Override
     public void onDestroy() {
-        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
 
     }

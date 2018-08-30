@@ -40,8 +40,8 @@ public class ServiceAPI {
 
 
     //发现URL   判断网址是否隐藏底部导航栏，需要网址后面加/
-//    public static String FIND_Addr = "http://39.108.152.50:8088/find/";
-    public static String FIND_Addr = "http://10.10.11.208:8208/";
+    public static String FIND_Addr = "http://39.108.152.50:8088/find/";
+//    public static String FIND_Addr = "http://10.10.11.208:8208/";
 
 
     //服务协议

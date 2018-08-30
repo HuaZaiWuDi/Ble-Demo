@@ -249,7 +249,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="24dp"
                             android:layout_toRightOf="@+id/iv_sports_time"
-                            android:text="运动时长"
+                            android:text="有效运动时长"
                             android:textColor="@color/GrayWrite"
                             android:textSize="10sp"/>
 

@@ -182,7 +182,7 @@
 
     <string-array name="problemType">
         <item>产品反馈</item>
-        <item>使用资询</item>
+        <item>使用咨询</item>
         <item>产品建议</item>
         <item>其它</item>
     </string-array>

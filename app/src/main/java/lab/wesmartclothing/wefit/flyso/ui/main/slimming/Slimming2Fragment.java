@@ -669,4 +669,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         }
     }
 
+
+    @Override
+    protected boolean canDragBack() {
+        return false;
+    }
 }

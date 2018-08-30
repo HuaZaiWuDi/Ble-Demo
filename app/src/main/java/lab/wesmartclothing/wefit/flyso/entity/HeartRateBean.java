@@ -2,11 +2,13 @@ package lab.wesmartclothing.wefit.flyso.entity;
 
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
@@ -54,16 +56,6 @@ public class HeartRateBean {
 
 
     public void saveHeartRate(HeartRateBean heartRateBean, HeartRateToKcal mHeartRateToKcal) {
-        final List<AthlList> athlList = heartRateBean.getAthlList();
-
-        double kcalTotal = 0;
-
-        for (AthlList heart : athlList) {
-            kcalTotal += mHeartRateToKcal.getCalorie(avgHeart, heart.getStepTime() / 3600);
-        }
-        RxLogUtils.d("运动卡路里数据：" + kcalTotal);
-        heartRateBean.setCalorie((int) (kcalTotal * 1000));
-
         String s = MyAPP.getGson().toJson(heartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -74,6 +66,8 @@ public class HeartRateBean {
                         athlList.clear();
                         SPUtils.remove(Key.CACHE_ATHL_RECORD);
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
+                        if (BuildConfig.DEBUG)
+                            RxToast.success("数据上传成功");
                     }
                 });
     }

@@ -219,7 +219,6 @@ public class AddedFoodFragment extends BaseAcFragment {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         QMUIFragment instance = SearchHistoryFragment.getInstance();
                         instance.setArguments(bundle);
                         startFragment(instance);

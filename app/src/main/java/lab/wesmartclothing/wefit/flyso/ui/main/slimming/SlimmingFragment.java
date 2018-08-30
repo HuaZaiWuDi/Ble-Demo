@@ -98,6 +98,7 @@ public class SlimmingFragment extends BaseFragment {
                 mViewPager.setCurrentItem(position);
             }
         });
+
     }
 
     private void initTitleTab() {

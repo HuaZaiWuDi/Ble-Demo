@@ -28,10 +28,6 @@ public class HeartRateToKcal {
      * T =运动持续时间（小时）double
      **/
 
-    /**
-     *
-     *
-     * */
 
     /**
      * @param HR true 为男，false为女;
@@ -62,7 +58,7 @@ public class HeartRateToKcal {
         } else {
             kcal = ((-20.4022 + (0.4472 * HR) - (0.1263 * W) + (0.074 * A)) / 4.184) * 60 * T;
         }
-        return Math.abs(kcal / 1000);
+        return Math.abs(kcal);
     }
 
 

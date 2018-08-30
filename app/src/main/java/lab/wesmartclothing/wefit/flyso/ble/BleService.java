@@ -34,7 +34,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.yolanda.health.qnblesdk.listen.QNBleConnectionChangeListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
 import org.androidannotations.annotations.Bean;
@@ -42,7 +41,9 @@ import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -50,6 +51,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -74,7 +76,7 @@ public class BleService extends Service {
 
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
 
-
+    private Map<String, Object> connectDevices = new HashMap<>();
     private final int heartDeviation = 10;//心率误差值
 
     @Bean
@@ -139,10 +141,9 @@ public class BleService extends Service {
     @Override
     public void onDestroy() {
         BleTools.getInstance().disConnect();
-        RxBus.getInstance().unSubscribe(this);
         if (BuildConfig.DEBUG) {
             RefWatcher refWatcher = LeakCanary.installedRefWatcher();
-// We expect schrodingerCat to be gone soon (or not), let's watch it.
+            // We expect schrodingerCat to be gone soon (or not), let's watch it.
             refWatcher.watch(this);
         }
         super.onDestroy();
@@ -154,7 +155,6 @@ public class BleService extends Service {
             RxLogUtils.d("验证权限");
             RxToast.warning(getString(R.string.open_loaction));
         }
-
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -248,23 +248,27 @@ public class BleService extends Service {
                         QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
                         RxBus.getInstance().post(bleDevice);
                         if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
-                                mQNBleTools.getConnectState() > 1) {//判断是否正在连接，或者已经连接则不在连接
+                                mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
+                                !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                             mQNBleTools.connectDevice(bleDevice);
                             mQNBleTools.setDevice(bleDevice);
+                            connectDevices.put(bleDevice.getMac(), bleDevice);
                         }
                     } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
                         BleDevice bleDevice = new BleDevice(device);//转换对象
 //                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
                         if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                                !BleTools.getInstance().connectedState())//判断是否正在连接，或者已经连接则不在连接
+                                !BleTools.getInstance().connectedState() &&
+                                !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                             connectClothing(bleDevice);
+                            connectDevices.put(bleDevice.getMac(), bleDevice);
+                        }
                         RxBus.getInstance().post(bleDevice);
                     }
                 }
             }
         });
     }
-
 
     //通过UUID验证设备类型
     public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {
@@ -276,7 +280,7 @@ public class BleService extends Service {
     }
 
     private void connectScaleCallBack() {
-        MyAPP.QNapi.setBleConnectionChangeListener(new QNBleConnectionChangeListener() {
+        MyAPP.QNapi.setBleConnectionChangeListener(new com.yolanda.health.qnblesdk.listener.QNBleConnectionChangeListener() {
             @Override
             public void onConnecting(QNBleDevice qnBleDevice) {
                 RxLogUtils.e("正在连接:");
@@ -298,7 +302,6 @@ public class BleService extends Service {
                 deviceLink.setMacAddr(qnBleDevice.getMac());
                 deviceLink.setDeviceName(getString(R.string.scale));//测试数据
                 deviceLink.deviceLink(deviceLink);
-
             }
 
             @Override
@@ -312,7 +315,7 @@ public class BleService extends Service {
                 mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
                 RxLogUtils.e("断开连接:");
-
+                connectDevices.remove(qnBleDevice.getMac());
             }
 
             @Override
@@ -320,16 +323,16 @@ public class BleService extends Service {
                 mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
                 RxLogUtils.d("连接异常：" + i);
                 mQNBleTools.disConnectDevice(qnBleDevice);
-                RxToast.info(getString(R.string.connectError));
+//                RxToast.info(getString(R.string.connectError));
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
-
+                connectDevices.remove(qnBleDevice.getMac());
             }
 
             @Override
             public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("体重秤状态变化:" + i);
-                if (i >= 5) {
-                    B.broadUpdate(BleService.this, Key.ACTION_STATE_START_MEASURE);
+                if (i >= 5 && i < 9) {
+                    RxBus.getInstance().post(new OpenAddWeight());
                 }
                 switch (i) {
                     case 5://正在测量
@@ -342,7 +345,6 @@ public class BleService extends Service {
                         break;
                     case 9://测量完成
                         break;
-
                 }
             }
         });
@@ -360,10 +362,10 @@ public class BleService extends Service {
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
                 RxLogUtils.d("连接失败：" + exception.toString());
-                RxToast.info(getString(R.string.connectError));
+//                RxToast.info(getString(R.string.connectError));
                 BleTools.getBleManager().disconnect(bleDevice);
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
-
+                connectDevices.remove(bleDevice.getMac());
             }
 
             @Override
@@ -393,7 +395,7 @@ public class BleService extends Service {
             public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
                 RxLogUtils.d("断开连接：");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
-
+                connectDevices.remove(device.getMac());
                 shopSporting();
             }
         });
@@ -414,7 +416,7 @@ public class BleService extends Service {
     }
 
     private void syncSetting() {
-        BleAPI.syncSetting(35, 50, 0x00, new BleChartChangeCallBack() {
+        BleAPI.syncSetting(40, 50, 0x00, new BleChartChangeCallBack() {
             @Override
             public void callBack(byte[] data) {
                 RxLogUtils.d("配置参数");
@@ -431,7 +433,7 @@ public class BleService extends Service {
                 RxLogUtils.d("包总数：" + packageCount);
                 if (packageCount > 0) {
                     RxLogUtils.d("开始同步包数据");
-                    synData();
+//                    synData();
                     RxToast.info("开始同步本地数据");
                 } else RxLogUtils.d("没有数据同步");
                 checkVersion();
@@ -505,7 +507,6 @@ public class BleService extends Service {
 
                 BleAPI.syncData(bytes);
                 synData();
-
             }
         });
     }
@@ -570,7 +571,7 @@ public class BleService extends Service {
                 mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
                 //卡路里累加计算
                 kcalTotal += mHeartRateToKcal.getCalorie(heartRate, 2f / 3600);
-                mSportsDataTab.setKcal(kcalTotal * 1000);//统一使用卡为基本热量单位
+                mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
                 RxBus.getInstance().post(mSportsDataTab);
             }
         });
@@ -579,7 +580,7 @@ public class BleService extends Service {
     //运动结束
     private void shopSporting() {
         lastHeartRate = 0;
-        RxLogUtils.d("数据同步结束");
+        athlRecord_2.clear();
         if (BuildConfig.DEBUG)
             RxToast.success("运动结束");
         if (athlHistoryRecord.size() > 0) {

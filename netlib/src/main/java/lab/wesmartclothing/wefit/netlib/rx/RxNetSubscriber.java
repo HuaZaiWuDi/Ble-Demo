@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.netlib.rx;
 
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,7 +15,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxHttpException;
  * 创建时间：2018/4/14
  */
 public abstract class RxNetSubscriber<T> implements Observer<T> {
-    private Context mContext;
     String TAG = "【RxNetSubscriber】";
 
     @Override
@@ -26,19 +24,15 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     public RxNetSubscriber() {
     }
 
-    public RxNetSubscriber(Context context) {
-        mContext = context;
-    }
 
     @Override
     public void onError(Throwable e) {
         Log.e(TAG, "onError: " + e.toString());
         if (BuildConfig.DEBUG)
             Toast.makeText(RxManager.getInstance().getApplication(), e.getMessage(), Toast.LENGTH_LONG).show();
-        else {
-            _onError(new RxHttpException().handleResponseError(e));
-            _onError(new RxHttpException().handleResponseError(e), -1);
-        }
+        _onError(new RxHttpException().handleResponseError(e));
+        _onError(new RxHttpException().handleResponseError(e), -1);
+        Log.e(TAG, "onError: " + e.toString());
     }
 
     @Override

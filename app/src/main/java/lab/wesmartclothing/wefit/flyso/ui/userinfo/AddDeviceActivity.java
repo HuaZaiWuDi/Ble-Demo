@@ -42,8 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -52,12 +50,14 @@ import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.ScanView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.RequestBody;
 
 @EActivity(R.layout.activity_add_device)
@@ -218,26 +218,29 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void initRxBus() {
         //瘦身衣
-        Disposable device = RxBus.getInstance().register(BleDevice.class, new Consumer<BleDevice>() {
-            @Override
-            public void accept(BleDevice device) throws Exception {
-                if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
-                    BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
-                    isBind(bean);
-                }
-            }
-        });
+        RxBus.getInstance().register2(BleDevice.class)
+                .compose(RxComposeUtils.<BleDevice>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<BleDevice>() {
+                    @Override
+                    protected void _onNext(BleDevice device) {
+                        if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
+                            BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
+                            isBind(bean);
+                        }
+                    }
+                });
         //体脂称
-        Disposable QNDevice = RxBus.getInstance().register(QNBleDevice.class, new Consumer<QNBleDevice>() {
-            @Override
-            public void accept(QNBleDevice device) throws Exception {
-                if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
-                    BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
-                    isBind(bean);
-                }
-            }
-        });
-        RxBus.getInstance().addSubscription(this, QNDevice, device);
+        RxBus.getInstance().register2(QNBleDevice.class)
+                .compose(RxComposeUtils.<QNBleDevice>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<QNBleDevice>() {
+                    @Override
+                    protected void _onNext(QNBleDevice device) {
+                        if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
+                            BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
+                            isBind(bean);
+                        }
+                    }
+                });
     }
 
 
@@ -256,7 +259,6 @@ public class AddDeviceActivity extends BaseActivity {
     protected void onDestroy() {
         mHandler.removeCallbacks(scanTimeout);
         mHandler = null;
-        RxBus.getInstance().unSubscribe(this);
         super.onDestroy();
     }
 
@@ -415,7 +417,7 @@ public class AddDeviceActivity extends BaseActivity {
         mHandler.removeCallbacks(scanTimeout);
         btn_scan.setEnabled(true);
         img_scan.stopAnimation();
-        
+
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
                 .subscribe(new RxNetSubscriber<String>() {

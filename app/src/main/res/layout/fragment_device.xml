@@ -192,7 +192,6 @@
                     android:textSize="15sp"
                     android:textStyle="bold"/>
 
-
                 <TextView
                     android:id="@+id/tv_connectState_clothing"
                     android:layout_width="wrap_content"

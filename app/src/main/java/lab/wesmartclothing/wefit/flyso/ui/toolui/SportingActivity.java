@@ -43,6 +43,7 @@ public class SportingActivity extends AppCompatActivity {
         });
         RxBus.getInstance().addSubscription(this, register);
 
+
     }
 
 

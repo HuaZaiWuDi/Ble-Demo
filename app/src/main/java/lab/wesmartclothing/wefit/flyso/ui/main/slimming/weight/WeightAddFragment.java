@@ -12,7 +12,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.yolanda.health.qnblesdk.listen.QNDataListener;
+import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
@@ -130,7 +130,7 @@ public class WeightAddFragment extends BaseAcFragment {
                     mBtnSave.setVisibility(View.INVISIBLE);
                     mMRoundDisPlayView.showPoint(false);
                     mMRoundDisPlayView.startAnimation();
-                    mMRoundDisPlayView.postDelayed(timeOut, 10000);
+                    mMRoundDisPlayView.postDelayed(timeOut, 15000);
                 }
             }
 
@@ -201,7 +201,7 @@ public class WeightAddFragment extends BaseAcFragment {
     private void saveWeight() {
         WeightAddBean bean = new WeightAddBean();
         if (mQnScaleData == null) {
-            RxToast.normal("体重测量失败");
+            RxToast.normal("测量体重失败");
             return;
         }
         bean.setMeasureTime(System.currentTimeMillis() + "");

@@ -26,7 +26,6 @@ import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -39,8 +38,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
@@ -61,6 +58,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -97,7 +95,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
     private List<String> hotLists = new ArrayList<>();
     private BaseQuickAdapter searchListAdapter, adapterAddFoods;
     private boolean isStorage = false;
-    private Disposable subscribe;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     private boolean SlimmingPage = false;
     private int foodType = 0;
@@ -137,12 +134,12 @@ public class SearchHistoryFragment extends BaseAcFragment {
 
     public void initView() {
         dialog.setLifecycleSubject(lifecycleSubject);
-        subscribe = new RxPermissions(mActivity)
+        new RxPermissions(mActivity)
                 .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new Consumer<Permission>() {
+                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Permission>() {
                     @Override
-                    public void accept(Permission permission) throws Exception {
-//                        RxToast.error("请先获取读取SDCard权限:" + permission.toString());
+                    protected void _onNext(Permission permission) {
                         isStorage = permission.granted;
                     }
                 });
@@ -207,15 +204,15 @@ public class SearchHistoryFragment extends BaseAcFragment {
             }
         };
         searchListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (RxUtils.isFastClick(1000)) return;
                 FoodListBean listBean = (FoodListBean) adapter.getData().get(position);
                 String foodName = listBean.getFoodName();
 
                 addSearchKey(foodName);
                 showAddFoodDialog(listBean);
+
+                mSearchView.clearFocus();
             }
         });
         searchListAdapter.bindToRecyclerView(mMRecyclerView);
@@ -244,8 +241,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
 
     @Override
     public void onDestroy() {
-        if (subscribe != null) subscribe.dispose();
-        subscribe = null;
         super.onDestroy();
     }
 

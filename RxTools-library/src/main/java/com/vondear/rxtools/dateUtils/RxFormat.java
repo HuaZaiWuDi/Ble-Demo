@@ -23,6 +23,7 @@ public class RxFormat {
     }
 
     public static final String Date_Date = "yyyy-MM-dd HH:mm:ss";
+    public static final String Date_Date2 = "yyyy-MM-dd HH:mm";
     public static final String Date_Time = "HH:mm:ss";
     public static final String Date_Date_CH = "yyyy年MM月dd日HH时mm分ss秒";
     public static final String Date_Time_CH = "HH时mm分ss秒";

@@ -26,7 +26,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
-import com.yolanda.health.qnblesdk.listen.QNDataListener;
+import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
@@ -51,6 +51,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
@@ -59,6 +60,8 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import tech.linjiang.suitlines.SuitLines;
 import tech.linjiang.suitlines.Unit;
 
@@ -151,10 +154,7 @@ public class WeightRecordFragment extends BaseAcFragment {
     @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
     void scaleStartMeasure() {
         if (isVisible()) {
-            RxLogUtils.d("显示：WeightRecordFragment");
-            QMUIFragment instance = WeightAddFragment.getInstance();
-            instance.setArguments(bundle);
-            startFragment(instance);
+
         }
     }
 
@@ -209,7 +209,23 @@ public class WeightRecordFragment extends BaseAcFragment {
 
         initTopBar();
         checkStatus();
+        initRxBus();
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
+    }
+
+    private void initRxBus() {
+        RxBus.getInstance().register2(OpenAddWeight.class)
+                .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<OpenAddWeight>() {
+                    @Override
+                    protected void _onNext(OpenAddWeight integer) {
+                        RxLogUtils.d("显示：WeightRecordFragment");
+                        QMUIFragment instance = WeightAddFragment.getInstance();
+                        instance.setArguments(bundle);
+                        startFragment(instance);
+                    }
+                });
+
     }
 
 
@@ -291,10 +307,10 @@ public class WeightRecordFragment extends BaseAcFragment {
         for (int i = 0; i < list.size(); i++) {
             WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
             Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
-            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), "");
+            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
             unit_weight.setShowPoint(true);
 
-            unit_bodyFat.setShowPoint(false);
+            unit_bodyFat.setShowPoint(list.size() == 1);
             unit_bodyFat.setFill(true);
             lines_Heat.add(unit_weight);
             lines_Time.add(unit_bodyFat);
@@ -372,7 +388,7 @@ public class WeightRecordFragment extends BaseAcFragment {
             @Override
             public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
                 RxLogUtils.d("历史数据：" + list.size());
-                if (list.size() > 0) {
+                if (list.size() > 0 && !isDetached()) {
                     mLayoutStrongTip.setVisibility(View.VISIBLE);
                     String checkSporting = getString(R.string.checkHistoryWeight);
                     SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
@@ -409,8 +425,11 @@ public class WeightRecordFragment extends BaseAcFragment {
                 return;
             }
             if (isSettingTargetWeight) {
-                //传递目标体重信息
-                startFragment(TargetDetailsFragment.getInstance());
+                //跳转初始体重详情
+                QMUIFragment fragment = TargetDetailsFragment.getInstance();
+                fragment.setArguments(bundle);
+                startFragment(fragment);
+
             } else {
                 //传递初始体重信息
                 QMUIFragment fragment = SettingTargetFragment.getInstance();

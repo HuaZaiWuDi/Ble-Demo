@@ -141,21 +141,21 @@ public class DeviceFragment extends BaseAcFragment {
         mQMUIAppBarLayout.setTitle("我的设备");
     }
 
+
     @OnClick({R.id.btn_unbind_scale, R.id.btn_unbind_clothing, R.id.btn_bind})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_unbind_scale:
-                deleteDeviceById(0);
+                deleteDeviceById(BleKey.TYPE_SCALE);
                 break;
             case R.id.btn_unbind_clothing:
-                deleteDeviceById(1);
+                deleteDeviceById(BleKey.TYPE_CLOTHING);
                 break;
             case R.id.btn_bind:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
                 break;
         }
     }
-
 
     private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(
@@ -217,9 +217,16 @@ public class DeviceFragment extends BaseAcFragment {
         });
     }
 
-    private void deleteDeviceById(final int position) {
+    private void deleteDeviceById(final String position) {
+        String gid = "";
+        for (int i = 0; i < beanList.size(); i++) {
+            DeviceListbean.ListBean device = beanList.get(i);
+            if (position.equals(device.getDeviceNo())) {
+                gid = device.getGid();
+            }
+        }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeBind(beanList.get(position % beanList.size()).getGid()))
+        RxManager.getInstance().doNetSubscribe(dxyService.removeBind(gid))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -227,11 +234,11 @@ public class DeviceFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
                         //添加绑定设备，这里实在不会
-                        if (position == 0) {
+                        if (BleKey.TYPE_SCALE.equals(position)) {
                             //删除绑定
                             new QNBleTools().disConnectDevice();
                             SPUtils.remove(SPKey.SP_scaleMAC);
-                        } else {
+                        } else if (BleKey.TYPE_CLOTHING.equals(position)) {
                             SPUtils.remove(SPKey.SP_clothingMAC);
                             BleTools.getInstance().disConnect();
                         }

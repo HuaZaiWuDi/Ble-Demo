@@ -333,7 +333,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_8"
-                        android:text="体重（kg）"
+                        android:text="体重(kg)"
                         android:textColor="@color/GrayWrite"
                         android:textSize="10sp"/>
 
@@ -369,7 +369,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dimen_8"
-                        android:text="体脂率（%）"
+                        android:text="体脂率(%)"
                         android:textColor="@color/GrayWrite"
                         android:textSize="10sp"/>
 
