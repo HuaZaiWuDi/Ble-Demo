@@ -56,7 +56,6 @@ public class RxActivityUtils {
     public static void finishActivity() {
         Activity activity = activityStack.lastElement();
         finishActivity(activity);
-        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
 

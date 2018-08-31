@@ -19,13 +19,8 @@ public class WebActivity extends BaseWebActivity {
         setContentView(R.layout.activity_software_protocol_activiy);
         parent = findViewById(R.id.parent);
         initWebView(parent);
-        initView();
     }
 
-    @Override
-    public void initView() {
-
-    }
 
 
     @Nullable

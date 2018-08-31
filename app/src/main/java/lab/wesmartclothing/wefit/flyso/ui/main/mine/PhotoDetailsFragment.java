@@ -2,14 +2,13 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.imagepicker.bean.ImageItem;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.recyclerview.banner.BannerLayoutManager;
 import com.vondear.rxtools.view.scaleimage.ImageSource;
@@ -20,13 +19,13 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created by jk on 2018/8/16.
  */
-public class PhotoDetailsFragment extends BaseAcFragment {
+public class PhotoDetailsFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -34,21 +33,18 @@ public class PhotoDetailsFragment extends BaseAcFragment {
     RecyclerView banner;
 
 
-    public static QMUIFragment getInstance() {
-        return new PhotoDetailsFragment();
-    }
-
     private BaseQuickAdapter adapter;
     private ArrayList<ImageItem> list;
     private int current = 0;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_photo_details, null);
-        ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_photo_details);
+        ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -56,7 +52,7 @@ public class PhotoDetailsFragment extends BaseAcFragment {
     }
 
     private void initRecycler() {
-        Bundle bundle = getArguments();
+        Bundle bundle = getIntent().getExtras();
         list = bundle.getParcelableArrayList(Key.BUNDLE_DATA);
 
         mQMUIAppBarLayout.setTitle(1 + "/" + list.size());
@@ -86,8 +82,8 @@ public class PhotoDetailsFragment extends BaseAcFragment {
                 Intent intent = new Intent();
                 bundle.putParcelableArrayList(Key.BUNDLE_DATA, list);
                 intent.putExtras(bundle);
-                setFragmentResult(UserInfofragment.RESULT_CODE, intent);
-                popBackStack();
+                setResult(UserInfofragment.RESULT_CODE, intent);
+                onBackPressed();
             }
         });
 
@@ -101,8 +97,8 @@ public class PhotoDetailsFragment extends BaseAcFragment {
                             Intent intent = new Intent();
                             bundle.putParcelableArrayList(Key.BUNDLE_DATA, list);
                             intent.putExtras(bundle);
-                            setFragmentResult(UserInfofragment.RESULT_CODE, intent);
-                            popBackStack();
+                            setResult(UserInfofragment.RESULT_CODE, intent);
+                            onBackPressed();
                         }
                     }
                 });

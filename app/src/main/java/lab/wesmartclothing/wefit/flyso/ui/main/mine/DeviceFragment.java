@@ -1,12 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.bluetooth.BluetoothAdapter;
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
@@ -22,8 +22,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.List;
@@ -33,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
@@ -50,8 +49,8 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 /**
  * Created by jk on 2018/8/10.
  */
-@EFragment
-public class DeviceFragment extends BaseAcFragment {
+@EActivity
+public class DeviceFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -83,7 +82,6 @@ public class DeviceFragment extends BaseAcFragment {
     QMUIRoundLinearLayout mBtnBind;
     Unbinder unbinder;
 
-    @Bean
     QNBleTools mQNBleTools;
 
     //体脂称连接状态
@@ -100,22 +98,21 @@ public class DeviceFragment extends BaseAcFragment {
             mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
     }
 
-    public static QMUIFragment getInstance() {
-        return new DeviceFragment_();
-    }
 
     private List<DeviceListbean.ListBean> beanList;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_device, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_device);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
+        mQNBleTools = QNBleTools.getInstance();
     }
 
 
@@ -135,7 +132,7 @@ public class DeviceFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("我的设备");

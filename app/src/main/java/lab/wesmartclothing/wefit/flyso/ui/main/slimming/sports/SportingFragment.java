@@ -3,8 +3,9 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,7 +19,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
@@ -31,20 +31,19 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -55,8 +54,8 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 /**
  * Created by jk on 2018/7/19.
  */
-@EFragment
-public class SportingFragment extends BaseAcFragment {
+@EActivity
+public class SportingFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -80,10 +79,6 @@ public class SportingFragment extends BaseAcFragment {
     LineChart mMLineChart;
     Unbinder unbinder;
 
-
-    public static QMUIFragment getInstance() {
-        return new SportingFragment_();
-    }
 
     private Button btn_Connect;
     TextToSpeech textToSpeech;
@@ -123,11 +118,11 @@ public class SportingFragment extends BaseAcFragment {
 
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_sportsing, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_sportsing);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
     private void initView() {
@@ -140,7 +135,7 @@ public class SportingFragment extends BaseAcFragment {
     }
 
     private void initTypeface() {
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvKcal.setTypeface(typeface);
         mTvAvHeartRate.setTypeface(typeface);
         mTvMaxHeartRate.setTypeface(typeface);
@@ -151,7 +146,6 @@ public class SportingFragment extends BaseAcFragment {
         mSwMusic.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
             @Override
             public void toggleToOn(final SwitchView view) {
-                openVoice();
                 mSwMusic.setOpened(true);
                 SPUtils.put(SPKey.SP_VoiceTip, true);
                 type = -1;
@@ -167,16 +161,14 @@ public class SportingFragment extends BaseAcFragment {
             }
         });
         mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, false));
-        if (mSwMusic.isOpened()) {
-            openVoice();
-        }
+
     }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("运动进行中");
@@ -186,28 +178,6 @@ public class SportingFragment extends BaseAcFragment {
         btn_Connect.setTextSize(13);
     }
 
-    @Background
-    public void openVoice() {
-        if (textToSpeech == null)
-            textToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    RxLogUtils.e("语音合成：" + status);
-                    // 判断是否转化成功
-                    if (status == TextToSpeech.SUCCESS) {
-                        //默认设定语言为中文，原生的android貌似不支持中文。
-                        int result = textToSpeech.setLanguage(Locale.CHINESE);
-                        RxLogUtils.e("支持中文:" + result);
-                        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                            RxLogUtils.e("支持中文");
-                        } else {
-                            //不支持中文就将语言设置为英文
-                            textToSpeech.setLanguage(Locale.US);
-                        }
-                    }
-                }
-            });
-    }
 
     private void initRxBus() {
         RxBus.getInstance().register2(SportsDataTab.class)
@@ -430,7 +400,7 @@ public class SportingFragment extends BaseAcFragment {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                popBackStack();
+                onBackPressed();
             }
         })
                 .setSure("取消")

@@ -1,11 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.dateUtils.RxFormat;
 
@@ -13,13 +12,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created by jk on 2018/8/15.
  */
-public class MessageDetailsFragment extends BaseAcFragment {
+public class MessageDetailsFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -31,27 +30,24 @@ public class MessageDetailsFragment extends BaseAcFragment {
     TextView mTvContent;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new MessageDetailsFragment();
-    }
-
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_message_details, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_message_details);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
-        Bundle bundle = getArguments();
+        Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mTvTitle.setText(bundle.getString(Key.BUNDLE_TITLE));
             mTvDate.setText(RxFormat.setFormatDate(bundle.getLong(Key.ADD_FOOD_DATE), RxFormat.Date));

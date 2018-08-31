@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.ui.main;
+package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -52,7 +52,6 @@ public class CollectWebActivity extends BaseWebActivity {
         initView();
     }
 
-    @Override
     public void initView() {
         parent = findViewById(R.id.parent);
         mBridgeWebView = new BridgeWebView(mActivity);

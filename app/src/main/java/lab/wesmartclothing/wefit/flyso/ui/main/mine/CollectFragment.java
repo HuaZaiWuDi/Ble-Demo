@@ -1,15 +1,14 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -34,12 +33,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.CollectWebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -53,7 +51,7 @@ import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 /**
  * Created by jk on 2018/8/10.
  */
-public class CollectFragment extends BaseAcFragment {
+public class CollectFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -67,17 +65,15 @@ public class CollectFragment extends BaseAcFragment {
     private int pageNum = 1;
     private View emptyView;
 
-    public static QMUIFragment getInstance() {
-        return new CollectFragment();
-    }
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_collect_, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_collect_);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -87,8 +83,8 @@ public class CollectFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (smartRefreshLayout != null)
-            smartRefreshLayout.autoRefresh();
+        pageNum = 1;
+        initData();
     }
 
     private void initRecycler() {
@@ -115,7 +111,7 @@ public class CollectFragment extends BaseAcFragment {
             public void onClick(View v) {
                 //去发现
                 RxBus.getInstance().post(new GoToFind());
-                popBackStack();
+                onBackPressed();
             }
         });
 
@@ -134,7 +130,6 @@ public class CollectFragment extends BaseAcFragment {
             }
         });
 
-        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
     }
@@ -143,7 +138,7 @@ public class CollectFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("我的收藏");
@@ -179,7 +174,7 @@ public class CollectFragment extends BaseAcFragment {
             // 2. 指定具体的高，比如80;
             // 3. WRAP_CONTENT，自身高度，不推荐;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            SwipeMenuItem closeItem = new SwipeMenuItem(getActivity())
+            SwipeMenuItem closeItem = new SwipeMenuItem(mActivity)
                     .setBackgroundColorResource(R.color.Gray)
                     .setImage(R.mipmap.icon_delete_write)
                     .setWidth(width)

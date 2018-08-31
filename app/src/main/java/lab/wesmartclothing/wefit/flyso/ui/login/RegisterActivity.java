@@ -32,6 +32,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -74,10 +75,13 @@ public class RegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.white))
+                .setLightStatusBar(false)
+                .process();
         initView();
     }
 
-    @Override
     public void initView() {
         SpannableStringBuilder spannableStringBuilder = RxTextUtils.getBuilder(mTvClause.getText())
                 .setForegroundColor(getResources().getColor(R.color.red))

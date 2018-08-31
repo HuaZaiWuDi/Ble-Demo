@@ -2,11 +2,11 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,13 +18,13 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.CropImageView;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
@@ -57,7 +57,7 @@ import static lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment.IMAG
 /**
  * Created by jk on 2018/8/10.
  */
-public class ProblemFragemnt extends BaseAcFragment {
+public class ProblemFragemnt extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -83,9 +83,6 @@ public class ProblemFragemnt extends BaseAcFragment {
     QMUIRoundButton mBtnSubmit;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new ProblemFragemnt();
-    }
 
     private List<String> problemType, problemTimes;
 
@@ -93,13 +90,15 @@ public class ProblemFragemnt extends BaseAcFragment {
     private QMUIRoundButtonDrawable mBtnTimesDrawable, mBtntypeDrawable, problemDrawable, phoneDrawable;
     private BaseQuickAdapter adapter;
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_problem, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_problem);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initImagePicker();
@@ -189,9 +188,8 @@ public class ProblemFragemnt extends BaseAcFragment {
 //                    scaleView.show();
                     Bundle bundle = new Bundle();
                     bundle.putParcelableArrayList(Key.BUNDLE_DATA, imageLists);
-                    QMUIFragment instance = PhotoDetailsFragment.getInstance();
-                    instance.setArguments(bundle);
-                    startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
+                    RxActivityUtils.skipActivity(mActivity, PhotoDetailsFragment.class, bundle);
+
                 } else if (img instanceof Integer) {
                     Intent intent = new Intent(mContext, ImageGridActivity.class);
                     intent.putExtra(ImageGridActivity.EXTRAS_IMAGES, imageLists);
@@ -205,7 +203,7 @@ public class ProblemFragemnt extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("问题与建议");
@@ -255,7 +253,7 @@ public class ProblemFragemnt extends BaseAcFragment {
     }
 
     public void problemType() {
-        new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
+        new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                 .addItem(problemType.get(0))
                 .addItem(problemType.get(1))
                 .addItem(problemType.get(2))
@@ -274,7 +272,7 @@ public class ProblemFragemnt extends BaseAcFragment {
     }
 
     public void problemTimes() {
-        new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
+        new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                 .addItem(problemTimes.get(0))
                 .addItem(problemTimes.get(1))
                 .addItem(problemTimes.get(2))
@@ -308,14 +306,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                 }
                 adapter.setNewData(images);
             }
-        }
-    }
-
-
-    @Override
-    protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
-        super.onFragmentResult(requestCode, resultCode, data);
-        if (requestCode == UserInfofragment.REQUEST_CODE && resultCode == UserInfofragment.RESULT_CODE) {
+        } else if (requestCode == UserInfofragment.REQUEST_CODE && resultCode == UserInfofragment.RESULT_CODE) {
             if (data != null) {
                 imageLists = data.getParcelableArrayListExtra(Key.BUNDLE_DATA);
 
@@ -329,6 +320,7 @@ public class ProblemFragemnt extends BaseAcFragment {
             }
         }
     }
+
 
     /*提交反馈，文字部分*/
     private void commitData(String imgUrl) {
@@ -351,7 +343,7 @@ public class ProblemFragemnt extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        popBackStack();
+                        onBackPressed();
                     }
 
                     @Override

@@ -76,7 +76,7 @@ public class AboutUpdateDialog extends RxDialog {
         mContext = context;
         this.mustUpdate = mustUpdate;
 
-        this.setCanceledOnTouchOutside(!mustUpdate);
+        this.setCanceledOnTouchOutside(false);
         setFullScreenWidth();
 
 

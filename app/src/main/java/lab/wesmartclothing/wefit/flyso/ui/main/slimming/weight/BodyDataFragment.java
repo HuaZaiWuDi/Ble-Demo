@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,8 +14,8 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.JsonObject;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -34,7 +35,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -45,6 +46,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -55,7 +57,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/7/27.
  */
-public class BodyDataFragment extends BaseAcFragment {
+public class BodyDataFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -70,9 +72,6 @@ public class BodyDataFragment extends BaseAcFragment {
     Unbinder unbinder;
     private List<MultiItemEntity> multiItermLists = new ArrayList<>();
 
-    public static QMUIFragment getInstance() {
-        return new BodyDataFragment();
-    }
 
     private ExpandableItemAdapter adapter;
     private String gid;
@@ -86,23 +85,28 @@ public class BodyDataFragment extends BaseAcFragment {
     private BodyDataUtil bodyDataUtil;
     private double[] bodyValue = new double[8];
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_body_data, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_body_data);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.white))
+                .setLightStatusBar(true)
+                .process();
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         bodys = getResources().getStringArray(R.array.bodyShape);
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvWeight.setTypeface(typeface);
-        gid = getArguments() == null ? "" : getArguments().getString(Key.BUNDLE_WEIGHT_GID);
+        gid = getIntent().getExtras() == null ? "" : getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_GID);
         initTopBar();
         initRecyclerView();
         initData();
-
 
     }
 
@@ -138,7 +142,6 @@ public class BodyDataFragment extends BaseAcFragment {
          充足=大于标准体重*80%
          *
          * */
-
         UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {
@@ -307,7 +310,7 @@ public class BodyDataFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         RxToast.normal("删除成功");
-                        popBackStack();
+                        onBackPressed();
                     }
 
                     @Override
@@ -321,7 +324,7 @@ public class BodyDataFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("身体数据");
@@ -331,8 +334,6 @@ public class BodyDataFragment extends BaseAcFragment {
     public void onViewClicked() {
         Bundle bundle = new Bundle();
         bundle.putInt(Key.BUNDLE_BODY_INDEX, bodyIndex);
-        QMUIFragment instance = BodyFatFragment.getInstance();
-        instance.setArguments(bundle);
-        startFragment(instance);
+        RxActivityUtils.skipActivity(mActivity, BodyFatFragment.class, bundle);
     }
 }

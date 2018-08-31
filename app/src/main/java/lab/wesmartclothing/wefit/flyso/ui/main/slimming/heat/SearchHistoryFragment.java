@@ -3,10 +3,10 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
@@ -48,7 +48,6 @@ import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -63,7 +62,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 
-public class SearchHistoryFragment extends BaseAcFragment {
+public class SearchHistoryFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -101,16 +100,13 @@ public class SearchHistoryFragment extends BaseAcFragment {
     private long currentTime = 0;
     private Bundle bundle;
 
-    public static QMUIFragment getInstance() {
-        return new SearchHistoryFragment();
-    }
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.activity_search_history, null);
-        ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_history);
+        ButterKnife.bind(this);
         initView();
-        return view;
     }
 
     @Override
@@ -153,7 +149,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
     }
 
     private void initBundle() {
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
@@ -166,7 +162,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
     }
@@ -440,7 +436,11 @@ public class SearchHistoryFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         FoodDetailsFragment.addedLists.clear();
-                        getBaseFragmentActivity().popBackStack(SlimmingPage ? MainFragment.class : HeatDetailFragment.class);
+                        if (SlimmingPage) {
+                            RxActivityUtils.finishActivity();
+                        } else {
+                            RxActivityUtils.skipActivityTop(mContext, HeatDetailFragment.class, bundle);
+                        }
                     }
 
                     @Override

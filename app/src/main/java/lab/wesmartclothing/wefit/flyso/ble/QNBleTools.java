@@ -38,6 +38,14 @@ public class QNBleTools {
     public static final int QN_CONNECED = 1;//连接完成，发现服务
     public static final int QN_DISCONNECED = 2;//断开连接
     public static final int QN_DISCONNECTING = 3;//连接失败
+    private static QNBleTools mQNBleTools;
+
+    public static QNBleTools getInstance() {
+        if (mQNBleTools == null) {
+            mQNBleTools = new QNBleTools();
+        }
+        return mQNBleTools;
+    }
 
 
     private int connectState = 2;

@@ -2,16 +2,16 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -30,7 +30,7 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 /**
  * Created by jk on 2018/7/27.
  */
-public class TargetDetailsFragment extends BaseAcFragment {
+public class TargetDetailsFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -48,19 +48,18 @@ public class TargetDetailsFragment extends BaseAcFragment {
     QMUIRoundButton mBtnReSet;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new TargetDetailsFragment();
-    }
 
     private Bundle bundle = new Bundle();
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_target_details, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_target_details);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         targetWeight();
@@ -70,7 +69,7 @@ public class TargetDetailsFragment extends BaseAcFragment {
         mTvTargetWeight.setTypeface(typeface);
         mTvDistanceTarget.setTypeface(typeface);
 
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
     }
 
 
@@ -78,7 +77,7 @@ public class TargetDetailsFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("目标设置");
@@ -87,9 +86,8 @@ public class TargetDetailsFragment extends BaseAcFragment {
     @OnClick(R.id.btn_reSet)
     public void onViewClicked() {
         //传递初始体重信息
-        QMUIFragment fragment = SettingTargetFragment.getInstance();
-        fragment.setArguments(bundle);
-        startFragmentAndDestroyCurrent(fragment);
+        RxActivityUtils.skipActivityAndFinish(mContext, SettingTargetFragment.class, bundle);
+
     }
 
     private void targetWeight() {

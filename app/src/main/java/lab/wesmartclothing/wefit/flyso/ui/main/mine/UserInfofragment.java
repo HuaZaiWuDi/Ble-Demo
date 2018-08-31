@@ -2,8 +2,8 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,12 +12,12 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.imagepicker.view.CropImageView;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -40,7 +40,7 @@ import cn.qqtheme.framework.entity.Province;
 import cn.qqtheme.framework.picker.DatePicker;
 import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -62,7 +62,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/8/9.
  */
-public class UserInfofragment extends BaseAcFragment {
+public class UserInfofragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -80,17 +80,15 @@ public class UserInfofragment extends BaseAcFragment {
     public static final int REQUEST_CODE = 501;
     public static final int IMAGE_PICKER = 503;
 
-    public static QMUIFragment getInstance() {
-        return new UserInfofragment();
-    }
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_user_info, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_user_info);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -122,7 +120,7 @@ public class UserInfofragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("个人资料");
@@ -192,9 +190,7 @@ public class UserInfofragment extends BaseAcFragment {
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_TITLE, "昵称");
                         bundle.putString(Key.BUNDLE_DATA, info.getUserName());
-                        QMUIFragment instance = EditFragment.getInstance();
-                        instance.setArguments(bundle);
-                        startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
+                        RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
                     }
                 })
                 .addItemView(sexItem, new View.OnClickListener() {
@@ -226,7 +222,7 @@ public class UserInfofragment extends BaseAcFragment {
                             RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
                             return;
                         }
-                        startFragment(TargetDetailsFragment.getInstance());
+                        RxActivityUtils.skipActivity(mActivity, TargetDetailsFragment.class);
                     }
                 })
                 .addTo(mGroupListView);
@@ -245,9 +241,7 @@ public class UserInfofragment extends BaseAcFragment {
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_TITLE, signItem.getText().toString());
                         bundle.putString(Key.BUNDLE_DATA, signItem.getDetailText().toString());
-                        QMUIFragment instance = EditFragment.getInstance();
-                        instance.setArguments(bundle);
-                        startFragmentForResult(instance, UserInfofragment.REQUEST_CODE);
+                        RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
                     }
                 })
                 .addTo(mGroupListView);
@@ -277,6 +271,16 @@ public class UserInfofragment extends BaseAcFragment {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
 
                 uploadImage(images.get(0).path);
+            }
+        } else if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
+            Bundle bundle = data.getExtras();
+            String title = bundle.getString(Key.BUNDLE_TITLE);
+            if (title.equals(userNameItem.getText().toString())) {
+                userNameItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+                info.setUserName(bundle.getString(Key.BUNDLE_DATA));
+            } else {
+                signItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+                info.setSignature(bundle.getString(Key.BUNDLE_DATA));
             }
         }
     }
@@ -343,7 +347,7 @@ public class UserInfofragment extends BaseAcFragment {
 
 
     private void showSex() {
-        new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
+        new QMUIBottomSheet.BottomListSheetBuilder(mActivity)
                 .addItem("男")
                 .addItem("女")
                 .setCheckedIndex(info.getSex() - 1)
@@ -401,7 +405,7 @@ public class UserInfofragment extends BaseAcFragment {
                         RxLogUtils.d("结束" + s);
                         RxToast.success("保存成功", 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
-                        getBaseFragmentActivity().popBackStack();
+                        RxActivityUtils.finishActivity();
                     }
 
                     @Override
@@ -413,23 +417,8 @@ public class UserInfofragment extends BaseAcFragment {
 
 
     @Override
-    protected void onFragmentResult(int requestCode, int resultCode, Intent data) {
-        super.onFragmentResult(requestCode, resultCode, data);
-        if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
-            Bundle bundle = data.getExtras();
-            String title = bundle.getString(Key.BUNDLE_TITLE);
-            if (title.equals(userNameItem.getText().toString())) {
-                userNameItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
-                info.setUserName(bundle.getString(Key.BUNDLE_DATA));
-            } else {
-                signItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
-                info.setSignature(bundle.getString(Key.BUNDLE_DATA));
-            }
-        }
-    }
+    public void onBackPressed() {
 
-    @Override
-    protected void popBackStack() {
         RxLogUtils.d("用户数据：" + info.toString());
         if (info.isChange()) {
             final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
@@ -441,7 +430,7 @@ public class UserInfofragment extends BaseAcFragment {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    getBaseFragmentActivity().popBackStack();
+                    RxActivityUtils.finishActivity();
                 }
             })
                     .setSure("留下")
@@ -452,7 +441,7 @@ public class UserInfofragment extends BaseAcFragment {
                         }
                     }).show();
         } else
-            super.popBackStack();
+            super.onBackPressed();
     }
 
 

@@ -48,6 +48,7 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -158,6 +159,7 @@ public class MainActivity extends BaseALocationActivity {
             case MyJpushReceiver.ACTIVITY_MESSAGE:
                 //跳转消息通知
 //                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
         }
     }
@@ -393,6 +395,11 @@ public class MainActivity extends BaseALocationActivity {
         super.onDestroy();
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     //通知栏推送已读
     private void pushMessageReaded(String msgId) {

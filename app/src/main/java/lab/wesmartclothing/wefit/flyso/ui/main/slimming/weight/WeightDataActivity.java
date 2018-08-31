@@ -66,7 +66,6 @@ public class WeightDataActivity extends BaseActivity {
 
     private BaseQuickAdapter adapter_Receive;
 
-    @Override
     @AfterViews
     public void initView() {
         initTopBar();

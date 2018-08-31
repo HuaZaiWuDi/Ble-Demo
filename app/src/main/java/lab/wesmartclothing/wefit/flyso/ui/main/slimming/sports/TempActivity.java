@@ -87,7 +87,6 @@ public class TempActivity extends BaseActivity {
     }
 
 
-    @Override
     @AfterViews
     public void initView() {
         tv_connectDevice.setText(BleTools.getInstance().isConnect() ? "已连接" : "未连接");

@@ -2,13 +2,12 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.InputFilter;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -17,13 +16,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created by jk on 2018/8/10.
  */
-public class EditFragment extends BaseAcFragment {
+public class EditFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -34,24 +33,22 @@ public class EditFragment extends BaseAcFragment {
     TextView mTvTip;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new EditFragment();
-    }
 
     private Bundle bundle;
     private String title;
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_edit, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_edit);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
 
     private void initView() {
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
         title = bundle.getString(Key.BUNDLE_TITLE);
         String data = bundle.getString(Key.BUNDLE_DATA);
         mEditText.setText(data);
@@ -70,7 +67,7 @@ public class EditFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle(title);
@@ -94,8 +91,8 @@ public class EditFragment extends BaseAcFragment {
             bundle.putString(Key.BUNDLE_DATA, name);
             Intent intent = new Intent();
             intent.putExtras(bundle);
-            setFragmentResult(UserInfofragment.RESULT_CODE, intent);
-            popBackStack();
+            setResult(UserInfofragment.RESULT_CODE, intent);
+            onBackPressed();
         } else {
             if (RxDataUtils.isNullString(name.trim())) {
                 RxToast.normal("请输入正确的签名");
@@ -105,9 +102,10 @@ public class EditFragment extends BaseAcFragment {
             bundle.putString(Key.BUNDLE_DATA, name);
             Intent intent = new Intent();
             intent.putExtras(bundle);
-            setFragmentResult(UserInfofragment.RESULT_CODE, intent);
-            popBackStack();
+            setResult(UserInfofragment.RESULT_CODE, intent);
+            onBackPressed();
         }
+
 
     }
 }

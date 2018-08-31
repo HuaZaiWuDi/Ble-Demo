@@ -29,7 +29,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -67,8 +66,8 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment_;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment_;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
@@ -484,49 +483,41 @@ public class Slimming2Fragment extends BaseAcFragment {
         switch (view.getId()) {
             case R.id.iv_userImg:
                 //跳转个人主页
-                startFragment(UserInfofragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, UserInfofragment.class);
                 break;
             case R.id.layout_notify:
                 //跳转消息通知
-                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
             case R.id.layout_Healthy:
                 //点击健康评级
                 break;
             case R.id.layout_heat:
                 //跳转热量记录
-                startFragment(HeatDetailFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, HeatDetailFragment.class);
                 break;
             case R.id.layout_breakfast:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);
-                QMUIFragment breakfast = FoodDetailsFragment.getInstance();
-                breakfast.setArguments(bundle);
-                startFragment(breakfast);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_lunch:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_LUNCH);
-                QMUIFragment lunch = FoodDetailsFragment.getInstance();
-                lunch.setArguments(bundle);
-                startFragment(lunch);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_dinner:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_DINNER);
-                QMUIFragment dinner = FoodDetailsFragment.getInstance();
-                dinner.setArguments(bundle);
-                startFragment(dinner);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_meal:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPED_MEAL);
-                QMUIFragment meal = FoodDetailsFragment.getInstance();
-                meal.setArguments(bundle);
-                startFragment(meal);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
 
             case R.id.layout_sports:
-                startFragment(SmartClothingFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, SmartClothingFragment_.class);
                 break;
             case R.id.layout_weight:
-                startFragment(WeightRecordFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, WeightRecordFragment_.class);
                 break;
             case R.id.btn_goBind_clothing:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
@@ -536,15 +527,15 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_notify2:
                 //跳转消息通知
-                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
             case R.id.iv_userImg2:
                 //跳转个人主页
-                startFragment(UserInfofragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, UserInfofragment.class);
                 break;
             case R.id.layout_food_recommend:
                 //跳转推荐食材
-                startFragment(FoodRecommend.getInstance());
+                RxActivityUtils.skipActivity(mActivity, FoodRecommend.class);
                 break;
         }
     }
@@ -639,7 +630,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             mBtnGoBindClothing.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startFragment(SmartClothingFragment.getInstance());
+                    RxActivityUtils.skipActivity(mActivity, SmartClothingFragment_.class);
                 }
             });
         }
@@ -657,11 +648,10 @@ public class Slimming2Fragment extends BaseAcFragment {
             mBtnGoBindScale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startFragment(WeightRecordFragment.getInstance());
+                    RxActivityUtils.skipActivity(mActivity, WeightRecordFragment_.class);
                 }
             });
         }
-
 
         int size = bean.getAthleticsInfoList().size();
         if (size != 0) {

@@ -3,14 +3,13 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
@@ -20,13 +19,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 
 /**
  * Created by jk on 2018/7/27.
  */
-public class BodyFatFragment extends BaseAcFragment {
+public class BodyFatFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -36,20 +36,22 @@ public class BodyFatFragment extends BaseAcFragment {
     Unbinder unbinder;
     BaseQuickAdapter adapter;
 
-    public static QMUIFragment getInstance() {
-        return new BodyFatFragment();
-    }
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_body_fat, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_body_fat);
+        unbinder = ButterKnife.bind(this);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.white))
+                .setLightStatusBar(true)
+                .process();
         initView();
-        return view;
     }
 
+
     private void initView() {
-        Bundle bundle = getArguments();
+        Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             lastIndex = bundle.getInt(Key.BUNDLE_BODY_INDEX);
         }
@@ -62,7 +64,7 @@ public class BodyFatFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("体型");

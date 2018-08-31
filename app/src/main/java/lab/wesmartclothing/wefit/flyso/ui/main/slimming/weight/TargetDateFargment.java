@@ -2,13 +2,12 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -23,7 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -35,7 +34,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/7/27.
  */
-public class TargetDateFargment extends BaseAcFragment {
+public class TargetDateFargment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -52,20 +51,18 @@ public class TargetDateFargment extends BaseAcFragment {
     TextView mTvTips;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new TargetDateFargment();
-    }
 
     private float stillNeed = 1, weeks;
     private Bundle bundle;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_target_date, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_target_date);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -76,7 +73,7 @@ public class TargetDateFargment extends BaseAcFragment {
     }
 
     private void initRuler() {
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
             RxLogUtils.d("BUNDLE：" + bundle);
             stillNeed = (float) bundle.getDouble(Key.BUNDLE_STILL_NEED);
@@ -125,7 +122,7 @@ public class TargetDateFargment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("目标设置");
@@ -158,7 +155,7 @@ public class TargetDateFargment extends BaseAcFragment {
                         //TODO 这里跳转目标不详，先跳转到体重首页
                         //关闭之前的设置目标体重和目标周期的界面
                         //直接跳转到指定的Fragment（同时清栈）
-                        getBaseFragmentActivity().popBackStack(WeightRecordFragment_.class);
+//                        getBaseFragmentActivity().popBackStack(WeightRecordFragment_.class);
                     }
 
                     @Override

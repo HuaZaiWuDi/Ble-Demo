@@ -4,25 +4,19 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
 
 import io.reactivex.subjects.BehaviorSubject;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
@@ -50,7 +44,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        //华为底部虚拟按键遮挡问题
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 //        //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.white)).process();
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.Gray))
+                .setLightStatusBar(true)
+                .process();
 
         mContext = this;
         mActivity = this;
@@ -96,9 +93,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public abstract void initView();
-
-
     @Override
     protected void onDestroy() {
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
@@ -141,4 +135,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        RxActivityUtils.finishActivity();
+    }
 }

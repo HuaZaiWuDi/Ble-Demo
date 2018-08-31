@@ -4,15 +4,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
@@ -27,7 +26,7 @@ import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.ArrayList;
@@ -38,13 +37,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -55,8 +55,8 @@ import tech.linjiang.suitlines.Unit;
 /**
  * Created by jk on 2018/7/18.
  */
-@EFragment
-public class SmartClothingFragment extends BaseAcFragment {
+@EActivity
+public class SmartClothingFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -122,7 +122,7 @@ public class SmartClothingFragment extends BaseAcFragment {
                 @Override
                 public void onClick(View v) {
                     mLayoutStrongTip.setVisibility(View.GONE);
-                    startFragment(SportingFragment.getInstance());
+                    RxActivityUtils.skipActivity(mActivity, SportingFragment_.class);
                 }
             });
         }
@@ -148,23 +148,26 @@ public class SmartClothingFragment extends BaseAcFragment {
     private Button btn_Connect;
     private long currentDate = 0;
 
-    public static QMUIFragment getInstance() {
-        return new SmartClothingFragment_();
-    }
 
     private List<AthleticsInfo.PageInfoBean.ListBean> list;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mActivity).inflate(R.layout.fragment_smart_clothing, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_smart_clothing);
+
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.red))
+                .setLightStatusBar(true)
+                .process();
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvHeatKcal.setTypeface(typeface);
         mTvSportsTime.setTypeface(typeface);
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
@@ -290,7 +293,7 @@ public class SmartClothingFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("运动记录");
@@ -308,9 +311,7 @@ public class SmartClothingFragment extends BaseAcFragment {
                 if (list == null || list.size() == 0) return;
                 Bundle args = new Bundle();
                 args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
-                QMUIFragment fragment = SportsDetailsFragment.getInstance();
-                fragment.setArguments(args);
-                startFragment(fragment);
+                RxActivityUtils.skipActivity(mActivity, SportsDetailsFragment.class, args);
                 break;
         }
     }

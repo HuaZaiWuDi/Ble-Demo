@@ -92,7 +92,7 @@
                 <action android:name="cn.jpush.android.intent.CONNECTION"/>
 
                 <!-- 接收网络变化 连接/断开 since 1.6.3 -->
-                <action android:name="cn.jpush.android.intent.CONNECTION" />
+                <action android:name="cn.jpush.android.intent.CONNECTION"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/><!--开机广播-->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/><!--网络状态改变广播-->
 
@@ -122,6 +122,7 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
@@ -139,10 +140,6 @@
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="nosensor">
-        </activity>
-        <activity
-            android:name=".ui.main.slimming.sports.SportsDetailsActivity_"
             android:screenOrientation="nosensor">
         </activity>
         <activity
@@ -173,7 +170,7 @@
             android:screenOrientation="nosensor"/>
 
         <activity
-            android:name=".ui.main.CollectWebActivity"
+            android:name=".ui.main.mine.CollectWebActivity"
             android:screenOrientation="nosensor">
         </activity>
         <activity
@@ -201,19 +198,34 @@
             android:screenOrientation="nosensor">
         </activity>
         <activity
-            android:name=".ui.main.slimming.sports.BaseSportingActivity"
-            android:screenOrientation="nosensor"/>
-        <activity
-            android:name=".ui.main.slimming.heat.second.BaseHeatActivity"
-            android:screenOrientation="nosensor"/>
-        <activity
-            android:name=".ui.main.slimming.weight.BaseWeightActivity"
-            android:screenOrientation="nosensor"/>
-        <activity
-            android:name=".ui.main.mine.BaseMeActivity"
+            android:name=".ui.main.mine.AboutFragment"
             android:screenOrientation="nosensor"/>
         <activity android:name=".ui.toolui.SportingActivity"/>
-
+        <activity android:name=".ui.main.mine.AccountFragment"/>
+        <activity android:name=".ui.main.mine.CollectFragment"/>
+        <activity android:name=".ui.main.mine.DeviceFragment_"/>
+        <activity android:name=".ui.main.mine.EditFragment"/>
+        <activity android:name=".ui.main.mine.MessageDetailsFragment"/>
+        <activity android:name=".ui.main.mine.MessageFragment"/>
+        <activity android:name=".ui.main.mine.PhotoDetailsFragment"/>
+        <activity android:name=".ui.main.mine.ProblemFragemnt"/>
+        <activity android:name=".ui.main.mine.Settingfragment"/>
+        <activity android:name=".ui.main.mine.UserInfofragment"/>
+        <activity android:name=".ui.main.slimming.heat.second.AddedFoodFragment"/>
+        <activity android:name=".ui.main.slimming.heat.second.FoodDetailsFragment"/>
+        <activity android:name=".ui.main.slimming.heat.second.FoodRecommend"/>
+        <activity android:name=".ui.main.slimming.heat.second.HeatDetailFragment"/>
+        <activity android:name=".ui.main.slimming.heat.SearchHistoryFragment"/>
+        <activity android:name=".ui.main.slimming.sports.SportingFragment_"/>
+        <activity android:name=".ui.main.slimming.sports.SportsDetailsFragment"/>
+        <activity android:name=".ui.main.slimming.weight.BodyFatFragment"/>
+        <activity android:name=".ui.main.slimming.weight.BodyDataFragment"/>
+        <activity android:name=".ui.main.slimming.weight.SettingTargetFragment"/>
+        <activity android:name=".ui.main.slimming.weight.TargetDateFargment"/>
+        <activity android:name=".ui.main.slimming.weight.TargetDetailsFragment"/>
+        <activity android:name=".ui.main.slimming.weight.WeightAddFragment"/>
+        <activity android:name=".ui.main.slimming.weight.WeightRecordFragment_"/>
+        <activity android:name=".ui.main.slimming.sports.SmartClothingFragment_"/>
     </application>
 
 </manifest>

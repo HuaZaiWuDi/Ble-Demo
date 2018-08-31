@@ -244,7 +244,6 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
 
-    @Override
     @AfterViews
     public void initView() {
         initStep(0);

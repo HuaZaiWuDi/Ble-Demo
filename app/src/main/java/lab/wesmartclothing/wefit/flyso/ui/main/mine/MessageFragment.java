@@ -1,14 +1,13 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -35,13 +34,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
 import lab.wesmartclothing.wefit.flyso.entity.ReadedBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -55,7 +53,7 @@ import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 /**
  * Created by jk on 2018/8/10.
  */
-public class MessageFragment extends BaseAcFragment {
+public class MessageFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -65,21 +63,19 @@ public class MessageFragment extends BaseAcFragment {
     SmartRefreshLayout smartRefreshLayout;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new MessageFragment();
-    }
 
     private BaseQuickAdapter adapter;
     private int pageNum = 1;
     private View emptyView;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_message, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_message);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -89,8 +85,8 @@ public class MessageFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (smartRefreshLayout != null)
-            smartRefreshLayout.autoRefresh();
+        pageNum = 1;
+        initData();
     }
 
     private void initRecycler() {
@@ -127,7 +123,6 @@ public class MessageFragment extends BaseAcFragment {
             }
         });
 
-        smartRefreshLayout.autoRefresh();
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
 
@@ -162,7 +157,7 @@ public class MessageFragment extends BaseAcFragment {
             // 2. 指定具体的高，比如80;
             // 3. WRAP_CONTENT，自身高度，不推荐;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            SwipeMenuItem closeItem = new SwipeMenuItem(getActivity())
+            SwipeMenuItem closeItem = new SwipeMenuItem(mActivity)
                     .setBackgroundColorResource(R.color.Gray)
                     .setImage(R.mipmap.icon_delete_write)
                     .setWidth(width)
@@ -189,7 +184,7 @@ public class MessageFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("消息通知");
@@ -284,7 +279,7 @@ public class MessageFragment extends BaseAcFragment {
                         ReadedBean readedBean = MyAPP.getGson().fromJson(s, ReadedBean.class);
                         if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_ACTIVITY) {
                             RxBus.getInstance().post(readedBean.getOpenTarget());
-                            getBaseFragmentActivity().popBackStack(MainFragment.class);
+                            onBackPressed();
                         } else if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_URL) {
                             //打开URL
                             Bundle bundle = new Bundle();
@@ -292,13 +287,11 @@ public class MessageFragment extends BaseAcFragment {
                             bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());
                             RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
                         } else {
-                            QMUIFragment instance = MessageDetailsFragment.getInstance();
                             Bundle bundle = new Bundle();
                             bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());
                             bundle.putString(Key.BUNDLE_DATA, readedBean.getAppContent());
                             bundle.putLong(Key.ADD_FOOD_DATE, readedBean.getEditDate());
-                            instance.setArguments(bundle);
-                            startFragment(instance);
+                            RxActivityUtils.skipActivity(mContext, MessageDetailsFragment.class, bundle);
                         }
                     }
 

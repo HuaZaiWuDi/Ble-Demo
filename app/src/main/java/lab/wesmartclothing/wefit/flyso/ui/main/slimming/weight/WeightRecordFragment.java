@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
@@ -33,21 +32,21 @@ import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
@@ -56,6 +55,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -68,8 +68,8 @@ import tech.linjiang.suitlines.Unit;
 /**
  * Created by jk on 2018/7/26.
  */
-@EFragment
-public class WeightRecordFragment extends BaseAcFragment {
+@EActivity
+public class WeightRecordFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -150,20 +150,8 @@ public class WeightRecordFragment extends BaseAcFragment {
     }
 
 
-    //蓝牙秤状态改变(开始测量)
-    @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
-    void scaleStartMeasure() {
-        if (isVisible()) {
-
-        }
-    }
-
-    @Bean
     QNBleTools mQNBleTools;
 
-    public static QMUIFragment getInstance() {
-        return new WeightRecordFragment_();
-    }
 
     private Button btn_Connect;
     private String currentGid;
@@ -175,13 +163,19 @@ public class WeightRecordFragment extends BaseAcFragment {
     private List<WeightDataBean.WeightListBean.ListBean> list;
     private Bundle bundle = new Bundle();
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_weight_record, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_weight_record);
+        unbinder = ButterKnife.bind(this);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.green_61D97F))
+                .setLightStatusBar(true)
+                .process();
         initView();
-        return view;
     }
+
 
     @Override
     public void onStart() {
@@ -198,7 +192,7 @@ public class WeightRecordFragment extends BaseAcFragment {
 
 
     private void initView() {
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvCurWeight.setTypeface(typeface);
         mTvBodyFat.setTypeface(typeface);
         mTvMuscle.setTypeface(typeface);
@@ -207,6 +201,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         tvStartWeight.setTypeface(typeface);
         tvEndWeight.setTypeface(typeface);
 
+        mQNBleTools = QNBleTools.getInstance();
         initTopBar();
         checkStatus();
         initRxBus();
@@ -215,14 +210,13 @@ public class WeightRecordFragment extends BaseAcFragment {
 
     private void initRxBus() {
         RxBus.getInstance().register2(OpenAddWeight.class)
+                .throttleFirst(1, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<OpenAddWeight>() {
                     @Override
                     protected void _onNext(OpenAddWeight integer) {
                         RxLogUtils.d("显示：WeightRecordFragment");
-                        QMUIFragment instance = WeightAddFragment.getInstance();
-                        instance.setArguments(bundle);
-                        startFragment(instance);
+                        RxActivityUtils.skipActivity(mContext, WeightAddFragment.class, bundle);
                     }
                 });
 
@@ -388,7 +382,7 @@ public class WeightRecordFragment extends BaseAcFragment {
             @Override
             public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
                 RxLogUtils.d("历史数据：" + list.size());
-                if (list.size() > 0 && !isDetached()) {
+                if (list.size() > 0) {
                     mLayoutStrongTip.setVisibility(View.VISIBLE);
                     String checkSporting = getString(R.string.checkHistoryWeight);
                     SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
@@ -415,9 +409,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         if (view.getId() == R.id.layout_sports) {
             if (list == null || list.size() == 0) return;
             bundle.putString(Key.BUNDLE_WEIGHT_GID, currentGid);
-            QMUIFragment fragment = BodyDataFragment.getInstance();
-            fragment.setArguments(bundle);
-            startFragment(fragment);
+            RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
         } else {
             //上一次体重为0则表示用户没有上称
             if (lastWeight == 0) {
@@ -426,15 +418,10 @@ public class WeightRecordFragment extends BaseAcFragment {
             }
             if (isSettingTargetWeight) {
                 //跳转初始体重详情
-                QMUIFragment fragment = TargetDetailsFragment.getInstance();
-                fragment.setArguments(bundle);
-                startFragment(fragment);
-
+                RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class, bundle);
             } else {
                 //传递初始体重信息
-                QMUIFragment fragment = SettingTargetFragment.getInstance();
-                fragment.setArguments(bundle);
-                startFragment(fragment);
+                RxActivityUtils.skipActivity(mContext, SettingTargetFragment.class, bundle);
             }
         }
     }
@@ -444,7 +431,7 @@ public class WeightRecordFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("体重记录");

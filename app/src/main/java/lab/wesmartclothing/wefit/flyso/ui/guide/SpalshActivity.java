@@ -71,7 +71,6 @@ public class SpalshActivity extends BaseActivity {
         }
     }
 
-    @Override
     @AfterViews
     public void initView() {
         RxLogUtils.e("加载：SpalshActivity");

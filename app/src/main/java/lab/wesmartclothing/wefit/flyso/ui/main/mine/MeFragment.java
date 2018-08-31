@@ -151,13 +151,13 @@ public class MeFragment extends BaseAcFragment {
                 .addItemView(deivceItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startFragment(DeviceFragment.getInstance());
+                        RxActivityUtils.skipActivity(mContext, DeviceFragment_.class);
                     }
                 })
                 .addItemView(collectionItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startFragment(CollectFragment.getInstance());
+                        RxActivityUtils.skipActivity(mContext, CollectFragment.class);
                     }
                 })
                 .addItemView(orderItem, new View.OnClickListener() {
@@ -187,13 +187,13 @@ public class MeFragment extends BaseAcFragment {
                 .addItemView(problemItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startFragment(ProblemFragemnt.getInstance());
+                        RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);
                     }
                 })
                 .addItemView(aboutUsItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startFragment(AboutFragment.getInstance());
+                        RxActivityUtils.skipActivity(mContext, AboutFragment.class);
                     }
                 })
                 .addTo(mGroupListView);
@@ -211,13 +211,13 @@ public class MeFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_userImg:
-                startFragment(UserInfofragment.getInstance());
+                RxActivityUtils.skipActivity(mContext, UserInfofragment.class);
                 break;
             case R.id.iv_setting:
-                startFragment(Settingfragment.getInstance());
+                RxActivityUtils.skipActivity(mContext, Settingfragment.class);
                 break;
             case R.id.iv_notify:
-                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mContext, MessageFragment.class);
                 break;
         }
     }
@@ -235,7 +235,6 @@ public class MeFragment extends BaseAcFragment {
                         UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
 
                         MyAPP.getImageLoader().displayImage(mActivity, user.getImgUrl(), R.mipmap.userimg, mIvUserImg);
-
 
                         mTvUserName.setText(user.getUserName());
                         deivceItem.setDetailText(user.getBindCount() == 0 ? "" : user.getBindCount() + "");
@@ -256,7 +255,6 @@ public class MeFragment extends BaseAcFragment {
                     }
                 });
     }
-
 
     @Override
     protected boolean canDragBack() {

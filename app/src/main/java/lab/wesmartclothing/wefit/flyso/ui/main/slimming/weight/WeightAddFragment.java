@@ -2,12 +2,11 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -25,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -42,7 +41,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/7/27.
  */
-public class WeightAddFragment extends BaseAcFragment {
+public class WeightAddFragment extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
@@ -60,20 +59,17 @@ public class WeightAddFragment extends BaseAcFragment {
     QMUIRoundButton mBtnSave;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new WeightAddFragment();
-    }
 
     //最近一次体重
     private double lastWeight;
     private QNScaleData mQnScaleData;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_add_weight, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_add_weight);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
 
@@ -96,7 +92,7 @@ public class WeightAddFragment extends BaseAcFragment {
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvTargetWeight.setTypeface(typeface);
 
-        Bundle bundle = getArguments();
+        Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             lastWeight = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
         }
@@ -190,7 +186,7 @@ public class WeightAddFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_forget:
-                popBackStack();
+                onBackPressed();
                 break;
             case R.id.btn_save:
                 saveWeight();
@@ -221,7 +217,7 @@ public class WeightAddFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
                         RxToast.normal("存储体重成功");
-                        popBackStack();
+                        onBackPressed();
                     }
 
                     @Override

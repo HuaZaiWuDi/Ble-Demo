@@ -3,13 +3,12 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
@@ -28,7 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -46,7 +45,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/8/11.
  */
-public class AboutFragment extends BaseAcFragment {
+public class AboutFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -64,9 +63,6 @@ public class AboutFragment extends BaseAcFragment {
     @BindView(R.id.layout_updateFail)
     LinearLayout mLayoutUpdateFail;
 
-    public static QMUIFragment getInstance() {
-        return new AboutFragment();
-    }
 
     private String updateURL = "";
     private AboutUpdateDialog dialog;
@@ -74,17 +70,18 @@ public class AboutFragment extends BaseAcFragment {
     private String newVersion = "";
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_about, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_about);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
+
     @Override
-    public void onDestroyView() {
+    protected void onDestroy() {
         BleAPI.readDeviceInfo(null);
-        super.onDestroyView();
+        super.onDestroy();
     }
 
     private void initView() {
@@ -103,7 +100,7 @@ public class AboutFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("关于我们");
@@ -165,14 +162,6 @@ public class AboutFragment extends BaseAcFragment {
                         RxToast.error(error);
                     }
                 });
-    }
-
-
-    @Override
-    protected void popBackStack() {
-        if (dialog == null || !dialog.isShowing()) {
-            super.popBackStack();
-        }
     }
 
 
