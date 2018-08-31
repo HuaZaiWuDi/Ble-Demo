@@ -597,7 +597,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
         mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
-        TextSpeakUtils.speakFlush(getString(bean.getAbleIntake() >= 0 ? R.string.can_eatHeat : R.string.EatMore) + Math.abs(bean.getAbleIntake()) + "卡路里的能量");
+        if (bean.getAbleIntake() < 0) {
+            TextSpeakUtils.speakFlush(getString(R.string.EatMore) + Math.abs(bean.getAbleIntake()) + "卡路里的能量");
+        }
 
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
