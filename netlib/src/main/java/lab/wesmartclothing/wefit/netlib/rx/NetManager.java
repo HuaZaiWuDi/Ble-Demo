@@ -57,8 +57,6 @@ public class NetManager {
      * @return
      */
     public <S> S createString(Class<S> service) {
-        Log.d("默认网址", "");
-        Log.d("默认网址", getBaseUrl(service));
 
         //在请求头添加参数
         Interceptor NetInterceptor = new Interceptor() {

@@ -233,7 +233,7 @@ public class Slimming2Fragment extends BaseAcFragment {
 
     private void initView() {
         add_food = getResources().getStringArray(R.array.add_food);
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvWeightStart.setTypeface(typeface);
         mTvWeightEnd.setTypeface(typeface);
 
@@ -253,6 +253,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         setLineChartData(null);
 
         setTGA(this.getClass().getSimpleName());
+
     }
 
 
@@ -549,7 +550,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -613,7 +614,6 @@ public class Slimming2Fragment extends BaseAcFragment {
             //TODO 提示需要录入目标体重
         }
 
-
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
             mLayoutClothingDefault.setVisibility(View.VISIBLE);
             QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
@@ -621,16 +621,16 @@ public class Slimming2Fragment extends BaseAcFragment {
             background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             mBtnGoBindClothing.setText(R.string.goBind);
             mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
+            RxLogUtils.e("去绑定");
         } else {
             mTvClothingTip.setText("请穿上燃脂衣开始运动吧");
+            mBtnGoBindClothing.setText(R.string.goSporting);
+            QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
+            background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));
+            background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
             boolean clothingIsEmpty = bean.getAthleticsInfoList().size() == 1 && bean.getAthleticsInfoList().get(0).getCalorie() == 0;
             mLayoutClothingDefault.setVisibility(clothingIsEmpty ? View.VISIBLE : View.GONE);
-            if (clothingIsEmpty) {
-                QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
-                background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                mBtnGoBindClothing.setText("去运动");
-            }
+
             mBtnGoBindClothing.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -641,14 +641,12 @@ public class Slimming2Fragment extends BaseAcFragment {
 
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
-            mBtnGoBindClothing.setText(R.string.goBind);
+            mBtnGoBindScale.setText(R.string.goBind);
             mTvWeightTip.setText("请绑定您的体脂称");
         } else {
             mTvWeightTip.setText("请开始管理体重吧");
+            mBtnGoBindScale.setText(R.string.goWeight);
             mLayoutScaleDefault.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
-            if (bean.getWeightInfoList().size() == 0) {
-                mBtnGoBindScale.setText("去称重");
-            }
             mBtnGoBindScale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

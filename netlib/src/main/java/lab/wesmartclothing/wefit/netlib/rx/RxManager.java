@@ -6,9 +6,6 @@ import android.app.Application;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
 
 /**
@@ -43,22 +40,6 @@ public class RxManager {
         return application;
     }
 
-    public void doUnifySubscribe(Observable<HttpResult> observable, RxNetSubscriber<HttpResult> subscriber) {
-        observable
-                .map(new Function<HttpResult, HttpResult>() {
-                    @Override
-                    public HttpResult apply(HttpResult httpResult) throws Exception {
-                        if (!httpResult.isStatus()) {
-//                            L.d("运行异常");
-                        }
-                        return httpResult;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-    }
-
 
     public <T> Observable<T> dofunSubscribe(Observable<T> observable) {
         return observable
@@ -69,12 +50,26 @@ public class RxManager {
     }
 
 
-    public <String> Observable<String> doNetSubscribe(Observable<String> observable) {
+    public <T> Observable<T> doNetSubscribe(Observable<T> observable) {
         return observable
-                .throttleFirst(1, TimeUnit.SECONDS)
-                .compose(RxThreadUtils.<String>handleResult())
-                .compose(RxThreadUtils.<String>rxThreadHelper());
+                .compose(RxThreadUtils.<T>handleResult())
+                .compose(RxThreadUtils.<T>rxThreadHelper());
     }
+
+//    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
+//                                            BehaviorSubject<LifeCycleEvent> lifecycleSubject,
+//                                            String cacheKey,
+//                                            IObservableStrategy strategy
+//    ) {
+//        return observable
+//
+//                .compose(RxThreadUtils.<HttpResult<T>>bindLife(lifecycleSubject))
+//                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstCache()))
+//                .map(new CacheResult.MapFunc<String>())
+//                .compose(RxThreadUtils.<T>handleResult2())
+//                .compose(RxThreadUtils.<T>rxThreadHelper());
+//    }
+
 
     public <T> Observable<T> doLoadDownSubscribe(Observable<T> observable) {
         return observable

@@ -184,7 +184,7 @@ public class MainActivity extends BaseALocationActivity {
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                mViewpager.setCurrentItem(position, true);
+                mViewpager.setCurrentItem(position, false);
             }
 
             @Override
@@ -192,10 +192,10 @@ public class MainActivity extends BaseALocationActivity {
                 //双击或三击我的按钮，出现切换网络界面，同时需要退出重新登录
                 if (position == 3 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
-                            .addItem("http://10.10.11.192:15112")
-                            .addItem("http://10.10.11.208:15112")
-                            .addItem("http://119.23.225.125:15112")
-                            .addItem("http://10.10.11.208:15101/mix/")
+                            .addItem(ServiceAPI.BASE_URL_192)
+                            .addItem(ServiceAPI.BASE_URL_208)
+                            .addItem(ServiceAPI.BASE_URL_125)
+                            .addItem(ServiceAPI.BASE_URL_mix)
                             .addItem(ServiceAPI.BASE_RELEASE)
                             .addItem(ServiceAPI.BASE_DEBUG)
                             .setTitle("修改网络需要重启应用，提示网络错误，需要重新登录")
@@ -396,12 +396,6 @@ public class MainActivity extends BaseALocationActivity {
     protected void onDestroy() {
         stopService(bleIntent);
         super.onDestroy();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     //通知栏推送已读

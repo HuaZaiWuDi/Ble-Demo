@@ -2,8 +2,6 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.app.Dialog;
 
-import com.zchu.rxcache.utils.LogUtils;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.reactivestreams.Publisher;
@@ -20,7 +18,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * 项目名称：MyProject
@@ -110,6 +110,66 @@ public class RxThreadUtils {
     }
 
     /**
+     * 绑定生命周期，在AC和Fragment在销毁时结束网络请求
+     *
+     * @param <T> 指定的泛型类型
+     * @return Observable
+     * <p>
+     * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
+     */
+    public static <T> ObservableTransformer<T, T> bindLife(final BehaviorSubject<LifeCycleEvent> subject) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.takeUntil(subject.skipWhile(new Predicate<LifeCycleEvent>() {
+                    @Override
+                    public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
+                        return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH;
+                    }
+                }));
+            }
+        };
+    }
+
+
+//    /**
+//     * 对结果进行预处理
+//     *
+//     * @param <T>
+//     * @return
+//     */
+//    public static <T> ObservableTransformer<T, T> handleResult() {
+//        return new ObservableTransformer<T, T>() {
+//            @Override
+//            public ObservableSource<T> apply(Observable<T> upstream) {
+//                return upstream.flatMap(new Function<T, ObservableSource<T>>() {
+//                    @Override
+//                    public ObservableSource<T> apply(T t) throws Exception {
+//                        if (t instanceof String) {
+//                            JSONObject object = null;
+//                            try {
+//                                object = new JSONObject((String) t);
+//                                int code = object.getInt("code");
+//                                String msg = object.getString("msg");
+//                                if (code == 0) {
+//                                    String data = object.getString("data");
+//                                    return createData((T) data);
+//                                } else {
+//                                    return Observable.error(new Throwable(msg));
+//                                }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                return Observable.error(new Throwable("数据异常"));
+//                            }
+//                        }
+//                        return Observable.error(new Throwable("数据异常"));
+//                    }
+//                });
+//            }
+//        };
+//    }
+
+    /**
      * 对结果进行预处理
      *
      * @param <T>
@@ -146,6 +206,7 @@ public class RxThreadUtils {
         };
     }
 
+
     /**
      * 对结果进行预处理
      *
@@ -156,20 +217,43 @@ public class RxThreadUtils {
         return new ObservableTransformer<HttpResult<T>, T>() {
             @Override
             public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
-                return upstream.flatMap(new Function<HttpResult<T>, ObservableSource<T>>() {
+                return upstream.map(new Function<HttpResult<T>, T>() {
                     @Override
-                    public ObservableSource<T> apply(HttpResult<T> t) throws Exception {
-                        LogUtils.debug(t.getCode() + "");
-                        if (t.getCode() == 0) {
-                            return createData(t.getData());
-                        } else {
-                            return Observable.error(new Throwable(t.getMessage()));
+                    public T apply(HttpResult<T> tHttpResult) throws Exception {
+                        if (tHttpResult.getCode() != 0) {
+                            throw new RuntimeException(tHttpResult.getMessage());
                         }
-
+                        return tHttpResult.getData();
                     }
                 });
             }
         };
     }
+
+//    /**
+//     * 对结果进行预处理
+//     *
+//     * @param <T>
+//     * @return
+//     */
+//    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
+//        return new ObservableTransformer<HttpResult<T>, T>() {
+//            @Override
+//            public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
+//                return upstream.flatMap(new Function<HttpResult<T>, ObservableSource<T>>() {
+//                    @Override
+//                    public ObservableSource<T> apply(HttpResult<T> t) throws Exception {
+//                        LogUtils.debug(t.getCode() + "");
+//                        if (t.getCode() == 0) {
+//                            return createData(t.getData());
+//                        } else {
+//                            return Observable.error(new Throwable(t.getMessage()));
+//                        }
+//
+//                    }
+//                });
+//            }
+//        };
+//    }
 
 }

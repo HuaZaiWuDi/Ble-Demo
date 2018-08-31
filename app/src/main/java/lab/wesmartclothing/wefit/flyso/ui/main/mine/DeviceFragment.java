@@ -22,6 +22,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
@@ -82,6 +83,7 @@ public class DeviceFragment extends BaseActivity {
     QMUIRoundLinearLayout mBtnBind;
     Unbinder unbinder;
 
+    @Bean
     QNBleTools mQNBleTools;
 
     //体脂称连接状态
@@ -112,7 +114,6 @@ public class DeviceFragment extends BaseActivity {
 
     private void initView() {
         initTopBar();
-        mQNBleTools = QNBleTools.getInstance();
     }
 
 
@@ -206,7 +207,7 @@ public class DeviceFragment extends BaseActivity {
                 RxLogUtils.d("电压：" + voltage);
                 VoltageToPower toPower = new VoltageToPower();
                 int capacity = toPower.getBatteryCapacity(voltage / 1000f);
-                double time = toPower.canUsedTime(voltage, false);
+                double time = toPower.canUsedTime(voltage / 1000f, false);
                 RxLogUtils.d("capacity:" + capacity + "time：" + time);
                 mTvClothingUseTime.setText(capacity + "");
                 mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(time / 24, 1));

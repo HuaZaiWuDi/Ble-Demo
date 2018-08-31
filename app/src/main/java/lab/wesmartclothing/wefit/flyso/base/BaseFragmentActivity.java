@@ -13,6 +13,7 @@ import com.vondear.rxtools.utils.StatusBarUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 
 /**
  * Created by cgspine on 2018/1/7.

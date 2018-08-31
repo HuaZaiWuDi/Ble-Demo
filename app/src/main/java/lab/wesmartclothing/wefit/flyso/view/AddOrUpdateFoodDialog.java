@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.LifeCycleEvent;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;

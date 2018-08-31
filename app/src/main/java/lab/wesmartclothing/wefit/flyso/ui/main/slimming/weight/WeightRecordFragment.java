@@ -32,6 +32,7 @@ import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
@@ -149,7 +150,7 @@ public class WeightRecordFragment extends BaseActivity {
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
     }
 
-
+    @Bean
     QNBleTools mQNBleTools;
 
 
@@ -162,7 +163,7 @@ public class WeightRecordFragment extends BaseActivity {
     private double lastWeight = 0;//最后一条体重数据
     private List<WeightDataBean.WeightListBean.ListBean> list;
     private Bundle bundle = new Bundle();
-
+    private boolean isVisite = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -179,6 +180,7 @@ public class WeightRecordFragment extends BaseActivity {
 
     @Override
     public void onStart() {
+        isVisite = true;
         initData();
         initBleCallBack();
         super.onStart();
@@ -186,6 +188,7 @@ public class WeightRecordFragment extends BaseActivity {
 
     @Override
     public void onStop() {
+        isVisite = false;
         MyAPP.QNapi.setDataListener(null);
         super.onStop();
     }
@@ -201,7 +204,6 @@ public class WeightRecordFragment extends BaseActivity {
         tvStartWeight.setTypeface(typeface);
         tvEndWeight.setTypeface(typeface);
 
-        mQNBleTools = QNBleTools.getInstance();
         initTopBar();
         checkStatus();
         initRxBus();
@@ -216,7 +218,8 @@ public class WeightRecordFragment extends BaseActivity {
                     @Override
                     protected void _onNext(OpenAddWeight integer) {
                         RxLogUtils.d("显示：WeightRecordFragment");
-                        RxActivityUtils.skipActivity(mContext, WeightAddFragment.class, bundle);
+                        if (isVisite)
+                            RxActivityUtils.skipActivity(mContext, WeightAddFragment.class, bundle);
                     }
                 });
 

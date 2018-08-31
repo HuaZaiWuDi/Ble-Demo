@@ -20,6 +20,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 
 /**
  * Created icon_hide_password 华 on 2017/5/2.

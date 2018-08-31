@@ -45,6 +45,8 @@
     <string name="receivedCount" translatable="false">%1$s领取的体重数据（%2$d）</string>
 
     <string name="goBind" translatable="false">去绑定</string>
+    <string name="goSporting" translatable="false">去运动</string>
+    <string name="goWeight" translatable="false">去称重</string>
 
     <string name="disConnected" translatable="false">未连接</string>
     <string name="connected" translatable="false">已连接</string>

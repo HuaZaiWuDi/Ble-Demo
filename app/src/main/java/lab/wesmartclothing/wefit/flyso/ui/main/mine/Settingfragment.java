@@ -120,7 +120,7 @@ public class Settingfragment extends BaseActivity {
                 .addItemView(accountItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext,AccountFragment.class);
+                        RxActivityUtils.skipActivity(mContext, AccountFragment.class);
                     }
                 })
                 .addItemView(clothing, new View.OnClickListener() {
@@ -177,9 +177,11 @@ public class Settingfragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
+                        boolean SP_GUIDE = SPUtils.getBoolean(SPKey.SP_GUIDE);
                         MyAPP.aMapLocation = null;
                         SPUtils.clear();
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
+                        SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
                         MyAPP.getRxCache().clear()
                                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))

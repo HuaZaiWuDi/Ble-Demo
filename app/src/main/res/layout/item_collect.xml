@@ -20,16 +20,17 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginRight="8dp"
+        android:scaleType="fitXY"
         tools:background="@color/c"/>
 
 
     <TextView
-        android:maxLines="1"
-        android:ellipsize="end"
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/iv_img"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/Gray"
         android:textSize="18sp"
         tools:text="张钧甯就是美丽又动人"/>
