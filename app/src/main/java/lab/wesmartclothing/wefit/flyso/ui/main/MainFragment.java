@@ -238,7 +238,6 @@ public class MainFragment extends BaseAcFragment {
             }
         });
 
-
     }
 
 //    private FragmentManager fm;
