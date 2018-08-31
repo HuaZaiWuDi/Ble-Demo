@@ -26,7 +26,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/icon_app"
         android:label="@string/appName"
-        android:roundIcon="@mipmap/icon_app"
+        android:roundIcon="@mipmap/icon_app_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label,icon,roundIcon">
