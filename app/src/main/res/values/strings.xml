@@ -168,6 +168,14 @@
     </string-array>
 
 
+    <string-array name="problemType">
+        <item>产品反馈</item>
+        <item>使用咨询</item>
+        <item>产品建议</item>
+        <item>其它</item>
+    </string-array>
+
+
     <string-array name="weightDatas">
         <item>体脂率</item>
         <item>BMI</item>
@@ -177,14 +185,10 @@
         <item>水分</item>
         <item>骨量</item>
         <item>身体年龄</item>
-    </string-array>
-
-
-    <string-array name="problemType">
-        <item>产品反馈</item>
-        <item>使用咨询</item>
-        <item>产品建议</item>
-        <item>其它</item>
+        <item>去脂体重</item>
+        <item>皮下脂肪率</item>
+        <item>骨骼肌率</item>
+        <item>蛋白质</item>
     </string-array>
 
     <string-array name="problemTimes">

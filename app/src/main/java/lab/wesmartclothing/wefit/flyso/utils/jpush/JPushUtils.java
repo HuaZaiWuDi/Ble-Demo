@@ -29,8 +29,9 @@ public class JPushUtils {
         JPushInterface.setDebugMode(BuildConfig.DEBUG);
         JPushInterface.init(application);
 
-//        setAliasOrTags(null);
+        setAliasOrTags(null);
     }
+
 
     public static void setAliasOrTags(String... tag) {
         if (tag != null)

@@ -226,6 +226,7 @@
         <activity android:name=".ui.main.slimming.weight.WeightAddFragment"/>
         <activity android:name=".ui.main.slimming.weight.WeightRecordFragment_"/>
         <activity android:name=".ui.main.slimming.sports.SmartClothingFragment_"/>
+        <activity android:name=".ui.guide.GuideActivity"/>
     </application>
 
 </manifest>

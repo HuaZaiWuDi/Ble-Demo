@@ -148,7 +148,7 @@ public class AddedFoodFragment extends BaseActivity {
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 TextView foodKcal = helper.getView(R.id.tv_foodKcal);
                 RxTextUtils.getBuilder(item.getCalorie() + "")
-                        .append("kacl/")
+                        .append("kcal/")
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                         .append(RxFormat.setFormatNum(item.getFoodCount(), "0.0") + item.getUnit())

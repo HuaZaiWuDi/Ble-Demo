@@ -10,9 +10,9 @@
                 tools:context="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity">
 
     <!--<FrameLayout-->
-        <!--android:id="@+id/mFrameLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <!--android:id="@+id/mFrameLayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
     <!--</FrameLayout>-->
     <android.support.v4.view.ViewPager
@@ -28,6 +28,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_padding"
         android:layout_alignParentBottom="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/line"/>
 
 
         <com.flyco.tablayout.CommonTabLayout

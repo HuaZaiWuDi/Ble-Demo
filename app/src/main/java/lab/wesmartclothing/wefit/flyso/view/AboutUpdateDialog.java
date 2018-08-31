@@ -23,7 +23,6 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
@@ -108,14 +107,12 @@ public class AboutUpdateDialog extends RxDialog {
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doLoadDownSubscribe(dxyService.downLoadFile(filePath))
-                .subscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, File>() {
                     @Override
                     public File apply(ResponseBody body) throws Exception {
                         return mFileDownLoadObserver.saveFile(body, Dir, fileName);
                     }
                 })
-                .observeOn(Schedulers.io())
                 .subscribe(mFileDownLoadObserver);
     }
 

@@ -163,6 +163,7 @@ public class BindPhoneActivity extends BaseActivity {
                         RxUtils.countDown(mBtnGetVCode, 60, 1, getString(R.string.getVCode));
                     }
                 })
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -199,6 +200,7 @@ public class BindPhoneActivity extends BaseActivity {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.phoneBind(phone, vCode, openId, nickname, imageUrl, userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

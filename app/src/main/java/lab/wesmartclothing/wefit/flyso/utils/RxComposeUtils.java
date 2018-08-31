@@ -114,7 +114,7 @@ public class RxComposeUtils {
      * @param <T> 指定的泛型类型
      * @return Observable
      * <p>
-     * takeUtil，很显然，observable.takUtil(condition)，当condition == true时终止，且包含临界条件的item
+     * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
      */
     public static <T> ObservableTransformer<T, T> bindLife(final BehaviorSubject<LifeCycleEvent> subject) {
         return new ObservableTransformer<T, T>() {

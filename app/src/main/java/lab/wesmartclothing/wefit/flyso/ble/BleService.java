@@ -434,7 +434,7 @@ public class BleService extends Service {
                 if (packageCount > 0) {
                     RxLogUtils.d("开始同步包数据");
 //                    synData();
-                    RxToast.info("开始同步本地数据");
+//                    RxToast.info("开始同步本地数据");
                 } else RxLogUtils.d("没有数据同步");
                 checkVersion();
             }

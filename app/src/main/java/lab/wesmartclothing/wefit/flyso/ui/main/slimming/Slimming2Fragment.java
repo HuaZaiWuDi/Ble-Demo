@@ -70,6 +70,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFrag
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment_;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -587,6 +588,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
         mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
+        if (bean.getAbleIntake() < 0) {
+            TextSpeakUtils.speakFlush(getString(R.string.EatMore) + Math.abs(bean.getAbleIntake()) + "卡路里的能量");
+        }
 
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");

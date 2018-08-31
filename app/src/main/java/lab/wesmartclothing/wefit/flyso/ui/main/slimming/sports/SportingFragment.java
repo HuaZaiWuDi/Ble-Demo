@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +47,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
@@ -81,7 +81,6 @@ public class SportingFragment extends BaseActivity {
 
 
     private Button btn_Connect;
-    TextToSpeech textToSpeech;
 
     private int currentTime = 0;
     private int type = -1;//运动上一次状态
@@ -98,8 +97,8 @@ public class SportingFragment extends BaseActivity {
                 btn_Connect.setText(R.string.disConnected);
                 mSwMusic.postDelayed(reConnectTimeOut, 9000);
             }
-        if (mSwMusic.isOpened() && textToSpeech != null)
-            textToSpeech.speak(state ? "设备已连接" : "设备连接已断开", TextToSpeech.QUEUE_FLUSH, null);
+        if (mSwMusic.isOpened())
+            TextSpeakUtils.speakFlush(state ? "设备已连接" : "设备连接已断开");
     }
 
     //监听系统蓝牙开启
@@ -155,9 +154,7 @@ public class SportingFragment extends BaseActivity {
             public void toggleToOff(SwitchView view) {
                 view.setOpened(false);
                 SPUtils.put(SPKey.SP_VoiceTip, false);
-                if (textToSpeech != null) {
-                    textToSpeech.stop();
-                }
+                TextSpeakUtils.stop();
             }
         });
         mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, false));
@@ -272,16 +269,16 @@ public class SportingFragment extends BaseActivity {
             if (type != 0) {
                 mTvSportsStatus.setText("热身");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
-                if (mSwMusic.isOpened() && textToSpeech != null)
-                    textToSpeech.speak(getString(R.string.speech_warm), TextToSpeech.QUEUE_FLUSH, null);
+                if (mSwMusic.isOpened())
+                    TextSpeakUtils.speakAdd(getString(R.string.speech_warm));
                 type = 0;
             }
         } else if (heart >= heart_1 && heart < heart_2) {
             if (type != 1) {
                 mTvSportsStatus.setText("燃脂");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
-                if (mSwMusic.isOpened() && textToSpeech != null)
-                    textToSpeech.speak(getString(R.string.speech_grease), TextToSpeech.QUEUE_FLUSH, null);
+                if (mSwMusic.isOpened())
+                    TextSpeakUtils.speakAdd(getString(R.string.speech_grease));
                 type = 1;
             }
         } else if (heart >= heart_2 && heart < heart_3) {
@@ -289,24 +286,24 @@ public class SportingFragment extends BaseActivity {
                 mTvSportsStatus.setText("有氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
                 type = 2;
-                if (mSwMusic.isOpened() && textToSpeech != null)
-                    textToSpeech.speak(getString(R.string.speech_aerobic), TextToSpeech.QUEUE_FLUSH, null);
+                if (mSwMusic.isOpened())
+                    TextSpeakUtils.speakAdd(getString(R.string.speech_aerobic));
             }
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 3) {
                 mTvSportsStatus.setText("无氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
                 type = 3;
-                if (mSwMusic.isOpened() && textToSpeech != null)
-                    textToSpeech.speak(getString(R.string.speech_anaerobic), TextToSpeech.QUEUE_FLUSH, null);
+                if (mSwMusic.isOpened())
+                    TextSpeakUtils.speakAdd(getString(R.string.speech_anaerobic));
             }
         } else if (heart >= heart_4) {
             if (type != 4) {
                 mTvSportsStatus.setText("极限");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
                 type = 4;
-                if (mSwMusic.isOpened() && textToSpeech != null)
-                    textToSpeech.speak(getString(R.string.speech_limit), TextToSpeech.QUEUE_FLUSH, null);
+                if (mSwMusic.isOpened())
+                    TextSpeakUtils.speakAdd(getString(R.string.speech_limit));
             }
         }
     }
@@ -352,8 +349,8 @@ public class SportingFragment extends BaseActivity {
     MyTimer timer2 = new MyTimer(2 * 60 * 1000, 2 * 60 * 1000, new MyTimerListener() {
         @Override
         public void enterTimer() {
-            if (mSwMusic.isOpened() && textToSpeech != null)
-                textToSpeech.speak(getString(R.string.speech_currentKcal, mTvKcal.getText()), TextToSpeech.QUEUE_ADD, null);
+            if (mSwMusic.isOpened())
+                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal));
         }
     });
 
@@ -362,11 +359,7 @@ public class SportingFragment extends BaseActivity {
     public void onDestroy() {
         timer.stopTimer();
         timer2.stopTimer();
-        if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-            textToSpeech = null;
-        }
+        TextSpeakUtils.stop();
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
@@ -385,8 +378,8 @@ public class SportingFragment extends BaseActivity {
         currentTime = 0;
         if (!dialog.isShowing())
             dialog.show();
-        if (mSwMusic.isOpened() && textToSpeech != null)
-            textToSpeech.speak("运动已结束", TextToSpeech.QUEUE_FLUSH, null);
+        if (mSwMusic.isOpened())
+            TextSpeakUtils.speakFlush("运动已结束");
     }
 
     RxDialogSureCancel dialog;

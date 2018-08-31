@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Environment;
-import android.speech.tts.TextToSpeech;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -19,7 +18,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
-import com.vondear.rxtools.model.cache.ACache;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
@@ -31,6 +29,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
@@ -43,14 +42,11 @@ public class MyAPP extends Application {
 
     private String BUGly_id = "11c87579c7";
     public static QNBleApi QNapi;
-    private static ACache aCache;
     private static RxCache rxCache;
     public static Typeface typeface;
     private static Gson sGson;
     public static AMapLocation aMapLocation = null;//定位信息
     public static GlideImageLoader sImageLoader;
-    public static TextToSpeech mTextToSpeech;
-    public static boolean isAppKill = true;
 
     //指定全局的上啦刷新，下拉加载的样式
     static {
@@ -88,15 +84,9 @@ public class MyAPP extends Application {
         JPushUtils.init(this);
         initLeakCanary();
         typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
+        TextSpeakUtils.init(this);
     }
 
-    public static void setmTextToSpeech(TextToSpeech mTextToSpeech) {
-        MyAPP.mTextToSpeech = mTextToSpeech;
-    }
-
-    public static TextToSpeech getmTextToSpeech() {
-        return mTextToSpeech;
-    }
 
     public static GlideImageLoader getImageLoader() {
         if (sImageLoader == null) {
@@ -191,6 +181,8 @@ public class MyAPP extends Application {
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
+        TextSpeakUtils.getInstance().shutdown();
 //        ActiveAndroid.dispose();
     }
+
 }

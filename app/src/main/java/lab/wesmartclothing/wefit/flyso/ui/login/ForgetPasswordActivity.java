@@ -129,6 +129,7 @@ public class ForgetPasswordActivity extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(dxyService.resetPassword(phone,
                 RxEncryptUtils.encryptMD5ToString(pwFirst), getIntent().getStringExtra("VCODE")))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

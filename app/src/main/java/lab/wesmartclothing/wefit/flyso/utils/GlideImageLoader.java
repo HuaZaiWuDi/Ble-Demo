@@ -28,10 +28,9 @@ public class GlideImageLoader implements ImageLoader {
     public void displayImage(Context activity, Object path, @DrawableRes int defaultImg, ImageView imageView) {
         Glide.with(activity)
                 .load(path)
+                .asBitmap()
                 .placeholder(defaultImg)
                 .centerCrop()
-                .crossFade(500)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(imageView);
     }
 

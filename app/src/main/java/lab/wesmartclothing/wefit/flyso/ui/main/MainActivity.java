@@ -52,6 +52,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -130,7 +131,7 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId" + SPUtils.getString(SPKey.SP_UserId));
 
-
+        TextSpeakUtils.speakFlush("主人，我想你了！");
         initMyViewPager();
         initBottomTab();
         mBottomTab.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +196,8 @@ public class MainActivity extends BaseALocationActivity {
                             .addItem("http://10.10.11.208:15112")
                             .addItem("http://119.23.225.125:15112")
                             .addItem("http://10.10.11.208:15101/mix/")
+                            .addItem(ServiceAPI.BASE_RELEASE)
+                            .addItem(ServiceAPI.BASE_DEBUG)
                             .setTitle("修改网络需要重启应用，提示网络错误，需要重新登录")
                             .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                                 @Override

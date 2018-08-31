@@ -55,7 +55,11 @@ public class RxHttpException {
 
     public String handleResponseError(Throwable t) {
         //这里不光是只能打印错误,还可以根据不同的错误作出不同的逻辑处理
-        String msg = "网络异常";
+        String msg = "请求网络失败";
+        if (!TextUtils.isEmpty(t.getMessage())) {
+            msg = t.getMessage();
+        }
+
         if (t instanceof UnknownHostException) {
             msg = "网络不可用";
         } else if (t instanceof SocketTimeoutException) {
@@ -68,12 +72,13 @@ public class RxHttpException {
         } else if (t instanceof ConnectException) {
             msg = "连接服务器失败";
         }
-        if (!TextUtils.isEmpty(t.getMessage())) {
-            msg = t.getMessage();
-        }
+//
         if ("timeout".equals(t.getMessage())) {
             msg = "请求网络超时";
         }
+//        if ("Failed".startsWith(t.getMessage())) {
+//            msg = "请求网络失败";
+//        }
         return msg;
     }
 
