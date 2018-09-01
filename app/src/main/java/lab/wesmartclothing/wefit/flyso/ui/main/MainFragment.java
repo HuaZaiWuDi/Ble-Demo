@@ -179,10 +179,11 @@ public class MainFragment extends BaseAcFragment {
                             .show();
 //                    showLocalNotify();
                 } else if (position == 0) {
-                    JPushInterface.getAlias(mContext, 11);
+//                    JPushInterface.getAlias(mContext, 11);
                 } else if (position == 1) {
-                    boolean connectionState = JPushInterface.getConnectionState(mContext);
-                    RxLogUtils.e("连接状态：" + connectionState);
+//                    boolean connectionState = JPushInterface.getConnectionState(mContext);
+//                    RxLogUtils.e("连接状态：" + connectionState);
+
                 }
             }
         });

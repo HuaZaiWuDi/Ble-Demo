@@ -230,7 +230,7 @@ public class WeightAddFragment extends BaseAcFragment {
 
                         //TODO 获取返回的GID
                         Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_WEIGHT_GID, "gid");
+                        bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
                         QMUIFragment fragment = BodyDataFragment.getInstance();
                         fragment.setArguments(bundle);
                         startFragmentAndDestroyCurrent(fragment);

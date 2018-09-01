@@ -41,7 +41,7 @@ public class JPushUtils {
         TagAliasOperatorHelper.TagAliasBean tagAliasBean = new TagAliasOperatorHelper.TagAliasBean();
         tagAliasBean.action = TagAliasOperatorHelper.ACTION_SET;
         tagAliasBean.tags = tags;
-        tagAliasBean.isAliasAction = true;
+        tagAliasBean.isAliasAction = SPUtils.getBoolean(SPKey.SP_PUSH_ALIAS);
         tagAliasBean.alias = SPUtils.getString(SPKey.SP_UserId);
         TagAliasOperatorHelper.getInstance().handleAction(mApplication, sequence, tagAliasBean);
     }

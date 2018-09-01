@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Intent;
 
 import com.google.gson.JsonObject;
@@ -35,6 +36,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
@@ -84,6 +86,7 @@ public class SpalshActivity extends BaseActivity {
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
         initUserInfo();
         initData();
+
 
     }
 

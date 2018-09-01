@@ -346,7 +346,7 @@ public class BleTools {
         ScanSettings scanSettings = new ScanSettings.Builder()
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//仅回调第一个
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
-                .setReportDelay(500)
+                .setReportDelay(800)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
         List<ScanFilter> filters = new ArrayList<>();
