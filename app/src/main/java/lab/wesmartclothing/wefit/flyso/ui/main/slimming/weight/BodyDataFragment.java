@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -85,6 +86,8 @@ public class BodyDataFragment extends BaseAcFragment {
 
     private BodyDataUtil bodyDataUtil;
     private double[] bodyValue = new double[12];
+    private Bundle mBundle = new Bundle();
+
 
     @Override
     protected View onCreateView() {
@@ -98,7 +101,10 @@ public class BodyDataFragment extends BaseAcFragment {
         bodys = getResources().getStringArray(R.array.bodyShape);
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvWeight.setTypeface(typeface);
-        gid = getArguments() == null ? "" : getArguments().getString(Key.BUNDLE_WEIGHT_GID);
+        mBundle = getArguments();
+
+        gid = mBundle.getString(Key.BUNDLE_WEIGHT_GID);
+
         initTopBar();
         initRecyclerView();
         initData();
@@ -234,37 +240,39 @@ public class BodyDataFragment extends BaseAcFragment {
     }
 
     private void initData() {
-        JsonObject object = new JsonObject();
-        object.addProperty("gid", gid);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
-                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
-                .map(new CacheResult.MapFunc<String>())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("心率数据：" + s);
-                        WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
-                        mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
-                        mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
+        if (!RxDataUtils.isNullString(gid)) {
+            JsonObject object = new JsonObject();
+            object.addProperty("gid", gid);
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
+            RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+            RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
+                    .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                    .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
+                    .map(new CacheResult.MapFunc<String>())
+                    .subscribe(new RxNetSubscriber<String>() {
+                        @Override
+                        protected void _onNext(String s) {
+                            RxLogUtils.d("心率数据：" + s);
+                            WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
+                            mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
+                            mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
 
-                        Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
-                        //一定要加这行！！！！！！！！！！！
-                        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                        mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
-                        mTvBodyFat.setText(bodys[(detailsBean.getBodyLevel() - 1) % 9]);
-                        WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
-                        notifyData(weightInfo);
-                        bodyIndex = detailsBean.getBodyLevel();
-                    }
+                            Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
+                            //一定要加这行！！！！！！！！！！！
+                            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                            mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
+                            mTvBodyFat.setText(bodys[(detailsBean.getBodyLevel() - 1) % 9]);
+                            WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
+                            notifyData(weightInfo);
+                            bodyIndex = detailsBean.getBodyLevel();
+                        }
 
-                    @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
-                    }
-                });
+                        @Override
+                        protected void _onError(String error) {
+                            RxToast.error(error);
+                        }
+                    });
+        }
     }
 
     private void initRecyclerView() {

@@ -38,7 +38,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -144,7 +143,8 @@ public class MainFragment extends BaseAcFragment {
                 R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
-            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
+            if (i != 2)
+                mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
@@ -210,7 +210,7 @@ public class MainFragment extends BaseAcFragment {
 //        mFragments.add(SlimmingFragment.getInstance());
         mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(FindFragment.getInstance());
-        mFragments.add(StoreFragment.getInstance());
+//        mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());
 
         mViewpager.setOffscreenPageLimit(4);

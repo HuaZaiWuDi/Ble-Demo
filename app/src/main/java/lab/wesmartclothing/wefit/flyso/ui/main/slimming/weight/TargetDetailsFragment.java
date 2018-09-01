@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -20,7 +21,9 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -52,7 +55,7 @@ public class TargetDetailsFragment extends BaseAcFragment {
         return new TargetDetailsFragment();
     }
 
-    private Bundle bundle = new Bundle();
+    Bundle bundle = new Bundle();
 
     @Override
     protected View onCreateView() {
@@ -65,12 +68,10 @@ public class TargetDetailsFragment extends BaseAcFragment {
     private void initView() {
         targetWeight();
         initTopBar();
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvTargetDays.setTypeface(typeface);
         mTvTargetWeight.setTypeface(typeface);
         mTvDistanceTarget.setTypeface(typeface);
-
-        bundle = getArguments();
     }
 
 
@@ -110,6 +111,8 @@ public class TargetDetailsFragment extends BaseAcFragment {
                         mTvTargetWeight.setText(targetWeight + "");
                         mTvDistanceTarget.setText(stillNeed + "");
 
+
+                        bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, SPUtils.getFloat(SPKey.SP_realWeight));
                         bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
                         bundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
                         bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);

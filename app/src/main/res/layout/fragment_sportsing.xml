@@ -117,7 +117,7 @@
                 android:maxLines="2"
                 android:paddingLeft="@dimen/dimen_15"
                 android:paddingRight="@dimen/dimen_15"
-                android:text="保持燃脂衣与App的连接，可提高数据数据准确性 如关闭或脱掉减肥衣将自动结束本次运动"
+                android:text="保持燃脂衣与App的连接，可提高数据准确性 如关闭或脱掉减肥衣将自动结束本次运动"
                 android:textColor="@color/GrayWrite"
                 android:textSize="11sp"/>
 

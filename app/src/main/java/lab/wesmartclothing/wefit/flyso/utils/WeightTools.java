@@ -89,6 +89,7 @@ public class WeightTools {
                 break;
             case 10:
                 bean.setBodyType(body2String((int) value));
+                bean.setBodyTypeIndex((int) value);
                 break;
             case 11:
                 bean.setProtein(value);

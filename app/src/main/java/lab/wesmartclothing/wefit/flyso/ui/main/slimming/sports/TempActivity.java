@@ -120,7 +120,7 @@ public class TempActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BleAPI.syncSetting(temp, bright, 0x00, new BleChartChangeCallBack() {
+                BleAPI.syncSetting(temp, bright, true, new BleChartChangeCallBack() {
                     @Override
                     public void callBack(byte[] data) {
 
@@ -145,7 +145,7 @@ public class TempActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BleAPI.syncSetting(temp, bright, 0x01, new BleChartChangeCallBack() {
+                BleAPI.syncSetting(temp, bright, true, new BleChartChangeCallBack() {
                     @Override
                     public void callBack(byte[] data) {
 

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.model.timer.MyTimer;
+import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -43,6 +45,9 @@ import okhttp3.RequestBody;
  * Created by jk on 2018/7/27.
  */
 public class WeightAddFragment extends BaseAcFragment {
+
+    public static final int currentWeightDataResultCode = 500;
+
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
@@ -80,13 +85,14 @@ public class WeightAddFragment extends BaseAcFragment {
     @Override
     public void onStart() {
         initBleCallBack();
-        mMRoundDisPlayView.postDelayed(timeOut, 8000);
+        TimeOutTimer.startTimer();
         super.onStart();
     }
 
     @Override
     public void onStop() {
         mMRoundDisPlayView.stopAnimation();
+        TimeOutTimer.stopTimer();
         MyAPP.QNapi.setDataListener(null);
         super.onStop();
     }
@@ -104,16 +110,16 @@ public class WeightAddFragment extends BaseAcFragment {
     }
 
 
-    Runnable timeOut = new Runnable() {
+    MyTimer TimeOutTimer = new MyTimer(15000, 1000, new MyTimerListener() {
         @Override
-        public void run() {
+        public void enterTimer() {
             mTvTip.setVisibility(View.INVISIBLE);
             mBtnForget.setVisibility(View.VISIBLE);
             mBtnSave.setVisibility(View.VISIBLE);
             mMRoundDisPlayView.stopAnimation();
             mTvTitle.setText("测量超时，请再试一次");
         }
-    };
+    });
 
     //体脂称提取数据回调
     private void initBleCallBack() {
@@ -130,7 +136,7 @@ public class WeightAddFragment extends BaseAcFragment {
                     mBtnSave.setVisibility(View.INVISIBLE);
                     mMRoundDisPlayView.showPoint(false);
                     mMRoundDisPlayView.startAnimation();
-                    mMRoundDisPlayView.postDelayed(timeOut, 15000);
+                    TimeOutTimer.startTimer();
                 }
             }
 
@@ -144,7 +150,7 @@ public class WeightAddFragment extends BaseAcFragment {
                 mMRoundDisPlayView.stopAnimation();
                 mMRoundDisPlayView.showPoint(true);
                 mMRoundDisPlayView.startAnim();
-                mMRoundDisPlayView.removeCallbacks(timeOut);
+                TimeOutTimer.stopTimer();
                 //强行延时三秒用来展示动画效果
                 mMRoundDisPlayView.postDelayed(new Runnable() {
                     @Override
@@ -199,7 +205,7 @@ public class WeightAddFragment extends BaseAcFragment {
     }
 
     private void saveWeight() {
-        WeightAddBean bean = new WeightAddBean();
+        final WeightAddBean bean = new WeightAddBean();
         if (mQnScaleData == null) {
             RxToast.normal("测量体重失败");
             return;
@@ -221,7 +227,13 @@ public class WeightAddFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
                         RxToast.normal("存储体重成功");
-                        popBackStack();
+
+                        //TODO 获取返回的GID
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_WEIGHT_GID, "gid");
+                        QMUIFragment fragment = BodyDataFragment.getInstance();
+                        fragment.setArguments(bundle);
+                        startFragmentAndDestroyCurrent(fragment);
                     }
 
                     @Override

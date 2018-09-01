@@ -6,6 +6,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -18,7 +20,6 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
-import uk.co.senab.photoview.PhotoView;
 
 public class GuideActivity extends BaseActivity {
 
@@ -65,7 +66,12 @@ public class GuideActivity extends BaseActivity {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-                PhotoView photoView = new PhotoView(mActivity);
+                ImageView photoView = new ImageView(mActivity);
+                RelativeLayout.MarginLayoutParams params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.MarginLayoutParams.MATCH_PARENT,
+                        RelativeLayout.MarginLayoutParams.MATCH_PARENT
+                );
+                photoView.setLayoutParams(params);
                 photoView.setImageResource(mImageItems.get(position));
 //                MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), photoView);
                 container.addView(photoView);

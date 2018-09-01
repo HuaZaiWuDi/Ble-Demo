@@ -222,7 +222,7 @@ public class UserInfofragment extends BaseAcFragment {
                 .addItemView(weightItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (info.getTargetWeight() == 0) {
+                        if (SPUtils.getFloat(SPKey.SP_realWeight) == 0) {
                             RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
                             return;
                         }

@@ -24,7 +24,7 @@
     <application
         android:name=".base.MyAPP"
         android:allowBackup="true"
-        android:icon="@mipmap/icon_app"
+        android:icon="@mipmap/icon_app_round"
         android:label="@string/appName"
         android:roundIcon="@mipmap/icon_app_round"
         android:supportsRtl="true"

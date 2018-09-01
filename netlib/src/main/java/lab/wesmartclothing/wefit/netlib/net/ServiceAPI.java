@@ -21,8 +21,8 @@ public class ServiceAPI {
 
 
     //上线
-    public static final String BASE_RELEASE = "https://api.wesmartclothing.com/";//上线版本
-    public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/";//测试版本
+    public static final String BASE_RELEASE = "https://api.wesmartclothing.com/mix/";//上线版本
+    public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/mix/";//测试版本
 
 
     public static String BASE_URL = BASE_DEBUG;

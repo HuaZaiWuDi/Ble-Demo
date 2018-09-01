@@ -22,6 +22,7 @@ public class TextSpeakUtils {
                 if (status == TextToSpeech.SUCCESS) {
                     //默认设定语言为中文，原生的android貌似不支持中文。
                     int result = mTextToSpeech.setLanguage(Locale.CHINESE);
+//                    mTextToSpeech.setPitch(0.8f);
                     RxLogUtils.e("支持中文:" + result);
                     if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                         RxLogUtils.e("支持中文");
@@ -40,7 +41,9 @@ public class TextSpeakUtils {
 
 
     public static void speakFlush(String text) {
+        RxLogUtils.e("添加文字：" + mTextToSpeech);
         if (mTextToSpeech != null) {
+            RxLogUtils.e("添加文字：" + text.length());
             mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -55,6 +58,13 @@ public class TextSpeakUtils {
         if (mTextToSpeech != null) {
             mTextToSpeech.stop();
         }
+    }
+
+    public static boolean isSpeak() {
+        if (mTextToSpeech != null) {
+            return mTextToSpeech.isSpeaking();
+        }
+        return false;
     }
 
 }
