@@ -84,6 +84,7 @@ public class MyAPP extends Application {
         JPushUtils.init(this);
         initLeakCanary();
         typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
+
         TextSpeakUtils.init(this);
     }
 
@@ -181,7 +182,6 @@ public class MyAPP extends Application {
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        TextSpeakUtils.getInstance().shutdown();
 //        ActiveAndroid.dispose();
     }
 

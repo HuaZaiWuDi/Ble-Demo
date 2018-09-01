@@ -257,6 +257,7 @@ public class WeightRecordFragment extends BaseActivity {
         stillNeed = bean.getStillNeed();
         lastWeight = bean.getWeight();
 
+        SPUtils.put(SPKey.SP_realWeight, (float) lastWeight);
         bundle.putDouble(Key.BUNDLE_LAST_WEIGHT, lastWeight);
         RxLogUtils.d("是否有目标体重：" + bean.isTargetSet());
         //是否录入体重

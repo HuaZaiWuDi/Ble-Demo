@@ -41,7 +41,7 @@ public class BleAPI {
      * 01	命令应答
      */
 
-    public static void syncSetting(int heat, int LED, int heatState, BleChartChangeCallBack bleChartChange) {
+    public static void syncSetting(int heat, int LED, boolean heatState, BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 //        0x02 0x11 0x01
         byte[] bytes = new byte[20];
@@ -52,19 +52,24 @@ public class BleAPI {
         //心率阈值
         bytes[3] = 0x01;
         System.arraycopy(BleKey.heartRates2, 0, bytes, 4, BleKey.heartRates2.length);
+        int index = 3 + BleKey.heartRates2.length;
 
         if (heat >= 0) {
-            bytes[7] = 0x02;
-            bytes[8] = (byte) heat;
+            index++;
+            bytes[index] = 0x02;
+            index++;
+            bytes[index] = (byte) heat;
         }
         if (LED >= 0) {
-            bytes[9] = 0x03;
-            bytes[10] = (byte) LED;
+            index++;
+            bytes[index] = 0x03;
+            index++;
+            bytes[index] = (byte) LED;
         }
-        if (heatState >= 0) {
-            bytes[11] = 0x04;
-            bytes[12] = (byte) heatState;
-        }
+        index++;
+        bytes[index] = 0x04;
+        index++;
+        bytes[index] = (byte) (heatState ? 0x01 : 0x00);
 
         Log.d("【写配置】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().write(bytes, bleChartChange);

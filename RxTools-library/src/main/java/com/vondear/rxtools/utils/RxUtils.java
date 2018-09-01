@@ -193,6 +193,20 @@ public class RxUtils {
         return false;
     }
 
+    public static boolean isFast2Click(int millisecond) {
+        long curClickTime = System.currentTimeMillis();
+        long interval = (curClickTime - lastClickTime);
+
+        if (0 < interval && interval < millisecond) {
+            // 超过点击间隔后再将lastClickTime重置为当前点击时间
+            if (0 < interval && interval < millisecond) {
+
+            }
+        }
+        lastClickTime = curClickTime;
+        return false;
+    }
+
     /**
      * Edittext 首位小数点自动加零，最多两位小数
      *

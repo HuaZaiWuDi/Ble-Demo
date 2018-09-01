@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -98,12 +97,13 @@ public class BodyDataFragment extends BaseActivity {
         initView();
     }
 
-
     private void initView() {
         bodys = getResources().getStringArray(R.array.bodyShape);
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvWeight.setTypeface(typeface);
-        gid = getIntent().getExtras() == null ? "" : getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_GID);
+
+        gid = getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_GID);
+
         initTopBar();
         initRecyclerView();
         initData();
@@ -145,6 +145,7 @@ public class BodyDataFragment extends BaseActivity {
          充足=大于标准体重*80%
          *
          * */
+
         UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {

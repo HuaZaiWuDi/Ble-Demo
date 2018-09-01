@@ -57,6 +57,8 @@ public interface Key {
     //是否结束前一个Fragment
     String BUNDLE_FINISH_FRAGMENT = "BUNDLE_FINISH_FRAGMENT";
 
+    String BUNDLE_WIEGHT_DATA = "BUNDLE_WIEGHT_DATA";
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播

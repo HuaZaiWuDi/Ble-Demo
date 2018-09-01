@@ -71,8 +71,13 @@ public class GuideActivity extends BaseActivity {
                         RelativeLayout.MarginLayoutParams.MATCH_PARENT
                 );
                 photoView.setLayoutParams(params);
+<<<<<<< HEAD
 //                photoView.setImageResource(mImageItems.get(position));
                 MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), photoView);
+=======
+                photoView.setImageResource(mImageItems.get(position));
+//                MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), photoView);
+>>>>>>> remotes/old-origin/master
                 container.addView(photoView);
                 return photoView;
             }

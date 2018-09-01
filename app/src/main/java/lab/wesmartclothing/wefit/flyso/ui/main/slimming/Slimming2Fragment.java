@@ -39,6 +39,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
@@ -221,6 +222,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     private int[] colors = {R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0,
             R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0, R.color.gray_ECEBF0};
     public String[] add_food;
+    private int lastKcal = 0;
 
     @Override
     protected View onCreateView() {
@@ -493,6 +495,10 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_Healthy:
                 //点击健康评级
+                if (RxUtils.isFastClick(500)) {
+                    TextSpeakUtils.speakFlush("主人真乖，来跟我一起做做运动吧！合理饮食，加强运动才是最科学有效的瘦身方式哦。");
+                }
+
                 break;
             case R.id.layout_heat:
                 //跳转热量记录
@@ -589,8 +595,11 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
         mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
-        if (bean.getAbleIntake() < 0) {
-            TextSpeakUtils.speakFlush(getString(R.string.EatMore) + Math.abs(bean.getAbleIntake()) + "卡路里的能量");
+        RxLogUtils.d("热量：" + (Math.abs(bean.getAbleIntake()) + "".trim()));
+        RxLogUtils.d("热量：" + (Math.abs(bean.getAbleIntake()) + "").length());
+        if (bean.getAbleIntake() < 0 && lastKcal != bean.getAbleIntake()) {
+            lastKcal = bean.getAbleIntake();
+            TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
 
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());

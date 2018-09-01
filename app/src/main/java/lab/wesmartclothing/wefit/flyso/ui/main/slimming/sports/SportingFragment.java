@@ -92,10 +92,8 @@ public class SportingFragment extends BaseActivity {
         if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
             if (state) {
                 btn_Connect.setText(R.string.connected);
-                mSwMusic.removeCallbacks(reConnectTimeOut);
             } else {
                 btn_Connect.setText(R.string.disConnected);
-                mSwMusic.postDelayed(reConnectTimeOut, 9000);
             }
         if (mSwMusic.isOpened())
             TextSpeakUtils.speakFlush(state ? "设备已连接" : "设备连接已断开");
@@ -106,14 +104,6 @@ public class SportingFragment extends BaseActivity {
     void CLOTHING_STOP() {
         stopSporting();
     }
-
-
-    Runnable reConnectTimeOut = new Runnable() {
-        @Override
-        public void run() {
-            stopSporting();
-        }
-    };
 
 
     @Override
@@ -269,41 +259,46 @@ public class SportingFragment extends BaseActivity {
             if (type != 0) {
                 mTvSportsStatus.setText("热身");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
                     TextSpeakUtils.speakAdd(getString(R.string.speech_warm));
-                type = 0;
+                    type = 0;
+                }
             }
         } else if (heart >= heart_1 && heart < heart_2) {
             if (type != 1) {
                 mTvSportsStatus.setText("燃脂");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
                     TextSpeakUtils.speakAdd(getString(R.string.speech_grease));
-                type = 1;
+                    type = 1;
+                }
             }
         } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 2) {
                 mTvSportsStatus.setText("有氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
-                type = 2;
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
+                    type = 2;
                     TextSpeakUtils.speakAdd(getString(R.string.speech_aerobic));
+                }
             }
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 3) {
                 mTvSportsStatus.setText("无氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
-                type = 3;
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
+                    type = 3;
                     TextSpeakUtils.speakAdd(getString(R.string.speech_anaerobic));
+                }
             }
         } else if (heart >= heart_4) {
             if (type != 4) {
                 mTvSportsStatus.setText("极限");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
-                type = 4;
-                if (mSwMusic.isOpened())
+                if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
+                    type = 4;
                     TextSpeakUtils.speakAdd(getString(R.string.speech_limit));
+                }
             }
         }
     }
@@ -350,7 +345,11 @@ public class SportingFragment extends BaseActivity {
         @Override
         public void enterTimer() {
             if (mSwMusic.isOpened())
+<<<<<<< HEAD
                 TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal));
+=======
+                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal) + mTvKcal.getText() + "千卡的能量");
+>>>>>>> remotes/old-origin/master
         }
     });
 

@@ -29,6 +29,12 @@ public class MyTimer {
         this.period = period;
     }
 
+    public MyTimer(MyTimerListener myTimerListener, long delay) {
+        this.myTimerListener = myTimerListener;
+        this.delay = delay;
+        this.period = 0;
+    }
+
     public MyTimer(MyTimerListener myTimerListener) {
         this.myTimerListener = myTimerListener;
     }
@@ -47,9 +53,13 @@ public class MyTimer {
                     });
                 }
             };
-            timer.schedule(task, delay, period);
+            if (period != 0)
+                timer.schedule(task, delay, period);
+            else
+                timer.schedule(task, delay);
         }
     }
+
 
     public void stopTimer() {
         if (timer != null) {

@@ -1,9 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import java.io.Serializable;
+
 /**
  * Created icon_hide_password jk on 2018/5/16.
  */
-public class WeightAddBean {
+public class WeightAddBean implements Serializable {
     /**
      * userId	string		用户ID
      * measureTime	datetime		测量时间
@@ -41,6 +43,15 @@ public class WeightAddBean {
     double bodyFfm;
     double healthScore;
     double sinew;
+    int bodyTypeIndex = 0;
+
+    public int getBodyTypeIndex() {
+        return bodyTypeIndex;
+    }
+
+    public void setBodyTypeIndex(int bodyTypeIndex) {
+        this.bodyTypeIndex = bodyTypeIndex;
+    }
 
     public double getHealthScore() {
         return healthScore;

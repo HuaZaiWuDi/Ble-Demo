@@ -30,6 +30,8 @@ import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.model.timer.MyTimer;
+import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
@@ -396,7 +398,8 @@ public class BleService extends Service {
                 RxLogUtils.d("断开连接：");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 connectDevices.remove(device.getMac());
-                shopSporting();
+//                shopSporting();
+                sportingStop.startTimer();
             }
         });
     }
@@ -416,7 +419,7 @@ public class BleService extends Service {
     }
 
     private void syncSetting() {
-        BleAPI.syncSetting(40, 50, 0x00, new BleChartChangeCallBack() {
+        BleAPI.syncSetting(60, 50, true, new BleChartChangeCallBack() {
             @Override
             public void callBack(byte[] data) {
                 RxLogUtils.d("配置参数");
@@ -473,7 +476,6 @@ public class BleService extends Service {
 
                 //验证没有数据则同步结束
                 if (data.length <= 3) {
-                    shopSporting();
                     return;
                 }
 
@@ -579,6 +581,7 @@ public class BleService extends Service {
 
     //运动结束
     private void shopSporting() {
+        sportingStop.stopTimer();
         lastHeartRate = 0;
         athlRecord_2.clear();
         if (BuildConfig.DEBUG)
@@ -589,6 +592,14 @@ public class BleService extends Service {
             athlHistoryRecord.clear();
         }
     }
+
+
+    MyTimer sportingStop = new MyTimer(9000, 1000, new MyTimerListener() {
+        @Override
+        public void enterTimer() {
+            B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_STOP);
+        }
+    });
 
 
     private void checkFirmwareVersion(JsonObject object) {

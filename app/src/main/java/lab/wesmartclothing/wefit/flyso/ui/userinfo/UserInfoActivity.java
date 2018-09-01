@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -37,6 +38,7 @@ import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -151,6 +153,8 @@ public class UserInfoActivity extends BaseALocationActivity {
                 .setLightStatusBar(false)
                 .process();
         initView();
+        Intent bleIntent = new Intent(mContext, BleService_.class);
+        startService(bleIntent);
     }
 
     public void initView() {

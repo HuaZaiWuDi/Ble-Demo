@@ -154,8 +154,7 @@ public class SportsDetailsFragment extends BaseActivity {
     private void checkHeartRate(HeartRateBean.AthlList bean) {
         int heart = bean.getHeartRate();
         byte[] heartRates = BleKey.heartRates;
-//        int heart_0 = heartRates[0] & 0xff;
-        int heart_0 = 0;//TODO 测试暂时归纳小于100的心率算热身心率
+        int heart_0 = heartRates[0] & 0xff;//TODO 测试暂时归纳小于100的心率算热身心率
         int heart_1 = heartRates[1] & 0xff;
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;
