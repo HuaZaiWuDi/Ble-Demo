@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -223,17 +224,14 @@ public class WeightAddFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
                         RxToast.normal("存储体重成功");
-<<<<<<< HEAD
                         onBackPressed();
-=======
 
                         //TODO 获取返回的GID
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
-                        QMUIFragment fragment = BodyDataFragment.getInstance();
-                        fragment.setArguments(bundle);
-                        startFragmentAndDestroyCurrent(fragment);
->>>>>>> remotes/old-origin/master
+
+                        RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
+
                     }
 
                     @Override

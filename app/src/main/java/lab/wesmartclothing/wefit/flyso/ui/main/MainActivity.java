@@ -52,11 +52,8 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-<<<<<<< HEAD
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
-=======
->>>>>>> remotes/old-origin/master
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -69,6 +66,7 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_APP;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_URL;
+
 
 public class MainActivity extends BaseALocationActivity {
 
@@ -132,7 +130,6 @@ public class MainActivity extends BaseALocationActivity {
 
         RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
-<<<<<<< HEAD
         RxLogUtils.d("UserId" + SPUtils.getString(SPKey.SP_UserId));
 
         TextSpeakUtils.speakFlush("主人，我想你了！");
@@ -167,9 +164,6 @@ public class MainActivity extends BaseALocationActivity {
                 RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
         }
-=======
-//        TextSpeakUtils.speakFlush("主人！我想你了");
->>>>>>> remotes/old-origin/master
     }
 
 

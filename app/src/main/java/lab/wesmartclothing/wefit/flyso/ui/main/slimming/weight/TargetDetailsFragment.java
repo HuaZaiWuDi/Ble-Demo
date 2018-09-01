@@ -11,11 +11,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-<<<<<<< HEAD
 import com.vondear.rxtools.activity.RxActivityUtils;
-=======
 import com.vondear.rxtools.utils.SPUtils;
->>>>>>> remotes/old-origin/master
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -23,12 +20,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-<<<<<<< HEAD
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-=======
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
->>>>>>> remotes/old-origin/master
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -36,6 +29,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+
 
 /**
  * Created by jk on 2018/7/27.
@@ -78,11 +72,7 @@ public class TargetDetailsFragment extends BaseActivity {
         mTvTargetDays.setTypeface(typeface);
         mTvTargetWeight.setTypeface(typeface);
         mTvDistanceTarget.setTypeface(typeface);
-<<<<<<< HEAD
 
-        bundle = getIntent().getExtras();
-=======
->>>>>>> remotes/old-origin/master
     }
 
 

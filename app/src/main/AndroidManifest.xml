@@ -124,6 +124,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
+
         </activity>
         <activity
             android:name=".ui.guide.SpalshActivity_"
@@ -200,33 +201,87 @@
         <activity
             android:name=".ui.main.mine.AboutFragment"
             android:screenOrientation="nosensor"/>
-        <activity android:name=".ui.toolui.SportingActivity"/>
-        <activity android:name=".ui.main.mine.AccountFragment"/>
-        <activity android:name=".ui.main.mine.CollectFragment"/>
-        <activity android:name=".ui.main.mine.DeviceFragment_"/>
-        <activity android:name=".ui.main.mine.EditFragment"/>
-        <activity android:name=".ui.main.mine.MessageDetailsFragment"/>
-        <activity android:name=".ui.main.mine.MessageFragment"/>
-        <activity android:name=".ui.main.mine.PhotoDetailsFragment"/>
-        <activity android:name=".ui.main.mine.ProblemFragemnt"/>
-        <activity android:name=".ui.main.mine.Settingfragment"/>
-        <activity android:name=".ui.main.mine.UserInfofragment"/>
-        <activity android:name=".ui.main.slimming.heat.second.AddedFoodFragment"/>
-        <activity android:name=".ui.main.slimming.heat.second.FoodDetailsFragment"/>
-        <activity android:name=".ui.main.slimming.heat.second.FoodRecommend"/>
-        <activity android:name=".ui.main.slimming.heat.second.HeatDetailFragment"/>
-        <activity android:name=".ui.main.slimming.heat.SearchHistoryFragment"/>
-        <activity android:name=".ui.main.slimming.sports.SportingFragment_"/>
-        <activity android:name=".ui.main.slimming.sports.SportsDetailsFragment"/>
-        <activity android:name=".ui.main.slimming.weight.BodyFatFragment"/>
-        <activity android:name=".ui.main.slimming.weight.BodyDataFragment"/>
-        <activity android:name=".ui.main.slimming.weight.SettingTargetFragment"/>
-        <activity android:name=".ui.main.slimming.weight.TargetDateFargment"/>
-        <activity android:name=".ui.main.slimming.weight.TargetDetailsFragment"/>
-        <activity android:name=".ui.main.slimming.weight.WeightAddFragment"/>
-        <activity android:name=".ui.main.slimming.weight.WeightRecordFragment_"/>
-        <activity android:name=".ui.main.slimming.sports.SmartClothingFragment_"/>
-        <activity android:name=".ui.guide.GuideActivity"/>
+        <activity
+            android:name=".ui.toolui.SportingActivity"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.AccountFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.CollectFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.DeviceFragment_"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.EditFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.MessageDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.MessageFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.PhotoDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.ProblemFragemnt"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.Settingfragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.UserInfofragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.AddedFoodFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.FoodDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.FoodRecommend"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.HeatDetailFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.SearchHistoryFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.sports.SportingFragment_"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.sports.SportsDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.BodyFatFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.BodyDataFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.SettingTargetFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.TargetDateFargment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.TargetDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.WeightAddFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.WeightRecordFragment_"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.sports.SmartClothingFragment_"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.guide.GuideActivity"
+            android:screenOrientation="nosensor"/>
     </application>
 
 </manifest>

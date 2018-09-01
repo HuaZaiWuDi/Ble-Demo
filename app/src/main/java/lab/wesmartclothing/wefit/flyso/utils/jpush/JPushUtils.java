@@ -29,7 +29,7 @@ public class JPushUtils {
         JPushInterface.setDebugMode(BuildConfig.DEBUG);
         JPushInterface.init(application);
 
-        setAliasOrTags(null);
+        setAliasOrTags("");
     }
 
 

@@ -345,11 +345,7 @@ public class SportingFragment extends BaseActivity {
         @Override
         public void enterTimer() {
             if (mSwMusic.isOpened())
-<<<<<<< HEAD
-                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal));
-=======
                 TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal) + mTvKcal.getText() + "千卡的能量");
->>>>>>> remotes/old-origin/master
         }
     });
 
