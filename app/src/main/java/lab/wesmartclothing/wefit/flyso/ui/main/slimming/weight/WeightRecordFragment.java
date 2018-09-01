@@ -25,9 +25,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
-import com.yolanda.health.qnblesdk.listener.QNDataListener;
-import com.yolanda.health.qnblesdk.out.QNBleDevice;
-import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -52,6 +49,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
+import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
@@ -182,14 +180,12 @@ public class WeightRecordFragment extends BaseActivity {
     public void onStart() {
         isVisite = true;
         initData();
-        initBleCallBack();
         super.onStart();
     }
 
     @Override
     public void onStop() {
         isVisite = false;
-        MyAPP.QNapi.setDataListener(null);
         super.onStop();
     }
 
@@ -223,6 +219,34 @@ public class WeightRecordFragment extends BaseActivity {
                     }
                 });
 
+
+        //体重历史数据
+        RxBus.getInstance().register2(ScaleHistoryData.class)
+                .compose(RxComposeUtils.<ScaleHistoryData>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<ScaleHistoryData>() {
+                    @Override
+                    protected void _onNext(ScaleHistoryData data) {
+                        final List<QNScaleStoreData> mList = data.getList();
+                        if (mList.size() > 0) {
+                            mLayoutStrongTip.setVisibility(View.VISIBLE);
+                            String checkSporting = getString(R.string.checkHistoryWeight);
+                            SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
+                                    .setForegroundColor(getResources().getColor(R.color.green_61D97F))
+                                    .setLength(9, checkSporting.length());
+                            mBtnStrongTip.setText(builder);
+                            mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mLayoutStrongTip.setVisibility(View.GONE);
+                                    String s = MyAPP.getGson().toJson(mList);
+                                    RxLogUtils.d("体重信息:" + s);
+                                    bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
+                                    RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
 
@@ -370,43 +394,6 @@ public class WeightRecordFragment extends BaseActivity {
         }
     }
 
-    //体脂称提取数据回调
-    private void initBleCallBack() {
-        MyAPP.QNapi.setDataListener(new QNDataListener() {
-            @Override
-            public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
-                RxLogUtils.d("体重秤实时重量：" + v);
-            }
-
-            @Override
-            public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                RxLogUtils.d("实时的稳定测量数据是否有效：");
-            }
-
-            @Override
-            public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
-                RxLogUtils.d("历史数据：" + list.size());
-                if (list.size() > 0) {
-                    mLayoutStrongTip.setVisibility(View.VISIBLE);
-                    String checkSporting = getString(R.string.checkHistoryWeight);
-                    SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
-                            .setForegroundColor(getResources().getColor(R.color.green_61D97F))
-                            .setLength(9, checkSporting.length());
-                    mBtnStrongTip.setText(builder);
-                    mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mLayoutStrongTip.setVisibility(View.GONE);
-                            String s = MyAPP.getGson().toJson(list);
-                            RxLogUtils.d("体重信息:" + s);
-                            bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
-                            RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
-                        }
-                    });
-                }
-            }
-        });
-    }
 
     @OnClick({R.id.layout_sportTip, R.id.tv_settingTarget, R.id.layout_sports})
     public void onViewClicked(View view) {

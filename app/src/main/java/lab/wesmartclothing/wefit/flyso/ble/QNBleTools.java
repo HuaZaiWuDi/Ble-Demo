@@ -24,7 +24,10 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
+import lab.wesmartclothing.wefit.flyso.rxbus.ScaleUnsteadyWeight;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created icon_hide_password jk on 2018/5/16.
@@ -183,6 +186,25 @@ public class QNBleTools {
                 }
             }
         });
+
+        MyAPP.QNapi.setDataListener(new QNDataListener() {
+            @Override
+            public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
+                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
+            }
+
+            @Override
+            public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
+                RxBus.getInstance().post(qnScaleData);
+            }
+
+            @Override
+            public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
+                RxLogUtils.d("历史数据：" + list.size());
+                RxBus.getInstance().post(new ScaleHistoryData(list));
+            }
+        });
+
     }
 
 

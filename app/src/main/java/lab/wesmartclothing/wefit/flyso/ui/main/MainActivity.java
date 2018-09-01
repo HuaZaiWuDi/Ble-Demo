@@ -52,7 +52,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -132,7 +131,6 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId" + SPUtils.getString(SPKey.SP_UserId));
 
-        TextSpeakUtils.speakFlush("主人，我想你了！");
         initMyViewPager();
         initBottomTab();
         mBottomTab.setOnClickListener(new View.OnClickListener() {
