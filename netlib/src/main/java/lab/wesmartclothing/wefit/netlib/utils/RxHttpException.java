@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.net.ParseException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
@@ -65,6 +66,7 @@ public class RxHttpException {
         } else if (t instanceof SocketTimeoutException) {
             msg = "请求网络超时";
         } else if (t instanceof HttpException) {
+            Log.e("网络异常：", t.toString());
             HttpException httpException = (HttpException) t;
             msg = convertStatusCode(httpException);
         } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException) {
@@ -76,9 +78,6 @@ public class RxHttpException {
         if ("timeout".equals(t.getMessage())) {
             msg = "请求网络超时";
         }
-//        if ("Failed".startsWith(t.getMessage())) {
-//            msg = "请求网络失败";
-//        }
         return msg;
     }
 

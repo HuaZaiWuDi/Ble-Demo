@@ -173,7 +173,7 @@ public class DeviceFragment extends BaseActivity {
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+                        RxToast.normal(error);
                     }
                 });
     }

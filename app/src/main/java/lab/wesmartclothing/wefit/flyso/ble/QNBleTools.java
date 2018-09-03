@@ -85,10 +85,10 @@ public class QNBleTools {
 
     public void saveUserInfo() {
         QNConfig config = MyAPP.QNapi.getConfig();
-        config.setDuration(5000);
+        config.setDuration(1000);
         config.setOnlyScreenOn(false);
         config.setAllowDuplicates(false);
-        config.setScanOutTime(10000);
+        config.setScanOutTime(1000);
         config.setUnit(0);
 
         config.save(new QNResultCallback() {
@@ -113,8 +113,7 @@ public class QNBleTools {
         MyAPP.QNapi.stopBleDeviceDiscovery(mQNResultCallback);
     }
 
-
-    public QNUser creatUser() {
+    public QNUser createUser() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
         if (info == null) {
@@ -138,21 +137,22 @@ public class QNBleTools {
     }
 
 
-    public void connectDevice(QNBleDevice device) {
+    public void connectDevice(QNBleDevice qnBleDevice) {
         MyAPP.QNapi.setDataListener(new QNDataListener() {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
-                RxLogUtils.d("体重秤实时重量：" + v);
+                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
             }
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                RxLogUtils.d("实时的稳定测量数据是否有效：");
+                RxBus.getInstance().post(qnScaleData);
             }
 
             @Override
             public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
                 RxLogUtils.d("历史数据：" + list.size());
+                RxBus.getInstance().post(new ScaleHistoryData(list));
             }
         });
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
@@ -177,34 +177,12 @@ public class QNBleTools {
             }
         });
         scanBle();
-        MyAPP.QNapi.connectDevice(device, creatUser(), new QNResultCallback() {
+        MyAPP.QNapi.connectDevice(qnBleDevice, createUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
                 RxLogUtils.d("轻牛SDK ：连接设备" + i + "----" + s);
-                if (i == 0) {
-                    RxLogUtils.d("轻牛SDK ：连接成功");
-                }
             }
         });
-
-        MyAPP.QNapi.setDataListener(new QNDataListener() {
-            @Override
-            public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
-                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
-            }
-
-            @Override
-            public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                RxBus.getInstance().post(qnScaleData);
-            }
-
-            @Override
-            public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
-                RxLogUtils.d("历史数据：" + list.size());
-                RxBus.getInstance().post(new ScaleHistoryData(list));
-            }
-        });
-
     }
 
 

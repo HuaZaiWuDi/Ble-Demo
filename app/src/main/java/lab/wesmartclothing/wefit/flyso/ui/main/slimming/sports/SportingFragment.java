@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -121,6 +122,13 @@ public class SportingFragment extends BaseActivity {
         initRxBus();
         initTypeface();
         showDialog();
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        RxLogUtils.e("onNewIntent");
     }
 
     private void initTypeface() {

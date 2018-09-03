@@ -184,6 +184,7 @@ public class RxThreadUtils {
                     public ObservableSource<T> apply(T t) throws Exception {
                         if (t instanceof String) {
                             JSONObject object = null;
+
                             try {
                                 object = new JSONObject((String) t);
                                 int code = object.getInt("code");

@@ -10,9 +10,11 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
@@ -24,6 +26,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -135,7 +138,7 @@ public class TargetDateFargment extends BaseActivity {
 
 
     private void settingTarget() {
-        double aDouble = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
+        double aDouble = SPUtils.getFloat(SPKey.SP_realWeight);
         double aDouble1 = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
 
         JsonObject object = new JsonObject();
@@ -155,7 +158,7 @@ public class TargetDateFargment extends BaseActivity {
                         //TODO 这里跳转目标不详，先跳转到体重首页
                         //关闭之前的设置目标体重和目标周期的界面
                         //直接跳转到指定的Fragment（同时清栈）
-//                        getBaseFragmentActivity().popBackStack(WeightRecordFragment_.class);
+                        RxActivityUtils.skipActivity(mContext, WeightRecordFragment_.class);
                     }
 
                     @Override

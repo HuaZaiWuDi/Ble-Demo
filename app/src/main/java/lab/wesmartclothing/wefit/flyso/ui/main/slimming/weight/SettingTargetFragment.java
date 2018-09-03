@@ -52,7 +52,6 @@ public class SettingTargetFragment extends BaseActivity {
 
 
     private float maxWeight, minWeight, settingWeight, initWeight = 0, stillNeed;
-    private Bundle bundle;
 
 
     @Override
@@ -76,11 +75,7 @@ public class SettingTargetFragment extends BaseActivity {
      * 女性：(身高cm－70)×60﹪=标准体重
      */
     private void bestWeight() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            initWeight = (float) bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
-            if (initWeight <= 0) initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
-        }
+        initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
         float standardWeight = 0;
@@ -161,11 +156,10 @@ public class SettingTargetFragment extends BaseActivity {
             return;
         }
 
-        Bundle mBundle = new Bundle(bundle);
+        Bundle mBundle = new Bundle();
         mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, settingWeight);
         mBundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
-        mBundle.putDouble(Key.BUNDLE_LAST_WEIGHT, initWeight);
-        RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, bundle);
+        RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
     }
 
 

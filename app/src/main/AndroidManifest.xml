@@ -117,8 +117,6 @@
             android:name=".ble.dfu.DfuService"
             android:exported="true"/>
 
-
-        <!--android:launchMode="singleTop"-->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -245,12 +243,14 @@
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.second.HeatDetailFragment"
+            android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.SearchHistoryFragment"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.sports.SportingFragment_"
+            android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.sports.SportsDetailsFragment"
@@ -272,12 +272,15 @@
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.WeightAddFragment"
+            android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.WeightRecordFragment_"
+            android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.sports.SmartClothingFragment_"
+            android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.guide.GuideActivity"

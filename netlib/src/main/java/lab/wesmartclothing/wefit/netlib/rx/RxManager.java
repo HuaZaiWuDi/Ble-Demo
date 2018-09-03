@@ -3,9 +3,15 @@ package lab.wesmartclothing.wefit.netlib.rx;
 
 import android.app.Application;
 
+import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.IObservableStrategy;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
 
 /**
@@ -16,7 +22,7 @@ import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
  */
 public class RxManager {
     private static RxManager rxManager = null;
-
+    private RxCache rxCache;
     String TAG = "[RxManager]";
 
     Application application;
@@ -30,6 +36,11 @@ public class RxManager {
             rxManager = new RxManager();
         }
         return rxManager;
+    }
+
+
+    public void setRxCache(RxCache rxCache) {
+        this.rxCache = rxCache;
     }
 
     public void setAPPlication(Application application) {
@@ -56,19 +67,19 @@ public class RxManager {
                 .compose(RxThreadUtils.<T>rxThreadHelper());
     }
 
-//    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
-//                                            BehaviorSubject<LifeCycleEvent> lifecycleSubject,
-//                                            String cacheKey,
-//                                            IObservableStrategy strategy
-//    ) {
-//        return observable
-//
-//                .compose(RxThreadUtils.<HttpResult<T>>bindLife(lifecycleSubject))
-//                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstCache()))
-//                .map(new CacheResult.MapFunc<String>())
-//                .compose(RxThreadUtils.<T>handleResult2())
-//                .compose(RxThreadUtils.<T>rxThreadHelper());
-//    }
+    public <T> Observable<T> doNetSubscribe(Observable<T> observable,
+                                            BehaviorSubject<LifeCycleEvent> lifecycleSubject,
+                                            String cacheKey,
+                                            IObservableStrategy strategy
+    ) {
+        return observable
+                .compose(RxThreadUtils.<T>bindLife(lifecycleSubject))
+                .compose(rxCache.<T>transformObservable(cacheKey, String.class, strategy))
+                .map(new CacheResult.MapFunc<T>())
+                .compose(RxThreadUtils.<T>handleResult())
+                .compose(RxThreadUtils.<T>rxThreadHelper());
+
+    }
 
 
     public <T> Observable<T> doLoadDownSubscribe(Observable<T> observable) {

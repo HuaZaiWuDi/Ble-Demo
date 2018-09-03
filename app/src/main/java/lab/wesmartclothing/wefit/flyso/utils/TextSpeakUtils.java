@@ -41,9 +41,7 @@ public class TextSpeakUtils {
 
 
     public static void speakFlush(String text) {
-        RxLogUtils.e("添加文字：" + mTextToSpeech);
         if (mTextToSpeech != null) {
-            RxLogUtils.e("添加文字：" + text.length());
             mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }

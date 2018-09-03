@@ -602,6 +602,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
 
+        SPUtils.put(SPKey.SP_realWeight, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getWeight());
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
         mTvCurrentkg.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");

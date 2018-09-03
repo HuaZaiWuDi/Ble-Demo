@@ -22,7 +22,9 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
-import com.zchu.rxcache.diskconverter.GsonDiskConverter;
+import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
+
+import java.io.File;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -72,7 +74,9 @@ public class MyAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        initRxCache();
         RxManager.getInstance().setAPPlication(this);
+        RxManager.getInstance().setRxCache(getRxCache());
         RxUtils.init(this);
         Bugly.init(getApplicationContext(), BUGly_id, BuildConfig.DEBUG);
         initDB();
@@ -86,6 +90,18 @@ public class MyAPP extends Application {
         typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
 
         TextSpeakUtils.init(this);
+    }
+
+    private void initRxCache() {
+        RxCache.initializeDefault(new RxCache.Builder()
+                .appVersion(2)
+//                    .diskDir(Environment.getDownloadCacheDirectory())
+                .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))
+                .diskConverter(new SerializableDiskConverter())
+                .diskMax((20 * 1024 * 1024))
+                .memoryMax(0)
+                .setDebug(true)
+                .build());
     }
 
 
@@ -111,18 +127,7 @@ public class MyAPP extends Application {
 
 
     public static RxCache getRxCache() {
-        if (rxCache == null) {
-//            rxCache = RxCache.getDefault();
-//
-            rxCache = new RxCache.Builder()
-                    .appVersion(1)//当版本号改变,缓存路径下存储的所有数据都会被清除掉
-                    .diskDir(Environment.getDownloadCacheDirectory())
-                    .diskConverter(new GsonDiskConverter())//支持Serializable、Json(GsonDiskConverter)
-                    .memoryMax(10 * 1024 * 1024)
-                    .diskMax(0)
-                    .build();
-        }
-        return rxCache;
+        return RxCache.getDefault();
     }
 
     public static Gson getGson() {

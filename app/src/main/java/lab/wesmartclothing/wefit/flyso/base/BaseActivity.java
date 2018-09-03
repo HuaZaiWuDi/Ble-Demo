@@ -12,15 +12,27 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
+import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
+import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment_;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created icon_hide_password 华 on 2017/5/2.
@@ -32,6 +44,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Activity mActivity;
     protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
     public TipDialog tipDialog;
+    private boolean gotoSporting = false;
+    private boolean gotoWeight = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +70,51 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         ScreenAdapter.setCustomDensity(this);
         initDialog();
+        initRxBus();
+
+    }
+
+    private void initRxBus() {
+        RxBus.getInstance().register2(OpenAddWeight.class)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<OpenAddWeight>() {
+                    @Override
+                    protected void _onNext(OpenAddWeight integer) {
+                        RxLogUtils.d("显示：WeightRecordFragment");
+                        RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
+                    }
+                });
+
+        RxBus.getInstance().register2(SportsDataTab.class)
+                .compose(RxComposeUtils.<SportsDataTab>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<SportsDataTab>() {
+                    @Override
+                    protected void _onNext(SportsDataTab sportsDataTab) {
+                        RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
+                        if (BleService.clothingFinish) {
+                            BleService.clothingFinish = false;
+                            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.getTvTitle().setVisibility(View.GONE);
+                            dialog.setContent("运动已开始，是否进入运动界面");
+                            dialog.setCancel("进入").setCancelListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                    RxActivityUtils.skipActivity(mContext, SportingFragment_.class);
+                                }
+                            })
+                                    .setSure("取消")
+                                    .setSureListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                        }
+                    }
+                });
     }
 
     @Override

@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -74,7 +75,6 @@ public class WeightAddFragment extends BaseActivity {
         initView();
     }
 
-
     @Override
     public void onStart() {
         TimeOutTimer.startTimer();
@@ -89,16 +89,19 @@ public class WeightAddFragment extends BaseActivity {
     }
 
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        RxLogUtils.e("新开启个界面：" + intent);
+    }
+
     private void initView() {
         initRxBus();
 
         Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
         mTvTargetWeight.setTypeface(typeface);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            lastWeight = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
-        }
+        lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
         RxLogUtils.d("上一次体重数据：" + lastWeight);
     }
 

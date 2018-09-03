@@ -7,7 +7,7 @@ import retrofit2.http.GET;
  * Created by jk on 2018/5/24.
  */
 public interface StoreService {
-    String BASE_URL = ServiceAPI.STORE_URL;
+    String BASE_URL = ServiceAPI.BASE_URL;
 
 
     ///////////////////////////////////////////////////////////////////////////

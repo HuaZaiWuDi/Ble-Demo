@@ -329,7 +329,7 @@ public class FoodDetailsFragment extends BaseActivity {
                         if (SlimmingPage) {
                             RxActivityUtils.finishActivity();
                         } else {
-                            RxActivityUtils.skipActivityTop(mContext, HeatDetailFragment.class, bundle);
+                            RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
                         }
                     }
 

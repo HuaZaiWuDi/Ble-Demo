@@ -27,6 +27,7 @@ import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -79,7 +80,10 @@ public class BleService extends Service {
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
 
     private Map<String, Object> connectDevices = new HashMap<>();
-    private final int heartDeviation = 10;//心率误差值
+    private static final int heartDeviation = 5;//心率误差值
+    private static int heartSupplement = (int) (Math.random() * 3 + 2);//补差值：修改补差值为2-5的随机数
+
+    public static boolean clothingFinish = true;
 
     @Bean
     QNBleTools mQNBleTools;
@@ -123,6 +127,7 @@ public class BleService extends Service {
     //监听系统蓝牙开启
     @Receiver(actions = Key.ACTION_CLOTHING_STOP)
     void CLOTHING_STOP() {
+        clothingFinish = true;
         BleAPI.clothingStop();
         shopSporting();
     }
@@ -215,17 +220,21 @@ public class BleService extends Service {
                     QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
                     RxBus.getInstance().post(bleDevice);
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
-                            mQNBleTools.getConnectState() > 1) {//判断是否正在连接，或者已经连接则不在连接
+                            mQNBleTools.getConnectState() > 1 &&
+                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                         mQNBleTools.connectDevice(bleDevice);
                         mQNBleTools.setDevice(bleDevice);
+                        connectDevices.put(bleDevice.getMac(), bleDevice);
                     }
 
                 } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
                     BleDevice bleDevice = new BleDevice(device);//转换对象
                     RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                            !BleTools.getInstance().connectedState())//判断是否正在连接，或者已经连接则不在连接
+                            !BleTools.getInstance().connectedState() &&
+                            !connectDevices.containsKey(bleDevice.getMac()))//判断是否正在连接，或者已经连接则不在连接
                         connectClothing(bleDevice);
+                    connectDevices.put(bleDevice.getMac(), bleDevice);
                     RxBus.getInstance().post(bleDevice);
                 }
             }
@@ -395,7 +404,7 @@ public class BleService extends Service {
 
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
-                RxLogUtils.d("断开连接：");
+                RxLogUtils.d("断开连接");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 connectDevices.remove(device.getMac());
 //                shopSporting();
@@ -533,10 +542,11 @@ public class BleService extends Service {
                 if (lastHeartRate == 0) {
                     lastHeartRate = heartRate;
                 }
+
                 if (lastHeartRate - heartRate > heartDeviation) {
-                    heartRate = lastHeartRate - heartDeviation;
+                    heartRate = lastHeartRate - heartSupplement;
                 } else if (lastHeartRate - heartRate < -heartDeviation) {
-                    heartRate = lastHeartRate + heartDeviation;
+                    heartRate = lastHeartRate + heartSupplement;
                 }
                 lastHeartRate = heartRate;
 
@@ -554,12 +564,6 @@ public class BleService extends Service {
                 SPUtils.put(Key.CACHE_ATHL_RECORD, athlData);
 
 
-                RxLogUtils.d("时间：" + RxFormat.setFormatDate(time, RxFormat.Date_Date_CH) +
-                        "----------心率:" + heartRate +
-                        "----------温度：" + (data[10] & 0xff) +
-                        "----------步数：" + ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}) +
-                        "----------电压：" + ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]}));
-
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
                 minHeart = heartRate < minHeart ? heartRate : minHeart;
 
@@ -569,8 +573,14 @@ public class BleService extends Service {
                 mSportsDataTab.setMaxHeart(maxHeart);
                 mSportsDataTab.setMinHeart(minHeart);
                 mSportsDataTab.setRealHeart(realHeartRate);
+                mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]}));
+                mSportsDataTab.setLightColor((BitUtils.setBitValue(data[17], 7, (byte) 0) & 0xff));
+                mSportsDataTab.setTemp((data[10] & 0xff));
                 mSportsDataTab.setDuration(athlRecord_2.size() * 2);
                 mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
+                mSportsDataTab.setData(data);
+                mSportsDataTab.setDate(RxFormat.setFormatDate(ByteUtil.bytesToLongD4(data, 3) * 1000, RxFormat.Date_Date_CH));
+                mSportsDataTab.setPower((BitUtils.checkBitValue(data[17], 7)));
                 //卡路里累加计算
                 kcalTotal += mHeartRateToKcal.getCalorie(heartRate, 2f / 3600);
                 mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位

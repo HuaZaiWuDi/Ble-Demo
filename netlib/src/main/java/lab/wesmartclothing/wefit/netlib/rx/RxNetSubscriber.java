@@ -1,11 +1,9 @@
 package lab.wesmartclothing.wefit.netlib.rx;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import lab.wesmartclothing.wefit.netlib.BuildConfig;
 import lab.wesmartclothing.wefit.netlib.utils.RxHttpException;
 
 /**
@@ -28,8 +26,8 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     @Override
     public void onError(Throwable e) {
         Log.e(TAG, "onError: " + e.toString());
-        if (BuildConfig.DEBUG)
-            Toast.makeText(RxManager.getInstance().getApplication(), e.getMessage(), Toast.LENGTH_LONG).show();
+//        if (BuildConfig.DEBUG)
+//            Toast.makeText(RxManager.getInstance().getApplication(), e.getMessage(), Toast.LENGTH_LONG).show();
         _onError(new RxHttpException().handleResponseError(e));
         _onError(new RxHttpException().handleResponseError(e), -1);
         Log.e(TAG, "onError: " + e.toString());

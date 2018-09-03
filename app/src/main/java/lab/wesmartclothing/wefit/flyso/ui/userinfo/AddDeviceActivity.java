@@ -439,8 +439,6 @@ public class AddDeviceActivity extends BaseActivity {
                         }
                         bean.setBind("true".equals(s));
                         adapter.addData(bean);
-
-
                     }
 
                     @Override
