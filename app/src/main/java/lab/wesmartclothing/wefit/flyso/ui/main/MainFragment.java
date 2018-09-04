@@ -160,7 +160,7 @@ public class MainFragment extends BaseAcFragment {
             @Override
             public void onTabReselect(int position) {
                 //双击或三击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == 3 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
+                if (position == 2 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
                     new QMUIBottomSheet.BottomListSheetBuilder(getActivity())
                             .addItem(ServiceAPI.BASE_DEBUG)
                             .addItem(ServiceAPI.BASE_RELEASE)
@@ -183,7 +183,6 @@ public class MainFragment extends BaseAcFragment {
                 } else if (position == 1) {
 //                    boolean connectionState = JPushInterface.getConnectionState(mContext);
 //                    RxLogUtils.e("连接状态：" + connectionState);
-
                 }
             }
         });

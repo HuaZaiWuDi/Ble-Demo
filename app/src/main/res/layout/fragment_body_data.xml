@@ -62,8 +62,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:id="@+id/tv_weight"
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:text="--"
                     android:textColor="@color/green_61D97F"
-                    android:textSize="24sp"
+                    android:textSize="36sp"
                     tools:text="56.2"/>
 
                 <TextView
@@ -81,7 +81,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/tv_weight"
-                    android:text="kg"
+                    android:text="分"
                     android:textColor="@color/green_61D97F"
                     android:textSize="13sp"/>
 

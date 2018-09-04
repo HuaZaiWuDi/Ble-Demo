@@ -25,9 +25,7 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,10 +80,10 @@ public class BodyDataFragment extends BaseAcFragment {
             R.mipmap.man_3_1, R.mipmap.man_3_2, R.mipmap.man_3_2,};
     private int bodyIndex;
     private String[] bodys;
-    public Map<Integer, Healthy> mHealthyMaps = new HashMap<>();
+    private List<Healthy> mHealthyList = new ArrayList<>();
 
     private BodyDataUtil bodyDataUtil;
-    private double[] bodyValue = new double[12];
+    private double[] bodyValue = new double[13];
     private Bundle mBundle = new Bundle();
 
 
@@ -111,7 +109,14 @@ public class BodyDataFragment extends BaseAcFragment {
 
     }
 
+    //TODO 个人信息资料标准的限定需要两套，根据性别来判定
     private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
+        mHealthyList.clear();
+
+        //体重
+        Healthy healthy0 = new Healthy();
+        mHealthyList.add(healthy0);
+
         //体脂率
         Healthy healthy = new Healthy();
         healthy.setSections(new double[]{11, 21, 26});
@@ -119,8 +124,7 @@ public class BodyDataFragment extends BaseAcFragment {
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
         healthy.setSectionLabels(new String[]{"11.0%", "21.0%", "26.0%"});
         healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
-        mHealthyMaps.put(0, healthy);
-
+        mHealthyList.add(healthy);
         //BMI
         Healthy healthy2 = new Healthy();
         healthy2.setSections(new double[]{18.5, 25});
@@ -128,7 +132,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy2.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
         healthy2.setLabels(new String[]{"偏低", "标准", "偏高"});
-        mHealthyMaps.put(1, healthy2);
+        mHealthyList.add(healthy2);
 
         //内脏脂肪等级
         Healthy healthy3 = new Healthy();
@@ -137,7 +141,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy3.setColors(new int[]{Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
         healthy3.setLabels(new String[]{"标准", "偏高", "严重偏高"});
-        mHealthyMaps.put(2, healthy3);
+        mHealthyList.add(healthy3);
 
         /**
          * 肌肉量
@@ -159,11 +163,11 @@ public class BodyDataFragment extends BaseAcFragment {
         //肌肉量
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{value1, value2});
-        healthy4.setSectionLabels(new String[]{value1 + "kg", value2 + "kg"});
+        healthy4.setSectionLabels(new String[]{RxFormatValue.fromat4S5R(value1, 1) + "kg", RxFormatValue.fromat4S5R(value2, 1) + "kg"});
         healthy4.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
-        mHealthyMaps.put(3, healthy4);
+        mHealthyList.add(healthy4);
 
         //基础代谢
         Healthy healthy5 = new Healthy();
@@ -172,7 +176,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy5.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F")});
         healthy5.setLabels(new String[]{"未达标", "达标"});
-        mHealthyMaps.put(4, healthy5);
+        mHealthyList.add(healthy5);
 
         //水分
         Healthy healthy6 = new Healthy();
@@ -181,7 +185,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy6.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy6.setLabels(new String[]{"偏低", "标准", "充足"});
-        mHealthyMaps.put(5, healthy6);
+        mHealthyList.add(healthy6);
 
         /**
          * 骨量
@@ -198,15 +202,8 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy7.setColors(new int[]{Color.parseColor("#5A7BEE"),
                 Color.parseColor("#61D97F"), Color.parseColor("#FFBC00")});
         healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});
-        mHealthyMaps.put(6, healthy7);
+        mHealthyList.add(healthy7);
 
-        //身体年龄
-        Healthy healthy8 = new Healthy();
-        mHealthyMaps.put(7, healthy8);
-
-        //去脂体重
-        Healthy healthy9 = new Healthy();
-        mHealthyMaps.put(8, healthy9);
 
         //皮下脂肪率
         Healthy healthy10 = new Healthy();
@@ -215,7 +212,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy10.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
         healthy10.setLabels(new String[]{"偏低", "标准", "偏高"});
-        mHealthyMaps.put(9, healthy10);
+        mHealthyList.add(healthy10);
 
         //骨骼肌率
         Healthy healthy11 = new Healthy();
@@ -224,7 +221,7 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy11.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
         healthy11.setLabels(new String[]{"偏低", "标准", "偏高"});
-        mHealthyMaps.put(10, healthy11);
+        mHealthyList.add(healthy11);
 
         //蛋白质
         Healthy healthy12 = new Healthy();
@@ -233,11 +230,18 @@ public class BodyDataFragment extends BaseAcFragment {
         healthy12.setColors(new int[]{Color.parseColor("#FF7200"), Color.parseColor("#61D97F"),
                 Color.parseColor("#17BD4F")});
         healthy12.setLabels(new String[]{"不足", "标准", "优秀"});
-        mHealthyMaps.put(11, healthy12);
+        mHealthyList.add(healthy12);
 
-        bodyDataUtil = new BodyDataUtil(mHealthyMaps);
+        //身体年龄
+        mHealthyList.add(healthy12);
+
+        //去脂体重
+        mHealthyList.add(healthy12);
+
+        bodyDataUtil = new BodyDataUtil(mHealthyList);
 
     }
+
 
     private void initData() {
         if (!RxDataUtils.isNullString(gid)) {
@@ -255,7 +259,7 @@ public class BodyDataFragment extends BaseAcFragment {
                             RxLogUtils.d("心率数据：" + s);
                             WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
                             mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
-                            mTvWeight.setText((float) detailsBean.getWeightInfo().getWeight() + "");
+                            mTvWeight.setText((float) detailsBean.getWeightInfo().getHealthScore() + "");
 
                             Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
                             //一定要加这行！！！！！！！！！！！
@@ -286,24 +290,25 @@ public class BodyDataFragment extends BaseAcFragment {
     private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
         initWeightData(weightInfo);
         String[] titles = getResources().getStringArray(R.array.weightDatas);
-        String[] units = {"%", "", "级", "kg", "kcal", "%", "kg", "岁", "kg", "%", "%", "%"};
-        int[] imgs = {R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
-                R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_body_age,
-                R.mipmap.icon_lean_body_weight, R.mipmap.icon_subcutaneous_fat, R.mipmap.icon_muscle_rate, R.mipmap.icon_protein};
+        String[] units = {"kg", "%", "", "级", "kg", "kcal", "%", "kg", "%", "%", "%", "岁", "kg"};
+        int[] imgs = {R.mipmap.icon_data_weight, R.mipmap.icon_bodyfat, R.mipmap.icon_bmi, R.mipmap.icon_viscera, R.mipmap.icon_muscle,
+                R.mipmap.icon_metabolic_rate, R.mipmap.icon_water, R.mipmap.icon_bone, R.mipmap.icon_subcutaneous_fat,
+                R.mipmap.icon_muscle_rate, R.mipmap.icon_protein, R.mipmap.icon_body_age, R.mipmap.icon_lean_body_weight};
 
         if (weightInfo != null) {
-            bodyValue[0] = weightInfo.getBodyFat();
-            bodyValue[1] = weightInfo.getBmi();
-            bodyValue[2] = weightInfo.getVisfat();
-            bodyValue[3] = weightInfo.getMuscle();
-            bodyValue[4] = weightInfo.getBmr();
-            bodyValue[5] = weightInfo.getWater();
-            bodyValue[6] = weightInfo.getBone();
-            bodyValue[7] = weightInfo.getBodyAge();
-            bodyValue[8] = weightInfo.getBodyFfm();
-            bodyValue[9] = weightInfo.getSubfat();
-            bodyValue[10] = weightInfo.getMuscle();
-            bodyValue[11] = weightInfo.getProtein();
+            bodyValue[0] = weightInfo.getWeight();
+            bodyValue[1] = weightInfo.getBodyFat();
+            bodyValue[2] = weightInfo.getBmi();
+            bodyValue[3] = weightInfo.getVisfat();
+            bodyValue[4] = weightInfo.getMuscle();
+            bodyValue[5] = weightInfo.getBmr();
+            bodyValue[6] = weightInfo.getWater();
+            bodyValue[7] = weightInfo.getBone();
+            bodyValue[8] = weightInfo.getSubfat();
+            bodyValue[9] = weightInfo.getMuscle();
+            bodyValue[10] = weightInfo.getProtein();
+            bodyValue[11] = weightInfo.getBodyAge();
+            bodyValue[12] = weightInfo.getBodyFfm();
 
             View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_delete_data, null);
             LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
@@ -324,14 +329,14 @@ public class BodyDataFragment extends BaseAcFragment {
             level0Bean.setBodyData(titles[i]);
             level0Bean.setBodyDataImg(imgs[i]);
 
-            if (i == 7 || i == 8) {
+            if (i == titles.length - 1 || i == titles.length - 2 || i == 0) {
                 level0Bean.setStatus("标准");
                 level0Bean.setStatusColor(Color.parseColor("#61D97F"));
                 level0Bean.setCanExpanded(false);
             } else {
 
                 BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
-                Healthy healthy = mHealthyMaps.get(i % mHealthyMaps.size());
+                Healthy healthy = mHealthyList.get(i % mHealthyList.size());
                 bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
                 bodyLevel1Bean.setLabels(healthy.getLabels());
                 bodyLevel1Bean.setColors(healthy.getColors());
@@ -343,7 +348,22 @@ public class BodyDataFragment extends BaseAcFragment {
 
             multiItermLists.add(level0Bean);
         }
+        int index = 1;
+        //排列下顺序，有问题的显示在前面，判断标准：状态颜色为 #61D97F、#17BD4F
+        for (int i = 0; i < multiItermLists.size(); i++) {
+            BodyLevel0Bean entity = (BodyLevel0Bean) multiItermLists.get(i);
+            if (entity.getStatusColor() != Color.parseColor("#61D97F")
+                    && entity.getStatusColor() != Color.parseColor("#17BD4F")) {
+                swap(multiItermLists, index, i);
+                index++;
+            }
+        }
         adapter.setNewData(multiItermLists);
+    }
+
+    public static void swap(List<?> list, int i, int j) {
+        final List l = list;
+        l.set(i, l.set(j, l.get(i)));
     }
 
 
