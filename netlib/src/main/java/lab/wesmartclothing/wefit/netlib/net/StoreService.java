@@ -14,15 +14,15 @@ public interface StoreService {
     // 商城
     ///////////////////////////////////////////////////////////////////////////
 //    @FormUrlEncoded
-    @GET("smart/getMallAddress")
+    @GET("system/getMallAddress")
     Observable<String> getMallAddress();
 
     //订单地址
-    @GET("smart/getOrderUrl")
+    @GET("system/getOrderUrl")
     Observable<String> getOrderUrl();
 
     //购物车地址
-    @GET("smart/getShoppingAddress")
+    @GET("system/getShoppingAddress")
     Observable<String> getShoppingAddress();
 
 

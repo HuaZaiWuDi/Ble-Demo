@@ -1,8 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
-import android.app.Application;
 import android.content.Intent;
+import android.os.Environment;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,6 +14,8 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -21,6 +23,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
+import java.io.File;
 import java.util.List;
 
 import io.reactivex.functions.Action;
@@ -36,7 +39,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
@@ -86,12 +88,25 @@ public class SpalshActivity extends BaseActivity {
         initUserInfo();
         initData();
 
+    }
 
+    private void initRxCache() {
+        RxLogUtils.e("申请权限");
+        RxCache.initializeDefault(new RxCache.Builder()
+                .appVersion(2)
+//                .diskDir(Environment.getDownloadCacheDirectory())
+                .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))
+                .diskConverter(new SerializableDiskConverter())
+                .diskMax((20 * 1024 * 1024))
+                .memoryMax(0)
+                .setDebug(true)
+                .build());
     }
 
     private void initUserInfo() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
@@ -120,6 +135,7 @@ public class SpalshActivity extends BaseActivity {
 
 
     private void gotoMain() {
+        initRxCache();
         RxLogUtils.d("跳转");
         if (!SPUtils.getBoolean(SPKey.SP_GUIDE)) {
             RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
@@ -137,8 +153,7 @@ public class SpalshActivity extends BaseActivity {
 
 
     private void initPromissions() {
-        RxPermissions permissions = new RxPermissions(mActivity);
-        permissions
+        new RxPermissions(mActivity)
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))

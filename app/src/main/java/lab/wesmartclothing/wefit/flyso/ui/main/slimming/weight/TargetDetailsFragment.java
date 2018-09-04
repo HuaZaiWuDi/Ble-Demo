@@ -109,7 +109,6 @@ public class TargetDetailsFragment extends BaseActivity {
                         mTvTargetWeight.setText(targetWeight + "");
                         mTvDistanceTarget.setText(stillNeed + "");
 
-
                         bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
                         bundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
                         bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);

@@ -22,7 +22,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
  */
 public class RxManager {
     private static RxManager rxManager = null;
-    private RxCache rxCache;
     String TAG = "[RxManager]";
 
     Application application;
@@ -38,10 +37,6 @@ public class RxManager {
         return rxManager;
     }
 
-
-    public void setRxCache(RxCache rxCache) {
-        this.rxCache = rxCache;
-    }
 
     public void setAPPlication(Application application) {
         this.application = application;
@@ -74,7 +69,7 @@ public class RxManager {
     ) {
         return observable
                 .compose(RxThreadUtils.<T>bindLife(lifecycleSubject))
-                .compose(rxCache.<T>transformObservable(cacheKey, String.class, strategy))
+                .compose(RxCache.getDefault().<T>transformObservable(cacheKey, String.class, strategy))
                 .map(new CacheResult.MapFunc<T>())
                 .compose(RxThreadUtils.<T>handleResult())
                 .compose(RxThreadUtils.<T>rxThreadHelper());

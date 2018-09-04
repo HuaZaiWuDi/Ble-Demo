@@ -76,13 +76,18 @@ public class SettingTargetFragment extends BaseActivity {
      */
     private void bestWeight() {
         initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
         float standardWeight = 0;
-        if (userInfo.getSex() == 1) {
-            standardWeight = (userInfo.getHeight() - 80) * 0.7f;
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            standardWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         } else {
-            standardWeight = (userInfo.getHeight() - 70) * 0.6f;
+            String string = SPUtils.getString(SPKey.SP_UserInfo);
+            UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
+            if (userInfo.getSex() == 1) {
+                standardWeight = (userInfo.getHeight() - 80) * 0.7f;
+            } else {
+                standardWeight = (userInfo.getHeight() - 70) * 0.6f;
+            }
         }
         initRuler(standardWeight);
         minWeight = standardWeight * 0.9f;
@@ -92,7 +97,7 @@ public class SettingTargetFragment extends BaseActivity {
         stillNeed = initWeight - standardWeight;
         if (stillNeed <= 0) {
             //TODO 当前体重小于目标体重着
-            tipDialog.showInfo("您当前体重小于标准体重，\n请设置目标体重~", 2000);
+            tipDialog.showInfo("您当前体重小于目标体重，\n请设置目标体重~", 2000);
         }
 
         String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";

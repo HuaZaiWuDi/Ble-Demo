@@ -79,13 +79,11 @@ public class QQLoginInstance extends LoginInstance implements IUiListener {
             public void subscribe(ObservableEmitter<QQUser> emitter) throws Exception {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder().url(buildUserInfoUrl(token, URL)).build();
-
                 try {
                     Response response = client.newCall(request).execute();
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     QQUser user = QQUser.parse(token.getOpenid(), jsonObject);
                     emitter.onNext(user);
-                    Log.d("QQ登录：", user.toString());
                 } catch (IOException | JSONException e) {
                     ShareLogger.e(INFO.FETCH_USER_INOF_ERROR);
                     emitter.onError(e);

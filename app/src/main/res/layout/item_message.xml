@@ -20,7 +20,7 @@
         android:layout_height="34dp"
         android:layout_marginRight="8dp"
         app:qmui_is_circle="true"
-        tools:src="@mipmap/app_name"/>
+        tools:src="@mipmap/icon_app_round"/>
 
 
     <ImageView

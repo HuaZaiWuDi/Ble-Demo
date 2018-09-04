@@ -82,16 +82,19 @@ public class LoginRegisterActivity extends BaseActivity {
 
     @OnClick(R.id.img_wexin)
     void img_wexin() {
+        tipDialog.show("正在登陆", 3000);
         LoginUtil.login(mActivity, LoginPlatform.WX, listener, true);
     }
 
     @OnClick(R.id.img_qq)
     void img_qq() {
+        tipDialog.show("正在登陆", 3000);
         LoginUtil.login(mActivity, LoginPlatform.QQ, listener, true);
     }
 
     @OnClick(R.id.img_weibo)
     void img_weibo() {
+        tipDialog.show("正在登陆", 3000);
         LoginUtil.login(mActivity, LoginPlatform.WEIBO, listener, true);
     }
 
@@ -121,6 +124,12 @@ public class LoginRegisterActivity extends BaseActivity {
     public void initView() {
         initTab();
         initRxBus();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tipDialog.dismiss();
     }
 
     private void initRxBus() {

@@ -79,7 +79,6 @@ public class QNBleTools {
 
     public void scanBle() {
         saveUserInfo();
-        stopScan();
         MyAPP.QNapi.startBleDeviceDiscovery(mQNResultCallback);
     }
 
