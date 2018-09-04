@@ -98,16 +98,20 @@ public class WxLoginInstance extends LoginInstance {
                     @Override
                     public void onNext(WxToken wxToken) {
                         if (fetchUserInfo) {
-                            mLoginListener.beforeFetchUserInfo(wxToken);
-                            fetchUserInfo(wxToken);
+                            if (mLoginListener != null) {
+                                mLoginListener.beforeFetchUserInfo(wxToken);
+                                fetchUserInfo(wxToken);
+                            }
                         } else {
-                            mLoginListener.loginSuccess(new LoginResult(LoginPlatform.WX, wxToken));
+                            if (mLoginListener != null)
+                                mLoginListener.loginSuccess(new LoginResult(LoginPlatform.WX, wxToken));
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mLoginListener.loginFailure(new Exception(e.getMessage()));
+                        if (mLoginListener != null)
+                            mLoginListener.loginFailure(new Exception(e.getMessage()));
                     }
 
                     @Override
@@ -143,13 +147,16 @@ public class WxLoginInstance extends LoginInstance {
 
                     @Override
                     public void onNext(WxUser wxUser) {
-                        mLoginListener.loginSuccess(
-                                new LoginResult(LoginPlatform.WX, token, wxUser));
+                        if (mLoginListener != null) {
+                            mLoginListener.loginSuccess(
+                                    new LoginResult(LoginPlatform.WX, token, wxUser));
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mLoginListener.loginFailure(new Exception(e));
+                        if (mLoginListener != null)
+                            mLoginListener.loginFailure(new Exception(e));
                     }
 
                     @Override
@@ -173,6 +180,7 @@ public class WxLoginInstance extends LoginInstance {
                 if (baseResp instanceof SendAuth.Resp && baseResp.getType() == 1) {
                     SendAuth.Resp resp = (SendAuth.Resp) baseResp;
                     Log.d("微信登录(handleResult):", resp.toString());
+                    if (mLoginListener == null) return;
                     switch (resp.errCode) {
                         case BaseResp.ErrCode.ERR_OK:
                             getToken(resp.code);

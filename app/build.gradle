@@ -106,10 +106,12 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "boolean", "VERSION_TEST", "false"//9月5号演示版本置为true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            buildConfigField "boolean", "VERSION_TEST", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

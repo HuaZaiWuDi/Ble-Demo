@@ -135,6 +135,7 @@ public class SportsDetailsFragment extends BaseActivity {
             checkHeartRate(athlList.get(i));
         }
 
+        if (totalTime == 0) return;
         mProWarm.setProgress((warmTime * 100) / totalTime);
         mProGrease.setProgress(greaseTime * 100 / totalTime);
         mProAerobic.setProgress(aerobicTime * 100 / totalTime);

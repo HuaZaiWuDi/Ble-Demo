@@ -1,8 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
-import com.vondear.rxtools.utils.RxLogUtils;
-
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
 
@@ -11,10 +10,10 @@ import lab.wesmartclothing.wefit.flyso.entity.Healthy;
  */
 public class BodyDataUtil {
 
-    private Map<Integer, Healthy> mHealthyMaps;
+    private List<Healthy> mHealthyList = new ArrayList<>();
 
-    public BodyDataUtil(Map<Integer, Healthy> mHealthyMaps) {
-        this.mHealthyMaps = mHealthyMaps;
+    public BodyDataUtil(List<Healthy> mHealthyList) {
+        this.mHealthyList = mHealthyList;
     }
 
 
@@ -23,7 +22,7 @@ public class BodyDataUtil {
         if (index == 4) {
             temp = (int) (realValue / (903 * 2) * 100);
         } else {
-            temp = bmi(realValue, mHealthyMaps.get(index % mHealthyMaps.size()).getSections());
+            temp = bmi(realValue, mHealthyList.get(index % mHealthyList.size()).getSections());
         }
 
         return temp;
@@ -67,9 +66,9 @@ public class BodyDataUtil {
 
     public Object[] checkStatus(double realValue, int index) {
 
-        double[] section = mHealthyMaps.get(index % mHealthyMaps.size()).getSections();
-        String[] labels = mHealthyMaps.get(index % mHealthyMaps.size()).getLabels();
-        int[] colors = mHealthyMaps.get(index % mHealthyMaps.size()).getColors();
+        double[] section = mHealthyList.get(index % mHealthyList.size()).getSections();
+        String[] labels = mHealthyList.get(index % mHealthyList.size()).getLabels();
+        int[] colors = mHealthyList.get(index % mHealthyList.size()).getColors();
 
         Object[] temps = new Object[2];
         String temp = "";

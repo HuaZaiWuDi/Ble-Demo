@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -74,7 +75,7 @@ public class MainActivity extends BaseALocationActivity {
     @BindView(R.id.mCommonTabLayout)
     CommonTabLayout mCommonTabLayout;
     @BindView(R.id.bottom_tab)
-    RelativeLayout mBottomTab;
+    LinearLayout mBottomTab;
     @BindView(R.id.parent)
     RelativeLayout mParent;
     private Intent bleIntent;

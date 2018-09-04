@@ -179,7 +179,7 @@ public class WeightAddFragment extends BaseActivity {
     }
 
 
-    MyTimer TimeOutTimer = new MyTimer(20000, 1000, new MyTimerListener() {
+    MyTimer TimeOutTimer = new MyTimer(new MyTimerListener() {
         @Override
         public void enterTimer() {
             mTvTip.setVisibility(View.INVISIBLE);
@@ -187,8 +187,9 @@ public class WeightAddFragment extends BaseActivity {
             mBtnSave.setVisibility(View.VISIBLE);
             mMRoundDisPlayView.stopAnimation();
             mTvTitle.setText("测量超时，请再试一次");
+            TimeOutTimer.stopTimer();
         }
-    });
+    }, 20000);
 
 
     @OnClick({R.id.btn_forget, R.id.btn_save})

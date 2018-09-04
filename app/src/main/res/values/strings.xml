@@ -179,6 +179,7 @@
 
 
     <string-array name="weightDatas">
+        <item>体重</item>
         <item>体脂率</item>
         <item>BMI</item>
         <item>内脏脂肪等级</item>
@@ -186,11 +187,11 @@
         <item>基础代谢率</item>
         <item>水分</item>
         <item>骨量</item>
-        <item>身体年龄</item>
-        <item>去脂体重</item>
         <item>皮下脂肪率</item>
         <item>骨骼肌率</item>
         <item>蛋白质</item>
+        <item>身体年龄</item>
+        <item>去脂体重</item>
     </string-array>
 
     <string-array name="problemTimes">

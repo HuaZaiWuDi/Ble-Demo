@@ -102,6 +102,7 @@ public class AddOrUpdateFoodDialog {
 
         mTvHeat.setText(listBean.getUnitCalorie() + "kcal/" + listBean.getUnitCount() + listBean.getUnit());
 
+        if (dialog.isShowing()) dialog.dismiss();
         dialog.show();
     }
 

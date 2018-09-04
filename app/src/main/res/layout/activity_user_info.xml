@@ -49,7 +49,8 @@
             android:layout_marginTop="35dp"
             android:visibility="gone"
             app:tl_indicator_anim_enable="true"
-            app:tl_indicator_color="@color/colorTheme"
+            app:tl_indicator_bounce_enable="false"
+            app:tl_indicator_color="@color/white"
             app:tl_indicator_gravity="BOTTOM"
             app:tl_indicator_style="TRIANGLE"/>
 

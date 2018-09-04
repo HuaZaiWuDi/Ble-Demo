@@ -62,36 +62,40 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp">
 
                 <TextView
-                    android:id="@+id/tv_weight"
+                    android:id="@+id/tv_healthScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
                     android:textColor="@color/green_61D97F"
-                    android:textSize="24sp"
+                    android:textSize="36sp"
                     tools:text="56.2"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/tv_weight"
+                    android:layout_alignBottom="@+id/tv_healthScore"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@+id/tv_weight"
-                    android:text="kg"
+                    android:layout_toRightOf="@+id/tv_healthScore"
+                    android:text="分"
                     android:textColor="@color/green_61D97F"
                     android:textSize="13sp"/>
 
             </RelativeLayout>
 
+
+
+
             <TextView
                 android:id="@+id/tv_Details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="体型判断通过分析身高、体重、体脂率等身体数据综合得出，仅供参考。"
+                android:layout_marginTop="8dp"
+                android:text="打败全国 90% 的人"
                 android:textColor="@color/GrayWrite"
                 android:textSize="10sp"/>
 

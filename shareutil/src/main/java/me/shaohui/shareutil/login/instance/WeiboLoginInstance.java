@@ -63,23 +63,28 @@ public class WeiboLoginInstance extends LoginInstance {
             public void onSuccess(Oauth2AccessToken oauth2AccessToken) {
                 WeiboToken weiboToken = WeiboToken.parse(oauth2AccessToken);
                 if (fetchUserInfo) {
-                    listener.beforeFetchUserInfo(weiboToken);
-                    fetchUserInfo(weiboToken);
+                    if (listener != null) {
+                        listener.beforeFetchUserInfo(weiboToken);
+                        fetchUserInfo(weiboToken);
+                    }
                 } else {
-                    listener.loginSuccess(new LoginResult(LoginPlatform.WEIBO, weiboToken));
+                    if (listener != null)
+                        listener.loginSuccess(new LoginResult(LoginPlatform.WEIBO, weiboToken));
                 }
             }
 
             @Override
             public void cancel() {
                 ShareLogger.i(INFO.AUTH_CANCEL);
-                listener.loginCancel();
+                if (listener != null)
+                    listener.loginCancel();
             }
 
             @Override
             public void onFailure(WbConnectErrorMessage wbConnectErrorMessage) {
                 ShareLogger.i(INFO.WEIBO_AUTH_ERROR);
-                listener.loginFailure(new Exception(wbConnectErrorMessage.getErrorMessage()));
+                if (listener != null)
+                    listener.loginFailure(new Exception(wbConnectErrorMessage.getErrorMessage()));
             }
         });
     }
@@ -113,14 +118,16 @@ public class WeiboLoginInstance extends LoginInstance {
 
                     @Override
                     public void onNext(WeiboUser weiboUser) {
-                        mLoginListener.loginSuccess(
-                                new LoginResult(LoginPlatform.WEIBO, token, weiboUser));
+                        if (mLoginListener != null)
+                            mLoginListener.loginSuccess(
+                                    new LoginResult(LoginPlatform.WEIBO, token, weiboUser));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         ShareLogger.e("onError：" + e.toString());
-                        mLoginListener.loginFailure(new Exception(e));
+                        if (mLoginListener != null)
+                            mLoginListener.loginFailure(new Exception(e));
                     }
 
                     @Override

@@ -557,6 +557,15 @@ public class BleService extends Service {
                 bean.setHeartTime(time);
                 bean.setStepTime(2);
 
+                if (BuildConfig.VERSION_TEST) {
+                    /**
+                     * 现场演示版本：
+                     * 实时上传心率数据，最后上传总数据
+                     *
+                     * */
+                    upLoadData(bean);
+                }
+
                 athlHistoryRecord.add(bean);
                 athlRecord_2.add(heartRate);
                 //添加本地缓存
@@ -581,6 +590,7 @@ public class BleService extends Service {
                 mSportsDataTab.setData(data);
                 mSportsDataTab.setDate(RxFormat.setFormatDate(ByteUtil.bytesToLongD4(data, 3) * 1000, RxFormat.Date_Date_CH));
                 mSportsDataTab.setPower((BitUtils.checkBitValue(data[17], 7)));
+                mHeartRateBean.setStepNumber(mSportsDataTab.getSteps());
                 //卡路里累加计算
                 kcalTotal += mHeartRateToKcal.getCalorie(heartRate, 2f / 3600);
                 mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
@@ -601,6 +611,13 @@ public class BleService extends Service {
             mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
             athlHistoryRecord.clear();
         }
+    }
+
+    private void upLoadData(HeartRateBean.AthlList bean) {
+        ArrayList<HeartRateBean.AthlList> list = new ArrayList<>();
+        list.add(bean);
+        mHeartRateBean.setAthlList(list);
+        mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
     }
 
 
