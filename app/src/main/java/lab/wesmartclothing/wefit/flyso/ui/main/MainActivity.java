@@ -174,7 +174,8 @@ public class MainActivity extends BaseALocationActivity {
                 R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
-            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
+            if (i != 2)
+                mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
@@ -190,7 +191,7 @@ public class MainActivity extends BaseALocationActivity {
             @Override
             public void onTabReselect(int position) {
                 //双击或三击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == 3 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
+                if (position == 2 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
                             .addItem(ServiceAPI.BASE_URL_208)
@@ -237,7 +238,7 @@ public class MainActivity extends BaseALocationActivity {
 //        mFragments.add(SlimmingFragment.getInstance());
         mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(FindFragment.getInstance());
-        mFragments.add(StoreFragment.getInstance());
+//        mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());
 
         mViewpager.setOffscreenPageLimit(4);

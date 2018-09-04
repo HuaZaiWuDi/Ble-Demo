@@ -78,6 +78,9 @@ public class RxHttpException {
         if ("timeout".equals(t.getMessage())) {
             msg = "请求网络超时";
         }
+        if (t.getMessage().contains("500")) {
+            msg = "请求网络失败";
+        }
         return msg;
     }
 
