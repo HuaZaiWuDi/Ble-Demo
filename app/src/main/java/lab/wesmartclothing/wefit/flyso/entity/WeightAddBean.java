@@ -14,14 +14,13 @@ public class WeightAddBean implements Serializable {
      * subfat	double		皮下脂肪率
      * visfat	double		内脏脂肪等级
      * bmr	double		基础代谢量
-     * flesh	double		肌肉。单位：kg
      * bodyAge	int		身体年龄
      * bodyfat	double		体脂。单位：百分比
      * bodyType	int		体型。1-瘦，2-正常，3-微胖，4-肥胖
      * bone	double		骨骼。单位：kg
      * muscle	double		骨骼肌率
      * protein	double		蛋白质
-     * flesh	double		肌肉。单位：kg
+     * sinew	double		肌肉量。单位：kg
      * water	double		水分。单位：百分比
      */
 

@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 
 public class GuideActivity extends BaseActivity {
@@ -70,8 +71,8 @@ public class GuideActivity extends BaseActivity {
                         RelativeLayout.MarginLayoutParams.MATCH_PARENT
                 );
                 photoView.setLayoutParams(params);
-                photoView.setImageResource(mImageItems.get(position));
-//                MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), photoView);
+//                photoView.setImageResource(mImageItems.get(position));
+                MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), 0, photoView);
                 container.addView(photoView);
                 return photoView;
             }

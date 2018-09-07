@@ -15,14 +15,21 @@ import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.smartclothing.blelibrary.BleTools;
+import com.tencent.bugly.Bugly;
+import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
 
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
 
@@ -63,14 +70,28 @@ public class MyAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        initDB();
-        MultiDex.install(this);
+        RxLogUtils.i("启动时长：初始化");
         initQN();
-        initShareLogin();
-        initLeakCanary();
-        ScreenAdapter.init(this);
 
+        //优化启动速度，把一些没必要立即初始化的操作放到子线程
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RxManager.getInstance().setAPPlication(MyAPP.this);
+                ScreenAdapter.init(MyAPP.this);
+                MultiDex.install(MyAPP.this);
+                initDB();
+                initShareLogin();
+                initLeakCanary();
 
+                RxUtils.init(MyAPP.this);
+                Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+                TextSpeakUtils.init(MyAPP.this);
+                MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
+                BleTools.initBLE(MyAPP.this);
+                RxLogUtils.i("启动时长：初始化结束");
+            }
+        }).start();
     }
 
 
@@ -147,8 +168,9 @@ public class MyAPP extends Application {
      * 可能是添加MultiDex分包，但未初始化的原因，在Application中重写attachBaseContext函数，对MultiDex初始化即可。
      */
     @Override
-    protected void attachBaseContext(Context base) {
+    protected void attachBaseContext(final Context base) {
         super.attachBaseContext(base);
+        RxLogUtils.i("启动时长：开始启动");
         MultiDex.install(base);
     }
 

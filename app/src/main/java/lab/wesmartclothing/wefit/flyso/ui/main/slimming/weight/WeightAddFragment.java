@@ -18,6 +18,8 @@ import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -220,8 +222,9 @@ public class WeightAddFragment extends BaseActivity {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
-                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .throttleFirst(2, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -233,7 +236,6 @@ public class WeightAddFragment extends BaseActivity {
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
                         RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
-
                     }
 
                     @Override

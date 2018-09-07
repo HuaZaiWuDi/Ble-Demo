@@ -79,23 +79,24 @@ public class SettingTargetFragment extends BaseActivity {
         float standardWeight = 0;
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            standardWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
-        } else {
-            String string = SPUtils.getString(SPKey.SP_UserInfo);
-            UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
-            if (userInfo.getSex() == 1) {
-                standardWeight = (userInfo.getHeight() - 80) * 0.7f;
-            } else {
-                standardWeight = (userInfo.getHeight() - 70) * 0.6f;
-            }
+            settingWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         }
-        initRuler(standardWeight);
+
+        String string = SPUtils.getString(SPKey.SP_UserInfo);
+        UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
+        if (userInfo.getSex() == 1) {
+            standardWeight = (userInfo.getHeight() - 80) * 0.7f;
+        } else {
+            standardWeight = (userInfo.getHeight() - 70) * 0.6f;
+        }
+        if (settingWeight == 0)
+            settingWeight = standardWeight;
+        initRuler(settingWeight);
         minWeight = standardWeight * 0.9f;
         maxWeight = standardWeight * 1.1f;
 
-        settingWeight = standardWeight;
-        stillNeed = initWeight - standardWeight;
-        if (stillNeed <= 0) {
+        stillNeed = initWeight - settingWeight;
+        if (stillNeed < 0) {
             //TODO 当前体重小于目标体重着
             tipDialog.showInfo("您当前体重小于目标体重，\n请设置目标体重~", 2000);
         }

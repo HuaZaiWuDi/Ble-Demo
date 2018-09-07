@@ -88,14 +88,12 @@
             </RelativeLayout>
 
 
-
-
             <TextView
                 android:id="@+id/tv_Details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="打败全国 90% 的人"
+                android:text="体型判断通过分析身高、体重、体脂率等身体数据综合得出，仅供参考。"
                 android:textColor="@color/GrayWrite"
                 android:textSize="10sp"/>
 

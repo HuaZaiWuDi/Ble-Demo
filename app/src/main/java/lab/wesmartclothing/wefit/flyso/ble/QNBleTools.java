@@ -7,12 +7,9 @@ import com.clj.fastble.data.BleDevice;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
-import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNConfig;
-import com.yolanda.health.qnblesdk.out.QNScaleData;
-import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.yolanda.health.qnblesdk.out.QNUser;
 
 import org.androidannotations.annotations.EBean;
@@ -20,14 +17,10 @@ import org.androidannotations.annotations.EBean;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
-import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
-import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
-import lab.wesmartclothing.wefit.flyso.rxbus.ScaleUnsteadyWeight;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created icon_hide_password jk on 2018/5/16.
@@ -80,6 +73,7 @@ public class QNBleTools {
     public void scanBle() {
         saveUserInfo();
         MyAPP.QNapi.startBleDeviceDiscovery(mQNResultCallback);
+        stopScan();
     }
 
     public void saveUserInfo() {
@@ -137,23 +131,6 @@ public class QNBleTools {
 
 
     public void connectDevice(QNBleDevice qnBleDevice) {
-        MyAPP.QNapi.setDataListener(new QNDataListener() {
-            @Override
-            public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
-                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
-            }
-
-            @Override
-            public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                RxBus.getInstance().post(qnScaleData);
-            }
-
-            @Override
-            public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
-                RxLogUtils.d("历史数据：" + list.size());
-                RxBus.getInstance().post(new ScaleHistoryData(list));
-            }
-        });
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice qnBleDevice) {

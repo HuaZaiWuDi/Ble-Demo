@@ -125,7 +125,7 @@ public class ProblemFragemnt extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 problemDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
-                mTvInputCount.setText((500 - count) + "");
+                mTvInputCount.setText((500 - s.length()) + "");
             }
 
             @Override

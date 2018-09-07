@@ -3,6 +3,7 @@ package com.smartclothing.blelibrary;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -21,7 +22,6 @@ import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
-import com.smartclothing.blelibrary.listener.StopDataCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.scanner.BluetoothLeScannerCompat;
 import com.smartclothing.blelibrary.scanner.ScanCallback;
@@ -73,7 +73,6 @@ public class BleTools {
 
     private BleChartChangeCallBack bleChartChange;
     private SynDataCallBack mSynDataCallBack;
-    private StopDataCallBack mStopDataCallBack;
     private byte[] bytes;
     private final int reWriteCount = 2;    //重连次数
     private int currentCount = 0;          //当前次数
@@ -113,14 +112,28 @@ public class BleTools {
         }
     };
 
-    public void write(final byte[] bytes, final BleChartChangeCallBack bleChartChange) {
-        this.bytes = bytes;
-        this.bleChartChange = bleChartChange;
 
+    final CountDownTimer mCountDownTimer = new CountDownTimer(timeOut, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            write(bytes, bleChartChange);
+        }
+
+        @Override
+        public void onFinish() {
+            bleChartChange = null;
+        }
+    };
+
+
+    public void write(final byte[] bytes, final BleChartChangeCallBack bleChartChange) {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
             Log.e(TAG, "未连接");
             return;
         }
+
+        this.bytes = bytes;
+        this.bleChartChange = bleChartChange;
 
         if (currentCount > reWriteCount) {
             Log.e(TAG, "写失败--次数：" + currentCount);
@@ -194,9 +207,6 @@ public class BleTools {
         mSynDataCallBack = synDataCallBack;
     }
 
-    public void setStopDataCallBack(StopDataCallBack stopDataCallBack) {
-        mStopDataCallBack = stopDataCallBack;
-    }
 
     public void openNotify(final BleOpenNotifyCallBack mBleOpenNotifyCallBack) {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
@@ -346,7 +356,7 @@ public class BleTools {
         ScanSettings scanSettings = new ScanSettings.Builder()
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//仅回调第一个
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
-                .setReportDelay(800)
+//                .setReportDelay(800)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
         List<ScanFilter> filters = new ArrayList<>();
@@ -422,4 +432,6 @@ public class BleTools {
     public boolean isBind(String Mac) {
         return BluetoothAdapter.checkBluetoothAddress(Mac);
     }
+
+
 }

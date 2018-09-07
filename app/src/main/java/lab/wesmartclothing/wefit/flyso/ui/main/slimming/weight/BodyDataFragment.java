@@ -26,6 +26,7 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +41,7 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
+import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
@@ -50,6 +52,8 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -109,7 +113,21 @@ public class BodyDataFragment extends BaseActivity {
         initTopBar();
         initRecyclerView();
         initData();
+        initRxBus();
+    }
 
+
+    public void initRxBus() {
+        RxBus.getInstance().register2(OpenAddWeight.class)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<OpenAddWeight>() {
+                    @Override
+                    protected void _onNext(OpenAddWeight integer) {
+                        RxLogUtils.d("显示：WeightRecordFragment");
+                        RxActivityUtils.finishActivity();
+                    }
+                });
     }
 
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
@@ -153,7 +171,6 @@ public class BodyDataFragment extends BaseActivity {
          充足=大于标准体重*80%
          *
          * */
-
         UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {
@@ -162,11 +179,12 @@ public class BodyDataFragment extends BaseActivity {
             standardWeight = (int) ((userInfo.getHeight() - 70) * 0.6);
         float value1 = standardWeight * 0.67f;
         float value2 = standardWeight * 0.80f;
-
+        RxLogUtils.e("肌肉量：" + value1);
+        RxLogUtils.e("肌肉量：" + value2);
         //肌肉量
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{value1, value2});
-        healthy4.setSectionLabels(new String[]{value1 + "kg", value2 + "kg"});
+        healthy4.setSectionLabels(new String[]{RxFormatValue.fromat4S5R(value1, 1) + "kg", RxFormatValue.fromat4S5R(value2, 1) + "kg"});
         healthy4.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
         healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
@@ -299,15 +317,15 @@ public class BodyDataFragment extends BaseActivity {
             bodyValue[1] = weightInfo.getBodyFat();
             bodyValue[2] = weightInfo.getBmi();
             bodyValue[3] = weightInfo.getVisfat();
-            bodyValue[4] = weightInfo.getMuscle();
+            bodyValue[4] = weightInfo.getSinew();
             bodyValue[5] = weightInfo.getBmr();
             bodyValue[6] = weightInfo.getWater();
             bodyValue[7] = weightInfo.getBone();
-            bodyValue[8] = weightInfo.getBodyAge();
-            bodyValue[9] = weightInfo.getBodyFfm();
-            bodyValue[10] = weightInfo.getSubfat();
-            bodyValue[11] = weightInfo.getMuscle();
-            bodyValue[12] = weightInfo.getProtein();
+            bodyValue[8] = weightInfo.getSubfat();
+            bodyValue[9] = weightInfo.getMuscle();
+            bodyValue[10] = weightInfo.getProtein();
+            bodyValue[11] = weightInfo.getBodyAge();
+            bodyValue[12] = weightInfo.getBodyFfm();
 
             View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_delete_data, null);
             LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
@@ -328,13 +346,17 @@ public class BodyDataFragment extends BaseActivity {
             level0Bean.setBodyData(titles[i]);
             level0Bean.setBodyDataImg(imgs[i]);
 
+            if (i == 4) {
+                RxLogUtils.e("肌肉量：" + level0Bean.getBodyValue());
+            }
+
             if (i == titles.length - 1 || i == titles.length - 2 || i == 0) {
                 level0Bean.setStatus("标准");
                 level0Bean.setStatusColor(Color.parseColor("#61D97F"));
                 level0Bean.setCanExpanded(false);
             } else {
 
-                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
+                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, level0Bean.getBodyValue()));
                 Healthy healthy = mHealthyList.get(i % mHealthyList.size());
                 bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
                 bodyLevel1Bean.setLabels(healthy.getLabels());
@@ -404,5 +426,11 @@ public class BodyDataFragment extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putInt(Key.BUNDLE_BODY_INDEX, bodyIndex);
         RxActivityUtils.skipActivity(mActivity, BodyFatFragment.class, bundle);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        RxActivityUtils.skipActivityAndFinish(mContext, WeightRecordFragment_.class);
     }
 }

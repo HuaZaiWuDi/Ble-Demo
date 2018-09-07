@@ -41,7 +41,6 @@ allprojects {
             versionCode      : 2,
             versionName      : "2.0"
     ]
-
 }
 
 

@@ -19,7 +19,7 @@ public class BodyDataUtil {
 
     public int transformation(int index, double realValue) {
         int temp = 0;
-        if (index == 4) {
+        if (index == 5) {
             temp = (int) (realValue / (903 * 2) * 100);
         } else {
             temp = bmi(realValue, mHealthyList.get(index % mHealthyList.size()).getSections());
@@ -27,7 +27,6 @@ public class BodyDataUtil {
 
         return temp;
     }
-
 
     private int bmi(double realValue, double[] section) {
 

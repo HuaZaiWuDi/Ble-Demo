@@ -2,21 +2,17 @@ package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Environment;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.smartclothing.blelibrary.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
-import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
@@ -31,7 +27,6 @@ import java.io.File;
 import java.util.List;
 
 import io.reactivex.functions.Action;
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -44,7 +39,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -82,8 +76,8 @@ public class SpalshActivity extends BaseActivity {
 
     @AfterViews
     public void initView() {
-        initApplication();
-
+        RxLogUtils.i("启动时长：引导页开始");
+        JPushUtils.init(getApplication());
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
         if (!RxDataUtils.isNullString(baseUrl))
             ServiceAPI.switchURL(baseUrl);
@@ -94,17 +88,6 @@ public class SpalshActivity extends BaseActivity {
         initUserInfo();
         initData();
 
-    }
-
-    //节省启动时间，将部分操作放到启动页
-    private void initApplication() {
-        RxManager.getInstance().setAPPlication(mActivity.getApplication());
-        RxUtils.init(mActivity.getApplication());
-        Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
-        TextSpeakUtils.init(mActivity.getApplication());
-        MyAPP.typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
-        BleTools.initBLE(mActivity.getApplication());
-        JPushUtils.init(mActivity.getApplication());
     }
 
     private void initRxCache() {
@@ -121,6 +104,12 @@ public class SpalshActivity extends BaseActivity {
     }
 
     private void initUserInfo() {
+        RxLogUtils.i("启动时长：获取用户信息");
+        if (!SPUtils.getBoolean(SPKey.SP_GUIDE)) {
+            SPUtils.put(SPKey.SP_GUIDE, true);
+            RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
+            return;
+        }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -145,6 +134,11 @@ public class SpalshActivity extends BaseActivity {
                         String scalesMacAddr = object.get("scalesMacAddr").getAsString();
                         SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
                         SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
 
                     }
                 });
@@ -152,20 +146,17 @@ public class SpalshActivity extends BaseActivity {
 
 
     private void gotoMain() {
-        initRxCache();
         RxLogUtils.d("跳转");
-        if (!SPUtils.getBoolean(SPKey.SP_GUIDE)) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
-            SPUtils.put(SPKey.SP_GUIDE, true);
-            return;
-        }
         //通过验证是否保存userId来判断是否登录
         if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else if (isSaveUserInfo)//
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
-        else
+        else {
+            initRxCache();
             RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
+        }
+        RxLogUtils.i("启动时长：引导页结束");
     }
 
 

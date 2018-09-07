@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +47,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
-import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -207,18 +205,6 @@ public class WeightRecordFragment extends BaseActivity {
     }
 
     private void initRxBus() {
-        RxBus.getInstance().register2(OpenAddWeight.class)
-                .throttleFirst(1, TimeUnit.SECONDS)
-                .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<OpenAddWeight>() {
-                    @Override
-                    protected void _onNext(OpenAddWeight integer) {
-                        RxLogUtils.d("显示：WeightRecordFragment");
-                        if (isVisite)
-                            RxActivityUtils.skipActivity(mContext, WeightAddFragment.class, bundle);
-                    }
-                });
-
 
         //体重历史数据
         RxBus.getInstance().register2(ScaleHistoryData.class)

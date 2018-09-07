@@ -545,7 +545,8 @@
         android:gravity="center"
         android:text="设置目标"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>
