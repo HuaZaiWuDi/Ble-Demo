@@ -180,7 +180,7 @@ public class RxSPUtils {
      * 存放JSON缓存数据
      *
      * @param context 上下文
-     * @param key 键名
+     * @param key     键名
      * @param content 内容
      * @return
      */
@@ -196,7 +196,7 @@ public class RxSPUtils {
      * 读取JSON缓存数据
      *
      * @param context 上下文
-     * @param key 键名
+     * @param key     键名
      * @return
      */
     public static String readJSONCache(Context context, String key) {
@@ -210,7 +210,7 @@ public class RxSPUtils {
      * 清除指定的信息
      *
      * @param context 上下文
-     * @param name 键名
+     * @param name    键名
      * @param key     若为null 则删除name下所有的键值
      */
     public static void clearPreference(Context context, String name, String key) {

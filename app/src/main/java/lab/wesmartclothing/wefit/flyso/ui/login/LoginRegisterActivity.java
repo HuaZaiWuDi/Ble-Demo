@@ -311,7 +311,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginOther(final LoginResult result) {
-        String openId = result.getUserInfo().getOpenId();
+        String openId = result.getToken().getOpenid();
         String nickname = result.getUserInfo().getNickname();
         String imageUrl = result.getUserInfo().getHeadImageUrl();
         String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ :

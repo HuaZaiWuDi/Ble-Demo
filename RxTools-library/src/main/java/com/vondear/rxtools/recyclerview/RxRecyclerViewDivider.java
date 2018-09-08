@@ -1,4 +1,4 @@
-package com.vondear.rxtools.utils;
+package com.vondear.rxtools.recyclerview;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

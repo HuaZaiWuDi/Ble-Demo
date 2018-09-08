@@ -11,8 +11,8 @@ import java.util.Map;
 
 /**
  * 项目名称：CommonProject
- * 类描述：
- * 创建人：oden
+ * 类描述：通过其他APP打开文件
+ * 创建人：Jack
  * 创建时间：2018/4/17
  */
 public class RxFileBySystem {
@@ -129,7 +129,7 @@ public class RxFileBySystem {
         if (dotIndex < 0) {
             return type;
         }
-    /* 获取文件的后缀名*/
+        /* 获取文件的后缀名*/
         String end = fName.substring(dotIndex, fName.length()).toLowerCase();
         if (end == "") return type;
 

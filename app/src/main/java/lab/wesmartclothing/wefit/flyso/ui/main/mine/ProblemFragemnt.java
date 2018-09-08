@@ -172,7 +172,11 @@ public class ProblemFragemnt extends BaseActivity {
         adapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_choose_img) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                MyAPP.getImageLoader().displayImage(mActivity, item, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
+                if (item instanceof Integer)
+                    MyAPP.getImageLoader().displayImage(mActivity, item, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
+                else {
+                    MyAPP.getImageLoader().displayImage(mActivity, ((ImageItem) item).path, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
+                }
             }
         };
         mRecyclerImgs.setAdapter(adapter);
@@ -188,7 +192,7 @@ public class ProblemFragemnt extends BaseActivity {
 //                    scaleView.show();
                     Bundle bundle = new Bundle();
                     bundle.putParcelableArrayList(Key.BUNDLE_DATA, imageLists);
-                    RxActivityUtils.skipActivity(mActivity, PhotoDetailsFragment.class, bundle);
+                    RxActivityUtils.skipActivityForResult(mActivity, PhotoDetailsFragment.class, bundle, UserInfofragment.REQUEST_CODE);
 
                 } else if (img instanceof Integer) {
                     Intent intent = new Intent(mContext, ImageGridActivity.class);
@@ -327,7 +331,7 @@ public class ProblemFragemnt extends BaseActivity {
         JsonObject object = new JsonObject();
         object.addProperty("ariseFreq", problemTimes.indexOf(mBtnTimes.getText().toString()));
         object.addProperty("contactInfo", mEditPhoneEmail.getText().toString());
-        object.addProperty("dealStatus", problemType.indexOf(mBtnType.getText().toString()));
+        object.addProperty("feedbackType", problemType.indexOf(mBtnType.getText().toString()));
         object.addProperty("feedbackDesc", mEditProble.getText().toString());
         object.addProperty("feedbackImg", imgUrl);
 

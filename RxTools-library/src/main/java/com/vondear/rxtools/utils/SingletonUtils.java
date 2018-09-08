@@ -3,6 +3,7 @@ package com.vondear.rxtools.utils;
 /**
  * Singleton helper class for lazily initialization.
  *
+ * 单例模式
  * @param <T> 泛型
  * @author <a href="http://www.trinea.cn/" target="_blank">Trinea
  */

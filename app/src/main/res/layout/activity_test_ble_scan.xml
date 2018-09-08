@@ -6,7 +6,14 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/red"
     tools:context=".TestBleScanActivity">
+
+
+    <tech.linjiang.suitlines.SuitLines
+        android:id="@+id/mSuitLines"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 
 
     <TextView

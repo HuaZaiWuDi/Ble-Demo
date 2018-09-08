@@ -83,6 +83,9 @@ public class SpalshActivity extends BaseActivity {
             ServiceAPI.switchURL(baseUrl);
 
 
+//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
+
+
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
         initUserInfo();
@@ -147,13 +150,13 @@ public class SpalshActivity extends BaseActivity {
 
     private void gotoMain() {
         RxLogUtils.d("跳转");
+        initRxCache();
         //通过验证是否保存userId来判断是否登录
         if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else if (isSaveUserInfo)//
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
         else {
-            initRxCache();
             RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
         }
         RxLogUtils.i("启动时长：引导页结束");

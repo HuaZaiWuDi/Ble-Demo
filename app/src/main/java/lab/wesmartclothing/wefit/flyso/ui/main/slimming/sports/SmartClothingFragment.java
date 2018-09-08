@@ -192,7 +192,7 @@ public class SmartClothingFragment extends BaseActivity {
                 R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected));
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsInfo(1, 20))
+        RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsInfo(1, 100))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())

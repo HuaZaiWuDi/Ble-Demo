@@ -241,7 +241,7 @@ public class WeightRecordFragment extends BaseActivity {
                 mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected));
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightInfo(1, 20))
+        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightInfo(1, 100))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())

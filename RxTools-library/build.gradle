@@ -30,7 +30,7 @@ dependencies {
     })
 
     //design包
-    implementation 'com.android.support:design:25.3.1'
+    implementation 'com.android.support:design:27.1.1'
 
     //cardView包
     implementation 'com.android.support:cardview-v7:27.1.1'
@@ -41,7 +41,7 @@ dependencies {
     //recyclerview包
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:support-annotations:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
     //流式布局
     implementation 'com.google.android:flexbox:0.2.7'
@@ -52,8 +52,8 @@ dependencies {
     //沉浸式
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
 
-    //okgo 网络请求框架包
-    implementation 'com.lzy.net:okgo:3.0.4'
+//    //okgo 网络请求框架包
+//    implementation 'com.lzy.net:okgo:3.0.4'
 
     //gson json工具类 google解析Json的库
     implementation 'com.google.code.gson:gson:2.8.1'
@@ -61,8 +61,8 @@ dependencies {
     //Log日志格式美化包
     implementation 'com.orhanobut:logger:2.1.1'
 
-    //支付宝 支付包c
-    api files('src/main/libs/alipaySdk-20170309.jar')
+//    //支付宝 支付包c
+//    api files('src/main/libs/alipaySdk-20170309.jar')
 
     //二维码解析
     implementation files('src/main/libs/zbardecoder.jar')
@@ -78,19 +78,6 @@ dependencies {
 
     //UI库 http://qmuiteam.com/android/get-started
     compile 'com.qmuiteam:qmui:1.1.3'
-
-//
-//    //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-//    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4'
-//
-//    //扩展支持横向刷新库
-//    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4'
-//
-//    //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-//    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4'
-//
-//    //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-//    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
 
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5'
 //    compile 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.5'//没有使用特殊Header，可以不加这行

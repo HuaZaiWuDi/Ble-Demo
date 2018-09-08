@@ -14,6 +14,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -190,6 +191,7 @@ public class CollectFragment extends BaseActivity {
         @Override
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
+            if (AntiShake.getInstance().check()) return;
             CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position);
             Bundle bundle = new Bundle();
             //打开URL

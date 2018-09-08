@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.app.Dialog;
+import android.text.TextUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -191,6 +192,9 @@ public class RxThreadUtils {
                                 String msg = object.getString("msg");
                                 if (code == 0) {
                                     String data = object.getString("data");
+                                    if (TextUtils.isEmpty(data)) {
+                                        return Observable.error(new Throwable("数据异常"));
+                                    }
                                     return createData((T) data);
                                 } else {
                                     return Observable.error(new Throwable(msg));

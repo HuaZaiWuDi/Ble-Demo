@@ -11,7 +11,7 @@ import java.util.Date;
  * @author shimiso
  */
 
-public class DateUtil {
+public class RxDateUtil {
 
     /**
      * 英文简写如：2010
@@ -269,7 +269,6 @@ public class DateUtil {
         SimpleDateFormat df = new SimpleDateFormat(FORMAT_FULL);
         Calendar calendar = Calendar.getInstance();
         return df.format(calendar.getTime());
-
     }
 
 
@@ -300,7 +299,7 @@ public class DateUtil {
 
 
     /**
-     * 功能描述：返回小
+     * 功能描述：返回小时
      *
      * @param date 日期
      * @return 返回小时
@@ -425,4 +424,48 @@ public class DateUtil {
         return (int) (t / 1000 - t1 / 1000) / 3600 / 24;
 
     }
+
+    public static void main(String[] a) {
+        Calendar instance = Calendar.getInstance();
+        int day = instance.get(Calendar.DATE);
+        System.out.println("DATE:" + day + "号");
+        System.out.println("YEAR:" + instance.get(Calendar.YEAR) + "年");
+        System.out.println("WEEK_OF_YEAR:" + instance.get(Calendar.WEEK_OF_YEAR));
+        System.out.println("MONTH:" + (instance.get(Calendar.MONTH) + 1) + "月");
+        System.out.println("DAY_OF_WEEK_IN_MONTH:" + (instance.get(Calendar.DAY_OF_WEEK_IN_MONTH)) + "这啥");
+        System.out.println("DAY_OF_WEEK:" + instance.get(Calendar.DAY_OF_WEEK));
+        System.out.println("DAY_OF_YEAR:" + instance.get(Calendar.DAY_OF_YEAR));
+        System.out.println("HOUR_OF_DAY:" + instance.get(Calendar.HOUR_OF_DAY));
+        System.out.println("DAY_OF_MONTH:" + instance.get(Calendar.DAY_OF_MONTH));
+        System.out.println("WEEK_OF_MONTH:" + instance.get(Calendar.WEEK_OF_MONTH));
+        System.out.println("HOUR:" + instance.get(Calendar.HOUR));
+        System.out.println("MINUTE:" + instance.get(Calendar.MINUTE));
+        System.out.println("MILLISECOND:" + instance.get(Calendar.MILLISECOND));
+        System.out.println("AM_PM:" + instance.get(Calendar.AM_PM));
+        System.out.println("SECOND:" + instance.get(Calendar.SECOND));
+
+
+        /**
+         * 时间：2018-9-8 15:56
+         *
+         * DATE:8号
+         YEAR:2018年
+         WEEK_OF_YEAR:36
+         MONTH:9月
+         DAY_OF_WEEK_IN_MONTH:2这啥
+         DAY_OF_WEEK:7
+         DAY_OF_YEAR:251
+         HOUR_OF_DAY:15
+         DAY_OF_MONTH:8
+         WEEK_OF_MONTH:2
+         HOUR:3
+         MINUTE:54
+         MILLISECOND:286
+         AM_PM:1
+         *
+         *
+         * */
+
+    }
+
 }

@@ -1,89 +1,100 @@
 package com.vondear.rxtools.utils;
 
-import com.ta.utdid2.android.utils.StringUtils;
+
+import android.text.TextUtils;
 
 import java.util.Random;
 
 
+/**
+ * 随机数类
+ */
+
 public class RandomUtils {
 
     public static final String NUMBERS_AND_LETTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String NUMBERS             = "0123456789";
-    public static final String LETTERS             = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String CAPITAL_LETTERS     = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String LOWER_CASE_LETTERS  = "abcdefghijklmnopqrstuvwxyz";
+    public static final String NUMBERS = "0123456789";
+    public static final String LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String CAPITAL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
 
     private RandomUtils() {
         throw new AssertionError();
     }
 
     /**
-     * get a fixed-length random string, its a mixture of uppercase, lowercase letters and numbers
-     * 
-     * @param length  length
-     * @return  RandomUtils
+     * 获取一个固定长度的随机字符串，它是大写字母、小写字母和数字的混合体。
+     *
+     * @param length length
+     * @return RandomUtils
      */
     public static String getRandomNumbersAndLetters(int length) {
         return getRandom(NUMBERS_AND_LETTERS, length);
     }
 
     /**
+     * 获取一个固定长度的随机字符串，它是数字的混合
      * get a fixed-length random string, its a mixture of numbers
-     * 
-     * @param length  length
-     * @return  RandomUtils
+     *
+     * @param length length
+     * @return RandomUtils
      */
     public static String getRandomNumbers(int length) {
         return getRandom(NUMBERS, length);
     }
 
     /**
+     * 获取一个固定长度的随机字符串，它是大写字母和小写字母的混合体。
      * get a fixed-length random string, its a mixture of uppercase and lowercase letters
-     * 
-     * @param length  length
-     * @return  RandomUtils
+     *
+     * @param length length
+     * @return RandomUtils
      */
     public static String getRandomLetters(int length) {
         return getRandom(LETTERS, length);
     }
 
     /**
+     * 获取一个固定长度的随机字符串，它是大写字母的混合体。
      * get a fixed-length random string, its a mixture of uppercase letters
-     * 
-     * @param length  length
-     * @return   CapitalLetters
+     *
+     * @param length length
+     * @return CapitalLetters
      */
     public static String getRandomCapitalLetters(int length) {
         return getRandom(CAPITAL_LETTERS, length);
     }
 
     /**
+     * 获取一个固定长度的随机字符串，它是小写字母的混合体。
      * get a fixed-length random string, its a mixture of lowercase letters
-     * 
-     * @param length  length
-     * @return  get a fixed-length random string, its a mixture of lowercase letters
+     *
+     * @param length length
+     * @return get a fixed-length random string, its a mixture of lowercase letters
      */
     public static String getRandomLowerCaseLetters(int length) {
         return getRandom(LOWER_CASE_LETTERS, length);
     }
 
     /**
+     * 获取一个固定长度的随机字符串，它是源代码中的字符的混合。
      * get a fixed-length random string, its a mixture of chars in source
-     * 
-     * @param source  source
-     * @param length  length
-     * @return  get a fixed-length random string, its a mixture of chars in source
+     *
+     * @param source source
+     * @param length length
+     * @return get a fixed-length random string, its a mixture of chars in source
      */
     public static String getRandom(String source, int length) {
-        return StringUtils.isEmpty(source) ? null : getRandom(source.toCharArray(), length);
+        return TextUtils.isEmpty(source) ? null : getRandom(source.toCharArray(), length);
     }
 
     /**
+     * 获取一个固定长度的随机字符串，它是源代码中字符的混合。
      * get a fixed-length random string, its a mixture of chars in sourceChar
-     * 
-     * @param sourceChar    sourceChar
-     * @param length  length
-     * @return   get a fixed-length random string, its a mixture of chars in sourceChar
+     *
+     * @param sourceChar sourceChar
+     * @param length     length
+     * @return get a fixed-length random string, its a mixture of chars in sourceChar
      */
     public static String getRandom(char[] sourceChar, int length) {
         if (sourceChar == null || sourceChar.length == 0 || length < 0) {
@@ -100,9 +111,8 @@ public class RandomUtils {
 
 
     /**
-     *
-     * @param max  接受的数值
-     * @return  返回一个随机的数值
+     * @param max 接受的数值
+     * @return 返回一个随机的数值
      */
     public static int getRandom(int max) {
 
@@ -111,10 +121,9 @@ public class RandomUtils {
 
 
     /**
-     *
-     * @param min  最小
-     * @param max  最大
-     * @return  返回一个范围的数值
+     * @param min 最小
+     * @param max 最大
+     * @return 返回一个范围的数值
      */
     public static int getRandom(int min, int max) {
 
@@ -128,9 +137,10 @@ public class RandomUtils {
     }
 
     /**
+     * 改组算法，使用默认的随机源随机排列指定的数组
      * Shuffling algorithm, Randomly permutes the specified array using a default source of randomness
-     * 
-     * @param objArray  数组
+     *
+     * @param objArray 数组
      * @return 从新的数组
      */
     public static boolean shuffle(Object[] objArray) {
@@ -142,11 +152,12 @@ public class RandomUtils {
     }
 
     /**
+     * 改组算法，随机置换指定数组
      * Shuffling algorithm, Randomly permutes the specified array
-     * 
-     * @param objArray  数组
-     * @param shuffleCount  洗的个数
-     * @return  是否成功
+     *
+     * @param objArray     数组
+     * @param shuffleCount 洗的个数
+     * @return 是否成功
      */
     public static boolean shuffle(Object[] objArray, int shuffleCount) {
         int length;
@@ -164,10 +175,11 @@ public class RandomUtils {
     }
 
     /**
+     * 改组算法，使用默认的随机源随机置换指定的int数组
      * Shuffling algorithm, Randomly permutes the specified int array using a default source of randomness
-     * 
-     * @param intArray  数组
-     * @return  洗牌之后
+     *
+     * @param intArray 数组
+     * @return 洗牌之后
      */
     public static int[] shuffle(int[] intArray) {
         if (intArray == null) {
@@ -178,11 +190,12 @@ public class RandomUtils {
     }
 
     /**
+     * 混洗算法，随机置换指定的int数组
      * Shuffling algorithm, Randomly permutes the specified int array
-     * 
-     * @param intArray   数组
-     * @param shuffleCount  范围
-     * @return  新的数组
+     *
+     * @param intArray     数组
+     * @param shuffleCount 范围
+     * @return 新的数组
      */
     public static int[] shuffle(int[] intArray, int shuffleCount) {
         int length;

@@ -15,6 +15,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -173,9 +174,9 @@ public class MessageFragment extends BaseActivity {
         @Override
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
+            if (AntiShake.getInstance().check()) return;
             final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
             readed(position);
-
         }
     };
 

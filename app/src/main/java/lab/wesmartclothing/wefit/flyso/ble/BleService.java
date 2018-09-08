@@ -489,8 +489,8 @@ public class BleService extends Service {
                     JsonObject object = new JsonObject();
                     object.addProperty("category", data[3]);//设备类型
                     object.addProperty("modelNo", data[4]);//待定
-                    object.addProperty("manufacture", com.vondear.rxtools.aboutByte.ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
-                    object.addProperty("hwVersion", com.vondear.rxtools.aboutByte.ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
+                    object.addProperty("manufacture", ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
+                    object.addProperty("hwVersion", ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
                     object.addProperty("firmwareVersion", firmwareVersion);//当前固件版本
                     checkFirmwareVersion(object);
                 }

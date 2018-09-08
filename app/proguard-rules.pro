@@ -19,6 +19,54 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+
+# standard  Android原生类
+-keep public class * extends android.app.Activity
+-keep public class * extends android.support.v7.app.ActionBarActivity
+-keep public class * extends android.support.v4.app.Fragment
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+
+
+# 序列化的类
+-keep public class * implements java.io.Serializable {
+        public *;
+}
+
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+    }
+
+
+#自定义类
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+#集成Activity的类，也就是布局
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+
+
 #bugly
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
@@ -81,3 +129,63 @@
 -keepclasseswithmembernames class * {
     @butterknife.* <methods>;
 }
+
+# OkHttp3
+-dontwarn okhttp3.logging.**
+-keep class okhttp3.internal.**{*;}
+-keep class okio.** { *; }
+-dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn javax.annotation.**
+
+
+#高德定位
+-keep class com.amap.api.location.**{*;}
+-keep class com.amap.api.fence.**{*;}
+-keep class com.autonavi.aps.amapapi.model.**{*;}
+-dontwarn com.amap.api.location.**
+-dontwarn com.amap.api.fence.**
+-dontwarn com.autonavi.aps.amapapi.model.**
+
+#高德 3D 地图
+-keep class com.amap.api.mapcore.**{*;}
+-keep class com.amap.api.maps.**{*;}
+-keep class com.autonavi.amap.mapcore.*{*;}
+-dontwarn com.amap.api.mapcore.**
+-dontwarn com.amap.api.maps.**
+-dontwarn com.autonavi.amap.mapcore.*
+
+
+#Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+#activeandroid
+-keep class com.activeandroid**{*;}
+-dontwarn com.activeandroid**
+
+#annotation
+-keep class org.androidannotations.**{*;}
+-keep class com.sun.codemodel.**{*;}
+-dontwarn  org.androidannotations.**
+-dontwarn com.sun.codemodel.**
+
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+#-keepattributes Signature-keepattributes Exceptions
+# RxJava RxAndroid
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+
+
+#数据库类，实体类还有自定义控件类
+-keep class lab.wesmartclothing.wefit.flyso.entity { *; }
+-keep class lab.wesmartclothing.wefit.flyso.view { *; }
+

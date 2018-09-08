@@ -83,7 +83,7 @@ public class PhotoDetailsFragment extends BaseActivity {
                 bundle.putParcelableArrayList(Key.BUNDLE_DATA, list);
                 intent.putExtras(bundle);
                 setResult(UserInfofragment.RESULT_CODE, intent);
-                onBackPressed();
+                finish();
             }
         });
 
@@ -92,13 +92,14 @@ public class PhotoDetailsFragment extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         adapter.remove(current);
+                        mQMUIAppBarLayout.setTitle((current == 0 ? current + 1 : current) + "/" + list.size());
                         if (adapter.getData().size() == 0) {
                             Bundle bundle = new Bundle();
                             Intent intent = new Intent();
                             bundle.putParcelableArrayList(Key.BUNDLE_DATA, list);
                             intent.putExtras(bundle);
                             setResult(UserInfofragment.RESULT_CODE, intent);
-                            onBackPressed();
+                            finish();
                         }
                     }
                 });
