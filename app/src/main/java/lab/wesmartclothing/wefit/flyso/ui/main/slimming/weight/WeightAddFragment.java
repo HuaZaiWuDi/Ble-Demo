@@ -232,7 +232,6 @@ public class WeightAddFragment extends BaseActivity {
                         RxToast.normal("存储体重成功");
                         onBackPressed();
 
-                        //TODO 获取返回的GID
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
                         RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);

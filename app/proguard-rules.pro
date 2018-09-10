@@ -189,3 +189,13 @@
 -keep class lab.wesmartclothing.wefit.flyso.entity { *; }
 -keep class lab.wesmartclothing.wefit.flyso.view { *; }
 
+# Retrofit
+-dontnote retrofit2.Platform
+-dontnote retrofit2.Platform$IOS$MainThreadExecutor
+-dontwarn retrofit2.Platform$Java8
+-keepattributes Signature
+-keepattributes Exceptions
+
+# okhttp
+-dontwarn okio.**
+

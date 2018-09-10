@@ -65,7 +65,7 @@ public class SettingTargetFragment extends BaseActivity {
     private void initView() {
         initTopBar();
         bestWeight();
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
         mTvTips.setTypeface(typeface);
     }
@@ -157,8 +157,8 @@ public class SettingTargetFragment extends BaseActivity {
     }
 
     private void nextStep() {
-        if (settingWeight > initWeight) {
-            tipDialog.showInfo("您设定的目标体重超过当前体重，\n请重新设置~", 2000);
+        if (settingWeight >= initWeight) {
+            tipDialog.showInfo("您设定的目标体重超过或等于当前体重，\n请重新设置~", 2000);
             return;
         }
 

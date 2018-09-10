@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,6 +49,7 @@ import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -153,8 +155,10 @@ public class SearchHistoryFragment extends BaseActivity {
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
-            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
+            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);//是否是从首页跳转
         }
+        Log.e("添加成功", SlimmingPage + "");
+        RxToast.info("添加成功:" + SlimmingPage);
     }
 
 
@@ -321,7 +325,6 @@ public class SearchHistoryFragment extends BaseActivity {
 
     private void addSearchKey(String query) {
         if (isStorage) {
-            RxLogUtils.d("是否包含：" + query + "---" + SearchWordTab.getKey(query));
             if (SearchWordTab.getKey(query) == null) {
                 SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), query);
                 keyTab.save();
@@ -426,7 +429,7 @@ public class SearchHistoryFragment extends BaseActivity {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-
+        Log.e("添加成功", SlimmingPage + "");
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
@@ -436,9 +439,12 @@ public class SearchHistoryFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
+
+                        Log.e("添加成功", SlimmingPage + "");
                         FoodDetailsFragment.addedLists.clear();
+                        RxLogUtils.e("添加成功:" + SlimmingPage);
                         if (SlimmingPage) {
-                            RxActivityUtils.finishActivity();
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         } else {
                             RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
                         }

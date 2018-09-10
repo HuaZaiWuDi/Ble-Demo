@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -315,7 +316,7 @@ public class FoodDetailsFragment extends BaseActivity {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-
+        Log.e("添加成功", SlimmingPage + "");
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
