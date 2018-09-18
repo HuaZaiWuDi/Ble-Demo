@@ -39,6 +39,8 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
 import lab.wesmartclothing.wefit.flyso.entity.ReadedBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -235,11 +237,26 @@ public class MessageFragment extends BaseActivity {
                 });
     }
 
+    //是否含有未读
+    private boolean hasRead() {
+        if (adapter != null) {
+            for (MessageBean.ListBean bean : (List<MessageBean.ListBean>) adapter.getData()) {
+                if (bean.getReadState() != 1) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     private void readAllRequest() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
+        if (!hasRead()) {
+            RxToast.normal("没有未读消息");
+            return;
+        }
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.readedAll())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -324,6 +341,16 @@ public class MessageFragment extends BaseActivity {
                         RxToast.normal(error);
                     }
                 });
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (!hasRead()) {
+            RxBus.getInstance().post(new RefreshMe());
+            RxBus.getInstance().post(new RefreshSlimming());
+        }
+        super.onBackPressed();
     }
 
 }

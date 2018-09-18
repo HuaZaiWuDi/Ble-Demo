@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.netlib.utils.HttpResult;
 import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
 
@@ -58,22 +59,33 @@ public class RxManager {
 
     public <T> Observable<T> doNetSubscribe(Observable<T> observable) {
         return observable
+                .compose(RxThreadUtils.<T>rxThreadHelper())
                 .compose(RxThreadUtils.<T>handleResult())
-                .compose(RxThreadUtils.<T>rxThreadHelper());
+                ;
     }
 
-    public <T> Observable<T> doNetSubscribe(Observable<T> observable,
+    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
                                             BehaviorSubject<LifeCycleEvent> lifecycleSubject,
                                             String cacheKey,
+                                            Class type,
                                             IObservableStrategy strategy
     ) {
         return observable
+                .compose(RxThreadUtils.<T>handleResult2())
+                .compose(RxThreadUtils.<T>rxThreadHelper())
                 .compose(RxThreadUtils.<T>bindLife(lifecycleSubject))
-                .compose(RxCache.getDefault().<T>transformObservable(cacheKey, String.class, strategy))
+                .compose(RxCache.getDefault().<T>transformObservable(cacheKey, type, strategy))
                 .map(new CacheResult.MapFunc<T>())
-                .compose(RxThreadUtils.<T>handleResult())
-                .compose(RxThreadUtils.<T>rxThreadHelper());
+                ;
+    }
 
+    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
+                                            BehaviorSubject<LifeCycleEvent> lifecycleSubject
+    ) {
+        return observable
+                .compose(RxThreadUtils.<T>handleResult2())
+                .compose(RxThreadUtils.<T>rxThreadHelper())
+                .compose(RxThreadUtils.<T>bindLife(lifecycleSubject));
     }
 
 

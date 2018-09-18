@@ -60,6 +60,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
@@ -77,6 +78,8 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/7/13.
@@ -234,6 +237,7 @@ public class Slimming2Fragment extends BaseAcFragment {
 
 
     private void initView() {
+        initRxBus();
         add_food = getResources().getStringArray(R.array.add_food);
         Typeface typeface = MyAPP.typeface;
         mTvWeightStart.setTypeface(typeface);
@@ -254,16 +258,22 @@ public class Slimming2Fragment extends BaseAcFragment {
         setDefaultBarData(null);
         setLineChartData(null);
 
+        initData();
         setTGA(this.getClass().getSimpleName());
 
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        initData();
+    private void initRxBus() {
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initData();
+                    }
+                });
     }
+
 
     private void initData() {
         getFirstPageData();
@@ -595,8 +605,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
         mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
-        RxLogUtils.d("热量：" + (Math.abs(bean.getAbleIntake()) + "".trim()));
-        RxLogUtils.d("热量：" + (Math.abs(bean.getAbleIntake()) + "").length());
         if (bean.getAbleIntake() < 0 && lastKcal != bean.getAbleIntake()) {
             lastKcal = bean.getAbleIntake();
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
@@ -631,7 +639,6 @@ public class Slimming2Fragment extends BaseAcFragment {
             background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             mBtnGoBindClothing.setText(R.string.goBind);
             mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
-            RxLogUtils.e("去绑定");
         } else {
             mTvClothingTip.setText("请穿上燃脂衣开始运动吧");
             mBtnGoBindClothing.setText(R.string.goSporting);

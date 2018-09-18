@@ -28,6 +28,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleUnsteadyWeight;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -231,6 +232,9 @@ public class WeightAddFragment extends BaseActivity {
                         RxLogUtils.d("添加体重：");
                         RxToast.normal("存储体重成功");
                         onBackPressed();
+
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshSlimming());
 
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_WEIGHT_GID, s);

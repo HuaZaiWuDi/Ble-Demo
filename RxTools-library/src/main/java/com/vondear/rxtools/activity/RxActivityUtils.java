@@ -6,7 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.view.View;
 
 import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxIntentUtils;
@@ -280,8 +285,6 @@ public class RxActivityUtils {
     }
 
 
-
-
     /**
      * 获取launcher activity
      *
@@ -301,4 +304,67 @@ public class RxActivityUtils {
         }
         return "no " + packageName;
     }
+
+
+    /**
+     * 跳转到桌面
+     *
+     * @param context
+     * @return
+     */
+    public static String getLauncherActivity(@NonNull Context context) {
+        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PackageManager pm = context.getPackageManager();
+        List<ResolveInfo> info = pm.queryIntentActivities(intent, 0);
+        for (ResolveInfo aInfo : info) {
+            if (aInfo.activityInfo.packageName.equals(context.getPackageName())) {
+                return aInfo.activityInfo.name;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 回到桌面 -> 同点击Home键效果
+     */
+    public static void startHomeActivity(@NonNull Context context) {
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        context.startActivity(homeIntent);
+    }
+
+    /**
+     * 设置跳转动画
+     *
+     * @param context
+     * @param enterAnim
+     * @param exitAnim
+     * @return
+     */
+    private static Bundle getOptionsBundle(final Context context, final int enterAnim, final int exitAnim) {
+        return ActivityOptionsCompat.makeCustomAnimation(context, enterAnim, exitAnim).toBundle();
+    }
+
+    /**
+     * 设置跳转动画
+     *
+     * @param activity
+     * @param sharedElements
+     * @return
+     */
+    private static Bundle getOptionsBundle(final Activity activity, final View[] sharedElements) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int len = sharedElements.length;
+            @SuppressWarnings("unchecked")
+            Pair<View, String>[] pairs = new Pair[len];
+            for (int i = 0; i < len; i++) {
+                pairs[i] = Pair.create(sharedElements[i], sharedElements[i].getTransitionName());
+            }
+            return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs).toBundle();
+        }
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, null, null).toBundle();
+    }
+
 }

@@ -38,7 +38,6 @@ public abstract class RxSubscriber<T> implements Observer<T> {
     @Override
     public void onNext(T t) {
         _onNext(t);
-        Log.v(TAG, "_onNext: " + t);
     }
 
 

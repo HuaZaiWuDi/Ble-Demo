@@ -91,7 +91,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .subscribe(new RxSubscriber<SportsDataTab>() {
                     @Override
                     protected void _onNext(SportsDataTab sportsDataTab) {
-                        RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
                         if (BleService.clothingFinish) {
                             BleService.clothingFinish = false;
                             final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);

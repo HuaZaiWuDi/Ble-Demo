@@ -10,13 +10,19 @@
     tools:context=".ui.login.LoginRegisterActivity">
 
 
+    <View
+        android:id="@+id/v_emptyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+
     <com.flyco.tablayout.CommonTabLayout
         android:id="@+id/mCommonTabLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dimen_50"
+        android:layout_below="@+id/v_emptyLayout"
         android:layout_marginLeft="@dimen/dimen_35"
         android:layout_marginRight="@dimen/dimen_35"
-        android:layout_marginTop="@dimen/dimen_50"
         android:background="@color/white"
         app:tl_divider_color="@color/BrightGray"
         app:tl_divider_width="@dimen/dimen_1"
@@ -110,5 +116,6 @@
         </RelativeLayout>
 
     </LinearLayout>
+
 
 </RelativeLayout>

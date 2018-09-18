@@ -1,9 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.login;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -63,9 +65,12 @@ public class LoginRegisterActivity extends BaseActivity {
     ImageView mImgQq;
     @BindView(R.id.img_weibo)
     ImageView mImgWeibo;
+    @BindView(R.id.v_emptyLayout)
+    View mVEmptyLayout;
 
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
+    private int softHeight = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +129,32 @@ public class LoginRegisterActivity extends BaseActivity {
     public void initView() {
         initTab();
         initRxBus();
+
+        ViewTreeObserver.OnGlobalLayoutListener listener = new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                //当键盘弹出隐藏的时候会 调用此方法。
+                Rect r = new Rect();
+                //获取当前界面可视部分
+                mActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+                //获取屏幕的高度
+                int screenHeight = mActivity.getWindow().getDecorView().getRootView().getHeight();
+                RxLogUtils.e("屏幕高度" + screenHeight);
+                //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候 此高度为0 键盘弹出的时候为一个正数
+                int heightDifference = screenHeight - r.bottom;
+                if (heightDifference != 0) {
+                    softHeight = heightDifference;
+                }
+                RxLogUtils.e("软键盘高度" + softHeight);
+                if (softHeight * 1f / screenHeight * 1f > 0.40f) {
+                    mVEmptyLayout.setVisibility(heightDifference == 0 ? View.VISIBLE : View.GONE);
+                }
+            }
+        };
+
+        //注册布局变化监听
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(listener);
     }
 
     @Override

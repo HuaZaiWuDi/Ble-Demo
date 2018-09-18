@@ -48,6 +48,8 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -159,7 +161,7 @@ public class AddDeviceActivity extends BaseActivity {
     void tv_skip() {
         //跳转主页
         if (!BUNDLE_FORCE_BIND)
-            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
+            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
         else
             RxActivityUtils.finishActivity();
     }
@@ -382,7 +384,6 @@ public class AddDeviceActivity extends BaseActivity {
         }
 
         mBindDeviceItem.setDeviceList(mDeviceLists);
-
         String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
@@ -396,15 +397,22 @@ public class AddDeviceActivity extends BaseActivity {
                         RxLogUtils.d("添加绑定设备：" + s);
                         //跳转主页
                         if (!BUNDLE_FORCE_BIND) {
-                            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         } else {
-                            RxActivityUtils.finishActivity();
+                            onBackPressed();
                         }
                     }
 
                     @Override
                     protected void _onError(String error) {
                         RxToast.error(error);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
+                        RxBus.getInstance().post(new RefreshSlimming());
+                        RxBus.getInstance().post(new RefreshMe());
                     }
                 });
     }

@@ -41,6 +41,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -49,6 +50,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.RequestBody;
 
 
@@ -280,7 +282,6 @@ public class FoodDetailsFragment extends BaseActivity {
                     protected void _onError(String error, int errorCode) {
                         RxToast.normal(error);
                         if (smartRefreshLayout.isLoading()) {
-                            pageNum++;
                             smartRefreshLayout.finishLoadMore(false);
                         }
                         if (smartRefreshLayout.isRefreshing())
@@ -328,10 +329,12 @@ public class FoodDetailsFragment extends BaseActivity {
                         RxToast.success("添加成功");
                         addedLists.clear();
                         if (SlimmingPage) {
+                            //刷新数据
                             RxActivityUtils.finishActivity();
                         } else {
                             RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
                         }
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
@@ -360,7 +363,6 @@ public class FoodDetailsFragment extends BaseActivity {
             RxActivityUtils.finishActivity();
             return;
         }
-
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
         dialog.setCanceledOnTouchOutside(false);
         dialog.getTvTitle().setVisibility(View.GONE);

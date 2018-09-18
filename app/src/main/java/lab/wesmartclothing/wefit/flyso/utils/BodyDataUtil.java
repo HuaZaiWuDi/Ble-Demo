@@ -17,6 +17,11 @@ public class BodyDataUtil {
     }
 
 
+    /**
+     * @param index
+     * @param realValue
+     * @return
+     */
     public int transformation(int index, double realValue) {
         int temp = 0;
         if (index == 5) {
@@ -28,8 +33,12 @@ public class BodyDataUtil {
         return temp;
     }
 
+    /**
+     * @param realValue
+     * @param section
+     * @return
+     */
     private int bmi(double realValue, double[] section) {
-
         int temp = 0;
         if (section.length == 1)
             if (realValue < section[0]) {
@@ -39,11 +48,12 @@ public class BodyDataUtil {
             }
         else if (section.length == 2) {
             if (realValue < section[0]) {
+
                 temp = (int) (realValue / section[0] * 33);
             } else if (realValue >= section[0] && realValue < section[1]) {
                 temp = (int) ((realValue - section[0]) / (section[1] - section[0]) * 33) + 33;
             } else {
-                temp = (int) ((realValue - section[1]) / (section[1] + 25) * 33) + 66;
+                temp = (int) ((realValue - section[1]) / (section[1] + (section[1] - section[0])) * 33) + 66;
             }
         } else if (section.length == 3) {
             if (realValue < section[0]) {
@@ -53,7 +63,7 @@ public class BodyDataUtil {
             } else if (realValue >= section[1] && realValue < section[2]) {
                 temp = (int) ((realValue - section[1]) / (section[2] - section[1]) * 25) + 50;
             } else {
-                temp = (int) ((realValue - section[2]) / (section[2] + 25) * 25) + 75;
+                temp = (int) ((realValue - section[2]) / (section[2] + (section[1] - section[0])) * 25) + 75;
             }
         }
 
@@ -63,6 +73,11 @@ public class BodyDataUtil {
         return temp;
     }
 
+    /**
+     * @param realValue
+     * @param index
+     * @return
+     */
     public Object[] checkStatus(double realValue, int index) {
 
         double[] section = mHealthyList.get(index % mHealthyList.size()).getSections();

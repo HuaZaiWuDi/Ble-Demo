@@ -2,19 +2,23 @@ package lab.wesmartclothing.wefit.flyso;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUIEmptyView;
-import com.vondear.rxtools.utils.RandomUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxRandom;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.common.RxBaseRoundProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import tech.linjiang.suitlines.SuitLines;
 import tech.linjiang.suitlines.Unit;
 
@@ -22,8 +26,6 @@ public class TestBleScanActivity extends AppCompatActivity {
 
     @BindView(R.id.parent)
     RelativeLayout mParent;
-    @BindView(R.id.tv_content)
-    TextView mTvContent;
 
     private QMUIEmptyView mEmptyView;
 
@@ -41,8 +43,43 @@ public class TestBleScanActivity extends AppCompatActivity {
 //        mParent.addView(mEmptyView);
 
 
-        initLine();
+//        initLine();
 
+        final RxRoundProgressBar progressBar = findViewById(R.id.mProgress);
+        progressBar.setProgress(50);
+
+        progressBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setProgress(RxRandom.getRandom(100));
+            }
+        });
+        progressBar.setOnProgressChangedListener(new RxBaseRoundProgressBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int viewId, float progress, boolean isPrimaryProgress, boolean isSecondaryProgress) {
+                RxLogUtils.e("进度：" + progress);
+            }
+        });
+
+        final RxTextRoundProgressBar mTextProgress = findViewById(R.id.mTextProgress);
+        mTextProgress.setProgress(50);
+
+
+        mTextProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTextProgress.setProgress(RxRandom.getRandom(100));
+            }
+        });
+        final RxIconRoundProgressBar mIconProgress = findViewById(R.id.mIconProgress);
+        mIconProgress.setProgress(50);
+
+        mIconProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIconProgress.setProgress(RxRandom.getRandom(100));
+            }
+        });
     }
 
     private void initLine() {
@@ -51,8 +88,8 @@ public class TestBleScanActivity extends AppCompatActivity {
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            Unit unit_weight = new Unit(RandomUtils.getRandom(100), i + "");
-            Unit unit_bodyFat = new Unit(RandomUtils.getRandom(50), i + "");
+            Unit unit_weight = new Unit(RxRandom.getRandom(100), i + "");
+            Unit unit_bodyFat = new Unit(RxRandom.getRandom(50), i + "");
             unit_weight.setShowPoint(true);
 
             unit_bodyFat.setFill(true);
@@ -70,32 +107,5 @@ public class TestBleScanActivity extends AppCompatActivity {
                 RxToast.normal(valueX + "");
             }
         });
-    }
-
-
-    int count = 0;
-
-    @OnClick(R.id.tv_content)
-    public void onViewClicked() {
-        count++;
-        switch (count % 4) {
-            case 0:
-                mEmptyView.show("我是title", "我是Content");
-                break;
-            case 1:
-                mEmptyView.show("我是错误的文字", null);
-                break;
-            case 2:
-                mEmptyView.show(true);
-                break;
-            case 3:
-                mEmptyView.show(false, "我是title", null, "我是Content", null);
-                break;
-            case 4:
-                mEmptyView.show(false, "我是title", "我是Content", "点击重试", null);
-                break;
-            default:
-                break;
-        }
     }
 }

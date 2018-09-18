@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Looper;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -92,6 +93,30 @@ public class MyAPP extends Application {
                 RxLogUtils.i("启动时长：初始化结束");
             }
         }).start();
+//        initCrash();
+    }
+
+    private void initCrash() {
+        new android.os.Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Looper.loop();
+                    } catch (Throwable e) {
+                        RxLogUtils.e("主线程异常:" + e.toString());
+                    }
+                }
+            }
+        });
+//        sUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        //所有线程异常拦截，由于主线程的异常都被我们catch住了，所以下面的代码拦截到的都是子线程的异常
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                RxLogUtils.e("子线程" + t.getName() + "异常:" + e.toString());
+            }
+        });
     }
 
 

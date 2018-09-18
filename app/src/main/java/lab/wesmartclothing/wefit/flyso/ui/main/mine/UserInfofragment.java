@@ -42,7 +42,10 @@ import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
@@ -55,6 +58,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -87,6 +91,7 @@ public class UserInfofragment extends BaseActivity {
         setContentView(R.layout.fragment_user_info);
         unbinder = ButterKnife.bind(this);
         initView();
+
     }
 
 
@@ -406,11 +411,15 @@ public class UserInfofragment extends BaseActivity {
                         RxToast.success("保存成功", 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
                         RxActivityUtils.finishActivity();
+                        new QNBleTools().disConnectDevice();
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshMe());
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+                        RxToast.normal(error);
                     }
                 });
     }
@@ -418,26 +427,26 @@ public class UserInfofragment extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-
         RxLogUtils.d("用户数据：" + info.toString());
         if (info.isChange()) {
             final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
             dialog.setCanceledOnTouchOutside(false);
             dialog.getTvTitle().setVisibility(View.GONE);
-            dialog.setContent("您已经修改信息\n是否退出？");
+            dialog.setContent("您已经修改信息\n是否保存？");
             dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-            dialog.setCancel("退出").setCancelListener(new View.OnClickListener() {
+            dialog.setCancel("保存").setCancelListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    RxActivityUtils.finishActivity();
+                    requestSaveUserInfo();
                 }
             })
-                    .setSure("留下")
+                    .setSure("退出")
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
+                            RxActivityUtils.finishActivity();
                         }
                     }).show();
         } else

@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,6 +47,7 @@ import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
@@ -59,6 +59,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -157,8 +158,6 @@ public class SearchHistoryFragment extends BaseActivity {
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
             SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);//是否是从首页跳转
         }
-        Log.e("添加成功", SlimmingPage + "");
-        RxToast.info("添加成功:" + SlimmingPage);
     }
 
 
@@ -282,7 +281,7 @@ public class SearchHistoryFragment extends BaseActivity {
 //        //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
 //        mSearchView.setIconified(false);
 //        //设置搜索框直接展开显示。左侧有放大镜(在搜索框外) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-        mSearchView.setIconifiedByDefault(false);
+//        mSearchView.setIconifiedByDefault(false);
 //        //设置搜索框直接展开显示。左侧有无放大镜(在搜索框中) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
 //        mSearchView.onActionViewExpanded();
         //修改搜索框底部的横线
@@ -296,27 +295,29 @@ public class SearchHistoryFragment extends BaseActivity {
         textView.setTextSize(15);//字体、提示字体大小
         textView.setHintTextColor(Color.WHITE);//提示字体颜色**
 
+        mSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.setIconifiedByDefault(false);
+            }
+        });
+
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //TODO 处理Text的。防止输入特殊文字
-                if (!RxDataUtils.isNullString(query) && query.length() <= 20) {
-
-                    addSearchKey(query);
-
-                    initSearchData(query);
-                } else RxToast.warning(getString(R.string.inputRightFoodName));
-
-                return false;
+                //用户点击搜索才会响应
+                addSearchKey(query);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //TODO 处理Text的。防止输入特殊文字
+                RxLogUtils.e("newText：" + newText);
+                //文字改变就会响应
                 if (!RxDataUtils.isNullString(newText) && newText.length() <= 20)
                     initSearchData(newText);
                 else mlayoutSearchData.setVisibility(View.GONE);
-                return false;
+                return true;
             }
         });
 
@@ -429,7 +430,6 @@ public class SearchHistoryFragment extends BaseActivity {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-        Log.e("添加成功", SlimmingPage + "");
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
@@ -438,16 +438,16 @@ public class SearchHistoryFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.success("添加成功");
-
-                        Log.e("添加成功", SlimmingPage + "");
+//                        RxToast.success("添加成功");
                         FoodDetailsFragment.addedLists.clear();
-                        RxLogUtils.e("添加成功:" + SlimmingPage);
                         if (SlimmingPage) {
-                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
+                            //刷新数据
+                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         } else {
+                            //刷新数据
                             RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
                         }
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override

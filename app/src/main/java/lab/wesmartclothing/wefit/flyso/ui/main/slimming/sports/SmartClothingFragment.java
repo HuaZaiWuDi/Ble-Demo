@@ -40,6 +40,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
@@ -49,6 +50,8 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import tech.linjiang.suitlines.SuitLines;
 import tech.linjiang.suitlines.Unit;
 
@@ -166,19 +169,26 @@ public class SmartClothingFragment extends BaseActivity {
 
 
     private void initView() {
+        initMRxBus();
         initTopBar();
         Typeface typeface = MyAPP.typeface;
         mTvHeatKcal.setTypeface(typeface);
         mTvSportsTime.setTypeface(typeface);
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
         checkStatus();
+        initData();
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        initData();
+    private void initMRxBus() {
+        //后台上传心率数据成功，刷新界面
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming hearRateUpload) {
+                        initData();
+                    }
+                });
     }
 
 
@@ -275,7 +285,6 @@ public class SmartClothingFragment extends BaseActivity {
         builder.add(lines_Time, Color.parseColor("#F2A49C"));
 
         mSuitlines.setSpaceMaxMin(0.2f, 0);
-
         builder.build(mSuitlines, false);
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
             @Override
@@ -315,5 +324,7 @@ public class SmartClothingFragment extends BaseActivity {
                 break;
         }
     }
+
+
 
 }

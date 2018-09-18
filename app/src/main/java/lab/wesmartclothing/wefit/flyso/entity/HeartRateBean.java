@@ -10,12 +10,14 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -66,6 +68,8 @@ public class HeartRateBean {
                         athlList.clear();
                         SPUtils.remove(Key.CACHE_ATHL_RECORD);
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
+                        //这里因为是后台上传数据，并不是跳转，使用RxBus方式
+                        RxBus.getInstance().post(new RefreshSlimming());
                         if (BuildConfig.DEBUG)
                             RxToast.success("数据上传成功");
                     }

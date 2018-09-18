@@ -38,6 +38,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -115,7 +116,6 @@ public class CollectFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-
 
         mRvCollect.setAdapter(adapter);
         smartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
@@ -218,6 +218,7 @@ public class CollectFragment extends BaseActivity {
                         if (adapter.getData().size() == 0) {
                             adapter.setEmptyView(emptyView);
                         }
+                        RxBus.getInstance().post(new RefreshMe());
                     }
 
                     @Override

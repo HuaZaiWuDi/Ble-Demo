@@ -6,6 +6,10 @@ def releaseTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
 
+//Git每次提交的版本号
+def cmd = 'git rev-list HEAD --count'
+def gitVersion = cmd.execute().text.trim().toInteger()
+
 android {
     signingConfigs {
         debug {
@@ -86,7 +90,7 @@ android {
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
                         // apk_渠道名-版本号-版本名称-编译时间.apk
-                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-release.apk"
+                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-release-api.apk"
 
                         outputFileName = fileName
                     }

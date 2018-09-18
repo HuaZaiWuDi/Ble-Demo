@@ -42,6 +42,7 @@ import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
 import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
@@ -149,7 +150,7 @@ public class BodyDataFragment extends BaseActivity {
         //BMI
         Healthy healthy2 = new Healthy();
         healthy2.setSections(new double[]{18.5, 25});
-        healthy2.setSectionLabels(new String[]{"18.5%", "25.0%"});
+        healthy2.setSectionLabels(new String[]{"18.5", "25.0"});
         healthy2.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
         healthy2.setLabels(new String[]{"偏低", "标准", "偏高"});
@@ -400,7 +401,10 @@ public class BodyDataFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.normal("删除成功");
+//                        RxToast.normal("删除成功");
+                        //刷新数据
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshSlimming());
                         onBackPressed();
                     }
 

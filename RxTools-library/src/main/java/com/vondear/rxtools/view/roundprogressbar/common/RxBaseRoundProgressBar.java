@@ -1,5 +1,7 @@
 package com.vondear.rxtools.view.roundprogressbar.common;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -26,11 +28,11 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     protected final static int DEFAULT_SECONDARY_PROGRESS = 0;
     protected final static int DEFAULT_PROGRESS_RADIUS = 30;
     protected final static int DEFAULT_BACKGROUND_PADDING = 0;
-
+    private final static int TOTAL_DURATION = 1000;//动画总时长
+    private ValueAnimator mAnimator;
     private LinearLayout layoutBackground;
     private LinearLayout layoutProgress;
     private LinearLayout layoutSecondaryProgress;
-
     private int radius;
     private int padding;
     private int totalWidth;
@@ -46,6 +48,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     private boolean isReverse;
 
     private OnProgressChangedListener progressChangedListener;
+    private boolean isAnimating;
 
     public RxBaseRoundProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -136,7 +139,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     @Override
     protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {
         super.onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);
-        if(!isInEditMode()) {
+        if (!isInEditMode()) {
             totalWidth = newWidth;
             drawAll();
             postDelayed(new Runnable() {
@@ -291,16 +294,61 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     }
 
     public void setProgress(float progress) {
+        float oldValue = this.progress;
+
         if (progress < 0)
             this.progress = 0;
         else if (progress > max)
             this.progress = max;
         else
             this.progress = progress;
+
+        if (isAnimating) {
+            isAnimating = false;
+            mAnimator.cancel();
+        }
+
+        startAnimation(oldValue, progress);
+
         drawPrimaryProgress();
-        if(progressChangedListener != null)
-            progressChangedListener.onProgressChanged(getId(), this.progress, true, false);
     }
+
+    private void startAnimation(float start, float end) {
+        mAnimator = ValueAnimator.ofFloat(start, end);
+        int duration = (int) Math.abs(TOTAL_DURATION * (end - start) / max);
+        mAnimator.setDuration(duration);
+        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                progress = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                isAnimating = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                isAnimating = false;
+                if (progressChangedListener != null)
+                    progressChangedListener.onProgressChanged(getId(), progress, true, false);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        mAnimator.start();
+    }
+
 
     public float getSecondaryProgressWidth() {
         if (layoutSecondaryProgress != null)
@@ -320,7 +368,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
         else
             this.secondaryProgress = secondaryProgress;
         drawSecondaryProgress();
-        if(progressChangedListener != null)
+        if (progressChangedListener != null)
             progressChangedListener.onProgressChanged(getId(), this.secondaryProgress, false, true);
     }
 

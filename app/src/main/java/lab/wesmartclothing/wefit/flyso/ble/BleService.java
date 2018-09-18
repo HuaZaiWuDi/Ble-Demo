@@ -1,15 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.ble;
 
-import android.Manifest;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.os.ParcelUuid;
-import android.support.v4.app.ActivityCompat;
 
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.data.BleDevice;
@@ -31,9 +28,11 @@ import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.interfaces.onRequestPermissionsListener;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxPermissionsUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -102,6 +101,7 @@ public class BleService extends Service {
     @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
     void bluetoothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
         if (state == BluetoothAdapter.STATE_OFF) {
+            BleTools.getInstance().stopScanByM();
         } else if (state == BluetoothAdapter.STATE_ON) {
             initBle();
         }
@@ -146,7 +146,6 @@ public class BleService extends Service {
         super.onCreate();
         initHeartRate();
         connectScaleCallBack();
-        initBle();
     }
 
 
@@ -163,50 +162,23 @@ public class BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            RxLogUtils.d("验证权限");
-            RxToast.warning(getString(R.string.open_loaction));
-        }
+        RxPermissionsUtils.requestLoaction(this, new onRequestPermissionsListener() {
+            @Override
+            public void onRequestBefore() {
+                RxLogUtils.d("验证权限");
+                RxToast.warning(getString(R.string.open_loaction));
+            }
+
+            @Override
+            public void onRequestLater() {
+                initBle();
+            }
+        });
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     private void initBle() {
-//        BleTools.getInstance().stopScan();
-//        BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
-//                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
-//                .setScanTimeOut(-1)
-//                .build();
-//        BleTools.getBleManager().initScanRule(bleConfig);
-//        BleTools.getBleManager().scan(new BleScanCallback() {
-//            @Override
-//            public void onScanFinished(List<BleDevice> scanResultList) {
-//                RxLogUtils.d("扫描结束：" + scanResultList.size());
-//            }
-//
-//            @Override
-//            public void onScanStarted(boolean success) {
-//                RxLogUtils.d("扫描开始：" + success);
-//            }
-//
-//            @Override
-//            public void onScanning(BleDevice bleDevice) {
-//                RxLogUtils.d("扫描扫描结果：" + bleDevice.getName());
-//                if (BleKey.Smart_Clothing.equals(bleDevice.getName())) {
-//                    if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)))
-//                        connectClothing(bleDevice);
-//                    RxBus.getInstance().post(bleDevice);
-//
-//                } else if (BleKey.ScaleName.equals(bleDevice.getName())) {
-//                    QNBleDevice qnBleDevice = mQNBleTools.bleDevice2QNDevice(bleDevice);
-//                    if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {
-//                        mQNBleTools.connectDevice(qnBleDevice);
-//                        mQNBleTools.setDevice(qnBleDevice);
-//                    }
-//                    RxBus.getInstance().post(qnBleDevice);
-//                }
-//            }
-//        });
 
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_QN_SCALE, BleKey.UUID_Servie)
@@ -248,12 +220,14 @@ public class BleService extends Service {
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
                 RxLogUtils.d("扫描失败：" + errorCode);
+                if (errorCode == ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED || errorCode == ScanCallback.SCAN_FAILED_INTERNAL_ERROR) {
+                    initBle();
+                }
             }
 
             @Override
             public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
                 super.onBatchScanResults(results);
-
                 for (int i = 0; i < results.size(); i++) {
 //                    RxLogUtils.d("扫描扫描结果：" + results.get(0).toString());
                     com.smartclothing.blelibrary.scanner.ScanResult result = results.get(0);

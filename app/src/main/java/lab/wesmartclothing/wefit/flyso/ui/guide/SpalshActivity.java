@@ -1,13 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Environment;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -46,7 +44,6 @@ import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 @EActivity(R.layout.activity_spalsh)
 public class SpalshActivity extends BaseActivity {
@@ -120,7 +117,7 @@ public class SpalshActivity extends BaseActivity {
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
-                        initPromissions();
+                        gotoMain();
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
@@ -163,19 +160,6 @@ public class SpalshActivity extends BaseActivity {
         RxLogUtils.i("启动时长：引导页结束");
     }
 
-
-    private void initPromissions() {
-        new RxPermissions(mActivity)
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        gotoMain();
-                    }
-                });
-    }
 
     @Override
     protected void onDestroy() {

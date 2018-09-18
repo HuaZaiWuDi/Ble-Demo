@@ -183,13 +183,13 @@ public class Settingfragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
                         SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
+                        BleTools.getInstance().disConnect();
+                        new QNBleTools().disConnectDevice();
                         MyAPP.getRxCache().clear()
                                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
-                                        BleTools.getInstance().disConnect();
-                                        new QNBleTools().disConnectDevice();
                                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
                                     }
                                 });

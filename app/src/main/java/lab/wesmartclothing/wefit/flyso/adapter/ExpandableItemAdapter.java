@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.adapter;
 
 import android.content.res.ColorStateList;
-import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,12 +9,12 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
-import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
 import lab.wesmartclothing.wefit.flyso.view.HealthyProgressView;
@@ -27,8 +26,6 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
     public static final int TYPE_LEVEL_0 = 0;
     public static final int TYPE_LEVEL_1 = 1;
 
-
-    private Typeface typeface;
 
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
@@ -45,8 +42,6 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
 
     @Override
     protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
-        if (typeface != null)
-            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/DIN-Regular.ttf");
 
         switch (helper.getItemViewType()) {
             case TYPE_LEVEL_0:
@@ -59,8 +54,8 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
 
                 int color = level0Bean.getStatusColor();
                 TextView bodyValue = helper.getView(R.id.tv_bodyValue);
-                bodyValue.setTypeface(typeface);
-                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(level0Bean.getBodyValue(), 1))
+                bodyValue.setTypeface(MyAPP.typeface);
+                RxTextUtils.getBuilder(level0Bean.getBodyValue() + "")
                         .setForegroundColor(color)
                         .append(" " + level0Bean.getUnit())
                         .setForegroundColor(color)

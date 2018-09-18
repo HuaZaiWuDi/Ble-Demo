@@ -55,6 +55,39 @@ public class RxKeyboardUtils {
         inputmanger.hideSoftInputFromWindow(edit.getWindowToken(), 0);
     }
 
+
+    /**
+     * 动态隐藏软键盘
+     *
+     * @param context
+     */
+    public static void hideSoftInput(Context context) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
+    }
+
+    /**
+     * 动态显示软键盘
+     *
+     * @param context
+     */
+    public static void showSoftInput(Context context) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    /**
+     * 动态显示软键盘
+     *
+     * @param context
+     */
+    public static boolean softInputIsShow(Context context) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        boolean isOpen = inputMethodManager.isActive();
+        return isOpen;
+    }
+
+
     /**
      * 点击屏幕空白区域隐藏软键盘（方法1）
      * <p>在onTouch中处理，未获焦点则隐藏</p>

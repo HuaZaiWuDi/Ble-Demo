@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 public class GuideActivity extends BaseActivity {
 
@@ -97,6 +101,20 @@ public class GuideActivity extends BaseActivity {
 
     @OnClick(R.id.btn_goto)
     public void onViewClicked() {
-        RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
+        initPermissions();
     }
+
+    private void initPermissions() {
+        new RxPermissions(mActivity)
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
+                    }
+                });
+    }
+
 }

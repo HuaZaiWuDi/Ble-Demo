@@ -197,7 +197,7 @@ public class RxThreadUtils {
                                     }
                                     return createData((T) data);
                                 } else {
-                                    return Observable.error(new Throwable(msg));
+                                    return Observable.error(new ExplainException(msg, msg, code));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -226,7 +226,7 @@ public class RxThreadUtils {
                     @Override
                     public T apply(HttpResult<T> tHttpResult) throws Exception {
                         if (tHttpResult.getCode() != 0) {
-                            throw new RuntimeException(tHttpResult.getMessage());
+                            throw new ExplainException(tHttpResult.getMessage(), tHttpResult.getMessage(), tHttpResult.getCode());
                         }
                         return tHttpResult.getData();
                     }

@@ -37,6 +37,8 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
@@ -46,6 +48,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created by jk on 2018/8/10.
@@ -249,6 +252,8 @@ public class DeviceFragment extends BaseActivity {
                             BleTools.getInstance().disConnect();
                         }
                         notifyData();
+                        RxBus.getInstance().post(new RefreshMe());
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override

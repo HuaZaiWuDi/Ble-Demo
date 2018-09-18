@@ -60,6 +60,7 @@ public class DeviceUtil {
         String version = packInfo.versionName;
         return version;
     }
+
     /**
      * 获取ANDROID ID
      *
@@ -68,6 +69,7 @@ public class DeviceUtil {
     public static String getAndroidId() {
         return Settings.Secure.getString(application.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
+
     /**
      * 获取设备厂商，如Xiaomi
      *

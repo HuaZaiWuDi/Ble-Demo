@@ -47,6 +47,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -159,7 +160,6 @@ public class WeightRecordFragment extends BaseActivity {
     private double lastWeight = 0;//最后一条体重数据
     private List<WeightDataBean.WeightListBean.ListBean> list;
     private Bundle bundle = new Bundle();
-    private boolean isVisite = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,20 +171,6 @@ public class WeightRecordFragment extends BaseActivity {
                 .setLightStatusBar(true)
                 .process();
         initView();
-    }
-
-
-    @Override
-    public void onStart() {
-        isVisite = true;
-        initData();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        isVisite = false;
-        super.onStop();
     }
 
 
@@ -201,11 +187,11 @@ public class WeightRecordFragment extends BaseActivity {
         initTopBar();
         checkStatus();
         initRxBus();
+        initData();
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
     }
 
     private void initRxBus() {
-
         //体重历史数据
         RxBus.getInstance().register2(ScaleHistoryData.class)
                 .compose(RxComposeUtils.<ScaleHistoryData>bindLife(lifecycleSubject))
@@ -231,6 +217,15 @@ public class WeightRecordFragment extends BaseActivity {
                                 }
                             });
                         }
+                    }
+                });
+
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initData();
                     }
                 });
     }

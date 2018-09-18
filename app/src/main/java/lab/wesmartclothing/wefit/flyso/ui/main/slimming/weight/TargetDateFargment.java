@@ -85,25 +85,25 @@ public class TargetDateFargment extends BaseActivity {
 
         weeks = stillNeed / 0.5f;
         mTvTargetDays.setText((int) (weeks * 7) + "天");
-        String tips = "每周减重目标 " + 0.5 + " kg";
+        String tips = "每周减重目标 " + (stillNeed < 0.5 ? stillNeed : 0.5) + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                 .setProportion(1.4f)
                 .setLength(7, tips.length() - 3);
         mTvTips.setText(builder);
 
-        mTvTargetWeight.setText(RxFormatValue.fromat4S5R(weeks, 0));
+        mTvTargetWeight.setText((int) (weeks < 1 ? 1 : weeks) + "");
         mRulerWeight.setTextLabel("周");
         mRulerWeight.setDecimal(false);
         mRulerWeight.setColor(getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.orange_FF7200));
         mRulerWeight.setParam(DrawUtil.dip2px(50), DrawUtil.dip2px(60), DrawUtil.dip2px(60),
                 DrawUtil.dip2px(60), DrawUtil.dip2px(1), DrawUtil.dip2px(12));
-        mRulerWeight.initViewParam(weeks, 1f, (stillNeed / 0.28f < 1 ? 1 : stillNeed / 0.28f), 10);
+        mRulerWeight.initViewParam((int) (weeks < 1 ? 1 : weeks), 1f, (stillNeed / 0.28f < 1 ? 1 : stillNeed / 0.28f), 10);
         mRulerWeight.setValueChangeListener(new DecimalScaleRulerView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
                 weeks = value;
-                mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 0));
+                mTvTargetWeight.setText((int) (weeks < 1 ? 1 : weeks) + "");
 
                 String tips = "每周减重目标 " + RxFormatValue.fromat4S5R((stillNeed / weeks), 1) + " kg";
                 SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)

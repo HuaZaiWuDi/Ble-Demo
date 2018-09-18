@@ -119,7 +119,7 @@ public class SportsDetailsFragment extends BaseActivity {
                         mTvAvHeartRate.setText(heartRateBean.getAvgHeart() + "");
                         mTvMaxHeartRate.setText(heartRateBean.getMaxHeart() + "");
 
-                        heartRateStatistics(heartRateBean.getAthlList(), heartRateBean.getDuration());
+                        heartRateStatistics(heartRateBean.getAthlList());
                     }
 
                     @Override
@@ -129,10 +129,12 @@ public class SportsDetailsFragment extends BaseActivity {
                 });
     }
 
-    private void heartRateStatistics(List<HeartRateBean.AthlList> athlList, int totalTime) {
+    private void heartRateStatistics(List<HeartRateBean.AthlList> athlList) {
         RxLogUtils.d("心率数据个数：" + athlList.size());
+        int totalTime = 0;
         for (int i = 0; i < athlList.size(); i++) {
             checkHeartRate(athlList.get(i));
+            totalTime += athlList.get(i).getStepTime();
         }
 
         if (totalTime == 0) return;

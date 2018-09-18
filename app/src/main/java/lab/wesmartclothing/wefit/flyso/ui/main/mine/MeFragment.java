@@ -14,7 +14,6 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
@@ -28,6 +27,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -36,6 +36,8 @@ import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/8/9.
@@ -79,25 +81,11 @@ public class MeFragment extends BaseAcFragment {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        initMineData();
-    }
-
-
-    @Override
-    protected void onVisible() {
-        super.onVisible();
-        RxLogUtils.d("显示：MeFragment");
-        initMineData();
-    }
-
-
     private void initView() {
+        initRxBus();
         groupList();
+        initMineData();
         initTypeface();
-
         RxTextUtils.getBuilder("--")
                 .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .append("--")
@@ -105,8 +93,28 @@ public class MeFragment extends BaseAcFragment {
                 .into(mTvSportingTime);
     }
 
+    @Override
+    protected void onVisible() {
+        super.onVisible();
+        initMineData();
+    }
+
+    //后台上传心率数据成功，刷新界面
+    private void initRxBus() {
+        //后台上传心率数据成功，刷新界面
+        RxBus.getInstance().register2(RefreshMe.class)
+                .compose(RxComposeUtils.<RefreshMe>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshMe>() {
+                    @Override
+                    protected void _onNext(RefreshMe hearRateUpload) {
+                        initMineData();
+                    }
+                });
+
+    }
+
     private void initTypeface() {
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvSportingTime.setTypeface(typeface);
         mTvTotalHeat.setTypeface(typeface);
         mTvTotalDays.setTypeface(typeface);

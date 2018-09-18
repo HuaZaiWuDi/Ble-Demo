@@ -141,7 +141,7 @@ public class BleTools {
         } else {
             TimeOut.postDelayed(reWrite, timeOut);
             currentCount++;
-            bleManager.write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
+            getBleManager() .write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
 
                 @Override
                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
@@ -160,7 +160,7 @@ public class BleTools {
     private BleCallBack mBleCallBack;
 
     public void writeNo(byte[] bytes) {
-        bleManager.write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
+        getBleManager() .write(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_WRITE, bytes, new BleWriteCallback() {
             @Override
             public void onWriteSuccess(int current, int total, byte[] justWrite) {
 //                Log.e(TAG, "无响应写成功:" + HexUtil.encodeHexStr(justWrite));
@@ -174,7 +174,7 @@ public class BleTools {
     }
 
     public void read() {
-        bleManager.read(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleReadCallback() {
+        getBleManager() .read(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleReadCallback() {
             @Override
             public void onReadSuccess(byte[] data) {
                 TimeOut.removeCallbacks(reWrite);
@@ -213,7 +213,7 @@ public class BleTools {
             Log.e(TAG, "未连接");
             return;
         }
-        bleManager.notify(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleNotifyCallback() {
+        getBleManager() .notify(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleNotifyCallback() {
             @Override
             public void onNotifySuccess() {
                 Log.d(TAG, "打开通知成功");
@@ -267,7 +267,7 @@ public class BleTools {
             Log.e(TAG, "未连接");
             return;
         }
-        bleManager.indicate(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleIndicateCallback() {
+        getBleManager() .indicate(bleDevice, BleKey.UUID_Servie, BleKey.UUID_CHART_READ_NOTIFY, new BleIndicateCallback() {
             @Override
             public void onIndicateSuccess() {
                 Log.e(TAG, "打开indicate成功");
@@ -299,7 +299,7 @@ public class BleTools {
             Log.e(TAG, "未连接");
             return;
         }
-        bleManager.readRssi(bleDevice, new BleRssiCallback() {
+        getBleManager() .readRssi(bleDevice, new BleRssiCallback() {
             @Override
             public void onRssiFailure(BleException exception) {
                 Log.e(TAG, "读取蓝牙信号失败:" + exception.toString());
@@ -344,7 +344,7 @@ public class BleTools {
             throw new IllegalArgumentException("BleScanCallback can not be Null!");
         }
 
-        if (!bleManager.isBlueEnable()) {
+        if (!getBleManager().isBlueEnable()) {
             BleLog.e("Bluetooth not enable!");
             scanCallback.onScanFailed(-1);
             return;
@@ -383,18 +383,16 @@ public class BleTools {
         TimeOut.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isScanning) {
-                    stopScanByM();
-                }
+                stopScanByM();
             }
         }, timeOut);
     }
 
     public void stopScanByM() {
-        Log.d("bleManager", "结束扫描");
         if (isScanning) {
             final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
             if (scanCallback != null && scanner != null) {
+                Log.d("bleManager", "结束扫描");
                 scanner.stopScan(scanCallback);
                 isScanning = false;
             }
@@ -406,26 +404,26 @@ public class BleTools {
     }
 
     public void stopScan() {
-        if (bleManager.getScanSate() == BleScanState.STATE_SCANNING) {
+        if (getBleManager() .getScanSate() == BleScanState.STATE_SCANNING) {
             Log.d("bleManager", "结束扫描");
-            bleManager.cancelScan();
+            getBleManager() .cancelScan();
         }
     }
 
     public boolean isConnect() {
-        if (bleManager == null || bleDevice == null) return false;
+        if (getBleManager()  == null || getBleManager()  == null) return false;
 
-        return bleManager.isConnected(bleDevice);
+        return getBleManager() .isConnected(bleDevice);
     }
 
     public boolean connectedState() {
-        if (bleManager == null || bleDevice == null) return false;
-        return bleManager.getConnectState(bleDevice) == 1 || bleManager.getConnectState(bleDevice) == 2;
+        if (getBleManager()  == null || getBleManager()  == null) return false;
+        return getBleManager() .getConnectState(bleDevice) == 1 || getBleManager() .getConnectState(bleDevice) == 2;
     }
 
     public void disConnect() {
-        if (bleManager != null && bleDevice != null)
-            bleManager.disconnect(bleDevice);
+        if (getBleManager()  != null && bleDevice != null)
+            getBleManager() .disconnect(bleDevice);
     }
 
 
