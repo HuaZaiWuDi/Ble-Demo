@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -8,7 +10,9 @@ import android.widget.RelativeLayout;
 import com.qmuiteam.qmui.widget.QMUIEmptyView;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRandom;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
@@ -29,12 +33,15 @@ public class TestBleScanActivity extends AppCompatActivity {
 
     private QMUIEmptyView mEmptyView;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_ble_scan);
         ButterKnife.bind(this);
 
+
+        final RxLinearLayout tv_test = findViewById(R.id.tv_test);
 
 //        mEmptyView = new QMUIEmptyView(this);
 //
@@ -52,6 +59,7 @@ public class TestBleScanActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setProgress(RxRandom.getRandom(100));
+                tv_test.setElevation(RxUtils.dp2px(progressBar.getProgress()));
             }
         });
         progressBar.setOnProgressChangedListener(new RxBaseRoundProgressBar.OnProgressChangedListener() {
@@ -69,6 +77,7 @@ public class TestBleScanActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mTextProgress.setProgress(RxRandom.getRandom(100));
+                tv_test.setTranslationZ(RxUtils.dp2px(mTextProgress.getProgress()));
             }
         });
         final RxIconRoundProgressBar mIconProgress = findViewById(R.id.mIconProgress);
@@ -80,6 +89,9 @@ public class TestBleScanActivity extends AppCompatActivity {
                 mIconProgress.setProgress(RxRandom.getRandom(100));
             }
         });
+
+
+
     }
 
     private void initLine() {
@@ -107,5 +119,9 @@ public class TestBleScanActivity extends AppCompatActivity {
                 RxToast.normal(valueX + "");
             }
         });
+    }
+
+    public void onClick(View view) {
+
     }
 }

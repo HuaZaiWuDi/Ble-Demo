@@ -60,6 +60,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_toRightOf="@+id/iv_userImg"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="请到体重记录页设定小目标哟！ ^-^"
             android:textColor="@color/white"
             android:textSize="10sp"/>
@@ -89,9 +91,9 @@
 
 
     <ScrollView
-        android:background="@color/bg_F7F7F9"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bg_F7F7F9"
         >
 
         <LinearLayout

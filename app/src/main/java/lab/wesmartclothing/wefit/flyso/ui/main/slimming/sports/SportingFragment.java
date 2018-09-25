@@ -47,6 +47,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
@@ -353,7 +354,7 @@ public class SportingFragment extends BaseActivity {
         @Override
         public void enterTimer() {
             if (mSwMusic.isOpened())
-                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal) + mTvKcal.getText().toString() + "千卡的能量");
+                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal) + Number2Chinese.number2Chinese(Double.parseDouble(mTvKcal.getText().toString())) + "千卡的能量");
         }
     });
 

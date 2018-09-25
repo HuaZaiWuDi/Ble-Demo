@@ -440,7 +440,8 @@ public class SuitLines extends View {
         super.onDraw(canvas);
 //        if (datas.isEmpty()) return;
         // lines
-
+        //硬件加速开启才能显示虚线
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.save();
         canvas.clipRect(linesArea.left, linesArea.top, linesArea.right, linesArea.bottom + xArea.height());
         canvas.translate(offset, 0);
@@ -1008,7 +1009,8 @@ public class SuitLines extends View {
             final List<Paint> tmpPaints = new ArrayList<>();
             for (int i = 0; i < datas.size(); i++) {
                 Paint paint = suitLines.buildNewPaint();
-                paint.setPathEffect(datas.get(i).get(0).getLineStyle() == DASHED ? new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
+                paint.setPathEffect(datas.get(i).get(0).getLineStyle() == DASHED ?
+                        new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
 //                paint.setStyle(datas.get(i).get(0).isFill() ? Paint.Style.FILL : Paint.Style.STROKE);
                 tmpPaints.add(i, paint);
             }

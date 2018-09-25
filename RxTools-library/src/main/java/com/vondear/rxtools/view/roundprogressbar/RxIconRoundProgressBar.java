@@ -52,21 +52,21 @@ public class RxIconRoundProgressBar extends RxBaseRoundProgressBar implements Vi
 
     @Override
     protected void initStyleable(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.IconRoundCornerProgress);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RxIconRoundProgressBar);
 
-        iconResource = typedArray.getResourceId(R.styleable.IconRoundCornerProgress_rcIconSrc, R.drawable.set);
+        iconResource = typedArray.getResourceId(R.styleable.RxIconRoundProgressBar_rcIconSrc, R.drawable.set);
 
-        iconSize = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconSize, -1);
-        iconWidth = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconWidth, dp2px(DEFAULT_ICON_SIZE));
-        iconHeight = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconHeight, dp2px(DEFAULT_ICON_SIZE));
-        iconPadding = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconPadding, -1);
-        iconPaddingLeft = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconPaddingLeft, dp2px(DEFAULT_ICON_PADDING_LEFT));
-        iconPaddingRight = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconPaddingRight, dp2px(DEFAULT_ICON_PADDING_RIGHT));
-        iconPaddingTop = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconPaddingTop, dp2px(DEFAULT_ICON_PADDING_TOP));
-        iconPaddingBottom = (int) typedArray.getDimension(R.styleable.IconRoundCornerProgress_rcIconPaddingBottom, dp2px(DEFAULT_ICON_PADDING_BOTTOM));
+        iconSize = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconSize, -1);
+        iconWidth = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconWidth, dp2px(DEFAULT_ICON_SIZE));
+        iconHeight = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconHeight, dp2px(DEFAULT_ICON_SIZE));
+        iconPadding = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconPadding, -1);
+        iconPaddingLeft = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconPaddingLeft, dp2px(DEFAULT_ICON_PADDING_LEFT));
+        iconPaddingRight = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconPaddingRight, dp2px(DEFAULT_ICON_PADDING_RIGHT));
+        iconPaddingTop = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconPaddingTop, dp2px(DEFAULT_ICON_PADDING_TOP));
+        iconPaddingBottom = (int) typedArray.getDimension(R.styleable.RxIconRoundProgressBar_rcIconPaddingBottom, dp2px(DEFAULT_ICON_PADDING_BOTTOM));
 
         int colorIconBackgroundDefault = context.getResources().getColor(R.color.round_corner_progress_bar_background_default);
-        colorIconBackground = typedArray.getColor(R.styleable.IconRoundCornerProgress_rcIconBackgroundColor, colorIconBackgroundDefault);
+        colorIconBackground = typedArray.getColor(R.styleable.RxIconRoundProgressBar_rcIconBackgroundColor, colorIconBackgroundDefault);
 
         typedArray.recycle();
     }

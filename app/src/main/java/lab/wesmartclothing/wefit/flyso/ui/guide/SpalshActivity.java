@@ -26,6 +26,7 @@ import java.util.List;
 
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.TestBleScanActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
@@ -66,7 +67,8 @@ public class SpalshActivity extends BaseActivity {
             updateAppBean.setVersion(RxDeviceUtils.getAppVersionName());
             updateAppBean.setSystem("Android");
             updateAppBean.setPhoneType(RxDeviceUtils.getBuildMANUFACTURER());
-            updateAppBean.setMacAddr(RxDeviceUtils.getAndroidId());//AndroidID);
+            //AndroidID
+            updateAppBean.setMacAddr(RxDeviceUtils.getAndroidId());
             updateAppBean.addDeviceVersion(updateAppBean);
         }
     }
@@ -76,18 +78,19 @@ public class SpalshActivity extends BaseActivity {
         RxLogUtils.i("启动时长：引导页开始");
         JPushUtils.init(getApplication());
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
-        if (!RxDataUtils.isNullString(baseUrl))
+        if (!RxDataUtils.isNullString(baseUrl)) {
             ServiceAPI.switchURL(baseUrl);
+        }
 
 
         //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
+        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
 
 
-        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-        initUserInfo();
-        initData();
+//        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
+//        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
+//        initUserInfo();
+//        initData();
 
     }
 
@@ -152,9 +155,9 @@ public class SpalshActivity extends BaseActivity {
         //通过验证是否保存userId来判断是否登录
         if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
-        } else if (isSaveUserInfo)//
+        } else if (isSaveUserInfo) {
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
-        else {
+        } else {
             RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
         }
         RxLogUtils.i("启动时长：引导页结束");
@@ -167,9 +170,10 @@ public class SpalshActivity extends BaseActivity {
     }
 
 
-    //重传在无网络情况下未上传的数据
+    /**
+     * 重传在无网络情况下未上传的数据
+     */
     private void initData() {
-//        openVoice();
         if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {
             //没有网络直接返回
             return;
@@ -180,7 +184,9 @@ public class SpalshActivity extends BaseActivity {
         uploadHistoryData();
     }
 
-    //获取商城地址
+    /**
+     * 获取商城地址
+     */
     private void getStoreAddr() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getMallAddress())
@@ -193,7 +199,9 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //获取商城订单地址
+    /**
+     * 获取商城订单地址
+     */
     private void getOrderUrl() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getOrderUrl())
@@ -206,7 +214,9 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //获取商城购物车地址
+    /**
+     * 获取商城购物车地址
+     */
     private void getShoppingAddress() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getShoppingAddress())
@@ -219,7 +229,9 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //判断本地是否有之前保存的心率数据：有则上传
+    /**
+     * 判断本地是否有之前保存的心率数据：有则上传
+     */
     @Background
     public void uploadHistoryData() {
         String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
@@ -234,14 +246,4 @@ public class SpalshActivity extends BaseActivity {
             }
         }
     }
-
-
-//
-//    //不退出app，而是隐藏当前的app
-//    @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(false);
-//        super.onBackPressed();
-//    }
-
 }

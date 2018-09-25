@@ -76,7 +76,6 @@ public class CollectFragment extends BaseActivity {
         initView();
     }
 
-
     private void initView() {
         initTopBar();
         initRecycler();
@@ -144,7 +143,6 @@ public class CollectFragment extends BaseActivity {
         });
         mQMUIAppBarLayout.setTitle("我的收藏");
     }
-
 
     /**
      * RecyclerView的Item中的Menu点击监听。
@@ -234,7 +232,7 @@ public class CollectFragment extends BaseActivity {
         );
         RxManager.getInstance().doNetSubscribe(dxyService.collectionList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("collectionList", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("collectionList" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

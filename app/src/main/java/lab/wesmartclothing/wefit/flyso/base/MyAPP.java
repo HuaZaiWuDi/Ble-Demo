@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Looper;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -19,6 +18,7 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxThreadPoolUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
@@ -41,7 +41,6 @@ public class MyAPP extends Application {
 
 
     public static QNBleApi QNapi;
-    private static RxCache rxCache;
     public static Typeface typeface;
     private static Gson sGson;
     public static AMapLocation aMapLocation = null;//定位信息
@@ -75,7 +74,7 @@ public class MyAPP extends Application {
         initQN();
 
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
-        new Thread(new Runnable() {
+        new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
             public void run() {
                 RxManager.getInstance().setAPPlication(MyAPP.this);
@@ -92,31 +91,8 @@ public class MyAPP extends Application {
                 BleTools.initBLE(MyAPP.this);
                 RxLogUtils.i("启动时长：初始化结束");
             }
-        }).start();
-//        initCrash();
-    }
+        });
 
-    private void initCrash() {
-        new android.os.Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Looper.loop();
-                    } catch (Throwable e) {
-                        RxLogUtils.e("主线程异常:" + e.toString());
-                    }
-                }
-            }
-        });
-//        sUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-        //所有线程异常拦截，由于主线程的异常都被我们catch住了，所以下面的代码拦截到的都是子线程的异常
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                RxLogUtils.e("子线程" + t.getName() + "异常:" + e.toString());
-            }
-        });
     }
 
 

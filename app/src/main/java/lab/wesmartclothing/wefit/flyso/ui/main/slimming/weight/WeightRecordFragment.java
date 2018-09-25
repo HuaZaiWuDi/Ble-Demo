@@ -23,6 +23,9 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.chart.LineBean;
+import com.vondear.rxtools.view.chart.SuitLines;
+import com.vondear.rxtools.view.chart.Unit;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
@@ -60,8 +63,6 @@ import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import tech.linjiang.suitlines.SuitLines;
-import tech.linjiang.suitlines.Unit;
 
 /**
  * Created by jk on 2018/7/26.
@@ -291,10 +292,6 @@ public class WeightRecordFragment extends BaseActivity {
         tvEndWeight.setText((float) bean.getTargetWeight() + "kg");
         proLimit.setProgress((float) (bean.getComplete() * 100));
 
-        Map<Float, String> map = new HashMap<>();
-        map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
-        mSuitlines.setlimitLabels(map);
-
         if (bean.getWeightList() != null) {
             initLineChart(bean);
         }
@@ -303,25 +300,37 @@ public class WeightRecordFragment extends BaseActivity {
 
     private void initLineChart(final WeightDataBean bean) {
         list = bean.getWeightList().getList();
-        SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
-        List<Unit> lines_Heat = new ArrayList<>();
-        List<Unit> lines_Time = new ArrayList<>();
+
+        List<Unit> lines_weight = new ArrayList<>();
+        List<Unit> lines_bodyFat = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
             Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
             Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
-            unit_weight.setShowPoint(true);
-
-            unit_bodyFat.setShowPoint(list.size() == 1);
-            unit_bodyFat.setFill(true);
-            lines_Heat.add(unit_weight);
-            lines_Time.add(unit_bodyFat);
+            lines_weight.add(unit_weight);
+            lines_bodyFat.add(unit_bodyFat);
         }
-        builder.add(lines_Heat, 0x7fffffff);
-        builder.add(lines_Time, 0x7fffffff);
+        LineBean weightLine = new LineBean();
+        weightLine.setUnits(lines_weight);
+        weightLine.setShowPoint(true);
+        weightLine.setColor(0x7fffffff);
 
-        mSuitlines.setSpaceMaxMin(0.3f, 0f);
-        builder.build(mSuitlines, false);
+
+        LineBean bodyFatLine = new LineBean();
+        bodyFatLine.setFill(true);
+        bodyFatLine.setShowPoint(list.size() == 1);
+        bodyFatLine.setUnits(lines_bodyFat);
+        bodyFatLine.setColor(0x7fffffff);
+
+        Map<Float, String> map = new HashMap<>();
+        map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
+        mSuitlines.setlimitLabels(map);
+
+        new SuitLines.LineBuilder()
+                .add(weightLine)
+                .add(bodyFatLine)
+                .build(mSuitlines);
+
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
             @Override
             public void selectItem(int valueX) {
@@ -333,6 +342,7 @@ public class WeightRecordFragment extends BaseActivity {
                 currentGid = list.get(valueX).getGid();
             }
         });
+
     }
 
     private void checkStatus() {

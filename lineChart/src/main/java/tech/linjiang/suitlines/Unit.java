@@ -60,6 +60,7 @@ public class Unit implements Comparable<Unit>, Cloneable {
      * 是否填充阴影
      **/
     private boolean isFill;
+    private int[] color;
 
 
     public boolean isFill() {
@@ -78,7 +79,7 @@ public class Unit implements Comparable<Unit>, Cloneable {
         this.lineStyle = lineStyle;
     }
 
-    private int[] color;
+
 
     public int[] getColor() {
         return color;

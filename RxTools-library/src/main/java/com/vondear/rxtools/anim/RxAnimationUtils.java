@@ -149,14 +149,45 @@ public class RxAnimationUtils {
         view.startAnimation(animation);
     }
 
+
+    /**
+     * 属性修改控件的高度
+     *
+     * @param start
+     * @param end
+     * @param view
+     */
     public static void animateHeight(int start, int end, final View view) {
         ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+        valueAnimator.setDuration(500);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int value = (int) animation.getAnimatedValue();//根据时间因子的变化系数进行设置高度
                 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                 layoutParams.height = value;
+                view.setLayoutParams(layoutParams);//设置高度
+            }
+        });
+        valueAnimator.start();
+    }
+
+    /**
+     * 属性修改控件的宽度
+     *
+     * @param start
+     * @param end
+     * @param view
+     */
+    public static void animateWidth(int start, int end, final View view) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+        valueAnimator.setDuration(500);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();//根据时间因子的变化系数进行设置高度
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                layoutParams.width = value;
                 view.setLayoutParams(layoutParams);//设置高度
             }
         });

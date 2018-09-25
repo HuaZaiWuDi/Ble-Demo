@@ -95,7 +95,7 @@
         <attr name="borderWidth" format="dimension"/>
     </declare-styleable>
 
-    <declare-styleable name="RoundCornerProgress">
+    <declare-styleable name="RxBaseRoundProgressBar">
         <attr name="rcReverse" format="boolean"/>
         <attr name="rcProgress" format="float"/>
         <attr name="rcMax" format="float"/>
@@ -107,7 +107,7 @@
         <attr name="rcBackgroundColor" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="IconRoundCornerProgress">
+    <declare-styleable name="RxIconRoundProgressBar">
         <attr name="rcIconSrc" format="integer"/>
         <attr name="rcIconSize" format="dimension"/>
         <attr name="rcIconWidth" format="dimension"/>
@@ -120,7 +120,7 @@
         <attr name="rcIconBackgroundColor" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="TextRoundCornerProgress">
+    <declare-styleable name="RxTextRoundProgressBar">
         <attr name="rcTextProgressColor" format="color"/>
         <attr name="rcTextProgressSize" format="dimension"/>
         <attr name="rcTextProgressMargin" format="dimension"/>
@@ -329,5 +329,411 @@
         <attr name="codes"
               format="integer"/>
     </declare-styleable>
+
+    <!--基础通用属性-->
+
+    <!--四周圆角度、左上、右上、左下、右下-->
+    <attr name="corner_radius" format="dimension"/>
+    <attr name="corner_radius_top_left" format="dimension"/>
+    <attr name="corner_radius_top_right" format="dimension"/>
+    <attr name="corner_radius_bottom_left" format="dimension"/>
+    <attr name="corner_radius_bottom_right" format="dimension"/>
+
+    <!--虚线边框宽度/间隔-->
+    <attr name="border_dash_width" format="dimension"/>
+    <attr name="border_dash_gap" format="dimension"/>
+
+    <!--边框宽度-->
+    <attr name="border_width_normal" format="dimension"/>
+    <attr name="border_width_pressed" format="dimension"/>
+    <attr name="border_width_unable" format="dimension"/>
+
+    <!--边框颜色-->
+    <attr name="border_color_normal" format="color"/>
+    <attr name="border_color_pressed" format="color"/>
+    <attr name="border_color_unable" format="color"/>
+
+    <!--背景颜色-->
+    <attr name="background_normal" format="color"/>
+    <attr name="background_pressed" format="color"/>
+    <attr name="background_unable" format="color"/>
+
+    <!-- TextView相关属性 -->
+
+    <!--文本颜色-->
+    <attr name="text_color_normal" format="color"/>
+    <attr name="text_color_pressed" format="color"/>
+    <attr name="text_color_unable" format="color"/>
+
+    <!--图标资源-->
+    <attr name="icon_src_normal" format="reference"/>
+    <attr name="icon_src_pressed" format="reference"/>
+    <attr name="icon_src_unable" format="reference"/>
+
+    <!--图标、大小、位置-->
+    <attr name="icon_height" format="dimension"/>
+    <attr name="icon_width" format="dimension"/>
+    <attr name="icon_direction">
+        <enum name="left" value="1"/>
+        <enum name="top" value="2"/>
+        <enum name="right" value="3"/>
+        <enum name="bottom" value="4"/>
+    </attr>
+
+    <!--设置颜色即开启ripple事件，若应用不支持ripple则响应background_pressed事件-->
+    <attr name="ripple_color" format="color"/>
+
+    <!--字体样式-->
+    <attr name="text_typeface" format="string"/>
+
+    <!--渐变-->
+    <attr name="gradient_angle" format="enum">
+        <enum name="TOP_BOTTOM" value="0"/>
+        <enum name="TR_BL" value="1"/>
+        <enum name="RIGHT_LEFT" value="2"/>
+        <enum name="BR_TL" value="3"/>
+        <enum name="BOTTOM_TOP" value="4"/>
+        <enum name="BL_TR" value="5"/>
+        <enum name="LEFT_RIGHT" value="6"/>
+        <enum name="TL_BR" value="7"/>
+    </attr>
+    <attr name="gradient_centerX" format="float"/>
+    <attr name="gradient_centerY" format="float"/>
+    <attr name="gradient_centerColor" format="color"/>
+    <attr name="gradient_endColor" format="color"/>
+    <attr name="gradient_startColor" format="color"/>
+    <attr name="gradient_gradientRadius" format="dimension"/>
+    <attr name="gradient_type" format="enum">
+        <enum name="linear" value="0"/>
+        <enum name="radial" value="1"/>
+        <enum name="sweep" value="2"/>
+    </attr>
+
+    <!--RBaseView 通用-->
+    <declare-styleable name="RBaseView">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--虚线边框宽度/间隔-->
+        <attr name="border_dash_width"/>
+        <attr name="border_dash_gap"/>
+
+        <!--边框宽度-->
+        <attr name="border_width_normal"/>
+        <attr name="border_width_pressed"/>
+        <attr name="border_width_unable"/>
+
+        <!--边框颜色-->
+        <attr name="border_color_normal"/>
+        <attr name="border_color_pressed"/>
+        <attr name="border_color_unable"/>
+
+        <!--背景颜色-->
+        <attr name="background_normal"/>
+        <attr name="background_pressed"/>
+        <attr name="background_unable"/>
+
+        <attr name="ripple_color"/>
+
+        <!--渐变-->
+        <attr name="gradient_angle"/>
+        <attr name="gradient_centerX"/>
+        <attr name="gradient_centerY"/>
+        <attr name="gradient_centerColor"/>
+        <attr name="gradient_endColor"/>
+        <attr name="gradient_startColor"/>
+        <attr name="gradient_gradientRadius"/>
+        <attr name="gradient_type"/>
+
+
+    </declare-styleable>
+
+    <!-- TextView -->
+    <declare-styleable name="RxTextView">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--虚线边框宽度/间隔-->
+        <attr name="border_dash_width"/>
+        <attr name="border_dash_gap"/>
+
+        <!--边框宽度-->
+        <attr name="border_width_normal"/>
+        <attr name="border_width_pressed"/>
+        <attr name="border_width_unable"/>
+
+        <!--边框颜色-->
+        <attr name="border_color_normal"/>
+        <attr name="border_color_pressed"/>
+        <attr name="border_color_unable"/>
+
+        <!--背景颜色-->
+        <attr name="background_normal"/>
+        <attr name="background_pressed"/>
+        <attr name="background_unable"/>
+
+        <!--文本颜色-->
+        <attr name="text_color_normal"/>
+        <attr name="text_color_pressed"/>
+        <attr name="text_color_unable"/>
+
+        <!--图标资源-->
+        <attr name="icon_src_normal"/>
+        <attr name="icon_src_pressed"/>
+        <attr name="icon_src_unable"/>
+
+        <!--图标、大小、位置-->
+        <attr name="icon_height"/>
+        <attr name="icon_width"/>
+        <attr name="icon_direction"/>
+
+        <!--字体样式-->
+        <attr name="text_typeface"/>
+
+        <!--波浪-->
+        <attr name="ripple_color"/>
+
+        <!--渐变-->
+        <attr name="gradient_angle"/>
+        <attr name="gradient_centerX"/>
+        <attr name="gradient_centerY"/>
+        <attr name="gradient_centerColor"/>
+        <attr name="gradient_endColor"/>
+        <attr name="gradient_startColor"/>
+        <attr name="gradient_gradientRadius"/>
+        <attr name="gradient_type"/>
+
+    </declare-styleable>
+
+    <!-- REditText -->
+    <declare-styleable name="RxEditText">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--虚线边框宽度/间隔-->
+        <attr name="border_dash_width"/>
+        <attr name="border_dash_gap"/>
+
+        <!--边框宽度-->
+        <attr name="border_width_normal"/>
+        <attr name="border_width_pressed"/>
+        <attr name="border_width_unable"/>
+
+        <!--边框颜色-->
+        <attr name="border_color_normal"/>
+        <attr name="border_color_pressed"/>
+        <attr name="border_color_unable"/>
+
+        <!--背景颜色-->
+        <attr name="background_normal"/>
+        <attr name="background_pressed"/>
+        <attr name="background_unable"/>
+
+        <!--文本颜色-->
+        <attr name="text_color_normal"/>
+        <attr name="text_color_pressed"/>
+        <attr name="text_color_unable"/>
+
+        <!--图标资源-->
+        <attr name="icon_src_normal"/>
+        <attr name="icon_src_pressed"/>
+        <attr name="icon_src_unable"/>
+
+        <!--图标、大小、位置-->
+        <attr name="icon_height"/>
+        <attr name="icon_width"/>
+        <attr name="icon_direction"/>
+
+        <!--字体样式-->
+        <attr name="text_typeface"/>
+
+        <!--波浪-->
+        <attr name="ripple_color"/>
+
+        <!--渐变-->
+        <attr name="gradient_angle"/>
+        <attr name="gradient_centerX"/>
+        <attr name="gradient_centerY"/>
+        <attr name="gradient_centerColor"/>
+        <attr name="gradient_endColor"/>
+        <attr name="gradient_startColor"/>
+        <attr name="gradient_gradientRadius"/>
+        <attr name="gradient_type"/>
+
+
+    </declare-styleable>
+
+    <!-- ImageView -->
+    <declare-styleable name="RxImageView">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--图标资源-->
+        <attr name="icon_src_normal"/>
+        <attr name="icon_src_pressed"/>
+        <attr name="icon_src_unable"/>
+
+        <!--边框-->
+        <attr name="border_width" format="dimension"/>
+        <attr name="border_color" format="color"/>
+
+        <!--是否圆形-->
+        <attr name="is_circle" format="boolean"/>
+
+
+    </declare-styleable>
+
+    <!-- RLinearLayout -->
+    <declare-styleable name="RxLinearLayout">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--虚线边框宽度/间隔-->
+        <attr name="border_dash_width"/>
+        <attr name="border_dash_gap"/>
+
+        <!--边框宽度-->
+        <attr name="border_width_normal"/>
+        <attr name="border_width_pressed"/>
+        <attr name="border_width_unable"/>
+
+        <!--边框颜色-->
+        <attr name="border_color_normal"/>
+        <attr name="border_color_pressed"/>
+        <attr name="border_color_unable"/>
+
+        <!--背景颜色-->
+        <attr name="background_normal"/>
+        <attr name="background_pressed"/>
+        <attr name="background_unable"/>
+
+        <!--波浪-->
+        <attr name="ripple_color"/>
+
+        <!--渐变-->
+        <attr name="gradient_angle"/>
+        <attr name="gradient_centerX"/>
+        <attr name="gradient_centerY"/>
+        <attr name="gradient_centerColor"/>
+        <attr name="gradient_endColor"/>
+        <attr name="gradient_startColor"/>
+        <attr name="gradient_gradientRadius"/>
+        <attr name="gradient_type"/>
+
+    </declare-styleable>
+
+    <!-- RRelativeLayout -->
+    <declare-styleable name="RxRelativeLayout">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--虚线边框宽度/间隔-->
+        <attr name="border_dash_width"/>
+        <attr name="border_dash_gap"/>
+
+        <!--边框宽度-->
+        <attr name="border_width_normal"/>
+        <attr name="border_width_pressed"/>
+        <attr name="border_width_unable"/>
+
+        <!--边框颜色-->
+        <attr name="border_color_normal"/>
+        <attr name="border_color_pressed"/>
+        <attr name="border_color_unable"/>
+
+        <!--背景颜色-->
+        <attr name="background_normal"/>
+        <attr name="background_pressed"/>
+        <attr name="background_unable"/>
+
+        <!--波浪-->
+        <attr name="ripple_color"/>
+
+        <!--渐变-->
+        <attr name="gradient_angle"/>
+        <attr name="gradient_centerX"/>
+        <attr name="gradient_centerY"/>
+        <attr name="gradient_centerColor"/>
+        <attr name="gradient_endColor"/>
+        <attr name="gradient_startColor"/>
+        <attr name="gradient_gradientRadius"/>
+        <attr name="gradient_type"/>
+
+    </declare-styleable>
+
+    <!-- RView -->
+    <declare-styleable name="RxView">
+
+        <!--四周圆角度、左上、右上、左下、右下-->
+        <attr name="corner_radius"/>
+        <attr name="corner_radius_top_left"/>
+        <attr name="corner_radius_top_right"/>
+        <attr name="corner_radius_bottom_left"/>
+        <attr name="corner_radius_bottom_right"/>
+
+        <!--虚线边框宽度/间隔-->
+        <attr name="border_dash_width"/>
+        <attr name="border_dash_gap"/>
+
+        <!--边框宽度-->
+        <attr name="border_width_normal"/>
+        <attr name="border_width_pressed"/>
+        <attr name="border_width_unable"/>
+
+        <!--边框颜色-->
+        <attr name="border_color_normal"/>
+        <attr name="border_color_pressed"/>
+        <attr name="border_color_unable"/>
+
+        <!--背景颜色-->
+        <attr name="background_normal"/>
+        <attr name="background_pressed"/>
+        <attr name="background_unable"/>
+
+        <!--波浪-->
+        <attr name="ripple_color"/>
+
+        <!--渐变-->
+        <attr name="gradient_angle"/>
+        <attr name="gradient_centerX"/>
+        <attr name="gradient_centerY"/>
+        <attr name="gradient_centerColor"/>
+        <attr name="gradient_endColor"/>
+        <attr name="gradient_startColor"/>
+        <attr name="gradient_gradientRadius"/>
+        <attr name="gradient_type"/>
+
+    </declare-styleable>
+
 
 </resources>

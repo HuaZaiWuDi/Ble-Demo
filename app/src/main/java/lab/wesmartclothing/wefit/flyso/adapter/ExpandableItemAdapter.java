@@ -42,7 +42,6 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
 
     @Override
     protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
-
         switch (helper.getItemViewType()) {
             case TYPE_LEVEL_0:
                 final BodyLevel0Bean level0Bean = (BodyLevel0Bean) item;
@@ -87,7 +86,8 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
                 progressView_1.setUpDownText(level1Bean.getSectionLabels(), level1Bean.getLabels());
                 progressView_1.setColors(level1Bean.getColors());
                 progressView_1.setProgress(level1Bean.getValue());
-
+            default:
+                break;
         }
     }
 

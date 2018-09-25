@@ -19,7 +19,7 @@ public class TextSpeakUtils {
             public void onInit(int status) {
                 RxLogUtils.e("语音合成：" + status);
                 // 判断是否转化成功
-                if (status == TextToSpeech.SUCCESS) {
+                if (status == TextToSpeech.SUCCESS && mTextToSpeech != null) {
                     //默认设定语言为中文，原生的android貌似不支持中文。
                     int result = mTextToSpeech.setLanguage(Locale.CHINESE);
 //                    mTextToSpeech.setPitch(0.8f);

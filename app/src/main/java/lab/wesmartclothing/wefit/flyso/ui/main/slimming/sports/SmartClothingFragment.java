@@ -22,6 +22,9 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.chart.LineBean;
+import com.vondear.rxtools.view.chart.SuitLines;
+import com.vondear.rxtools.view.chart.Unit;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -52,8 +55,6 @@ import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import tech.linjiang.suitlines.SuitLines;
-import tech.linjiang.suitlines.Unit;
 
 /**
  * Created by jk on 2018/7/18.
@@ -266,26 +267,33 @@ public class SmartClothingFragment extends BaseActivity {
     }
 
     private void initLineChart(final List<AthleticsInfo.PageInfoBean.ListBean> list) {
-        SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
-//            RxLogUtils.d("体重数据：getCalorie：" + bean.getCalorie() + "----getDuration：" + bean.getDuration());
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, "");
-            unit_time.setLineStyle(SuitLines.DASHED);
-            unit_time.setShowPoint(true);
-            unit_heat.setShowPoint(true);
 
             lines_Heat.add(unit_heat);
             lines_Time.add(unit_time);
         }
-        builder.add(lines_Heat, Color.parseColor("#F2A49C"));
-        builder.add(lines_Time, Color.parseColor("#F2A49C"));
 
-        mSuitlines.setSpaceMaxMin(0.2f, 0);
-        builder.build(mSuitlines, false);
+        LineBean heatLine = new LineBean();
+        heatLine.setUnits(lines_Heat);
+        heatLine.setShowPoint(true);
+        heatLine.setColor(Color.parseColor("#F2A49C"));
+
+        LineBean timeLine = new LineBean();
+        timeLine.setShowPoint(true);
+        timeLine.setUnits(lines_Time);
+        timeLine.setColor(Color.parseColor("#F2A49C"));
+        timeLine.setDashed(true);
+
+        new SuitLines.LineBuilder()
+                .add(heatLine)
+                .add(timeLine)
+                .build(mSuitlines);
+
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
             @Override
             public void selectItem(int valueX) {
@@ -296,6 +304,7 @@ public class SmartClothingFragment extends BaseActivity {
                 currentDate = bean.getAthlDate();
             }
         });
+
     }
 
     private void initTopBar() {
@@ -324,7 +333,6 @@ public class SmartClothingFragment extends BaseActivity {
                 break;
         }
     }
-
 
 
 }

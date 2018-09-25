@@ -75,7 +75,6 @@ public class GuideActivity extends BaseActivity {
                         RelativeLayout.MarginLayoutParams.MATCH_PARENT
                 );
                 photoView.setLayoutParams(params);
-//                photoView.setImageResource(mImageItems.get(position));
                 MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), 0, photoView);
                 container.addView(photoView);
                 return photoView;
