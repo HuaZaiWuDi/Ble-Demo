@@ -7,19 +7,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 
-import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 
 /**
  * Created by cgspine on 2018/1/7.
  */
 
-public abstract class BaseFragmentActivity extends QMUIFragmentActivity {
+public abstract class BaseFragmentActivity extends BaseActivity {
 
 
     public Context mContext;

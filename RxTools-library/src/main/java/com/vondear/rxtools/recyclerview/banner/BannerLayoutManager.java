@@ -88,7 +88,8 @@ public class BannerLayoutManager extends LinearLayoutManager {
             if (mLinearSnapHelper != null) {
 
                 View view = mLinearSnapHelper.findSnapView(this);
-                mCurrentPosition = getPosition(view);
+                if (view != null)
+                    mCurrentPosition = getPosition(view);
 
                 if (mOnSelectedViewListener != null)
                     mOnSelectedViewListener.onSelectedView(view, mCurrentPosition % mRealCount);

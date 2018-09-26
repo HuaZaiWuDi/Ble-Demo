@@ -1,5 +1,7 @@
 package com.vondear.rxtools.view.roundprogressbar.common;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -26,11 +28,11 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     protected final static int DEFAULT_SECONDARY_PROGRESS = 0;
     protected final static int DEFAULT_PROGRESS_RADIUS = 30;
     protected final static int DEFAULT_BACKGROUND_PADDING = 0;
-
+    private final static int TOTAL_DURATION = 1000;//动画总时长
+    private ValueAnimator mAnimator;
     private LinearLayout layoutBackground;
     private LinearLayout layoutProgress;
     private LinearLayout layoutSecondaryProgress;
-
     private int radius;
     private int padding;
     private int totalWidth;
@@ -46,6 +48,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     private boolean isReverse;
 
     private OnProgressChangedListener progressChangedListener;
+    private boolean isAnimating;
 
     public RxBaseRoundProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -110,23 +113,23 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
 
     // Retrieve initial parameter from view attribute
     public void setupStyleable(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundCornerProgress);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RxBaseRoundProgressBar);
 
-        radius = (int) typedArray.getDimension(R.styleable.RoundCornerProgress_rcRadius, dp2px(DEFAULT_PROGRESS_RADIUS));
-        padding = (int) typedArray.getDimension(R.styleable.RoundCornerProgress_rcBackgroundPadding, dp2px(DEFAULT_BACKGROUND_PADDING));
+        radius = (int) typedArray.getDimension(R.styleable.RxBaseRoundProgressBar_rcRadius, dp2px(DEFAULT_PROGRESS_RADIUS));
+        padding = (int) typedArray.getDimension(R.styleable.RxBaseRoundProgressBar_rcBackgroundPadding, dp2px(DEFAULT_BACKGROUND_PADDING));
 
-        isReverse = typedArray.getBoolean(R.styleable.RoundCornerProgress_rcReverse, false);
+        isReverse = typedArray.getBoolean(R.styleable.RxBaseRoundProgressBar_rcReverse, false);
 
-        max = typedArray.getFloat(R.styleable.RoundCornerProgress_rcMax, DEFAULT_MAX_PROGRESS);
-        progress = typedArray.getFloat(R.styleable.RoundCornerProgress_rcProgress, DEFAULT_PROGRESS);
-        secondaryProgress = typedArray.getFloat(R.styleable.RoundCornerProgress_rcSecondaryProgress, DEFAULT_SECONDARY_PROGRESS);
+        max = typedArray.getFloat(R.styleable.RxBaseRoundProgressBar_rcMax, DEFAULT_MAX_PROGRESS);
+        progress = typedArray.getFloat(R.styleable.RxBaseRoundProgressBar_rcProgress, DEFAULT_PROGRESS);
+        secondaryProgress = typedArray.getFloat(R.styleable.RxBaseRoundProgressBar_rcSecondaryProgress, DEFAULT_SECONDARY_PROGRESS);
 
         int colorBackgroundDefault = context.getResources().getColor(R.color.round_corner_progress_bar_background_default);
-        colorBackground = typedArray.getColor(R.styleable.RoundCornerProgress_rcBackgroundColor, colorBackgroundDefault);
+        colorBackground = typedArray.getColor(R.styleable.RxBaseRoundProgressBar_rcBackgroundColor, colorBackgroundDefault);
         int colorProgressDefault = context.getResources().getColor(R.color.round_corner_progress_bar_progress_default);
-        colorProgress = typedArray.getColor(R.styleable.RoundCornerProgress_rcProgressColor, colorProgressDefault);
+        colorProgress = typedArray.getColor(R.styleable.RxBaseRoundProgressBar_rcProgressColor, colorProgressDefault);
         int colorSecondaryProgressDefault = context.getResources().getColor(R.color.round_corner_progress_bar_secondary_progress_default);
-        colorSecondaryProgress = typedArray.getColor(R.styleable.RoundCornerProgress_rcSecondaryProgressColor, colorSecondaryProgressDefault);
+        colorSecondaryProgress = typedArray.getColor(R.styleable.RxBaseRoundProgressBar_rcSecondaryProgressColor, colorSecondaryProgressDefault);
         typedArray.recycle();
 
         initStyleable(context, attrs);
@@ -136,7 +139,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     @Override
     protected void onSizeChanged(int newWidth, int newHeight, int oldWidth, int oldHeight) {
         super.onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);
-        if(!isInEditMode()) {
+        if (!isInEditMode()) {
             totalWidth = newWidth;
             drawAll();
             postDelayed(new Runnable() {
@@ -290,17 +293,69 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
         return progress;
     }
 
-    public void setProgress(float progress) {
+    public void setProgress(float progress, boolean anim) {
+        float oldValue = this.progress;
+
         if (progress < 0)
             this.progress = 0;
         else if (progress > max)
             this.progress = max;
         else
             this.progress = progress;
+
+        if (anim) {
+            if (isAnimating) {
+                isAnimating = false;
+                mAnimator.cancel();
+            }
+
+            startAnimation(oldValue, progress);
+        }
+
         drawPrimaryProgress();
-        if(progressChangedListener != null)
-            progressChangedListener.onProgressChanged(getId(), this.progress, true, false);
     }
+
+
+    public void setProgress(float progress) {
+        setProgress(progress, true);
+    }
+
+    private void startAnimation(float start, float end) {
+        mAnimator = ValueAnimator.ofFloat(start, end);
+        int duration = (int) Math.abs(TOTAL_DURATION * (end - start) / max);
+        mAnimator.setDuration(duration);
+        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                progress = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                isAnimating = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                isAnimating = false;
+                if (progressChangedListener != null)
+                    progressChangedListener.onProgressChanged(getId(), progress, true, false);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+        mAnimator.start();
+    }
+
 
     public float getSecondaryProgressWidth() {
         if (layoutSecondaryProgress != null)
@@ -320,7 +375,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
         else
             this.secondaryProgress = secondaryProgress;
         drawSecondaryProgress();
-        if(progressChangedListener != null)
+        if (progressChangedListener != null)
             progressChangedListener.onProgressChanged(getId(), this.secondaryProgress, false, true);
     }
 

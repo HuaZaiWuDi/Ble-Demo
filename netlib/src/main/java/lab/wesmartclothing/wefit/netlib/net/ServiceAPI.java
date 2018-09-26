@@ -11,13 +11,14 @@ public class ServiceAPI {
 
     //一期
 //    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
-    public static final String BASE_URL_192 = "http://10.10.11.192:15112";//德人服务器
-    public static final String BASE_URL_208_ = "http://10.10.11.208:15112/mix/";//牛耕测试环境
+    public static final String BASE_URL_192 = "http://10.10.11.192:15390";//德人服务器
 
     //二期
-    public static final String BASE_URL_208 = "http://10.10.11.208:15112";
-    public static final String BASE_URL_125 = "http://119.23.225.125:15112";
-    public static final String BASE_URL_mix = "http://10.10.11.208:15101/mix/";//网关
+    public static final String BASE_URL_208 = "http://10.10.11.208:15390";//牛耕测试环境
+    public static final String BASE_URL_125 = "http://119.23.225.125:15390";
+    public static final String BASE_URL_mix = "http://10.10.11.208:15390/mix/";//网关
+
+    public static final String BASE_URL_TEST = "http://10.10.11.208:15112";//网关
 
 
     //上线

@@ -3,10 +3,10 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -40,15 +40,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -58,12 +59,13 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 
-public class SearchHistoryFragment extends BaseAcFragment {
+public class SearchHistoryFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -101,16 +103,13 @@ public class SearchHistoryFragment extends BaseAcFragment {
     private long currentTime = 0;
     private Bundle bundle;
 
-    public static QMUIFragment getInstance() {
-        return new SearchHistoryFragment();
-    }
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.activity_search_history, null);
-        ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_history);
+        ButterKnife.bind(this);
         initView();
-        return view;
     }
 
     @Override
@@ -153,11 +152,11 @@ public class SearchHistoryFragment extends BaseAcFragment {
     }
 
     private void initBundle() {
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
-            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
+            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);//是否是从首页跳转
         }
     }
 
@@ -166,7 +165,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
     }
@@ -282,7 +281,7 @@ public class SearchHistoryFragment extends BaseAcFragment {
 //        //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
 //        mSearchView.setIconified(false);
 //        //设置搜索框直接展开显示。左侧有放大镜(在搜索框外) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-        mSearchView.setIconifiedByDefault(false);
+//        mSearchView.setIconifiedByDefault(false);
 //        //设置搜索框直接展开显示。左侧有无放大镜(在搜索框中) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
 //        mSearchView.onActionViewExpanded();
         //修改搜索框底部的横线
@@ -296,27 +295,29 @@ public class SearchHistoryFragment extends BaseAcFragment {
         textView.setTextSize(15);//字体、提示字体大小
         textView.setHintTextColor(Color.WHITE);//提示字体颜色**
 
+        mSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.setIconifiedByDefault(false);
+            }
+        });
+
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //TODO 处理Text的。防止输入特殊文字
-                if (!RxDataUtils.isNullString(query) && query.length() <= 20) {
-
-                    addSearchKey(query);
-
-                    initSearchData(query);
-                } else RxToast.warning(getString(R.string.inputRightFoodName));
-
-                return false;
+                //用户点击搜索才会响应
+                addSearchKey(query);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //TODO 处理Text的。防止输入特殊文字
+                RxLogUtils.e("newText：" + newText);
+                //文字改变就会响应
                 if (!RxDataUtils.isNullString(newText) && newText.length() <= 20)
                     initSearchData(newText);
                 else mlayoutSearchData.setVisibility(View.GONE);
-                return false;
+                return true;
             }
         });
 
@@ -325,7 +326,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
 
     private void addSearchKey(String query) {
         if (isStorage) {
-            RxLogUtils.d("是否包含：" + query + "---" + SearchWordTab.getKey(query));
             if (SearchWordTab.getKey(query) == null) {
                 SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), query);
                 keyTab.save();
@@ -430,7 +430,6 @@ public class SearchHistoryFragment extends BaseAcFragment {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
@@ -439,9 +438,16 @@ public class SearchHistoryFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.success("添加成功");
+//                        RxToast.success("添加成功");
                         FoodDetailsFragment.addedLists.clear();
-                        getBaseFragmentActivity().popBackStack(SlimmingPage ? MainFragment.class : HeatDetailFragment.class);
+                        if (SlimmingPage) {
+                            //刷新数据
+                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                        } else {
+                            //刷新数据
+                            RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
+                        }
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override

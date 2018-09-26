@@ -25,10 +25,10 @@
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="28dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="13dp"
         app:qmui_backgroundColor="@color/GrayWrite"
         app:qmui_borderColor="@color/GrayWrite">
 
@@ -36,9 +36,10 @@
             android:id="@+id/mSearchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
             app:closeIcon="@mipmap/icon_cancle"
-            app:iconifiedByDefault="false"
+            app:queryHint="请输入食物名称"
             app:searchIcon="@mipmap/icon_search">
 
         </android.support.v7.widget.SearchView>

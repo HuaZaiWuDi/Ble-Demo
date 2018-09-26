@@ -29,7 +29,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUICollapsingTopBarLayout;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -61,6 +60,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
@@ -68,8 +68,8 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment_;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment_;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
@@ -78,6 +78,8 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/7/13.
@@ -235,8 +237,9 @@ public class Slimming2Fragment extends BaseAcFragment {
 
 
     private void initView() {
+        initRxBus();
         add_food = getResources().getStringArray(R.array.add_food);
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvWeightStart.setTypeface(typeface);
         mTvWeightEnd.setTypeface(typeface);
 
@@ -255,15 +258,22 @@ public class Slimming2Fragment extends BaseAcFragment {
         setDefaultBarData(null);
         setLineChartData(null);
 
-        setTGA(this.getClass().getSimpleName());
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
         initData();
+        setTGA(this.getClass().getSimpleName());
+
     }
+
+    private void initRxBus() {
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initData();
+                    }
+                });
+    }
+
 
     private void initData() {
         getFirstPageData();
@@ -487,11 +497,11 @@ public class Slimming2Fragment extends BaseAcFragment {
         switch (view.getId()) {
             case R.id.iv_userImg:
                 //跳转个人主页
-                startFragment(UserInfofragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, UserInfofragment.class);
                 break;
             case R.id.layout_notify:
                 //跳转消息通知
-                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
             case R.id.layout_Healthy:
                 //点击健康评级
@@ -502,38 +512,30 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_heat:
                 //跳转热量记录
-                startFragment(HeatDetailFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, HeatDetailFragment.class);
                 break;
             case R.id.layout_breakfast:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);
-                QMUIFragment breakfast = FoodDetailsFragment.getInstance();
-                breakfast.setArguments(bundle);
-                startFragment(breakfast);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_lunch:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_LUNCH);
-                QMUIFragment lunch = FoodDetailsFragment.getInstance();
-                lunch.setArguments(bundle);
-                startFragment(lunch);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_dinner:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_DINNER);
-                QMUIFragment dinner = FoodDetailsFragment.getInstance();
-                dinner.setArguments(bundle);
-                startFragment(dinner);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_meal:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPED_MEAL);
-                QMUIFragment meal = FoodDetailsFragment.getInstance();
-                meal.setArguments(bundle);
-                startFragment(meal);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
 
             case R.id.layout_sports:
-                startFragment(SmartClothingFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, SmartClothingFragment_.class);
                 break;
             case R.id.layout_weight:
-                startFragment(WeightRecordFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, WeightRecordFragment_.class);
                 break;
             case R.id.btn_goBind_clothing:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
@@ -543,15 +545,15 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
             case R.id.layout_notify2:
                 //跳转消息通知
-                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
             case R.id.iv_userImg2:
                 //跳转个人主页
-                startFragment(UserInfofragment.getInstance());
+                RxActivityUtils.skipActivity(mActivity, UserInfofragment.class);
                 break;
             case R.id.layout_food_recommend:
                 //跳转推荐食材
-                startFragment(FoodRecommend.getInstance());
+                RxActivityUtils.skipActivity(mActivity, FoodRecommend.class);
                 break;
         }
     }
@@ -564,7 +566,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -603,13 +605,12 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
         mIvNotify2.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
 
-        RxLogUtils.d("热量：" + (Math.abs(bean.getAbleIntake()) + "".trim()));
-        RxLogUtils.d("热量：" + (Math.abs(bean.getAbleIntake()) + "").length());
         if (bean.getAbleIntake() < 0 && lastKcal != bean.getAbleIntake()) {
             lastKcal = bean.getAbleIntake();
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
 
+        SPUtils.put(SPKey.SP_realWeight, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getWeight());
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
         mTvCurrentkg.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
@@ -640,40 +641,36 @@ public class Slimming2Fragment extends BaseAcFragment {
             mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
         } else {
             mTvClothingTip.setText("请穿上燃脂衣开始运动吧");
+            mBtnGoBindClothing.setText(R.string.goSporting);
+            QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
+            background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));
+            background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
             boolean clothingIsEmpty = bean.getAthleticsInfoList().size() == 1 && bean.getAthleticsInfoList().get(0).getCalorie() == 0;
             mLayoutClothingDefault.setVisibility(clothingIsEmpty ? View.VISIBLE : View.GONE);
-            if (clothingIsEmpty) {
-                QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
-                background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                mBtnGoBindClothing.setText("去运动");
-            }
+
             mBtnGoBindClothing.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startFragment(SmartClothingFragment.getInstance());
+                    RxActivityUtils.skipActivity(mActivity, SmartClothingFragment_.class);
                 }
             });
         }
 
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
-            mBtnGoBindClothing.setText(R.string.goBind);
+            mBtnGoBindScale.setText(R.string.goBind);
             mTvWeightTip.setText("请绑定您的体脂称");
         } else {
             mTvWeightTip.setText("请开始管理体重吧");
+            mBtnGoBindScale.setText(R.string.goWeight);
             mLayoutScaleDefault.setVisibility(bean.getWeightInfoList().size() == 0 ? View.VISIBLE : View.GONE);
-            if (bean.getWeightInfoList().size() == 0) {
-                mBtnGoBindScale.setText("去称重");
-            }
             mBtnGoBindScale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startFragment(WeightRecordFragment.getInstance());
+                    RxActivityUtils.skipActivity(mActivity, WeightRecordFragment_.class);
                 }
             });
         }
-
 
         int size = bean.getAthleticsInfoList().size();
         if (size != 0) {

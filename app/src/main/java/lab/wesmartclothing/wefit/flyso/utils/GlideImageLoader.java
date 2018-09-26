@@ -17,6 +17,13 @@ import lab.wesmartclothing.wefit.flyso.R;
 public class GlideImageLoader implements ImageLoader {
 
 
+    public static GlideImageLoader getInstance() {
+        return new GlideImageLoader();
+    }
+
+    public GlideImageLoader() {
+    }
+
     public void displayImage(Context activity, Object path, ImageView imageView) {
         Glide.with(activity)
                 .load(path)

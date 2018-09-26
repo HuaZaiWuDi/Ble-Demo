@@ -13,12 +13,11 @@
 
     <style name="StartTheme" parent="AppTheme">
         <item name="android:windowFullscreen">false</item>
-        <item name="android:windowBackground">@drawable/start_up</item>
+        <item name="android:windowBackground">@drawable/img_start_up</item>
 
     </style>
 
     <!-- Application theme. -->
-
 
     <style name="QDTopBar" parent="QMUI.TopBar">
         <item name="qmui_topbar_bg_color">@color/white</item>

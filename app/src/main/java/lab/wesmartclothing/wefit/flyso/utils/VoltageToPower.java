@@ -66,10 +66,10 @@ public class VoltageToPower {
 //    }
 
 
-//    电池电压区间7.2-8.2
+//    电池电压区间7.2-8.4
     public int getBatteryCapacity(double Voltage) {
         System.out.print(Voltage);
-        int batteryCapacity = (int) ((Voltage - 7.2) * 100f);
+        int batteryCapacity = (int) ((Voltage - 7.2) / (8.4 - 7.2) * 100f);
         if (batteryCapacity > 100) batteryCapacity = 100;
         if (batteryCapacity < 0) batteryCapacity = 0;
         return batteryCapacity;
@@ -87,13 +87,13 @@ public class VoltageToPower {
     public double canUsedTime(double Voltage, boolean isHeating) {
         double time = 0;
         double batteryCapacity = getBatteryCapacity(Voltage) / 100f * 2200;
-        RxLogUtils.d("电池：" + getBatteryCapacity(Voltage));
-        RxLogUtils.d("电池：" + batteryCapacity);
         if (isHeating) {
             time = batteryCapacity / 1000f;
         } else {
             time = batteryCapacity / 10f;
         }
+        RxLogUtils.d("剩余电量：" + getBatteryCapacity(Voltage));
+        RxLogUtils.d("剩余使用时长（小时）：" + batteryCapacity);
         return time;
     }
 

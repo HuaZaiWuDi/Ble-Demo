@@ -57,8 +57,6 @@ public class NetManager {
      * @return
      */
     public <S> S createString(Class<S> service) {
-        Log.d("默认网址", "");
-        Log.d("默认网址", getBaseUrl(service));
 
         //在请求头添加参数
         Interceptor NetInterceptor = new Interceptor() {
@@ -119,8 +117,14 @@ public class NetManager {
             builder.addInterceptor(loggingInterceptor);
         }
         builder.addInterceptor(NetInterceptor);
+//        builder.addInterceptor(new XInterceptor.CommonNoNetCache(60 * 60 * 24 * 7, RxManager.getInstance().application));
+//        builder.addInterceptor(new XInterceptor.CommonNetCache(2));
 //        builder.addInterceptor(publicParamInterceptor);
 
+
+//        //声明缓存地址和大小
+//        Cache cache = new Cache(RxManager.getInstance().application.getCacheDir(), 10 * 1024 * 1024);
+//        builder.cache(cache);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())

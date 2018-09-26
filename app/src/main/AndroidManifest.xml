@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
@@ -77,7 +78,7 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
-        <!-- 极光通知广播 -->
+        <!--极光通知广播-->
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -92,32 +93,36 @@
 
                 <!-- 接收网络变化 连接/断开 since 1.6.3 -->
                 <action android:name="cn.jpush.android.intent.CONNECTION"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/> <!-- 开机广播 -->
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/> <!-- 网络状态改变广播 -->
+                <action android:name="android.intent.action.BOOT_COMPLETED"/><!--开机广播-->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/><!--网络状态改变广播-->
 
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
+
+
         <receiver android:name=".utils.jpush.MyJPushMessageReceiver">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
-
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
 
-        <!-- DUF服务 -->
-        <activity android:name=".ble.dfu.NotificationActivity"/>
+
+        <!--DUF服务-->
+        <activity
+            android:name=".ble.dfu.NotificationActivity"/>
 
         <service
             android:name=".ble.dfu.DfuService"
             android:exported="true"/>
 
-        <!-- android:launchMode="singleTop" -->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
+
         </activity>
         <activity
             android:name=".ui.guide.SpalshActivity_"
@@ -130,13 +135,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:screenOrientation="nosensor">
-        </activity>
-        <activity
-            android:name=".ui.main.slimming.sports.SportsDetailsActivity_"
             android:screenOrientation="nosensor">
         </activity>
         <activity
@@ -165,8 +167,9 @@
         <activity
             android:name=".ui.login.LoginRegisterActivity"
             android:screenOrientation="nosensor"/>
+
         <activity
-            android:name=".ui.main.CollectWebActivity"
+            android:name=".ui.main.mine.CollectWebActivity"
             android:screenOrientation="nosensor">
         </activity>
         <activity
@@ -194,20 +197,94 @@
             android:screenOrientation="nosensor">
         </activity>
         <activity
-            android:name=".ui.main.slimming.sports.BaseSportingActivity"
+            android:name=".ui.main.mine.AboutFragment"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.heat.second.BaseHeatActivity"
+            android:name=".ui.toolui.SportingActivity"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.weight.BaseWeightActivity"
+            android:name=".ui.main.mine.AccountFragment"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.mine.BaseMeActivity"
+            android:name=".ui.main.mine.CollectFragment"
             android:screenOrientation="nosensor"/>
-        <activity android:name=".ui.toolui.SportingActivity"/>
-        <activity android:name=".ui.guide.GuideActivity">
-        </activity>
+        <activity
+            android:name=".ui.main.mine.DeviceFragment_"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.EditFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.MessageDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.MessageFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.PhotoDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.ProblemFragemnt"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.Settingfragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.mine.UserInfofragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.AddedFoodFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.FoodDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.FoodRecommend"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.second.HeatDetailFragment"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.heat.SearchHistoryFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.sports.SportingFragment_"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.sports.SportsDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.BodyFatFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.BodyDataFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.SettingTargetFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.TargetDateFargment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.TargetDetailsFragment"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.WeightAddFragment"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.WeightRecordFragment_"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.sports.SmartClothingFragment_"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.guide.GuideActivity"
+            android:screenOrientation="nosensor"/>
     </application>
 
 </manifest>

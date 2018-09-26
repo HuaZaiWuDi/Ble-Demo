@@ -94,8 +94,6 @@
                         android:layout_height="6dp"
                         android:layout_below="@+id/tv_weight_start"
                         android:layout_marginTop="@dimen/dimen_3"
-                        android:max="100"
-                        android:progress="30"
                         app:rcBackgroundColor="@color/GrayWrite"
                         app:rcMax="100"
                         app:rcProgress="0"

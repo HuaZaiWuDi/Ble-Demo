@@ -44,6 +44,7 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -143,15 +144,14 @@ public class UserInfoActivity extends BaseALocationActivity {
 
 
     @Override
-    protected int getContextViewId() {
-        return 0;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
         ButterKnife.bind(this);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.white))
+                .setLightStatusBar(false)
+                .process();
         initView();
         Intent bleIntent = new Intent(mContext, BleService_.class);
         startService(bleIntent);

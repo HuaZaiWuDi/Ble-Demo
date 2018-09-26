@@ -38,10 +38,8 @@ public class RxBroadcastUtils {
         BroadcastReceiverNetWork mReceiverNetWork = new BroadcastReceiverNetWork();
         IntentFilter mFilter = new IntentFilter();
         mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        context.registerReceiver(mReceiverNetWork, mFilter);
+        ((Context) weakReference.get()).registerReceiver(mReceiverNetWork, mFilter);
         return mReceiverNetWork;
     }
-
-
 
 }

@@ -1,9 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -11,13 +12,13 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -35,13 +36,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.MainFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
@@ -49,13 +50,14 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.RequestBody;
 
 
 /**
  * Created by jk on 2018/8/3.
  */
-public class FoodDetailsFragment extends BaseAcFragment {
+public class FoodDetailsFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -74,9 +76,6 @@ public class FoodDetailsFragment extends BaseAcFragment {
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
 
-    public static QMUIFragment getInstance() {
-        return new FoodDetailsFragment();
-    }
 
     private int foodType = 0;
     private long currentTime = 0;
@@ -88,12 +87,14 @@ public class FoodDetailsFragment extends BaseAcFragment {
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     public static List<FoodListBean> addedLists = new ArrayList<>();//已经添加的食物列表
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_food_detail, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_food_detail);
+        ButterKnife.bind(this);
         initView();
-        return view;
+
     }
 
     @Override
@@ -123,7 +124,6 @@ public class FoodDetailsFragment extends BaseAcFragment {
         initAddFoodRecyclerView();
         pageNum = 1;
         initData();
-
 
         dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
@@ -177,7 +177,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
     }
 
     private void initBundle() {
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
@@ -226,6 +226,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
             }
         });
 
+
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
     }
@@ -237,7 +238,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)]);
@@ -245,9 +246,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        QMUIFragment instance = SearchHistoryFragment.getInstance();
-                        instance.setArguments(bundle);
-                        startFragment(instance);
+                        RxActivityUtils.skipActivity(mActivity, SearchHistoryFragment.class, bundle);
                     }
                 });
     }
@@ -283,7 +282,6 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     protected void _onError(String error, int errorCode) {
                         RxToast.normal(error);
                         if (smartRefreshLayout.isLoading()) {
-                            pageNum++;
                             smartRefreshLayout.finishLoadMore(false);
                         }
                         if (smartRefreshLayout.isRefreshing())
@@ -319,7 +317,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-
+        Log.e("添加成功", SlimmingPage + "");
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
@@ -330,8 +328,13 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         addedLists.clear();
-
-                        getBaseFragmentActivity().popBackStack(SlimmingPage ? MainFragment.class : HeatDetailFragment.class);
+                        if (SlimmingPage) {
+                            //刷新数据
+                            RxActivityUtils.finishActivity();
+                        } else {
+                            RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
+                        }
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
@@ -345,7 +348,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.recyclerAddFoods:
-                startFragment(AddedFoodFragment.getInstance());
+                RxActivityUtils.skipActivity(mContext, AddedFoodFragment.class);
                 break;
             case R.id.iv_complete:
                 //添加食物
@@ -354,16 +357,12 @@ public class FoodDetailsFragment extends BaseAcFragment {
         }
     }
 
-    //监听返回按钮
     @Override
-    protected void popBackStack() {
-//        super.popBackStack();
-
+    public void onBackPressed() {
         if (addedLists.size() == 0) {
-            super.popBackStack();
+            RxActivityUtils.finishActivity();
             return;
         }
-
         final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
         dialog.setCanceledOnTouchOutside(false);
         dialog.getTvTitle().setVisibility(View.GONE);
@@ -374,7 +373,7 @@ public class FoodDetailsFragment extends BaseAcFragment {
             public void onClick(View v) {
                 dialog.dismiss();
                 addedLists.clear();
-                getBaseFragmentActivity().popBackStack();
+                RxActivityUtils.finishActivity();
             }
         })
                 .setSure("取消")
@@ -385,5 +384,6 @@ public class FoodDetailsFragment extends BaseAcFragment {
                     }
                 }).show();
     }
+
 
 }

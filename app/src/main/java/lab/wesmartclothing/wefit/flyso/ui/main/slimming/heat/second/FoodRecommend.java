@@ -1,14 +1,14 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -24,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodRecommendBean;
@@ -38,7 +38,7 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 /**
  * Created by jk on 2018/8/23.
  */
-public class FoodRecommend extends BaseAcFragment {
+public class FoodRecommend extends BaseActivity {
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.mRecyclerView)
@@ -47,20 +47,19 @@ public class FoodRecommend extends BaseAcFragment {
     TextView mTvFoodTotal;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new FoodRecommend();
-    }
 
     private BaseSectionQuickAdapter sectionQuickAdapter;
     private List<HeatFoodSection> mBeans = new ArrayList<>();
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_food_recommend, null);
-        unbinder = ButterKnife.bind(this, view);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_food_recommend);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -168,7 +167,7 @@ public class FoodRecommend extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("食材推荐");

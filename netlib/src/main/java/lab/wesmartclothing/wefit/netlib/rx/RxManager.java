@@ -3,12 +3,16 @@ package lab.wesmartclothing.wefit.netlib.rx;
 
 import android.app.Application;
 
+import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.IObservableStrategy;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.netlib.utils.HttpResult;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
 
 /**
@@ -19,7 +23,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
  */
 public class RxManager {
     private static RxManager rxManager = null;
-
     String TAG = "[RxManager]";
 
     Application application;
@@ -35,28 +38,13 @@ public class RxManager {
         return rxManager;
     }
 
+
     public void setAPPlication(Application application) {
         this.application = application;
     }
 
     public Application getApplication() {
         return application;
-    }
-
-    public void doUnifySubscribe(Observable<HttpResult> observable, RxNetSubscriber<HttpResult> subscriber) {
-        observable
-                .map(new Function<HttpResult, HttpResult>() {
-                    @Override
-                    public HttpResult apply(HttpResult httpResult) throws Exception {
-                        if (!httpResult.isStatus()) {
-//                            L.d("运行异常");
-                        }
-                        return httpResult;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
     }
 
 
@@ -69,12 +57,37 @@ public class RxManager {
     }
 
 
-    public <String> Observable<String> doNetSubscribe(Observable<String> observable) {
+    public <T> Observable<T> doNetSubscribe(Observable<T> observable) {
         return observable
-                .throttleFirst(1, TimeUnit.SECONDS)
-                .compose(RxThreadUtils.<String>handleResult())
-                .compose(RxThreadUtils.<String>rxThreadHelper());
+                .compose(RxThreadUtils.<T>rxThreadHelper())
+                .compose(RxThreadUtils.<T>handleResult())
+                ;
     }
+
+    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
+                                            BehaviorSubject<LifeCycleEvent> lifecycleSubject,
+                                            String cacheKey,
+                                            Class type,
+                                            IObservableStrategy strategy
+    ) {
+        return observable
+                .compose(RxThreadUtils.<T>handleResult2())
+                .compose(RxThreadUtils.<T>rxThreadHelper())
+                .compose(RxThreadUtils.<T>bindLife(lifecycleSubject))
+                .compose(RxCache.getDefault().<T>transformObservable(cacheKey, type, strategy))
+                .map(new CacheResult.MapFunc<T>())
+                ;
+    }
+
+    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
+                                            BehaviorSubject<LifeCycleEvent> lifecycleSubject
+    ) {
+        return observable
+                .compose(RxThreadUtils.<T>handleResult2())
+                .compose(RxThreadUtils.<T>rxThreadHelper())
+                .compose(RxThreadUtils.<T>bindLife(lifecycleSubject));
+    }
+
 
     public <T> Observable<T> doLoadDownSubscribe(Observable<T> observable) {
         return observable

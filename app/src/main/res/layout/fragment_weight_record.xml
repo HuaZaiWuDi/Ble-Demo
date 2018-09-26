@@ -60,7 +60,7 @@
             android:background="@color/green_61D97F">
 
 
-            <tech.linjiang.suitlines.SuitLines
+            <com.vondear.rxtools.view.chart.SuitLines
                 android:id="@+id/suitlines"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -444,7 +444,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dimen_8"
-                            android:text="研究表明，设定了目标的人减肥成功率可以提升80%。，快穿上减肥衣去运动吧。"
+                            android:text="研究表明，设定了目标的人减肥成功率可以提升80%。，快穿上瘦身衣去运动吧。"
                             android:textColor="@color/GrayWrite"/>
                     </LinearLayout>
 
@@ -497,7 +497,6 @@
                                 android:layout_toRightOf="@+id/tv_startWeight"
                                 app:rcBackgroundColor="@color/GrayWrite"
                                 app:rcMax="100"
-                                app:rcProgress="30"
                                 app:rcProgressColor="@color/green_61D97F"/>
 
 
@@ -545,7 +544,8 @@
         android:gravity="center"
         android:text="设置目标"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

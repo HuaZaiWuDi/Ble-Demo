@@ -2,14 +2,14 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -31,7 +31,7 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 /**
  * Created by jk on 2018/7/26.
  */
-public class SettingTargetFragment extends BaseAcFragment {
+public class SettingTargetFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -51,25 +51,21 @@ public class SettingTargetFragment extends BaseAcFragment {
     Unbinder unbinder;
 
 
-    public static QMUIFragment getInstance() {
-        return new SettingTargetFragment();
-    }
-
     private float maxWeight, minWeight, settingWeight, initWeight = 0, stillNeed;
-    private Bundle bundle;
+
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_setting_target, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_setting_target);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
     private void initView() {
         initTopBar();
         bestWeight();
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
         mTvTips.setTypeface(typeface);
     }
@@ -79,28 +75,30 @@ public class SettingTargetFragment extends BaseAcFragment {
      * 女性：(身高cm－70)×60﹪=标准体重
      */
     private void bestWeight() {
-        bundle = getArguments();
+        initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
+        float standardWeight = 0;
+        Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            initWeight = (float) bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
-            if (initWeight <= 0) initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
+            settingWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         }
+
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
-        float standardWeight = 0;
         if (userInfo.getSex() == 1) {
             standardWeight = (userInfo.getHeight() - 80) * 0.7f;
         } else {
             standardWeight = (userInfo.getHeight() - 70) * 0.6f;
         }
-        initRuler(standardWeight);
+        if (settingWeight == 0)
+            settingWeight = standardWeight;
+        initRuler(settingWeight);
         minWeight = standardWeight * 0.9f;
         maxWeight = standardWeight * 1.1f;
 
-        settingWeight = standardWeight;
-        stillNeed = initWeight - standardWeight;
-        if (stillNeed <= 0) {
+        stillNeed = initWeight - settingWeight;
+        if (stillNeed < 0) {
             //TODO 当前体重小于目标体重着
-            tipDialog.showInfo("您当前体重小于标准体重，\n请设置目标体重~", 2000);
+            tipDialog.showInfo("您当前体重小于目标体重，\n请设置目标体重~", 2000);
         }
 
         String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
@@ -152,25 +150,22 @@ public class SettingTargetFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("目标设置");
     }
 
     private void nextStep() {
-        if (settingWeight > initWeight) {
-            tipDialog.showInfo("您设定的目标体重超过当前体重，\n请重新设置~", 2000);
+        if (settingWeight >= initWeight) {
+            tipDialog.showInfo("您设定的目标体重超过或等于当前体重，\n请重新设置~", 2000);
             return;
         }
 
-        Bundle mBundle = new Bundle(bundle);
+        Bundle mBundle = new Bundle();
         mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, settingWeight);
         mBundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
-        mBundle.putDouble(Key.BUNDLE_LAST_WEIGHT, initWeight);
-        QMUIFragment instance = TargetDateFargment.getInstance();
-        instance.setArguments(mBundle);
-        startFragment(instance);
+        RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
     }
 
 

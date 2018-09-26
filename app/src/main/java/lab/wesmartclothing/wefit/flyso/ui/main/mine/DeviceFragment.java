@@ -1,12 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.bluetooth.BluetoothAdapter;
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
@@ -23,7 +23,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.List;
@@ -33,10 +33,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
@@ -46,12 +48,13 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created by jk on 2018/8/10.
  */
-@EFragment
-public class DeviceFragment extends BaseAcFragment {
+@EActivity
+public class DeviceFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -100,19 +103,17 @@ public class DeviceFragment extends BaseAcFragment {
             mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
     }
 
-    public static QMUIFragment getInstance() {
-        return new DeviceFragment_();
-    }
 
     private List<DeviceListbean.ListBean> beanList;
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_device, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_device);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -123,6 +124,7 @@ public class DeviceFragment extends BaseAcFragment {
     public void onStart() {
         super.onStart();
         initData();
+        notifyData();
     }
 
     @Override
@@ -135,7 +137,7 @@ public class DeviceFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("我的设备");
@@ -170,36 +172,42 @@ public class DeviceFragment extends BaseAcFragment {
 
                         DeviceListbean deviceListbean = MyAPP.getGson().fromJson(s, DeviceListbean.class);
                         beanList = deviceListbean.getList();
-                        notifyData();
+                        for (int i = 0; i < beanList.size(); i++) {
+                            DeviceListbean.ListBean device = beanList.get(i);
+                            if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
+                                int hour = device.getOnlineDuration() / 3600;
+                                mTvScaleUseTime.setText((hour <= 0 ? 1 : hour) + "");
+                            }
+                        }
                     }
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+                        RxToast.normal(error);
                     }
                 });
     }
 
     private void notifyData() {
-        mTvNoDeviceTip.setVisibility(beanList.size() > 0 ? View.GONE : View.VISIBLE);
-        mBtnBind.setVisibility(beanList.size() == 2 ? View.GONE : View.VISIBLE);
+        boolean clothingIsBind = BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC));
+        boolean scaleIsBind = BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC));
+
+        mTvNoDeviceTip.setVisibility(clothingIsBind || scaleIsBind ? View.GONE : View.VISIBLE);
+        mBtnBind.setVisibility(clothingIsBind && scaleIsBind ? View.GONE : View.VISIBLE);
         mLayoutScale.setVisibility(View.GONE);
         mLayoutClothing.setVisibility(View.GONE);
 
-        for (int i = 0; i < beanList.size(); i++) {
-            DeviceListbean.ListBean device = beanList.get(i);
-            if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
-                mLayoutScale.setVisibility(View.VISIBLE);
-                mTvScaleId.setText(device.getMacAddr());
-                int hour = device.getOnlineDuration() / 3600;
-                mTvScaleUseTime.setText((hour <= 0 ? 1 : hour) + "");
-                mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
-            } else if (BleKey.TYPE_CLOTHING.equals(device.getDeviceNo())) {
-                mLayoutClothing.setVisibility(View.VISIBLE);
-                mTvClothingId.setText(device.getMacAddr());
-                mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
-            }
+        if (scaleIsBind) {
+            mLayoutScale.setVisibility(View.VISIBLE);
+            mTvScaleId.setText(SPUtils.getString(SPKey.SP_scaleMAC));
+            mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
         }
+        if (clothingIsBind) {
+            mLayoutClothing.setVisibility(View.VISIBLE);
+            mTvClothingId.setText(SPUtils.getString(SPKey.SP_clothingMAC));
+            mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
+        }
+
 
         BleAPI.getVoltage(new BleChartChangeCallBack() {
             @Override
@@ -209,7 +217,7 @@ public class DeviceFragment extends BaseAcFragment {
                 RxLogUtils.d("电压：" + voltage);
                 VoltageToPower toPower = new VoltageToPower();
                 int capacity = toPower.getBatteryCapacity(voltage / 1000f);
-                double time = toPower.canUsedTime(voltage, false);
+                double time = toPower.canUsedTime(voltage / 1000f, false);
                 RxLogUtils.d("capacity:" + capacity + "time：" + time);
                 mTvClothingUseTime.setText(capacity + "");
                 mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(time / 24, 1));
@@ -219,12 +227,13 @@ public class DeviceFragment extends BaseAcFragment {
 
     private void deleteDeviceById(final String position) {
         String gid = "";
-        for (int i = 0; i < beanList.size(); i++) {
-            DeviceListbean.ListBean device = beanList.get(i);
-            if (position.equals(device.getDeviceNo())) {
-                gid = device.getGid();
+        if (beanList != null)
+            for (int i = 0; i < beanList.size(); i++) {
+                DeviceListbean.ListBean device = beanList.get(i);
+                if (position.equals(device.getDeviceNo())) {
+                    gid = device.getGid();
+                }
             }
-        }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeBind(gid))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -236,18 +245,20 @@ public class DeviceFragment extends BaseAcFragment {
                         //添加绑定设备，这里实在不会
                         if (BleKey.TYPE_SCALE.equals(position)) {
                             //删除绑定
-                            new QNBleTools().disConnectDevice();
+                            mQNBleTools.disConnectDevice();
                             SPUtils.remove(SPKey.SP_scaleMAC);
                         } else if (BleKey.TYPE_CLOTHING.equals(position)) {
                             SPUtils.remove(SPKey.SP_clothingMAC);
                             BleTools.getInstance().disConnect();
                         }
-                        initData();
+                        notifyData();
+                        RxBus.getInstance().post(new RefreshMe());
+                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
                     protected void _onError(String error) {
-                        RxToast.error(error);
+                        RxToast.error("删除失败");
                     }
                 });
     }

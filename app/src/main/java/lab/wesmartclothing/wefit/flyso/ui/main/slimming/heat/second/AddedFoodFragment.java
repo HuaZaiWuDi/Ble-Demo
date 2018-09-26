@@ -1,17 +1,17 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -25,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
@@ -43,7 +43,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/8/3.
  */
-public class AddedFoodFragment extends BaseAcFragment {
+public class AddedFoodFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -54,9 +54,6 @@ public class AddedFoodFragment extends BaseAcFragment {
     TextView mTvAddedNoData;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new AddedFoodFragment();
-    }
 
     private int foodType = 0;
     private BaseQuickAdapter adapter;
@@ -64,15 +61,17 @@ public class AddedFoodFragment extends BaseAcFragment {
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     private long currentTime = 0;
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_added_food, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_added_food);
+        ButterKnife.bind(this);
         initView();
-        return view;
     }
 
-    private void initView() {
+
+    public void initView() {
         initRecyclerView();
         initData();
         initTopBar();
@@ -100,7 +99,7 @@ public class AddedFoodFragment extends BaseAcFragment {
     }
 
     private void initData() {
-        bundle = getArguments();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
@@ -163,9 +162,8 @@ public class AddedFoodFragment extends BaseAcFragment {
             @Override
             public void onClick(View v) {
                 //跳转添加食物
-                QMUIFragment instance = FoodDetailsFragment.getInstance();
-                instance.setArguments(bundle);
-                startFragment(instance);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+
             }
         });
         adapter.addFooterView(footerView);
@@ -211,7 +209,7 @@ public class AddedFoodFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                RxActivityUtils.finishActivity();
             }
         });
         mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)].substring(2, 4));
@@ -219,9 +217,7 @@ public class AddedFoodFragment extends BaseAcFragment {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        QMUIFragment instance = SearchHistoryFragment.getInstance();
-                        instance.setArguments(bundle);
-                        startFragment(instance);
+                        RxActivityUtils.skipActivity(mActivity, SearchHistoryFragment.class, bundle);
                     }
                 });
     }

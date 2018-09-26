@@ -9,17 +9,11 @@
 
 
     <string name="heat">热量</string>
-    <string name="weight" translatable="false">体重</string>
-    <string name="sports" translatable="false">运动</string>
     <string name="sportsTime" translatable="false">时长</string>
 
     <string name="cancel" translatable="false">取消</string>
     <string name="ok" translatable="false">完成</string>
     <string name="confirm">确认</string>
-
-    <string name="unit_kcal" translatable="false">kcal</string>
-    <string name="unit_k" translatable="false">cal</string>
-    <string name="unit_kcal3" translatable="false">--kcal</string>
 
     <string name="inputRightFoodName" translatable="false">请输入正确的食物名字</string>
     <string name="weightNoZero" translatable="false">重量不能为0</string>
@@ -45,17 +39,12 @@
     <string name="receivedCount" translatable="false">%1$s领取的体重数据（%2$d）</string>
 
     <string name="goBind" translatable="false">去绑定</string>
+    <string name="goSporting" translatable="false">去运动</string>
+    <string name="goWeight" translatable="false">去称重</string>
 
     <string name="disConnected" translatable="false">未连接</string>
     <string name="connected" translatable="false">已连接</string>
     <string name="unBind" translatable="false">未绑定</string>
-
-    <string name="curHeart" translatable="false">当前心率</string>
-    <string name="maxHeart" translatable="false">最高心率</string>
-    <string name="avgHeart" translatable="false">平均心率</string>
-    <string name="startSports" translatable="false">开始运动</string>
-    <string name="sportsDetails" translatable="false">运动详情</string>
-    <string name="consumeHeat" translatable="false">消耗热量</string>
 
     <string name="warm" translatable="false">热身</string>
     <string name="grease" translatable="false">燃脂</string>
@@ -105,7 +94,6 @@
     <string name="tip_nodata">还未上传数据哦！</string>
     <string name="tv_loading">正在加载</string>
     <string name="open_loaction">未给予定位权限，无法搜索到蓝牙设备</string>
-    <string name="connectError">连接瘦身衣异常，请开关蓝牙后再连接</string>
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
     <string name="ServiceAgreement">服务协议</string>
     <string name="phoneError">手机号码号码不正确</string>
@@ -138,12 +126,6 @@
         <item>@string/nav_find</item>
         <item>@string/nav_store</item>
         <item>@string/nav_me</item>
-    </string-array>
-
-    <string-array name="tab_Slimming">
-        <item>@string/heat</item>
-        <item>@string/weight</item>
-        <item>@string/sports</item>
     </string-array>
 
     <string-array name="add_food">

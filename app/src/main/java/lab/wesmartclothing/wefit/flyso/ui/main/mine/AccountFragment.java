@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -8,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -41,7 +41,7 @@ import me.shaohui.shareutil.share.SharePlatform;
 /**
  * Created by jk on 2018/8/9.
  */
-public class AccountFragment extends BaseAcFragment {
+public class AccountFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -73,17 +73,15 @@ public class AccountFragment extends BaseAcFragment {
     private boolean wechatIsBind, QQIsBind, weiboIsBind;
     private SwitchBindListener switchBindListener;
 
-    public static QMUIFragment getInstance() {
-        return new AccountFragment();
-    }
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_account, null);
-        ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_account);
+        ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     private void initView() {
         initTopBar();
@@ -116,7 +114,7 @@ public class AccountFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+               onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("账号管理");

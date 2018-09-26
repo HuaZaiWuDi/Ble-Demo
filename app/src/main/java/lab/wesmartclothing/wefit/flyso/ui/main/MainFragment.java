@@ -12,6 +12,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -129,7 +130,7 @@ public class MainFragment extends BaseAcFragment {
                 break;
             case MyJpushReceiver.ACTIVITY_MESSAGE:
                 //跳转消息通知
-                startFragment(MessageFragment.getInstance());
+                RxActivityUtils.skipActivity(mContext, MessageFragment.class);
                 break;
         }
     }
@@ -165,7 +166,7 @@ public class MainFragment extends BaseAcFragment {
                             .addItem(ServiceAPI.BASE_DEBUG)
                             .addItem(ServiceAPI.BASE_RELEASE)
                             .addItem(ServiceAPI.BASE_URL_192)
-                            .addItem(ServiceAPI.BASE_URL_208_)
+                            .addItem(ServiceAPI.BASE_URL_mix)
                             .setTitle("修改网络需要重启应用，提示网络错误，需要重新登录")
                             .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
                                 @Override

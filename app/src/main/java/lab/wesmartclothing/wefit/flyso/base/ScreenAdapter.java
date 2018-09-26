@@ -45,7 +45,8 @@ public class ScreenAdapter {
                 }
             });
         }
-        final float targetDensity = metrics.widthPixels / 360;//这里表示的是，设计图纸宽度为360dp。
+        //这里表示的是，设计图纸宽度为360dp。
+        final float targetDensity = metrics.widthPixels / 360;
         final float targetScaleDensity = targetDensity * (myScaledDensity / myDensity);
         final int targetDensityDpi = (int) (160 * targetDensity);
 

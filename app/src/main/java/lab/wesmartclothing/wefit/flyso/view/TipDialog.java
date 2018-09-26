@@ -1,10 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.LayoutRes;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.vondear.rxtools.model.timer.MyTimer;
+import com.vondear.rxtools.model.timer.MyTimerListener;
 
 import lab.wesmartclothing.wefit.flyso.R;
 
@@ -14,7 +15,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 public class TipDialog {
     private final long defaultTimeout = 10 * 1000;
     private QMUITipDialog tipDialog;
-    private Handler mHandler = new Handler();
     private Context mContext;
 
     public TipDialog(Context mContext) {
@@ -22,18 +22,19 @@ public class TipDialog {
     }
 
 
-    public void setDuration(long timeOut) {
-        dismiss();
-        if (timeOut <= 0) return;
-        mHandler.removeCallbacksAndMessages(null);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (tipDialog.isShowing()) {
-                    tipDialog.dismiss();
-                }
+    private MyTimer timeoutTimer = new MyTimer(new MyTimerListener() {
+        @Override
+        public void enterTimer() {
+            if (tipDialog != null && tipDialog.isShowing()) {
+                tipDialog.dismiss();
             }
-        }, timeOut);
+        }
+    });
+
+    public void setDuration(long timeOut) {
+        if (timeOut <= 0) return;
+        timeoutTimer.setPeriodAndDelay(0, timeOut);
+        timeoutTimer.startTimer();
     }
 
     public void show(long timeOut) {
@@ -42,6 +43,17 @@ public class TipDialog {
                 .setTipWord(mContext.getString(R.string.tv_loading))
                 .create();
         setDuration(timeOut);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
+        tipDialog.show();
+    }
+
+    public void show(String text, long timeOut) {
+        tipDialog = new QMUITipDialog.Builder(mContext)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord(text)
+                .create();
+        setDuration(timeOut);
+        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
@@ -61,7 +73,7 @@ public class TipDialog {
                 .setTipWord(content)
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
-        setDuration(defaultTimeout);
+        setDuration(timeOut);
         if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
@@ -72,7 +84,7 @@ public class TipDialog {
                 .setTipWord(content)
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
-        setDuration(defaultTimeout);
+        setDuration(timeOut);
         if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
@@ -100,7 +112,7 @@ public class TipDialog {
 
     public void dismiss() {
         if (tipDialog == null) return;
-        mHandler.removeCallbacksAndMessages(null);
+        if (timeoutTimer != null) timeoutTimer.stopTimer();
         if (tipDialog.isShowing())
             tipDialog.dismiss();
     }

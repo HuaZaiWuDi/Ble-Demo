@@ -11,6 +11,8 @@ import android.content.pm.ResolveInfo;
 public class AppInfoUtil {
 
     /**
+     * 获取包名
+     * 活动名称检索发射器应用from the context of the
      * Retrieve launcher activity name of the application from the context
      *
      * @param context The context of the application package.

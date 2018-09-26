@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,10 +14,9 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.JsonObject;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -26,6 +26,7 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,45 +34,50 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
+import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/7/27.
  */
-public class BodyDataFragment extends BaseAcFragment {
+public class BodyDataFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.tv_bodyFat)
     TextView mTvBodyFat;
-    @BindView(R.id.tv_weight)
-    TextView mTvWeight;
     @BindView(R.id.tv_date)
     TextView mTvDate;
     @BindView(R.id.mRecyclerView)
     RecyclerView mMRecyclerView;
     Unbinder unbinder;
+    @BindView(R.id.tv_healthScore)
+    TextView mTvHealthScore;
+    @BindView(R.id.tv_Details)
+    TextView mTvDetails;
     private List<MultiItemEntity> multiItermLists = new ArrayList<>();
 
-    public static QMUIFragment getInstance() {
-        return new BodyDataFragment();
-    }
 
     private ExpandableItemAdapter adapter;
     private String gid;
@@ -84,29 +90,45 @@ public class BodyDataFragment extends BaseAcFragment {
 
     private BodyDataUtil bodyDataUtil;
     private double[] bodyValue = new double[13];
-    private Bundle mBundle = new Bundle();
 
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_body_data, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_body_data);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.white))
+                .setLightStatusBar(true)
+                .process();
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
     private void initView() {
         bodys = getResources().getStringArray(R.array.bodyShape);
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
-        mTvWeight.setTypeface(typeface);
-        mBundle = getArguments();
+        Typeface typeface = MyAPP.typeface;
+        mTvHealthScore.setTypeface(typeface);
 
-        gid = mBundle.getString(Key.BUNDLE_WEIGHT_GID);
+        gid = getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_GID);
 
         initTopBar();
         initRecyclerView();
         initData();
+        initRxBus();
+    }
 
+
+    public void initRxBus() {
+        RxBus.getInstance().register2(OpenAddWeight.class)
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<OpenAddWeight>() {
+                    @Override
+                    protected void _onNext(OpenAddWeight integer) {
+                        RxLogUtils.d("显示：WeightRecordFragment");
+                        RxActivityUtils.finishActivity();
+                    }
+                });
     }
 
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
@@ -128,7 +150,7 @@ public class BodyDataFragment extends BaseAcFragment {
         //BMI
         Healthy healthy2 = new Healthy();
         healthy2.setSections(new double[]{18.5, 25});
-        healthy2.setSectionLabels(new String[]{"18.5%", "25.0%"});
+        healthy2.setSectionLabels(new String[]{"18.5", "25.0"});
         healthy2.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
         healthy2.setLabels(new String[]{"偏低", "标准", "偏高"});
@@ -150,7 +172,6 @@ public class BodyDataFragment extends BaseAcFragment {
          充足=大于标准体重*80%
          *
          * */
-
         UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {
@@ -159,7 +180,8 @@ public class BodyDataFragment extends BaseAcFragment {
             standardWeight = (int) ((userInfo.getHeight() - 70) * 0.6);
         float value1 = standardWeight * 0.67f;
         float value2 = standardWeight * 0.80f;
-
+        RxLogUtils.e("肌肉量：" + value1);
+        RxLogUtils.e("肌肉量：" + value2);
         //肌肉量
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{value1, value2});
@@ -242,41 +264,37 @@ public class BodyDataFragment extends BaseAcFragment {
 
     }
 
-
     private void initData() {
-        if (!RxDataUtils.isNullString(gid)) {
-            JsonObject object = new JsonObject();
-            object.addProperty("gid", gid);
-            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
-            RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-            RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
-                    .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                    .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
-                    .map(new CacheResult.MapFunc<String>())
-                    .subscribe(new RxNetSubscriber<String>() {
-                        @Override
-                        protected void _onNext(String s) {
-                            RxLogUtils.d("心率数据：" + s);
-                            WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
-                            mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
-                            mTvWeight.setText((float) detailsBean.getWeightInfo().getHealthScore() + "");
+        JsonObject object = new JsonObject();
+        object.addProperty("gid", gid);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("心率数据：" + s);
+                        WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
+                        mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
+                        mTvHealthScore.setText(detailsBean.getWeightInfo().getHealthScore() + "");
+                        Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
+                        //一定要加这行！！！！！！！！！！！
+                        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                        mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
+                        mTvBodyFat.setText(bodys[(detailsBean.getBodyLevel() - 1) % 9]);
+                        WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
+                        notifyData(weightInfo);
+                        bodyIndex = detailsBean.getBodyLevel();
+                    }
 
-                            Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
-                            //一定要加这行！！！！！！！！！！！
-                            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                            mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
-                            mTvBodyFat.setText(bodys[(detailsBean.getBodyLevel() - 1) % 9]);
-                            WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
-                            notifyData(weightInfo);
-                            bodyIndex = detailsBean.getBodyLevel();
-                        }
-
-                        @Override
-                        protected void _onError(String error) {
-                            RxToast.error(error);
-                        }
-                    });
-        }
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.error(error);
+                    }
+                });
     }
 
     private void initRecyclerView() {
@@ -300,7 +318,7 @@ public class BodyDataFragment extends BaseAcFragment {
             bodyValue[1] = weightInfo.getBodyFat();
             bodyValue[2] = weightInfo.getBmi();
             bodyValue[3] = weightInfo.getVisfat();
-            bodyValue[4] = weightInfo.getMuscle();
+            bodyValue[4] = weightInfo.getSinew();
             bodyValue[5] = weightInfo.getBmr();
             bodyValue[6] = weightInfo.getWater();
             bodyValue[7] = weightInfo.getBone();
@@ -329,13 +347,17 @@ public class BodyDataFragment extends BaseAcFragment {
             level0Bean.setBodyData(titles[i]);
             level0Bean.setBodyDataImg(imgs[i]);
 
+            if (i == 4) {
+                RxLogUtils.e("肌肉量：" + level0Bean.getBodyValue());
+            }
+
             if (i == titles.length - 1 || i == titles.length - 2 || i == 0) {
                 level0Bean.setStatus("标准");
                 level0Bean.setStatusColor(Color.parseColor("#61D97F"));
                 level0Bean.setCanExpanded(false);
             } else {
 
-                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, (float) bodyValue[i]));
+                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, level0Bean.getBodyValue()));
                 Healthy healthy = mHealthyList.get(i % mHealthyList.size());
                 bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
                 bodyLevel1Bean.setLabels(healthy.getLabels());
@@ -354,6 +376,7 @@ public class BodyDataFragment extends BaseAcFragment {
             BodyLevel0Bean entity = (BodyLevel0Bean) multiItermLists.get(i);
             if (entity.getStatusColor() != Color.parseColor("#61D97F")
                     && entity.getStatusColor() != Color.parseColor("#17BD4F")) {
+//                entity.setExpanded(true);
                 swap(multiItermLists, index, i);
                 index++;
             }
@@ -370,7 +393,7 @@ public class BodyDataFragment extends BaseAcFragment {
     private void deleteWeight() {
         JsonObject object = new JsonObject();
         object.addProperty("gid", gid);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.removeWeightInfo(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -378,8 +401,11 @@ public class BodyDataFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.normal("删除成功");
-                        popBackStack();
+//                        RxToast.normal("删除成功");
+                        //刷新数据
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshSlimming());
+                        onBackPressed();
                     }
 
                     @Override
@@ -393,7 +419,7 @@ public class BodyDataFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("身体数据");
@@ -403,8 +429,12 @@ public class BodyDataFragment extends BaseAcFragment {
     public void onViewClicked() {
         Bundle bundle = new Bundle();
         bundle.putInt(Key.BUNDLE_BODY_INDEX, bodyIndex);
-        QMUIFragment instance = BodyFatFragment.getInstance();
-        instance.setArguments(bundle);
-        startFragment(instance);
+        RxActivityUtils.skipActivity(mActivity, BodyFatFragment.class, bundle);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        RxActivityUtils.skipActivityAndFinish(mContext, WeightRecordFragment_.class);
     }
 }

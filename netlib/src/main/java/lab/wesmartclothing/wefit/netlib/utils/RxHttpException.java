@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.net.ParseException;
-import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
@@ -56,29 +56,21 @@ public class RxHttpException {
     public String handleResponseError(Throwable t) {
         //这里不光是只能打印错误,还可以根据不同的错误作出不同的逻辑处理
         String msg = "请求网络失败";
-        if (!TextUtils.isEmpty(t.getMessage())) {
-            msg = t.getMessage();
-        }
-
         if (t instanceof UnknownHostException) {
             msg = "网络不可用";
         } else if (t instanceof SocketTimeoutException) {
             msg = "请求网络超时";
         } else if (t instanceof HttpException) {
+            Log.e("网络异常：", t.toString());
             HttpException httpException = (HttpException) t;
             msg = convertStatusCode(httpException);
         } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException) {
             msg = "数据解析错误";
         } else if (t instanceof ConnectException) {
             msg = "连接服务器失败";
+        } else if (t instanceof ExplainException) {//返回后台解释性异常码
+            msg = ((ExplainException) t).getMsg();
         }
-//
-        if ("timeout".equals(t.getMessage())) {
-            msg = "请求网络超时";
-        }
-//        if ("Failed".startsWith(t.getMessage())) {
-//            msg = "请求网络失败";
-//        }
         return msg;
     }
 

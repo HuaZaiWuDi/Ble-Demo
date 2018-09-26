@@ -1,10 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -37,7 +37,7 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 /**
  * Created by jk on 2018/8/9.
  */
-public class Settingfragment extends BaseAcFragment {
+public class Settingfragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -48,17 +48,14 @@ public class Settingfragment extends BaseAcFragment {
     Unbinder unbinder;
 
 
-    public static QMUIFragment getInstance() {
-        return new Settingfragment();
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_setting);
+        unbinder = ButterKnife.bind(this);
+        initView();
     }
 
-    @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_setting, null);
-        unbinder = ButterKnife.bind(this, view);
-        initView();
-        return view;
-    }
 
     private void initView() {
         initTopBar();
@@ -123,7 +120,7 @@ public class Settingfragment extends BaseAcFragment {
                 .addItemView(accountItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startFragment(AccountFragment.getInstance());
+                        RxActivityUtils.skipActivity(mContext, AccountFragment.class);
                     }
                 })
                 .addItemView(clothing, new View.OnClickListener() {
@@ -141,7 +138,7 @@ public class Settingfragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("设置");
@@ -180,17 +177,19 @@ public class Settingfragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(String s) {
                         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
+                        boolean SP_GUIDE = SPUtils.getBoolean(SPKey.SP_GUIDE);
                         MyAPP.aMapLocation = null;
                         SPUtils.clear();
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
+                        SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
+                        BleTools.getInstance().disConnect();
+                        new QNBleTools().disConnectDevice();
                         MyAPP.getRxCache().clear()
                                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
-                                        BleTools.getInstance().disConnect();
-                                        new QNBleTools().disConnectDevice();
                                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
                                     }
                                 });

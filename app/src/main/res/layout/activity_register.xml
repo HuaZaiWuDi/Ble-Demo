@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -33,12 +33,13 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/dimen_35"
         android:paddingRight="@dimen/dimen_35"
-        android:paddingTop="@dimen/dimen_20"
         >
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
             android:text="新用户注册"
             android:textColor="@color/Gray"
             android:textSize="20sp"
@@ -49,7 +50,6 @@
             android:id="@+id/edit_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_40"
             android:background="@null"
             android:drawableLeft="@mipmap/icon_phone"
             android:drawablePadding="10dp"
@@ -141,20 +141,16 @@
 
     </LinearLayout>
 
-    <RelativeLayout
+
+    <TextView
+        android:id="@+id/tv_clause"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/tv_clause"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/dimen_40"
-            android:gravity="center_horizontal"
-            android:text="@string/login_clause"
-            android:textSize="@dimen/dimen_11"/>
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dimen_40"
+        android:gravity="center_horizontal"
+        android:text="@string/login_clause"
+        android:textSize="@dimen/dimen_11"/>
 
 
-</FrameLayout>
+</RelativeLayout>

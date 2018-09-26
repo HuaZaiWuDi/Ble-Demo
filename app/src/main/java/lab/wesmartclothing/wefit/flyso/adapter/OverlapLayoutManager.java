@@ -11,7 +11,11 @@ import android.view.ViewGroup;
  */
 public class OverlapLayoutManager extends RecyclerView.LayoutManager {
     private Context mContext;
-    private float SCALE_GAP = 20f;//向右偏移的角度百分百
+
+    /**
+     * 向右偏移的角度百分百
+     */
+    private static float SCALE_GAP = 20f;
 
     public OverlapLayoutManager(Context context) {
         mContext = context;
@@ -52,8 +56,7 @@ public class OverlapLayoutManager extends RecyclerView.LayoutManager {
         //1在布局layout之前，将所有的子View先全部detach掉，然后放到Scrap集合里面缓存。
         detachAndScrapAttachedViews(recycler);
         //2)只将最上面4个view添加到RecylerView容器里面
-
-        int itemCount = getItemCount();//10个
+        int itemCount = getItemCount();
 
         for (int i = 0; i < itemCount; i++) {
             View view = recycler.getViewForPosition(i);

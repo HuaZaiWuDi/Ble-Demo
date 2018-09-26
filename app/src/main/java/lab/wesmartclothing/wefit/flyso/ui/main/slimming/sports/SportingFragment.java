@@ -1,9 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -17,7 +19,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
@@ -30,7 +31,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
 import java.util.ArrayList;
@@ -41,11 +42,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
@@ -54,8 +56,8 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 /**
  * Created by jk on 2018/7/19.
  */
-@EFragment
-public class SportingFragment extends BaseAcFragment {
+@EActivity
+public class SportingFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -79,10 +81,6 @@ public class SportingFragment extends BaseAcFragment {
     LineChart mMLineChart;
     Unbinder unbinder;
 
-
-    public static QMUIFragment getInstance() {
-        return new SportingFragment_();
-    }
 
     private Button btn_Connect;
 
@@ -111,11 +109,11 @@ public class SportingFragment extends BaseAcFragment {
 
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_sportsing, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_sportsing);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
 
     private void initView() {
@@ -125,6 +123,13 @@ public class SportingFragment extends BaseAcFragment {
         initRxBus();
         initTypeface();
         showDialog();
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        RxLogUtils.e("onNewIntent");
     }
 
     private void initTypeface() {
@@ -152,13 +157,14 @@ public class SportingFragment extends BaseAcFragment {
             }
         });
         mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, false));
+
     }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("运动进行中");
@@ -167,6 +173,7 @@ public class SportingFragment extends BaseAcFragment {
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
     }
+
 
     private void initRxBus() {
         RxBus.getInstance().register2(SportsDataTab.class)
@@ -206,6 +213,7 @@ public class SportingFragment extends BaseAcFragment {
                         mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
                     }
                 });
+
     }
 
     private void initChart(LineChart lineChartBase) {
@@ -346,7 +354,7 @@ public class SportingFragment extends BaseAcFragment {
         @Override
         public void enterTimer() {
             if (mSwMusic.isOpened())
-                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal) + mTvKcal.getText() + "千卡的能量");
+                TextSpeakUtils.speakAdd(getString(R.string.speech_currentKcal) + Number2Chinese.number2Chinese(Double.parseDouble(mTvKcal.getText().toString())) + "千卡的能量");
         }
     });
 
@@ -389,7 +397,7 @@ public class SportingFragment extends BaseAcFragment {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                popBackStack();
+                onBackPressed();
             }
         })
                 .setSure("取消")

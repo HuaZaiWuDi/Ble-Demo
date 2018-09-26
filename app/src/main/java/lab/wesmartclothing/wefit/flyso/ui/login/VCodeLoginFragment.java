@@ -114,7 +114,6 @@ public class VCodeLoginFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
         View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_login_vcode, null);
         unbinder = ButterKnife.bind(this, rootView);
         initView();

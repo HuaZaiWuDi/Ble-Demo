@@ -2,8 +2,6 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Environment;
-import android.speech.tts.TextToSpeech;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -19,12 +17,12 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
-import com.vondear.rxtools.model.cache.ACache;
+import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxThreadPoolUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
-import com.zchu.rxcache.diskconverter.GsonDiskConverter;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -32,7 +30,6 @@ import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
-import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
@@ -42,16 +39,12 @@ import me.shaohui.shareutil.ShareManager;
  */
 public class MyAPP extends Application {
 
-    private String BUGly_id = "11c87579c7";
+
     public static QNBleApi QNapi;
-    private static ACache aCache;
-    private static RxCache rxCache;
     public static Typeface typeface;
     private static Gson sGson;
     public static AMapLocation aMapLocation = null;//定位信息
     public static GlideImageLoader sImageLoader;
-    public static TextToSpeech mTextToSpeech;
-    public static boolean isAppKill = true;
 
     //指定全局的上啦刷新，下拉加载的样式
     static {
@@ -77,20 +70,29 @@ public class MyAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        RxManager.getInstance().setAPPlication(this);
-        RxUtils.init(this);
-        Bugly.init(getApplicationContext(), BUGly_id, BuildConfig.DEBUG);
-        initDB();
-        MultiDex.install(this);
+        RxLogUtils.i("启动时长：初始化");
         initQN();
-        BleTools.initBLE(this);
-        initShareLogin();
-        ScreenAdapter.init(this);
-        JPushUtils.init(this);
-        initLeakCanary();
-        typeface = Typeface.createFromAsset(this.getAssets(), "fonts/DIN-Regular.ttf");
 
-        TextSpeakUtils.init(this);
+        //优化启动速度，把一些没必要立即初始化的操作放到子线程
+        new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
+            @Override
+            public void run() {
+                RxManager.getInstance().setAPPlication(MyAPP.this);
+                ScreenAdapter.init(MyAPP.this);
+                MultiDex.install(MyAPP.this);
+                initDB();
+                initShareLogin();
+                initLeakCanary();
+
+                RxUtils.init(MyAPP.this);
+                Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+                TextSpeakUtils.init(MyAPP.this);
+                MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
+                BleTools.initBLE(MyAPP.this);
+                RxLogUtils.i("启动时长：初始化结束");
+            }
+        });
+
     }
 
 
@@ -116,18 +118,7 @@ public class MyAPP extends Application {
 
 
     public static RxCache getRxCache() {
-        if (rxCache == null) {
-//            rxCache = RxCache.getDefault();
-//
-            rxCache = new RxCache.Builder()
-                    .appVersion(1)//当版本号改变,缓存路径下存储的所有数据都会被清除掉
-                    .diskDir(Environment.getDownloadCacheDirectory())
-                    .diskConverter(new GsonDiskConverter())//支持Serializable、Json(GsonDiskConverter)
-                    .memoryMax(10 * 1024 * 1024)
-                    .diskMax(0)
-                    .build();
-        }
-        return rxCache;
+        return RxCache.getDefault();
     }
 
     public static Gson getGson() {
@@ -178,8 +169,9 @@ public class MyAPP extends Application {
      * 可能是添加MultiDex分包，但未初始化的原因，在Application中重写attachBaseContext函数，对MultiDex初始化即可。
      */
     @Override
-    protected void attachBaseContext(Context base) {
+    protected void attachBaseContext(final Context base) {
         super.attachBaseContext(base);
+        RxLogUtils.i("启动时长：开始启动");
         MultiDex.install(base);
     }
 

@@ -33,12 +33,14 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.RequestBody;
 
 
@@ -66,7 +68,6 @@ public class WeightDataActivity extends BaseActivity {
 
     private BaseQuickAdapter adapter_Receive;
 
-    @Override
     @AfterViews
     public void initView() {
         initTopBar();
@@ -129,7 +130,6 @@ public class WeightDataActivity extends BaseActivity {
         final QNScaleStoreData qnScaleData = (QNScaleStoreData) adapter_Receive.getItem(position);
         WeightAddBean bean = new WeightAddBean();
 
-
         bean.setMeasureTime(qnScaleData.getMeasureTime().getTime() + "");
         QNScaleData scaleData = qnScaleData.generateScaleData();
         if (scaleData != null)
@@ -150,6 +150,10 @@ public class WeightDataActivity extends BaseActivity {
                         RxLogUtils.d("添加体重：" + s);
                         adapter_Receive.remove(position);
                         tv_receive.setText(getString(R.string.receivedCount, "待", adapter_Receive.getItemCount()));
+
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshSlimming());
+
                     }
 
                     @Override

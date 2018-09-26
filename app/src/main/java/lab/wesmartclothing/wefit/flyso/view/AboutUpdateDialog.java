@@ -75,7 +75,7 @@ public class AboutUpdateDialog extends RxDialog {
         mContext = context;
         this.mustUpdate = mustUpdate;
 
-        this.setCanceledOnTouchOutside(!mustUpdate);
+        this.setCanceledOnTouchOutside(false);
         setFullScreenWidth();
 
 
@@ -127,6 +127,7 @@ public class AboutUpdateDialog extends RxDialog {
         public void onDownLoadFail(Throwable throwable) {
             mTvUpdateTip.setText("下载文件失败:" + throwable.toString());
             RxLogUtils.e(throwable.toString());
+            setCanceledOnTouchOutside(true);
         }
 
         @Override
@@ -139,11 +140,13 @@ public class AboutUpdateDialog extends RxDialog {
     private void startMyDFU(File o) {
         if (!BleTools.getInstance().isConnect()) {
             mTvUpdateTip.setText("未连接设备，请连上设备再重试");
+            setCanceledOnTouchOutside(true);
             return;
         }
 
         if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
             mTvUpdateTip.setText("升级文件有误");
+            setCanceledOnTouchOutside(true);
             return;
         }
 

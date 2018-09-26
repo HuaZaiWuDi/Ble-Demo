@@ -1,11 +1,13 @@
 package lab.wesmartclothing.wefit.flyso.ui.login;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -13,6 +15,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBarUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -32,7 +35,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
-import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -42,9 +45,12 @@ import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 public class RegisterActivity extends BaseActivity {
 
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
     private String phone;
     private String vCode;
     private String password;
+    private int softHeight = 0;
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mMQMUIAppBarLayout;
@@ -75,11 +81,17 @@ public class RegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
+        StatusBarUtils.from(this)
+                .setStatusBarColor(getResources().getColor(R.color.white))
+                .setLightStatusBar(false)
+                .process();
         initView();
     }
 
-    @Override
     public void initView() {
+        //注册布局变化监听
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(listener);
+        initTopBar();
         SpannableStringBuilder spannableStringBuilder = RxTextUtils.getBuilder(mTvClause.getText())
                 .setForegroundColor(getResources().getColor(R.color.red))
                 .setUnderline()
@@ -87,12 +99,7 @@ public class RegisterActivity extends BaseActivity {
         mTvClause.setText(spannableStringBuilder);
 
         switchEnable(false);
-        mMQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RxActivityUtils.finishActivity();
-            }
-        });
+
         mEditPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -156,6 +163,48 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
+    private void initTopBar() {
+        mMQMUIAppBarLayout.addLeftImageButton(R.mipmap.icon_back, R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+    }
+
+    ViewTreeObserver.OnGlobalLayoutListener listener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            //当键盘弹出隐藏的时候会 调用此方法。
+            Rect r = new Rect();
+            //获取当前界面可视部分
+            mActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+            //获取屏幕的高度
+            int screenHeight = mActivity.getWindow().getDecorView().getRootView().getHeight();
+            //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候需要减去导航栏的高度 此高度为0 键盘弹出的时候为一个正数
+            int heightDifference = screenHeight - r.bottom;
+            RxLogUtils.e("屏幕高度sheightDifference:" + heightDifference);
+            if (RxBarUtils.navigationBarExist(mActivity)) {
+                heightDifference = heightDifference - RxBarUtils.getDaoHangHeight(mContext);
+            }
+            if (heightDifference > 0) {
+                softHeight = heightDifference;
+            }
+            if (softHeight * 1f / screenHeight * 1f > 0.40f) {
+                mTvTitle.setVisibility(heightDifference == 0 ? View.VISIBLE : View.GONE);
+                mMQMUIAppBarLayout.setTitle(heightDifference == 0 ? "" : mTvTitle.getText().toString());
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        //注册布局变化监听
+        getWindow().getDecorView().getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+        super.onDestroy();
+    }
+
     private void getVCode() {
         String phone = mEditPhone.getText().toString();
         if (!RxRegUtils.isMobileExact(phone)) {
@@ -170,7 +219,6 @@ public class RegisterActivity extends BaseActivity {
                         RxUtils.countDown(mBtnGetVCode, 60, 1, getString(R.string.getVCode));
                     }
                 })
-                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -206,8 +254,6 @@ public class RegisterActivity extends BaseActivity {
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.register(phone, vCode, RxEncryptUtils.encryptMD5ToString(password)))
-                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

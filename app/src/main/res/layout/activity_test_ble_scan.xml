@@ -6,14 +6,76 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/red"
     tools:context=".TestBleScanActivity">
 
 
-    <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <tech.linjiang.suitlines.SuitLines
+        android:id="@+id/mSuitLines"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+
+    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+        android:id="@+id/mProgress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_30"
         android:layout_centerInParent="true"
-        android:text="我是详情"/>
+        app:rcBackgroundColor="@color/GrayWrite"
+        app:rcMax="100"
+        app:rcProgress="0"
+        app:rcProgressColor="@color/white"
+        app:rcRadius="3dp">
+
+    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+    <com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar
+        android:id="@+id/mTextProgress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_30"
+        android:layout_below="@+id/mProgress"
+        android:layout_marginBottom="@dimen/dimen_30"
+        android:layout_marginTop="@dimen/dimen_30"
+        app:rcBackgroundColor="@color/GrayWrite"
+        app:rcMax="100"
+        app:rcProgress="0"
+        app:rcProgressColor="@color/white"
+        app:rcRadius="3dp"
+        app:rcTextProgress="进度："
+        >
+    </com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar>
+
+    <com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar
+        android:id="@+id/mIconProgress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_30"
+        android:layout_below="@+id/mTextProgress"
+        app:rcBackgroundColor="@color/GrayWrite"
+        app:rcMax="100"
+        app:rcProgress="0"
+        app:rcProgressColor="@color/white"
+        app:rcRadius="3dp"
+        >
+
+    </com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar>
+
+
+    <com.vondear.rxtools.view.layout.RxLinearLayout
+        android:id="@+id/tv_test"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dimen_50"
+        android:elevation="20dp"
+        android:translationZ="20dp"
+        app:background_normal="@color/green_61D97F"
+        app:gradient_angle="BOTTOM_TOP"
+        app:gradient_endColor="@color/green_61D97F"
+        app:gradient_startColor="@color/red"
+        app:gradient_type="linear"
+        app:ripple_color="@color/yellow_FFBC00"
+        app:corner_radius="25dp"
+        />
+
 
 </RelativeLayout>

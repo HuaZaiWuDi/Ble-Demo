@@ -43,10 +43,6 @@ public class WebTitleActivity extends BaseWebActivity {
         mQMUIAppBarLayout.setTitle(getIntent().getStringExtra(Key.BUNDLE_TITLE));
     }
 
-    @Override
-    public void initView() {
-
-    }
 
     @Nullable
     @Override

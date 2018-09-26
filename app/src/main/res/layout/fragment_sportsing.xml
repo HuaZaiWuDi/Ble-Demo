@@ -249,7 +249,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="有效运动时间"
+                        android:text="运动时间"
                         android:textColor="@color/GrayWrite"
                         android:textSize="11sp"/>
 

@@ -23,11 +23,12 @@
     </android.support.v4.view.ViewPager>
 
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/bottom_tab"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_padding"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
@@ -47,6 +48,6 @@
             app:tl_textUnselectColor="@color/colorTabText"
             app:tl_textsize="@dimen/d_35"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

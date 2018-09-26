@@ -45,14 +45,14 @@ public class RxTextRoundProgressBar extends RxBaseRoundProgressBar implements Vi
 
     @Override
     protected void initStyleable(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TextRoundCornerProgress);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RxTextRoundProgressBar);
 
-        colorTextProgress = typedArray.getColor(R.styleable.TextRoundCornerProgress_rcTextProgressColor, Color.WHITE);
+        colorTextProgress = typedArray.getColor(R.styleable.RxTextRoundProgressBar_rcTextProgressColor, Color.WHITE);
 
-        textProgressSize = (int) typedArray.getDimension(R.styleable.TextRoundCornerProgress_rcTextProgressSize, dp2px(DEFAULT_TEXT_SIZE));
-        textProgressMargin = (int) typedArray.getDimension(R.styleable.TextRoundCornerProgress_rcTextProgressMargin, dp2px(DEFAULT_TEXT_MARGIN));
+        textProgressSize = (int) typedArray.getDimension(R.styleable.RxTextRoundProgressBar_rcTextProgressSize, dp2px(DEFAULT_TEXT_SIZE));
+        textProgressMargin = (int) typedArray.getDimension(R.styleable.RxTextRoundProgressBar_rcTextProgressMargin, dp2px(DEFAULT_TEXT_MARGIN));
 
-        textProgress = typedArray.getString(R.styleable.TextRoundCornerProgress_rcTextProgress);
+        textProgress = typedArray.getString(R.styleable.RxTextRoundProgressBar_rcTextProgress);
 
         typedArray.recycle();
     }

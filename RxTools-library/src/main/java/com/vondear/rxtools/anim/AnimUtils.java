@@ -9,6 +9,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -29,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.vondear.rxtools.interfaces.onUpdateListener;
 
 /**
  * 项目名称：TextureViewDome
@@ -65,7 +65,6 @@ public class AnimUtils {
      * @param duration 时间
      */
     public static void doHeartBeat(View view, final int duration) {
-
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +74,26 @@ public class AnimUtils {
                         ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.4f, 0.9f, 1.0f)
                 );
                 set.setDuration(duration);
+                set.start();
+            }
+        });
+    }
+
+    /**
+     * 点击反馈动画
+     *
+     * @param view 视图
+     */
+    public static void doHeartBeat(View view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AnimatorSet set = new AnimatorSet();
+                set.playTogether(
+                        ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.4f, 0.9f, 1.0f),
+                        ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.4f, 0.9f, 1.0f)
+                );
+                set.setDuration(500);
                 set.start();
             }
         });
@@ -171,6 +190,7 @@ public class AnimUtils {
      * 需要注意的是，当按钮显示的时候会响应用户点击事件，当随渐变动画消失之后，再次点击会失去响应，此外如果我们想要改变波纹的颜色
      * 可以在xml中修改 android:colorControlHighlight 的属性
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void doCircle(View myView) {
         // get the center for the clipping circle
         int cx = (myView.getLeft() + myView.getRight()) / 2;
@@ -190,6 +210,7 @@ public class AnimUtils {
      * 需要注意的是，当按钮显示的时候会响应用户点击事件，当随渐变动画消失之后，再次点击会失去响应，此外如果我们想要改变波纹的颜色
      * 可以在xml中修改 android:colorControlHighlight 的属性
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void hideCircle(final View myView) {
         int cx = (myView.getLeft() + myView.getRight()) / 2;
         int cy = (myView.getTop() + myView.getBottom()) / 2;

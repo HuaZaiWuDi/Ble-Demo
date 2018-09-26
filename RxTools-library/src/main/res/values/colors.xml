@@ -230,4 +230,9 @@
     <color name="qmui_drawable_color_list_pressed">#DEE0E2</color>
 
 
+    <color name="underline_default_color">#CCCCCC</color>
+    <color name="underline_selected_color">#000</color>
+    <color name="hintColor">#CCCCCC</color>
+    <color name="textColor">#000</color>
+
 </resources>

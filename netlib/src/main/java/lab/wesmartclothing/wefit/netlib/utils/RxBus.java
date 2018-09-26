@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -90,7 +89,6 @@ public class RxBus {
      */
     public <T> Observable<T> register2(Class<T> tClass) {
         return mBus.ofType(tClass)
-                .throttleFirst(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

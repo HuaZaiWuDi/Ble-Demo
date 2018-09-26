@@ -2,13 +2,12 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleKey;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -25,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -39,7 +38,7 @@ import okhttp3.RequestBody;
 /**
  * Created by jk on 2018/7/19.
  */
-public class SportsDetailsFragment extends BaseAcFragment {
+public class SportsDetailsFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
@@ -75,9 +74,6 @@ public class SportsDetailsFragment extends BaseAcFragment {
     TextView mTvWarmTime;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
-        return new SportsDetailsFragment();
-    }
 
     private long currentTime = 0;
 
@@ -87,13 +83,15 @@ public class SportsDetailsFragment extends BaseAcFragment {
     int anaerobicTime = 0;
     int limitTime = 0;
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_sport_details, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_sport_details);
+        unbinder = ButterKnife.bind(this);
         initView();
-        return view;
     }
+
 
     @Override
     public void onStart() {
@@ -121,7 +119,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
                         mTvAvHeartRate.setText(heartRateBean.getAvgHeart() + "");
                         mTvMaxHeartRate.setText(heartRateBean.getMaxHeart() + "");
 
-                        heartRateStatistics(heartRateBean.getAthlList(), heartRateBean.getDuration());
+                        heartRateStatistics(heartRateBean.getAthlList());
                     }
 
                     @Override
@@ -131,12 +129,15 @@ public class SportsDetailsFragment extends BaseAcFragment {
                 });
     }
 
-    private void heartRateStatistics(List<HeartRateBean.AthlList> athlList, int totalTime) {
+    private void heartRateStatistics(List<HeartRateBean.AthlList> athlList) {
         RxLogUtils.d("心率数据个数：" + athlList.size());
+        int totalTime = 0;
         for (int i = 0; i < athlList.size(); i++) {
             checkHeartRate(athlList.get(i));
+            totalTime += athlList.get(i).getStepTime();
         }
 
+        if (totalTime == 0) return;
         mProWarm.setProgress((warmTime * 100) / totalTime);
         mProGrease.setProgress(greaseTime * 100 / totalTime);
         mProAerobic.setProgress(aerobicTime * 100 / totalTime);
@@ -156,7 +157,7 @@ public class SportsDetailsFragment extends BaseAcFragment {
     private void checkHeartRate(HeartRateBean.AthlList bean) {
         int heart = bean.getHeartRate();
         byte[] heartRates = BleKey.heartRates;
-        int heart_0 = heartRates[0] & 0xff;//TODO 测试暂时归纳小于100的心率算热身心率
+        int heart_0 = heartRates[0] & 0xff;
         int heart_1 = heartRates[1] & 0xff;
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;
@@ -190,11 +191,11 @@ public class SportsDetailsFragment extends BaseAcFragment {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
 
-        Bundle args = getArguments();
+        Bundle args = getIntent().getExtras();
         currentTime = args == null ? System.currentTimeMillis() : args.getLong(Key.BUNDLE_SPORTING_DATE);
         mQMUIAppBarLayout.setTitle(RxFormat.setFormatDate(currentTime, RxFormat.Date_CH));
     }

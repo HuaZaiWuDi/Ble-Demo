@@ -8,13 +8,10 @@
 
     <color name="colorTheme">#48EBBB</color>
 
-    <color name="colorRed">#FFB094</color>
-
     <!--tab标签栏文字的颜色-->
     <color name="colorTabText">#585858</color>
     <color name="textColor">#4D4D4D</color>
     <color name="lineColor">#F2F2F2</color>
-    <color name="bg_color">#FCFAFA</color>
     <color name="textHeatColor">#999999</color>
 
     <!--第二期UI-->

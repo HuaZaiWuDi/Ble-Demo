@@ -440,7 +440,8 @@ public class SuitLines extends View {
         super.onDraw(canvas);
 //        if (datas.isEmpty()) return;
         // lines
-
+        //硬件加速开启才能显示虚线
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
         canvas.save();
         canvas.clipRect(linesArea.left, linesArea.top, linesArea.right, linesArea.bottom + xArea.height());
         canvas.translate(offset, 0);
@@ -511,24 +512,6 @@ public class SuitLines extends View {
         invalidate();
     }
 
-    /**
-     * 是否滑动到了左边缘，注意，并非指可视区域的边缘，下同
-     *
-     * @return
-     */
-    private boolean isArriveAtLeftEdge() {
-        return offset == 0 && mMove > 0;
-    }
-
-    /**
-     * 是否滑动到了右边缘
-     *
-     * @return
-     */
-    private boolean isArriveAtRightEdge() {
-        return Math.abs(offset) == Math.abs(maxOffset) && mMove < 0;
-    }
-
 
     /**
      * 开始连接每条线的各个点<br>
@@ -543,7 +526,6 @@ public class SuitLines extends View {
             paths.get(i).reset();
         }
         for (int i = startIndex; i <= endIndex; i++) {
-
             for (int j = 0; j < datas.size(); j++) {
                 Unit current = datas.get(j).get(i);
 
@@ -584,29 +566,11 @@ public class SuitLines extends View {
     private void drawExsitDirectly(Canvas canvas) {
         // TODO 需要优化
         for (int j = 0; j < datas.size(); j++) {
-            if (!needCoverLine) {
-                boolean isFill = datas.get(j).get(0).isFill();
-                paints.get(j).setStyle(isFill ? Paint.Style.FILL : Paint.Style.STROKE);
-                canvas.drawPath(paths.get(j), paints.get(j));
-            } else {
-                if (needCoverLine) {
-                    coverLinePaint.setColor(Util.tryGetStartColorOfLinearGradient((LinearGradient) paints.get(j).getShader()));
-                    canvas.save();
-                    canvas.clipRect(linesArea.left - offset, linesArea.top, linesArea.right - offset, linesArea.bottom);
-                    // 由于paint的stroke是双边，所以下一个draw不会覆盖当前已经的draw
-                    canvas.drawPath(paths.get(j), coverLinePaint);
-                    canvas.restore();
-                    tmpPath.set(paths.get(j));
-                    tmpPath.lineTo(datas.get(j).get(0).getXY().x, linesArea.bottom);
-                    tmpPath.lineTo(datas.get(j).get(datas.size()).getXY().x, linesArea.bottom);
-                    tmpPath.close();
-                    canvas.drawPath(tmpPath, paints.get(j));
-                    tmpPath.reset();
-                }
-            }
+            boolean isFill = datas.get(j).get(0).isFill();
+            paints.get(j).setStyle(isFill ? Paint.Style.FILL : Paint.Style.STROKE);
+            canvas.drawPath(paths.get(j), paints.get(j));
         }
     }
-
 
     /**
      * 画提示文本和辅助线
@@ -682,6 +646,9 @@ public class SuitLines extends View {
     }
 
 
+    /**
+     * 更新图表
+     */
     private void feedInternal(Map<Integer, List<Unit>> entry, List<Paint> entryPaints,
                               Map<Integer, int[]> colors) {
         reset(); // 该方法调用了datas.clear();
@@ -721,7 +688,7 @@ public class SuitLines extends View {
     }
 
     /**
-     * 得到maxValueOfY
+     * 得到最大值，最小值作为图表的上下间隙
      *
      * @param datas
      */
@@ -753,7 +720,6 @@ public class SuitLines extends View {
                 minValueY = value < minValueY ? value : minValueY;
             }
         }
-
     }
 
     /**
@@ -768,7 +734,6 @@ public class SuitLines extends View {
         xArea = new RectF(validArea.left, yArea.top, validArea.right, validArea.top);
 
         linesArea = new RectF(validArea.left, validArea.top, validArea.right, validArea.bottom);
-
     }
 
     /**
@@ -776,7 +741,6 @@ public class SuitLines extends View {
      * <br>同时得到了realBetween，maxOffset
      */
     private void calcUnitXY() {
-//        int realNum = Math.min(datas.get(0).size(), maxOfVisible);
         realBetween = linesArea.width() / maxOfVisible;
         for (int i = 0; i < datas.get(0).size(); i++) {
             for (int j = 0; j < datas.size(); j++) {
@@ -820,28 +784,6 @@ public class SuitLines extends View {
 
     ///APIs/////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * 在fill形态时，是否在图表上边缘绘制line
-     *
-     * @param enable true表示需要，反正不需要
-     */
-    public void setCoverLine(boolean enable) {
-        needCoverLine = enable;
-        forceToDraw = true;
-        postInvalidate();
-    }
-
-    /**
-     * 在fill形态时，指定在图表上边缘绘制line的宽度，该方法会开启needCoverLine特性
-     *
-     * @param withdp 宽度
-     */
-    public void setCoverLine(float withdp) {
-        needCoverLine = true;
-        coverLinePaint.setStrokeWidth(Util.dip2px(withdp) * 2);
-        forceToDraw = true;
-        postInvalidate();
-    }
 
     /**
      * 设置默认一条line时的颜色
@@ -987,13 +929,6 @@ public class SuitLines extends View {
         this.spaceMin = min;
     }
 
-    /**
-     * 关闭边缘效果，默认开启
-     */
-    public void disableEdgeEffect() {
-        needEdgeEffect = false;
-        postInvalidate();
-    }
 
     /**
      * 关闭点击提示信息，默认开启
@@ -1074,7 +1009,8 @@ public class SuitLines extends View {
             final List<Paint> tmpPaints = new ArrayList<>();
             for (int i = 0; i < datas.size(); i++) {
                 Paint paint = suitLines.buildNewPaint();
-                paint.setPathEffect(datas.get(i).get(0).getLineStyle() == DASHED ? new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
+                paint.setPathEffect(datas.get(i).get(0).getLineStyle() == DASHED ?
+                        new DashPathEffect(new float[]{Util.dip2px(3), Util.dip2px(6)}, 0) : null);
 //                paint.setStyle(datas.get(i).get(0).isFill() ? Paint.Style.FILL : Paint.Style.STROKE);
                 tmpPaints.add(i, paint);
             }

@@ -64,9 +64,9 @@ public class LoginSuccessUtils {
                         SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
 
                         if (sex == 0) {
-                            RxActivityUtils.skipActivityAndFinishAll(mContext, UserInfoActivity.class);
+                            RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity.class);
                         } else {
-                            RxActivityUtils.skipActivityAndFinishAll(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         }
                     }
 

@@ -2,8 +2,8 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,11 +11,11 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
@@ -30,10 +30,11 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
-import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
@@ -41,13 +42,15 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/8/2.
  */
-public class HeatDetailFragment extends BaseAcFragment {
+public class HeatDetailFragment extends BaseActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -120,9 +123,6 @@ public class HeatDetailFragment extends BaseAcFragment {
     @BindView(R.id.iv_addMeal)
     ImageView mIvAddMeal;
 
-    public static QMUIFragment getInstance() {
-        return new HeatDetailFragment();
-    }
 
     private BaseQuickAdapter adapterBreakfast, adapterLunch, adapterDinner, adapterMeal;
 
@@ -136,26 +136,19 @@ public class HeatDetailFragment extends BaseAcFragment {
     Bundle bundle = new Bundle();
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_heat_detail, null);
-        unbinder = ButterKnife.bind(this, view);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_heat_detail);
+        unbinder = ButterKnife.bind(this);
         initView();
-
-        return view;
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        initData();
-    }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popBackStack();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("热量记录");
@@ -237,10 +230,23 @@ public class HeatDetailFragment extends BaseAcFragment {
     }
 
     private void initView() {
+        initMRxBus();
         initTypeface();
         initTopBar();
         initRecycler();
         initDataChoose();
+        initData();
+    }
+
+    private void initMRxBus() {
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshHeatDetails) {
+                        initData();
+                    }
+                });
     }
 
     private void initTypeface() {
@@ -280,12 +286,11 @@ public class HeatDetailFragment extends BaseAcFragment {
         adapterBreakfast.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QMUIFragment instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
                 bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-                instance.setArguments(bundle);
-                startFragment(instance);
+
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
             }
         });
 
@@ -299,12 +304,10 @@ public class HeatDetailFragment extends BaseAcFragment {
         adapterLunch.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QMUIFragment instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
                 bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-                instance.setArguments(bundle);
-                startFragment(instance);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
             }
         });
 
@@ -318,12 +321,10 @@ public class HeatDetailFragment extends BaseAcFragment {
         adapterDinner.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QMUIFragment instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
                 bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-                instance.setArguments(bundle);
-                startFragment(instance);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
             }
         });
         adapterMeal = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_food_img) {
@@ -337,12 +338,10 @@ public class HeatDetailFragment extends BaseAcFragment {
         adapterMeal.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QMUIFragment instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
                 bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-                instance.setArguments(bundle);
-                startFragment(instance);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
             }
         });
 
@@ -369,51 +368,44 @@ public class HeatDetailFragment extends BaseAcFragment {
 
     @OnClick({R.id.iv_addBreakfast, R.id.layout_breakfast, R.id.iv_addLunch, R.id.layout_lunch, R.id.iv_addDinner, R.id.layout_dinner, R.id.iv_addMeal, R.id.layout_meal})
     public void onViewClicked(View view) {
-        QMUIFragment instance = null;
+        bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
         switch (view.getId()) {
             case R.id.iv_addBreakfast:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
-                instance = FoodDetailsFragment.getInstance();
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_breakfast:
-                instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_BREAKFAST);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
                 break;
             case R.id.iv_addLunch:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
-                instance = FoodDetailsFragment.getInstance();
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_lunch:
-                instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_LUNCH);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
                 break;
             case R.id.iv_addDinner:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
-                instance = FoodDetailsFragment.getInstance();
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_dinner:
-                instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPE_DINNER);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
                 break;
             case R.id.iv_addMeal:
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
-                instance = FoodDetailsFragment.getInstance();
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_meal:
-                instance = AddedFoodFragment.getInstance();
                 bundle.putInt(Key.ADD_FOOD_TYPE, TYPED_MEAL);
                 bundle.putString(Key.ADD_FOOD_INFO, heatData);
-                bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+                RxActivityUtils.skipActivity(mActivity, AddedFoodFragment.class, bundle);
                 break;
         }
-        bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-        instance.setArguments(bundle);
-        startFragment(instance);
     }
 }

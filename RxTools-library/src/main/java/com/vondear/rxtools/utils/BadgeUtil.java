@@ -15,6 +15,11 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * 桌面红点
+ *
+ * */
+
 public class BadgeUtil {
     /**
      * 设置Badge 目前支持Launcher:

@@ -3,9 +3,15 @@ package com.vondear.rxtools.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -334,4 +340,91 @@ public class RxBarUtils {
     }
 
     //==============================================================================================以上为设置状态栏相关
+
+    /**
+     * 获取导航栏高度
+     *
+     * @param context
+     * @return
+     */
+    public static int getDaoHangHeight(Context context) {
+        int result = 0;
+        int resourceId = 0;
+        int rid = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+        if (rid != 0) {
+            resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            return context.getResources().getDimensionPixelSize(resourceId);
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * 判断虚拟导航栏是否显示
+     *
+     * @param activity 当前窗口
+     * @return true(显示虚拟导航栏)，false(不显示或不支持虚拟导航栏)
+     */
+    public static boolean checkNavigationBarShow(@NonNull Activity activity) {
+        boolean show;
+        Window window = activity.getWindow();
+        Display display = window.getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getRealSize(point);
+
+        View decorView = window.getDecorView();
+        Configuration conf = RxUtils.getContext().getResources().getConfiguration();
+        if (Configuration.ORIENTATION_LANDSCAPE == conf.orientation) {
+            View contentView = decorView.findViewById(android.R.id.content);
+            show = (point.x != contentView.getWidth());
+        } else {
+            Rect rect = new Rect();
+            decorView.getWindowVisibleDisplayFrame(rect);
+            show = (rect.bottom != point.y);
+        }
+        return show;
+    }
+
+    public static boolean checkDeviceHasNavigationBar(Activity activity) {
+
+        //当键盘弹出隐藏的时候会 调用此方法。
+        Rect r = new Rect();
+        //获取当前界面可视部分
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+        //获取屏幕的高度
+        int screenHeight = activity.getWindow().getDecorView().getRootView().getHeight();
+        int windowHeight = screenHeight - r.bottom ;
+        RxLogUtils.e("屏幕高度：" + windowHeight);
+        return windowHeight == 0;
+    }
+ /**
+     * 此方法在模拟器还是在真机都是完全正确
+     *
+     * @param activity
+     * @return
+     */
+    public static boolean navigationBarExist(Activity activity) {
+        WindowManager windowManager = activity.getWindowManager();
+        Display d = windowManager.getDefaultDisplay();
+
+        DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            d.getRealMetrics(realDisplayMetrics);
+        }
+
+        int realHeight = realDisplayMetrics.heightPixels;
+        int realWidth = realDisplayMetrics.widthPixels;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        d.getMetrics(displayMetrics);
+
+        int displayHeight = displayMetrics.heightPixels;
+        int displayWidth = displayMetrics.widthPixels;
+
+        return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
+    }
+
+
+
 }

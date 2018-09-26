@@ -105,6 +105,8 @@ public interface Key {
     String LoginType_QQ = "QQ";
     String LoginType_WEIBO = "MicroBlog";
 
+    //BUGLY
+     String BUGly_id = "11c87579c7";
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY

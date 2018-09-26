@@ -1,19 +1,19 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
-import android.Manifest;
-import android.app.Application;
 import android.content.Intent;
+import android.os.Environment;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -21,6 +21,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Receiver;
 
+import java.io.File;
 import java.util.List;
 
 import io.reactivex.functions.Action;
@@ -36,14 +37,13 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 @EActivity(R.layout.activity_spalsh)
 public class SpalshActivity extends BaseActivity {
@@ -66,37 +66,59 @@ public class SpalshActivity extends BaseActivity {
             updateAppBean.setVersion(RxDeviceUtils.getAppVersionName());
             updateAppBean.setSystem("Android");
             updateAppBean.setPhoneType(RxDeviceUtils.getBuildMANUFACTURER());
-            updateAppBean.setMacAddr(RxDeviceUtils.getAndroidId());//AndroidID);
+            //AndroidID
+            updateAppBean.setMacAddr(RxDeviceUtils.getAndroidId());
             updateAppBean.addDeviceVersion(updateAppBean);
         }
     }
 
-    @Override
     @AfterViews
     public void initView() {
-        RxLogUtils.e("加载：SpalshActivity");
+        RxLogUtils.i("启动时长：引导页开始");
+        JPushUtils.init(getApplication());
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
-        if (!RxDataUtils.isNullString(baseUrl))
+        if (!RxDataUtils.isNullString(baseUrl)) {
             ServiceAPI.switchURL(baseUrl);
+        }
 
-//        RxActivityUtils.skipActivityAndFinish(this, TestBleScanActivity.class);
 
-//        //测试账号
+//        //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
+//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
+
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
         initUserInfo();
         initData();
 
+    }
 
+    private void initRxCache() {
+        RxLogUtils.e("申请权限");
+        RxCache.initializeDefault(new RxCache.Builder()
+                .appVersion(2)
+//                .diskDir(Environment.getDownloadCacheDirectory())
+                .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))
+                .diskConverter(new SerializableDiskConverter())
+                .diskMax((20 * 1024 * 1024))
+                .memoryMax(0)
+                .setDebug(true)
+                .build());
     }
 
     private void initUserInfo() {
+        RxLogUtils.i("启动时长：获取用户信息");
+        if (!SPUtils.getBoolean(SPKey.SP_GUIDE)) {
+            SPUtils.put(SPKey.SP_GUIDE, true);
+            RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
+            return;
+        }
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
-                        initPromissions();
+                        gotoMain();
                     }
                 })
                 .subscribe(new RxNetSubscriber<String>() {
@@ -114,6 +136,11 @@ public class SpalshActivity extends BaseActivity {
                         String scalesMacAddr = object.get("scalesMacAddr").getAsString();
                         SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
                         SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
 
                     }
                 });
@@ -122,34 +149,18 @@ public class SpalshActivity extends BaseActivity {
 
     private void gotoMain() {
         RxLogUtils.d("跳转");
-        if (!SPUtils.getBoolean(SPKey.SP_GUIDE)) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
-            SPUtils.put(SPKey.SP_GUIDE, true);
-            return;
-        }
+        initRxCache();
         //通过验证是否保存userId来判断是否登录
         if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
-        } else if (isSaveUserInfo)//
+        } else if (isSaveUserInfo) {
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
-        else
+        } else {
             RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
+        }
+        RxLogUtils.i("启动时长：引导页结束");
     }
 
-
-    private void initPromissions() {
-        RxPermissions permissions = new RxPermissions(mActivity);
-        permissions
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        gotoMain();
-                    }
-                });
-    }
 
     @Override
     protected void onDestroy() {
@@ -157,9 +168,10 @@ public class SpalshActivity extends BaseActivity {
     }
 
 
-    //重传在无网络情况下未上传的数据
+    /**
+     * 重传在无网络情况下未上传的数据
+     */
     private void initData() {
-//        openVoice();
         if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {
             //没有网络直接返回
             return;
@@ -170,7 +182,9 @@ public class SpalshActivity extends BaseActivity {
         uploadHistoryData();
     }
 
-    //获取商城地址
+    /**
+     * 获取商城地址
+     */
     private void getStoreAddr() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getMallAddress())
@@ -183,7 +197,9 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //获取商城订单地址
+    /**
+     * 获取商城订单地址
+     */
     private void getOrderUrl() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getOrderUrl())
@@ -196,7 +212,9 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //获取商城购物车地址
+    /**
+     * 获取商城购物车地址
+     */
     private void getShoppingAddress() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getShoppingAddress())
@@ -209,7 +227,9 @@ public class SpalshActivity extends BaseActivity {
                 });
     }
 
-    //判断本地是否有之前保存的心率数据：有则上传
+    /**
+     * 判断本地是否有之前保存的心率数据：有则上传
+     */
     @Background
     public void uploadHistoryData() {
         String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
@@ -224,14 +244,4 @@ public class SpalshActivity extends BaseActivity {
             }
         }
     }
-
-
-//
-//    //不退出app，而是隐藏当前的app
-//    @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(false);
-//        super.onBackPressed();
-//    }
-
 }

@@ -1,35 +1,39 @@
 package lab.wesmartclothing.wefit.flyso;
 
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.lzy.imagepicker.ImagePicker;
-import com.lzy.imagepicker.bean.ImageItem;
-import com.lzy.imagepicker.ui.ImageGridActivity;
-import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.widget.QMUIEmptyView;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxRandom;
+import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxLinearLayout;
+import com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.common.RxBaseRoundProgressBar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
+import tech.linjiang.suitlines.SuitLines;
+import tech.linjiang.suitlines.Unit;
 
 public class TestBleScanActivity extends AppCompatActivity {
 
     @BindView(R.id.parent)
     RelativeLayout mParent;
-    @BindView(R.id.tv_content)
-    TextView mTvContent;
 
     private QMUIEmptyView mEmptyView;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,78 +41,87 @@ public class TestBleScanActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
+        final RxLinearLayout tv_test = findViewById(R.id.tv_test);
+
 //        mEmptyView = new QMUIEmptyView(this);
 //
 //
 //        mEmptyView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 //        mParent.addView(mEmptyView);
-        initImagePicker();
 
 
-        Intent intent = new Intent(this, ImageGridActivity.class);
-        startActivityForResult(intent, 111);
+//        initLine();
 
-    }
+        final RxRoundProgressBar progressBar = findViewById(R.id.mProgress);
+        progressBar.setProgress(50);
 
-
-    private void initImagePicker() {
-        ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
-        imagePicker.setShowCamera(true);//显示拍照按钮
-        imagePicker.setMultiMode(false);
-        imagePicker.setCrop(true);        //允许裁剪（单选才有效）
-        imagePicker.setSaveRectangle(true); //是否按矩形区域保存
-        imagePicker.setSelectLimit(1);    //选中数量限制
-        imagePicker.setStyle(CropImageView.Style.RECTANGLE);  //裁剪框的形状
-        imagePicker.setFocusWidth(800);   //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
-        imagePicker.setFocusHeight(800);  //裁剪框的高度。单位像素（圆形自动取宽高最小值）
-        imagePicker.setOutPutX(1000);//保存文件的宽度。单位像素
-        imagePicker.setOutPutY(1000);//保存文件的高度。单位像素
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        RxLogUtils.d("requestCode：" + requestCode);
-        RxLogUtils.d("resultCode：" + resultCode);
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
-            if (data != null && requestCode == 111) {
-                ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
-                RxLogUtils.d("选中的图片：" + images.size());
-//                Glide.with(this).load(images.get(0).path)
-//                        .asBitmap()
-//                        .placeholder(R.mipmap.userimg)
-//                        .into(mIvUserImg);
-            } else {
-                Toast.makeText(this, "没有数据", Toast.LENGTH_SHORT).show();
+        progressBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setProgress(RxRandom.getRandom(100));
+                tv_test.setElevation(RxUtils.dp2px(progressBar.getProgress()));
             }
-        }
+        });
+        progressBar.setOnProgressChangedListener(new RxBaseRoundProgressBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(int viewId, float progress, boolean isPrimaryProgress, boolean isSecondaryProgress) {
+                RxLogUtils.e("进度：" + progress);
+            }
+        });
+
+        final RxTextRoundProgressBar mTextProgress = findViewById(R.id.mTextProgress);
+        mTextProgress.setProgress(50);
+
+
+        mTextProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTextProgress.setProgress(RxRandom.getRandom(100));
+                tv_test.setTranslationZ(RxUtils.dp2px(mTextProgress.getProgress()));
+            }
+        });
+        final RxIconRoundProgressBar mIconProgress = findViewById(R.id.mIconProgress);
+        mIconProgress.setProgress(50);
+
+        mIconProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIconProgress.setProgress(RxRandom.getRandom(100));
+            }
+        });
+
+
+
     }
 
-    int count = 0;
+    private void initLine() {
+        SuitLines mSuitLines = findViewById(R.id.mSuitLines);
+        SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
+        List<Unit> lines_Heat = new ArrayList<>();
+        List<Unit> lines_Time = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            Unit unit_weight = new Unit(RxRandom.getRandom(100), i + "");
+            Unit unit_bodyFat = new Unit(RxRandom.getRandom(50), i + "");
+            unit_weight.setShowPoint(true);
 
-    @OnClick(R.id.tv_content)
-    public void onViewClicked() {
-        count++;
-        switch (count % 4) {
-            case 0:
-                mEmptyView.show("我是title", "我是Content");
-                break;
-            case 1:
-                mEmptyView.show("我是错误的文字", null);
-                break;
-            case 2:
-                mEmptyView.show(true);
-                break;
-            case 3:
-                mEmptyView.show(false, "我是title", null, "我是Content", null);
-                break;
-            case 4:
-                mEmptyView.show(false, "我是title", "我是Content", "点击重试", null);
-                break;
-            default:
-                break;
+            unit_bodyFat.setFill(true);
+            lines_Heat.add(unit_weight);
+            lines_Time.add(unit_bodyFat);
         }
+        builder.add(lines_Heat, 0x7fffffff);
+        builder.add(lines_Time, 0x7fffffff);
+
+        mSuitLines.setSpaceMaxMin(0.3f, 0f);
+        builder.build(mSuitLines, false);
+        mSuitLines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
+            @Override
+            public void selectItem(int valueX) {
+                RxToast.normal(valueX + "");
+            }
+        });
+    }
+
+    public void onClick(View view) {
+
     }
 }

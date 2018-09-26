@@ -52,4 +52,14 @@ public class RxPermissionsUtils {
             onRequestPermissionsListener.onRequestLater();
         }
     }
+
+    public static void requestLoaction(Context mContext, onRequestPermissionsListener onRequestPermissionsListener) {
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            onRequestPermissionsListener.onRequestBefore();
+        } else {
+            onRequestPermissionsListener.onRequestLater();
+        }
+    }
 }

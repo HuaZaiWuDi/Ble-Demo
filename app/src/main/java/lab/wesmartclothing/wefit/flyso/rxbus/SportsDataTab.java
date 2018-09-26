@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -7,14 +8,72 @@ import java.util.List;
  */
 public class SportsDataTab {
 
-    List<Integer> athlRecord_2;
-    int steps;
-    int duration;
-    double kcal;
-    int maxHeart;
-    int minHeart;
-    int curHeart;
-    int realHeart;
+    List<Integer> athlRecord_2;//心率详情数据
+    int steps;//步数
+    int duration;//耗时
+    double kcal;//消耗卡路里（千卡）
+    int maxHeart;//最小心率
+    int minHeart;//最大心率
+    int curHeart;//修改后的心率
+    int realHeart;//真实心率
+    boolean isPower;//是否充电
+    int lightColor;//灯光颜色
+    byte[] data;//原始数据
+    int temp;//温度
+    int voltage;//电压
+    String date;//时间
+
+    public int getTemp() {
+        return temp;
+    }
+
+    public void setTemp(int temp) {
+        this.temp = temp;
+    }
+
+    public int getVoltage() {
+        return voltage;
+    }
+
+    public void setVoltage(int voltage) {
+        this.voltage = voltage;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public String getLightColor() {
+        return byte2Color(lightColor);
+    }
+
+    public void setLightColor(int lightColor) {
+        this.lightColor = lightColor;
+    }
+
+    public boolean isPower() {
+        return isPower;
+    }
+
+    public String getPower() {
+        return isPower ? "正在加热" : "停止加热";
+    }
+
+    public void setPower(boolean power) {
+        isPower = power;
+    }
 
     public int getRealHeart() {
         return realHeart;
@@ -81,15 +140,49 @@ public class SportsDataTab {
     }
 
 
+    private String byte2Color(int b) {
+        String color = "";
+        switch (b) {
+            case 0:
+                color = "白色";
+                break;
+            case 1:
+                color = "红色";
+                break;
+            case 2:
+                color = "蓝色";
+                break;
+            case 3:
+                color = "绿色";
+                break;
+            case 4:
+                color = "紫色";
+                break;
+            case 5:
+                color = "启动白色";
+                break;
+        }
+        return color;
+    }
+
+
     @Override
     public String toString() {
         return "SportsDataTab{" +
+                "athlRecord_2个数=" + athlRecord_2.size() +
                 ", steps=" + steps +
                 ", duration=" + duration +
                 ", kcal=" + kcal +
                 ", maxHeart=" + maxHeart +
                 ", minHeart=" + minHeart +
                 ", curHeart=" + curHeart +
+                ", realHeart=" + realHeart +
+                ", isPower=" + getPower() +
+                ", lightColor=" + byte2Color(lightColor) +
+                ", data=" + Arrays.toString(data) +
+                ", temp=" + temp + "°C" +
+                ", voltage=" + voltage +
+                ", date='" + date + '\'' +
                 '}';
     }
 }

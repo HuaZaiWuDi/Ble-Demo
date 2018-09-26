@@ -32,8 +32,6 @@ public interface RetrofitService {
     // 瘦身（热量）
     ///////////////////////////////////////////////////////////////////////////
 
-    @POST("heat/getSlimHistoryInfo")
-    Observable<String> getHeatHistory(@Body RequestBody body);
 
     @FormUrlEncoded
     @POST("heat/getFoodInfo")

@@ -36,6 +36,7 @@ import android.widget.TextView;
 import static android.graphics.BlurMaskFilter.Blur;
 
 /**
+ * Spn使用，
  * @author by vondear on 2016/12/23.
  */
 
