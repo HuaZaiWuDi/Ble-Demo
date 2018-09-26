@@ -26,7 +26,6 @@ import java.util.List;
 
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.TestBleScanActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
@@ -83,14 +82,13 @@ public class SpalshActivity extends BaseActivity {
         }
 
 
-        //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
+//        //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
+//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
 
-
-//        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-//        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-//        initUserInfo();
-//        initData();
+        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
+        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
+        initUserInfo();
+        initData();
 
     }
 

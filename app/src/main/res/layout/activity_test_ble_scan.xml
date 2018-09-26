@@ -62,20 +62,19 @@
 
     <com.vondear.rxtools.view.layout.RxLinearLayout
         android:id="@+id/tv_test"
-        android:layout_width="100dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dimen_50"
         android:elevation="20dp"
         android:translationZ="20dp"
         app:background_normal="@color/green_61D97F"
-        app:background_pressed="@color/red"
         app:gradient_angle="BOTTOM_TOP"
         app:gradient_endColor="@color/green_61D97F"
         app:gradient_startColor="@color/red"
         app:gradient_type="linear"
-        app:ripple_color="@color/Gray"
-        app:corner_radius="4dp"
+        app:ripple_color="@color/yellow_FFBC00"
+        app:corner_radius="25dp"
         />
 
 
