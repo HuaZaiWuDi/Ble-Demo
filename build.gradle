@@ -32,15 +32,16 @@ allprojects {
         maven { url 'https://dl.bintray.com/zchu/maven/' }
     }
 
-    ext.versions = [
-            compileSdkVersion: 26,
-            minSdkVersion    : 18,
-            targetSdkVersion : 25,
-            buildToolsVersion: '26.0.2',
-            supportVersion   : "25.3.1",
-            versionCode      : 4,
-            versionName      : "2.1.0"
-    ]
+    ext {
+        compileSdkVersion = 26
+        minSdkVersion = 18
+        targetSdkVersion = 25
+        buildToolsVersion = '26.0.2'
+        supportVersion = "27.1.1"
+        versionCode = 4
+        versionName = "2.1.0"
+    }
+
 }
 
 

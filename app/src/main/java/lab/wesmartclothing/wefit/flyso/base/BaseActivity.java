@@ -91,8 +91,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .subscribe(new RxSubscriber<SportsDataTab>() {
                     @Override
                     protected void _onNext(SportsDataTab sportsDataTab) {
+//                        Logger.d("运动是否结束：" + BleService.clothingFinish);
                         if (BleService.clothingFinish) {
-                            BleService.clothingFinish = false;
                             final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.getTvTitle().setVisibility(View.GONE);
@@ -111,6 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                             dialog.dismiss();
                                         }
                                     });
+                            dialog.show();
                         }
                     }
                 });
@@ -186,7 +187,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         return super.onCreateView(name, context, attrs);
     }
-
 
 
     @Override

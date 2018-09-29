@@ -44,6 +44,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -185,7 +186,7 @@ public class SportingFragment extends BaseActivity {
                         if (dialog.isShowing()) {
                             dialog.dismiss();
                         }
-                        if (currentTime == 0) {
+                        if (BleService.clothingFinish || currentTime == 0) {
                             currentTime = sportsDataTab.getDuration();
                             timer.startTimer();
                             timer2.startTimer();

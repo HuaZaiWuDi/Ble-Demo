@@ -10,6 +10,8 @@ import com.activeandroid.Configuration;
 import com.activeandroid.app.Application;
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -89,7 +91,13 @@ public class MyAPP extends Application {
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
                 BleTools.initBLE(MyAPP.this);
-                RxLogUtils.i("启动时长：初始化结束");
+                Logger.addLogAdapter(new AndroidLogAdapter() {
+                    @Override
+                    public boolean isLoggable(int priority, String tag) {
+                        return BuildConfig.DEBUG;
+                    }
+                });
+                Logger.i("启动时长：初始化结束");
             }
         });
 

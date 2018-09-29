@@ -593,6 +593,7 @@ public class BleService extends Service {
                 kcalTotal += mHeartRateToKcal.getCalorie(heartRate, 2f / 3600);
                 mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
                 RxBus.getInstance().post(mSportsDataTab);
+                BleService.clothingFinish = false;
             }
         });
     }
@@ -619,12 +620,12 @@ public class BleService extends Service {
     }
 
 
-    MyTimer sportingStop = new MyTimer(9000, 1000, new MyTimerListener() {
+    MyTimer sportingStop = new MyTimer(new MyTimerListener() {
         @Override
         public void enterTimer() {
             B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_STOP);
         }
-    });
+    }, 10000);
 
 
     private void checkFirmwareVersion(JsonObject object) {

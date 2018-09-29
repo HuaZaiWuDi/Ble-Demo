@@ -32,7 +32,7 @@ public class MyTimer {
     public MyTimer(MyTimerListener myTimerListener, long delay) {
         this.myTimerListener = myTimerListener;
         this.delay = delay;
-        this.period = 1000;
+        this.period = 0;
     }
 
 

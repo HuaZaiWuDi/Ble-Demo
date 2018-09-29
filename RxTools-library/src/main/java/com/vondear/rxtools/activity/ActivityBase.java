@@ -13,6 +13,7 @@ public abstract class ActivityBase extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         RxActivityUtils.addActivity(this);
+        initView();
     }
 
     public abstract void initView();

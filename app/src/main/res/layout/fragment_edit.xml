@@ -34,13 +34,14 @@
         <EditText
             android:id="@+id/edit_text"
             android:layout_width="match_parent"
-            android:layout_height="37dp"
+            android:layout_height="wrap_content"
             android:background="@null"
-            android:maxLines="1"
+            android:maxLines="2"
+            android:minHeight="37dp"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"
             android:textSize="15sp"
-            tools:text="随便写写什么"/>
+            tools:text="随便写写什么随便写写什么随便写写什么随便写写什么随便写写什么随便写写什么"/>
 
 
         <View

@@ -10,10 +10,6 @@
     tools:context=".TestBleScanActivity">
 
 
-    <tech.linjiang.suitlines.SuitLines
-        android:id="@+id/mSuitLines"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"/>
 
 
     <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar

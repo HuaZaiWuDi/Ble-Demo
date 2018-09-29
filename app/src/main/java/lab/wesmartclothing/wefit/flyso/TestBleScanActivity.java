@@ -11,20 +11,14 @@ import com.qmuiteam.qmui.widget.QMUIEmptyView;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRandom;
 import com.vondear.rxtools.utils.RxUtils;
-import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.common.RxBaseRoundProgressBar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import tech.linjiang.suitlines.SuitLines;
-import tech.linjiang.suitlines.Unit;
 
 public class TestBleScanActivity extends AppCompatActivity {
 
@@ -42,6 +36,7 @@ public class TestBleScanActivity extends AppCompatActivity {
 
 
         final RxLinearLayout tv_test = findViewById(R.id.tv_test);
+
 
 //        mEmptyView = new QMUIEmptyView(this);
 //
@@ -90,36 +85,8 @@ public class TestBleScanActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
-    private void initLine() {
-        SuitLines mSuitLines = findViewById(R.id.mSuitLines);
-        SuitLines.LineBuilder builder = new SuitLines.LineBuilder();
-        List<Unit> lines_Heat = new ArrayList<>();
-        List<Unit> lines_Time = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            Unit unit_weight = new Unit(RxRandom.getRandom(100), i + "");
-            Unit unit_bodyFat = new Unit(RxRandom.getRandom(50), i + "");
-            unit_weight.setShowPoint(true);
-
-            unit_bodyFat.setFill(true);
-            lines_Heat.add(unit_weight);
-            lines_Time.add(unit_bodyFat);
-        }
-        builder.add(lines_Heat, 0x7fffffff);
-        builder.add(lines_Time, 0x7fffffff);
-
-        mSuitLines.setSpaceMaxMin(0.3f, 0f);
-        builder.build(mSuitLines, false);
-        mSuitLines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
-            @Override
-            public void selectItem(int valueX) {
-                RxToast.normal(valueX + "");
-            }
-        });
-    }
 
     public void onClick(View view) {
 

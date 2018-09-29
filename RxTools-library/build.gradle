@@ -3,12 +3,12 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 android {
-    compileSdkVersion versions.compileSdkVersion
-    buildToolsVersion versions.buildToolsVersion
+    compileSdkVersion parent.ext.compileSdkVersion
+    buildToolsVersion parent.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion versions.minSdkVersion
-        targetSdkVersion versions.targetSdkVersion
+        minSdkVersion parent.ext.minSdkVersion
+        targetSdkVersion parent.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.1"
 
@@ -30,63 +30,54 @@ dependencies {
     })
 
     //design包
-    implementation 'com.android.support:design:27.1.1'
+    api "com.android.support:design:$supportVersion"
 
     //cardView包
-    implementation 'com.android.support:cardview-v7:27.1.1'
+    api "com.android.support:cardview-v7:$supportVersion"
 
     //appcompat包
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    api "com.android.support:appcompat-v7:$supportVersion"
 
     //recyclerview包
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:support-annotations:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    api "com.android.support:recyclerview-v7:$supportVersion"
+    api "com.android.support:support-annotations:$supportVersion"
+    api 'com.android.support.constraint:constraint-layout:1.1.3'
 
     //流式布局
-    implementation 'com.google.android:flexbox:0.2.7'
+    api 'com.google.android:flexbox:0.2.7'
 
     //动画向下版本兼容 nineold包
-    implementation 'com.nineoldandroids:library:2.4.0'
-
-    //沉浸式
-    implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
-
-//    //okgo 网络请求框架包
-//    implementation 'com.lzy.net:okgo:3.0.4'
+    api 'com.nineoldandroids:library:2.4.0'
 
     //gson json工具类 google解析Json的库
-    implementation 'com.google.code.gson:gson:2.8.1'
+    api 'com.google.code.gson:gson:2.8.1'
 
     //Log日志格式美化包
-    implementation 'com.orhanobut:logger:2.1.1'
-
-//    //支付宝 支付包c
-//    api files('src/main/libs/alipaySdk-20170309.jar')
+    api 'com.orhanobut:logger:2.2.0'
 
     //二维码解析
-    implementation files('src/main/libs/zbardecoder.jar')
+    api files('src/main/libs/zbardecoder.jar')
 
     //二维码生成
-    implementation files('src/main/libs/zxing.jar')
+    api files('src/main/libs/zxing.jar')
 
     //压缩与加密
-    implementation files('src/main/libs/zip4j_1.3.2.jar')
+    api files('src/main/libs/zip4j_1.3.2.jar')
 
     //侧滑删除Recycler
-    compile 'com.yanzhenjie:recyclerview-swipe:1.1.4'
+    api 'com.yanzhenjie:recyclerview-swipe:1.1.4'
 
     //UI库 http://qmuiteam.com/android/get-started
-    compile 'com.qmuiteam:qmui:1.1.3'
+    api 'com.qmuiteam:qmui:1.1.3'
 
-    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5'
+    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5'
 //    compile 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.5'//没有使用特殊Header，可以不加这行
 
     //万能RecyclerView适配器
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.40'
+    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.40'
 
     //图片加载
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'jp.wasabeef:glide-transformations:2.0.1'
+    api 'com.github.bumptech.glide:glide:3.7.0'
+    api 'jp.wasabeef:glide-transformations:2.0.1'
 
 }

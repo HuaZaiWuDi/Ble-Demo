@@ -150,7 +150,7 @@ public class HealthyProgressView extends View {
         index = (int) (x / interval) + 1;
 
         canvas.translate(x, mHeight / 2f);
-        paint_progress.setColor(colors[index - 1]);
+        paint_progress.setColor(colors[(index - 1) % colors.length]);
         canvas.drawCircle(0, 0, dp2px(6), paint_progress);
         paint_progress.setColor(Color.WHITE);
         canvas.drawCircle(0, 0, dp2px(2), paint_progress);
