@@ -37,5 +37,5 @@ public interface SPKey {
 
     String SP_GUIDE = "SP_GUIDE";//引导页
 
-
+    String SP_BMR="SP_BMR";
 }

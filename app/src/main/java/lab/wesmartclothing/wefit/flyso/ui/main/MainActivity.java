@@ -25,17 +25,12 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.jpush.android.api.JPushInterface;
-import cn.jpush.android.data.JPushLocalNotification;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
@@ -84,32 +79,6 @@ public class MainActivity extends BaseALocationActivity {
     private List<Fragment> mFragments = new ArrayList<>();
 
 
-//    @Receiver(actions = Key.ACTION_SWITCH_BOTTOM_TAB)
-//    void switchBottomTab(@Receiver.Extra(Key.EXTRA_SWITCH_BOTTOM_TAB) boolean isVisible) {
-//        bottom_tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-//    }
-//
-
-
-    //检测到运动强制跳转界面
-
-//    //蓝牙秤状态改变(开始测量)
-//    @Receiver(actions = Key.ACTION_STATE_START_MEASURE)
-//    void scaleStartMeasure() {
-//        Bundle bundle = new Bundle();
-//        RxLogUtils.d("显示：WeightRecordFragment");
-//        QMUIFragment instance = WeightAddFragment.getInstance();
-//        instance.setArguments(bundle);
-//        startFragment(instance);
-//    }
-//
-//    //心率
-//    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
-//    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] heartRate) {
-//        startFragment(SportingFragment.getInstance());
-//    }
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +111,11 @@ public class MainActivity extends BaseALocationActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RxLogUtils.d("启动时长" + "主页可交互");
+    }
 
     private void openActivity(String openTarget) {
         switch (openTarget) {
@@ -159,7 +133,6 @@ public class MainActivity extends BaseALocationActivity {
                 break;
             case MyJpushReceiver.ACTIVITY_MESSAGE:
                 //跳转消息通知
-//                startFragment(MessageFragment.getInstance());
                 RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
                 break;
         }
@@ -216,22 +189,6 @@ public class MainActivity extends BaseALocationActivity {
         });
     }
 
-    private void showLocalNotify() {
-        JPushLocalNotification ln = new JPushLocalNotification();
-        ln.setBuilderId(1);
-        ln.setContent("hhhfff");
-        ln.setTitle("lnfff");
-        ln.setNotificationId(11111111);
-        ln.setBroadcastTime(System.currentTimeMillis() + 1000 * 60 * 10);
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", "jpush");
-        map.put("test", "111");
-        JSONObject json = new JSONObject(map);
-        ln.setExtras(json.toString());
-        JPushInterface.addLocalNotification(mContext.getApplicationContext(), ln);
-    }
-
 
     private void initMyViewPager() {
         mFragments.clear();
@@ -283,7 +240,6 @@ public class MainActivity extends BaseALocationActivity {
         Bundle bundle = getIntent().getExtras();
         RxLogUtils.d("点击通知：" + bundle);
         if (bundle == null) return;
-
         String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
         JsonParser parser = new JsonParser();
         JsonObject object = (JsonObject) parser.parse(extra);

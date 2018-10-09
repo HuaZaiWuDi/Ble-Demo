@@ -180,9 +180,6 @@ public class BodyDataFragment extends BaseActivity {
             standardWeight = (int) ((userInfo.getHeight() - 70) * 0.6);
         float value1 = standardWeight * 0.67f;
         float value2 = standardWeight * 0.80f;
-        RxLogUtils.e("肌肉量：" + value1);
-        RxLogUtils.e("肌肉量：" + value2);
-        //肌肉量
         Healthy healthy4 = new Healthy();
         healthy4.setSections(new double[]{value1, value2});
         healthy4.setSectionLabels(new String[]{RxFormatValue.fromat4S5R(value1, 1) + "kg", RxFormatValue.fromat4S5R(value2, 1) + "kg"});
@@ -192,9 +189,11 @@ public class BodyDataFragment extends BaseActivity {
         mHealthyList.add(healthy4);
 
         //基础代谢
+        float bmr = SPUtils.getFloat(SPKey.SP_BMR);
+        bmr = bmr == 0 ? 903 : bmr;
         Healthy healthy5 = new Healthy();
-        healthy5.setSections(new double[]{903});
-        healthy5.setSectionLabels(new String[]{"903kcal"});
+        healthy5.setSections(new double[]{bmr});
+        healthy5.setSectionLabels(new String[]{bmr + "kcal"});
         healthy5.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F")});
         healthy5.setLabels(new String[]{"未达标", "达标"});
@@ -225,7 +224,6 @@ public class BodyDataFragment extends BaseActivity {
                 Color.parseColor("#61D97F"), Color.parseColor("#FFBC00")});
         healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});
         mHealthyList.add(healthy7);
-
 
         //皮下脂肪率
         Healthy healthy10 = new Healthy();
@@ -271,7 +269,7 @@ public class BodyDataFragment extends BaseActivity {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstCache()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -346,11 +344,6 @@ public class BodyDataFragment extends BaseActivity {
             level0Bean.setBodyValue(bodyValue[i]);
             level0Bean.setBodyData(titles[i]);
             level0Bean.setBodyDataImg(imgs[i]);
-
-            if (i == 4) {
-                RxLogUtils.e("肌肉量：" + level0Bean.getBodyValue());
-            }
-
             if (i == titles.length - 1 || i == titles.length - 2 || i == 0) {
                 level0Bean.setStatus("标准");
                 level0Bean.setStatusColor(Color.parseColor("#61D97F"));

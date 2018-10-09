@@ -169,7 +169,7 @@ public class AddOrUpdateFoodDialog {
                 dialog.dismiss();
                 String foodCount = mEtFoodG.getText().toString();
                 if (!"0".equals(foodCount) && !RxDataUtils.isNullString(foodCount)) {
-                    int count = Integer.parseInt(foodCount);
+                    double count = Double.parseDouble(foodCount);
                     listBean.setCalorie((int) (listBean.getUnitCalorie() * 1f / listBean.getUnitCount() * count));
                     listBean.setFoodCount(count);
                 } else {

@@ -261,6 +261,7 @@ public class FirstPageBean {
         private double water;
         private double weight;
         private long weightDate;
+        private double basalHeat;
 
         public double getBmi() {
             return bmi;
@@ -360,6 +361,18 @@ public class FirstPageBean {
 
         public long getWeightDate() {
             return weightDate;
+        }
+
+        public void setBmi(double bmi) {
+            this.bmi = bmi;
+        }
+
+        public double getBasalHeat() {
+            return basalHeat;
+        }
+
+        public void setBasalHeat(double basalHeat) {
+            this.basalHeat = basalHeat;
         }
     }
 

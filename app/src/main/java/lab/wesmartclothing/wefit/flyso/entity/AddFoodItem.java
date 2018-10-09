@@ -34,7 +34,7 @@ public class AddFoodItem {
     public static class intakeList implements Serializable {
         private String foodId;
         private String foodName;
-        private int foodCount;
+        private double foodCount;
         private String unit;
         private String weight;
         private String weightType;
@@ -79,7 +79,7 @@ public class AddFoodItem {
             this.foodName = foodName;
         }
 
-        public void setFoodCount(int foodCount) {
+        public void setFoodCount(double foodCount) {
             this.foodCount = foodCount;
         }
 

@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.widget.QMUIEmptyView;
+import com.vondear.rxtools.model.timer.MyTimer;
+import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRandom;
 import com.vondear.rxtools.utils.RxUtils;
@@ -26,6 +28,7 @@ public class TestBleScanActivity extends AppCompatActivity {
     RelativeLayout mParent;
 
     private QMUIEmptyView mEmptyView;
+    private RxTextRoundProgressBar mTextProgress;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -64,15 +67,16 @@ public class TestBleScanActivity extends AppCompatActivity {
             }
         });
 
-        final RxTextRoundProgressBar mTextProgress = findViewById(R.id.mTextProgress);
+        mTextProgress = findViewById(R.id.mTextProgress);
         mTextProgress.setProgress(50);
 
 
         mTextProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextProgress.setProgress(RxRandom.getRandom(100));
-                tv_test.setTranslationZ(RxUtils.dp2px(mTextProgress.getProgress()));
+//                mTextProgress.setProgress(RxRandom.getRandom(100));
+//                tv_test.setTranslationZ(RxUtils.dp2px(mTextProgress.getProgress()));
+                mTimer.startTimer();
             }
         });
         final RxIconRoundProgressBar mIconProgress = findViewById(R.id.mIconProgress);
@@ -86,6 +90,17 @@ public class TestBleScanActivity extends AppCompatActivity {
         });
 
     }
+
+
+    int progress = 0;
+    MyTimer mTimer = new MyTimer(1000, 100, new MyTimerListener() {
+        @Override
+        public void enterTimer() {
+            progress++;
+            if (progress == 100) progress = 0;
+            mTextProgress.setProgress(progress,false);
+        }
+    });
 
 
     public void onClick(View view) {

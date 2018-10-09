@@ -610,6 +610,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
 
+        //当前体重
         SPUtils.put(SPKey.SP_realWeight, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getWeight());
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
@@ -618,6 +619,9 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvBodyFat.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getBodyFat() + "");
         mIvHealthyLevel.switchLevel(bean.getWeightInfo() == null ? "" : bean.getSickLevel());
         mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
+
+        //基础代谢
+        SPUtils.put(SPKey.SP_BMR, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getBasalHeat());
 
         int targetProgress = (int) (bean.getComplete() * 100);
         mProWeight.setProgress(targetProgress);

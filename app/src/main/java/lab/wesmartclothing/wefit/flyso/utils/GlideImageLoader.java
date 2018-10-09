@@ -14,8 +14,13 @@ import java.io.File;
 
 import lab.wesmartclothing.wefit.flyso.R;
 
+/**
+ * @author Jack
+ * @date on 2018/10/8
+ * @describe 图片加载器
+ * @org 智裳科技
+ */
 public class GlideImageLoader implements ImageLoader {
-
 
     public static GlideImageLoader getInstance() {
         return new GlideImageLoader();

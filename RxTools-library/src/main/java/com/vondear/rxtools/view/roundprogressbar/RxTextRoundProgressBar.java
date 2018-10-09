@@ -215,6 +215,12 @@ public class RxTextRoundProgressBar extends RxBaseRoundProgressBar implements Vi
         drawTextProgressPosition();
     }
 
+    @Override
+    public void setProgress(float progress, boolean anim) {
+        super.setProgress(progress, anim);
+        drawTextProgressPosition();
+    }
+
     public int getTextProgressColor() {
         return colorTextProgress;
     }

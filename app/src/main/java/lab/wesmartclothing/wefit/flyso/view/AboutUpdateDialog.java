@@ -261,7 +261,7 @@ public class AboutUpdateDialog extends RxDialog {
         public void onProgressChanged(String deviceAddress, int percent, float speed, float avgSpeed, int currentPart, int partsTotal) {
             super.onProgressChanged(deviceAddress, percent, speed, avgSpeed, currentPart, partsTotal);
             RxLogUtils.d("onProgressChanged:" + "percent:" + percent + "----" + speed + "----avgSpeed:" + avgSpeed + "-----currentPart:" + currentPart + "------prtsTotal:" + partsTotal);
-            mMRxTextRoundProgressBar.setProgress(percent);
+            mMRxTextRoundProgressBar.setProgress(percent, false);
             mMRxTextRoundProgressBar.setProgressText("");
             mTvProgress.setText((int) mMRxTextRoundProgressBar.getProgress() + "");
         }

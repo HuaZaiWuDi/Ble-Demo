@@ -91,13 +91,8 @@ public class MyAPP extends Application {
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
                 BleTools.initBLE(MyAPP.this);
-                Logger.addLogAdapter(new AndroidLogAdapter() {
-                    @Override
-                    public boolean isLoggable(int priority, String tag) {
-                        return BuildConfig.DEBUG;
-                    }
-                });
-                Logger.i("启动时长：初始化结束");
+
+                RxLogUtils.i("启动时长：初始化结束");
             }
         });
 
@@ -179,6 +174,12 @@ public class MyAPP extends Application {
     @Override
     protected void attachBaseContext(final Context base) {
         super.attachBaseContext(base);
+        Logger.addLogAdapter(new AndroidLogAdapter() {
+            @Override
+            public boolean isLoggable(int priority, String tag) {
+                return BuildConfig.DEBUG;
+            }
+        });
         RxLogUtils.i("启动时长：开始启动");
         MultiDex.install(base);
     }

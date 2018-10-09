@@ -26,7 +26,7 @@ public class HealthyProgressView extends View {
     //颜色列表
     private int[] colors = {Color.WHITE};
 
-    //点阵集合
+    //点阵集合  防止progress为0或者100时圆点被剪裁的问题，暂时这样处理
     private float max = 100f;
     private float min = 0f;
     private float progress = 0f;
@@ -145,11 +145,18 @@ public class HealthyProgressView extends View {
         float width = mWidth - getPaddingLeft() - getPaddingRight();
         progress = progress < min ? min : progress;
         progress = progress > max ? max : progress;
+
         float x = width * progress / (max - min);
         //所在的区间
         index = (int) (x / interval) + 1;
 
-        canvas.translate(x, mHeight / 2f);
+        if (progress == min) {
+            canvas.translate(dp2px(6), mHeight / 2f);
+        } else if (progress == max) {
+            canvas.translate(width - dp2px(6), mHeight / 2f);
+        } else {
+            canvas.translate(x, mHeight / 2f);
+        }
         paint_progress.setColor(colors[(index - 1) % colors.length]);
         canvas.drawCircle(0, 0, dp2px(6), paint_progress);
         paint_progress.setColor(Color.WHITE);

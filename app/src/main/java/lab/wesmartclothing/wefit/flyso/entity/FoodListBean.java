@@ -27,7 +27,7 @@ public class FoodListBean {
     private String userId;
     private String weightType;
     private String foodName;
-    private int foodCount;
+    private double foodCount;
     private int eatType;
     private long createTime;
     private String foodImg;
@@ -126,11 +126,11 @@ public class FoodListBean {
         this.foodName = foodName;
     }
 
-    public int getFoodCount() {
+    public double getFoodCount() {
         return foodCount;
     }
 
-    public void setFoodCount(int foodCount) {
+    public void setFoodCount(double foodCount) {
         this.foodCount = foodCount;
     }
 

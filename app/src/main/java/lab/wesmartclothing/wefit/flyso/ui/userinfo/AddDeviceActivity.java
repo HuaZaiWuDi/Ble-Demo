@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -21,6 +20,8 @@ import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.model.timer.MyTimer;
+import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -124,7 +125,6 @@ public class AddDeviceActivity extends BaseActivity {
 
     private int stepState = 0;
     private BaseQuickAdapter adapter;
-    private Handler mHandler = new Handler();
     private List<BindDeviceItem.DeviceListBean> mDeviceLists = new ArrayList<>();
     private Map<String, BindDeviceBean> scanDevice = new HashMap<>();
 
@@ -202,20 +202,20 @@ public class AddDeviceActivity extends BaseActivity {
         img_scan.startAnimation();
         btn_scan.setEnabled(false);
 
-        mHandler.postDelayed(scanTimeout, 15000);
+        scanTimeout.startTimer();
 
         initRxBus();
     }
 
-    private Runnable scanTimeout = new Runnable() {
+    private MyTimer scanTimeout = new MyTimer(new MyTimerListener() {
         @Override
-        public void run() {
+        public void enterTimer() {
             btn_scan.setEnabled(true);
             img_scan.stopAnimation();
             RxToast.warning(getString(R.string.checkBle));
             initStep(3);
         }
-    };
+    }, 15000);
 
 
     private void initRxBus() {
@@ -258,8 +258,7 @@ public class AddDeviceActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        mHandler.removeCallbacks(scanTimeout);
-        mHandler = null;
+        scanTimeout.stopTimer();
         super.onDestroy();
     }
 
@@ -423,7 +422,7 @@ public class AddDeviceActivity extends BaseActivity {
         }
         scanDevice.put(bean.getMac(), bean);
 
-        mHandler.removeCallbacks(scanTimeout);
+        scanTimeout.stopTimer();
         btn_scan.setEnabled(true);
         img_scan.stopAnimation();
 

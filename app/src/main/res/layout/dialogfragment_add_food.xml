@@ -84,8 +84,7 @@
                 android:background="@null"
                 android:gravity="center_vertical|left"
                 android:hint="输入数量"
-                android:inputType="number"
-                android:maxLength="4"
+                android:inputType="numberDecimal"
                 android:maxLines="1"
                 android:paddingLeft="16dp"
                 android:textColor="@color/Gray"
@@ -117,27 +116,29 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <TextView
+        <com.vondear.rxtools.view.layout.RxTextView
             android:id="@+id/cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/BrightGray"
             android:gravity="center"
             android:text="@string/cancel"
             android:textColor="@color/white"
-            android:textSize="56px"/>
+            android:textSize="56px"
+            app:background_normal="@color/BrightGray"
+            app:corner_radius_bottom_left="4dp"/>
 
-        <TextView
+        <com.vondear.rxtools.view.layout.RxTextView
             android:id="@+id/ok"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/orange_FF7200"
             android:gravity="center"
             android:text="@string/ok"
             android:textColor="@color/white"
-            android:textSize="56px"/>
+            android:textSize="56px"
+            app:background_normal="@color/orange_FF7200"
+            app:corner_radius_bottom_right="4dp"/>
     </LinearLayout>
 
 

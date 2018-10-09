@@ -331,7 +331,7 @@ public class BleService extends Service {
             public void onConnectError(QNBleDevice qnBleDevice, int i) {
                 mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
                 RxLogUtils.d("连接异常：" + i);
-                mQNBleTools.disConnectDevice(qnBleDevice);
+                mQNBleTools.disConnectDevice();
 //                RxToast.info(getString(R.string.connectError));
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
                 connectDevices.remove(qnBleDevice.getMac());

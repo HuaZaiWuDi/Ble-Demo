@@ -40,7 +40,7 @@ public class AddedHeatInfo {
     private String foodName;
     private String foodImg;
     private String remark;
-    private int foodCount;
+    private double foodCount;
     private int unitCount;
     private String unit;
     private String weightType;
@@ -150,11 +150,11 @@ public class AddedHeatInfo {
         this.remark = remark;
     }
 
-    public int getFoodCount() {
+    public double getFoodCount() {
         return foodCount;
     }
 
-    public void setFoodCount(int foodCount) {
+    public void setFoodCount(double foodCount) {
         this.foodCount = foodCount;
     }
 
