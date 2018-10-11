@@ -127,11 +127,15 @@ public class LoginRegisterActivity extends BaseActivity {
     };
 
 
+    @Override
+    protected void onStop() {
+        tipDialog.dismiss();
+        super.onStop();
+    }
+
     public void initView() {
         initTab();
         initRxBus();
-
-
         //注册布局变化监听
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
     }
@@ -160,7 +164,7 @@ public class LoginRegisterActivity extends BaseActivity {
             }
         }
     };
-    
+
 
     private void initRxBus() {
         RxBus.getInstance().register2(PasswordLoginBus.class)

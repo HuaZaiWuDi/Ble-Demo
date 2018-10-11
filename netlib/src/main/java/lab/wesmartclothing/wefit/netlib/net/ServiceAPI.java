@@ -38,8 +38,6 @@ public class ServiceAPI {
     public static String Store_Addr = "https://weidian.com/?userid=1063198383";
 
     //商城URL
-    public static String STORE_URL = "http://10.10.11.208:15111";
-
     public static String Order_Url = "http://10.10.11.208:15111";
 
     public static String Shopping_Address = "http://10.10.11.208:15111";

@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
@@ -54,8 +56,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RxLogUtils.d("加载Fragment:" + savedInstanceState);
         if (savedInstanceState != null) {
-
             boolean aBoolean = savedInstanceState.getBoolean(STATE_SAVE_IS_HIDDEN);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             if (!aBoolean) {

@@ -384,7 +384,6 @@ public class AddDeviceActivity extends BaseActivity {
 
         mBindDeviceItem.setDeviceList(mDeviceLists);
         String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
-
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addBindDevice(body))
@@ -417,6 +416,10 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
+        if (bean.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) ||
+                bean.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+            return;
+        }
         if (scanDevice.containsKey(bean.getMac())) {
             return;
         }
@@ -425,6 +428,8 @@ public class AddDeviceActivity extends BaseActivity {
         scanTimeout.stopTimer();
         btn_scan.setEnabled(true);
         img_scan.stopAnimation();
+        if (stepState != 2)
+            initStep(1);
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
@@ -433,9 +438,6 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        if (stepState != 2)
-                            initStep(1);
-
                         if ("true".equals(s)) {
                             if (bean.getDeivceType() == 0) {
                                 SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
@@ -451,7 +453,7 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onError(String error) {
                         //网络获取异常不可用
-                        adapter.addData(bean);
+                        RxToast.normal(error);
                     }
                 });
     }

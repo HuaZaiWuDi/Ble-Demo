@@ -42,6 +42,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.guide.SpalshActivity_;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
@@ -82,16 +83,21 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
+        //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
+        if (savedInstanceState != null) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, SpalshActivity_.class);
+            return;
+        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
-
         initView();
         bleIntent = new Intent(mContext, BleService_.class);
         startService(bleIntent);
     }
 
     public void initView() {
+
         initReceiverPush();
         initRxBus();
         startLocation(null);
@@ -192,7 +198,6 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initMyViewPager() {
         mFragments.clear();
-//        mFragments.add(SlimmingFragment.getInstance());
         mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(FindFragment.getInstance());
 //        mFragments.add(StoreFragment.getInstance());
@@ -214,7 +219,6 @@ public class MainActivity extends BaseALocationActivity {
         mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -227,7 +231,6 @@ public class MainActivity extends BaseALocationActivity {
 
             }
         });
-
     }
 
     /**
@@ -351,7 +354,6 @@ public class MainActivity extends BaseALocationActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(bleIntent);
         super.onDestroy();
     }
 

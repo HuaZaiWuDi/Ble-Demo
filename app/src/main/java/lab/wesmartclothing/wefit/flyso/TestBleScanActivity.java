@@ -36,7 +36,7 @@ public class TestBleScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_ble_scan);
         ButterKnife.bind(this);
-
+        RxLogUtils.i("启动时长：无网络请求的界面");
 
         final RxLinearLayout tv_test = findViewById(R.id.tv_test);
 
@@ -98,7 +98,7 @@ public class TestBleScanActivity extends AppCompatActivity {
         public void enterTimer() {
             progress++;
             if (progress == 100) progress = 0;
-            mTextProgress.setProgress(progress,false);
+            mTextProgress.setProgress(progress, false);
         }
     });
 

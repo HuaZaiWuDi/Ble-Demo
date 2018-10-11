@@ -586,7 +586,6 @@ public class SuitLines extends View {
 
         clickIndexs = new int[]{mLineBeans.get(0).getUnits().size() - 1, 0};
         notifyValueChange();
-        invalidate();
 
         postAction(new Runnable() {
             @Override

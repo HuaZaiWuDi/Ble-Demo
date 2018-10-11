@@ -26,9 +26,9 @@ public class ExplainException extends Exception {
         Code = code;
     }
 
-    public ExplainException(String message, String msg, int code) {
+    public ExplainException(String message, int code) {
         super(message);
-        this.msg = msg;
+        this.msg = message;
         Code = code;
     }
 

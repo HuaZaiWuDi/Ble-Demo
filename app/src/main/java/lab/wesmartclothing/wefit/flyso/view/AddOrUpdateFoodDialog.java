@@ -2,17 +2,16 @@ package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
-import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialog;
+import com.vondear.rxtools.view.layout.RxEditText;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
@@ -30,6 +28,7 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -49,9 +48,7 @@ public class AddOrUpdateFoodDialog {
     @BindView(R.id.tv_info)
     TextView mTvInfo;
     @BindView(R.id.et_food_g)
-    EditText mEtFoodG;
-    @BindView(R.id.layout_Text)
-    QMUIRoundRelativeLayout mLayoutText;
+    RxEditText mEtFoodG;
     @BindView(R.id.tv_unit)
     TextView mTvUnit;
     @BindView(R.id.cancel)

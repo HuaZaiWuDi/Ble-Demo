@@ -69,31 +69,22 @@
         android:orientation="horizontal">
 
 
-        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout
-            android:id="@+id/layout_Text"
+        <com.vondear.rxtools.view.layout.RxEditText
+            android:id="@+id/et_food_g"
             android:layout_width="120dp"
             android:layout_height="44dp"
-            app:qmui_backgroundColor="#FBFBFC"
-            app:qmui_borderColor="@color/bg_F7F7F9"
-            app:qmui_radius="4dp">
-
-            <EditText
-                android:id="@+id/et_food_g"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:gravity="center_vertical|left"
-                android:hint="输入数量"
-                android:inputType="numberDecimal"
-                android:maxLines="1"
-                android:paddingLeft="16dp"
-                android:textColor="@color/Gray"
-                android:textColorHint="@color/BrightGray"
-                android:textSize="15sp"
-                android:textStyle="bold"/>
-
-
-        </com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout>
+            android:gravity="center"
+            android:hint="输入数量"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:textColor="@color/Gray"
+            android:textColorHint="@color/BrightGray"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:background_normal="#FBFBFC"
+            app:border_color_normal="#F7F7F9"
+            app:corner_radius="4dp"
+            tools:text="222"/>
 
 
         <TextView
@@ -103,7 +94,7 @@
             android:layout_gravity="bottom"
             android:gravity="end"
             android:textColor="@color/orange_FF7200"
-            android:textSize="16sp"
+            android:textSize="20sp"
             tools:text="克"/>
 
     </LinearLayout>

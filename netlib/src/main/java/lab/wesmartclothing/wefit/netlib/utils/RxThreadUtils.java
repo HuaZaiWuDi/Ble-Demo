@@ -3,6 +3,8 @@ package lab.wesmartclothing.wefit.netlib.utils;
 import android.app.Dialog;
 import android.text.TextUtils;
 
+import com.zchu.rxcache.utils.LogUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.reactivestreams.Publisher;
@@ -197,7 +199,7 @@ public class RxThreadUtils {
                                     }
                                     return createData((T) data);
                                 } else {
-                                    return Observable.error(new ExplainException(msg, msg, code));
+                                    return Observable.error(new ExplainException(msg, code));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -218,47 +220,46 @@ public class RxThreadUtils {
      * @param <T>
      * @return
      */
-    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
-        return new ObservableTransformer<HttpResult<T>, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
-                return upstream.map(new Function<HttpResult<T>, T>() {
-                    @Override
-                    public T apply(HttpResult<T> tHttpResult) throws Exception {
-                        if (tHttpResult.getCode() != 0) {
-                            throw new ExplainException(tHttpResult.getMessage(), tHttpResult.getMessage(), tHttpResult.getCode());
-                        }
-                        return tHttpResult.getData();
-                    }
-                });
-            }
-        };
-    }
-
-//    /**
-//     * 对结果进行预处理
-//     *
-//     * @param <T>
-//     * @return
-//     */
 //    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
 //        return new ObservableTransformer<HttpResult<T>, T>() {
 //            @Override
 //            public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
-//                return upstream.flatMap(new Function<HttpResult<T>, ObservableSource<T>>() {
+//                return upstream.map(new Function<HttpResult<T>, T>() {
 //                    @Override
-//                    public ObservableSource<T> apply(HttpResult<T> t) throws Exception {
-//                        LogUtils.debug(t.getCode() + "");
-//                        if (t.getCode() == 0) {
-//                            return createData(t.getData());
-//                        } else {
-//                            return Observable.error(new Throwable(t.getMessage()));
+//                    public T apply(HttpResult<T> tHttpResult) throws Exception {
+//                        if (tHttpResult.getCode() != 0) {
+//                            throw new ExplainException(tHttpResult.getMessage(), tHttpResult.getMessage(), tHttpResult.getCode());
 //                        }
-//
+//                        return tHttpResult.getData();
 //                    }
 //                });
 //            }
 //        };
 //    }
+
+    /**
+     * 对结果进行预处理
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
+        return new ObservableTransformer<HttpResult<T>, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
+                return upstream.flatMap(new Function<HttpResult<T>, ObservableSource<T>>() {
+                    @Override
+                    public ObservableSource<T> apply(HttpResult<T> t) throws Exception {
+                        LogUtils.debug(t.toString());
+                        if (t.getCode() == 0) {
+                            return createData(t.getData());
+                        } else {
+                            return Observable.error(new ExplainException(t.getMessage(), t.getCode()));
+                        }
+                    }
+                });
+            }
+        };
+    }
 
 }
