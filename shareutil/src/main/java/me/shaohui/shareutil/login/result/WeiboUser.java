@@ -128,6 +128,7 @@ public class WeiboUser extends BaseUser {
     @Override
     public String toString() {
         return "WeiboUser{" +
+                "openId='" + getOpenId() + '\'' +
                 "language='" + language + '\'' +
                 ", city='" + city + '\'' +
                 ", province='" + province + '\'' +

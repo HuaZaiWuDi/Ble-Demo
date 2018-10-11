@@ -114,7 +114,7 @@ public class AccountFragment extends BaseActivity {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               onBackPressed();
+                onBackPressed();
             }
         });
         mQMUIAppBarLayout.setTitle("账号管理");

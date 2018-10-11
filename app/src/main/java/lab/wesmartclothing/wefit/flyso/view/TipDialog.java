@@ -38,75 +38,75 @@ public class TipDialog {
     }
 
     public void show(long timeOut) {
+        dismiss();
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord(mContext.getString(R.string.tv_loading))
                 .create();
         setDuration(timeOut);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
     public void show(String text, long timeOut) {
+        dismiss();
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord(text)
                 .create();
         setDuration(timeOut);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
     public void show() {
+        dismiss();
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
                 .setTipWord(mContext.getString(R.string.tv_loading))
                 .create();
         setDuration(defaultTimeout);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
     public void showSuccess(String content, long timeOut) {
+        dismiss();
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
                 .setTipWord(content)
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(timeOut);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
     public void showFail(String content, long timeOut) {
+        dismiss();
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
                 .setTipWord(content)
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(timeOut);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
     public void showInfo(String content, long timeOut) {
+        dismiss();
         tipDialog = new QMUITipDialog.Builder(mContext)
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_INFO)
                 .setTipWord(content)
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(timeOut);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 
     public void showCustom(@LayoutRes int resId) {
+        dismiss();
         tipDialog = new QMUITipDialog.CustomBuilder(mContext)
                 .setContent(resId)
                 .create();
         tipDialog.setCanceledOnTouchOutside(true);
         setDuration(defaultTimeout);
-        if (tipDialog.isShowing()) tipDialog.dismiss();
         tipDialog.show();
     }
 

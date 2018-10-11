@@ -41,7 +41,6 @@
         <activity
             android:name="me.shaohui.shareutil._ShareActivity"
             android:launchMode="singleTask"
-            android:taskAffinity="me.shaohui.shareutil"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>

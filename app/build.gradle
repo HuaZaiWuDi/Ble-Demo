@@ -213,4 +213,5 @@ dependencies {
     //    //轻牛体重秤SDK
     implementation files('libs/qnsdk-0.3.4.jar')
 
+    compile project(path: ':netlib')
 }

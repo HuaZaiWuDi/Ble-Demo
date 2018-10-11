@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import com.vondear.rxtools.BuildConfig;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,7 +17,7 @@ import java.util.Date;
  */
 public class RxLogUtils {
 
-    private static Boolean LOG_SWITCH = BuildConfig.DEBUG; // 日志文件总开关
+    private static Boolean LOG_SWITCH = true; // 日志文件总开关
     private static Boolean LOG_TO_FILE = false; // 日志写入文件开关
     private static String LOG_TAG = "TAG"; // 默认的tag
     private static char LOG_TYPE = 'v';// 输入日志类型，v代表输出所有信息,w则只输出警告...

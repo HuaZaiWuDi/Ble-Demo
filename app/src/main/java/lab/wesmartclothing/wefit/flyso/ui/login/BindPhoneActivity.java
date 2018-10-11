@@ -193,7 +193,7 @@ public class BindPhoneActivity extends BaseActivity {
         }
         LoginResult result = (LoginResult) getIntent().getSerializableExtra(Key.BUNDLE_OTHER_LOGIN_INFO);
         RxLogUtils.e("登录信息：" + result.toString());
-        String openId = result.getUserInfo().getOpenId();
+        String openId = result.getToken().getOpenid();
         String nickname = result.getUserInfo().getNickname();
         String imageUrl = result.getUserInfo().getHeadImageUrl();
         String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ : result.getPlatform() == LoginPlatform.WEIBO ? Key.LoginType_WEIBO : Key.LoginType_WEXIN;

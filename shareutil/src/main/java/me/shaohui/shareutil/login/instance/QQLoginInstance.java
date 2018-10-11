@@ -69,7 +69,7 @@ public class QQLoginInstance extends LoginInstance implements IUiListener {
 
     @Override
     public void fetchUserInfo(final BaseToken token) {
-
+        ShareLogger.i("fetchUserInfo:" + token.toString());
         Observable.create(new ObservableOnSubscribe<QQUser>() {
             @Override
             public void subscribe(ObservableEmitter<QQUser> emitter) throws Exception {
@@ -94,6 +94,7 @@ public class QQLoginInstance extends LoginInstance implements IUiListener {
 
                     @Override
                     public void onNext(QQUser qqUser) {
+                        ShareLogger.i("fetchUserInfo:onNext:" + mLoginListener);
                         if (mLoginListener != null)
                             mLoginListener.loginSuccess(
                                     new LoginResult(LoginPlatform.QQ, token, qqUser));
@@ -107,7 +108,7 @@ public class QQLoginInstance extends LoginInstance implements IUiListener {
 
                     @Override
                     public void onComplete() {
-
+                        ShareLogger.i("fetchUserInfo:onComplete:");
                     }
                 });
     }

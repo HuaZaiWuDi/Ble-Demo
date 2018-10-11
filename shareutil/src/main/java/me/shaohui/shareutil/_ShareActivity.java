@@ -88,8 +88,8 @@ public class _ShareActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         ShareLogger.i("onDestroy:" + isNew);
-        ShareUtil.recycle();
-        LoginUtil.recycle();
+//        ShareUtil.recycle();
+//        LoginUtil.recycle();
     }
 
     @Override
