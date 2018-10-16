@@ -3,8 +3,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.Calendar;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -14,7 +12,6 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 /**
  * Created icon_hide_password jk on 2018/6/13.
  */
-@EBean
 public class HeartRateToKcal {
 
 
@@ -33,7 +30,7 @@ public class HeartRateToKcal {
      * @param HR true 为男，false为女;
      * @return 千卡
      */
-    public double getCalorie(int HR, double T) {
+    public static double getCalorie(int HR, double T) {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
         if (info == null) {

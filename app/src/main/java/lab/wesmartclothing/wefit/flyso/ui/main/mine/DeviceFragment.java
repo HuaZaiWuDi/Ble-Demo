@@ -1,6 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -22,10 +26,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Receiver;
-
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,7 +41,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -53,7 +53,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 /**
  * Created by jk on 2018/8/10.
  */
-@EActivity
 public class DeviceFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -86,25 +85,26 @@ public class DeviceFragment extends BaseActivity {
     QMUIRoundLinearLayout mBtnBind;
     Unbinder unbinder;
 
-    @Bean
-    QNBleTools mQNBleTools;
-
-    //体脂称连接状态
-    @Receiver(actions = Key.ACTION_SCALE_CONNECT)
-    void scaleIsConnect(@Receiver.Extra(Key.EXTRA_SCALE_CONNECT) boolean state) {
-        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)))
-            mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
-    }
-
-    //监听瘦身衣连接情况
-    @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
-    void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
-        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
-            mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
-    }
+    QNBleTools mQNBleTools = QNBleTools.getInstance();
 
 
     private List<DeviceListbean.ListBean> beanList;
+
+
+    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Key.ACTION_SCALE_CONNECT.equals(intent.getAction())) {
+                //体脂称连接状态
+                boolean state = intent.getExtras().getBoolean(Key.EXTRA_SCALE_CONNECT);
+                mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
+            } else if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
+                //监听瘦身衣连接情况
+                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
+                mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +112,13 @@ public class DeviceFragment extends BaseActivity {
         setContentView(R.layout.fragment_device);
         unbinder = ButterKnife.bind(this);
         initView();
+
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_SCALE_CONNECT);
+        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
+        registerReceiver(registerReceiver, filter);
+
     }
 
 
@@ -129,6 +136,7 @@ public class DeviceFragment extends BaseActivity {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(registerReceiver);
         BleAPI.getVoltage(null);
         super.onDestroy();
     }
@@ -154,7 +162,7 @@ public class DeviceFragment extends BaseActivity {
                 deleteDeviceById(BleKey.TYPE_CLOTHING);
                 break;
             case R.id.btn_bind:
-                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
                 break;
         }
     }

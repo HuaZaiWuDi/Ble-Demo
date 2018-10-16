@@ -7,6 +7,8 @@ import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.ParcelUuid;
+import android.view.View;
+import android.widget.TextView;
 
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.data.BleDevice;
@@ -26,6 +28,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.aboutByte.HexUtil;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.interfaces.onRequestPermissionsListener;
@@ -36,12 +39,13 @@ import com.vondear.rxtools.utils.RxPermissionsUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
+import com.zchu.rxcache.RxCache;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.Receiver;
 
@@ -56,13 +60,15 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
-import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleUnsteadyWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
+import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -89,12 +95,9 @@ public class BleService extends Service {
 
     public static boolean clothingFinish = true;
 
-    @Bean
-    QNBleTools mQNBleTools;
-    @Bean
-    HeartRateBean mHeartRateBean;
-    @Bean
-    HeartRateToKcal mHeartRateToKcal;
+    QNBleTools mQNBleTools = QNBleTools.getInstance();
+
+    HeartRateBean mHeartRateBean = new HeartRateBean();
 
 
     //监听系统蓝牙开启
@@ -270,16 +273,23 @@ public class BleService extends Service {
     }
 
     private void connectScaleCallBack() {
+        /**
+         * 2018-10-16
+         * 修改逻辑判断有实时数据或者稳定数据时在跳转
+         *
+         * */
         MyAPP.QNapi.setDataListener(new QNDataListener() {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
                 RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
+                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class);
             }
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.e("稳定体重");
                 RxBus.getInstance().post(qnScaleData);
+                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class);
             }
 
             @Override
@@ -340,9 +350,6 @@ public class BleService extends Service {
             @Override
             public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("体重秤状态变化:" + i);
-                if (i >= 5 && i < 9) {
-                    RxBus.getInstance().post(new OpenAddWeight());
-                }
                 switch (i) {
                     case 5://正在测量
                         break;
@@ -510,8 +517,7 @@ public class BleService extends Service {
 
                     athlHistoryRecord.add(bean);
                     //添加本地缓存
-                    String athlData = MyAPP.getGson().toJson(athlHistoryRecord);
-                    SPUtils.put(Key.CACHE_ATHL_RECORD, athlData);
+                    RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord);
                 }
 
                 BleAPI.syncData(bytes);
@@ -567,8 +573,7 @@ public class BleService extends Service {
                 athlHistoryRecord.add(bean);
                 athlRecord_2.add(heartRate);
                 //添加本地缓存
-                String athlData = MyAPP.getGson().toJson(athlHistoryRecord);
-                SPUtils.put(Key.CACHE_ATHL_RECORD, athlData);
+                RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord);
 
 
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
@@ -590,10 +595,35 @@ public class BleService extends Service {
                 mSportsDataTab.setPower((BitUtils.checkBitValue(data[17], 7)));
                 mHeartRateBean.setStepNumber(mSportsDataTab.getSteps());
                 //卡路里累加计算
-                kcalTotal += mHeartRateToKcal.getCalorie(heartRate, 2f / 3600);
+                kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
                 mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
                 RxBus.getInstance().post(mSportsDataTab);
+
+
+                if (BleService.clothingFinish) {
+                    final RxDialogSureCancel dialog = new RxDialogSureCancel(RxActivityUtils.currentActivity());
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.getTvTitle().setVisibility(View.GONE);
+                    dialog.setContent("运动已开始，是否进入运动界面");
+                    dialog.setCancel("进入")
+                            .setCancelListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingFragment.class);
+                                }
+                            })
+                            .setSure("取消")
+                            .setSureListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    dialog.show();
+                }
                 BleService.clothingFinish = false;
+
             }
         });
     }
@@ -607,7 +637,7 @@ public class BleService extends Service {
             RxToast.success("运动结束");
         if (athlHistoryRecord.size() > 0) {
             mHeartRateBean.setAthlList(athlHistoryRecord);
-            mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+            mHeartRateBean.saveHeartRate(mHeartRateBean);
             athlHistoryRecord.clear();
         }
     }
@@ -616,7 +646,7 @@ public class BleService extends Service {
         ArrayList<HeartRateBean.AthlList> list = new ArrayList<>();
         list.add(bean);
         mHeartRateBean.setAthlList(list);
-        mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
+        mHeartRateBean.saveHeartRate(mHeartRateBean);
     }
 
 
@@ -628,6 +658,11 @@ public class BleService extends Service {
     }, 10000);
 
 
+    /**
+     * 检测瘦身衣是否需要升级
+     *
+     * @param object
+     */
     private void checkFirmwareVersion(JsonObject object) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -635,18 +670,39 @@ public class BleService extends Service {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
+                        final FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
-                            RxBus.getInstance().post(firmwareVersionUpdate);
+
+                            final RxDialogSureCancel dialog = new RxDialogSureCancel(RxActivityUtils.currentActivity());
+                            TextView tvTitle = dialog.getTvTitle();
+                            tvTitle.setVisibility(View.VISIBLE);
+                            tvTitle.setText("固件升级");
+                            dialog.getTvContent().setText("是否升级到最新的版本");
+                            dialog.setCancel("升级");
+                            dialog.setCancelListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                    AboutUpdateDialog updatedialog = new AboutUpdateDialog(RxActivityUtils.currentActivity(), firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                                    updatedialog.show();
+                                }
+                            });
+                            dialog.setSure(firmwareVersionUpdate.getMustUpgrade() != 0 ? "退出" : "取消");
+                            dialog.show();
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.setSureListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                    if (firmwareVersionUpdate.getMustUpgrade() != 0) {
+                                        RxActivityUtils.AppExit(RxActivityUtils.currentActivity());
+                                    }
+                                }
+                            });
                         } else {
                             RxLogUtils.d("已经是最新的版本");
                         }
-                    }
-
-                    @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
                     }
                 });
     }

@@ -329,9 +329,9 @@ public class ProblemFragemnt extends BaseActivity {
     /*提交反馈，文字部分*/
     private void commitData(String imgUrl) {
         JsonObject object = new JsonObject();
-        object.addProperty("ariseFreq", problemTimes.indexOf(mBtnTimes.getText().toString()));
+        object.addProperty("ariseFreq", problemTimes.indexOf(mBtnTimes.getText().toString()) + 1);
         object.addProperty("contactInfo", mEditPhoneEmail.getText().toString());
-        object.addProperty("feedbackType", problemType.indexOf(mBtnType.getText().toString()));
+        object.addProperty("feedbackType", problemType.indexOf(mBtnType.getText().toString()) + 1);
         object.addProperty("feedbackDesc", mEditProble.getText().toString());
         object.addProperty("feedbackImg", imgUrl);
 
@@ -383,11 +383,12 @@ public class ProblemFragemnt extends BaseActivity {
                 });
     }
 
+
     public static List<MultipartBody.Part> filesToMultipartBodyParts(List<File> files) {
         List<MultipartBody.Part> parts = new ArrayList<>(files.size());
         for (File file : files) {
             RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+            MultipartBody.Part part = MultipartBody.Part.createFormData("files", file.getName(), requestBody);
             parts.add(part);
         }
         return parts;

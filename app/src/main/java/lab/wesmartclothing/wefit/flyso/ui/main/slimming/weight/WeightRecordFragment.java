@@ -1,6 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -32,10 +36,6 @@ import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Receiver;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +54,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -67,7 +67,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 /**
  * Created by jk on 2018/7/26.
  */
-@EActivity
 public class WeightRecordFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -130,26 +129,29 @@ public class WeightRecordFragment extends BaseActivity {
     @BindView(R.id.tv_details)
     TextView mTvDetails;
 
-    //监听系统蓝牙开启
-    @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
-    void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
-        if (state == BluetoothAdapter.STATE_OFF) {
-            checkStatus();
-        } else if (state == BluetoothAdapter.STATE_ON) {
-            mLayoutStrongTip.setVisibility(View.GONE);
+
+    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //体脂称连接状态
+            if (Key.ACTION_SCALE_CONNECT.equals(intent.getAction())) {
+                boolean state = intent.getExtras().getBoolean(Key.EXTRA_SCALE_CONNECT, false);
+                if (btn_Connect != null)
+                    btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
+                //系统蓝牙监听
+            } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
+                int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+                if (state == BluetoothAdapter.STATE_OFF) {
+                    checkStatus();
+                } else if (state == BluetoothAdapter.STATE_ON) {
+                    mLayoutStrongTip.setVisibility(View.GONE);
+                }
+            }
         }
-    }
+    };
 
-    //体脂称连接状态
-    @Receiver(actions = Key.ACTION_SCALE_CONNECT)
-    void scaleIsConnect(@Receiver.Extra(Key.EXTRA_SCALE_CONNECT) boolean state) {
-        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)))
-            if (btn_Connect != null)
-                btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
-    }
 
-    @Bean
-    QNBleTools mQNBleTools;
+    QNBleTools mQNBleTools = QNBleTools.getInstance();
 
 
     private Button btn_Connect;
@@ -171,6 +173,12 @@ public class WeightRecordFragment extends BaseActivity {
                 .setStatusBarColor(getResources().getColor(R.color.green_61D97F))
                 .setLightStatusBar(true)
                 .process();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_SCALE_CONNECT);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(registerReceiver, filter);
+
         initView();
     }
 
@@ -214,7 +222,7 @@ public class WeightRecordFragment extends BaseActivity {
                                     String s = MyAPP.getGson().toJson(mList);
                                     RxLogUtils.d("体重信息:" + s);
                                     bundle.putString(Key.BUNDLE_WEIGHT_HISTORY, s);
-                                    RxActivityUtils.skipActivity(mActivity, WeightDataActivity_.class, bundle);
+                                    RxActivityUtils.skipActivity(mActivity, WeightDataActivity.class, bundle);
                                 }
                             });
                         }
@@ -356,7 +364,7 @@ public class WeightRecordFragment extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                    RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
                 }
             })
                     .setSure("暂不绑定")
@@ -407,6 +415,12 @@ public class WeightRecordFragment extends BaseActivity {
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(registerReceiver);
+        super.onDestroy();
+    }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {

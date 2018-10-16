@@ -68,9 +68,9 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment_;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment_;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
@@ -532,16 +532,16 @@ public class Slimming2Fragment extends BaseAcFragment {
                 break;
 
             case R.id.layout_sports:
-                RxActivityUtils.skipActivity(mActivity, SmartClothingFragment_.class);
+                RxActivityUtils.skipActivity(mActivity, SmartClothingFragment.class);
                 break;
             case R.id.layout_weight:
-                RxActivityUtils.skipActivity(mActivity, WeightRecordFragment_.class);
+                RxActivityUtils.skipActivity(mActivity, WeightRecordFragment.class);
                 break;
             case R.id.btn_goBind_clothing:
-                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
                 break;
             case R.id.btn_goBind_scale:
-                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
                 break;
             case R.id.layout_notify2:
                 //跳转消息通知
@@ -655,7 +655,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             mBtnGoBindClothing.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RxActivityUtils.skipActivity(mActivity, SmartClothingFragment_.class);
+                    RxActivityUtils.skipActivity(mActivity, SmartClothingFragment.class);
                 }
             });
         }
@@ -671,7 +671,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             mBtnGoBindScale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RxActivityUtils.skipActivity(mActivity, WeightRecordFragment_.class);
+                    RxActivityUtils.skipActivity(mActivity, WeightRecordFragment.class);
                 }
             });
         }

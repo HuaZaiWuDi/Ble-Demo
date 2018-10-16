@@ -10,12 +10,11 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
-import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
-import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -62,15 +61,40 @@ public class MeFragment extends BaseAcFragment {
     TextView mTvTotalDays;
     @BindView(R.id.tv_MaxHeartRate)
     TextView mTvMaxHeartRate;
-    @BindView(R.id.groupListView)
-    QMUIGroupListView mGroupListView;
     Unbinder unbinder;
+    @BindView(R.id.iv_myDevice)
+    ImageView mIvMyDevice;
+    @BindView(R.id.tv_deviceCount)
+    TextView mTvDeviceCount;
+    @BindView(R.id.layout_myDevice)
+    RxRelativeLayout mLayoutMyDevice;
+    @BindView(R.id.iv_Collect)
+    ImageView mIvCollect;
+    @BindView(R.id.tv_collectCount)
+    TextView mTvCollectCount;
+    @BindView(R.id.layout_myCollect)
+    RxRelativeLayout mLayoutMyCollect;
+    @BindView(R.id.iv_Order)
+    ImageView mIvOrder;
+    @BindView(R.id.layout_myOrder)
+    RxRelativeLayout mLayoutMyOrder;
+    @BindView(R.id.iv_shoppingAddress)
+    ImageView mIvShoppingAddress;
+    @BindView(R.id.layout_myShoppingAddress)
+    RxRelativeLayout mLayoutMyShoppingAddress;
+    @BindView(R.id.iv_problem)
+    ImageView mIvProblem;
+    @BindView(R.id.layout_problem)
+    RxRelativeLayout mLayoutProblem;
+    @BindView(R.id.iv_aboutUs)
+    ImageView mIvAboutUs;
+    @BindView(R.id.layout_aboutUs)
+    RxRelativeLayout mLayoutAboutUs;
 
     public static QMUIFragment getInstance() {
         return new MeFragment();
     }
 
-    private QMUICommonListItemView deivceItem, collectionItem;
 
     @Override
     protected View onCreateView() {
@@ -83,7 +107,6 @@ public class MeFragment extends BaseAcFragment {
 
     private void initView() {
         initRxBus();
-        groupList();
         initMineData();
         initTypeface();
         RxTextUtils.getBuilder("--")
@@ -132,103 +155,6 @@ public class MeFragment extends BaseAcFragment {
                 .into(mTvSportingTime);
     }
 
-    private void groupList() {
-        //设置
-        deivceItem = mGroupListView.createItemView(
-                getResources().getDrawable(R.mipmap.icon_device), "我的设备", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        setItemView(deivceItem);
-        collectionItem = mGroupListView.createItemView(
-                getResources().getDrawable(R.mipmap.icon_collection), "我的收藏", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        setItemView(collectionItem);
-        final QMUICommonListItemView orderItem = mGroupListView.createItemView(
-                getResources().getDrawable(R.mipmap.icon_order), "我的订单", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        setItemView(orderItem);
-        final QMUICommonListItemView shoppingItem = mGroupListView.createItemView(
-                getResources().getDrawable(R.mipmap.icon_shopping), "我的购物车", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        setItemView(shoppingItem);
-
-        //关于我的
-        QMUICommonListItemView problemItem = mGroupListView.createItemView(
-                getResources().getDrawable(R.mipmap.icon_problem), "问题与建议", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        setItemView(problemItem);
-        QMUICommonListItemView aboutUsItem = mGroupListView.createItemView(
-                getResources().getDrawable(R.mipmap.icon_about_us), "关于我们", "", QMUICommonListItemView.HORIZONTAL, QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        setItemView(aboutUsItem);
-
-        QMUIGroupListView.newSection(getContext())
-                .addItemView(deivceItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, DeviceFragment_.class);
-                    }
-                })
-                .addItemView(collectionItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, CollectFragment.class);
-                    }
-                })
-                .addItemView(orderItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //服务协议
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
-                        bundle.putString(Key.BUNDLE_TITLE, orderItem.getText().toString());
-                        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
-                    }
-                })
-                .addItemView(shoppingItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //服务协议
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Shopping_Address);
-                        bundle.putString(Key.BUNDLE_TITLE, shoppingItem.getText().toString());
-                        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
-                    }
-                })
-                .setUseTitleViewForSectionSpace(false)
-                .addTo(mGroupListView);
-
-        QMUIGroupListView.newSection(getContext())
-                .addItemView(problemItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);
-                    }
-                })
-                .addItemView(aboutUsItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, AboutFragment.class);
-                    }
-                })
-                .addTo(mGroupListView);
-
-    }
-
-    private void setItemView(QMUICommonListItemView item) {
-        item.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        item.getTextView().setTextSize(15);
-        item.getTextView().getPaint().setFakeBoldText(true);
-        item.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
-    }
-
-    @OnClick({R.id.iv_userImg, R.id.iv_setting, R.id.iv_notify})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_userImg:
-                RxActivityUtils.skipActivity(mContext, UserInfofragment.class);
-                break;
-            case R.id.iv_setting:
-                RxActivityUtils.skipActivity(mContext, Settingfragment.class);
-                break;
-            case R.id.iv_notify:
-                RxActivityUtils.skipActivity(mContext, MessageFragment.class);
-                break;
-        }
-    }
 
     private void initMineData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -245,8 +171,8 @@ public class MeFragment extends BaseAcFragment {
                         MyAPP.getImageLoader().displayImage(mActivity, user.getImgUrl(), R.mipmap.userimg, mIvUserImg);
 
                         mTvUserName.setText(user.getUserName());
-                        deivceItem.setDetailText(user.getBindCount() == 0 ? "" : user.getBindCount() + "");
-                        collectionItem.setDetailText(user.getCollectCount() == 0 ? "" : user.getCollectCount() + "");
+                        mTvDeviceCount.setText(user.getBindCount() == 0 ? "" : user.getBindCount() + "");
+                        mTvCollectCount.setText(user.getCollectCount() == 0 ? "" : user.getCollectCount() + "");
 
                         //更新消息未读状态
                         mIvNotify.setImageResource(user.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
@@ -267,5 +193,54 @@ public class MeFragment extends BaseAcFragment {
     @Override
     protected boolean canDragBack() {
         return false;
+    }
+
+
+    @OnClick({
+            R.id.layout_myDevice,
+            R.id.layout_myCollect,
+            R.id.layout_myOrder,
+            R.id.layout_myShoppingAddress,
+            R.id.layout_problem,
+            R.id.layout_aboutUs,
+            R.id.iv_userImg,
+            R.id.iv_setting,
+            R.id.iv_notify})
+    public void onViewClicked(View view) {
+        Bundle bundle = new Bundle();
+        switch (view.getId()) {
+            case R.id.layout_myDevice:
+                RxActivityUtils.skipActivity(mContext, DeviceFragment.class);
+                break;
+            case R.id.layout_myCollect:
+                RxActivityUtils.skipActivity(mContext, CollectFragment.class);
+                break;
+            case R.id.layout_myOrder:
+
+                bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
+                bundle.putString(Key.BUNDLE_TITLE, "我的订单");
+                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                break;
+            case R.id.layout_myShoppingAddress:
+                bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Shopping_Address);
+                bundle.putString(Key.BUNDLE_TITLE, "我的购物车");
+                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                break;
+            case R.id.layout_problem:
+                RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);
+                break;
+            case R.id.layout_aboutUs:
+                RxActivityUtils.skipActivity(mContext, AboutFragment.class);
+                break;
+            case R.id.iv_userImg:
+                RxActivityUtils.skipActivity(mContext, UserInfofragment.class);
+                break;
+            case R.id.iv_setting:
+                RxActivityUtils.skipActivity(mContext, Settingfragment.class);
+                break;
+            case R.id.iv_notify:
+                RxActivityUtils.skipActivity(mContext, MessageFragment.class);
+                break;
+        }
     }
 }

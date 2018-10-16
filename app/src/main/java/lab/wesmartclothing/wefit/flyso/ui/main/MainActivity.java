@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -23,7 +22,6 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +35,11 @@ import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
 import lab.wesmartclothing.wefit.flyso.ble.BleService_;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
-import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
-import lab.wesmartclothing.wefit.flyso.ui.guide.SpalshActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
@@ -50,7 +47,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
-import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -86,7 +82,7 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
         //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
         if (savedInstanceState != null) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, SpalshActivity_.class);
+            RxActivityUtils.skipActivityAndFinish(mActivity, SplashActivity.class);
             return;
         }
         setContentView(R.layout.activity_main);
@@ -272,42 +268,6 @@ public class MainActivity extends BaseALocationActivity {
     }
 
     private void initRxBus() {
-        RxBus.getInstance().register2(FirmwareVersionUpdate.class)
-                .compose(RxComposeUtils.<FirmwareVersionUpdate>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<FirmwareVersionUpdate>() {
-                    @Override
-                    protected void _onNext(final FirmwareVersionUpdate firmwareVersionUpdate) {
-                        final boolean isMust = firmwareVersionUpdate.getMustUpgrade() != 0;
-                        //差值大于2kg，体重数据不合理
-                        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-                        TextView tvTitle = dialog.getTvTitle();
-                        tvTitle.setVisibility(View.VISIBLE);
-                        tvTitle.setText("固件升级");
-                        dialog.getTvContent().setText("是否升级到最新的版本");
-                        dialog.setCancel("升级");
-                        dialog.setCancelListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                AboutUpdateDialog updatedialog = new AboutUpdateDialog(mActivity, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
-                                updatedialog.show();
-                            }
-                        });
-                        dialog.setSure(isMust ? "退出" : "取消");
-                        dialog.show();
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.setSureListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                if (isMust) {
-                                    RxActivityUtils.AppExit(mContext);
-                                    finish();
-                                }
-                            }
-                        });
-                    }
-                });
 
         RxBus.getInstance().register2(GoToFind.class)
                 .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))

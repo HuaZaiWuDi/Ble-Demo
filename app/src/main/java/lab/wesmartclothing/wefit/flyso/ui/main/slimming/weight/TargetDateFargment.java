@@ -158,7 +158,7 @@ public class TargetDateFargment extends BaseActivity {
                         RxLogUtils.d("心率数据：" + s);
                         //关闭之前的设置目标体重和目标周期的界面
                         //直接跳转到指定的Fragment（同时清栈）
-                        RxActivityUtils.skipActivity(mContext, WeightRecordFragment_.class);
+                        RxActivityUtils.skipActivity(mContext, WeightRecordFragment.class);
                     }
 
                     @Override

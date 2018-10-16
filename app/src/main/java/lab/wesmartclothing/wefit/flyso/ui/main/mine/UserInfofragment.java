@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,8 +14,6 @@ import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
-import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -24,6 +21,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.vondear.rxtools.view.layout.RxRelativeLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,16 +72,41 @@ public class UserInfofragment extends BaseActivity {
     QMUIRadiusImageView mIvUserImg;
     @BindView(R.id.layout_userImg)
     RelativeLayout mLayoutUserImg;
-    @BindView(R.id.groupListView)
-    QMUIGroupListView mGroupListView;
     Unbinder unbinder;
+    @BindView(R.id.tv_userName)
+    TextView mTvUserName;
+    @BindView(R.id.layout_userName)
+    RxRelativeLayout mLayoutUserName;
+    @BindView(R.id.tv_userSex)
+    TextView mTvUserSex;
+    @BindView(R.id.layout_userSex)
+    RxRelativeLayout mLayoutUserSex;
+    @BindView(R.id.tv_Birth)
+    TextView mTvBirth;
+    @BindView(R.id.layout_userBirth)
+    RxRelativeLayout mLayoutUserBirth;
+    @BindView(R.id.tv_userHeight)
+    TextView mTvUserHeight;
+    @BindView(R.id.layout_userHeight)
+    RxRelativeLayout mLayoutUserHeight;
+    @BindView(R.id.tv_userWeight)
+    TextView mTvUserWeight;
+    @BindView(R.id.layout_userWeight)
+    RxRelativeLayout mLayoutUserWeight;
+    @BindView(R.id.tv_userCity)
+    TextView mTvUserCity;
+    @BindView(R.id.layout_userCity)
+    RxRelativeLayout mLayoutUserCity;
+    @BindView(R.id.tv_userSign)
+    TextView mTvUserSign;
+    @BindView(R.id.layout_userSign)
+    RxRelativeLayout mLayoutUserSign;
 
-    private QMUICommonListItemView userNameItem, sexItem, birthItem, heightItem, weightItem, cityItem, signItem;
     private UserInfo info;
     public static final int RESULT_CODE = 500;
     public static final int REQUEST_CODE = 501;
     public static final int IMAGE_PICKER = 503;
-
+    private boolean userImgIsChange = false;//是否需要上传头像
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +120,6 @@ public class UserInfofragment extends BaseActivity {
 
     private void initView() {
         initTopBar();
-        groupList();
         initImagePicker();
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         info = MyAPP.getGson().fromJson(string, UserInfo.class);
@@ -133,7 +155,13 @@ public class UserInfofragment extends BaseActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        requestSaveUserInfo();
+                        if (info.isChange()) {
+                            if (userImgIsChange) {
+                                uploadImage();
+                            } else {
+                                requestSaveUserInfo();
+                            }
+                        }
                     }
                 });
     }
@@ -142,123 +170,15 @@ public class UserInfofragment extends BaseActivity {
 
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
 
-        userNameItem.setDetailText(info.getUserName());
-        sexItem.setDetailText(info.getSex() == 1 ? "男" : "女");
-        birthItem.setDetailText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
-        heightItem.setDetailText(info.getHeight() + "\tcm");
-        weightItem.setDetailText(info.getTargetWeight() + "\tkg");
+        mTvUserName.setText(info.getUserName());
+        mTvUserSex.setText(info.getSex() == 1 ? "男" : "女");
+        mTvBirth.setText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
+        mTvUserHeight.setText(info.getHeight() + "\tcm");
+        mTvUserWeight.setText(info.getTargetWeight() + "\tkg");
         if (!RxDataUtils.isNullString(info.getProvince()) && !RxDataUtils.isNullString(info.getCity()))
-            cityItem.setDetailText(info.getProvince() + "," + info.getCity());
+            mTvUserCity.setText(info.getProvince() + "," + info.getCity());
         if (!RxDataUtils.isNullString(info.getSignature()))
-            signItem.setDetailText(info.getSignature());
-    }
-
-    private void groupList() {
-        userNameItem = mGroupListView.createItemView("昵称");
-        userNameItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        setItemView(userNameItem);
-
-        sexItem = mGroupListView.createItemView("性别");
-        sexItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        setItemView(sexItem);
-
-        birthItem = mGroupListView.createItemView("生日");
-        birthItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        setItemView(birthItem);
-
-        heightItem = mGroupListView.createItemView("身高");
-        heightItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        setItemView(heightItem);
-
-        weightItem = mGroupListView.createItemView("目标体重");
-        weightItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        setItemView(weightItem);
-
-        cityItem = mGroupListView.createItemView("所在城市");
-        cityItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        cityItem.setDetailText("未知");
-        setItemView(cityItem);
-
-        signItem = mGroupListView.createItemView("签名");
-        signItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
-        signItem.setDetailText("请输入个性签名");
-        TextView textView = signItem.getDetailTextView();
-        textView.setMaxLines(1);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
-        setItemView(signItem);
-
-        QMUIGroupListView.newSection(mActivity)
-                .setUseTitleViewForSectionSpace(false)
-                .addItemView(userNameItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_TITLE, "昵称");
-                        bundle.putString(Key.BUNDLE_DATA, info.getUserName());
-                        RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
-                    }
-                })
-                .addItemView(sexItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showSex();
-                    }
-                })
-                .addTo(mGroupListView);
-
-        QMUIGroupListView.newSection(mActivity)
-                .setUseTitleViewForSectionSpace(false)
-                .addItemView(birthItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showDate();
-                    }
-                })
-                .addItemView(heightItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showHeight();
-                    }
-                })
-                .addItemView(weightItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (SPUtils.getFloat(SPKey.SP_realWeight) <= 0) {
-                            RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
-                            return;
-                        }
-                        RxActivityUtils.skipActivity(mActivity, TargetDetailsFragment.class);
-                    }
-                })
-                .addTo(mGroupListView);
-
-        QMUIGroupListView.newSection(mActivity)
-                .setUseTitleViewForSectionSpace(false)
-                .addItemView(cityItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showAddress();
-                    }
-                })
-                .addItemView(signItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_TITLE, signItem.getText().toString());
-                        bundle.putString(Key.BUNDLE_DATA, signItem.getDetailText().toString());
-                        RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
-                    }
-                })
-                .addTo(mGroupListView);
-
-    }
-
-    private void setItemView(QMUICommonListItemView item) {
-        item.getTextView().setTextColor(getResources().getColor(R.color.Gray));
-        item.getTextView().setTextSize(15);
-        item.getTextView().getPaint().setFakeBoldText(true);
-        item.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
-        item.getDetailTextView().setEllipsize(TextUtils.TruncateAt.END);
+            mTvUserSign.setText(info.getSignature());
     }
 
 
@@ -275,16 +195,20 @@ public class UserInfofragment extends BaseActivity {
             if (data != null && requestCode == IMAGE_PICKER) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
 
-                uploadImage(images.get(0).path);
+                MyAPP.getImageLoader().displayImage(mActivity, images.get(0).path, R.mipmap.userimg, mIvUserImg);
+
+                //成功后将本地图片设置到imageView中，并在退回到个人中心时，刷新贴图url
+                info.setImgUrl(images.get(0).path);
+                userImgIsChange = true;
             }
         } else if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
             Bundle bundle = data.getExtras();
             String title = bundle.getString(Key.BUNDLE_TITLE);
-            if (title.equals(userNameItem.getText().toString())) {
-                userNameItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+            if ("昵称".equals(title)) {
+                mTvUserName.setText(bundle.getString(Key.BUNDLE_DATA));
                 info.setUserName(bundle.getString(Key.BUNDLE_DATA));
             } else {
-                signItem.setDetailText(bundle.getString(Key.BUNDLE_DATA));
+                mTvUserSign.setText(bundle.getString(Key.BUNDLE_DATA));
                 info.setSignature(bundle.getString(Key.BUNDLE_DATA));
             }
         }
@@ -303,7 +227,7 @@ public class UserInfofragment extends BaseActivity {
             @Override
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
-                birthItem.setDetailText(year + "-" + month + "-" + day);
+                mTvBirth.setText(year + "-" + month + "-" + day);
                 Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
                 info.setBirthday(date.getTime());
             }
@@ -323,7 +247,7 @@ public class UserInfofragment extends BaseActivity {
 
             @Override
             public void onAddressPicked(Province province, City city, County county) {
-                cityItem.setDetailText(province.getName() + "," + city.getName());
+                mTvUserCity.setText(province.getName() + "," + city.getName());
                 info.setProvince(province.getName());
                 info.setCity(city.getName());
             }
@@ -343,7 +267,7 @@ public class UserInfofragment extends BaseActivity {
             @Override
             public void onNumberPicked(int index, Number item) {
                 RxLogUtils.d("身高：" + item);
-                heightItem.setDetailText(item + "cm");
+                mTvUserHeight.setText(item + "cm");
                 info.setHeight((int) item);
             }
         });
@@ -360,7 +284,7 @@ public class UserInfofragment extends BaseActivity {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
                         dialog.dismiss();
-                        sexItem.setDetailText(tag);
+                        mTvUserSex.setText(tag);
                         info.setSex(position + 1);
                     }
                 })
@@ -368,9 +292,9 @@ public class UserInfofragment extends BaseActivity {
                 .show();
     }
 
-    private void uploadImage(final String cropImagePath) {
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(cropImagePath));
-        MultipartBody.Part body = MultipartBody.Part.createFormData("file", cropImagePath, requestFile);
+    private void uploadImage() {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(info.getImgUrl()));
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", info.getImgUrl(), requestFile);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.uploadUserImg(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -378,15 +302,7 @@ public class UserInfofragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        MyAPP.getImageLoader().displayImage(mActivity, cropImagePath, R.mipmap.userimg, mIvUserImg);
-
-                        RxLogUtils.d("结束" + s);
-                        RxToast.success("保存成功", 2000);
-                        //成功后将本地图片设置到imageView中，并在退回到个人中心时，刷新贴图url
-                        info.setImgUrl(s);
-                        UserInfo myInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
-                        myInfo.setImgUrl(s);
-                        SPUtils.put(SPKey.SP_UserInfo, MyAPP.getGson().toJson(myInfo));
+                        requestSaveUserInfo();
                     }
 
                     @Override
@@ -411,7 +327,7 @@ public class UserInfofragment extends BaseActivity {
                         RxToast.success("保存成功", 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
                         RxActivityUtils.finishActivity();
-                        new QNBleTools().disConnectDevice();
+                        QNBleTools.getInstance().disConnectDevice();
                         //刷新数据
                         RxBus.getInstance().post(new RefreshMe());
                         RxBus.getInstance().post(new RefreshSlimming());
@@ -438,7 +354,11 @@ public class UserInfofragment extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    requestSaveUserInfo();
+                    if (userImgIsChange) {
+                        uploadImage();
+                    } else {
+                        requestSaveUserInfo();
+                    }
                 }
             })
                     .setSure("退出")
@@ -454,4 +374,46 @@ public class UserInfofragment extends BaseActivity {
     }
 
 
+    @OnClick({
+            R.id.layout_userName,
+            R.id.layout_userSex,
+            R.id.layout_userBirth,
+            R.id.layout_userHeight,
+            R.id.layout_userWeight,
+            R.id.layout_userCity,
+            R.id.layout_userSign})
+    public void onViewClicked(View view) {
+        Bundle bundle = new Bundle();
+        switch (view.getId()) {
+            case R.id.layout_userName:
+                bundle.putString(Key.BUNDLE_TITLE, "昵称");
+                bundle.putString(Key.BUNDLE_DATA, info.getUserName());
+                RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
+                break;
+            case R.id.layout_userSex:
+                showSex();
+                break;
+            case R.id.layout_userBirth:
+                showDate();
+                break;
+            case R.id.layout_userHeight:
+                showHeight();
+                break;
+            case R.id.layout_userWeight:
+                if (SPUtils.getFloat(SPKey.SP_realWeight) <= 0) {
+                    RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
+                    return;
+                }
+                RxActivityUtils.skipActivity(mActivity, TargetDetailsFragment.class);
+                break;
+            case R.id.layout_userCity:
+                showAddress();
+                break;
+            case R.id.layout_userSign:
+                bundle.putString(Key.BUNDLE_TITLE, "签名");
+                bundle.putString(Key.BUNDLE_DATA, info.getSignature());
+                RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
+                break;
+        }
+    }
 }

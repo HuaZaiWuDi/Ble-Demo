@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.view.View;
 
-import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxIntentUtils;
 
 import java.util.List;
@@ -73,7 +72,7 @@ public class RxActivityUtils {
         if (activity != null) {
             activityStack.remove(activity);
             activity.finish();
-            activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            activityAnim(activity);
             activity = null;
         }
     }
@@ -86,6 +85,7 @@ public class RxActivityUtils {
         for (Activity activity : activityStack) {
             if (activity.getClass().equals(cls)) {
                 finishActivity();
+
             }
         }
     }
@@ -170,7 +170,7 @@ public class RxActivityUtils {
         intent.putExtras(bundle);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
         ((Activity) context).finish();
     }
 
@@ -186,7 +186,7 @@ public class RxActivityUtils {
         Intent intent = new Intent(context, goal);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
         ((Activity) context).finish();
     }
 
@@ -201,7 +201,7 @@ public class RxActivityUtils {
         Intent intent = new Intent(context, goal);
         intent.putExtras(bundle);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
         ((Activity) context).finish();
     }
 
@@ -214,7 +214,7 @@ public class RxActivityUtils {
     public static void skipActivityAndFinish(Context context, Class<?> goal) {
         Intent intent = new Intent(context, goal);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
         ((Activity) context).finish();
     }
 
@@ -228,7 +228,7 @@ public class RxActivityUtils {
     public static void skipActivity(Context context, Class<?> goal) {
         Intent intent = new Intent(context, goal);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
     }
 
     /**
@@ -241,7 +241,7 @@ public class RxActivityUtils {
         Intent intent = new Intent(context, goal);
         intent.putExtras(bundle);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
     }
 
     /**
@@ -254,7 +254,7 @@ public class RxActivityUtils {
         Intent intent = new Intent(context, goal);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
     }
 
     /**
@@ -268,20 +268,20 @@ public class RxActivityUtils {
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtras(bundle);
         context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
     }
 
     public static void skipActivityForResult(Activity context, Class<?> goal, int requestCode) {
         Intent intent = new Intent(context, goal);
         context.startActivityForResult(intent, requestCode);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
     }
 
     public static void skipActivityForResult(Activity context, Class<?> goal, Bundle bundle, int requestCode) {
         Intent intent = new Intent(context, goal);
         intent.putExtras(bundle);
         context.startActivityForResult(intent, requestCode);
-        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activityAnim(context);
     }
 
 
@@ -333,7 +333,19 @@ public class RxActivityUtils {
         Intent homeIntent = new Intent(Intent.ACTION_MAIN);
         homeIntent.addCategory(Intent.CATEGORY_HOME);
         context.startActivity(homeIntent);
+        activityAnim(context);
     }
+
+
+    /**
+     * 设置界面跳转动画
+     *
+     * @param context
+     */
+    private static void activityAnim(final Context context) {
+//        ((Activity) context).overridePendingTransition(R.anim.translate_left2right, R.anim.translate_right2left);
+    }
+
 
     /**
      * 设置跳转动画

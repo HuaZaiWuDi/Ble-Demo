@@ -22,18 +22,16 @@ import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -41,34 +39,34 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 
-@EActivity(R.layout.activity_weight_data)
 public class WeightDataActivity extends BaseActivity {
+
+    @BindView(R.id.QMUIAppBarLayout)
+    QMUITopBar QMUIAppBarLayout;
+    @BindView(R.id.tv_receive)
+    TextView tv_receive;
+    @BindView(R.id.mRecycler_Receive)
+    RecyclerView mRecycler_Receive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_weight_data);
+        ButterKnife.bind(this);
+        initView();
+        weightHistoryData = getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_HISTORY);
     }
 
 
-    @ViewById
-    RecyclerView mRecycler_Receive;
-    @ViewById
-    TextView tv_receive;
-    @ViewById
-    QMUITopBar QMUIAppBarLayout;
+    String weightHistoryData;
 
-    @Extra
-    String BUNDLE_WEIGHT_HISTORY;
-
-    @Extra
-    double BUNDLE_LAST_WEIGHT;
 
     private BaseQuickAdapter adapter_Receive;
 
-    @AfterViews
     public void initView() {
         initTopBar();
         initRecyclerView();
@@ -89,7 +87,7 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void initRecyclerView() {
-        final Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        final Typeface typeface = MyAPP.typeface;
         mRecycler_Receive.setLayoutManager(new LinearLayoutManager(mContext));
 
         adapter_Receive = new BaseQuickAdapter<QNScaleStoreData, BaseViewHolder>(R.layout.item_weight_data) {
@@ -117,7 +115,7 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void initData() {
-        List<QNScaleStoreData> listReceives = MyAPP.getGson().fromJson(BUNDLE_WEIGHT_HISTORY, new TypeToken<List<QNScaleStoreData>>() {
+        List<QNScaleStoreData> listReceives = MyAPP.getGson().fromJson(weightHistoryData, new TypeToken<List<QNScaleStoreData>>() {
         }.getType());
 
         adapter_Receive.setNewData(listReceives);
@@ -139,7 +137,7 @@ public class WeightDataActivity extends BaseActivity {
         bean.setWeight(qnScaleData.getWeight());
         String s = MyAPP.getGson().toJson(bean, WeightAddBean.class);
 
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

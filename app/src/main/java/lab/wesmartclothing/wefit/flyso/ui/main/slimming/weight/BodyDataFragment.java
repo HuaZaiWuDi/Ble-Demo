@@ -428,6 +428,6 @@ public class BodyDataFragment extends BaseActivity {
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        RxActivityUtils.skipActivityAndFinish(mContext, WeightRecordFragment_.class);
+        RxActivityUtils.skipActivityAndFinish(mContext, WeightRecordFragment.class);
     }
 }

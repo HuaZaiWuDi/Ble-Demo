@@ -1,14 +1,18 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,6 +20,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.clj.fastble.data.BleDevice;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
@@ -30,19 +35,14 @@ import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.Receiver;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -51,6 +51,7 @@ import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -61,66 +62,73 @@ import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-@EActivity(R.layout.activity_add_device)
 public class AddDeviceActivity extends BaseActivity {
 
-    @ViewById
-    ImageView img_working;
-    @ViewById
-    ImageView img_startUse;
-    @ViewById
-    ImageView img_bind;
-    @ViewById
-    ImageView img_back;
-    @ViewById
-    ScanView img_scan;
-    @ViewById
-    TextView tv_title;
-    @ViewById
-    TextView tv_skip;
-    @ViewById
-    TextView tv_working;
-    @ViewById
-    TextView tv_startUse;
-    @ViewById
-    TextView tv_bind;
-    @ViewById
-    TextView tv_info;
-    @ViewById
-    View line_working;
-    @ViewById
-    View line_bind_L;
-    @ViewById
-    View line_bind_R;
-    @ViewById
-    View line_use;
-    @ViewById
-    Button btn_scan;
-    @ViewById
-    RelativeLayout layout_scan;
-    @ViewById
-    RelativeLayout layout_bind;
-    @ViewById
-    RecyclerView mRecyclerView;
-    //    @ViewById
-//    SmoothRefreshLayout refresh;
-    @ViewById
-    RelativeLayout layout_notDevice;
-    @ViewById
-    RelativeLayout layout_scan_2;
 
-    @Bean
-    BindDeviceItem mBindDeviceItem;
+    BindDeviceItem mBindDeviceItem = new BindDeviceItem();
 
-    @Bean
-    QNBleTools mQNBleTools;
+    QNBleTools mQNBleTools = QNBleTools.getInstance();
 
-    @Extra
-    boolean BUNDLE_FORCE_BIND = true;//是否强制绑定
-    @Extra
-    String BUNDLE_BIND_TYPE = "all";//设置扫描类型，all为全部扫描
+    boolean forceBind = true;//是否强制绑定
+
+
+    @BindView(R.id.layout_scan)
+    RelativeLayout mLayoutScan;
+    @BindView(R.id.img_scan)
+    ScanView mImgScan;
+    @BindView(R.id.layout_scan_2)
+    RelativeLayout mLayoutScan2;
+    @BindView(R.id.tv_nearDevice)
+    TextView mTvNearDevice;
+    @BindView(R.id.mRecyclerView)
+    RecyclerView mMRecyclerView;
+    @BindView(R.id.layout_bind)
+    RelativeLayout mLayoutBind;
+    @BindView(R.id.img_back)
+    ImageView mImgBack;
+    @BindView(R.id.back)
+    LinearLayout mBack;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.tv_skip)
+    TextView mTvSkip;
+    @BindView(R.id.layout_title)
+    RelativeLayout mLayoutTitle;
+    @BindView(R.id.tv_info)
+    TextView mTvInfo;
+    @BindView(R.id.img_working)
+    ImageView mImgWorking;
+    @BindView(R.id.tv_working)
+    TextView mTvWorking;
+    @BindView(R.id.line_working)
+    View mLineWorking;
+    @BindView(R.id.img_bind)
+    ImageView mImgBind;
+    @BindView(R.id.tv_bind)
+    TextView mTvBind;
+    @BindView(R.id.line_bind_L)
+    View mLineBindL;
+    @BindView(R.id.line_bind_R)
+    View mLineBindR;
+    @BindView(R.id.img_startUse)
+    ImageView mImgStartUse;
+    @BindView(R.id.tv_startUse)
+    TextView mTvStartUse;
+    @BindView(R.id.line_use)
+    View mLineUse;
+    @BindView(R.id.layout_step)
+    LinearLayout mLayoutStep;
+    @BindView(R.id.btn_scan)
+    QMUIRoundButton mBtnScan;
+    @BindView(R.id.img_no_data)
+    ImageView mImgNoData;
+    @BindView(R.id.tv_tip)
+    TextView mTvTip;
+    @BindView(R.id.layout_notDevice)
+    RelativeLayout mLayoutNotDevice;
 
 
     private int stepState = 0;
@@ -128,14 +136,6 @@ public class AddDeviceActivity extends BaseActivity {
     private List<BindDeviceItem.DeviceListBean> mDeviceLists = new ArrayList<>();
     private Map<String, BindDeviceBean> scanDevice = new HashMap<>();
 
-    @Click
-    void back() {
-        if (stepState == 3) {
-            initStep(0);
-        } else {
-            RxActivityUtils.finishActivity();
-        }
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -148,40 +148,34 @@ public class AddDeviceActivity extends BaseActivity {
         return true;
     }
 
-    @Click
-    void btn_scan() {
-        if (stepState == 0) {
-            startScan();
-        } else if (stepState == 2) {
-            bindDevice();
-        }
-    }
-
-    @Click
-    void tv_skip() {
-        //跳转主页
-        if (!BUNDLE_FORCE_BIND)
-            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-        else
-            RxActivityUtils.finishActivity();
-    }
 
     //监听系统蓝牙开启
-    @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
-    void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
-        if (state == BluetoothAdapter.STATE_OFF) {
-            btn_scan.setEnabled(true);
-            img_scan.stopAnimation();
-            RxToast.warning(getString(R.string.checkBle));
-            initStep(3);
+    BroadcastReceiver systemBleReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+            if (state == BluetoothAdapter.STATE_OFF) {
+                mBtnScan.setEnabled(true);
+                mImgScan.stopAnimation();
+                RxToast.warning(getString(R.string.checkBle));
+                initStep(3);
+            }
         }
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_device);
+        ButterKnife.bind(this);
         //屏幕沉浸
         StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+
+        forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
+
+        registerReceiver(systemBleReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        initView();
+        initRxBus();
     }
 
     private void startScan() {
@@ -199,19 +193,18 @@ public class AddDeviceActivity extends BaseActivity {
 
         mDeviceLists.clear();
         scanDevice.clear();
-        img_scan.startAnimation();
-        btn_scan.setEnabled(false);
+        mImgScan.startAnimation();
+        mBtnScan.setEnabled(false);
 
         scanTimeout.startTimer();
 
-        initRxBus();
     }
 
     private MyTimer scanTimeout = new MyTimer(new MyTimerListener() {
         @Override
         public void enterTimer() {
-            btn_scan.setEnabled(true);
-            img_scan.stopAnimation();
+            mBtnScan.setEnabled(true);
+            mImgScan.stopAnimation();
             RxToast.warning(getString(R.string.checkBle));
             initStep(3);
         }
@@ -225,10 +218,8 @@ public class AddDeviceActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<BleDevice>() {
                     @Override
                     protected void _onNext(BleDevice device) {
-                        if (BleKey.TYPE_CLOTHING.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
-                            BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
-                            isBind(bean);
-                        }
+                        BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
+                        isBind(bean);
                     }
                 });
         //体脂称
@@ -237,27 +228,25 @@ public class AddDeviceActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<QNBleDevice>() {
                     @Override
                     protected void _onNext(QNBleDevice device) {
-                        if (BleKey.TYPE_SCALE.equals(BUNDLE_BIND_TYPE) || "all".equals(BUNDLE_BIND_TYPE)) {
-                            BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
-                            isBind(bean);
-                        }
+                        BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
+                        isBind(bean);
                     }
                 });
     }
 
 
-    @AfterViews
     public void initView() {
         initStep(0);
         initRecycler();
-        if (BUNDLE_FORCE_BIND)
-            tv_skip.setVisibility(View.GONE);
+        if (forceBind)
+            mTvSkip.setVisibility(View.GONE);
 
     }
 
 
     @Override
     protected void onDestroy() {
+        unregisterReceiver(systemBleReceiver);
         scanTimeout.stopTimer();
         super.onDestroy();
     }
@@ -268,7 +257,7 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void initRecycler() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mMRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new BaseQuickAdapter<BindDeviceBean, BaseViewHolder>(R.layout.item_bind_device) {
             @Override
             protected void convert(BaseViewHolder helper, BindDeviceBean item) {
@@ -312,50 +301,50 @@ public class AddDeviceActivity extends BaseActivity {
                 }
             }
         });
-        adapter.bindToRecyclerView(mRecyclerView);
+        adapter.bindToRecyclerView(mMRecyclerView);
     }
 
     private void initStep(int stepState) {
         this.stepState = stepState;
-        layout_notDevice.setVisibility(stepState == 3 ? View.VISIBLE : View.GONE);
-        tv_title.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
-        img_back.setImageResource(stepState == 0 ? R.mipmap.back_icon : R.mipmap.back);
-        if (!BUNDLE_FORCE_BIND)
-            tv_skip.setVisibility(stepState == 1 ? View.GONE : View.VISIBLE);
-        tv_skip.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
-        tv_info.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.textHeatColor));
+        mLayoutNotDevice.setVisibility(stepState == 3 ? View.VISIBLE : View.GONE);
+        mTvTitle.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
+        mImgBack.setImageResource(stepState == 0 ? R.mipmap.back_icon : R.mipmap.back);
+        if (!forceBind)
+            mTvSkip.setVisibility(stepState == 1 ? View.GONE : View.VISIBLE);
+        mTvSkip.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
+        mTvSkip.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.textHeatColor));
 
         Drawable drawableColor = RxImageTools.changeDrawableColor(mContext, R.mipmap.icon_wancheng3x, R.color.green_61D97F);
 
         switch (stepState) {
             case 0:
-                layout_scan.setVisibility(View.VISIBLE);
-                layout_scan_2.setVisibility(View.VISIBLE);
-                layout_bind.setVisibility(View.GONE);
-                btn_scan.setVisibility(View.VISIBLE);
+                mLayoutScan.setVisibility(View.VISIBLE);
+                mLayoutScan2.setVisibility(View.VISIBLE);
+                mLayoutBind.setVisibility(View.GONE);
+                mBtnScan.setVisibility(View.VISIBLE);
                 break;
             case 1:
-                layout_scan.setVisibility(View.GONE);
-                layout_scan_2.setVisibility(View.GONE);
-                layout_bind.setVisibility(View.VISIBLE);
-                img_working.setBackground(drawableColor);
+                mLayoutScan.setVisibility(View.GONE);
+                mLayoutScan2.setVisibility(View.GONE);
+                mLayoutBind.setVisibility(View.VISIBLE);
+                mImgWorking.setBackground(drawableColor);
 
-                img_bind.setBackgroundResource(R.mipmap.icon_xuanzhe);
-                line_bind_L.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-                line_bind_R.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-                tv_bind.setTextColor(getResources().getColor(R.color.textColor));
-                btn_scan.setVisibility(View.INVISIBLE);
+                mImgBind.setBackgroundResource(R.mipmap.icon_xuanzhe);
+                mLineBindL.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
+                mLineBindR.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
+                mTvBind.setTextColor(getResources().getColor(R.color.textColor));
+                mBtnScan.setVisibility(View.INVISIBLE);
                 break;
             case 2:
-                img_startUse.setBackgroundResource(R.mipmap.icon_xuanzhe);
-                img_bind.setBackground(drawableColor);
-                line_use.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-                tv_startUse.setTextColor(getResources().getColor(R.color.textColor));
-                btn_scan.setVisibility(View.VISIBLE);
-                btn_scan.setText(R.string.startUse);
+                mImgStartUse.setBackgroundResource(R.mipmap.icon_xuanzhe);
+                mImgBind.setBackground(drawableColor);
+                mLineUse.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
+                mTvStartUse.setTextColor(getResources().getColor(R.color.textColor));
+                mBtnScan.setVisibility(View.VISIBLE);
+                mBtnScan.setText(R.string.startUse);
                 break;
             case 3:
-                layout_scan.setVisibility(View.GONE);
+                mLayoutScan.setVisibility(View.GONE);
                 break;
         }
     }
@@ -384,7 +373,7 @@ public class AddDeviceActivity extends BaseActivity {
 
         mBindDeviceItem.setDeviceList(mDeviceLists);
         String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addBindDevice(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -394,7 +383,7 @@ public class AddDeviceActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加绑定设备：" + s);
                         //跳转主页
-                        if (!BUNDLE_FORCE_BIND) {
+                        if (!forceBind) {
                             RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         } else {
                             onBackPressed();
@@ -426,8 +415,8 @@ public class AddDeviceActivity extends BaseActivity {
         scanDevice.put(bean.getMac(), bean);
 
         scanTimeout.stopTimer();
-        btn_scan.setEnabled(true);
-        img_scan.stopAnimation();
+        mBtnScan.setEnabled(true);
+        mImgScan.stopAnimation();
         if (stepState != 2)
             initStep(1);
 
@@ -458,4 +447,30 @@ public class AddDeviceActivity extends BaseActivity {
                 });
     }
 
+    @OnClick({R.id.back, R.id.btn_scan, R.id.tv_tip})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.back:
+                if (stepState == 3) {
+                    initStep(0);
+                } else {
+                    RxActivityUtils.finishActivity();
+                }
+                break;
+            case R.id.btn_scan:
+                if (stepState == 0) {
+                    startScan();
+                } else if (stepState == 2) {
+                    bindDevice();
+                }
+                break;
+            case R.id.tv_tip:
+                //跳转主页
+                if (!forceBind)
+                    RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                else
+                    RxActivityUtils.finishActivity();
+                break;
+        }
+    }
 }

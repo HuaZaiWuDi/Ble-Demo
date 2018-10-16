@@ -235,4 +235,10 @@
     <color name="hintColor">#CCCCCC</color>
     <color name="textColor">#000</color>
 
+    <color name="colorPrimary">#ff662c</color>
+    <color name="colorPrimaryDark">#ff662c</color>
+    <color name="colorAccent">#ff662c</color>
+    <color name="blink_color">#b1b1b1</color>
+    <color name="shimmer_color">#a2878787</color>
+
 </resources>

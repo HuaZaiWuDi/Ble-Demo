@@ -356,7 +356,7 @@ public class UserInfoActivity extends BaseALocationActivity {
                         //跳转扫描界面
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);
-                        RxActivityUtils.skipActivity(mContext, AddDeviceActivity_.class, bundle);
+                        RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class, bundle);
                     }
 
                     @Override

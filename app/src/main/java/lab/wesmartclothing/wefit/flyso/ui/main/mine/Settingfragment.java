@@ -26,7 +26,6 @@ import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.TempActivity_;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -126,7 +125,7 @@ public class Settingfragment extends BaseActivity {
                 .addItemView(clothing, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, TempActivity_.class);
+//                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
                     }
                 })
                 .setUseTitleViewForSectionSpace(false)
@@ -184,7 +183,7 @@ public class Settingfragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
                         BleTools.getInstance().disConnect();
-                        new QNBleTools().disConnectDevice();
+                        QNBleTools.getInstance().disConnectDevice();
                         MyAPP.getRxCache().clear()
                                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                                 .subscribe(new RxSubscriber<Boolean>() {

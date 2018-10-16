@@ -10,8 +10,6 @@
     tools:context=".TestBleScanActivity">
 
 
-
-
     <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
         android:id="@+id/mProgress"
         android:layout_width="match_parent"
@@ -65,16 +63,23 @@
         android:elevation="20dp"
         android:translationZ="20dp"
         app:background_normal="@color/green_61D97F"
+        app:corner_radius="25dp"
         app:gradient_angle="BOTTOM_TOP"
         app:gradient_endColor="@color/green_61D97F"
         app:gradient_startColor="@color/red"
         app:gradient_type="linear"
         app:ripple_color="@color/yellow_FFBC00"
-        app:corner_radius="25dp"
         />
 
 
+    <RelativeLayout
+        android:id="@+id/layout_test"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/mIconProgress">
 
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

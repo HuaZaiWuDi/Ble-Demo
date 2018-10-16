@@ -1,7 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,13 +18,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Receiver;
 
 import java.io.File;
 import java.util.List;
@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -36,31 +35,22 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
-@EActivity(R.layout.activity_spalsh)
-public class SpalshActivity extends BaseActivity {
-
+public class SplashActivity extends BaseActivity {
 
     private boolean isSaveUserInfo = false;
 
-    @Bean
-    HeartRateBean mHeartRateBean;
-    @Bean
-    HeartRateToKcal mHeartRateToKcal;
-
-    @Receiver(actions = Intent.ACTION_PACKAGE_REPLACED)
-    void replaced(Intent intent) {
-        String packageName = intent.getData().getSchemeSpecificPart();
-        if (this.getPackageName().equals(packageName)) {
+    BroadcastReceiver APPReplacedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
             //覆盖升级APP成功
             UpdateAppBean updateAppBean = new UpdateAppBean();
             updateAppBean.setVersionFlag(UpdateAppBean.VERSION_FLAG_APP);
@@ -71,25 +61,30 @@ public class SpalshActivity extends BaseActivity {
             updateAppBean.setMacAddr(RxDeviceUtils.getAndroidId());
             updateAppBean.addDeviceVersion(updateAppBean);
         }
+    };
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        RxLogUtils.i("启动时长：引导页开始");
+        setContentView(R.layout.activity_spalsh);
+        initView();
+        //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
+//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
     }
 
-    @AfterViews
     public void initView() {
-        RxLogUtils.i("启动时长：引导页开始");
-        JPushUtils.init(getApplication());
+        registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
+
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
+        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         if (!RxDataUtils.isNullString(baseUrl)) {
             ServiceAPI.switchURL(baseUrl);
         }
 
-
-//        //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-
-        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-        initUserInfo();
         initData();
+        initUserInfo();
+        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
 
     }
 
@@ -159,6 +154,7 @@ public class SpalshActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        unregisterReceiver(APPReplacedReceiver);
         super.onDestroy();
     }
 
@@ -225,18 +221,20 @@ public class SpalshActivity extends BaseActivity {
     /**
      * 判断本地是否有之前保存的心率数据：有则上传
      */
-    @Background
     public void uploadHistoryData() {
-        String value = SPUtils.getString(Key.CACHE_ATHL_RECORD);
-        RxLogUtils.i("保存本地的心率数据：" + value);
-        if (!RxDataUtils.isNullString(value)) {
-            List<HeartRateBean.AthlList> lists = MyAPP.getGson().fromJson(value, new TypeToken<List<HeartRateBean.AthlList>>() {
-            }.getType());
-            RxLogUtils.i("保存本地的心率数据：" + lists.size());
-            if (lists != null && lists.size() > 0) {
-                mHeartRateBean.setAthlList(lists);
-                mHeartRateBean.saveHeartRate(mHeartRateBean, mHeartRateToKcal);
-            }
-        }
+        RxCache.getDefault().<List<HeartRateBean.AthlList>>load(Key.CACHE_ATHL_RECORD, new TypeToken<List<HeartRateBean.AthlList>>() {
+        }.getType())
+                .map(new CacheResult.MapFunc<List<HeartRateBean.AthlList>>())
+                .subscribe(new RxSubscriber<List<HeartRateBean.AthlList>>() {
+                    @Override
+                    protected void _onNext(List<HeartRateBean.AthlList> athlLists) {
+                        if (athlLists != null && !athlLists.isEmpty()) {
+                            HeartRateBean mHeartRateBean = new HeartRateBean();
+                            mHeartRateBean.setAthlList(athlLists);
+                            mHeartRateBean.saveHeartRate(mHeartRateBean);
+
+                        }
+                    }
+                });
     }
 }

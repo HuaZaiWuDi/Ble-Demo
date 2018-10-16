@@ -125,8 +125,9 @@
 
         </activity>
         <activity
-            android:name=".ui.guide.SpalshActivity_"
+            android:name=".ui.guide.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"
             android:theme="@style/StartTheme">
             <intent-filter>
@@ -137,24 +138,29 @@
         </activity>
 
         <activity
-            android:name=".ui.main.slimming.weight.WeightDataActivity_"
+            android:name=".ui.main.slimming.weight.WeightDataActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.userinfo.UserInfoActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
-            android:name=".ui.userinfo.AddDeviceActivity_"
+            android:name=".ui.userinfo.AddDeviceActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.WebActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.WebTitleActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
 
@@ -166,80 +172,98 @@
 
         <activity
             android:name=".ui.login.LoginRegisterActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
 
         <activity
             android:name=".ui.main.mine.CollectWebActivity"
-            android:screenOrientation="nosensor">
-        </activity>
-        <activity
-            android:name=".ui.main.slimming.sports.TempActivity_"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".TestBleScanActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.login.RegisterActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.login.BindPhoneActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.login.ForgetPasswordActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.login.VerificationPhoneActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.main.mine.AboutFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.toolui.SportingActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.AccountFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.CollectFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.mine.DeviceFragment_"
+            android:name=".ui.main.mine.DeviceFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.EditFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.MessageDetailsFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.MessageFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.PhotoDetailsFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.ProblemFragemnt"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.Settingfragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.mine.UserInfofragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.second.AddedFoodFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.second.FoodDetailsFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.second.FoodRecommend"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.second.HeatDetailFragment"
@@ -247,43 +271,51 @@
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.heat.SearchHistoryFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.sports.SportingFragment_"
-            android:launchMode="singleTask"
+            android:name=".ui.main.slimming.sports.SportingFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.sports.SportsDetailsFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.BodyFatFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.BodyDataFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.SettingTargetFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.TargetDateFargment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.TargetDetailsFragment"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.main.slimming.weight.WeightAddFragment"
+            android:launchMode="singleTop"
+            android:screenOrientation="nosensor"/>
+        <activity
+            android:name=".ui.main.slimming.weight.WeightRecordFragment"
             android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.weight.WeightRecordFragment_"
-            android:launchMode="singleTask"
-            android:screenOrientation="nosensor"/>
-        <activity
-            android:name=".ui.main.slimming.sports.SmartClothingFragment_"
+            android:name=".ui.main.slimming.sports.SmartClothingFragment"
             android:launchMode="singleTask"
             android:screenOrientation="nosensor"/>
         <activity
             android:name=".ui.guide.GuideActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
     </application>
 

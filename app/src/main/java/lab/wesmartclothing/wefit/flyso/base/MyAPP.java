@@ -32,6 +32,7 @@ import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
@@ -96,6 +97,7 @@ public class MyAPP extends Application {
                         return BuildConfig.DEBUG;
                     }
                 });
+                JPushUtils.init(MyAPP.this);
                 RxLogUtils.i("启动时长：初始化结束");
             }
         });

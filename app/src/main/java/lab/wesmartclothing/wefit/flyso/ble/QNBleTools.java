@@ -12,8 +12,6 @@ import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNConfig;
 import com.yolanda.health.qnblesdk.out.QNUser;
 
-import org.androidannotations.annotations.EBean;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
@@ -26,7 +24,6 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
  * Created icon_hide_password jk on 2018/5/16.
  */
 
-@EBean(scope = EBean.Scope.Singleton)//单例模式 传入的是using context.getApplicationContext()对象
 public class QNBleTools {
 
 

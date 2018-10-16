@@ -32,7 +32,7 @@
         android:background="@color/bg_F7F7F9"
         android:orientation="vertical"
         >
-        <!--android:background="?attr/selectableItemBackground"-->
+
         <RelativeLayout
             android:id="@+id/layout_userImg"
             android:layout_width="match_parent"
@@ -61,14 +61,266 @@
         </RelativeLayout>
 
 
-        <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
-            android:id="@+id/groupListView"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/white"/>
+            android:layout_height="1dp"
+            android:background="@color/line"/>
 
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userName"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="昵称"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="昵称"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line"/>
+
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userSex"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="性别"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_userSex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userBirth"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="生日"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_Birth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line"/>
+
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userHeight"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="身高"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_userHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line"/>
+
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userWeight"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="目标体重"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_userWeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userCity"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="所在城市"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_userCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line"/>
+
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
+            android:id="@+id/layout_userSign"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/GrayWrite">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="签名"
+                android:textColor="@color/Gray"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/tv_userSign"
+                android:layout_width="185dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -110,7 +110,6 @@ public class LoginRegisterActivity extends BaseActivity {
         public void loginSuccess(LoginResult result) {
             //登录成功， 如果你选择了获取用户信息，可以通过
             RxLogUtils.e("登录成功:" + result.toString());
-            RxToast.normal("登录成功：" + result.getToken().getOpenid(), 100000);
             loginOther(result);
         }
 
@@ -133,6 +132,7 @@ public class LoginRegisterActivity extends BaseActivity {
         tipDialog.dismiss();
         super.onStop();
     }
+
 
     public void initView() {
         initTab();

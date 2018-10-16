@@ -1,7 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -31,9 +34,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Receiver;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +57,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 /**
  * Created by jk on 2018/7/19.
  */
-@EActivity
 public class SportingFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -89,24 +88,28 @@ public class SportingFragment extends BaseActivity {
     private int type = -1;//运动上一次状态
     private LineDataSet set;
 
-    //监听瘦身衣连接情况
-    @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
-    void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
-        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
-            if (state) {
-                btn_Connect.setText(R.string.connected);
-            } else {
-                btn_Connect.setText(R.string.disConnected);
-            }
-        if (mSwMusic.isOpened())
-            TextSpeakUtils.speakFlush(state ? "设备已连接" : "设备连接已断开");
-    }
 
-    //监听系统蓝牙开启
-    @Receiver(actions = Key.ACTION_CLOTHING_STOP)
-    void CLOTHING_STOP() {
-        stopSporting();
-    }
+    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //监听瘦身衣连接情况
+            if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
+                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
+                if (state) {
+                    btn_Connect.setText(R.string.connected);
+                } else {
+                    btn_Connect.setText(R.string.disConnected);
+                }
+                if (mSwMusic.isOpened())
+                    TextSpeakUtils.speakFlush(state ? "设备已连接" : "设备连接已断开");
+
+            } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
+                //瘦身衣运动结束
+                stopSporting();
+            }
+
+        }
+    };
 
 
     @Override
@@ -115,6 +118,11 @@ public class SportingFragment extends BaseActivity {
         setContentView(R.layout.fragment_sportsing);
         unbinder = ButterKnife.bind(this);
         initView();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
+        filter.addAction(Key.ACTION_CLOTHING_STOP);
+        registerReceiver(registerReceiver, filter);
     }
 
     private void initView() {
@@ -362,6 +370,7 @@ public class SportingFragment extends BaseActivity {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(registerReceiver);
         timer.stopTimer();
         timer2.stopTimer();
         TextSpeakUtils.stop();

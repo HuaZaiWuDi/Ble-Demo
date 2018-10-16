@@ -4,10 +4,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qmuiteam.qmui.widget.QMUIEmptyView;
+import com.vondear.rxtools.model.state.PageLayout;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -89,8 +93,59 @@ public class TestBleScanActivity extends AppCompatActivity {
             }
         });
 
+        TextView emptyView = new TextView(this);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
+        );
+        emptyView.setLayoutParams(params);
+        emptyView.setGravity(Gravity.CENTER);
+        emptyView.setText("我是空数据");
+
+        TextView errorView = new TextView(this);
+        errorView.setLayoutParams(params);
+        errorView.setGravity(Gravity.CENTER);
+        errorView.setText("我是异常数据");
+
+        TextView LoadingView = new TextView(this);
+        LoadingView.setLayoutParams(params);
+        LoadingView.setGravity(Gravity.CENTER);
+        LoadingView.setText("我是加载数据");
+
+
+        pageLayout = new PageLayout.Builder(this)
+                .initPage(findViewById(R.id.layout_test))
+                .setEmpty(emptyView)
+                .setError(errorView)
+                .setLoading(LoadingView)
+                .setOnRetryListener(new PageLayout.OnRetryClickListener() {
+                    @Override
+                    public void onRetry() {
+                        Toast.makeText(TestBleScanActivity.this, "重试", Toast.LENGTH_SHORT).show();
+                    }
+                }).create();
+
+
+        pageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                index++;
+                if (index % 4 == 0) {
+                    pageLayout.showLoading();
+                } else if (index % 4 == 1) {
+                    pageLayout.showEmpty();
+                } else if (index % 4 == 2) {
+                    pageLayout.showError();
+                } else if (index % 4 == 3) {
+                    pageLayout.hide();
+                }
+            }
+        });
+
     }
 
+    int index = 0;
+    PageLayout pageLayout;
 
     int progress = 0;
     MyTimer mTimer = new MyTimer(1000, 100, new MyTimerListener() {

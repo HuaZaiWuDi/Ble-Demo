@@ -1,10 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-
-import org.androidannotations.annotations.EBean;
+import com.zchu.rxcache.RxCache;
 
 import java.util.List;
 
@@ -12,7 +10,6 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -24,7 +21,6 @@ import okhttp3.RequestBody;
 /**
  * Created icon_hide_password jk on 2018/6/11.
  */
-@EBean
 public class HeartRateBean {
 
 
@@ -57,7 +53,7 @@ public class HeartRateBean {
     private List<AthlList> athlList;
 
 
-    public void saveHeartRate(HeartRateBean heartRateBean, HeartRateToKcal mHeartRateToKcal) {
+    public void saveHeartRate(HeartRateBean heartRateBean) {
         String s = MyAPP.getGson().toJson(heartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -66,7 +62,7 @@ public class HeartRateBean {
                     @Override
                     protected void _onNext(String s) {
                         athlList.clear();
-                        SPUtils.remove(Key.CACHE_ATHL_RECORD);
+                        RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD);
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());

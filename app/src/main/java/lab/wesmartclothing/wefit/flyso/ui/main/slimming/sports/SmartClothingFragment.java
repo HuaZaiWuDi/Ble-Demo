@@ -1,6 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -29,9 +33,6 @@ import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Receiver;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity_;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -59,7 +60,6 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 /**
  * Created by jk on 2018/7/18.
  */
-@EActivity
 public class SmartClothingFragment extends BaseActivity {
 
 
@@ -100,71 +100,76 @@ public class SmartClothingFragment extends BaseActivity {
     TextView mTvSportDate;
 
 
-    //监听瘦身衣连接情况
-    @Receiver(actions = Key.ACTION_CLOTHING_CONNECT)
-    void clothingConnectStatus(@Receiver.Extra(Key.EXTRA_CLOTHING_CONNECT) boolean state) {
-        if (BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)))
-            if (state) {
-                btn_Connect.setText(R.string.connected);
-            } else {
-                btn_Connect.setText(R.string.disConnected);
-                mLayoutStrongTip.setVisibility(View.GONE);
-            }
-    }
-
-    //心率
-    @Receiver(actions = Key.ACTION_HEART_RATE_CHANGED)
-    void myHeartRate(@Receiver.Extra(Key.EXTRA_HEART_RATE_CHANGED) byte[] heartRate) {
-        if (mLayoutStrongTip != null && mLayoutStrongTip.getVisibility() == View.GONE) {
-            mLayoutStrongTip.setVisibility(View.VISIBLE);
-            String checkSporting = getString(R.string.checkSporting);
-            SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
-                    .setForegroundColor(getResources().getColor(R.color.red))
-                    .setLength(9, checkSporting.length());
-            mBtnStrongTip.setText(builder);
-            mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mLayoutStrongTip.setVisibility(View.GONE);
-                    RxActivityUtils.skipActivity(mActivity, SportingFragment_.class);
-                }
-            });
-        }
-    }
-
-    //监听系统蓝牙开启
-    @Receiver(actions = Key.ACTION_CLOTHING_STOP)
-    void CLOTHING_STOP() {
-        mLayoutStrongTip.setVisibility(View.GONE);
-    }
-
-    //监听系统蓝牙开启
-    @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
-    void blueToothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
-        if (state == BluetoothAdapter.STATE_OFF) {
-            checkStatus();
-        } else if (state == BluetoothAdapter.STATE_ON) {
-            mLayoutStrongTip.setVisibility(View.GONE);
-        }
-    }
-
-
     private Button btn_Connect;
     private long currentDate = 0;
 
 
     private List<AthleticsInfo.PageInfoBean.ListBean> list;
 
+
+    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //监听瘦身衣连接情况
+            if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
+                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
+                if (state) {
+                    btn_Connect.setText(R.string.connected);
+                } else {
+                    btn_Connect.setText(R.string.disConnected);
+                    mLayoutStrongTip.setVisibility(View.GONE);
+                }
+                //心率改变
+            } else if (Key.ACTION_HEART_RATE_CHANGED.equals(intent.getAction())) {
+                if (mLayoutStrongTip != null && mLayoutStrongTip.getVisibility() == View.GONE) {
+                    mLayoutStrongTip.setVisibility(View.VISIBLE);
+                    String checkSporting = getString(R.string.checkSporting);
+                    SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
+                            .setForegroundColor(getResources().getColor(R.color.red))
+                            .setLength(9, checkSporting.length());
+                    mBtnStrongTip.setText(builder);
+                    mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mLayoutStrongTip.setVisibility(View.GONE);
+                            RxActivityUtils.skipActivity(mActivity, SportingFragment.class);
+                        }
+                    });
+                }
+                //瘦身衣运动结束
+            } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
+                mLayoutStrongTip.setVisibility(View.GONE);
+                //监听系统蓝牙
+            } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
+                int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+                if (state == BluetoothAdapter.STATE_OFF) {
+                    checkStatus();
+                } else if (state == BluetoothAdapter.STATE_ON) {
+                    mLayoutStrongTip.setVisibility(View.GONE);
+                }
+            }
+
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_smart_clothing);
+        unbinder = ButterKnife.bind(this);
 
         StatusBarUtils.from(this)
                 .setStatusBarColor(getResources().getColor(R.color.red))
                 .setLightStatusBar(true)
                 .process();
-        unbinder = ButterKnife.bind(this);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
+        filter.addAction(Key.ACTION_HEART_RATE_CHANGED);
+        filter.addAction(Key.ACTION_CLOTHING_STOP);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(registerReceiver, filter);
+
         initView();
     }
 
@@ -195,6 +200,7 @@ public class SmartClothingFragment extends BaseActivity {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(registerReceiver);
         super.onDestroy();
     }
 
@@ -239,7 +245,7 @@ public class SmartClothingFragment extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    RxActivityUtils.skipActivity(mActivity, AddDeviceActivity_.class);
+                    RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
                 }
             })
                     .setSure("暂不绑定")

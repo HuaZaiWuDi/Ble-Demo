@@ -38,6 +38,7 @@ android {
                 qq_id: "1106924585"
         ]
 
+        //强制指定包名，貌似是的
         // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
         javaCompileOptions {
             annotationProcessorOptions {

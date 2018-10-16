@@ -73,7 +73,7 @@ public class FoodRecommend extends BaseActivity {
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
-                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstCache()))
+                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
