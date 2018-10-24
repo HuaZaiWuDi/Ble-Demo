@@ -57,9 +57,10 @@ public interface Key {
     //是否结束前一个Fragment
     String BUNDLE_FINISH_FRAGMENT = "BUNDLE_FINISH_FRAGMENT";
 
-    String BUNDLE_WIEGHT_DATA = "BUNDLE_WIEGHT_DATA";
+    //体重秤实时数据
+    String BUNDLE_WEIGHT_UNSTEADY = "BUNDLE_WEIGHT_UNSTEADY";
 
-
+    String BUNDLE_WEIGHT_QNDATA = "BUNDLE_WEIGHT_QNDATA";
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////
@@ -106,7 +107,7 @@ public interface Key {
     String LoginType_WEIBO = "MicroBlog";
 
     //BUGLY
-     String BUGly_id = "11c87579c7";
+    String BUGly_id = "11c87579c7";
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY

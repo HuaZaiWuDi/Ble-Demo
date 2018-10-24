@@ -3,11 +3,14 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.qmuiteam.qmui.arch.QMUIFragment;
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
@@ -22,7 +25,7 @@ import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
  * Created by cgspine on 2018/1/7.
  */
 
-public abstract class BaseAcFragment extends QMUIFragment {
+public abstract class BaseAcFragment extends Fragment {
     public Activity mActivity;
     public Context mContext;
     public String TGA = "";
@@ -31,10 +34,15 @@ public abstract class BaseAcFragment extends QMUIFragment {
     public BaseAcFragment() {
     }
 
+
+    @Nullable
     @Override
-    protected int backViewInitOffset() {
-        return QMUIDisplayHelper.dp2px(getContext(), 100);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return onCreateView();
+
     }
+
+    protected abstract View onCreateView();
 
 
     @Override
@@ -164,11 +172,6 @@ public abstract class BaseAcFragment extends QMUIFragment {
     }
 
     protected void onInvisible() {
-    }
-
-    @Override
-    protected boolean canDragBack() {
-        return true;
     }
 
 

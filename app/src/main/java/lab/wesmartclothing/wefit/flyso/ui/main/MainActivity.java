@@ -33,7 +33,7 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
-import lab.wesmartclothing.wefit.flyso.ble.BleService_;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -88,7 +88,7 @@ public class MainActivity extends BaseALocationActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
-        bleIntent = new Intent(mContext, BleService_.class);
+        bleIntent = new Intent(mContext, BleService.class);
         startService(bleIntent);
     }
 

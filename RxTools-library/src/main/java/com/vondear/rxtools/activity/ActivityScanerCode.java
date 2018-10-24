@@ -32,7 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.vondear.rxtools.R;
-import com.vondear.rxtools.anim.RxAnimationUtils;
+import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxBarUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxSPUtils;

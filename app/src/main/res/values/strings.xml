@@ -58,7 +58,7 @@
     <string name="bindDeviceSubtitle">绑定扫描到的设备</string>
     <string name="startUse">开始使用</string>
     <string name="startUseSubtitle">马上开始运动</string>
-    <string name="scan">扫描</string>
+    <string name="scan">扫 描</string>
     <string name="nearDevice">附近的设备</string>
     <string name="bind">绑定</string>
     <string name="bindings">已绑定</string>
@@ -98,6 +98,7 @@
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
     <string name="search_noData">没有搜索到关于 " %1$s " 的食物哦，请您重新输入食物的关键字 ^-^</string>
     <string name="must_input">最多可以输入%1$d字</string>
+    <string name="plan">感谢使用TimeToFit为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n1.身体质量指数（BMI）在 18.5-40 之间； \n2.年龄在 18-60 之间； \n3.产后女性已不在哺乳期，且距离上次生产一年以上； \n4.未患有心血管疾病且近期未有其他影响饮食或运动的病症。</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>

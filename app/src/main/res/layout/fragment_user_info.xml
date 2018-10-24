@@ -309,6 +309,7 @@
 
 
             <TextView
+                android:gravity="right"
                 android:id="@+id/tv_userSign"
                 android:layout_width="185dp"
                 android:layout_height="wrap_content"

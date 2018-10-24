@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:background="@color/white"
     android:id="@+id/layout_notDevice"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
 
     <ImageView
@@ -23,6 +23,7 @@
         android:gravity="center"
         android:maxLines="2"
         android:text="@string/notDevice"
-        android:textColor="@color/textHeatColor"/>
+        android:textColor="@color/textHeatColor"
+        android:textSize="13sp"/>
 
 </RelativeLayout>

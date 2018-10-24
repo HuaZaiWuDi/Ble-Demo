@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso;
+package lab.wesmartclothing.wefit.flyso.ui.toolui;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qmuiteam.qmui.widget.QMUIEmptyView;
 import com.vondear.rxtools.model.state.PageLayout;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -21,17 +20,18 @@ import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
+import com.vondear.rxtools.view.roundprogressbar.VerticalProgress;
 import com.vondear.rxtools.view.roundprogressbar.common.RxBaseRoundProgressBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lab.wesmartclothing.wefit.flyso.R;
 
 public class TestBleScanActivity extends AppCompatActivity {
 
     @BindView(R.id.parent)
     RelativeLayout mParent;
 
-    private QMUIEmptyView mEmptyView;
     private RxTextRoundProgressBar mTextProgress;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -43,6 +43,18 @@ public class TestBleScanActivity extends AppCompatActivity {
         RxLogUtils.i("启动时长：无网络请求的界面");
 
         final RxLinearLayout tv_test = findViewById(R.id.tv_test);
+
+
+        VerticalProgress mVerticalProgress = findViewById(R.id.mVerticalProgress);
+        mVerticalProgress.setProgress(100);
+
+//
+//        mParent.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                RxAnimationUtils.doCircle(mParent, 0, 0);
+//            }
+//        });
 
 
 //        mEmptyView = new QMUIEmptyView(this);
@@ -100,6 +112,7 @@ public class TestBleScanActivity extends AppCompatActivity {
         );
         emptyView.setLayoutParams(params);
         emptyView.setGravity(Gravity.CENTER);
+
         emptyView.setText("我是空数据");
 
         TextView errorView = new TextView(this);
@@ -126,7 +139,7 @@ public class TestBleScanActivity extends AppCompatActivity {
                 }).create();
 
 
-        pageLayout.setOnClickListener(new View.OnClickListener() {
+        tv_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 index++;
@@ -141,7 +154,6 @@ public class TestBleScanActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     int index = 0;

@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -60,7 +59,7 @@ public class MainFragment extends BaseAcFragment {
     RelativeLayout mParent;
     Unbinder unbinder;
 
-    public static QMUIFragment getInstance() {
+    public static Fragment getInstance() {
         return new MainFragment();
     }
 
@@ -76,10 +75,6 @@ public class MainFragment extends BaseAcFragment {
     }
 
 
-    @Override
-    protected boolean canDragBack() {
-        return false;
-    }
 
     private void initView() {
         RxLogUtils.i("MainFragment 创建");

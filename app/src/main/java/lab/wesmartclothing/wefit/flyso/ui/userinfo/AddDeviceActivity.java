@@ -7,19 +7,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.clj.fastble.data.BleDevice;
 import com.google.gson.Gson;
+import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
@@ -27,6 +26,7 @@ import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -55,7 +55,6 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.view.ScanView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -68,85 +67,34 @@ import okhttp3.RequestBody;
 public class AddDeviceActivity extends BaseActivity {
 
 
+    public static final int STATUS_SCAN_DEVICE = 0;
+    public static final int STATUS_FIND_DEVICE = 1;
+    public static final int STATUS_BIND_DEVICE = 2;
+    public static final int STATUS_NO_DEVICE = 3;
+
     BindDeviceItem mBindDeviceItem = new BindDeviceItem();
 
     QNBleTools mQNBleTools = QNBleTools.getInstance();
 
     boolean forceBind = true;//是否强制绑定
-
-
-    @BindView(R.id.layout_scan)
-    RelativeLayout mLayoutScan;
+    @BindView(R.id.topBar)
+    QMUITopBar mTopBar;
+    @BindView(R.id.tv_details)
+    TextView mTvDetails;
     @BindView(R.id.img_scan)
-    ScanView mImgScan;
-    @BindView(R.id.layout_scan_2)
-    RelativeLayout mLayoutScan2;
-    @BindView(R.id.tv_nearDevice)
-    TextView mTvNearDevice;
+    ImageView mImgScan;
     @BindView(R.id.mRecyclerView)
     RecyclerView mMRecyclerView;
-    @BindView(R.id.layout_bind)
-    RelativeLayout mLayoutBind;
-    @BindView(R.id.img_back)
-    ImageView mImgBack;
-    @BindView(R.id.back)
-    LinearLayout mBack;
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.tv_skip)
-    TextView mTvSkip;
-    @BindView(R.id.layout_title)
-    RelativeLayout mLayoutTitle;
-    @BindView(R.id.tv_info)
-    TextView mTvInfo;
-    @BindView(R.id.img_working)
-    ImageView mImgWorking;
-    @BindView(R.id.tv_working)
-    TextView mTvWorking;
-    @BindView(R.id.line_working)
-    View mLineWorking;
-    @BindView(R.id.img_bind)
-    ImageView mImgBind;
-    @BindView(R.id.tv_bind)
-    TextView mTvBind;
-    @BindView(R.id.line_bind_L)
-    View mLineBindL;
-    @BindView(R.id.line_bind_R)
-    View mLineBindR;
-    @BindView(R.id.img_startUse)
-    ImageView mImgStartUse;
-    @BindView(R.id.tv_startUse)
-    TextView mTvStartUse;
-    @BindView(R.id.line_use)
-    View mLineUse;
-    @BindView(R.id.layout_step)
-    LinearLayout mLayoutStep;
     @BindView(R.id.btn_scan)
     QMUIRoundButton mBtnScan;
-    @BindView(R.id.img_no_data)
-    ImageView mImgNoData;
-    @BindView(R.id.tv_tip)
-    TextView mTvTip;
-    @BindView(R.id.layout_notDevice)
-    RelativeLayout mLayoutNotDevice;
+    @BindView(R.id.img_noDevice)
+    ImageView mImgNoDevice;
 
 
     private int stepState = 0;
     private BaseQuickAdapter adapter;
-    private List<BindDeviceItem.DeviceListBean> mDeviceLists = new ArrayList<>();
-    private Map<String, BindDeviceBean> scanDevice = new HashMap<>();
-
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK)
-            if (stepState == 3) {
-                initStep(0);
-            } else {
-                RxActivityUtils.finishActivity();
-            }
-        return true;
-    }
+    private List<BindDeviceItem.DeviceListBean> mDeviceLists = new ArrayList<>();//添加绑定设备
+    private Map<String, BindDeviceBean> scanDevice = new HashMap<>();//防止重复添加
 
 
     //监听系统蓝牙开启
@@ -156,9 +104,9 @@ public class AddDeviceActivity extends BaseActivity {
             int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
             if (state == BluetoothAdapter.STATE_OFF) {
                 mBtnScan.setEnabled(true);
-                mImgScan.stopAnimation();
+
+                mImgScan.clearAnimation();
                 RxToast.warning(getString(R.string.checkBle));
-                initStep(3);
             }
         }
     };
@@ -168,10 +116,11 @@ public class AddDeviceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         ButterKnife.bind(this);
-        //屏幕沉浸
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+        StatusBarUtils.from(mActivity).setStatusBarColor(ContextCompat.getColor(mContext, R.color.white)).process();
 
-        forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
+        if (getIntent().getExtras() != null) {
+            forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
+        }
 
         registerReceiver(systemBleReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         initView();
@@ -193,20 +142,19 @@ public class AddDeviceActivity extends BaseActivity {
 
         mDeviceLists.clear();
         scanDevice.clear();
-        mImgScan.startAnimation();
+        mImgScan.startAnimation(RxAnimationUtils.RotateAnim(15));
         mBtnScan.setEnabled(false);
-
+        scanTimeout.stopTimer();
         scanTimeout.startTimer();
 
+        RxLogUtils.d("开启动画");
     }
 
     private MyTimer scanTimeout = new MyTimer(new MyTimerListener() {
         @Override
         public void enterTimer() {
-            mBtnScan.setEnabled(true);
-            mImgScan.stopAnimation();
-            RxToast.warning(getString(R.string.checkBle));
-            initStep(3);
+            switchStatus(STATUS_NO_DEVICE);
+
         }
     }, 15000);
 
@@ -236,11 +184,28 @@ public class AddDeviceActivity extends BaseActivity {
 
 
     public void initView() {
-        initStep(0);
+        initTopBar();
         initRecycler();
-        if (forceBind)
-            mTvSkip.setVisibility(View.GONE);
+        switchStatus(STATUS_SCAN_DEVICE);
+    }
 
+    private void initTopBar() {
+        mTopBar.setTitle("添加设备");
+        mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        if (!forceBind)
+            mTopBar.addRightTextButton("跳过", R.id.tv_skip)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //跳转主页
+                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                        }
+                    });
     }
 
 
@@ -297,56 +262,11 @@ public class AddDeviceActivity extends BaseActivity {
                     }
                     item.setBind(true);
                     adapter.notifyDataSetChanged();
-                    initStep(2);
+                    switchStatus(STATUS_BIND_DEVICE);
                 }
             }
         });
         adapter.bindToRecyclerView(mMRecyclerView);
-    }
-
-    private void initStep(int stepState) {
-        this.stepState = stepState;
-        mLayoutNotDevice.setVisibility(stepState == 3 ? View.VISIBLE : View.GONE);
-        mTvTitle.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
-        mImgBack.setImageResource(stepState == 0 ? R.mipmap.back_icon : R.mipmap.back);
-        if (!forceBind)
-            mTvSkip.setVisibility(stepState == 1 ? View.GONE : View.VISIBLE);
-        mTvSkip.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.black));
-        mTvSkip.setTextColor(getResources().getColor(stepState == 0 ? R.color.white : R.color.textHeatColor));
-
-        Drawable drawableColor = RxImageTools.changeDrawableColor(mContext, R.mipmap.icon_wancheng3x, R.color.green_61D97F);
-
-        switch (stepState) {
-            case 0:
-                mLayoutScan.setVisibility(View.VISIBLE);
-                mLayoutScan2.setVisibility(View.VISIBLE);
-                mLayoutBind.setVisibility(View.GONE);
-                mBtnScan.setVisibility(View.VISIBLE);
-                break;
-            case 1:
-                mLayoutScan.setVisibility(View.GONE);
-                mLayoutScan2.setVisibility(View.GONE);
-                mLayoutBind.setVisibility(View.VISIBLE);
-                mImgWorking.setBackground(drawableColor);
-
-                mImgBind.setBackgroundResource(R.mipmap.icon_xuanzhe);
-                mLineBindL.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-                mLineBindR.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-                mTvBind.setTextColor(getResources().getColor(R.color.textColor));
-                mBtnScan.setVisibility(View.INVISIBLE);
-                break;
-            case 2:
-                mImgStartUse.setBackgroundResource(R.mipmap.icon_xuanzhe);
-                mImgBind.setBackground(drawableColor);
-                mLineUse.setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-                mTvStartUse.setTextColor(getResources().getColor(R.color.textColor));
-                mBtnScan.setVisibility(View.VISIBLE);
-                mBtnScan.setText(R.string.startUse);
-                break;
-            case 3:
-                mLayoutScan.setVisibility(View.GONE);
-                break;
-        }
     }
 
 
@@ -370,7 +290,6 @@ public class AddDeviceActivity extends BaseActivity {
                 }
             }
         }
-
         mBindDeviceItem.setDeviceList(mDeviceLists);
         String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
@@ -414,11 +333,8 @@ public class AddDeviceActivity extends BaseActivity {
         }
         scanDevice.put(bean.getMac(), bean);
 
+        switchStatus(STATUS_FIND_DEVICE);
         scanTimeout.stopTimer();
-        mBtnScan.setEnabled(true);
-        mImgScan.stopAnimation();
-        if (stepState != 2)
-            initStep(1);
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
@@ -433,7 +349,6 @@ public class AddDeviceActivity extends BaseActivity {
                             } else {
                                 SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
                             }
-                            initStep(2);
                         }
                         bean.setBind("true".equals(s));
                         adapter.addData(bean);
@@ -447,30 +362,65 @@ public class AddDeviceActivity extends BaseActivity {
                 });
     }
 
-    @OnClick({R.id.back, R.id.btn_scan, R.id.tv_tip})
+
+    /**
+     * 修改布局状态
+     *
+     * @param stepState
+     */
+    private void switchStatus(int stepState) {
+        this.stepState = stepState;
+        switch (stepState) {
+            case STATUS_SCAN_DEVICE:
+                mBtnScan.setEnabled(true);
+                mBtnScan.setVisibility(View.VISIBLE);
+                mBtnScan.setText(R.string.scan);
+                mImgScan.setVisibility(View.VISIBLE);
+                mImgNoDevice.setVisibility(View.GONE);
+                mMRecyclerView.setVisibility(View.GONE);
+                break;
+            case STATUS_FIND_DEVICE:
+                mImgScan.clearAnimation();
+                mBtnScan.setVisibility(View.GONE);
+                mImgScan.setVisibility(View.GONE);
+                mMRecyclerView.setVisibility(View.VISIBLE);
+                mImgNoDevice.setVisibility(View.GONE);
+                break;
+            case STATUS_BIND_DEVICE:
+                mImgScan.clearAnimation();
+                mBtnScan.setEnabled(true);
+                mBtnScan.setVisibility(View.VISIBLE);
+                mBtnScan.setText("开始使用");
+                mImgScan.setVisibility(View.GONE);
+                mMRecyclerView.setVisibility(View.VISIBLE);
+                mImgNoDevice.setVisibility(View.GONE);
+                break;
+            case STATUS_NO_DEVICE:
+                RxToast.warning(getString(R.string.checkBle));
+                mImgScan.clearAnimation();
+                mBtnScan.setEnabled(true);
+                mBtnScan.setVisibility(View.VISIBLE);
+                mBtnScan.setText("重新扫描");
+                mImgScan.setVisibility(View.GONE);
+                mMRecyclerView.setVisibility(View.GONE);
+                mImgNoDevice.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+
+    @OnClick({R.id.btn_scan})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.back:
-                if (stepState == 3) {
-                    initStep(0);
-                } else {
-                    RxActivityUtils.finishActivity();
-                }
-                break;
             case R.id.btn_scan:
-                if (stepState == 0) {
+                if (stepState == STATUS_SCAN_DEVICE) {
                     startScan();
-                } else if (stepState == 2) {
+                } else if (stepState == STATUS_BIND_DEVICE) {
                     bindDevice();
+                } else if (stepState == STATUS_NO_DEVICE) {
+                    switchStatus(STATUS_SCAN_DEVICE);
+                    startScan();
                 }
-                break;
-            case R.id.tv_tip:
-                //跳转主页
-                if (!forceBind)
-                    RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-                else
-                    RxActivityUtils.finishActivity();
-                break;
         }
     }
 }

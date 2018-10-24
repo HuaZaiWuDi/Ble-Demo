@@ -18,6 +18,7 @@ import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -29,7 +30,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.rxbus.ScaleUnsteadyWeight;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -40,7 +40,6 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.RequestBody;
 
 /**
@@ -96,89 +95,80 @@ public class WeightAddFragment extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         RxLogUtils.e("新开启个界面：" + intent);
+        showWeightData(intent);
     }
 
     private void initView() {
-        initRxBus();
-
-        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), "fonts/DIN-Regular.ttf");
+        showWeightData(getIntent());
+        Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
 
         lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
         RxLogUtils.d("上一次体重数据：" + lastWeight);
     }
 
-    private void initRxBus() {
-        //实时体重数据
-        RxBus.getInstance().register2(ScaleUnsteadyWeight.class)
-                .compose(RxComposeUtils.<ScaleUnsteadyWeight>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<ScaleUnsteadyWeight>() {
-                    @Override
-                    protected void _onNext(ScaleUnsteadyWeight weight) {
-                        mTvTargetWeight.setText((float) weight.getWeight() + "");
-                        mTvTip.setText("称重中...");
-                        mTvTitle.setText("正在测量体重");
-                        if (mTvTip.getVisibility() == View.INVISIBLE) {
-                            mTvTip.setVisibility(View.VISIBLE);
-                            mBtnForget.setVisibility(View.INVISIBLE);
-                            mBtnSave.setVisibility(View.INVISIBLE);
-                            mMRoundDisPlayView.showPoint(false);
-                            mMRoundDisPlayView.startAnimation();
-                            TimeOutTimer.startTimer();
-                        }
+
+    private void showWeightData(Intent intent) {
+        double unsteadyWeight = intent.getExtras().getDouble(Key.BUNDLE_WEIGHT_UNSTEADY, 0);
+        final QNScaleData qnScaleData = MyAPP.getGson().fromJson(intent.getExtras().getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
+        if (unsteadyWeight > 0) {
+            mTvTargetWeight.setText((float) unsteadyWeight + "");
+            mTvTip.setText("称重中...");
+            mTvTitle.setText("正在测量体重");
+            if (mTvTip.getVisibility() == View.INVISIBLE) {
+                mTvTip.setVisibility(View.VISIBLE);
+                mBtnForget.setVisibility(View.INVISIBLE);
+                mBtnSave.setVisibility(View.INVISIBLE);
+                mMRoundDisPlayView.showPoint(false);
+                mMRoundDisPlayView.startAnimation();
+                TimeOutTimer.startTimer();
+            }
+        }
+
+        if (qnScaleData != null) {
+            RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
+
+            final float realWeight = (float) qnScaleData.getAllItem().get(0).getValue();
+            mTvTargetWeight.setText(realWeight + "");
+            mTvTip.setText("身体成分测量中...");
+            mTvTitle.setText("正在测量身体成分");
+            mMRoundDisPlayView.stopAnimation();
+            mMRoundDisPlayView.showPoint(true);
+            mMRoundDisPlayView.startAnim();
+            TimeOutTimer.stopTimer();
+            //强行延时三秒用来展示动画效果
+            mMRoundDisPlayView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mTvTip.setVisibility(View.INVISIBLE);
+                    mBtnForget.setVisibility(View.VISIBLE);
+                    mBtnSave.setVisibility(View.VISIBLE);
+                    mMRoundDisPlayView.stopAnimation();
+                    //TODO 这里暂时通过返回的数据的个数判断是否有效
+                    mQnScaleData = qnScaleData;
+                    if (qnScaleData.getItemValue(3) == 0) {
+                        //无效
+                        mTvTitle.setText("测量身体成分失败");
+                    } else if (lastWeight != 0 && (Math.abs(realWeight - lastWeight) > 2)) {
+                        //无效
+                        mTvTitle.setText("测量数据和之前相差过大");
+                    } else if (lastWeight == 0 || realWeight >= 35) {//身体成分成功直接跳转回去
+                        mTvTitle.setText("测量身体成分成功");
+                        saveWeight();
+                    } else {
+                        mTvTitle.setText("测量体重失败");
                     }
-                });
 
-        //稳定数据
-        RxBus.getInstance().register2(QNScaleData.class)
-                .compose(RxComposeUtils.<QNScaleData>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<QNScaleData>() {
-                    @Override
-                    protected void _onNext(final QNScaleData qnScaleData) {
-                        RxLogUtils.d("实时的稳定测量数据是否有效：2222");
-                        final float realWeight = (float) qnScaleData.getAllItem().get(0).getValue();
-                        mTvTargetWeight.setText(realWeight + "");
-                        mTvTip.setText("身体成分测量中...");
-                        mTvTitle.setText("正在测量身体成分");
-                        mMRoundDisPlayView.stopAnimation();
-                        mMRoundDisPlayView.showPoint(true);
-                        mMRoundDisPlayView.startAnim();
-                        TimeOutTimer.stopTimer();
-                        //强行延时三秒用来展示动画效果
-                        mMRoundDisPlayView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mTvTip.setVisibility(View.INVISIBLE);
-                                mBtnForget.setVisibility(View.VISIBLE);
-                                mBtnSave.setVisibility(View.VISIBLE);
-                                mMRoundDisPlayView.stopAnimation();
-                                //TODO 这里暂时通过返回的数据的个数判断是否有效
-                                mQnScaleData = qnScaleData;
-                                if (qnScaleData.getItemValue(3) == 0) {
-                                    //无效
-                                    mTvTitle.setText("测量身体成分失败");
-                                } else if (lastWeight != 0 && (Math.abs(realWeight - lastWeight) > 2)) {
-                                    //无效
-                                    mTvTitle.setText("测量数据和之前相差过大");
-                                } else if (lastWeight == 0 || realWeight >= 35) {//身体成分成功直接跳转回去
-                                    mTvTitle.setText("测量身体成分成功");
-                                    saveWeight();
-                                } else {
-                                    mTvTitle.setText("测量体重失败");
-                                }
+                }
+            }, 3000);
 
-                            }
-                        }, 3000);
-
-                        for (QNScaleItemData item : qnScaleData.getAllItem()) {
-                            RxLogUtils.d("---------------------");
-                            RxLogUtils.d("实时的稳定测量数据：【名字】" + item.getName());
-                            RxLogUtils.d("实时的稳定测量数据：【类型】" + item.getType());
-                            RxLogUtils.d("实时的稳定测量数据：【值】" + item.getValue());
-                        }
-                    }
-                });
-
+            for (QNScaleItemData item : qnScaleData.getAllItem()) {
+                RxLogUtils.d("---------------------");
+                RxLogUtils.d("实时的稳定测量数据：【名字】" + item.getName());
+                RxLogUtils.d("实时的稳定测量数据：【类型】" + item.getType());
+                RxLogUtils.d("实时的稳定测量数据：【值】" + item.getValue());
+            }
+        }
     }
 
 
@@ -230,7 +220,7 @@ public class WeightAddFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
-                        RxToast.normal("存储体重成功");
+//                        RxToast.normal("存储体重成功");
                         onBackPressed();
 
                         //刷新数据

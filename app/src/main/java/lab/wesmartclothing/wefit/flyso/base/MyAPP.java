@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -25,6 +26,9 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
+
+import java.io.File;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -98,6 +102,14 @@ public class MyAPP extends Application {
                     }
                 });
                 JPushUtils.init(MyAPP.this);
+                RxCache.initializeDefault(new RxCache.Builder()
+                        .appVersion(2)
+                        .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))
+                        .diskConverter(new SerializableDiskConverter())
+                        .diskMax((20 * 1024 * 1024))
+                        .memoryMax((20 * 1024 * 1024))
+                        .setDebug(true)
+                        .build());
                 RxLogUtils.i("启动时长：初始化结束");
             }
         });

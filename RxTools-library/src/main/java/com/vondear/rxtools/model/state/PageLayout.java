@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 
 /**
@@ -130,7 +129,6 @@ public class PageLayout extends FrameLayout {
         private PageLayout mPageLayout;
         private LayoutInflater mInflater;
         private Context mContext;
-        private TextView mTvError;
         private OnRetryClickListener mOnRetryClickListener;
 
         public Builder(Context context) {
@@ -163,7 +161,7 @@ public class PageLayout extends FrameLayout {
          * 自定义错误布局
          * 默认样式，传入错误文案ID 如果不传入点击ID，默认点击全屏重新加载，及点击回调
          */
-        public Builder setError(int errorId, int errorClickId, final OnRetryClickListener onRetryClickListener) {
+        public Builder setError(int errorId, int errorClickId) {
             View error = mInflater.inflate(errorId, mPageLayout, false);
             mPageLayout.mError = error;
             mPageLayout.addView(error);
@@ -171,17 +169,17 @@ public class PageLayout extends FrameLayout {
                 error.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (onRetryClickListener != null)
-                            onRetryClickListener.onRetry();
+                        if (mOnRetryClickListener != null)
+                            mOnRetryClickListener.onRetry();
                     }
                 });
             } else {
-                mTvError = error.findViewById(errorClickId);
+                View mTvError = error.findViewById(errorClickId);
                 mTvError.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (onRetryClickListener != null)
-                            onRetryClickListener.onRetry();
+                        if (mOnRetryClickListener != null)
+                            mOnRetryClickListener.onRetry();
                     }
                 });
             }
@@ -195,6 +193,13 @@ public class PageLayout extends FrameLayout {
         public Builder setError(View error) {
             mPageLayout.mError = error;
             mPageLayout.addView(error);
+            error.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnRetryClickListener != null)
+                        mOnRetryClickListener.onRetry();
+                }
+            });
             return this;
         }
 

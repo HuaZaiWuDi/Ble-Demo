@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 
 import com.google.gson.JsonObject;
@@ -19,9 +18,7 @@ import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
-import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -68,14 +65,13 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         RxLogUtils.i("启动时长：引导页开始");
         setContentView(R.layout.activity_spalsh);
+        registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
         initView();
-        //TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
+//        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
+//        RxActivityUtils.skipActivityAndFinish(mContext, WelcomeActivity.class);
     }
 
     public void initView() {
-        registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
         if (!RxDataUtils.isNullString(baseUrl)) {
@@ -88,17 +84,6 @@ public class SplashActivity extends BaseActivity {
 
     }
 
-    private void initRxCache() {
-        RxLogUtils.e("申请权限");
-        RxCache.initializeDefault(new RxCache.Builder()
-                .appVersion(2)
-                .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))
-                .diskConverter(new SerializableDiskConverter())
-                .diskMax((20 * 1024 * 1024))
-                .memoryMax((20 * 1024 * 1024))
-                .setDebug(true)
-                .build());
-    }
 
     private void initUserInfo() {
         RxLogUtils.i("启动时长：获取用户信息");
@@ -139,9 +124,8 @@ public class SplashActivity extends BaseActivity {
 
     private void gotoMain() {
         RxLogUtils.d("跳转");
-        initRxCache();
         //通过验证是否保存userId来判断是否登录
-        if ("".equals(SPUtils.getString(SPKey.SP_UserId))) {
+        if (RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else if (isSaveUserInfo) {
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);

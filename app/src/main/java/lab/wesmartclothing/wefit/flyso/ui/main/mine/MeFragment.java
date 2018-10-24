@@ -2,13 +2,13 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.qmuiteam.qmui.arch.QMUIFragment;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -91,7 +91,7 @@ public class MeFragment extends BaseAcFragment {
     @BindView(R.id.layout_aboutUs)
     RxRelativeLayout mLayoutAboutUs;
 
-    public static QMUIFragment getInstance() {
+    public static Fragment getInstance() {
         return new MeFragment();
     }
 
@@ -160,7 +160,7 @@ public class MeFragment extends BaseAcFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.userCenter())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -188,11 +188,6 @@ public class MeFragment extends BaseAcFragment {
                         RxToast.error(error);
                     }
                 });
-    }
-
-    @Override
-    protected boolean canDragBack() {
-        return false;
     }
 
 

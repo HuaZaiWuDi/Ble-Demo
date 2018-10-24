@@ -4,7 +4,6 @@ apply plugin: 'com.getkeepsafe.dexcount'
 def AAVersion = '4.4.0'
 
 
-
 def releaseTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
@@ -94,7 +93,7 @@ android {
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
                         // apk_渠道名-版本号-版本名称-编译时间.apk
-                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-release-api.apk"
+                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-release.apk"
 
                         outputFileName = fileName
                     }

@@ -47,8 +47,6 @@ public class StoreFragment extends BaseWebFragment {
     }
 
 
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

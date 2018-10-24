@@ -15,5 +15,5 @@
     <item name="tv_connect" type="id"/>
     <item name="id_search" type="id"/>
     <item name="main" type="id"/>
-
+    <item name="tv_skip" type="id"/>
 </resources>

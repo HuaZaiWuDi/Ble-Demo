@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/red"
-    tools:context=".TestBleScanActivity">
+    tools:context=".ui.toolui.TestBleScanActivity">
 
 
     <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
@@ -28,8 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dimen_30"
         android:layout_below="@+id/mProgress"
-        android:layout_marginBottom="@dimen/dimen_30"
         android:layout_marginTop="@dimen/dimen_30"
+        android:layout_marginBottom="@dimen/dimen_30"
         app:rcBackgroundColor="@color/GrayWrite"
         app:rcMax="100"
         app:rcProgress="0"
@@ -80,6 +80,17 @@
 
 
     </RelativeLayout>
+
+    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+        android:id="@+id/mVerticalProgress"
+        android:layout_margin="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+
 
 
 </RelativeLayout>

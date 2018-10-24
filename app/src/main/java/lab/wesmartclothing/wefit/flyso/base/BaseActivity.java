@@ -44,8 +44,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-//        //华为底部虚拟按键遮挡问题
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 //        //屏幕沉浸
         StatusBarUtils.from(this)
                 .setStatusBarColor(getResources().getColor(R.color.Gray))

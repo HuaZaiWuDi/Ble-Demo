@@ -4,7 +4,11 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.view.View;
@@ -46,10 +50,8 @@ import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.RxCache;
 
-import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.Receiver;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +63,6 @@ import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
-import lab.wesmartclothing.wefit.flyso.rxbus.ScaleUnsteadyWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -74,10 +75,10 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-@EService
 public class BleService extends Service {
     int packageCounts = 0;
     long lastTime = 0;
@@ -99,46 +100,36 @@ public class BleService extends Service {
 
     HeartRateBean mHeartRateBean = new HeartRateBean();
 
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case BluetoothAdapter.ACTION_STATE_CHANGED:
+                    int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+                    if (state == BluetoothAdapter.STATE_OFF) {
+                        BleTools.getInstance().stopScanByM();
+                    } else if (state == BluetoothAdapter.STATE_ON) {
+                        initBle();
+                    }
 
-    //监听系统蓝牙开启
-    @Receiver(actions = BluetoothAdapter.ACTION_STATE_CHANGED)
-    void bluetoothisOpen(@Receiver.Extra(BluetoothAdapter.EXTRA_STATE) int state) {
-        if (state == BluetoothAdapter.STATE_OFF) {
-            BleTools.getInstance().stopScanByM();
-        } else if (state == BluetoothAdapter.STATE_ON) {
-            initBle();
+                    break;
+                case RxSystemBroadcastUtil.SCREEN_ON:
+                    RxLogUtils.d("亮屏");
+                    initBle();
+                    break;
+                case RxSystemBroadcastUtil.SCREEN_OFF:
+                    RxLogUtils.d("息屏");
+                    BleTools.getInstance().stopScanByM();
+                    break;
+                case Key.ACTION_CLOTHING_STOP:
+                    clothingFinish = true;
+                    BleAPI.clothingStop();
+                    shopSporting();
+                    break;
+            }
         }
-    }
+    };
 
-    @Receiver(actions = RxSystemBroadcastUtil.SCREEN_ON)
-    void screenOn() {
-        RxLogUtils.d("亮屏");
-        initBle();
-    }
-
-    @Receiver(actions = RxSystemBroadcastUtil.SCREEN_OFF)
-    void screenOff() {
-        RxLogUtils.d("息屏");
-        BleTools.getInstance().stopScanByM();
-    }
-
-
-//    //DFU升级会断开连接，这个时候不要判断版本数据
-//    @Receiver(actions = BleKey.ACTION_DFU_STARTING)
-//    void dfuStarting(@Receiver.Extra(BleKey.EXTRA_DFU_STARTING) boolean state) {
-//        dfuStarting = state;
-//        if (!dfuStarting) {
-//            openConnect();
-//        }
-//    }
-
-    //监听系统蓝牙开启
-    @Receiver(actions = Key.ACTION_CLOTHING_STOP)
-    void CLOTHING_STOP() {
-        clothingFinish = true;
-        BleAPI.clothingStop();
-        shopSporting();
-    }
 
     public BleService() {
 
@@ -149,11 +140,22 @@ public class BleService extends Service {
         super.onCreate();
         initHeartRate();
         connectScaleCallBack();
+        initBroadcast();
+    }
+
+    private void initBroadcast() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        filter.addAction(RxSystemBroadcastUtil.SCREEN_ON);
+        filter.addAction(RxSystemBroadcastUtil.SCREEN_OFF);
+        filter.addAction(Key.ACTION_CLOTHING_STOP);
+        registerReceiver(mBroadcastReceiver, filter);
     }
 
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(mBroadcastReceiver);
         BleTools.getInstance().disConnect();
         if (BuildConfig.DEBUG) {
             RefWatcher refWatcher = LeakCanary.installedRefWatcher();
@@ -281,15 +283,19 @@ public class BleService extends Service {
         MyAPP.QNapi.setDataListener(new QNDataListener() {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
-                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
-                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class);
+//                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
+                Bundle bundle = new Bundle();
+                bundle.putDouble(Key.BUNDLE_WEIGHT_UNSTEADY, v);
+                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
             }
 
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
-                RxLogUtils.e("稳定体重");
-                RxBus.getInstance().post(qnScaleData);
-                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class);
+                RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
+                Bundle bundle = new Bundle();
+                bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, MyAPP.getGson().toJson(qnScaleData));
+                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+//                RxBus.getInstance().post(qnScaleData);
             }
 
             @Override
@@ -517,7 +523,13 @@ public class BleService extends Service {
 
                     athlHistoryRecord.add(bean);
                     //添加本地缓存
-                    RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord);
+                    RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord)
+                            .subscribe(new RxSubscriber<Boolean>() {
+                                @Override
+                                protected void _onNext(Boolean aBoolean) {
+                                    RxLogUtils.d("RxCache数据：：" + Key.CACHE_ATHL_RECORD);
+                                }
+                            });
                 }
 
                 BleAPI.syncData(bytes);
@@ -573,8 +585,13 @@ public class BleService extends Service {
                 athlHistoryRecord.add(bean);
                 athlRecord_2.add(heartRate);
                 //添加本地缓存
-                RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord);
-
+                RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord)
+                        .subscribe(new RxSubscriber<Boolean>() {
+                            @Override
+                            protected void _onNext(Boolean aBoolean) {
+                                RxLogUtils.d("RxCache数据：：" + Key.CACHE_ATHL_RECORD);
+                            }
+                        });
 
                 maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
                 minHeart = heartRate < minHeart ? heartRate : minHeart;

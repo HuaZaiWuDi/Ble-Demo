@@ -198,7 +198,6 @@ public abstract class BaseFragment extends Fragment {
             return;
         }
 //        isLoad = false;
-//        RxLogUtils.d("加载数据");
         initData();
     }
 

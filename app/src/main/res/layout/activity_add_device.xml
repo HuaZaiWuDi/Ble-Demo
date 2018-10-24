@@ -5,282 +5,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.userinfo.AddDeviceActivity">
 
 
-    <RelativeLayout
-        android:id="@+id/layout_scan"
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layout_step"
-        android:background="@mipmap/img_bj2">
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/layout_scan_2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layout_step"
-        android:layout_below="@+id/layout_title"
-        android:layout_marginBottom="@dimen/d_80">
-
-        <lab.wesmartclothing.wefit.flyso.view.ScanView
-            android:id="@+id/img_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@mipmap/img_bj33x">
-
-        </lab.wesmartclothing.wefit.flyso.view.ScanView>
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/icon_logo_23x"/>
-
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/layout_bind"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layout_step"
-        android:layout_below="@+id/layout_title"
-        android:padding="@dimen/d_30"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tv_nearDevice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nearDevice"
-            android:textColor="@color/black"
-            android:textSize="@dimen/d_50"/>
-
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/mRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/tv_nearDevice"
-            >
-
-        </android.support.v7.widget.RecyclerView>
-
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/layout_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/barHeight"
-        android:paddingBottom="@dimen/d_30"
-        android:paddingTop="90px">
-
-        <LinearLayout
-            android:id="@+id/back"
-            android:layout_width="@dimen/d_100"
-            android:layout_height="match_parent"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/img_back"
-                android:layout_width="@dimen/d_60"
-                android:layout_height="@dimen/d_60"
-                android:layout_marginLeft="@dimen/d_30"
-                android:src="@mipmap/back"/>
-
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:text="@string/AddDevice"
-            android:textColor="@color/black"
-            android:textSize="@dimen/d_50"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/tv_skip"
-            android:layout_width="@dimen/d_200"
-            android:layout_height="@dimen/d_200"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:text="@string/skip"
-            android:textColor="@color/textHeatColor"
-            android:textSize="@dimen/d_45"/>
-
-
-    </RelativeLayout>
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/white"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/Gray"
+        tools:visibility="visible"
+        />
 
 
     <TextView
-        android:id="@+id/tv_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/layout_title"
-        android:layout_marginRight="@dimen/d_50"
-        android:layout_marginTop="@dimen/d_10"
-        android:drawableLeft="@mipmap/icon_tishi_w3x"
-        android:drawablePadding="@dimen/d_20"
-        android:text="@string/device_about"
-        android:textColor="@color/white"
-        android:textSize="@dimen/d_30"/>
+        android:layout_below="@+id/topBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:text="扫描搜索设备"
+        android:textColor="@color/Gray"
+        android:textSize="17sp"/>
+
+    <TextView
+        android:id="@+id/tv_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="62dp"
+        android:text="请添加您最近购买的智能设备"
+        android:textColor="@color/GrayWrite"
+        android:textSize="12sp"/>
 
 
-    <LinearLayout
-        android:id="@+id/layout_step"
+    <ImageView
+        android:id="@+id/img_scan"
+        android:layout_width="211dp"
+        android:layout_height="211dp"
+        android:layout_below="@+id/tv_details"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="73dp"
+        android:src="@mipmap/icon_scanbg"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="370px"
-        android:layout_above="@+id/btn_scan"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_details"
+        android:layout_marginTop="41dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        >
 
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/img_working"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@mipmap/icon_xuanzhe"/>
-
-            <TextView
-                android:id="@+id/tv_working"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/img_working"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/d_20"
-                android:text="@string/doing"
-                android:textColor="@color/textColor"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_working"
-                android:layout_centerHorizontal="true"
-                android:text="@string/doingSubtitle"
-                android:textColor="@color/textHeatColor"/>
-
-            <View
-                android:id="@+id/line_working"
-                android:layout_width="match_parent"
-                android:layout_height="5px"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/img_working"
-                android:background="@color/green_61D97F"/>
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/img_bind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@mipmap/icon_weixuanzhe3x"/>
-
-            <TextView
-                android:id="@+id/tv_bind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/img_bind"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/d_20"
-                android:text="@string/bindDevice"
-                android:textColor="@color/textHeatColor"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bind"
-                android:layout_centerHorizontal="true"
-                android:text="@string/bindDeviceSubtitle"
-                android:textColor="@color/textHeatColor"/>
-
-            <View
-                android:id="@+id/line_bind_L"
-                android:layout_width="match_parent"
-                android:layout_height="5px"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/img_bind"
-                android:background="@color/textHeatColor"/>
-
-            <View
-                android:id="@+id/line_bind_R"
-                android:layout_width="match_parent"
-                android:layout_height="5px"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/img_bind"
-                android:background="@color/textHeatColor"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/img_startUse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@mipmap/icon_weixuanzhe3x"/>
-
-            <TextView
-                android:id="@+id/tv_startUse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/img_startUse"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/d_20"
-                android:text="@string/startUse"
-                android:textColor="@color/textHeatColor"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_startUse"
-                android:layout_centerHorizontal="true"
-                android:text="@string/startUseSubtitle"
-                android:textColor="@color/textHeatColor"/>
-
-            <View
-                android:id="@+id/line_use"
-                android:layout_width="match_parent"
-                android:layout_height="5px"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/img_startUse"
-                android:background="@color/textHeatColor"/>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </android.support.v7.widget.RecyclerView>
 
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
@@ -289,8 +73,8 @@
         android:layout_height="46dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
         android:layout_marginTop="35dp"
+        android:layout_marginBottom="24dp"
         android:text="@string/scan"
         android:textColor="@color/white"
         android:textSize="18dp"
@@ -299,12 +83,16 @@
         app:qmui_radius="23dp"/>
 
 
-    <include
-        layout="@layout/layout_no_device"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/layout_title"
-        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/img_noDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_details"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="61dp"
+        android:src="@mipmap/icon_update_fail"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 
 </RelativeLayout>

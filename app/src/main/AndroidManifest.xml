@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
@@ -78,7 +77,7 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
-        <!--极光通知广播-->
+        <!-- 极光通知广播 -->
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -93,25 +92,22 @@
 
                 <!-- 接收网络变化 连接/断开 since 1.6.3 -->
                 <action android:name="cn.jpush.android.intent.CONNECTION"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/><!--开机广播-->
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/><!--网络状态改变广播-->
+                <action android:name="android.intent.action.BOOT_COMPLETED"/> <!-- 开机广播 -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/> <!-- 网络状态改变广播 -->
 
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
-
-
         <receiver android:name=".utils.jpush.MyJPushMessageReceiver">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
+
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
         </receiver>
 
-
-        <!--DUF服务-->
-        <activity
-            android:name=".ble.dfu.NotificationActivity"/>
+        <!-- DUF服务 -->
+        <activity android:name=".ble.dfu.NotificationActivity"/>
 
         <service
             android:name=".ble.dfu.DfuService"
@@ -122,7 +118,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-
         </activity>
         <activity
             android:name=".ui.guide.SplashActivity"
@@ -136,7 +131,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.main.slimming.weight.WeightDataActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -165,7 +159,7 @@
         </activity>
 
         <service
-            android:name=".ble.BleService_"
+            android:name=".ble.BleService"
             android:enabled="true"
             android:exported="true">
         </service>
@@ -174,14 +168,13 @@
             android:name=".ui.login.LoginRegisterActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
-
         <activity
             android:name=".ui.main.mine.CollectWebActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
         <activity
-            android:name=".TestBleScanActivity"
+            android:name=".ui.toolui.TestBleScanActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
@@ -317,6 +310,12 @@
             android:name=".ui.guide.GuideActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
+        <activity android:name=".ui.main.slimming.plan.PlanMatterActivity">
+        </activity>
+        <activity android:name=".ui.main.slimming.plan.WelcomeActivity">
+        </activity>
+        <activity android:name=".ui.main.slimming.plan.PlanDetailsActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -252,7 +252,6 @@ public class WeightRecordFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("加载数据：" + s);
                         WeightDataBean bean = MyAPP.getGson().fromJson(s, WeightDataBean.class);
                         notifyData(bean);
                     }

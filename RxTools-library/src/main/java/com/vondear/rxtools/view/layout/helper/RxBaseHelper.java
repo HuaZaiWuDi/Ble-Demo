@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.vondear.rxtools.R;
-import com.vondear.rxtools.utils.RxLogUtils;
 
 
 /**
@@ -308,7 +307,6 @@ public class RxBaseHelper<T extends View> {
     private void setRipple() {
         if (mRippleColor != 0) {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                RxLogUtils.e("mRippleColor：" + mRippleColor);
                 Drawable contentDrawable = (mStateBackground == null ? mBackgroundPressed : mStateBackground);
                 RippleDrawable rippleDrawable = new RippleDrawable(ColorStateList.valueOf(mRippleColor), contentDrawable, contentDrawable);
                 mView.setBackground(rippleDrawable);

@@ -571,7 +571,6 @@ public class Slimming2Fragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("加载数据：" + s);
                         FirstPageBean bean = MyAPP.getGson().fromJson(s, FirstPageBean.class);
                         notifyData(bean);
                     }
@@ -682,9 +681,4 @@ public class Slimming2Fragment extends BaseAcFragment {
         }
     }
 
-
-    @Override
-    protected boolean canDragBack() {
-        return false;
-    }
 }

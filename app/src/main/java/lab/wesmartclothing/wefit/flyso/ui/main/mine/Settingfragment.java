@@ -14,6 +14,9 @@ import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.zchu.rxcache.RxCache;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +34,6 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/8/9.
@@ -184,14 +186,14 @@ public class Settingfragment extends BaseActivity {
 
                         BleTools.getInstance().disConnect();
                         QNBleTools.getInstance().disConnectDevice();
-                        MyAPP.getRxCache().clear()
-                                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
-                                .subscribe(new RxSubscriber<Boolean>() {
-                                    @Override
-                                    protected void _onNext(Boolean aBoolean) {
-                                        RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
-                                    }
-                                });
+                        try {
+                            RxCache.getDefault().clear2();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
+                        }
+
                     }
 
                     @Override

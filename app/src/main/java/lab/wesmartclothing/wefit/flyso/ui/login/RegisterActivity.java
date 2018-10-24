@@ -1,13 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.login;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -15,9 +13,10 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBarUtils;
+import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
+import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -50,7 +49,6 @@ public class RegisterActivity extends BaseActivity {
     private String phone;
     private String vCode;
     private String password;
-    private int softHeight = 0;
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mMQMUIAppBarLayout;
@@ -89,8 +87,8 @@ public class RegisterActivity extends BaseActivity {
     }
 
     public void initView() {
-        //注册布局变化监听
-        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(listener);
+
+
         initTopBar();
         SpannableStringBuilder spannableStringBuilder = RxTextUtils.getBuilder(mTvClause.getText())
                 .setForegroundColor(getResources().getColor(R.color.red))
@@ -173,35 +171,33 @@ public class RegisterActivity extends BaseActivity {
 
     }
 
-    ViewTreeObserver.OnGlobalLayoutListener listener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            //当键盘弹出隐藏的时候会 调用此方法。
-            Rect r = new Rect();
-            //获取当前界面可视部分
-            mActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
-            //获取屏幕的高度
-            int screenHeight = mActivity.getWindow().getDecorView().getRootView().getHeight();
-            //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候需要减去导航栏的高度 此高度为0 键盘弹出的时候为一个正数
-            int heightDifference = screenHeight - r.bottom;
-            RxLogUtils.e("屏幕高度sheightDifference:" + heightDifference);
-            if (RxBarUtils.navigationBarExist(mActivity)) {
-                heightDifference = heightDifference - RxBarUtils.getDaoHangHeight(mContext);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //注册布局变化监听
+        RxKeyboardUtils.registerSoftInputChangedListener(mActivity, new RxKeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                RxLogUtils.e("软键盘高度：" + height);
+                if (height < 300) {
+                    RxAnimationUtils.animateHeight(0, RxUtils.dp2px(100), mTvTitle);
+                } else {
+                    RxAnimationUtils.animateHeight(RxUtils.dp2px(100), 0, mTvTitle);
+                }
             }
-            if (heightDifference > 0) {
-                softHeight = heightDifference;
-            }
-            if (softHeight * 1f / screenHeight * 1f > 0.40f) {
-                mTvTitle.setVisibility(heightDifference == 0 ? View.VISIBLE : View.GONE);
-                mMQMUIAppBarLayout.setTitle(heightDifference == 0 ? "" : mTvTitle.getText().toString());
-            }
-        }
-    };
+        });
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        RxKeyboardUtils.unregisterSoftInputChangedListener(mActivity);
+    }
+
 
     @Override
     protected void onDestroy() {
-        //注册布局变化监听
-        getWindow().getDecorView().getViewTreeObserver().removeOnGlobalLayoutListener(listener);
         super.onDestroy();
     }
 

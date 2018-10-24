@@ -22,7 +22,6 @@ import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -216,7 +215,6 @@ public class SmartClothingFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("加载数据：" + s);
                         AthleticsInfo bean = MyAPP.getGson().fromJson(s, AthleticsInfo.class);
 
                         mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
