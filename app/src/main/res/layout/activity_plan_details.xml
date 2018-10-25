@@ -1,10 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="50dp"
     tools:context=".ui.main.slimming.plan.PlanDetailsActivity">
 
-</android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:layout_width="240dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        android:background="@color/Gray"/>
+
+
+    <TextView
+        android:id="@+id/tv_plan"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="219dp"
+        android:gravity="center"
+        android:text="正在为您精心制定计划，预计在3个工作日内生成定制计划报告，请注意查收！"
+        android:textColor="@color/Gray"
+        android:textSize="14sp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_below="@+id/tv_plan"
+        android:orientation="horizontal">
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+
+            <ImageView
+                android:id="@+id/img_submit"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_centerInParent="true"
+                android:background="@color/Gray"/>
+
+            <View
+                android:id="@+id/line_submit"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/img_submit"
+                android:background="@color/green_61D97F"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_submit"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="提交定制信息"
+                android:textColor="@color/GrayWrite"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_date_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_submit"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="2018/10/10 16:16:06"
+                android:textColor="@color/BrightGray"
+                android:textSize="10sp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/line_examine_left"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/img_examine"
+                android:background="@color/BrightGray"/>
+
+
+            <ImageView
+                android:id="@+id/img_examine"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_centerInParent="true"
+                android:background="@color/Gray"/>
+
+            <View
+                android:id="@+id/line_examine_right"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/img_examine"
+                android:background="@color/BrightGray"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_examine"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="专家审核"
+                android:textColor="@color/GrayWrite"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_date_examine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_examine"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="2018/10/10 16:16:06"
+                android:textColor="@color/BrightGray"
+                android:textSize="10sp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/line_plan"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/img_plan"
+                android:background="@color/BrightGray"/>
+
+            <ImageView
+                android:id="@+id/img_plan"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_centerInParent="true"
+                android:background="@color/Gray"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_plan"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="计划和健康报告"
+                android:textColor="@color/GrayWrite"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_date_plan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_plan"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="2018/10/10 16:16:06"
+                android:textColor="@color/BrightGray"
+                android:textSize="10sp"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:id="@+id/tv_ok"
+        android:layout_width="187dp"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="96dp"
+        android:gravity="center"
+        android:text="@string/ok"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:background_normal="@color/green_61D97F"
+        app:corner_radius="22dp"
+        app:ripple_color="@color/Gray"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="23dp"
+        android:gravity="center"
+        android:lineSpacingExtra="8dp"
+        android:text="@string/phone_email"
+        android:textColor="@color/Gray"
+        android:textSize="12sp"/>
+
+
+</RelativeLayout>

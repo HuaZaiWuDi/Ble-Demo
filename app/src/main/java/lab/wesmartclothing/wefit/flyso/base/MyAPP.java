@@ -79,7 +79,7 @@ public class MyAPP extends Application {
         super.onCreate();
         RxLogUtils.i("启动时长：初始化");
         initQN();
-
+        JPushUtils.init(MyAPP.this);
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
@@ -101,7 +101,6 @@ public class MyAPP extends Application {
                         return BuildConfig.DEBUG;
                     }
                 });
-                JPushUtils.init(MyAPP.this);
                 RxCache.initializeDefault(new RxCache.Builder()
                         .appVersion(2)
                         .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))

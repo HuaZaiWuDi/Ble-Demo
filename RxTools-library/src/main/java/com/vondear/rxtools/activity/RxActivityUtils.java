@@ -121,17 +121,30 @@ public class RxActivityUtils {
     /**
      * 判断是否存在指定Activity
      *
-     * @param context     上下文
-     * @param packageName 包名
-     * @param className   activity全路径类名
+     * @param context   上下文
+     * @param className activity全路径类名
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isExistActivity(Context context, String packageName, String className) {
+    public static boolean isExistActivity(Context context, String className) {
         Intent intent = new Intent();
-        intent.setClassName(packageName, className);
+        intent.setClassName(context.getPackageName(), className);
         return !(context.getPackageManager().resolveActivity(intent, 0) == null ||
                 intent.resolveActivity(context.getPackageManager()) == null ||
                 context.getPackageManager().queryIntentActivities(intent, 0).size() == 0);
+    }
+
+    /**
+     * 判断是否存在指定Activity
+     *
+     * @return {@code true}: 是<br>{@code false}: 否
+     */
+    public static boolean isExistActivity(Class<?> cls) {
+        for (Activity activity : activityStack) {
+            if (activity.getClass().equals(cls)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

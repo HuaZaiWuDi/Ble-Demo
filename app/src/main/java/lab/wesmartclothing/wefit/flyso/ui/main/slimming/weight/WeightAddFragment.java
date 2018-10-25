@@ -32,6 +32,7 @@ import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.WelcomeActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
 import lab.wesmartclothing.wefit.flyso.view.RoundDisPlayView;
@@ -221,14 +222,20 @@ public class WeightAddFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
 //                        RxToast.normal("存储体重成功");
-                        onBackPressed();
+//                        onBackPressed();
 
+                        if (RxActivityUtils.isExistActivity(WelcomeActivity.class)) {
+                            onBackPressed();
+                            //把体重数据传递到欢迎界面
+                            RxBus.getInstance().post(bean);
+                        } else {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
+                            RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
+                        }
                         //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
 
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
-                        RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
                     }
 
                     @Override

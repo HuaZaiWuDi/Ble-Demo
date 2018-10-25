@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -66,9 +67,10 @@ public class SplashActivity extends BaseActivity {
         RxLogUtils.i("启动时长：引导页开始");
         setContentView(R.layout.activity_spalsh);
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-        initView();
+//        initView();
 //        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, WelcomeActivity.class);
+        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+        startService(new Intent(mContext, BleService.class));
     }
 
     public void initView() {

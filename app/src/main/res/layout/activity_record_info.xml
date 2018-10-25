@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.main.slimming.plan.RecordInfoActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.qmuiteam.qmui.widget.QMUITopBar
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/topBarHeight"
+            android:hapticFeedbackEnabled="true"
+            app:qmui_topbar_bg_color="@color/white"
+            app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+            app:qmui_topbar_need_separator="false"
+            app:qmui_topbar_title_color="@color/Gray"
+            tools:visibility="visible"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:text="你的运动相关信息"
+            android:textColor="@color/Gray"
+            android:textSize="19sp"/>
+
+        <lab.wesmartclothing.wefit.flyso.view.DotView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp"/>
+
+        <TextView
+            android:id="@+id/tv_infoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="23dp"
+            android:layout_marginBottom="16dp"
+            android:text="攀爬楼梯是否吃力："
+            android:textColor="@color/Gray"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:id="@+id/tv_next"
+        android:layout_width="187dp"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="38dp"
+        android:gravity="center"
+        android:text="@string/nextWay"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:background_normal="@color/green_61D97F"
+        app:corner_radius="22dp"
+        app:ripple_color="@color/Gray"/>
+
+
+</RelativeLayout>

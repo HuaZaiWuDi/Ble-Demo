@@ -29,7 +29,7 @@ public class VerticalProgress extends View {
     private float progressHeight = 0;//进度高度
     private ValueAnimator mAnimator;
     private boolean isAnimating;
-    private boolean isClip = true;//是否剪裁只显示顶部圆角
+    private boolean isClip = false;//是否剪裁只显示顶部圆角
 
     public VerticalProgress(Context context) {
         this(context, null);
@@ -90,6 +90,10 @@ public class VerticalProgress extends View {
         /*绘制圆角矩形，背景色为画笔颜色*/
         canvas.drawRoundRect(rf, round, round, bgProgressPaint);
 
+    }
+
+    public void setClip(boolean clip) {
+        isClip = clip;
     }
 
     public void setProgress(int progress, boolean anim) {
@@ -161,12 +165,12 @@ public class VerticalProgress extends View {
         if (wMode == MeasureSpec.EXACTLY) {
             mWidth = wSize;
         } else {
-            mWidth = RxUtils.dp2px(10);
+            mWidth = RxUtils.dp2px(8);
         }
         if (hMode == MeasureSpec.EXACTLY) {
             mHeight = hSize;
         } else {
-            mHeight = RxUtils.dp2px(46);
+            mHeight = RxUtils.dp2px(44);
         }
         setMeasuredDimension(mWidth, mHeight);
     }

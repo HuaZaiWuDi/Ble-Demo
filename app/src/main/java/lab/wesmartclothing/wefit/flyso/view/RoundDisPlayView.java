@@ -116,7 +116,6 @@ public class RoundDisPlayView extends View {
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
 
-
         drawRound3(canvas);
         //画中间的文字
 //        drawCentreText(canvas);

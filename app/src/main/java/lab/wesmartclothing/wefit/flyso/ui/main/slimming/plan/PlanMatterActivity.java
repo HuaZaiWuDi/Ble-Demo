@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.layout.RxTextView;
 
@@ -54,7 +55,7 @@ public class PlanMatterActivity extends BaseActivity {
                 onBackPressed();
                 break;
             case R.id.tv_Agree:
-//                RxActivityUtils.skipActivity(mActivity,);
+                RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
                 break;
         }
     }

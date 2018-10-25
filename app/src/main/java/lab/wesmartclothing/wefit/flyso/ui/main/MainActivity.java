@@ -43,7 +43,7 @@ import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
@@ -194,7 +194,8 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initMyViewPager() {
         mFragments.clear();
-        mFragments.add(Slimming2Fragment.getInstance());
+        mFragments.add(SlimmingFragment.newInstance());
+//        mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(FindFragment.getInstance());
 //        mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());

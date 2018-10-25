@@ -316,6 +316,8 @@
         </activity>
         <activity android:name=".ui.main.slimming.plan.PlanDetailsActivity">
         </activity>
+        <activity android:name=".ui.main.slimming.plan.RecordInfoActivity">
+        </activity>
     </application>
 
 </manifest>

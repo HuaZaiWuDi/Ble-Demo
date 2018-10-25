@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_F7F7F9"
+    android:orientation="vertical"
+    android:paddingBottom="50dp">
+
+
+    <!--title-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="106dp"
+        android:background="@color/Gray"
+        android:contentDescription="@string/app_name"
+        android:padding="16dp"
+        tools:visibility="visible">
+
+
+        <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+            android:id="@+id/iv_userImg"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dimen_16"
+            android:src="@mipmap/userimg"
+            />
+
+
+        <TextView
+            android:id="@+id/tv_userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/layout_notify"
+            android:layout_toRightOf="@+id/iv_userImg"
+            android:ellipsize="end"
+            android:maxLength="16"
+            android:maxLines="1"
+            android:text="我是用户名"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+
+        <LinearLayout
+            android:id="@+id/layout_notify"
+            android:layout_width="@dimen/dimen_50"
+            android:layout_height="@dimen/dimen_50"
+            android:layout_alignParentRight="true"
+            android:gravity="top|right">
+
+
+            <ImageView
+                android:id="@+id/iv_notify"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@mipmap/icon_email_white"/>
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/img_seeRecord"
+            android:layout_width="114dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:background="@mipmap/icon_see_record"/>
+
+
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <com.vondear.rxtools.view.layout.RxImageView
+                android:id="@+id/img_planMark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="10dp"
+                android:src="@mipmap/icon_plan_mark"
+                android:translationZ="5dp"/>
+
+            <!--瘦身目标-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="196dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                >
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/icon_location_point"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="40dp"
+                        android:text="瘦身目标"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+
+                </RelativeLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/line"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="141dp"
+                    android:padding="15dp">
+
+
+                    <com.vondear.rxtools.view.layout.RxTextView
+                        android:layout_width="97dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"
+                        android:text="查看或重置目标"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"
+                        app:background_normal="@color/bg_F7F7F9"
+                        app:border_color_normal="@color/GrayWrite"
+                        app:border_width_normal="1dp"
+                        app:corner_radius="4dp"
+                        app:ripple_color="@color/Gray"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_weight_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:text="您的当前体重"
+                        android:textColor="@color/BrightGray"
+                        android:textSize="10sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_currentWeight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_weight_title"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:text="66.6kg"
+                        android:textColor="@color/Gray"
+                        android:textSize="31sp"/>
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        >
+
+                        <TextView
+                            android:id="@+id/tv_initWeight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="起始体重\n60.6kg"
+                            android:textColor="@color/BrightGray"
+                            android:textSize="8sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_targetWeight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:gravity="center"
+                            android:text="目标体重\n60.6kg"
+                            android:textColor="@color/BrightGray"
+                            android:textSize="8sp"/>
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+            <!--今日热量-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="306dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/icon_heat"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="今日热量"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/line"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:src="@mipmap/icon_recipes"/>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:id="@+id/tv_IngestionHeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="还可摄入热量\n1693 kcal"
+                        android:textSize="10sp"
+                        tools:textColor="@color/Gray"/>
+
+                    <com.qmuiteam.qmui.widget.QMUIProgressBar
+                        android:id="@+id/circleProgressBar"
+                        android:layout_width="61dp"
+                        android:layout_height="61dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_toRightOf="@+id/tv_IngestionHeat"
+                        app:qmui_background_color="@color/BrightGray"
+                        app:qmui_max_value="100"
+                        app:qmui_progress_color="@color/orange_FF7200"
+                        app:qmui_stroke_round_cap="true"
+                        app:qmui_stroke_width="8dp"
+                        app:qmui_type="type_circle"
+                        app:qmui_value="80"/>
+
+
+                    <View
+                        android:id="@+id/line_vertical"
+                        android:layout_width="1dp"
+                        android:layout_height="61dp"
+                        android:layout_marginLeft="31dp"
+                        android:layout_marginRight="31dp"
+                        android:layout_toRightOf="@+id/circleProgressBar"
+                        android:background="@color/line"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+                        android:id="@+id/breakfastProgress"
+                        android:layout_width="8dp"
+                        android:layout_height="44dp"
+                        android:layout_toRightOf="@+id/line_vertical"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/breakfastProgress"
+                        android:layout_marginTop="4dp"
+                        android:layout_toRightOf="@+id/line_vertical"
+                        android:text="早"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+                        android:id="@+id/lunchProgress"
+                        android:layout_width="8dp"
+                        android:layout_height="44dp"
+                        android:layout_marginLeft="23dp"
+                        android:layout_toRightOf="@+id/breakfastProgress"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/lunchProgress"
+                        android:layout_marginLeft="23dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_toRightOf="@+id/breakfastProgress"
+                        android:text="午"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+                        android:id="@+id/dinnerProgress"
+                        android:layout_width="8dp"
+                        android:layout_height="44dp"
+                        android:layout_marginLeft="23dp"
+                        android:layout_toRightOf="@+id/lunchProgress"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/dinnerProgress"
+                        android:layout_marginLeft="23dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_toRightOf="@+id/lunchProgress"
+                        android:text="晚"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+                        android:id="@+id/mealProgress"
+                        android:layout_width="8dp"
+                        android:layout_height="44dp"
+                        android:layout_marginLeft="23dp"
+                        android:layout_toRightOf="@+id/dinnerProgress"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/mealProgress"
+                        android:layout_marginLeft="23dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_toRightOf="@+id/dinnerProgress"
+                        android:text="加"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:orientation="horizontal">
+
+
+                    <com.vondear.rxtools.view.layout.RxLinearLayout
+                        android:layout_width="77dp"
+                        android:layout_height="54dp"
+                        android:layout_marginRight="8dp"
+                        android:elevation="20dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="8dp"
+                        android:translationZ="40dp"
+                        app:background_normal="@color/gray"
+                        app:corner_radius="4dp"
+                        app:ripple_color="@color/Gray">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableTop="@mipmap/icon_breakfast"
+                            android:elevation="20dp"
+                            android:gravity="center"
+                            android:text="早餐"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="10sp"
+                            android:translationZ="10dp"
+                            />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:src="@mipmap/icon_yellow_add"/>
+
+                    </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>
