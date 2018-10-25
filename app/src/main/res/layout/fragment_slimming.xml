@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="106dp"
         android:background="@color/Gray"
-        android:contentDescription="@string/app_name"
         android:padding="16dp"
         tools:visibility="visible">
 
@@ -376,18 +375,15 @@
                     android:orientation="horizontal">
 
 
-                    <com.vondear.rxtools.view.layout.RxLinearLayout
+                    <android.support.v7.widget.CardView
                         android:layout_width="77dp"
                         android:layout_height="54dp"
                         android:layout_marginRight="8dp"
-                        android:elevation="20dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingLeft="8dp"
-                        android:translationZ="40dp"
-                        app:background_normal="@color/gray"
-                        app:corner_radius="4dp"
-                        app:ripple_color="@color/Gray">
+                        app:cardElevation="4dp"
+                        android:translationZ="4dp">
 
 
                         <TextView
@@ -408,7 +404,7 @@
                             android:layout_marginLeft="8dp"
                             android:src="@mipmap/icon_yellow_add"/>
 
-                    </com.vondear.rxtools.view.layout.RxLinearLayout>
+                    </android.support.v7.widget.CardView>
 
 
                 </LinearLayout>

@@ -34,6 +34,7 @@ import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.net.StoreService;
@@ -71,6 +72,7 @@ public class SplashActivity extends BaseActivity {
 //        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
         RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
         startService(new Intent(mContext, BleService.class));
+        JPushUtils.init(getApplication());
     }
 
     public void initView() {

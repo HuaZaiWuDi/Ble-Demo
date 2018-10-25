@@ -36,7 +36,6 @@ import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
-import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
@@ -79,7 +78,6 @@ public class MyAPP extends Application {
         super.onCreate();
         RxLogUtils.i("启动时长：初始化");
         initQN();
-        JPushUtils.init(MyAPP.this);
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
