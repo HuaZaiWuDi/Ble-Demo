@@ -601,6 +601,7 @@
         <attr name="is_circle" format="boolean"/>
 
 
+
     </declare-styleable>
 
     <!-- RLinearLayout -->

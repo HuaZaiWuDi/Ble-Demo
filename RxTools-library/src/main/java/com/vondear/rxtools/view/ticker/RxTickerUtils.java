@@ -9,8 +9,8 @@ public class RxTickerUtils {
 
     /**
      * @return a default ordering for all viewable ASCII characters. This list also special cases
-     *         space to be in front of the 0 and swap '.' with '/'. These special cases make
-     *         typical US currency animations intuitive.
+     * space to be in front of the 0 and swap '.' with '/'. These special cases make
+     * typical US currency animations intuitive.
      */
     public static char[] getDefaultListForUSCurrency() {
         final int indexOf0 = (int) '0';

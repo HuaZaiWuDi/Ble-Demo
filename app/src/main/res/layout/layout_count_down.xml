@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="离目标完成还剩  "
+        android:textColor="@color/Gray"
+        android:textSize="10sp"/>
+
+
+    <com.vondear.rxtools.view.layout.RxLinearLayout
+        android:layout_width="19dp"
+        android:layout_height="23dp"
+        android:gravity="center"
+        app:background_normal="@color/black">
+
+        <com.vondear.rxtools.view.ticker.RxTickerView
+            android:id="@+id/ticker_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:ticker_animationDuration="500"/>
+
+
+    </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" 天 "
+        android:textColor="@color/Gray"
+        android:textSize="10sp"/>
+
+
+    <com.vondear.rxtools.view.layout.RxLinearLayout
+        android:layout_width="19dp"
+        android:layout_height="23dp"
+        android:gravity="center"
+        app:background_normal="@color/black">
+
+        <com.vondear.rxtools.view.ticker.RxTickerView
+            android:id="@+id/ticker_hour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:ticker_animationDuration="500"/>
+
+
+    </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="23dp"
+        android:gravity="center"
+        android:text=" : "
+        android:textColor="@color/Gray"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+
+    <com.vondear.rxtools.view.layout.RxLinearLayout
+        android:layout_width="19dp"
+        android:layout_height="23dp"
+        android:gravity="center"
+        app:background_normal="@color/black">
+
+        <com.vondear.rxtools.view.ticker.RxTickerView
+            android:id="@+id/ticker_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:ticker_animationDuration="500"/>
+
+
+    </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="23dp"
+        android:gravity="center"
+        android:text=" : "
+        android:textColor="@color/Gray"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+    <com.vondear.rxtools.view.layout.RxLinearLayout
+        android:layout_width="19dp"
+        android:layout_height="23dp"
+        android:gravity="center"
+        app:background_normal="@color/black">
+
+        <com.vondear.rxtools.view.ticker.RxTickerView
+            android:id="@+id/ticker_sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:ticker_animationDuration="500"/>
+
+
+    </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+</LinearLayout>

@@ -30,6 +30,7 @@ public class VerticalProgress extends View {
     private ValueAnimator mAnimator;
     private boolean isAnimating;
     private boolean isClip = false;//是否剪裁只显示顶部圆角
+    private int progressColor = Color.parseColor("#FF7200");
 
     public VerticalProgress(Context context) {
         this(context, null);
@@ -56,7 +57,7 @@ public class VerticalProgress extends View {
         progressPaint.setDither(true);
         progressPaint.setAntiAlias(true);
         progressPaint.setStyle(Paint.Style.FILL);
-        progressPaint.setColor(Color.parseColor("#FF7200"));
+
         progressPaint.setStrokeCap(Paint.Cap.ROUND);//设置为线条圆头
 
     }
@@ -65,6 +66,7 @@ public class VerticalProgress extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        progressPaint.setColor(progressColor);
         round = mWidth / 2;
         // 必须先设置显示区域再绘制,剪裁掉底部的圆角
         if (isClip)
@@ -94,6 +96,10 @@ public class VerticalProgress extends View {
 
     public void setClip(boolean clip) {
         isClip = clip;
+    }
+
+    public void setProgressColor(int progressColor) {
+        this.progressColor = progressColor;
     }
 
     public void setProgress(int progress, boolean anim) {

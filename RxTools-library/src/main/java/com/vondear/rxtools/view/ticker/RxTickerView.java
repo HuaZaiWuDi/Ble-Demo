@@ -67,6 +67,7 @@ public class RxTickerView extends View {
     private Interpolator animationInterpolator;
     private int gravity;
     private boolean animateMeasurementChange;
+    private String text = "0";
 
     public RxTickerView(Context context) {
         super(context);
@@ -222,6 +223,7 @@ public class RxTickerView extends View {
      * @param animate whether to animate to text.
      */
     public synchronized void setText(String text, boolean animate) {
+        this.text = text;
         final char[] targetText = text == null ? new char[0] : text.toCharArray();
 
         if (columnManager.shouldDebounceText(targetText)) {
@@ -267,6 +269,10 @@ public class RxTickerView extends View {
             textPaint.setColor(textColor);
             invalidate();
         }
+    }
+
+    public String getText() {
+        return text;
     }
 
     /**

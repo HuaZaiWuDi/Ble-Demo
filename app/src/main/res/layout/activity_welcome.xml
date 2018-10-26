@@ -89,6 +89,6 @@
         android:textSize="17sp"
         app:background_normal="@color/green_61D97F"
         app:corner_radius="22dp"
-        app:ripple_color="@color/Gray"/>
+        app:ripple_color="@color/GrayWrite"/>
 
 </LinearLayout>

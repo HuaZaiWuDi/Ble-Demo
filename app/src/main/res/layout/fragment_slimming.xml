@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_F7F7F9"
+    android:background="@color/white"
     android:orientation="vertical"
     android:paddingBottom="50dp">
 
@@ -13,19 +13,22 @@
     <!--title-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="106dp"
-        android:background="@color/Gray"
+        android:layout_height="95dp"
+        android:background="@mipmap/icon_title_bg"
         android:padding="16dp"
         tools:visibility="visible">
 
 
-        <com.qmuiteam.qmui.widget.QMUIRadiusImageView
+        <com.vondear.rxtools.view.layout.RxImageView
             android:id="@+id/iv_userImg"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/dimen_16"
-            android:src="@mipmap/userimg"
+            app:corner_radius="32dp"
+            app:icon_src_normal="@mipmap/userimg"
+            app:icon_src_pressed="@color/GrayWrite"
+            app:is_circle="true"
             />
 
 
@@ -60,13 +63,14 @@
         </LinearLayout>
 
 
-        <ImageView
+        <com.vondear.rxtools.view.layout.RxTextView
             android:id="@+id/img_seeRecord"
-            android:layout_width="114dp"
-            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:background="@mipmap/icon_see_record"/>
+            app:icon_src_normal="@mipmap/icon_see_record"
+            />
 
 
     </RelativeLayout>
@@ -88,15 +92,14 @@
                 android:id="@+id/img_planMark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="10dp"
-                android:src="@mipmap/icon_plan_mark"
-                android:translationZ="5dp"/>
+                app:icon_src_normal="@mipmap/icon_plan_mark"
+                app:icon_src_pressed="@color/gray"/>
 
             <!--瘦身目标-->
             <LinearLayout
+                android:id="@+id/layout_slimmingTerget"
                 android:layout_width="match_parent"
                 android:layout_height="196dp"
-                android:background="@color/white"
                 android:orientation="vertical"
                 >
 
@@ -121,6 +124,12 @@
                         android:textColor="@color/Gray"
                         android:textSize="14sp"/>
 
+                    <lab.wesmartclothing.wefit.flyso.view.CountDownView
+                        android:id="@+id/mCountDownView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"/>
+
 
                 </RelativeLayout>
 
@@ -137,6 +146,7 @@
 
 
                     <com.vondear.rxtools.view.layout.RxTextView
+                        android:id="@+id/resetTarget"
                         android:layout_width="97dp"
                         android:layout_height="24dp"
                         android:layout_alignParentRight="true"
@@ -144,11 +154,11 @@
                         android:text="查看或重置目标"
                         android:textColor="@color/GrayWrite"
                         android:textSize="10sp"
-                        app:background_normal="@color/bg_F7F7F9"
+                        app:background_normal="@color/white"
                         app:border_color_normal="@color/GrayWrite"
                         app:border_width_normal="1dp"
                         app:corner_radius="4dp"
-                        app:ripple_color="@color/Gray"/>
+                        app:ripple_color="@color/GrayWrite"/>
 
 
                     <TextView
@@ -158,7 +168,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="8dp"
                         android:text="您的当前体重"
-                        android:textColor="@color/BrightGray"
+                        android:textColor="@color/GrayWrite"
                         android:textSize="10sp"/>
 
 
@@ -186,8 +196,29 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="起始体重\n60.6kg"
-                            android:textColor="@color/BrightGray"
+                            android:textColor="@color/GrayWrite"
                             android:textSize="8sp"/>
+
+
+                        <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                            android:id="@+id/pro_target"
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:layout_margin="8dp"
+                            android:layout_toLeftOf="@+id/tv_targetWeight"
+                            android:layout_toRightOf="@+id/tv_initWeight">
+
+
+                        </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignLeft="@+id/pro_target"
+                            android:layout_alignBottom="@+id/pro_target"
+                            android:layout_marginLeft="8dp"
+                            android:src="@mipmap/icon_location_gray"/>
 
 
                         <TextView
@@ -197,7 +228,7 @@
                             android:layout_alignParentRight="true"
                             android:gravity="center"
                             android:text="目标体重\n60.6kg"
-                            android:textColor="@color/BrightGray"
+                            android:textColor="@color/GrayWrite"
                             android:textSize="8sp"/>
 
                     </RelativeLayout>
@@ -209,10 +240,10 @@
 
             <!--今日热量-->
             <LinearLayout
+                android:id="@+id/layout_heat"
                 android:layout_width="match_parent"
                 android:layout_height="306dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/white"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -236,7 +267,6 @@
                         android:textColor="@color/Gray"
                         android:textSize="14sp"/>
 
-
                 </LinearLayout>
 
                 <View
@@ -244,26 +274,31 @@
                     android:layout_height="1dp"
                     android:background="@color/line"/>
 
-                <ImageView
-                    android:layout_width="match_parent"
+                <com.vondear.rxtools.view.layout.RxImageView
+                    android:id="@+id/img_recipes"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="15dp"
-                    android:src="@mipmap/icon_recipes"/>
+                    app:icon_src_normal="@mipmap/icon_recipes"
+                    app:icon_src_pressed="@color/GrayWrite"
+                    />
 
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="15dp">
+                    android:layout_marginLeft="10dp"
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/tv_IngestionHeat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:lineSpacingExtra="10dp"
                         android:text="还可摄入热量\n1693 kcal"
-                        android:textSize="10sp"
-                        tools:textColor="@color/Gray"/>
+                        android:textColor="@color/Gray"
+                        android:textSize="10sp"/>
 
                     <com.qmuiteam.qmui.widget.QMUIProgressBar
                         android:id="@+id/circleProgressBar"
@@ -369,45 +404,677 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
-
                     <android.support.v7.widget.CardView
+                        android:id="@+id/layout_breakfast"
                         android:layout_width="77dp"
                         android:layout_height="54dp"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:background="@drawable/selector_ripple_bg_"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingLeft="8dp"
-                        app:cardElevation="4dp"
-                        android:translationZ="4dp">
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp">
 
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawableTop="@mipmap/icon_breakfast"
-                            android:elevation="20dp"
-                            android:gravity="center"
-                            android:text="早餐"
-                            android:textColor="@color/GrayWrite"
-                            android:textSize="10sp"
-                            android:translationZ="10dp"
-                            />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
-                            android:src="@mipmap/icon_yellow_add"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableTop="@mipmap/icon_breakfast"
+                                android:elevation="20dp"
+                                android:gravity="center"
+                                android:text="早餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"
+                                android:translationZ="10dp"
+                                />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:src="@mipmap/icon_yellow_add"/>
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/layout_lunch"
+                        android:layout_width="77dp"
+                        android:layout_height="54dp"
+                        android:layout_marginLeft="8dp"
+                        android:background="@drawable/selector_ripple_bg_"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="8dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableTop="@mipmap/icon_lunch"
+                                android:elevation="20dp"
+                                android:gravity="center"
+                                android:text="午餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"
+                                android:translationZ="10dp"
+                                />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:src="@mipmap/icon_yellow_add"/>
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/layout_dinner"
+                        android:layout_width="77dp"
+                        android:layout_height="54dp"
+                        android:layout_marginLeft="8dp"
+                        android:background="@drawable/selector_ripple_bg_"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="8dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableTop="@mipmap/icon_dinner"
+                                android:elevation="20dp"
+                                android:gravity="center"
+                                android:text="晚餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"
+                                android:translationZ="10dp"
+                                />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:src="@mipmap/icon_yellow_add"/>
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/layout_meal"
+                        android:layout_width="77dp"
+                        android:layout_height="54dp"
+                        android:layout_marginLeft="8dp"
+                        android:background="@drawable/selector_ripple_bg_"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="8dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableTop="@mipmap/icon_meal"
+                                android:elevation="20dp"
+                                android:gravity="center"
+                                android:text="加餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"
+                                android:translationZ="10dp"
+                                />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:src="@mipmap/icon_yellow_add"/>
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <!--今日运动-->
+            <RelativeLayout
+                android:id="@+id/layout_sporting"
+                android:layout_width="match_parent"
+                android:layout_height="361dp"
+                android:layout_marginTop="8dp"
+                >
+
+                <LinearLayout
+                    android:id="@+id/layout_sportTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/icon_sports"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="今日运动"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/line"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layout_sportTitle"
+                    android:orientation="vertical"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_curriculum"/>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="106dp"
+                        android:layout_marginLeft="31dp"
+                        android:layout_marginRight="31dp"
+                        android:layout_marginBottom="5dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:paddingBottom="8dp"
+                            >
+
+                            <TextView
+                                android:id="@+id/tv_chartTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="bpm"
+                                android:textColor="@color/Gray"
+                                android:textSize="6sp"/>
+
+                            <com.github.mikephil.charting.charts.LineChart
+                                android:id="@+id/lineChart"
+                                android:layout_width="match_parent"
+                                android:layout_height="55dp"
+                                android:layout_below="@+id/tv_chartTitle">
+
+                            </com.github.mikephil.charting.charts.LineChart>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/lineChart"
+                                android:layout_alignParentRight="true"
+                                android:text="time"
+                                android:textColor="@color/Gray"
+                                android:textSize="6sp"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_sportingTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:text="100‘06“层本次运动时间"
+                                android:textColor="@color/Gray"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:id="@+id/tv_sportingKcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_alignParentBottom="true"
+                                android:text="100‘06“层本次运动时间"
+                                android:textColor="@color/Gray"
+                                android:textSize="12sp"/>
+
+                        </RelativeLayout>
+
 
                     </android.support.v7.widget.CardView>
 
 
                 </LinearLayout>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="154dp"
+                    android:layout_height="87dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="2dp">
+
+
+                    <com.vondear.rxtools.view.layout.RxTextView
+                        android:id="@+id/tv_freeSporting"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:icon_src_normal="@mipmap/icon_free_sporting"
+                        />
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="154dp"
+                    android:layout_height="87dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="2dp">
+
+
+                    <com.vondear.rxtools.view.layout.RxTextView
+                        android:id="@+id/tv_curriculumSporting"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:icon_src_normal="@mipmap/icon_curriculum_sporting"
+                        />
+
+
+                </android.support.v7.widget.CardView>
+
+
+            </RelativeLayout>
+
+            <!--今日体重-->
+            <LinearLayout
+                android:id="@+id/layout_weight"
+                android:layout_width="match_parent"
+                android:layout_height="252dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/layout_weightTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_weight"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="今日运动"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:src="@mipmap/icon_green_problem"/>
+
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/line"/>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:id="@+id/tv_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="30dp"
+                        android:drawableRight="@mipmap/icon_green_down"
+                        android:drawablePadding="8dp"
+                        android:text="56.6 体重(kg)"
+                        android:textColor="@color/Gray"
+                        android:textSize="31dp"/>
+
+
+                    <com.vondear.rxtools.view.layout.RxTextView
+                        android:id="@+id/tv_weight_status"
+                        android:layout_width="35dp"
+                        android:layout_height="14dp"
+                        android:layout_alignBottom="@+id/tv_weight"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toRightOf="@+id/tv_weight"
+                        android:gravity="center"
+                        android:text="标准"
+                        android:textColor="@color/green_61D97F"
+                        android:textSize="11sp"
+                        app:border_color_normal="@color/green_61D97F"
+                        app:border_width_normal="1dp"
+                        app:corner_radius="2dp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_bodyFat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_weight"
+                        android:drawableRight="@mipmap/icon_green_down"
+                        android:text="2222222"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_bmi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_weight"
+                        android:layout_centerHorizontal="true"
+                        android:drawableRight="@mipmap/icon_green_down"
+                        android:text="2222222"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_bmr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_weight"
+                        android:layout_alignParentRight="true"
+                        android:drawableRight="@mipmap/icon_red_up"
+                        android:text="2222222"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+
+                    <com.vondear.rxtools.view.layout.RxTextView
+                        android:id="@+id/reWeigh"
+                        android:layout_width="187dp"
+                        android:layout_height="44dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="center"
+                        android:text="重新称重"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:background_normal="@color/green_61D97F"
+                        app:corner_radius="22dp"
+                        app:ripple_color="@color/Gray"/>
+
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+
+            <!--今日能量-->
+            <LinearLayout
+                android:id="@+id/layout_energy"
+                android:layout_width="match_parent"
+                android:layout_height="227dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/layout_energyTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_energy"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:text="今日能量"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:src="@mipmap/icon_green_problem"/>
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/line"/>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="15dp">
+
+
+                    <LinearLayout
+                        android:id="@+id/layout_Legend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/shape_gray_8dp"
+                            android:drawablePadding="4dp"
+                            android:text="计划"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="8sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:drawableLeft="@drawable/shape_yellow_8dp"
+                            android:drawablePadding="4dp"
+                            android:text="实际"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="8sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/shape_red_8dp"
+                            android:drawablePadding="4dp"
+                            android:text="负值"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="8sp"/>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/barChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="110dp"
+                        android:layout_below="@+id/layout_Legend"
+                        android:layout_marginLeft="45dp"
+                        android:orientation="horizontal">
+
+
+                        <com.vondear.rxtools.view.chart.bar.BarGroupChart
+                            android:id="@+id/pro_diet_plan"
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent"
+                            />
+
+                        <com.vondear.rxtools.view.chart.bar.BarGroupChart
+                            android:id="@+id/pro_diet_real"
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            />
+
+
+                        <com.vondear.rxtools.view.chart.bar.BarGroupChart
+                            android:id="@+id/pro_sport_plan"
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="50dp"
+                            />
+
+                        <com.vondear.rxtools.view.chart.bar.BarGroupChart
+                            android:id="@+id/pro_sport_real"
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            />
+
+
+                        <com.vondear.rxtools.view.chart.bar.BarGroupChart
+                            android:id="@+id/pro_heat_plan"
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="50dp"
+                            />
+
+                        <com.vondear.rxtools.view.chart.bar.BarGroupChart
+                            android:id="@+id/pro_heat_real"
+                            android:layout_width="20dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            />
+
+
+                    </LinearLayout>
+
+
+                    <View
+                        android:id="@+id/line_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignBottom="@+id/barChart"
+                        android:layout_marginBottom="5dp"
+                        android:background="@color/line"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/barChart"
+                        android:layout_marginLeft="45dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="饮食摄入 (kcal)"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/barChart"
+                        android:layout_marginLeft="150dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="运动消耗 (kcal)"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/barChart"
+                        android:layout_marginLeft="255dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="盈余热量 (kcal)"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                </RelativeLayout>
 
 
             </LinearLayout>

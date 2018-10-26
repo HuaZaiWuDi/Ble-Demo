@@ -16,11 +16,11 @@ import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRandom;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.view.chart.bar.BarGroupChart;
 import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxIconRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
-import com.vondear.rxtools.view.roundprogressbar.VerticalProgress;
 import com.vondear.rxtools.view.roundprogressbar.common.RxBaseRoundProgressBar;
 
 import butterknife.BindView;
@@ -45,9 +45,9 @@ public class TestBleScanActivity extends AppCompatActivity {
         final RxLinearLayout tv_test = findViewById(R.id.tv_test);
 
 
-        VerticalProgress mVerticalProgress = findViewById(R.id.mVerticalProgress);
-        mVerticalProgress.setProgress(100);
-
+        BarGroupChart mVerticalProgress = findViewById(R.id.mVerticalProgress);
+        mVerticalProgress.setProgress(80);
+        mVerticalProgress.setTopValue(1000);
 //
 //        mParent.setOnClickListener(new View.OnClickListener() {
 //            @Override

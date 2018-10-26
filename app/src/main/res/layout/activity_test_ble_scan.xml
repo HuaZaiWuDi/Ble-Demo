@@ -81,9 +81,8 @@
 
     </RelativeLayout>
 
-    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+    <com.vondear.rxtools.view.chart.bar.BarGroupChart
         android:id="@+id/mVerticalProgress"
-        android:layout_margin="30dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"

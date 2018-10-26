@@ -67,12 +67,12 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         RxLogUtils.i("启动时长：引导页开始");
         setContentView(R.layout.activity_spalsh);
+        startService(new Intent(mContext, BleService.class));
+        JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
 //        initView();
 //        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
         RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-        startService(new Intent(mContext, BleService.class));
-        JPushUtils.init(getApplication());
     }
 
     public void initView() {
