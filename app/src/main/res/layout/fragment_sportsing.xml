@@ -125,8 +125,8 @@
             <View
                 android:layout_width="@dimen/dimen_35"
                 android:layout_height="@dimen/dimen_1"
-                android:layout_alignParentRight="true"
                 android:layout_below="@+id/tv_kcal"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/dimen_50"
                 android:background="@color/GrayWrite"/>
 
@@ -271,7 +271,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="190dp"
+                android:layout_height="250dp"
                 android:layout_below="@+id/layout_sports"
                 android:layout_marginTop="46dp"
                 android:background="#443C4A"
@@ -281,7 +281,7 @@
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/lineCHart_HeartRate"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="250dp">
 
                 </com.github.mikephil.charting.charts.LineChart>
 
@@ -343,6 +343,17 @@
                         android:textSize="13sp"
                         app:qmui_backgroundColor="@color/brown_ABA08E"
                         app:qmui_borderColor="#443C4A"/>
+
+                    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                        android:layout_width="36dp"
+                        android:layout_height="28dp"
+                        android:layout_marginTop="20dp"
+                        android:text="静息"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        app:qmui_backgroundColor="@color/GrayWrite"
+                        app:qmui_borderColor="@color/GrayWrite"/>
+
                 </LinearLayout>
 
             </RelativeLayout>

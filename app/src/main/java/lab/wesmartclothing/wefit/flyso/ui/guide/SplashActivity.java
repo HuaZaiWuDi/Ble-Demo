@@ -69,7 +69,7 @@ public class SplashActivity extends BaseActivity {
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
         initView();
 //        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, WelcomeActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(mContext, SportingFragment.class);
         JPushUtils.init(getApplication());
     }
 

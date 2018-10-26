@@ -132,7 +132,18 @@ public class SportingFragment extends BaseActivity {
         initRxBus();
         initTypeface();
         showDialog();
+//        testTimer.startTimer();
     }
+
+
+    MyTimer testTimer = new MyTimer(0, 2000, new MyTimerListener() {
+        @Override
+        public void enterTimer() {
+            SportsDataTab dataTab = new SportsDataTab();
+            dataTab.setCurHeart((int) (Math.random() * 140 + 60));
+            setHeartRate(dataTab);
+        }
+    });
 
 
     @Override
@@ -194,34 +205,42 @@ public class SportingFragment extends BaseActivity {
                         if (dialog.isShowing()) {
                             dialog.dismiss();
                         }
-                        if (BleService.clothingFinish || currentTime == 0) {
-                            currentTime = sportsDataTab.getDuration();
-                            timer.startTimer();
-                            timer2.startTimer();
+                        setHeartRate(sportsDataTab);
 
-                            List<Entry> heartValues = new ArrayList<>();
-                            for (int i = 0; i < sportsDataTab.getAthlRecord_2().size(); i++) {
-                                heartValues.add(new Entry(i, sportsDataTab.getAthlRecord_2().get(i)));
-                            }
-                            set.setValues(heartValues);
-                            mMLineChart.getData().notifyDataChanged();
-                            mMLineChart.notifyDataSetChanged();
-                            mMLineChart.setVisibleXRangeMaximum(15);
-                            mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
-                        } else {
-                            mMLineChart.getData().addEntry(new Entry(mMLineChart.getData().getDataSetByIndex(0).getEntryCount(), sportsDataTab.getCurHeart()), 0);
-                            mMLineChart.getData().notifyDataChanged();
-                            mMLineChart.notifyDataSetChanged();
-                            mMLineChart.setVisibleXRangeMaximum(15);
-                            mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
-                        }
-
-                        heartRate(sportsDataTab.getCurHeart());
-                        mTvKcal.setText(RxFormatValue.fromatUp(sportsDataTab.getKcal(), 1));
-                        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
                     }
                 });
+
+    }
+
+    private void setHeartRate(SportsDataTab sportsDataTab) {
+
+        if (BleService.clothingFinish || currentTime == 0) {
+            currentTime = sportsDataTab.getDuration();
+            timer.startTimer();
+            timer2.startTimer();
+
+            List<Entry> heartValues = new ArrayList<>();
+            if (sportsDataTab.getAthlRecord_2() != null)
+                for (int i = 0; i < sportsDataTab.getAthlRecord_2().size(); i++) {
+                    heartValues.add(new Entry(i, sportsDataTab.getAthlRecord_2().get(i)));
+                }
+            set.setValues(heartValues);
+            mMLineChart.getData().notifyDataChanged();
+            mMLineChart.notifyDataSetChanged();
+            mMLineChart.setVisibleXRangeMaximum(15);
+            mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
+        } else {
+            mMLineChart.getData().addEntry(new Entry(mMLineChart.getData().getDataSetByIndex(0).getEntryCount(), sportsDataTab.getCurHeart()), 0);
+            mMLineChart.getData().notifyDataChanged();
+            mMLineChart.notifyDataSetChanged();
+            mMLineChart.setVisibleXRangeMaximum(15);
+            mMLineChart.moveViewTo(mMLineChart.getData().getEntryCount() - 15, 50f, YAxis.AxisDependency.LEFT);
+        }
+
+        heartRate(sportsDataTab.getCurHeart());
+        mTvKcal.setText(RxFormatValue.fromatUp(sportsDataTab.getKcal(), 1));
+        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
+        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
 
     }
 
@@ -247,11 +266,11 @@ public class SportingFragment extends BaseActivity {
 
         YAxis yAxis = lineChartBase.getAxisLeft();
         yAxis.setAxisMaximum(200);
-        yAxis.setAxisMinimum(100);
+        yAxis.setAxisMinimum(60);
         XAxis x = lineChartBase.getXAxis();
         x.setSpaceMin(14f);
         lineChartBase.setData(new LineData());
-        addLimitLine2Y(lineChartBase, new float[]{120f, 140f, 160f, 180f}, new String[]{"", "", "", ""});
+        addLimitLine2Y(lineChartBase, new float[]{100f, 120f, 140f, 160f, 180f}, new String[]{"", "", "", "", ""});
 
         LineData data = mMLineChart.getData();
         set = (LineDataSet) data.getDataSetByIndex(0);
@@ -316,6 +335,15 @@ public class SportingFragment extends BaseActivity {
                 if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
                     type = 4;
                     TextSpeakUtils.speakAdd(getString(R.string.speech_limit));
+                }
+            }
+        } else if (heart >= 60 && heart < 100) {
+            if (type != 5) {
+                mTvSportsStatus.setText("静息");
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.GrayWrite));
+                if (mSwMusic.isOpened() && !TextSpeakUtils.isSpeak()) {
+                    type = 5;
+                    TextSpeakUtils.speakAdd("您当前处于静息心率");
                 }
             }
         }

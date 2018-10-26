@@ -558,12 +558,13 @@ public class BleService extends Service {
                 if (lastHeartRate == 0) {
                     lastHeartRate = heartRate;
                 }
-
-                if (lastHeartRate - heartRate > heartDeviation) {
-                    heartRate = lastHeartRate - heartSupplement;
-                } else if (lastHeartRate - heartRate < -heartDeviation) {
-                    heartRate = lastHeartRate + heartSupplement;
-                }
+                //去掉补差值
+//
+//                if (lastHeartRate - heartRate > heartDeviation) {
+//                    heartRate = lastHeartRate - heartSupplement;
+//                } else if (lastHeartRate - heartRate < -heartDeviation) {
+//                    heartRate = lastHeartRate + heartSupplement;
+//                }
                 lastHeartRate = heartRate;
 
                 long time = ByteUtil.bytesToLongD4(data, 3) * 1000;
