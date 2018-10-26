@@ -7,7 +7,11 @@ def AAVersion = '4.4.0'
 def releaseTime() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }
-
+def getMyStoreFile(){
+    if("true".equals(IS_JENKINS)){
+        return file("/home/sign")
+    }
+}
 //Git每次提交的版本号
 def cmd = 'git rev-list HEAD --count'
 def gitVersion = cmd.execute().text.trim().toInteger()
@@ -133,6 +137,24 @@ android {
         // Or, if you prefer, you can continue to check for errors in release builds,
         // but continue the build even when errors are found:
         abortOnError false
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            //新名字
+            def newName
+            //输出文件夹
+            def outDirectory
+            //是否为Jenkins打包，输出路径不同
+            if ("true".equals(IS_JENKINS)) {
+                //BUILD_PATH为服务器输出路径
+                outDirectory = "/user/local/Android/apk"
+                newName = "TimeToFit" + "-" + defaultConfig.versionName + "-" + BUILD_TYPE + ".apk"
+            } else {
+                outDirectory = output.outputFile.getParent()
+                newName = "TimeToFit" + "-" + defaultConfig.versionName + "-" + BUILD_TYPE + ".apk"
+            }
+            output.outputFile = new File(outDirectory, newName)
+        }
     }
 
 }
