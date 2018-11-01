@@ -37,5 +37,8 @@ public interface SPKey {
 
     String SP_GUIDE = "SP_GUIDE";//引导页
 
-    String SP_BMR="SP_BMR";
+    String SP_BMR = "SP_BMR";
+
+    String SP_SET_PLAN = "SP_SET_PLAN";//是否定制计划
+
 }

@@ -17,6 +17,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
 
     @Override
     public void onSubscribe(Disposable d) {
+        Log.e(TAG, "onSubscribe: " );
     }
 
     public RxNetSubscriber() {
@@ -34,7 +35,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
 
     @Override
     public void onComplete() {
-
+        Log.e(TAG, "onComplete: " );
     }
 
     @Override

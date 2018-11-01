@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,7 +54,7 @@ public class TargetDetailsFragment extends BaseActivity {
 
 
     Bundle bundle = new Bundle();
-
+    RxDialogSureCancel rxDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,9 +88,22 @@ public class TargetDetailsFragment extends BaseActivity {
 
     @OnClick(R.id.btn_reSet)
     public void onViewClicked() {
-        //传递初始体重信息
-        RxActivityUtils.skipActivityAndFinish(mContext, SettingTargetFragment.class, bundle);
+        showChooseDialog();
+    }
 
+    private void showChooseDialog() {
+        rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("重置目标会更改已定制的瘦身计划，您确定要重置吗？")
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //传递初始体重信息
+                        RxActivityUtils.skipActivityAndFinish(mContext, SettingTargetFragment.class, bundle);
+                    }
+                });
+        rxDialog.show();
     }
 
     private void targetWeight() {
@@ -121,4 +136,10 @@ public class TargetDetailsFragment extends BaseActivity {
                 });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (rxDialog != null && rxDialog.isShowing())
+            rxDialog.dismiss();
+    }
 }

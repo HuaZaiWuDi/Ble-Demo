@@ -2,6 +2,7 @@
     <string name="appName">Timetofit</string>
     <string name="nav_slimming">瘦身</string>
     <string name="nav_find">发现</string>
+    <string name="nav_record">记录</string>
     <string name="nav_store">商城</string>
     <string name="nav_me">我的</string>
     <string name="heat">热量</string>
@@ -100,10 +101,11 @@
     <string name="must_input">最多可以输入%1$d字</string>
     <string name="plan">感谢使用TimeToFit为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n1.身体质量指数（BMI）在 18.5-40 之间； \n2.年龄在 18-60 之间； \n3.产后女性已不在哺乳期，且距离上次生产一年以上； \n4.未患有心血管疾病且近期未有其他影响饮食或运动的病症。</string>
     <string name="phone_email">客服电话：43046554 \n客服邮箱：466113124@wesma</string>
+    <string name="empty_recipes">亲爱的%1$s，此日期没有任何记录哦，点击按钮可以补录饮食…</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>
-        <item>@string/nav_find</item>
+        <item>@string/nav_record</item>
         <item>@string/nav_store</item>
         <item>@string/nav_me</item>
     </string-array>
@@ -159,6 +161,17 @@
         <item>一天一次</item>
         <item>一天多次</item>
         <item>始终出现</item>
+    </string-array>
+
+
+    <string-array name="week">
+        <item>日</item>
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
     </string-array>
 
 </resources>

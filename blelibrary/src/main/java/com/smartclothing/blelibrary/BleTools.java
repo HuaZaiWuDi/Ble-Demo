@@ -87,7 +87,7 @@ public class BleTools {
                 Log.e(TAG, "设备不支持BLE");
             return;
         }
-        if (bleManager.isBlueEnable())
+        if (!bleManager.isBlueEnable())
             bleManager.enableBluetooth();
 //        bleManager.disableBluetooth();//关闭蓝牙
         bleManager.enableLog(false);//是否开启蓝牙日志

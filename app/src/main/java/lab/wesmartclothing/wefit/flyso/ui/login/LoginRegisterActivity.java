@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -22,6 +21,7 @@ import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.UnScrollableViewPager;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
@@ -40,7 +40,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -312,31 +311,26 @@ public class LoginRegisterActivity extends BaseActivity {
     }
 
     private void showDialog2settingPassword() {
-        RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity)
-                .setCancel("设置密码")
-                .setCancelListener(new View.OnClickListener() {
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setContent("该手机号还未设置密码")
+                .setSure("设置密码")
+                .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //进入设置密码流程，跳转验证手机号
                         RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class);
                     }
                 })
-                .setSure("验证码登录")
-                .setSureListener(new View.OnClickListener() {
+                .setCancel("验证码登录")
+                .setCancelListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mCommonTabLayout.setCurrentTab(1);
                     }
-                })
-                .setContent("该手机号还未设置密码");
-        dialog.getTvTitle().setVisibility(View.GONE);
-        TextView tvCancel = dialog.getTvCancel();
-        TextView tvSure = dialog.getTvSure();
-        tvCancel.setBackgroundColor(getResources().getColor(R.color.red));
-        tvCancel.setTextColor(getResources().getColor(R.color.white));
-        tvSure.setBackgroundColor(getResources().getColor(R.color.BrightGray));
-        tvSure.setTextColor(getResources().getColor(R.color.white));
-        dialog.show();
+                });
+        rxDialog.show();
+
+
     }
 
 

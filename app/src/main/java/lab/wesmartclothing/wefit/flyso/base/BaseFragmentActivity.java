@@ -9,7 +9,6 @@ import android.view.WindowManager;
 
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.StatusBarUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
@@ -44,7 +43,6 @@ public abstract class BaseFragmentActivity extends BaseActivity {
         mActivity = this;
         RxActivityUtils.addActivity(this);
 
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         ScreenAdapter.setCustomDensity(this);
         tipDialog = new TipDialog(mContext);
     }

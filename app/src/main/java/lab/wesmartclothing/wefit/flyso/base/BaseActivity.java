@@ -3,22 +3,20 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.zhy.autolayout.AutoFrameLayout;
-import com.zhy.autolayout.AutoLinearLayout;
-import com.zhy.autolayout.AutoRelativeLayout;
+import com.vondear.rxtools.utils.StatusBarUtils;
 
+import butterknife.ButterKnife;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 
@@ -32,23 +30,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Activity mActivity;
     protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
     public TipDialog tipDialog;
-    private boolean gotoSporting = false;
-    private boolean gotoWeight = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         lifecycleSubject.onNext(LifeCycleEvent.CREATE);
-        super.onCreate(savedInstanceState);
+
         //设置为横屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-//        //屏幕沉浸
+        super.onCreate(savedInstanceState);
+        //屏幕沉浸
         StatusBarUtils.from(this)
                 .setStatusBarColor(getResources().getColor(R.color.Gray))
-                .setLightStatusBar(true)
+                .setLightStatusBar(false)
                 .process();
+
 
         mContext = this;
         mActivity = this;
@@ -56,6 +55,43 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         ScreenAdapter.setCustomDensity(this);
         initDialog();
+
+        if (layoutId() != 0) {
+            setContentView(layoutId());
+            ButterKnife.bind(this);
+        }
+        if (getIntent().getExtras() != null)
+            initBundle(getIntent().getExtras());
+        initViews();
+        initNetData();
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getExtras() != null)
+            initBundle(intent.getExtras());
+    }
+
+    protected @LayoutRes
+    int layoutId() {
+        return 0;
+    }
+
+
+    //初始化Bundle数据
+    protected void initBundle(Bundle bundle) {
+
+    }
+
+    //初始化布局逻辑
+    protected void initViews() {
+
+    }
+
+    //初始化网络数据
+    protected void initNetData() {
 
     }
 
@@ -107,33 +143,35 @@ public abstract class BaseActivity extends AppCompatActivity {
         mActivity = null;
     }
 
-    private static final String LAYOUT_LINEARLAYOUT = "LinearLayout";
-    private static final String LAYOUT_FRAMELAYOUT = "FrameLayout";
-    private static final String LAYOUT_RELATIVELAYOUT = "RelativeLayout";
-
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        View view = null;
-        if (LAYOUT_FRAMELAYOUT.equals(name)) {
-            view = new AutoFrameLayout(context, attrs);
-        }
-
-        if (LAYOUT_LINEARLAYOUT.equals(name)) {
-            view = new AutoLinearLayout(context, attrs);
-        }
-
-        if (LAYOUT_RELATIVELAYOUT.equals(name)) {
-            view = new AutoRelativeLayout(context, attrs);
-        }
-
-        if (view != null) return view;
-
-        return super.onCreateView(name, context, attrs);
-    }
+//    private static final String LAYOUT_LINEARLAYOUT = "LinearLayout";
+//    private static final String LAYOUT_FRAMELAYOUT = "FrameLayout";
+//    private static final String LAYOUT_RELATIVELAYOUT = "RelativeLayout";
+//
+//    @Override
+//    public View onCreateView(String name, Context context, AttributeSet attrs) {
+//        View view = null;
+//        if (LAYOUT_FRAMELAYOUT.equals(name)) {
+//            view = new AutoFrameLayout(context, attrs);
+//        }
+//
+//        if (LAYOUT_LINEARLAYOUT.equals(name)) {
+//            view = new AutoLinearLayout(context, attrs);
+//        }
+//
+//        if (LAYOUT_RELATIVELAYOUT.equals(name)) {
+//            view = new AutoRelativeLayout(context, attrs);
+//        }
+//
+//        if (view != null) return view;
+//
+//        return super.onCreateView(name, context, attrs);
+//    }
 
 
     @Override
     public void onBackPressed() {
         RxActivityUtils.finishActivity();
     }
+
+
 }

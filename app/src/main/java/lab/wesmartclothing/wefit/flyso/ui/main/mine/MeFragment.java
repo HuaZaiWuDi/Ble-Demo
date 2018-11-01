@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -97,17 +95,15 @@ public class MeFragment extends BaseAcFragment {
 
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_me, null);
-        unbinder = ButterKnife.bind(this, view);
-        initView();
-        return view;
+    protected int layoutId() {
+        return R.layout.fragment_me;
     }
 
 
-    private void initView() {
+    @Override
+    protected void initViews() {
+        super.initViews();
         initRxBus();
-        initMineData();
         initTypeface();
         RxTextUtils.getBuilder("--")
                 .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
@@ -120,6 +116,13 @@ public class MeFragment extends BaseAcFragment {
     protected void onVisible() {
         super.onVisible();
         initMineData();
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+        initMineData();
+
     }
 
     //后台上传心率数据成功，刷新界面

@@ -44,6 +44,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
@@ -86,6 +87,9 @@ public class MainActivity extends BaseALocationActivity {
             return;
         }
         setContentView(R.layout.activity_main);
+
+//        StatusBarUtil.setTranslucent(this);
+
         ButterKnife.bind(this);
         initView();
         bleIntent = new Intent(mContext, BleService.class);
@@ -93,7 +97,6 @@ public class MainActivity extends BaseALocationActivity {
     }
 
     public void initView() {
-
         initReceiverPush();
         initRxBus();
         startLocation(null);
@@ -143,14 +146,13 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initBottomTab() {
         String[] tab_text = getResources().getStringArray(R.array.tab_text);
-        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_find_unselect,
+        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_record,
                 R.mipmap.icon_shopping_unselect, R.mipmap.icon_mine_unselect};
-        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_find_select,
+        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_record_unselect,
                 R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
-            if (i != 2)
-                mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
+            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
@@ -196,6 +198,7 @@ public class MainActivity extends BaseALocationActivity {
         mFragments.clear();
         mFragments.add(SlimmingFragment.newInstance());
 //        mFragments.add(Slimming2Fragment.getInstance());
+        mFragments.add(SlimmingRecordFragment.newInstance());
         mFragments.add(FindFragment.getInstance());
 //        mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());

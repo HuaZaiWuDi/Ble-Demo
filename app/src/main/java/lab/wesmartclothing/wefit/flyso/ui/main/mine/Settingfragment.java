@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -147,25 +148,19 @@ public class Settingfragment extends BaseActivity {
 
     @OnClick(R.id.tv_logout)
     public void onViewClicked() {
-        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.getTvContent().setText("退出登录？");
-        dialog.setCancel("退出");
-        dialog.setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                logout();
-            }
-        });
-        dialog.setSure("取消");
-        dialog.setSureListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("退出登录？")
+                .setSure("退出")
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        logout();
+                    }
+                });
+        rxDialog.show();
+
     }
 
 

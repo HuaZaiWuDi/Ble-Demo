@@ -30,7 +30,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.SharePop;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ShareListener;
@@ -46,7 +45,6 @@ public class CollectWebActivity extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_interactive);
         //屏幕沉浸
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.Gray)).process();
         initView();
     }
 

@@ -2,6 +2,8 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.ColorInt;
+import android.support.v4.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
@@ -30,59 +32,82 @@ public class ChartManager {
     private XAxis x;
     private YAxis y;
     private Context mContext;
-    private LineChart mLineChart;
+    private LineChart lineChartBase;
+
 
     //初始化图表
-    public ChartManager(Context context, LineChart mLineChart) {
-        mContext = context;
-        this.mLineChart = mLineChart;
-        // no description text
-        mLineChart.getDescription().setEnabled(false);
-        mLineChart.setTouchEnabled(true);//可以点击
-        // enable scaling and dragging
-        mLineChart.setDragEnabled(true);
-        mLineChart.setScaleEnabled(false);
-        // if disabled, scaling can be done on x- and y-axis separately
-        mLineChart.setPinchZoom(false);//X，Y轴缩放
-
-        mLineChart.getAxisRight().setEnabled(false);
-        mLineChart.getLegend().setEnabled(false);//关闭图例
-        mLineChart.setAutoScaleMinMaxEnabled(false);
-        mLineChart.setNoDataText(mContext.getString(R.string.tip_nodata));//没有数据时显示
-        mLineChart.setNoDataTextColor(Color.WHITE);
-        mLineChart.setViewPortOffsets(10, 50, 20, 50);
-
-        x = mLineChart.getXAxis();
-        x.setAvoidFirstLastClipping(true);
-        x.setTextColor(Color.WHITE);
-//        x.setLabelCount(7, true);
-        x.setEnabled(true);
-        x.setPosition(XAxis.XAxisPosition.BOTTOM);
-        x.setDrawGridLines(false);
-        x.setGridColor(context.getResources().getColor(R.color.lineColor));
-        x.setAxisLineColor(Color.WHITE);
-        x.setDrawAxisLine(false);
-        x.setDrawLabels(true);
+    public void initChart(LineChart lineChartBase) {
+        this.lineChartBase = lineChartBase;
+        lineChartBase.getLegend().setEnabled(false);
+        lineChartBase.getDescription().setEnabled(false);
+        lineChartBase.setTouchEnabled(false);//可以点击
+        lineChartBase.setDragEnabled(false);
+        lineChartBase.setScaleEnabled(false);
+        lineChartBase.setPinchZoom(false);//X，Y轴缩放
+//        lineChartBase.setViewPortOffsets(0, 0, 160, 0);
 
 
-        y = mLineChart.getAxisLeft();
-        y.setDrawLimitLinesBehindData(true);
-        y.setLabelCount(7, true);
-        y.setTextColor(Color.WHITE);
-        y.setDrawGridLines(false);
-        y.setGridColor(context.getResources().getColor(R.color.lineColor));
-        y.setAxisLineColor(Color.WHITE);
-//        y.setGranularity(2f);// //设置最小间隔，防止当放大时出现重复标签
-        y.setDrawAxisLine(false);
-        y.setDrawLabels(false);
-//
+        XAxis xAxis = lineChartBase.getXAxis();
+        xAxis.setEnabled(false);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawLabels(false);
 
-        mLineChart.invalidate();
+
+        YAxis leftAxis = lineChartBase.getAxisLeft();
+        YAxis rightAxis = lineChartBase.getAxisRight();
+        rightAxis.setEnabled(false);
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setDrawLabels(false);
+
+
+        lineChartBase.setData(new LineData());
+        addLimitLine2Y(lineChartBase, new float[]{120f, 140f, 160f, 180f}, new String[]{"", "", "", ""});
+
+        lineChartBase.invalidate();
+    }
+
+
+
+
+    public void createSet(@ColorInt int color, String label) {
+        LineData data = lineChartBase.getData();
+        // set.addEntry(...); // can be called as well
+
+        LineDataSet set = new LineDataSet(null, label);
+        set.setDrawIcons(false);
+        set.setDrawValues(false);
+        set.setColor(color);
+        set.setDrawCircleHole(false);
+        set.setDrawCircles(false);
+        set.setLineWidth(3f);
+        set.setHighlightEnabled(false);
+//        set.setCircleColors();
+//        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+//        set.setCubicIntensity(0.2f);
+        data.addDataSet(set);
+        lineChartBase.invalidate();
+    }
+
+    //添加提示线
+    public void addLimitLine2Y(BarLineChartBase lineChartBase, float[] value, String[] label) {
+        YAxis y = lineChartBase.getAxisLeft();
+        y.removeAllLimitLines();
+        if (value == null) return;
+        for (int i = 0; i < value.length; i++) {
+            //提示线，
+            LimitLine ll = new LimitLine(value[i], label[i]);//线条颜色宽度等
+            ll.setLineColor(ContextCompat.getColor(mContext, R.color.GrayWrite));
+            ll.setLineWidth(0.1f);
+            //加入到 mXAxis 或 mYAxis
+            y.addLimitLine(ll);
+        }
     }
 
 
     public void addLegend() {
-        Legend legend = mLineChart.getLegend();
+        Legend legend = lineChartBase.getLegend();
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         legend.setDrawInside(true);
@@ -103,37 +128,18 @@ public class ChartManager {
         ll.setTextColor(mContext.getResources().getColor(R.color.white));
         ll.setTextSize(12f);
 
-        YAxis y = mLineChart.getAxisLeft();
+        YAxis y = lineChartBase.getAxisLeft();
         y.removeAllLimitLines();
         //加入到 mXAxis 或 mYAxis
         y.addLimitLine(ll);
     }
 
-    //添加提示线
-    public void addLimitLine2X(float value) {
-        mLineChart.highlightValue(value, 0);
-        mLineChart.invalidate();
-//        mLineChart.setHighlightPerTapEnabled(false);
-//        //提示线，
-//        LimitLine ll = new LimitLine(value, "");//线条颜色宽度等
-//        ll.setLineColor(Color.WHITE);
-//        ll.setLineWidth(2f);
-//        ll.enableDashedLine(10f, 10f, 0f);
-//
-//        x.removeAllLimitLines();
-//        //加入到 mXAxis 或 mYAxis
-//        x.addLimitLine(ll);
-
-//        mLineChart.setDefaultFocusHighlightEnabled(true);
-
-    }
-
 
     //添加Tip
     public void addMarker(MarkerView mv) {
-        mv.setChartView(mLineChart); // For bounds control
-        mLineChart.setMarker(mv); // Set the marker to the chart
-        mLineChart.invalidate();
+        mv.setChartView(lineChartBase); // For bounds control
+        lineChartBase.setMarker(mv); // Set the marker to the chart
+        lineChartBase.invalidate();
     }
 
     //添加数据
@@ -149,27 +155,25 @@ public class ChartManager {
         data.setDrawValues(false);
 
         // set data
-        mLineChart.setData(data);
+        lineChartBase.setData(data);
 
         data.notifyDataChanged();
-        mLineChart.notifyDataSetChanged();
-        mLineChart.invalidate();
+        lineChartBase.notifyDataSetChanged();
+        lineChartBase.invalidate();
 
 //        mLineChart.animateX(500);
 
-        mLineChart.setVisibleXRangeMaximum(7);
-        mLineChart.setVisibleXRangeMinimum(7);
-        mLineChart.moveViewToX(yVals.size() - 4);
+        lineChartBase.setVisibleXRangeMinimum(7);
+        lineChartBase.moveViewToX(yVals.size() - 4);
 
-        addLimitLine2X(yVals.size() - 1);
 
     }
 
     //添加X轴标签
     private void addXLabel(List<String> days) {
-        XAxis x = mLineChart.getXAxis();
+        XAxis x = lineChartBase.getXAxis();
         x.setValueFormatter(new MyXFormatter(days));
-        mLineChart.invalidate();
+        lineChartBase.invalidate();
     }
 
 
@@ -262,18 +266,17 @@ public class ChartManager {
         data.setDrawValues(false);
 
         // set data
-        mLineChart.setData(data);
+        lineChartBase.setData(data);
 
         data.notifyDataChanged();
-        mLineChart.notifyDataSetChanged();
-        mLineChart.invalidate();
+        lineChartBase.notifyDataSetChanged();
+        lineChartBase.invalidate();
 
 //        mLineChart.animateX(500);
-        mLineChart.setVisibleXRangeMaximum(7);
-        mLineChart.setVisibleXRangeMinimum(7);
-        mLineChart.moveViewToX(line1.size() - 4);
+        lineChartBase.setVisibleXRangeMaximum(7);
+        lineChartBase.setVisibleXRangeMinimum(7);
+        lineChartBase.moveViewToX(line1.size() - 4);
 
-        addLimitLine2X(line1.size() - 1);
 
 //        addLegend();
     }

@@ -109,17 +109,21 @@
     </LinearLayout>
 
 
-    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+    <com.vondear.rxtools.view.layout.RxTextView
         android:id="@+id/btn_confirm"
         android:layout_width="195dp"
         android:layout_height="46dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
-        android:text="@string/confirm"
+        android:gravity="center"
+        android:text="确认"
         android:textColor="@color/white"
         android:textSize="18dp"
-        app:qmui_backgroundColor="@color/orange_FF7200"
-        app:qmui_borderColor="@color/orange_FF7200"/>
+        app:background_normal="@color/green_61D97F"
+        app:corner_radius="22dp"
+        app:ripple_color="@color/GrayWrite"/>
+
+
 
 </RelativeLayout>

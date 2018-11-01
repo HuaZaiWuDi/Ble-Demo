@@ -42,8 +42,8 @@
                 android:layout_width="289dp"
                 android:layout_height="48dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/dimen_8"
                 android:layout_marginTop="@dimen/dimen_8"
+                android:layout_marginBottom="@dimen/dimen_8"
                 android:text="检测到您未开启手机蓝牙，开启蓝牙"
                 android:textColor="@color/Gray"
                 android:textSize="13sp"
@@ -81,9 +81,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/dimen_10"
-                android:layout_marginRight="@dimen/dimen_16"
                 android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_16"
+                android:layout_marginBottom="@dimen/dimen_10"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -372,8 +372,8 @@
                     android:id="@+id/layout_sportTip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/dimen_46"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="@dimen/dimen_46"
                     android:background="@color/white"
                     android:padding="16dp"
                     >
@@ -403,13 +403,15 @@
                         android:layout_marginRight="34dp"
                         android:text="设置"
                         android:textColor="@color/GrayWrite"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:background="@mipmap/icon_goto"/>
+                        android:background="@mipmap/icon_goto"
+                        android:visibility="gone"/>
 
 
                     <View
@@ -491,8 +493,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="8dp"
                                 android:layout_marginLeft="16dp"
-                                android:layout_marginRight="16dp"
                                 android:layout_marginTop="5dp"
+                                android:layout_marginRight="16dp"
                                 android:layout_toLeftOf="@+id/tv_endWeight"
                                 android:layout_toRightOf="@+id/tv_startWeight"
                                 app:rcBackgroundColor="@color/GrayWrite"

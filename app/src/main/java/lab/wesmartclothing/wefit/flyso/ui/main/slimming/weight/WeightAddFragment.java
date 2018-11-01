@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -68,7 +69,6 @@ public class WeightAddFragment extends BaseActivity {
 
     //最近一次体重
     private double lastWeight;
-    private QNScaleData mQnScaleData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,12 +76,16 @@ public class WeightAddFragment extends BaseActivity {
         setContentView(R.layout.fragment_add_weight);
         unbinder = ButterKnife.bind(this);
         initView();
+        if (!BleTools.getBleManager().isBlueEnable())
+            BleTools.getBleManager().enableBluetooth();
     }
+
+    private QNScaleData mQnScaleData;
 
     @Override
     public void onStart() {
-        TimeOutTimer.startTimer();
         super.onStart();
+
     }
 
     @Override
@@ -106,11 +110,16 @@ public class WeightAddFragment extends BaseActivity {
 
         lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
         RxLogUtils.d("上一次体重数据：" + lastWeight);
+
+        mTvTip.setText("请上称");
+        mTvTitle.setText("测量体重");
     }
 
 
     private void showWeightData(Intent intent) {
-        double unsteadyWeight = intent.getExtras().getDouble(Key.BUNDLE_WEIGHT_UNSTEADY, 0);
+        Bundle extras = intent.getExtras();
+        if (extras == null) return;
+        double unsteadyWeight = extras.getDouble(Key.BUNDLE_WEIGHT_UNSTEADY, 0);
         final QNScaleData qnScaleData = MyAPP.getGson().fromJson(intent.getExtras().getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
         if (unsteadyWeight > 0) {
             mTvTargetWeight.setText((float) unsteadyWeight + "");
@@ -186,7 +195,7 @@ public class WeightAddFragment extends BaseActivity {
     }, 20000);
 
 
-    @OnClick({R.id.btn_forget, R.id.btn_save})
+    @OnClick({R.id.btn_forget, R.id.btn_save, R.id.img_close})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_forget:
@@ -194,6 +203,9 @@ public class WeightAddFragment extends BaseActivity {
                 break;
             case R.id.btn_save:
                 saveWeight();
+                break;
+            case R.id.img_close:
+                onBackPressed();
                 break;
         }
     }
@@ -224,6 +236,9 @@ public class WeightAddFragment extends BaseActivity {
 //                        RxToast.normal("存储体重成功");
 //                        onBackPressed();
 
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshSlimming());
+
                         if (RxActivityUtils.isExistActivity(WelcomeActivity.class)) {
                             onBackPressed();
                             //把体重数据传递到欢迎界面
@@ -233,8 +248,7 @@ public class WeightAddFragment extends BaseActivity {
                             bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
                             RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
                         }
-                        //刷新数据
-                        RxBus.getInstance().post(new RefreshSlimming());
+
 
                     }
 

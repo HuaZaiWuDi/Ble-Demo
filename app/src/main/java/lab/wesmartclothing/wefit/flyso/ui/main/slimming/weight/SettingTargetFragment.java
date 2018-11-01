@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
 
@@ -47,7 +47,7 @@ public class SettingTargetFragment extends BaseActivity {
     @BindView(R.id.ruler_weight)
     DecimalScaleRulerView mWeightRulerView;
     @BindView(R.id.btn_nextStep)
-    QMUIRoundButton mBtnNextStep;
+    RxTextView mBtnNextStep;
     Unbinder unbinder;
 
 
@@ -161,10 +161,9 @@ public class SettingTargetFragment extends BaseActivity {
             tipDialog.showInfo("您设定的目标体重超过或等于当前体重，\n请重新设置~", 2000);
             return;
         }
-
         Bundle mBundle = new Bundle();
-        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, settingWeight);
-        mBundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
+        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(settingWeight, 2));
+        mBundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
         RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
     }
 

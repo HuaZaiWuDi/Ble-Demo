@@ -601,7 +601,6 @@
         <attr name="is_circle" format="boolean"/>
 
 
-
     </declare-styleable>
 
     <!-- RLinearLayout -->
@@ -736,5 +735,36 @@
 
     </declare-styleable>
 
+
+    <declare-styleable name="RoundProgressBar">
+        <attr name="pro_type" format="enum">
+            <enum name="type_rect" value="0"/>
+            <enum name="type_circle" value="1"/>
+        </attr>
+        <attr name="pro_progress_color" format="color"/>
+        <attr name="pro_background_color" format="color"/>
+        <attr name="pro_max_value" format="integer"/>
+        <attr name="pro_value" format="integer"/>
+        <attr name="pro_stroke_width" format="dimension"/>
+        <attr name="pro_stroke_round_cap" format="boolean"/>
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="VerticalProgress">
+        <attr name="pro_Color" format="color"/>
+        <attr name="isClip" format="boolean"/>
+        <attr name="isDrawBg" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="BarVerticalChart">
+        <attr name="progressColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="BarGroupChart">
+        <attr name="proBarColor" format="color"/>
+        <attr name="topValue" format="integer"/>
+    </declare-styleable>
 
 </resources>

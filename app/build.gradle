@@ -214,4 +214,6 @@ dependencies {
     implementation files('libs/qnsdk-0.3.4.jar')
 
     compile project(path: ':netlib')
+
+    compile 'com.haibin:calendarview:3.4.8'
 }

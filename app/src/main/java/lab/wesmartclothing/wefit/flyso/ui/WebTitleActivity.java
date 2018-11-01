@@ -13,7 +13,6 @@ import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 
 public class WebTitleActivity extends BaseWebActivity {
     @BindView(R.id.parent)
@@ -26,7 +25,6 @@ public class WebTitleActivity extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_title);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this).setStatusBarColor(getResources().getColor(R.color.Gray)).process();
 
         initWebView(mParent);
 

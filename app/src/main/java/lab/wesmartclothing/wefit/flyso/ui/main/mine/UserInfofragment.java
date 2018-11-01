@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -345,30 +346,31 @@ public class UserInfofragment extends BaseActivity {
     public void onBackPressed() {
         RxLogUtils.d("用户数据：" + info.toString());
         if (info.isChange()) {
-            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.getTvTitle().setVisibility(View.GONE);
-            dialog.setContent("您已经修改信息\n是否保存？");
-            dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-            dialog.setCancel("保存").setCancelListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    if (userImgIsChange) {
-                        uploadImage();
-                    } else {
-                        requestSaveUserInfo();
-                    }
-                }
-            })
-                    .setSure("退出")
+            RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                    .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                    .setContent("您已经修改信息\n是否保存？")
+                    .setSure("保存")
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
+                            if (userImgIsChange) {
+                                uploadImage();
+                            } else {
+                                requestSaveUserInfo();
+                            }
+                        }
+                    })
+                    .setCancel("退出")
+                    .setCancelListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
                             RxActivityUtils.finishActivity();
                         }
-                    }).show();
+                    });
+            rxDialog.show();
+
+
         } else
             super.onBackPressed();
     }

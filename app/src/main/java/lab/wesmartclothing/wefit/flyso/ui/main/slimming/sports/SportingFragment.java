@@ -399,24 +399,16 @@ public class SportingFragment extends BaseActivity {
     RxDialogSureCancel dialog;
 
     private void showDialog() {
-        dialog = new RxDialogSureCancel(mActivity);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.setContent("运动已结束，是否退出界面");
-        dialog.setCancel("退出").setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                onBackPressed();
-            }
-        })
-                .setSure("取消")
+        dialog = new RxDialogSureCancel(mContext)
+                .setContent("运动已结束，是否退出界面？")
+                .setSure("退出")
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        onBackPressed();
                     }
                 });
+        dialog.show();
     }
 
 }

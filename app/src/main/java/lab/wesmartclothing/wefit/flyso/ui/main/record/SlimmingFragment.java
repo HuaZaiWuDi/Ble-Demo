@@ -1,32 +1,71 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
+import android.bluetooth.BluetoothAdapter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
-import com.qmuiteam.qmui.widget.QMUIProgressBar;
+import com.orhanobut.logger.Logger;
+import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.dateUtils.RxTimeUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarGroupChart;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.VerticalProgress;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.CountDownView;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.ui.main.record
@@ -72,7 +111,7 @@ public class SlimmingFragment extends BaseAcFragment {
     @BindView(R.id.tv_IngestionHeat)
     TextView mTvIngestionHeat;
     @BindView(R.id.circleProgressBar)
-    QMUIProgressBar mCircleProgressBar;
+    RoundProgressBar mCircleProgressBar;
     @BindView(R.id.line_vertical)
     View mLineVertical;
     @BindView(R.id.breakfastProgress)
@@ -95,8 +134,6 @@ public class SlimmingFragment extends BaseAcFragment {
     LinearLayout mLayoutHeat;
     @BindView(R.id.layout_sportTitle)
     LinearLayout mLayoutSportTitle;
-    @BindView(R.id.tv_chartTitle)
-    TextView mTvChartTitle;
     @BindView(R.id.lineChart)
     LineChart mLineChart;
     @BindView(R.id.tv_sportingTime)
@@ -124,7 +161,7 @@ public class SlimmingFragment extends BaseAcFragment {
     @BindView(R.id.reWeigh)
     RxTextView mReWeigh;
     @BindView(R.id.layout_weight)
-    LinearLayout mLayoutWeight;
+    RelativeLayout mLayoutWeight;
     @BindView(R.id.layout_energyTitle)
     LinearLayout mLayoutEnergyTitle;
     @BindView(R.id.pro_diet_plan)
@@ -145,7 +182,33 @@ public class SlimmingFragment extends BaseAcFragment {
     View mLineView;
     @BindView(R.id.layout_energy)
     LinearLayout mLayoutEnergy;
-    Unbinder unbinder;
+    @BindView(R.id.tv_clothing_tip)
+    TextView mTvClothingTip;
+    @BindView(R.id.btn_goBind_clothing)
+    RxTextView mBtnGoBindClothing;
+    @BindView(R.id.layout_clothing_default)
+    LinearLayout mLayoutClothingDefault;
+    @BindView(R.id.tv_weight_tip)
+    TextView mTvWeightTip;
+    @BindView(R.id.btn_goBind_scale)
+    RxTextView mBtnGoBindScale;
+    @BindView(R.id.layout_scale_default)
+    LinearLayout mLayoutScaleDefault;
+    @BindView(R.id.layout_Legend)
+    LinearLayout mLayoutLegend;
+    @BindView(R.id.card_freeSporting)
+    CardView mCardFreeSporting;
+    @BindView(R.id.card_curriculumSporting)
+    CardView mCardCurriculumSporting;
+    @BindView(R.id.layout_title)
+    RelativeLayout mLayoutTitle;
+    @BindView(R.id.layout_lineChart)
+    RelativeLayout mLayoutLineChart;
+    @BindView(R.id.scroll)
+    NestedScrollView mScroll;
+
+
+    private PlanBean bean;
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -154,15 +217,32 @@ public class SlimmingFragment extends BaseAcFragment {
         return fragment;
     }
 
+
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_slimming, null);
-        unbinder = ButterKnife.bind(this, view);
-        init();
-        return view;
+    protected int layoutId() {
+        return R.layout.fragment_slimming;
     }
 
-    private void init() {
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+
+        String string = SPUtils.getString(SPKey.SP_UserInfo);
+        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        RxLogUtils.d("用户数据:" + info);
+        if (info != null) {
+            mTvUserName.setText(info.getUserName());
+
+            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
+        }
+
+        getData();
+    }
+
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         mTvCurrentWeight.setTypeface(MyAPP.typeface);
         mTvInitWeight.setTypeface(MyAPP.typeface);
         mTvTargetWeight.setTypeface(MyAPP.typeface);
@@ -175,133 +255,464 @@ public class SlimmingFragment extends BaseAcFragment {
         mTvBmr.setTypeface(MyAPP.typeface);
 
 
-        RxTextUtils.getBuilder("66.6")
-                .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
+//        mScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+//            @Override
+//            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+//                RxLogUtils.d("滑动的距离scrollY：" + scrollY);
+//                RxLogUtils.d("滑动的距离oldScrollY：" + oldScrollY);
+//                if (scrollY > oldScrollY) {
+//                    //向下滑
+//
+//                } else {
+//                    //向上滑
+//                }
+//            }
+//        });
 
-        RxTextUtils.getBuilder("起始体重\n")
-                .append("60.6").setProportion(1.5f)
-                .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                .into(mTvInitWeight);
+        initRxBus();
+    }
 
-        RxTextUtils.getBuilder("目标体重\n")
-                .append("60.6").setProportion(1.5f)
-                .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                .into(mTvTargetWeight);
-
-
-        RxTextUtils.getBuilder("多摄入热量\n")
-                .append("60.6").setProportion(1.5f)
-                .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                .into(mTvIngestionHeat);
+    private void initRxBus() {
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initNetData();
+                    }
+                });
+    }
 
 
-        RxTextUtils.getBuilder("100‘06“")
+    ///////////////////////////////////////////////////////////////////////////
+    // 接口
+    ///////////////////////////////////////////////////////////////////////////
+
+    private void getData() {
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.planIndex())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        Logger.json(s);
+                        bean = JSON.parseObject(s, PlanBean.class);
+                        RxLogUtils.d("是否运行：" + bean);
+                        updateUI();
+                    }
+
+                    @Override
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
+                    }
+                });
+    }
+
+
+    private void updateUI() {
+        if (bean == null) return;
+        switchPlanStatus(bean.getPlanState());
+        toDayWeight(bean.getWeightChangeVO());
+        slimmingTarget();
+        toDayHeat(bean.getHeatInfoVO());
+        toDaySporting(bean.getAthlPlanList());
+        toDayEnergy(bean.getTodayHeatVO());
+        notifyData();
+    }
+
+    /**
+     * 今日运动
+     *
+     * @param athlPlanList
+     */
+    private void toDaySporting(List<PlanBean.AthlPlanListBean> athlPlanList) {
+
+        RxTextUtils.getBuilder(RxFormat.setSec2MS(bean.getTotalTime() * 60))
                 .append("本次运动时间")
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvSportingTime);
 
-        RxTextUtils.getBuilder("1666")
+        RxTextUtils.getBuilder(bean.getTotalDeplete() + "")
                 .append("预计消耗热量(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvSportingKcal);
 
-        RxTextUtils.getBuilder("56.6")
+    }
+
+    /**
+     * 消息通知
+     */
+    private void notifyData() {
+        mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
+    }
+
+    /**
+     * 今日能量比例
+     *
+     * @param todayHeatVO
+     */
+    private void toDayEnergy(PlanBean.TodayHeatVOBean todayHeatVO) {
+        if (todayHeatVO == null) return;
+        int maxValue = checkMaxValue(todayHeatVO);
+        RxLogUtils.d("最大值：" + maxValue);
+        //饮食摄入预计
+        mProDietPlan.setTopValue(todayHeatVO.getPlanIntake());
+        mProDietPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
+        mProDietPlan.setProgress(todayHeatVO.getPlanIntake() * 100 / maxValue);
+
+        //饮食摄入实际
+        mProDietReal.setTopValue(todayHeatVO.getRealIntake());
+        mProDietReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
+        mProDietReal.setProgress(todayHeatVO.getRealIntake() * 100 / maxValue);
+
+        //运动预计
+        mProSportPlan.setTopValue(todayHeatVO.getPlanDeplete());
+        mProSportPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
+        mProSportPlan.setProgress(todayHeatVO.getPlanDeplete() * 100 / maxValue);
+
+        //运动实际
+        mProSportReal.setTopValue(todayHeatVO.getRealDeplete());
+        mProSportReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
+        mProSportReal.setProgress(todayHeatVO.getRealDeplete() * 100 / maxValue);
+
+        //盈余预计
+        mProHeatPlan.setTopValue(todayHeatVO.getPlanSurplus());
+        mProHeatPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
+        mProHeatPlan.setProgress(todayHeatVO.getPlanSurplus() * 100 / maxValue);
+
+        //盈余热量：运动+基础代谢-摄入，正值为良好，负值为盈余
+        //盈余实际
+        mProHeatReal.setProgress(Math.abs(todayHeatVO.getRealSurplus()) * 100 / maxValue);
+        mProHeatReal.setTopValue(Math.abs(todayHeatVO.getRealSurplus()));
+        mProHeatReal.setColor(ContextCompat.getColor(mContext, todayHeatVO.getRealSurplus() < 0 ? R.color.red : R.color.yellow_FFBC00));
+    }
+
+    private int checkMaxValue(PlanBean.TodayHeatVOBean todayHeatVO) {
+        List<Integer> heat = new ArrayList<>();
+        heat.add(todayHeatVO.getPlanDeplete());
+        heat.add(todayHeatVO.getRealDeplete());
+        heat.add(todayHeatVO.getPlanSurplus());
+        heat.add(todayHeatVO.getRealSurplus());
+        heat.add(todayHeatVO.getPlanIntake());
+        heat.add(todayHeatVO.getRealIntake());
+
+        return Collections.max(heat) == 0 ? 1 : Collections.max(heat);
+    }
+
+    /**
+     * 今日体重
+     *
+     * @param weightChangeVO
+     */
+    private void toDayWeight(PlanBean.WeightChangeVOBean weightChangeVO) {
+        if (bean.getWeightChangeVO() == null || bean.getWeightChangeVO().getWeight() == null)
+            return;
+        double weight = weightChangeVO.getWeight().getWeight();
+        boolean hasInitialWeight = bean.getWeightChangeVO().isHasInitialWeight();
+        double maxNormalWeight = bean.getMaxNormalWeight();
+        double minNormalWeight = bean.getMinNormalWeight();
+
+        if (weight > minNormalWeight && minNormalWeight <= maxNormalWeight) {
+            mTvWeightStatus.setText("标准");
+            mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
+            mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                    .setBorderWidthNormal(RxUtils.dp2px(1));
+        } else if (weight <= minNormalWeight) {
+            mTvWeightStatus.setText("偏瘦");
+            mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
+            mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.blue))
+                    .setBorderWidthNormal(RxUtils.dp2px(1));
+        } else if (weight > maxNormalWeight) {
+            mTvWeightStatus.setText("偏胖");
+            mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.orange_FF7200));
+            mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.orange_FF7200))
+                    .setBorderWidthNormal(RxUtils.dp2px(1));
+        }
+
+        RxTextUtils.getBuilder(weight + "")
                 .append("体重(kg)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.5f).into(mTvWeight);
 
-
-        RxTextUtils.getBuilder("22.80")
+        RxTextUtils.getBuilder(weightChangeVO.getWeight().getBodyFat() + "")
                 .append(" 体脂率(%)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvBodyFat);
-        RxTextUtils.getBuilder("23.60")
+
+        RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmi() + "")
                 .append(" BMI").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvBmi);
-        RxTextUtils.getBuilder("1226")
+
+        RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmr() + "")
                 .append(" 基础代谢率(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvBmr);
 
 
-        mBreakfastProgress.setProgress(50);
-        mLunchProgress.setProgress(70);
-        mDinnerProgress.setProgress(80);
-        mMealProgress.setProgress(100);
-        mMealProgress.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
+        if (hasInitialWeight) {
+            Drawable drawable1 = ContextCompat.getDrawable(mContext, weightChangeVO.getWeightChange() < 0 ?
+                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
+            mTvWeight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable1, null);
 
-        //饮食摄入预计
-        mProDietPlan.setProgress(0);
-        mProDietPlan.setTopValue(1200);
-        mProDietPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
+            Drawable drawable2 = ContextCompat.getDrawable(mContext, weightChangeVO.getBodyFatChange() < 0 ?
+                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
+            mTvBodyFat.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable2, null);
 
-        //饮食摄入实际
-        mProDietReal.setProgress(100);
-        mProDietReal.setTopValue(800);
-        mProDietReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
+            Drawable drawable3 = ContextCompat.getDrawable(mContext, weightChangeVO.getBmiChange() < 0 ?
+                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
+            mTvBmi.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable3, null);
 
-        //运动预计
-        mProSportPlan.setProgress(70);
-        mProSportPlan.setTopValue(800);
-        mProSportPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
-
-        //运动实际
-        mProSportReal.setProgress(40);
-        mProSportReal.setTopValue(800);
-        mProSportReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
-
-        //盈余预计
-        mProHeatPlan.setProgress(80);
-        mProHeatPlan.setTopValue(800);
-        mProHeatPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
-
-        //盈余实际
-        mProHeatReal.setProgress(60);
-        mProHeatReal.setTopValue(800);
-        mProHeatReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
+            Drawable drawable4 = ContextCompat.getDrawable(mContext, weightChangeVO.getBmrChange() < 0 ?
+                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
+            mTvBmr.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable4, null);
+        }
 
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+
+    /**
+     * 今日热量
+     * <p>
+     * 早、午、晚、加餐能量占每日建议摄入能量比：3:4:2:1；
+     * <p>
+     * 能量条颜色变化以 UI 设计为
+     * 准，规则为摄入热量超过建议摄
+     * 入热量 80%颜色开始变化；超过
+     * 的摄入热量，能量条充满；
+     * 能量条高度：每餐已摄入热量占
+     * 每餐建议摄入热量比*能量条完
+     * 整高度
+     *
+     * @param heatInfoVO
+     */
+    private void toDayHeat(PlanBean.HeatInfoVOBean heatInfoVO) {
+        if (bean.getHeatInfoVO() == null) return;
+        boolean warning = heatInfoVO.isWarning();
+        int basalCalorie = heatInfoVO.getBasalCalorie();
+
+        RxTextUtils.getBuilder(warning ? "多摄入热量\n" : "还可摄入热量\n")
+                .append(heatInfoVO.getAbleIntake() + "").setProportion(1.5f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
+                .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
+                .into(mTvIngestionHeat);
+
+
+        mCircleProgressBar.setProgressColor(ContextCompat.getColor(mContext, warning ? R.color.red : R.color.orange_FF7200));
+        mCircleProgressBar.setProgress((int) (heatInfoVO.getIntakePercent() * 100));
+
+        int proBreakfast = (int) (heatInfoVO.getBreakfast().getCalorie() * 100 / (basalCalorie * 0.3f));
+        int proLunch = (int) (heatInfoVO.getLunch().getCalorie() * 100 / (basalCalorie * 0.4f));
+        int proDinner = (int) (heatInfoVO.getDinner().getCalorie() * 100 / (basalCalorie * 0.2f));
+        int proMeal = (int) (heatInfoVO.getSnacks().getCalorie() * 100 / (basalCalorie * 0.1f));
+
+        mBreakfastProgress.setProgressColor(ContextCompat.getColor(mContext, proBreakfast > 80 ? R.color.red : R.color.orange_FF7200));
+        mBreakfastProgress.setProgress(proBreakfast);
+        mLunchProgress.setProgressColor(ContextCompat.getColor(mContext, proLunch > 80 ? R.color.red : R.color.orange_FF7200));
+        mLunchProgress.setProgress(proLunch);
+        mDinnerProgress.setProgressColor(ContextCompat.getColor(mContext, proDinner > 80 ? R.color.red : R.color.orange_FF7200));
+        mDinnerProgress.setProgress(proDinner);
+        mMealProgress.setProgressColor(ContextCompat.getColor(mContext, proMeal > 80 ? R.color.red : R.color.orange_FF7200));
+        mMealProgress.setProgress(proMeal);
+
     }
 
-    @OnClick({R.id.iv_userImg, R.id.layout_notify, R.id.img_seeRecord, R.id.img_planMark, R.id.resetTarget, R.id.img_recipes, R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal, R.id.tv_freeSporting, R.id.tv_curriculumSporting, R.id.reWeigh})
+
+    /**
+     * 瘦身目标
+     */
+    private void slimmingTarget() {
+        if (bean.getTargetInfo() == null || bean.getWeightChangeVO() == null) return;
+        Logger.d("当前时间：" + RxTimeUtils.milliseconds2String(bean.getTargetInfo().getTargetDate()));
+        mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
+        RxTextUtils.getBuilder(bean.getWeightChangeVO().getWeight().getWeight() + "")
+                .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
+
+        RxTextUtils.getBuilder("起始体重\n")
+                .append(bean.getTargetInfo().getInitialWeight() + "").setProportion(1.5f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
+                .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
+                .into(mTvInitWeight);
+
+        RxTextUtils.getBuilder("目标体重\n")
+                .append(bean.getTargetInfo().getTargetWeight() + "").setProportion(1.5f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
+                .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
+                .into(mTvTargetWeight);
+
+        if (bean.getComplete() < 0) {
+            mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
+            mProTarget.setProgress(5);
+        } else if (bean.getComplete() > 0) {
+            mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
+            mProTarget.setProgress(bean.getComplete());
+        }
+    }
+
+
+    /**
+     * 0-未参加，1-待分配，2-待审核，3-已审核
+     *
+     * @param planState
+     */
+    private void switchPlanStatus(int planState) {
+        if (planState == 0) {
+            mImgPlanMark.setVisibility(View.VISIBLE);
+            mImgSeeRecord.setVisibility(View.GONE);
+            mLayoutSlimmingTerget.setVisibility(View.GONE);
+            mImgRecipes.setVisibility(View.GONE);
+        } else {
+            mImgRecipes.setVisibility(View.VISIBLE);
+            mImgPlanMark.setVisibility(View.GONE);
+            mImgSeeRecord.setVisibility(View.VISIBLE);
+            mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
+        }
+
+        //瘦身衣状态
+        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+            mLayoutClothingDefault.setVisibility(View.VISIBLE);
+            mCardFreeSporting.setVisibility(View.GONE);
+            mCardCurriculumSporting.setVisibility(View.GONE);
+            mBtnGoBindClothing.setText(R.string.goBind);
+            mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
+        } else if (planState == 0) {
+            mLayoutClothingDefault.setVisibility(View.VISIBLE);
+            mCardFreeSporting.setVisibility(View.GONE);
+            mCardCurriculumSporting.setVisibility(View.GONE);
+            mBtnGoBindClothing.setText("去运动");
+            mTvClothingTip.setText("今天还没运动哦~");
+            mBtnGoBindClothing.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.orange_FF7200));
+        } else {
+            if (planState != 3) {
+                mLayoutLineChart.setBackgroundResource(R.mipmap.bg_custom_plam);
+            } else {
+                mLayoutLineChart.setBackground(null);
+            }
+            mLayoutClothingDefault.setVisibility(View.GONE);
+            mCardFreeSporting.setVisibility(View.VISIBLE);
+            mCardCurriculumSporting.setVisibility(View.VISIBLE);
+        }
+
+        //体脂称状态
+        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
+            mLayoutScaleDefault.setVisibility(View.VISIBLE);
+            mBtnGoBindScale.setText(R.string.goBind);
+            mTvWeightTip.setText("请绑定您的体脂称");
+        } else if (!bean.isHasTodayWeight()) {//去称重
+            mLayoutScaleDefault.setVisibility(View.VISIBLE);
+            mBtnGoBindScale.setText("去称重");
+            mTvWeightTip.setText("今天还没有称重哦～");
+        } else {
+            mLayoutScaleDefault.setVisibility(View.GONE);
+        }
+    }
+
+
+    @OnClick({
+            R.id.iv_userImg,
+            R.id.layout_notify,
+            R.id.img_seeRecord,
+            R.id.img_planMark,
+            R.id.resetTarget,
+            R.id.img_recipes,
+            R.id.layout_breakfast,
+            R.id.layout_lunch,
+            R.id.layout_dinner,
+            R.id.layout_meal,
+            R.id.tv_freeSporting,
+            R.id.tv_curriculumSporting,
+            R.id.reWeigh,
+            R.id.btn_goBind_scale,
+            R.id.btn_goBind_clothing,
+    })
     public void onViewClicked(View view) {
+        Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.iv_userImg:
+                RxActivityUtils.skipActivity(mContext, UserInfofragment.class);
                 break;
             case R.id.layout_notify:
+                RxActivityUtils.skipActivity(mContext, MessageFragment.class);
                 break;
             case R.id.img_seeRecord:
+                bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
+                RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
                 break;
             case R.id.img_planMark:
+                RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
                 break;
             case R.id.resetTarget:
+                RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
                 break;
             case R.id.img_recipes:
+                RxActivityUtils.skipActivity(mContext, RecipesActivity.class);
                 break;
             case R.id.layout_breakfast:
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_lunch:
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_LUNCH);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_dinner:
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_DINNER);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_meal:
-                break;
-            case R.id.tv_freeSporting:
-                break;
-            case R.id.tv_curriculumSporting:
+                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPED_MEAL);
+                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.reWeigh:
+                RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
+                break;
+            case R.id.btn_goBind_scale:
+                if (getString(R.string.goBind).equals(mBtnGoBindScale.getText().toString())) {
+                    RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
+                } else {
+                    RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
+                }
+                break;
+            case R.id.btn_goBind_clothing:
+                if (getString(R.string.goBind).equals(mBtnGoBindClothing.getText().toString())) {
+                    RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
+                } else {
+                    //进入实时运动界面，没有定制课程
+                    RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                }
+                break;
+            case R.id.tv_freeSporting:
+                //进入实时运动界面，没有定制课程
+                RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                break;
+            case R.id.tv_curriculumSporting:
+                if (bean.getPlanState() != 3) {
+                    showFreeSportDialog();
+                } else {
+                    //进入实时运动界面，定制课程
+                    RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                }
                 break;
         }
+    }
+
+    private void showFreeSportDialog() {
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("您还未制定课程，去自由运动试试吧")
+                .setSure("自由运动")
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //进入实时运动界面，没有定制课程
+                        RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                    }
+                });
+        rxDialog.show();
     }
 }

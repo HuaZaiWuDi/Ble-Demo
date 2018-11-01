@@ -3,6 +3,7 @@ package com.vondear.rxtools.view.roundprogressbar;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxUtils;
 
 /**
@@ -30,6 +32,7 @@ public class VerticalProgress extends View {
     private ValueAnimator mAnimator;
     private boolean isAnimating;
     private boolean isClip = false;//是否剪裁只显示顶部圆角
+    private boolean isDrawBg = true;
     private int progressColor = Color.parseColor("#FF7200");
 
     public VerticalProgress(Context context) {
@@ -42,10 +45,17 @@ public class VerticalProgress extends View {
 
     public VerticalProgress(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.VerticalProgress);
+        progressColor = array.getColor(R.styleable.VerticalProgress_pro_Color, Color.parseColor("#FF7200"));
+        isClip = array.getBoolean(R.styleable.VerticalProgress_isClip, false);
+        isDrawBg = array.getBoolean(R.styleable.VerticalProgress_isDrawBg, true);
+        array.recycle();
+
+
         bgProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bgProgressPaint.setDither(true);
         bgProgressPaint.setAntiAlias(true);
@@ -71,7 +81,8 @@ public class VerticalProgress extends View {
         // 必须先设置显示区域再绘制,剪裁掉底部的圆角
         if (isClip)
             canvas.clipRect(0, 0, mWidth, mHeight - round);
-        drawBg(canvas);
+        if (isDrawBg)
+            drawBg(canvas);
         drawProgress(canvas);
 
     }

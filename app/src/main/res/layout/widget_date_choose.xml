@@ -20,20 +20,21 @@
             android:layout_gravity="center"
             android:onClick="iv_last"
             android:padding="@dimen/d_40"
-            android:paddingEnd="8dp"
             android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:src="@drawable/arrow_left_icon"
             android:text="Last"
-            android:textColor="@color/colorFontWhite"/>
+            android:textColor="@color/colorFontWhite"
+            android:tint="@color/GrayWrite"/>
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/btn_date"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            app:qmui_radius="4dp"
             android:textColor="@color/BrightGray"
-            app:qmui_backgroundColor="@color/black_312B36"
-            app:qmui_borderColor="@color/black_312B36"
+            app:qmui_backgroundColor="@color/GrayWrite"
+            app:qmui_borderColor="@color/GrayWrite"
+            app:qmui_radius="4dp"
             tools:text="6月20日"/>
 
 
@@ -45,10 +46,11 @@
             android:gravity="center"
             android:onClick="iv_next"
             android:padding="@dimen/d_40"
-            android:paddingEnd="8dp"
             android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:src="@drawable/arrow_right_icon"
-            android:textColor="@color/colorFontWhite"/>
+            android:textColor="@color/colorFontWhite"
+            android:tint="@color/GrayWrite"/>
 
 
     </LinearLayout>

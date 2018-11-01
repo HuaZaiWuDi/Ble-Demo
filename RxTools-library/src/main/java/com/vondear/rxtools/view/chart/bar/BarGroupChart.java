@@ -3,6 +3,7 @@ package com.vondear.rxtools.view.chart.bar;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,7 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxUtils;
 
 /**
@@ -35,6 +36,7 @@ public class BarGroupChart extends View {
     private int topValue = 0, oldValue;
     private int color = Color.parseColor("#FF7200");
 
+
     public BarGroupChart(Context context) {
         this(context, null);
     }
@@ -45,10 +47,14 @@ public class BarGroupChart extends View {
 
     public BarGroupChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BarGroupChart);
+        color = array.getColor(R.styleable.BarGroupChart_proBarColor, Color.parseColor("#FF7200"));
+        topValue = array.getColor(R.styleable.BarGroupChart_topValue, 0);
+        array.recycle();
 
         progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         progressPaint.setDither(true);
@@ -78,7 +84,6 @@ public class BarGroupChart extends View {
 
     //画进度
     private void drawProgress(Canvas canvas) {
-
         //进度最高高度
         barHeight = (int) (mHeight * 0.9f);
 
@@ -92,8 +97,6 @@ public class BarGroupChart extends View {
         rf.bottom = mHeight;
         /*绘制圆角矩形，背景色为画笔颜色*/
         canvas.drawRoundRect(rf, round, round, progressPaint);
-
-        RxLogUtils.d("字体底部：" + textPaint.getFontMetricsInt().bottom);
 
         textPaint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(String.valueOf(oldValue), mWidth / 2, top - (mHeight - barHeight) / 2, textPaint);
@@ -113,6 +116,8 @@ public class BarGroupChart extends View {
             }
 
             startAnimation(oldValue, progress);
+        } else {
+            this.oldValue = topValue;
         }
         postInvalidate();
     }
@@ -199,5 +204,6 @@ public class BarGroupChart extends View {
 
     public void setColor(@ColorInt int color) {
         this.color = color;
+        invalidate();
     }
 }

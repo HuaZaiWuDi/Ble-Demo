@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,8 @@ import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
@@ -29,7 +32,23 @@ public abstract class BaseAcFragment extends Fragment {
     public Activity mActivity;
     public Context mContext;
     public String TGA = "";
+    private Unbinder unbinder;
     protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
+
+    /**
+     * 是否可见状态
+     */
+    private boolean isVisible;
+
+    /**
+     * 标志位，View已经初始化完成。
+     */
+    private boolean isPrepared;
+
+    /**
+     * 是否第一次加载
+     */
+    private boolean isFirstLoad = true;
 
     public BaseAcFragment() {
     }
@@ -38,11 +57,60 @@ public abstract class BaseAcFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return onCreateView();
+        // 若 viewpager 不设置 setOffscreenPageLimit 或设置数量不够
+        // 销毁的Fragment onCreateView 每次都会执行(但实体类没有从内存销毁)
+        // 导致initData反复执行,所以这里注释掉
+        // isFirstLoad = true;
+
+        // 取消 isFirstLoad = true的注释 , 因为上述的initData本身就是应该执行的
+        // onCreateView执行 证明被移出过FragmentManager initData确实要执行.
+        // 如果这里有数据累加的Bug 请在initViews方法里初始化您的数据 比如 list.clear();
+        isFirstLoad = true;
+        View view = LayoutInflater.from(mContext).inflate(layoutId(), null);
+        unbinder = ButterKnife.bind(this, view);
+        initViews();
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            initBundle(arguments);
+        }
+        isPrepared = true;
+        lazyLoad();
+        return view;
+    }
+
+
+    /**
+     * 要实现延迟加载Fragment内容,需要在 onCreateView
+     * isPrepared = true;
+     */
+    protected void lazyLoad() {
+        if (!isPrepared || !isVisible || !isFirstLoad) {
+            return;
+        }
+        isFirstLoad = false;
+        initNetData();
+    }
+
+
+    protected abstract @LayoutRes
+    int layoutId();
+
+
+    //初始化Bundle数据
+    protected void initBundle(Bundle bundle) {
 
     }
 
-    protected abstract View onCreateView();
+    //初始化布局逻辑
+    protected void initViews() {
+
+    }
+
+    //初始化网络数据
+    protected void initNetData() {
+
+    }
 
 
     @Override
@@ -68,7 +136,6 @@ public abstract class BaseAcFragment extends Fragment {
     }
 
     private void initDialog() {
-
         tipDialog = new TipDialog(mActivity);
     }
 
@@ -82,9 +149,15 @@ public abstract class BaseAcFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (getUserVisibleHint()) {
-            onVisible();
+            isVisible = true;
+            if (isPrepared) {
+                onVisible();
+            }
         } else {
-            onInvisible();
+            isVisible = false;
+            if (isPrepared) {
+                onInvisible();
+            }
         }
     }
 
@@ -99,9 +172,15 @@ public abstract class BaseAcFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            onVisible();
+            isVisible = true;
+            if (isPrepared) {
+                onVisible();
+            }
         } else {
-            onInvisible();
+            isVisible = false;
+            if (isPrepared) {
+                onInvisible();
+            }
         }
     }
 
@@ -130,6 +209,8 @@ public abstract class BaseAcFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (unbinder != null)
+            unbinder.unbind();
         if (tipDialog != null) {
             tipDialog.dismiss();
         }
@@ -150,6 +231,7 @@ public abstract class BaseAcFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onDetach() {
         RxLogUtils.i(TGA + "：onDetach");
@@ -169,6 +251,7 @@ public abstract class BaseAcFragment extends Fragment {
     }
 
     protected void onVisible() {
+        lazyLoad();
     }
 
     protected void onInvisible() {

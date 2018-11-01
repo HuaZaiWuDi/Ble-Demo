@@ -17,6 +17,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -32,7 +33,6 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -80,7 +80,7 @@ public class BindPhoneActivity extends BaseActivity {
         ButterKnife.bind(this);
         StatusBarUtils.from(this)
                 .setStatusBarColor(getResources().getColor(R.color.white))
-                .setLightStatusBar(false)
+                .setLightStatusBar(true)
                 .process();
         initView();
     }

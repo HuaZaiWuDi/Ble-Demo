@@ -318,6 +318,8 @@
         </activity>
         <activity android:name=".ui.main.slimming.plan.RecordInfoActivity">
         </activity>
+        <activity android:name=".ui.main.slimming.heat.RecipesActivity">
+        </activity>
     </application>
 
 </manifest>

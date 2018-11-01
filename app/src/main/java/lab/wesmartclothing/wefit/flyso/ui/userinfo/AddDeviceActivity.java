@@ -120,7 +120,10 @@ public class AddDeviceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         ButterKnife.bind(this);
-        StatusBarUtils.from(mActivity).setStatusBarColor(ContextCompat.getColor(mContext, R.color.white)).process();
+        StatusBarUtils.from(mActivity)
+                .setStatusBarColor(ContextCompat.getColor(mContext, R.color.white))
+                .setLightStatusBar(true)
+                .process();
 
         if (getIntent().getExtras() != null) {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);

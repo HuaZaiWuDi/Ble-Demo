@@ -36,12 +36,55 @@
             android:textColor="@color/Gray"
             android:textSize="19sp"/>
 
-        <lab.wesmartclothing.wefit.flyso.view.DotView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:layout_width="184dp"
+            android:layout_height="35dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="25dp"/>
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:background_normal="@color/white"
+            app:border_color_normal="#F7F7F9"
+            app:border_width_normal="1dp"
+            app:corner_radius="4dp">
+
+
+            <TextView
+                android:id="@+id/tv_last"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:alpha="0.2"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="上一题"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="1/5"
+                android:textColor="@color/Gray"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_next"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:alpha="0.2"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="下一题"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
 
         <TextView
             android:id="@+id/tv_infoTitle"
@@ -66,7 +109,7 @@
 
 
     <com.vondear.rxtools.view.layout.RxTextView
-        android:id="@+id/tv_next"
+        android:id="@+id/tv_nextWay"
         android:layout_width="187dp"
         android:layout_height="44dp"
         android:layout_alignParentBottom="true"
@@ -76,6 +119,7 @@
         android:text="@string/nextWay"
         android:textColor="@color/white"
         android:textSize="18sp"
+        android:visibility="gone"
         app:background_normal="@color/green_61D97F"
         app:corner_radius="22dp"
         app:ripple_color="@color/Gray"/>

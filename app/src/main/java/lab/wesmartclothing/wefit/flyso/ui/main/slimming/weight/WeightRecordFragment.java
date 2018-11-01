@@ -26,11 +26,11 @@ import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.LineBean;
 import com.vondear.rxtools.view.chart.SuitLines;
 import com.vondear.rxtools.view.chart.Unit;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
@@ -54,9 +54,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -349,32 +347,9 @@ public class WeightRecordFragment extends BaseActivity {
                 currentGid = list.get(valueX).getGid();
             }
         });
-
     }
 
     private void checkStatus() {
-        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
-            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.getTvTitle().setVisibility(View.GONE);
-            dialog.setContent("您还未绑定体脂称");
-            dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-            dialog.setCancel("去绑定").setCancelListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
-                }
-            })
-                    .setSure("暂不绑定")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-        }
-
         if (!BleTools.getBleManager().isBlueEnable()) {
             mLayoutStrongTip.setVisibility(View.VISIBLE);
             String tipOpenBlueTooth = getString(R.string.tipOpenBlueTooth);

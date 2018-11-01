@@ -60,8 +60,18 @@ public interface RetrofitService {
     @POST("slim/indexInfo")
     Observable<String> indexInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
-    @POST("heat/fetchFoodPlan")
-    Observable<String> fetchFoodPlan();
+    //查询饮食计划
+    @POST("heat/fetchDietPlan")
+    Observable<String> fetchDietPlan(@Body RequestBody body);
+
+    //查询定制计划日期
+    @POST("heat/fetchPlanDate")
+    Observable<String> fetchPlanDate(@Body RequestBody body);
+
+    //获取操作首页信息接口
+    @POST("slim/planIndex")
+    Observable<String> planIndex();
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 体重
@@ -294,4 +304,19 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
     @POST("upgrade/getUpgradeInfo")
     Observable<String> getUpgradeInfo(@Body RequestBody body);
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    //问题报告信息模块
+    // 问题和报告相关信息
+    ///////////////////////////////////////////////////////////////////////////
+    //查询问题列表
+    @POST("/questionInform/questionList")
+    Observable<String> questionList();
+
+    //提交报告接口
+    @POST("/questionInform/submitInform")
+    Observable<String> submitInform(@Body RequestBody body);
+
+
 }

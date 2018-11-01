@@ -70,14 +70,15 @@ public class SplashActivity extends BaseActivity {
         startService(new Intent(mContext, BleService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-//        initView();
+        initView();
 //        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
     }
 
     public void initView() {
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
+//        NetManager.getInstance().setUserIdToken("e3e35aaff6b84cc29195f270ab7b95a1", SPUtils.getString(SPKey.SP_token));
         if (!RxDataUtils.isNullString(baseUrl)) {
             ServiceAPI.switchURL(baseUrl);
         }

@@ -81,6 +81,21 @@ public final class RxFormatValue {
      * @param type  保留的模式
      * @return String
      */
+    public static double formatDouble(double i, int scale, int type) {
+        BigDecimal bigDecimal = new BigDecimal(i);
+        BigDecimal decimal = bigDecimal.setScale(scale, type);//保留小数点后2位，直接去掉值。
+
+        return decimal.doubleValue();
+    }
+
+    /**
+     * 方法描述：doubleToString
+     *
+     * @param i     值
+     * @param scale 保留小数点后几位
+     * @param type  保留的模式
+     * @return String
+     */
     public static BigDecimal fromatValue(double i, int scale, int type) {
         BigDecimal bigDecimal = new BigDecimal(i);
         BigDecimal decimal = bigDecimal.setScale(scale, type);//保留小数点后2位，直接去掉值。
@@ -104,6 +119,17 @@ public final class RxFormatValue {
     }
 
     /**
+     * 方法描述：四舍五入格式化
+     *
+     * @param i     值
+     * @param scale 保留小数点后几位
+     * @return String
+     */
+    public static double format4S5R(double i, int scale) {
+        return formatDouble(i, scale, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
      * 方法描述：五舍四入格式化
      *
      * @param i     值
@@ -112,6 +138,17 @@ public final class RxFormatValue {
      */
     public static String fromat5S4R(double i, int scale) {
         return fromatDouble(i, scale, BigDecimal.ROUND_HALF_DOWN);
+    }
+
+    /**
+     * 方法描述：五舍四入格式化
+     *
+     * @param i     值
+     * @param scale 保留小数点后几位
+     * @return String
+     */
+    public static double format5S4R(double i, int scale) {
+        return formatDouble(i, scale, BigDecimal.ROUND_HALF_DOWN);
     }
 
     /**
@@ -126,6 +163,17 @@ public final class RxFormatValue {
     }
 
     /**
+     * 方法描述：直接舍掉
+     *
+     * @param i     值
+     * @param scale 保留小数点后几位
+     * @return String
+     */
+    public static double formatDown(double i, int scale) {
+        return formatDouble(i, scale, BigDecimal.ROUND_DOWN);
+    }
+
+    /**
      * 方法描述：直接入位
      *
      * @param i     值
@@ -134,6 +182,17 @@ public final class RxFormatValue {
      */
     public static String fromatUp(double i, int scale) {
         return fromatDouble(i, scale, BigDecimal.ROUND_UP);
+    }
+
+    /**
+     * 方法描述：直接入位
+     *
+     * @param i     值
+     * @param scale 保留小数点后几位
+     * @return String
+     */
+    public static double formatUp(double i, int scale) {
+        return formatDouble(i, scale, BigDecimal.ROUND_UP);
     }
 
 

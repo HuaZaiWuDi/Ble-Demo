@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -98,16 +99,12 @@ public class AccountFragment extends BaseActivity {
     }
 
     private void initMyDialog() {
-        dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvContent().setText("解绑后将不能作为登录方式，确定解除微信账号绑定么？");
-        dialog.setCancel("解除绑定");
-        dialog.setSure("取消");
-        dialog.setSureListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("解绑后将不能作为登录方式，确定解除微信账号绑定么？")
+                .setSure("解除绑定");
+
     }
 
     private void initTopBar() {
@@ -124,7 +121,7 @@ public class AccountFragment extends BaseActivity {
         this.switchBindListener = switchBindListener;
         if (isBind) {
             //解绑
-            dialog.setCancelListener(new View.OnClickListener() {
+            dialog.setSureListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     unbindOther(type);

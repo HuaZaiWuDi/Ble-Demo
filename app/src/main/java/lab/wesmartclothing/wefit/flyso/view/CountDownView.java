@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.orhanobut.logger.Logger;
+import com.vondear.rxtools.dateUtils.RxTimeUtils;
+import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.view.ticker.RxTickerUtils;
 import com.vondear.rxtools.view.ticker.RxTickerView;
-
-import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +40,9 @@ public class CountDownView extends LinearLayout {
     @BindView(R.id.ticker_sec)
     RxTickerView mTickerSec;
     private Context mContext;
-    private Calendar mCalendar;
+
+    long time2 = System.currentTimeMillis();
+    private CountDownTimer countDownTimer;
 
     public CountDownView(Context context) {
         this(context, null);
@@ -67,42 +70,41 @@ public class CountDownView extends LinearLayout {
         mTickerMin.setTypeface(MyAPP.typeface);
         mTickerSec.setTypeface(MyAPP.typeface);
 
-        setCountDownDays(22);
+//        setCountDownDays(time);
     }
 
 
-    public void setCountDownDays(int days) {
-        mTickerDays.setText(days + "", true);
-        mCountDownTimer.start();
-    }
+    public void setCountDownDays(long time) {
+        Logger.d("当前时间：" + time);
+        long day = RxTimeUtils.getIntervalByNow(time, RxConstUtils.TimeUnit.DAY);
+        mTickerDays.setText(day + "", true);
+        if (countDownTimer != null) countDownTimer.cancel();
+        countDownTimer = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long day = RxTimeUtils.getIntervalTime(millisUntilFinished, time2, RxConstUtils.TimeUnit.DAY);
+                long hour = RxTimeUtils.getIntervalTime(millisUntilFinished, time2, RxConstUtils.TimeUnit.HOUR) % 24;
+                long min = RxTimeUtils.getIntervalTime(millisUntilFinished, time2, RxConstUtils.TimeUnit.MIN) % 60;
+                long sec = RxTimeUtils.getIntervalTime(millisUntilFinished, time2, RxConstUtils.TimeUnit.SEC) % 60;
 
-
-    CountDownTimer mCountDownTimer = new CountDownTimer(System.currentTimeMillis(), 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            mCalendar = Calendar.getInstance();
-            int hour = 24 - mCalendar.get(Calendar.HOUR_OF_DAY);
-            int min = 60 - mCalendar.get(Calendar.MINUTE);
-            int sec = 60 - mCalendar.get(Calendar.SECOND);
-            if (!String.valueOf(hour).equals(mTickerHour.getText())) {
-                mTickerHour.setText(hour + "", true);
+                if (!String.valueOf(day).equals(mTickerDays.getText())) {
+                    mTickerDays.setText(day + "", true);
+                }
+                if (!String.valueOf(hour).equals(mTickerHour.getText())) {
+                    mTickerHour.setText(hour + "", true);
+                }
+                if (!String.valueOf(min).equals(mTickerMin.getText())) {
+                    mTickerMin.setText(min + "", true);
+                }
+                mTickerSec.setText(sec + "", true);
             }
-            if (!String.valueOf(min).equals(mTickerMin.getText())) {
-                mTickerMin.setText(min + "", true);
+
+            @Override
+            public void onFinish() {
+
             }
-            mTickerSec.setText(sec + "", true);
-        }
+        }.start();
 
-        @Override
-        public void onFinish() {
-
-        }
-    };
-
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (mCountDownTimer != null) mCountDownTimer.cancel();
     }
+
 }

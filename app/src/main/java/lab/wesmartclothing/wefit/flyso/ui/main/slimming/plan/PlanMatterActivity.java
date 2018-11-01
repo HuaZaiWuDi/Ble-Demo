@@ -31,7 +31,10 @@ public class PlanMatterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slimming_plan);
-        StatusBarUtils.from(mActivity).setLightStatusBar(true).setStatusBarColor(ContextCompat.getColor(mContext, R.color.white)).process();
+        StatusBarUtils.from(mActivity)
+                .setLightStatusBar(true)
+                .setStatusBarColor(ContextCompat.getColor(mContext, R.color.white))
+                .process();
         ButterKnife.bind(this);
 
         initTopBar();

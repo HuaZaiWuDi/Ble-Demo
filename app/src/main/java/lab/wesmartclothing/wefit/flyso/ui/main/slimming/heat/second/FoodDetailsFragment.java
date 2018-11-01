@@ -2,9 +2,9 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -78,7 +78,7 @@ public class FoodDetailsFragment extends BaseActivity {
 
 
     private int foodType = 0;
-    private long currentTime = 0;
+    private long currentTime = System.currentTimeMillis();
     private int pageNum = 0;//页码
     private boolean SlimmingPage = false;
     private Bundle bundle;
@@ -180,7 +180,7 @@ public class FoodDetailsFragment extends BaseActivity {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
-            currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
+            currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
             SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
         }
     }
@@ -317,7 +317,6 @@ public class FoodDetailsFragment extends BaseActivity {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-        Log.e("添加成功", SlimmingPage + "");
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
@@ -328,12 +327,7 @@ public class FoodDetailsFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         addedLists.clear();
-                        if (SlimmingPage) {
-                            //刷新数据
-                            RxActivityUtils.finishActivity();
-                        } else {
-                            RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
-                        }
+                        onBackPressed();
                         RxBus.getInstance().post(new RefreshSlimming());
                     }
 
@@ -363,26 +357,19 @@ public class FoodDetailsFragment extends BaseActivity {
             RxActivityUtils.finishActivity();
             return;
         }
-        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.setContent("已添加的食物还未确认，您确定要返回么？");
-        dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.orange_FF7200));
-        dialog.setCancel("确认").setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                addedLists.clear();
-                RxActivityUtils.finishActivity();
-            }
-        })
-                .setSure("取消")
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("已添加的食物还未确认，您确定要返回么？")
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        addedLists.clear();
+                        RxActivityUtils.finishActivity();
                     }
-                }).show();
+                });
+        rxDialog.setCanceledOnTouchOutside(false);
+        rxDialog.show();
     }
 
 

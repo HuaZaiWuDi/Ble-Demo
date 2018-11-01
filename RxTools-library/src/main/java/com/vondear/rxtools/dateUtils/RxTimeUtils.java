@@ -310,7 +310,7 @@ public class RxTimeUtils {
      *                     </ul>
      * @return unit时间戳
      */
-    private static long milliseconds2Unit(long milliseconds, RxConstUtils.TimeUnit unit) {
+    public static long milliseconds2Unit(long milliseconds, RxConstUtils.TimeUnit unit) {
         switch (unit) {
             case MSEC:
                 return milliseconds / RxConstUtils.MSEC;
@@ -382,8 +382,26 @@ public class RxTimeUtils {
      * @return unit时间戳
      */
     public static long getIntervalTime(Date time0, Date time1, RxConstUtils.TimeUnit unit) {
-        return Math.abs(milliseconds2Unit(date2Milliseconds(time1)
-                - date2Milliseconds(time0), unit));
+        return Math.abs(milliseconds2Unit(date2Milliseconds(time1) - date2Milliseconds(time0), unit));
+    }
+
+    /**
+     * 获取两个时间差（单位：unit）
+     * <p>time1和time2都为Date类型</p>
+     *
+     * @param time0 Date类型时间1
+     * @param time1 Date类型时间2
+     * @param unit  <ul>
+     *              <li>{@link RxConstUtils.TimeUnit#MSEC}: 毫秒</li>
+     *              <li>{@link RxConstUtils.TimeUnit#SEC }: 秒</li>
+     *              <li>{@link RxConstUtils.TimeUnit#MIN }: 分</li>
+     *              <li>{@link RxConstUtils.TimeUnit#HOUR}: 小时</li>
+     *              <li>{@link RxConstUtils.TimeUnit#DAY }: 天</li>
+     *              </ul>
+     * @return unit时间戳
+     */
+    public static long getIntervalTime(long time0, long time1, RxConstUtils.TimeUnit unit) {
+        return Math.abs(milliseconds2Unit(time0 - time1, unit));
     }
 
     /**
@@ -479,6 +497,24 @@ public class RxTimeUtils {
      */
     public static long getIntervalByNow(Date time, RxConstUtils.TimeUnit unit) {
         return getIntervalTime(getCurTimeDate(), time, unit);
+    }
+
+    /**
+     * 获取与当前时间的差（单位：unit）
+     * <p>time为Date类型</p>
+     *
+     * @param time long类型时间
+     * @param unit <ul>
+     *             <li>{@link RxConstUtils.TimeUnit#MSEC}: 毫秒</li>
+     *             <li>{@link RxConstUtils.TimeUnit#SEC }: 秒</li>
+     *             <li>{@link RxConstUtils.TimeUnit#MIN }: 分</li>
+     *             <li>{@link RxConstUtils.TimeUnit#HOUR}: 小时</li>
+     *             <li>{@link RxConstUtils.TimeUnit#DAY }: 天</li>
+     *             </ul>
+     * @return unit时间戳
+     */
+    public static long getIntervalByNow(long time, RxConstUtils.TimeUnit unit) {
+        return getIntervalTime(getCurTimeDate(), new Date(time), unit);
     }
 
     /**

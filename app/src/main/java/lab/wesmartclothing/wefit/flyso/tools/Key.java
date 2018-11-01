@@ -61,6 +61,12 @@ public interface Key {
     String BUNDLE_WEIGHT_UNSTEADY = "BUNDLE_WEIGHT_UNSTEADY";
 
     String BUNDLE_WEIGHT_QNDATA = "BUNDLE_WEIGHT_QNDATA";
+
+    //计划的状态
+    String BUNDLE_PLAN_STATUS = "BUNDLE_PLAN_STATUS";
+
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////

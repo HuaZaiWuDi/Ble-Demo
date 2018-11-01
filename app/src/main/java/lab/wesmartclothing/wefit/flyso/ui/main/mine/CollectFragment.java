@@ -190,7 +190,7 @@ public class CollectFragment extends BaseActivity {
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
             if (AntiShake.getInstance().check()) return;
-            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position);
+            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position % adapter.getData().size());
             Bundle bundle = new Bundle();
             //打开URL
             bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");

@@ -6,7 +6,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,9 +51,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -176,7 +173,6 @@ public class Slimming2Fragment extends BaseAcFragment {
     ImageView mIvWeight;
     @BindView(R.id.layout_weight)
     LinearLayout mLayoutWeight;
-    Unbinder unbinder;
     @BindView(R.id.tv_target)
     TextView mTvTarget;
     @BindView(R.id.tv_date)
@@ -227,16 +223,16 @@ public class Slimming2Fragment extends BaseAcFragment {
     public String[] add_food;
     private int lastKcal = 0;
 
+
     @Override
-    protected View onCreateView() {
-        View rootView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_layout_slimming2, null);
-        unbinder = ButterKnife.bind(this, rootView);
-        initView();
-        return rootView;
+    protected int layoutId() {
+        return R.layout.fragment_layout_slimming2;
     }
 
 
-    private void initView() {
+    @Override
+    protected void initViews() {
+        super.initViews();
         initRxBus();
         add_food = getResources().getStringArray(R.array.add_food);
         Typeface typeface = MyAPP.typeface;
@@ -258,24 +254,13 @@ public class Slimming2Fragment extends BaseAcFragment {
         setDefaultBarData(null);
         setLineChartData(null);
 
-        initData();
         setTGA(this.getClass().getSimpleName());
 
     }
 
-    private void initRxBus() {
-        RxBus.getInstance().register2(RefreshSlimming.class)
-                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<RefreshSlimming>() {
-                    @Override
-                    protected void _onNext(RefreshSlimming refreshSlimming) {
-                        initData();
-                    }
-                });
-    }
-
-
-    private void initData() {
+    @Override
+    protected void initNetData() {
+        super.initNetData();
         getFirstPageData();
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
@@ -298,6 +283,18 @@ public class Slimming2Fragment extends BaseAcFragment {
             }
         });
     }
+
+    private void initRxBus() {
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initNetData();
+                    }
+                });
+    }
+
 
     private void initChart(BarLineChartBase lineChartBase) {
         lineChartBase.setEnabled(false);

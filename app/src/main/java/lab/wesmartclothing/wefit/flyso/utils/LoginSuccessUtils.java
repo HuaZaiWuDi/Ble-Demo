@@ -9,6 +9,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
@@ -54,14 +56,11 @@ public class LoginSuccessUtils {
 
                         JPushUtils.setAliasOrTags("");
 
-                        JsonParser parser = new JsonParser();
-                        JsonObject object = (JsonObject) parser.parse(s);
-                        int sex = object.get("sex").getAsInt();
+                        UserInfo userInfo = MyAPP.getGson().fromJson(s, UserInfo.class);
 
-                        String clothesMacAddr = object.get("clothesMacAddr").getAsString();
-                        String scalesMacAddr = object.get("scalesMacAddr").getAsString();
-                        SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
-                        SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
+                        int sex = userInfo.getSex();
+                        SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
+                        SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
 
                         if (sex == 0) {
                             RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity.class);

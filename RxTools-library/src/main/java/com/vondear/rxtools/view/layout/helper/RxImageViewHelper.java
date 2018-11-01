@@ -10,9 +10,13 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -62,9 +66,12 @@ public class RxImageViewHelper {
 
     private ImageView mView;
 
+    private Context mContext;
+
     public RxImageViewHelper(Context context, ImageView view, AttributeSet attrs) {
         mView = view;
         initAttributeSet(context, attrs);
+        mContext = context;
     }
 
     /**
@@ -420,12 +427,36 @@ public class RxImageViewHelper {
         return this;
     }
 
+    public RxImageViewHelper setIconColorNormal(@ColorInt int color) {
+        this.mIconNormal = new ColorDrawable(color);
+        setup();
+        return this;
+    }
+
+    public RxImageViewHelper setIconResNormal(@DrawableRes int color) {
+        this.mIconNormal = ContextCompat.getDrawable(mContext, color);
+        setup();
+        return this;
+    }
+
     public Drawable getIconNormal() {
         return mIconNormal;
     }
 
     public RxImageViewHelper setIconPressed(Drawable icon) {
         this.mIconPressed = icon;
+        setup();
+        return this;
+    }
+
+    public RxImageViewHelper setIconColorPressed(@ColorInt int color) {
+        this.mIconPressed = new ColorDrawable(color);
+        setup();
+        return this;
+    }
+
+    public RxImageViewHelper setIconResPressed(@DrawableRes int color) {
+        this.mIconPressed = ContextCompat.getDrawable(mContext, color);
         setup();
         return this;
     }

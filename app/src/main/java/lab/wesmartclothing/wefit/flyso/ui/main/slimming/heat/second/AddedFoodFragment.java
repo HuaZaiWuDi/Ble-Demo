@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -178,25 +179,17 @@ public class AddedFoodFragment extends BaseActivity {
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final BaseQuickAdapter adapter, View view, final int position) {
-                final RxDialogSureCancel deleteDialog = new RxDialogSureCancel(mActivity);
-                deleteDialog.setCanceledOnTouchOutside(false);
-                deleteDialog.getTvTitle().setVisibility(View.GONE);
-                deleteDialog.setContent("确定要删除此条记录么？");
-                deleteDialog.setCancel(getString(R.string.confirm)).setCancelListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        deleteDialog.dismiss();
-                        dialog.deleteData(mContext, ((FoodListBean) adapter.getItem(position)));
-                    }
-                })
-                        .setSure(getString(R.string.cancel))
+                RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                        .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                        .setContent("确定要删除此条记录么？")
                         .setSureListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                deleteDialog.dismiss();
+                                dialog.deleteData(mContext, ((FoodListBean) adapter.getItem(position)));
                             }
-                        }).show();
-
+                        });
+                rxDialog.show();
                 return true;
             }
         });

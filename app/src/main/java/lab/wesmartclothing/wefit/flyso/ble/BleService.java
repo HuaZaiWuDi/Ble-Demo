@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.view.View;
-import android.widget.TextView;
 
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.data.BleDevice;
@@ -616,28 +615,18 @@ public class BleService extends Service {
                 mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
                 RxBus.getInstance().post(mSportsDataTab);
 
-
                 if (BleService.clothingFinish) {
-                    final RxDialogSureCancel dialog = new RxDialogSureCancel(RxActivityUtils.currentActivity());
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.getTvTitle().setVisibility(View.GONE);
-                    dialog.setContent("运动已开始，是否进入运动界面");
-                    dialog.setCancel("进入")
-                            .setCancelListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingFragment.class);
-                                }
-                            })
-                            .setSure("取消")
+                    RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+                            .setContent("运动已开始，是否进入运动界面？")
+                            .setSure("进入")
                             .setSureListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    dialog.dismiss();
+                                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingFragment.class);
                                 }
                             });
-                    dialog.show();
+                    rxDialog.show();
+
                 }
                 BleService.clothingFinish = false;
 
@@ -690,33 +679,25 @@ public class BleService extends Service {
                         final FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
+                            RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+                                    .setContent("是否升级到最新的固件版本")
+                                    .setSure("升级")
+                                    .setSureListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            AboutUpdateDialog updatedialog = new AboutUpdateDialog(RxActivityUtils.currentActivity(), firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                                            updatedialog.show();
+                                        }
+                                    }).setCancelListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            if (firmwareVersionUpdate.getMustUpgrade() != 0) {
+                                                RxActivityUtils.AppExit(RxActivityUtils.currentActivity());
+                                            }
+                                        }
+                                    });
+                            rxDialog.show();
 
-                            final RxDialogSureCancel dialog = new RxDialogSureCancel(RxActivityUtils.currentActivity());
-                            TextView tvTitle = dialog.getTvTitle();
-                            tvTitle.setVisibility(View.VISIBLE);
-                            tvTitle.setText("固件升级");
-                            dialog.getTvContent().setText("是否升级到最新的版本");
-                            dialog.setCancel("升级");
-                            dialog.setCancelListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                    AboutUpdateDialog updatedialog = new AboutUpdateDialog(RxActivityUtils.currentActivity(), firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
-                                    updatedialog.show();
-                                }
-                            });
-                            dialog.setSure(firmwareVersionUpdate.getMustUpgrade() != 0 ? "退出" : "取消");
-                            dialog.show();
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.setSureListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dialog.dismiss();
-                                    if (firmwareVersionUpdate.getMustUpgrade() != 0) {
-                                        RxActivityUtils.AppExit(RxActivityUtils.currentActivity());
-                                    }
-                                }
-                            });
                         } else {
                             RxLogUtils.d("已经是最新的版本");
                         }

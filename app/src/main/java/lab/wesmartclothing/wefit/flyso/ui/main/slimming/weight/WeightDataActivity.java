@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -178,26 +179,20 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void showDialog() {
-        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.getTvContent().setText("你还有未领取的体重数据，\n离开后将全部被忽略\n？");
-        dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-        dialog.setCancel(getString(R.string.btn_leave));
-        dialog.setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                RxActivityUtils.finishActivity();
-            }
-        });
-        dialog.setSure(getString(R.string.btn_continue));
-        dialog.setSureListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("你还有未领取的体重数据，\n离开后将全部被忽略？")
+                .setSure(getString(R.string.btn_continue))
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RxActivityUtils.finishActivity();
+                    }
+                })
+                .setCancel(getString(R.string.btn_continue));
+        rxDialog.show();
+
     }
 
 }

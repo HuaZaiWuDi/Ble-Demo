@@ -1061,7 +1061,7 @@ import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
  * */
 
 
-public abstract class BaseALocationActivity extends BaseFragmentActivity {
+public abstract class BaseALocationActivity extends BaseActivity {
 
 
     @Override
