@@ -1,5 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.vondear.rxtools.dateUtils.RxTimeUtils;
+import com.vondear.rxtools.utils.RxConstUtils;
+
 import java.io.Serializable;
 
 /**
@@ -35,7 +38,16 @@ public class UserInfo implements Serializable {
     private String country;
     private String province;
     private boolean isChange = false;
+    private long registerTime;
 
+
+    public long getRegisterTime() {
+        return RxTimeUtils.getIntervalTime(System.currentTimeMillis(), registerTime, RxConstUtils.TimeUnit.DAY);
+    }
+
+    public void setRegisterTime(long registerTime) {
+        this.registerTime = registerTime;
+    }
 
     public void setCity(String city) {
         this.city = city;

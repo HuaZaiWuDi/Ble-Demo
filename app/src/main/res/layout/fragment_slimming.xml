@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fitsSystemWindows="true"
-    android:paddingBottom="50dp">
+    android:fitsSystemWindows="true">
 
 
     <!--title-->
@@ -15,11 +14,9 @@
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
         android:layout_height="95dp"
-        android:background="@mipmap/icon_title_bg"
+        android:background="@color/Gray"
         android:paddingLeft="16dp"
-        android:paddingTop="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="8dp"
         tools:visibility="visible">
 
 
@@ -27,6 +24,7 @@
             android:id="@+id/iv_userImg"
             android:layout_width="64dp"
             android:layout_height="64dp"
+            android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/dimen_16"
             app:corner_radius="32dp"
             app:icon_src_normal="@mipmap/userimg"
@@ -39,6 +37,7 @@
             android:id="@+id/tv_userName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_toLeftOf="@+id/layout_notify"
             android:layout_toRightOf="@+id/iv_userImg"
             android:ellipsize="end"
@@ -54,6 +53,7 @@
             android:layout_width="@dimen/dimen_50"
             android:layout_height="@dimen/dimen_50"
             android:layout_alignParentRight="true"
+            android:layout_marginTop="16dp"
             android:gravity="top|right">
 
 
@@ -72,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
             android:visibility="gone"
             app:icon_src_normal="@mipmap/icon_see_record"
             />
@@ -84,7 +85,7 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="94dp"
+        android:layout_below="@+id/layout_title"
         android:scrollbars="none">
 
 
@@ -96,10 +97,12 @@
             <com.vondear.rxtools.view.layout.RxImageView
                 android:id="@+id/img_planMark"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
+                android:scaleType="fitXY"
                 android:visibility="gone"
                 app:icon_src_normal="@mipmap/icon_plan_mark"
-                app:icon_src_pressed="@color/gray"/>
+                app:icon_src_pressed="@color/gray"
+                tools:visibility="visible"/>
 
 
             <!--瘦身目标-->

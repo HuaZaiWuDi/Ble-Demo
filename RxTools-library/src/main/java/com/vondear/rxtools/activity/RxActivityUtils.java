@@ -58,8 +58,10 @@ public class RxActivityUtils {
      * 结束当前Activity（堆栈中最后一个压入的）
      */
     public static void finishActivity() {
-        Activity activity = activityStack.lastElement();
-        finishActivity(activity);
+        if (!activityStack.empty()) {
+            Activity activity = activityStack.lastElement();
+            finishActivity(activity);
+        }
     }
 
 

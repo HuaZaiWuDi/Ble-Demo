@@ -14,7 +14,6 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
-import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -53,8 +52,6 @@ public class LoginSuccessUtils {
                     protected void _onNext(String s) {
                         RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
-
-                        JPushUtils.setAliasOrTags("");
 
                         UserInfo userInfo = MyAPP.getGson().fromJson(s, UserInfo.class);
 

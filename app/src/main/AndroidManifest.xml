@@ -267,7 +267,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.sports.SportingFragment"
+            android:name=".ui.main.slimming.sports.SportingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
@@ -320,6 +320,13 @@
         </activity>
         <activity android:name=".ui.main.slimming.heat.RecipesActivity">
         </activity>
+        <activity android:name=".ui.main.slimming.energy.EnergyActivity">
+        </activity>
+        <activity
+            android:name=".ui.toolui.Main2Activity"
+            android:label="@string/title_activity_main2">
+        </activity>
+        <activity android:name=".ui.main.slimming.sports.PlanSportingActivity"/>
     </application>
 
 </manifest>

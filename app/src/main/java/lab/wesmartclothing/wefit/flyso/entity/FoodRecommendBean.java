@@ -16,7 +16,7 @@ public class FoodRecommendBean {
 
     private FoodPlanBean foodPlan;
     private boolean hasFoodPlan;
-    private List<String> dateList;
+    private List<Long> dateList;
 
     public FoodPlanBean getFoodPlan() {
         return foodPlan;
@@ -34,11 +34,11 @@ public class FoodRecommendBean {
         this.hasFoodPlan = hasFoodPlan;
     }
 
-    public List<String> getDateList() {
+    public List<Long> getDateList() {
         return dateList;
     }
 
-    public void setDateList(List<String> dateList) {
+    public void setDateList(List<Long> dateList) {
         this.dateList = dateList;
     }
 

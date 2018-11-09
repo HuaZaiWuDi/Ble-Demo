@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.app.Dialog;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.zchu.rxcache.utils.LogUtils;
 
@@ -107,6 +108,7 @@ public class RxThreadUtils {
                     emitter.onComplete();
                 } catch (Exception e) {
                     emitter.onError(e);
+                    Log.e("createData", "subscribe: ", e);
                 }
             }
         });

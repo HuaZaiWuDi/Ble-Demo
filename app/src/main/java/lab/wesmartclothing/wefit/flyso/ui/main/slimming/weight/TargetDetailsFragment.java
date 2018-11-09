@@ -13,6 +13,7 @@ import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -55,6 +56,11 @@ public class TargetDetailsFragment extends BaseActivity {
 
     Bundle bundle = new Bundle();
     RxDialogSureCancel rxDialog;
+
+    @Override
+    protected int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.white);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,10 +128,10 @@ public class TargetDetailsFragment extends BaseActivity {
 
                         mTvTargetDays.setText(hasDays + "");
                         mTvTargetWeight.setText(targetWeight + "");
-                        mTvDistanceTarget.setText(stillNeed + "");
+                        mTvDistanceTarget.setText(RxFormatValue.fromat4S5R(stillNeed, 2));
 
                         bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
-                        bundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
+                        bundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
                         bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
                     }
 

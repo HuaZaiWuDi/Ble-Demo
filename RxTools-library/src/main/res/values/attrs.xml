@@ -760,6 +760,8 @@
 
     <declare-styleable name="BarVerticalChart">
         <attr name="progressColor" format="color"/>
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="barWidth" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="BarGroupChart">

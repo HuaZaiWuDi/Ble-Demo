@@ -26,10 +26,10 @@ import com.vondear.rxtools.utils.RxUtils;
  */
 public class BarVerticalChart extends View {
 
-    private int mWidth, mHeight, barWidth = RxUtils.dp2px(10), barHeight;
+    private int mWidth, mHeight, barHeight;
     private Paint progressPaint;
-    private float round;//圆角
-    private float progressHeight = 0;//进度高度
+    private float round, barWidth;//圆角
+    private int progress = 0;//进度高度
     private ValueAnimator mAnimator;
     private boolean isAnimating;
     private RectF rf = new RectF();
@@ -52,6 +52,8 @@ public class BarVerticalChart extends View {
     private void init(Context context, AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BarVerticalChart);
         color = array.getColor(R.styleable.BarVerticalChart_progressColor, Color.parseColor("#D9D8E1"));
+        round = array.getDimension(R.styleable.BarVerticalChart_cornerRadius, RxUtils.dp2px(10) / 2);
+        barWidth = array.getDimension(R.styleable.BarVerticalChart_barWidth, RxUtils.dp2px(10));
         array.recycle();
 
         progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -68,8 +70,7 @@ public class BarVerticalChart extends View {
         super.onDraw(canvas);
         progressPaint.setColor(color);
 
-        round = barWidth / 2;
-        canvas.clipRect(0, 0, mWidth, mHeight - round);
+        canvas.clipRect(0, 0, barWidth, mHeight - round);
         drawProgress(canvas);
     }
 
@@ -79,50 +80,53 @@ public class BarVerticalChart extends View {
         //进度最高高度
         barHeight = mHeight;
 
-        float progress = (progressHeight / 100f * barHeight);
+        float progressHeight = (progress / 100f * barHeight);
 
-        float top = progressHeight != 0 ? mHeight - progress : mHeight - round * 2;
+//        float top = progress != 0 ? mHeight - progressHeight : mHeight - round * 2;
 
-        rf.left = mWidth / 2 - round;
+        float top = mHeight - progressHeight > mHeight - round * 2 ? mHeight - round * 2 : mHeight - progressHeight;
+
+
+
+        rf.left = mWidth / 2 - barWidth / 2;
         rf.top = top;
-        rf.right = mWidth / 2 + round;
+        rf.right = mWidth / 2 + barWidth / 2;
         rf.bottom = mHeight;
         /*绘制圆角矩形，背景色为画笔颜色*/
         canvas.drawRoundRect(rf, round, round, progressPaint);
     }
 
-
     public void setProgress(int progress, boolean anim) {
-        float oldValue = this.progressHeight;
+        int oldValue = this.progress;
 
         if (progress < 0) progress = 0;
         if (progress > 100) progress = 100;
 
-        if (anim) {
+        if (anim && oldValue != progress) {
             if (isAnimating) {
                 isAnimating = false;
                 mAnimator.cancel();
             }
-
             startAnimation(oldValue, progress);
+        } else {
+            this.progress = progress;
         }
         postInvalidate();
     }
-
 
     public void setProgress(int progress) {
         setProgress(progress, true);
     }
 
-    private void startAnimation(float start, final float end) {
-        mAnimator = ValueAnimator.ofFloat(start, end);
-        int duration = (int) Math.abs(1000 * (end - start) / 100);
+    private void startAnimation(int start, final int end) {
+        mAnimator = ValueAnimator.ofInt(start, end);
+        int duration = Math.abs(1000 * (end - start) / 100);
         mAnimator.setDuration(duration);
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                progressHeight = (float) animation.getAnimatedValue();
-                invalidate();
+                progress = (int) animation.getAnimatedValue();
+                postInvalidate();
             }
         });
 
@@ -180,12 +184,15 @@ public class BarVerticalChart extends View {
     ///////////////////////////////////////////////////////////////////////////
 
 
+    public int getProgress() {
+        return progress;
+    }
+
     public void setBarWidth(int barWidth) {
         this.barWidth = barWidth;
     }
 
     public void setColor(@ColorInt int color) {
         this.color = color;
-        invalidate();
     }
 }

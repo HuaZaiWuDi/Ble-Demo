@@ -68,6 +68,15 @@ public interface RetrofitService {
     @POST("heat/fetchPlanDate")
     Observable<String> fetchPlanDate(@Body RequestBody body);
 
+    //查询记录饮食日期
+    @POST("heat/fetchDietRecordDate")
+    Observable<String> fetchDietRecordDate(@Body RequestBody body);
+
+    //获取能量记录列表信息
+    @POST("slim/fetchHeatList")
+    Observable<String> fetchHeatList();
+
+
     //获取操作首页信息接口
     @POST("slim/planIndex")
     Observable<String> planIndex();
@@ -118,6 +127,11 @@ public interface RetrofitService {
     @POST("athl/fetchAthleticsInfo")
     Observable<String> getAthleticsInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
+    //获取运动列表记录详情（包括多次运动）
+    @FormUrlEncoded
+    @POST("/athl/fetchAthleticsListDetail")
+    Observable<String> fetchAthleticsListDetail(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+
     //获取运动列表记录
     @FormUrlEncoded
     @POST("athl/fetchAthleticsList")
@@ -128,6 +142,14 @@ public interface RetrofitService {
 
     @POST("athl/athleticsDetail")
     Observable<String> athleticsDetail(@Body RequestBody body);
+
+    //获取单次运动记录信息
+    @POST("athl/singleAthlDetail")
+    Observable<String> singleAthlDetail(@Body RequestBody body);
+
+    //获取某一天定制课程运动记录信息
+    @POST("/athl/courseAthlDetail")
+    Observable<String> courseAthlDetail(@Body RequestBody body);
 
 
     ///////////////////////////////////////////////////////////////////////////

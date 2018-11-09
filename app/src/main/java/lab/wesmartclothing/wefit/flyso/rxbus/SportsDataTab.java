@@ -22,6 +22,15 @@ public class SportsDataTab {
     int temp;//温度
     int voltage;//电压
     String date;//时间
+    double score;//分数
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
 
     public int getTemp() {
         return temp;
@@ -169,7 +178,6 @@ public class SportsDataTab {
     @Override
     public String toString() {
         return "SportsDataTab{" +
-                "athlRecord_2个数=" + athlRecord_2.size() +
                 ", steps=" + steps +
                 ", duration=" + duration +
                 ", kcal=" + kcal +

@@ -29,11 +29,9 @@ import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
-import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.interfaces.onRequestPermissionsListener;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -47,9 +45,7 @@ import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
-import com.zchu.rxcache.RxCache;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -60,44 +56,33 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
-import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
-import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 public class BleService extends Service {
-    int packageCounts = 0;
-    long lastTime = 0;
-    static boolean isFirst = true;
-    private List<HeartRateBean.AthlList> athlHistoryRecord = new ArrayList<>();//需要上传的心率数据
-    private List<Integer> athlRecord_2 = new ArrayList<>();//实时心率
+    static boolean isFirst = true;//固件升级检查弹窗提示
 
-    public static String firmwareVersion = "";
 
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
 
     private Map<String, Object> connectDevices = new HashMap<>();
-    private static final int heartDeviation = 5;//心率误差值
-    private static int heartSupplement = (int) (Math.random() * 3 + 2);//补差值：修改补差值为2-5的随机数
 
     public static boolean clothingFinish = true;
-
     QNBleTools mQNBleTools = QNBleTools.getInstance();
 
-    HeartRateBean mHeartRateBean = new HeartRateBean();
+    private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -183,7 +168,6 @@ public class BleService extends Service {
     }
 
     private void initBle() {
-
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_QN_SCALE, BleKey.UUID_Servie)
 //                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
@@ -400,7 +384,6 @@ public class BleService extends Service {
                 DeviceLink deviceLink = new DeviceLink();
                 deviceLink.setMacAddr(bleDevice.getMac());
                 deviceLink.setDeviceName(getString(R.string.clothing));//测试数据
-                deviceLink.setFirmwareVersion(firmwareVersion);
                 deviceLink.deviceLink(deviceLink);
 
                 BleTools.getInstance().setBleDevice(bleDevice);
@@ -417,8 +400,7 @@ public class BleService extends Service {
                 RxLogUtils.d("断开连接");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 connectDevices.remove(device.getMac());
-//                shopSporting();
-                sportingStop.startTimer();
+                sportingStopTimer.startTimer();
             }
         });
     }
@@ -471,7 +453,7 @@ public class BleService extends Service {
                 public void callBack(byte[] data) {
                     RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
                     //021309 010203000400050607090a0b0c10111213
-                    firmwareVersion = data[9] + "." + data[10] + "." + data[11];
+                    String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
                     JsonObject object = new JsonObject();
                     object.addProperty("category", data[3]);//设备类型
                     object.addProperty("modelNo", data[4]);//待定
@@ -497,39 +479,13 @@ public class BleService extends Service {
                 if (data.length <= 3) {
                     return;
                 }
-
-                long time = ByteUtil.bytesToLongD4(data, 3);
-
                 byte[] bytes = new byte[4];
                 bytes[0] = data[3];
                 bytes[1] = data[4];
                 bytes[2] = data[5];
                 bytes[3] = data[6];
 
-                //根据时间去重
-                if (lastTime == time) {
-                    RxLogUtils.d("表示重复包");
-                } else {
-                    packageCounts++;
-                    RxLogUtils.d("包序号：" + packageCounts);
-                    lastTime = time;
-                    int heartRate = data[8] & 0xff;
-
-                    HeartRateBean.AthlList bean = new HeartRateBean.AthlList();
-                    bean.setHeartRate(heartRate);
-                    bean.setHeartTime(time * 1000);
-                    bean.setStepTime(10);
-
-                    athlHistoryRecord.add(bean);
-                    //添加本地缓存
-                    RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord)
-                            .subscribe(new RxSubscriber<Boolean>() {
-                                @Override
-                                protected void _onNext(Boolean aBoolean) {
-                                    RxLogUtils.d("RxCache数据：：" + Key.CACHE_ATHL_RECORD);
-                                }
-                            });
-                }
+                mHeartRateUtil.addHsitoryData(data);
 
                 BleAPI.syncData(bytes);
                 synData();
@@ -537,11 +493,6 @@ public class BleService extends Service {
         });
     }
 
-    private int maxHeart = 0;//最大心率
-    private int minHeart = 0;//最小心率
-    private double kcalTotal = 0;//总卡路里
-    private int lastHeartRate = 0;//上一次的心率值
-    private int realHeartRate = 0;//真实心率
 
     private void initHeartRate() {
         BleTools.getInstance().setBleCallBack(new BleCallBack() {
@@ -552,68 +503,7 @@ public class BleService extends Service {
                 B.broadUpdate(BleService.this, Key.ACTION_HEART_RATE_CHANGED, Key.EXTRA_HEART_RATE_CHANGED, data);
                 if (data.length < 17) return;
 
-                int heartRate = realHeartRate = data[8] & 0xff;
-
-                if (lastHeartRate == 0) {
-                    lastHeartRate = heartRate;
-                }
-
-                if (lastHeartRate - heartRate > heartDeviation) {
-                    heartRate = lastHeartRate - heartSupplement;
-                } else if (lastHeartRate - heartRate < -heartDeviation) {
-                    heartRate = lastHeartRate + heartSupplement;
-                }
-                lastHeartRate = heartRate;
-
-                long time = ByteUtil.bytesToLongD4(data, 3) * 1000;
-
-                HeartRateBean.AthlList bean = new HeartRateBean.AthlList();
-                bean.setHeartRate(heartRate);
-                bean.setHeartTime(time);
-                bean.setStepTime(2);
-
-                if (BuildConfig.VERSION_TEST) {
-                    /**
-                     * 现场演示版本：
-                     * 实时上传心率数据，最后上传总数据
-                     *
-                     * */
-                    upLoadData(bean);
-                }
-
-                athlHistoryRecord.add(bean);
-                athlRecord_2.add(heartRate);
-                //添加本地缓存
-                RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, athlHistoryRecord)
-                        .subscribe(new RxSubscriber<Boolean>() {
-                            @Override
-                            protected void _onNext(Boolean aBoolean) {
-                                RxLogUtils.d("RxCache数据：：" + Key.CACHE_ATHL_RECORD);
-                            }
-                        });
-
-                maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
-                minHeart = heartRate < minHeart ? heartRate : minHeart;
-
-                SportsDataTab mSportsDataTab = new SportsDataTab();
-                mSportsDataTab.setAthlRecord_2(athlRecord_2);
-                mSportsDataTab.setCurHeart(heartRate);
-                mSportsDataTab.setMaxHeart(maxHeart);
-                mSportsDataTab.setMinHeart(minHeart);
-                mSportsDataTab.setRealHeart(realHeartRate);
-                mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{data[15], data[16]}));
-                mSportsDataTab.setLightColor((BitUtils.setBitValue(data[17], 7, (byte) 0) & 0xff));
-                mSportsDataTab.setTemp((data[10] & 0xff));
-                mSportsDataTab.setDuration(athlRecord_2.size() * 2);
-                mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{data[12], data[13]}));
-                mSportsDataTab.setData(data);
-                mSportsDataTab.setDate(RxFormat.setFormatDate(ByteUtil.bytesToLongD4(data, 3) * 1000, RxFormat.Date_Date_CH));
-                mSportsDataTab.setPower((BitUtils.checkBitValue(data[17], 7)));
-                mHeartRateBean.setStepNumber(mSportsDataTab.getSteps());
-                //卡路里累加计算
-                kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
-                mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
-                RxBus.getInstance().post(mSportsDataTab);
+                mHeartRateUtil.addRealTimeData(data);
 
                 if (BleService.clothingFinish) {
                     RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
@@ -622,41 +512,24 @@ public class BleService extends Service {
                             .setSureListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingFragment.class);
+                                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
                                 }
                             });
                     rxDialog.show();
 
                 }
                 BleService.clothingFinish = false;
-
             }
         });
     }
 
     //运动结束
     private void shopSporting() {
-        sportingStop.stopTimer();
-        lastHeartRate = 0;
-        athlRecord_2.clear();
-        if (BuildConfig.DEBUG)
-            RxToast.success("运动结束");
-        if (athlHistoryRecord.size() > 0) {
-            mHeartRateBean.setAthlList(athlHistoryRecord);
-            mHeartRateBean.saveHeartRate(mHeartRateBean);
-            athlHistoryRecord.clear();
-        }
-    }
-
-    private void upLoadData(HeartRateBean.AthlList bean) {
-        ArrayList<HeartRateBean.AthlList> list = new ArrayList<>();
-        list.add(bean);
-        mHeartRateBean.setAthlList(list);
-        mHeartRateBean.saveHeartRate(mHeartRateBean);
+        sportingStopTimer.stopTimer();
     }
 
 
-    MyTimer sportingStop = new MyTimer(new MyTimerListener() {
+    MyTimer sportingStopTimer = new MyTimer(new MyTimerListener() {
         @Override
         public void enterTimer() {
             B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_STOP);
@@ -697,7 +570,6 @@ public class BleService extends Service {
                                         }
                                     });
                             rxDialog.show();
-
                         } else {
                             RxLogUtils.d("已经是最新的版本");
                         }

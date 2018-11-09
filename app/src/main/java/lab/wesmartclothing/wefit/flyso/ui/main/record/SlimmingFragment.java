@@ -14,10 +14,13 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.dateUtils.RxTimeUtils;
+import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -42,11 +45,14 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
+import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
@@ -54,10 +60,12 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsF
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
+import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.CountDownView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -66,6 +74,8 @@ import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.ui.main.record
@@ -209,6 +219,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
 
     private PlanBean bean;
+    private HeartLineChartUtils lineChartUtils;
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -237,8 +248,11 @@ public class SlimmingFragment extends BaseAcFragment {
         }
 
         getData();
+
     }
 
+
+    boolean isFold = false;//是否折叠
 
     @Override
     protected void initViews() {
@@ -253,26 +267,32 @@ public class SlimmingFragment extends BaseAcFragment {
         mTvBodyFat.setTypeface(MyAPP.typeface);
         mTvBmi.setTypeface(MyAPP.typeface);
         mTvBmr.setTypeface(MyAPP.typeface);
+        lineChartUtils = new HeartLineChartUtils(mLineChart);
 
-
-//        mScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-//            @Override
-//            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-//                RxLogUtils.d("滑动的距离scrollY：" + scrollY);
-//                RxLogUtils.d("滑动的距离oldScrollY：" + oldScrollY);
-//                if (scrollY > oldScrollY) {
-//                    //向下滑
-//
-//                } else {
-//                    //向上滑
-//                }
-//            }
-//        });
-
-        initRxBus();
+        mScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY <= RxUtils.dp2px(32) && isFold) {
+                    isFold = false;
+                    //展开
+                    RxAnimationUtils.animateHeight(RxUtils.dp2px(64), RxUtils.dp2px(95), mLayoutTitle);
+                    mIvUserImg.animate().scaleX(1f).scaleY(1f).setDuration(500).start();
+                    mImgSeeRecord.animate().scaleX(1f).scaleY(1f).setDuration(500).alpha(1f).start();
+                    mImgSeeRecord.setEnabled(true);
+                } else if (scrollY > RxUtils.dp2px(32) && !isFold) {
+                    isFold = true;
+                    //收缩
+                    RxAnimationUtils.animateHeight(RxUtils.dp2px(95), RxUtils.dp2px(64), mLayoutTitle);
+                    mIvUserImg.animate().scaleX(0.5f).scaleY(0.5f).setDuration(500).start();
+                    mImgSeeRecord.animate().scaleX(0f).scaleY(0f).setDuration(500).alpha(0f).start();
+                    mImgSeeRecord.setEnabled(false);
+                }
+            }
+        });
     }
 
-    private void initRxBus() {
+    @Override
+    protected void initRxBus() {
         RxBus.getInstance().register2(RefreshSlimming.class)
                 .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<RefreshSlimming>() {
@@ -287,7 +307,6 @@ public class SlimmingFragment extends BaseAcFragment {
     ///////////////////////////////////////////////////////////////////////////
     // 接口
     ///////////////////////////////////////////////////////////////////////////
-
     private void getData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.planIndex())
@@ -328,8 +347,10 @@ public class SlimmingFragment extends BaseAcFragment {
      *
      * @param athlPlanList
      */
-    private void toDaySporting(List<PlanBean.AthlPlanListBean> athlPlanList) {
-
+    private void toDaySporting(List<AthlPlanListBean> athlPlanList) {
+        if (athlPlanList == null || athlPlanList.isEmpty()) return;
+        lineChartUtils.setPlanLineData(athlPlanList);
+        getCurrentRealHeart();
         RxTextUtils.getBuilder(RxFormat.setSec2MS(bean.getTotalTime() * 60))
                 .append("本次运动时间")
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
@@ -342,6 +363,39 @@ public class SlimmingFragment extends BaseAcFragment {
                 .into(mTvSportingKcal);
 
     }
+
+    private void getCurrentRealHeart() {
+        JsonObject object = new JsonObject();
+        object.addProperty("athlDate", System.currentTimeMillis());
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.courseAthlDetail(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        Logger.json(s);
+                        List<SportingDetailBean.RealAthlListBean> realAthlList = MyAPP.getGson().fromJson(s, new TypeToken<List<SportingDetailBean.RealAthlListBean>>() {
+                        }.getType());
+                        List<Integer> realLists = new ArrayList<>();
+                        for (SportingDetailBean.RealAthlListBean bean : realAthlList) {
+                            realLists.add(bean.getHeartRate());
+                        }
+                        lineChartUtils.setRealTimeData(realLists);
+                        mLineChart.animateX(1000);
+                    }
+
+                    @Override
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
+                    }
+                });
+
+    }
+
 
     /**
      * 消息通知
@@ -495,8 +549,8 @@ public class SlimmingFragment extends BaseAcFragment {
         boolean warning = heatInfoVO.isWarning();
         int basalCalorie = heatInfoVO.getBasalCalorie();
 
-        RxTextUtils.getBuilder(warning ? "多摄入热量\n" : "还可摄入热量\n")
-                .append(heatInfoVO.getAbleIntake() + "").setProportion(1.5f)
+        RxTextUtils.getBuilder(heatInfoVO.getAbleIntake() < 0 ? "多摄入热量\n" : "还可摄入热量\n")
+                .append(Math.abs(heatInfoVO.getAbleIntake()) + "").setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .into(mTvIngestionHeat);
@@ -639,8 +693,14 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, MessageFragment.class);
                 break;
             case R.id.img_seeRecord:
-                bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
-                RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
+                if (bean.getPlanState() == 3) {
+                    bundle.putString(Key.BUNDLE_TITLE, "timetofit健康报告");
+                    bundle.putString(Key.BUNDLE_WEB_URL, "");
+                    RxActivityUtils.skipActivity(mContext, WebTitleActivity.class, bundle);
+                } else if (bean.getPlanState() != 0) {
+                    bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
+                    RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
+                }
                 break;
             case R.id.img_planMark:
                 RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
@@ -682,23 +742,25 @@ public class SlimmingFragment extends BaseAcFragment {
                     RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
                 } else {
                     //进入实时运动界面，没有定制课程
-                    RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                    RxActivityUtils.skipActivity(mContext, SportingActivity.class);
                 }
                 break;
             case R.id.tv_freeSporting:
                 //进入实时运动界面，没有定制课程
-                RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                RxActivityUtils.skipActivity(mContext, SportingActivity.class);
                 break;
             case R.id.tv_curriculumSporting:
                 if (bean.getPlanState() != 3) {
                     showFreeSportDialog();
-                } else {
+                } else if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                    bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
                     //进入实时运动界面，定制课程
-                    RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                    RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
                 }
                 break;
         }
     }
+
 
     private void showFreeSportDialog() {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
@@ -710,7 +772,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     @Override
                     public void onClick(View v) {
                         //进入实时运动界面，没有定制课程
-                        RxActivityUtils.skipActivity(mContext, SportingFragment.class);
+                        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
                     }
                 });
         rxDialog.show();

@@ -69,7 +69,7 @@ public abstract class BaseAcFragment extends Fragment {
         View view = LayoutInflater.from(mContext).inflate(layoutId(), null);
         unbinder = ButterKnife.bind(this, view);
         initViews();
-
+        initRxBus();
         Bundle arguments = getArguments();
         if (arguments != null) {
             initBundle(arguments);
@@ -112,6 +112,9 @@ public abstract class BaseAcFragment extends Fragment {
 
     }
 
+    protected void initRxBus() {
+
+    }
 
     @Override
     public void onAttach(Context context) {

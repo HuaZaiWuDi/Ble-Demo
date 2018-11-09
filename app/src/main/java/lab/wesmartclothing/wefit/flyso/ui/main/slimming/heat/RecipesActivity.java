@@ -105,7 +105,7 @@ public class RecipesActivity extends BaseActivity {
         initTopBar();
         initRecycler();
         mTvTotalKcal.setTypeface(MyAPP.typeface);
-
+        mChooseDate.setTheme(DateChoose.TYPE_RECIPES);
         mChooseDate.setOnDateChangeListener(new DateChoose.OnDateChangeListener() {
             @Override
             public void onDateChangeListener(int year, int month, int day, long millis) {
@@ -174,7 +174,6 @@ public class RecipesActivity extends BaseActivity {
                         }
                         mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
                         mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);
-                        mChooseDate.setTheme(DateChoose.TYPE_RECIPES, recommendBean.getDateList());
                     }
 
                     @Override

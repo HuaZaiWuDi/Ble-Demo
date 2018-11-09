@@ -167,7 +167,7 @@ public class MyAPP extends Application {
         //手动的添加模型类
         builder.addModelClasses(SearchWordTab.class)
                 .setDatabaseName("Wefit.db")
-                .setDatabaseVersion(1);
+                .setDatabaseVersion(3);
 
         ActiveAndroid.initialize(builder.create());
     }

@@ -103,7 +103,6 @@ public class MeFragment extends BaseAcFragment {
     @Override
     protected void initViews() {
         super.initViews();
-        initRxBus();
         initTypeface();
         RxTextUtils.getBuilder("--")
                 .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
@@ -126,7 +125,8 @@ public class MeFragment extends BaseAcFragment {
     }
 
     //后台上传心率数据成功，刷新界面
-    private void initRxBus() {
+    @Override
+    protected void initRxBus() {
         //后台上传心率数据成功，刷新界面
         RxBus.getInstance().register2(RefreshMe.class)
                 .compose(RxComposeUtils.<RefreshMe>bindLife(lifecycleSubject))

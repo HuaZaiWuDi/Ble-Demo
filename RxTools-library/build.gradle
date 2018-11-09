@@ -55,12 +55,6 @@ dependencies {
     //Log日志格式美化包
     api 'com.orhanobut:logger:2.2.0'
 
-    //二维码解析
-    api files('src/main/libs/zbardecoder.jar')
-
-    //二维码生成
-    api files('src/main/libs/zxing.jar')
-
     //压缩与加密
     api files('src/main/libs/zip4j_1.3.2.jar')
 
@@ -82,4 +76,7 @@ dependencies {
 
     //状态栏
     compile 'com.jaeger.statusbarutil:library:1.5.1'
+
+    //Zxing核心包
+    implementation 'com.google.zxing:core:3.3.3'
 }

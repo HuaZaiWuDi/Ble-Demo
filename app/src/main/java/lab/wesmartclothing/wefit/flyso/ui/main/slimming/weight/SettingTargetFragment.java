@@ -51,7 +51,7 @@ public class SettingTargetFragment extends BaseActivity {
     Unbinder unbinder;
 
 
-    private float maxWeight, minWeight, settingWeight, initWeight = 0, stillNeed;
+    private float maxWeight, minWeight, targetWeight, initWeight = 0, stillNeed;
 
 
     @Override
@@ -75,11 +75,12 @@ public class SettingTargetFragment extends BaseActivity {
      * 女性：(身高cm－70)×60﹪=标准体重
      */
     private void bestWeight() {
+        //最新的体重
         initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         float standardWeight = 0;
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            settingWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
+            targetWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         }
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
@@ -89,13 +90,13 @@ public class SettingTargetFragment extends BaseActivity {
         } else {
             standardWeight = (userInfo.getHeight() - 70) * 0.6f;
         }
-        if (settingWeight == 0)
-            settingWeight = standardWeight;
-        initRuler(settingWeight);
+        if (targetWeight == 0)
+            targetWeight = standardWeight;
+        initRuler(targetWeight);
         minWeight = standardWeight * 0.9f;
         maxWeight = standardWeight * 1.1f;
 
-        stillNeed = initWeight - settingWeight;
+        stillNeed = initWeight - targetWeight;
         if (stillNeed < 0) {
             //TODO 当前体重小于目标体重着
             tipDialog.showInfo("您当前体重小于目标体重，\n请设置目标体重~", 2000);
@@ -123,10 +124,10 @@ public class SettingTargetFragment extends BaseActivity {
         mWeightRulerView.setValueChangeListener(new DecimalScaleRulerView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
-                settingWeight = value;
+                targetWeight = value;
                 mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
 
-                stillNeed = initWeight - settingWeight;
+                stillNeed = initWeight - targetWeight;
                 String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
                 SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -136,9 +137,9 @@ public class SettingTargetFragment extends BaseActivity {
 
                 tv_targetDays.setCompoundDrawables(null, null, null, null);
 
-                if (settingWeight > maxWeight) {
+                if (targetWeight > maxWeight) {
                     RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);
-                } else if (settingWeight < minWeight) {
+                } else if (targetWeight < minWeight) {
                     RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～", 2000);
                 }
             }
@@ -157,12 +158,12 @@ public class SettingTargetFragment extends BaseActivity {
     }
 
     private void nextStep() {
-        if (settingWeight >= initWeight) {
+        if (targetWeight >= initWeight) {
             tipDialog.showInfo("您设定的目标体重超过或等于当前体重，\n请重新设置~", 2000);
             return;
         }
         Bundle mBundle = new Bundle();
-        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(settingWeight, 2));
+        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(targetWeight, 2));
         mBundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
         RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
     }

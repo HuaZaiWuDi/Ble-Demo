@@ -184,10 +184,8 @@ public class TestBleScanActivity extends AppCompatActivity {
         List<Entry> heartValues = new ArrayList<>();
         List<Entry> defaultValues = new ArrayList<>();
 
-
         int[] ints = {5, 15, 20, 35, 40, 50, 55, 70};
         int[] yValues = {100, 120, 140, 160, 180, 160, 140, 180, 200};
-
 
         //30分钟
         int min = 0;
@@ -195,7 +193,6 @@ public class TestBleScanActivity extends AppCompatActivity {
             if (ints[min] * 60 / 2 == heartValues.size()) {
                 min++;
             }
-
             //心率区间
             int startYValue = yValues[min];
             int endYValue = min + 1 >= yValues.length ? yValues[yValues.length - 1] : yValues[min + 1];
@@ -204,7 +201,6 @@ public class TestBleScanActivity extends AppCompatActivity {
             int startXValue = (min - 1) < 0 ? 0 : ints[min - 1] * 30;
             //区间后一个点
             int endXValue = ints[min] * 30;
-
 
             float value = 0;
             //上升

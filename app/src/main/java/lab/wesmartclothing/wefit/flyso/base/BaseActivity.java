@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
@@ -42,15 +44,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         super.onCreate(savedInstanceState);
+        mContext = this;
+        mActivity = this;
         //屏幕沉浸
         StatusBarUtils.from(this)
-                .setStatusBarColor(getResources().getColor(R.color.Gray))
-                .setLightStatusBar(false)
+                .setStatusBarColor(statusBarColor())
+                .setLightStatusBar(statusBarColor() != ContextCompat.getColor(mContext, R.color.Gray))
                 .process();
 
 
-        mContext = this;
-        mActivity = this;
         RxActivityUtils.addActivity(this);
 
         ScreenAdapter.setCustomDensity(this);
@@ -59,11 +61,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (layoutId() != 0) {
             setContentView(layoutId());
             ButterKnife.bind(this);
+            initViews();
+            if (getIntent().getExtras() != null)
+                initBundle(getIntent().getExtras());
+            initRxBus2();
+            initNetData();
         }
-        if (getIntent().getExtras() != null)
-            initBundle(getIntent().getExtras());
-        initViews();
-        initNetData();
     }
 
 
@@ -72,6 +75,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         if (intent.getExtras() != null)
             initBundle(intent.getExtras());
+    }
+
+    protected @ColorInt
+    int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.Gray);
     }
 
     protected @LayoutRes
@@ -95,6 +103,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    protected void initRxBus2() {
+
+    }
 
     @Override
     protected void onStart() {

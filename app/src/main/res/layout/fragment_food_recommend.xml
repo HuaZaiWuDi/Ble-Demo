@@ -35,7 +35,7 @@
                 android:id="@+id/chooseDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="24dp"
                 />
 
@@ -77,9 +77,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
+                            android:text="早餐"
                             android:textColor="@color/Gray"
-                            android:textSize="18sp"
-                            tools:text="早餐"/>
+                            android:textSize="18sp"/>
 
 
                         <TextView
@@ -141,9 +141,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
+                            android:text="午餐"
                             android:textColor="@color/Gray"
-                            android:textSize="18sp"
-                            tools:text="午餐"/>
+                            android:textSize="18sp"/>
 
 
                         <TextView
@@ -205,9 +205,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
+                            android:text="晚餐"
                             android:textColor="@color/Gray"
-                            android:textSize="18sp"
-                            tools:text="晚餐"/>
+                            android:textSize="18sp"/>
 
 
                         <TextView
@@ -269,9 +269,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
+                            android:text="加餐"
                             android:textColor="@color/Gray"
-                            android:textSize="18sp"
-                            tools:text="加餐"/>
+                            android:textSize="18sp"/>
 
 
                         <TextView
@@ -362,55 +362,53 @@
         >
 
 
-        <android.support.v7.widget.CardView
+        <com.vondear.rxtools.view.layout.RxLinearLayout
             android:id="@+id/layout_breakfast"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_marginLeft="24dp"
-            android:background="@drawable/selector_ripple_bg_"
+            android:elevation="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:cardCornerRadius="27dp"
-            app:cardElevation="4dp">
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/GrayWrite"
+            >
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@mipmap/icon_breakfast"
+                android:gravity="right"
+                android:text="早餐"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_yellow_add_shork"/>
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@mipmap/icon_breakfast"
-                    android:gravity="center"
-                    android:text="早餐"
-                    android:textColor="@color/GrayWrite"
-                    android:textSize="10sp"
-                    />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/icon_yellow_add"/>
-
-            </LinearLayout>
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
 
 
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
+        <com.vondear.rxtools.view.layout.RxLinearLayout
             android:id="@+id/layout_lunch"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_marginLeft="32dp"
-            android:background="@drawable/selector_ripple_bg_"
+            android:elevation="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:cardCornerRadius="27dp"
-            app:cardElevation="4dp">
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/GrayWrite"
+            >
 
 
             <LinearLayout
@@ -424,34 +422,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@mipmap/icon_lunch"
-                    android:elevation="20dp"
-                    android:gravity="center"
+                    android:gravity="right"
                     android:text="午餐"
                     android:textColor="@color/GrayWrite"
                     android:textSize="10sp"
-                    android:translationZ="10dp"
                     />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/icon_yellow_add"/>
+                    android:src="@mipmap/icon_yellow_add_shork"/>
 
             </LinearLayout>
 
 
-        </android.support.v7.widget.CardView>
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
 
-        <android.support.v7.widget.CardView
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
             android:id="@+id/layout_dinner"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_marginLeft="32dp"
-            android:background="@drawable/selector_ripple_bg_"
+            android:elevation="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:cardCornerRadius="27dp"
-            app:cardElevation="4dp">
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/GrayWrite">
 
 
             <LinearLayout
@@ -465,34 +464,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@mipmap/icon_dinner"
-                    android:elevation="20dp"
-                    android:gravity="center"
+                    android:gravity="right"
                     android:text="晚餐"
                     android:textColor="@color/GrayWrite"
                     android:textSize="10sp"
-                    android:translationZ="10dp"
                     />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/icon_yellow_add"/>
+                    android:src="@mipmap/icon_yellow_add_shork"/>
 
             </LinearLayout>
 
 
-        </android.support.v7.widget.CardView>
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
 
-        <android.support.v7.widget.CardView
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
             android:id="@+id/layout_meal"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_marginLeft="32dp"
-            android:background="@drawable/selector_ripple_bg_"
+            android:elevation="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:cardCornerRadius="27dp"
-            app:cardElevation="4dp">
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/GrayWrite">
 
 
             <LinearLayout
@@ -506,23 +506,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@mipmap/icon_meal"
-                    android:elevation="20dp"
-                    android:gravity="center"
-                    android:text="加餐"
+                    android:gravity="right"
+                    android:text="晚餐"
                     android:textColor="@color/GrayWrite"
                     android:textSize="10sp"
-                    android:translationZ="10dp"
                     />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/icon_yellow_add"/>
+                    android:src="@mipmap/icon_yellow_add_shork"/>
 
             </LinearLayout>
 
 
-        </android.support.v7.widget.CardView>
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
 
     </LinearLayout>
 

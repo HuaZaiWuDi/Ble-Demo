@@ -233,7 +233,6 @@ public class Slimming2Fragment extends BaseAcFragment {
     @Override
     protected void initViews() {
         super.initViews();
-        initRxBus();
         add_food = getResources().getStringArray(R.array.add_food);
         Typeface typeface = MyAPP.typeface;
         mTvWeightStart.setTypeface(typeface);
@@ -284,7 +283,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         });
     }
 
-    private void initRxBus() {
+    @Override
+    protected void initRxBus() {
         RxBus.getInstance().register2(RefreshSlimming.class)
                 .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<RefreshSlimming>() {

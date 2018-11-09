@@ -33,6 +33,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.annotation.IntRange;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1610,7 +1611,7 @@ public class RxImageUtils {
      * @param quality 质量
      * @return 质量压缩后的图片
      */
-    public static Bitmap compressByQuality(Bitmap src, int quality) {
+    public static Bitmap compressByQuality(Bitmap src, @IntRange(from = 0, to = 100) int quality) {
         return compressByQuality(src, quality, false);
     }
 
@@ -1622,7 +1623,7 @@ public class RxImageUtils {
      * @param recycle 是否回收
      * @return 质量压缩后的图片
      */
-    public static Bitmap compressByQuality(Bitmap src, int quality, boolean recycle) {
+    public static Bitmap compressByQuality(Bitmap src, @IntRange(from = 0, to = 100) int quality, boolean recycle) {
         if (isEmptyBitmap(src) || quality < 0 || quality > 100) return null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         src.compress(CompressFormat.JPEG, quality, baos);
@@ -1638,8 +1639,8 @@ public class RxImageUtils {
      * @param maxByteSize 允许最大值字节数
      * @return 质量压缩压缩过的图片
      */
-    public static Bitmap compressByQuality(Bitmap src, long maxByteSize) {
-        return compressByQuality(src, maxByteSize, false);
+    public static Bitmap compressByMaxByteSize(Bitmap src, long maxByteSize) {
+        return compressByMaxByteSize(src, maxByteSize, false);
     }
 
     /**
@@ -1650,7 +1651,7 @@ public class RxImageUtils {
      * @param recycle     是否回收
      * @return 质量压缩压缩过的图片
      */
-    public static Bitmap compressByQuality(Bitmap src, long maxByteSize, boolean recycle) {
+    public static Bitmap compressByMaxByteSize(Bitmap src, long maxByteSize, boolean recycle) {
         if (isEmptyBitmap(src) || maxByteSize <= 0) return null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int quality = 100;

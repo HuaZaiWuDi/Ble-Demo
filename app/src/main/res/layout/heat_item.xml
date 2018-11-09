@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:textColor="@color/orange_FF7200"
+        android:textColor="@color/Gray"
         android:textSize="18sp"
         tools:text="620千卡"/>
 

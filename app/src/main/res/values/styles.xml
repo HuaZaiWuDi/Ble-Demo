@@ -11,6 +11,7 @@
 
         <item name="android:windowAnimationStyle">@style/activityAnimation</item>
 
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
     <!-- 仿微信界面交互方式 样式 -->

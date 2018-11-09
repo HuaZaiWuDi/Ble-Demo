@@ -3,29 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/red"
-    android:fitsSystemWindows="true"
-    android:paddingBottom="50dp">
-
-
-    <ImageView
-        android:id="@+id/img_head"
-        android:layout_width="match_parent"
-        android:layout_height="134dp"
-        android:scaleType="fitXY"
-        android:src="@mipmap/bg_slimming_record"/>
-
-
-    <ImageView
-        android:id="@+id/img_email"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:padding="14dp"
-        android:src="@mipmap/icon_email_white"/>
+    android:fitsSystemWindows="true">
 
 
     <com.vondear.rxtools.view.layout.RxRelativeLayout
@@ -40,14 +22,13 @@
         android:translationZ="4dp"
         app:background_normal="@color/white"
         app:corner_radius="4dp"
-        tools:visibility="visible"
         >
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/pro_complete"
+            android:layout_above="@+id/layout_complete"
             android:layout_marginLeft="35dp"
             android:layout_marginBottom="8dp"
             android:text="今日完成"
@@ -62,38 +43,43 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="8dp"
             android:layout_marginRight="24dp"
-            android:text="已连续记录 6 天"
             android:textColor="@color/GrayWrite"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            tools:text="已连续记录 6 天"/>
 
 
-        <com.vondear.rxtools.view.waveview.RxWaveView
-            android:id="@+id/pro_complete"
+        <RelativeLayout
+            android:id="@+id/layout_complete"
             android:layout_width="61dp"
             android:layout_height="61dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="23dp"
-            android:layout_marginRight="25dp"
-            tools:background="@color/red"/>
+            android:layout_marginRight="25dp">
+
+            <com.vondear.rxtools.view.waveview.RxWaveView
+                android:id="@+id/pro_complete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:background="@color/red"/>
 
 
-        <TextView
-            android:id="@+id/tv_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="34dp"
-            android:layout_marginBottom="18dp"
-            android:text="100%"
-            android:textColor="@color/Gray"
-            android:textSize="17sp"/>
+            <TextView
+                android:id="@+id/tv_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="0.0%"
+                android:textColor="@color/Gray"
+                android:textSize="17sp"/>
+
+        </RelativeLayout>
 
 
         <View
             android:layout_width="1dp"
             android:layout_height="61dp"
             android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/pro_complete"
+            android:layout_toRightOf="@+id/layout_complete"
             android:background="@color/line"/>
 
 
@@ -103,7 +89,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="26dp"
             android:layout_marginRight="23dp"
-            android:layout_toRightOf="@+id/pro_complete"
+            android:layout_toRightOf="@+id/layout_complete"
             android:orientation="horizontal">
 
 
@@ -246,21 +232,304 @@
         android:elevation="4dp"
         android:translationZ="5dp"
         app:icon_src_normal="@mipmap/userimg"
-        app:is_circle="true"/>
+        app:is_circle="true"
+        />
 
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/img_head"
         android:background="@color/white">
 
 
         <LinearLayout
+            android:id="@+id/prant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="92dp">
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/layout_shareHead"
+                android:layout_width="match_parent"
+                android:layout_height="242dp"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/bg_slimming_record"/>
+
+
+                <com.vondear.rxtools.view.layout.RxImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="12dp"
+                    app:corner_radius="2dp"
+                    app:icon_src_normal="@mipmap/icon_logo_w"
+                    tools:background="@color/green"
+                    />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="31dp"
+                    android:layout_marginLeft="69dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"/>
+
+
+                <TextView
+                    android:id="@+id/tv_appVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="101dp"
+                    android:layout_marginTop="8dp"
+                    android:text="让 你 健 康 瘦\ntimetofit v1.0"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+
+
+                <ImageView
+                    android:id="@+id/img_QRcode"
+                    android:layout_width="61dp"
+                    android:layout_height="61dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="15dp"
+                    android:scaleType="fitXY"
+                    tools:background="@color/green"/>
+
+
+                <com.vondear.rxtools.view.layout.RxRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="138dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="80dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp"
+                    android:paddingBottom="23dp"
+                    android:translationZ="2dp"
+                    app:background_normal="@color/white"
+                    app:corner_radius="4dp"
+                    tools:visibility="visible"
+                    >
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/layout_complete2"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="今日完成"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_continuousRecord2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="24dp"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="10sp"
+                        tools:text="已连续记录 6 天"/>
+
+
+                    <RelativeLayout
+                        android:id="@+id/layout_complete2"
+                        android:layout_width="61dp"
+                        android:layout_height="61dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="23dp"
+                        android:layout_marginRight="25dp">
+
+                        <com.vondear.rxtools.view.waveview.RxWaveView
+                            android:id="@+id/pro_complete2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:background="@color/red"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_progress2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="0.0%"
+                            android:textColor="@color/Gray"
+                            android:textSize="17sp"/>
+
+                    </RelativeLayout>
+
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="61dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toRightOf="@+id/layout_complete2"
+                        android:background="@color/line"/>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="61dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="26dp"
+                        android:layout_marginRight="23dp"
+                        android:layout_toRightOf="@+id/layout_complete2"
+                        android:orientation="horizontal">
+
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <com.vondear.rxtools.view.layout.RxImageView
+                                android:id="@+id/img_breakfast2"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"
+                                android:layout_centerHorizontal="true"
+                                app:icon_src_normal="@color/Gray_ECEBF0"
+                                app:is_circle="true"/>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="早餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <com.vondear.rxtools.view.layout.RxImageView
+                                android:id="@+id/img_lunch2"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"
+                                android:layout_centerHorizontal="true"
+                                app:icon_src_normal="@color/Gray_ECEBF0"
+                                app:is_circle="true"/>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="午餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <com.vondear.rxtools.view.layout.RxImageView
+                                android:id="@+id/img_dinner2"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"
+                                android:layout_centerHorizontal="true"
+                                app:icon_src_normal="@color/Gray_ECEBF0"
+                                app:is_circle="true"/>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="晚餐"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <com.vondear.rxtools.view.layout.RxImageView
+                                android:id="@+id/img_sporting2"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"
+                                android:layout_centerHorizontal="true"
+                                app:icon_src_normal="@color/Gray_ECEBF0"
+                                app:is_circle="true"/>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="运动"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"/>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <com.vondear.rxtools.view.layout.RxImageView
+                                android:id="@+id/img_weigh2"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"
+                                android:layout_centerHorizontal="true"
+                                app:icon_src_normal="@color/Gray_ECEBF0"
+                                app:is_circle="true"/>
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="称重"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="10sp"/>
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
+
+                </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+                <com.vondear.rxtools.view.layout.RxImageView
+                    android:id="@+id/img_userImg2"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:elevation="3dp"
+                    android:translationZ="4dp"
+                    app:icon_src_normal="@mipmap/userimg"
+                    app:is_circle="true"
+                    tools:visibility="visible"/>
+
+            </RelativeLayout>
+
 
             <!--健康评级-->
             <LinearLayout
@@ -322,9 +591,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:lineSpacingExtra="8dp"
-                        android:text="56.60 体重(kg)\n56.60 体重(kg)\n56.60 体重(kg)\n56.60 体重(kg)"
                         android:textColor="@color/Gray"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp"
+                        tools:text="-- 体重(kg)\n-- 体重(kg)\n-- 体重(kg)\n-- 体重(kg)"/>
 
 
                     <LinearLayout
@@ -338,17 +607,17 @@
                             android:id="@+id/tv_healthScore"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="76.9 分"
                             android:textColor="@color/Gray"
-                            android:textSize="38sp"/>
+                            android:textSize="38sp"
+                            tools:text="0.0 分"/>
 
                         <TextView
                             android:id="@+id/tv_healthDate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2018/07/10"
                             android:textColor="@color/GrayWrite"
-                            android:textSize="10sp"/>
+                            android:textSize="10sp"
+                            tools:text="2018/07/10"/>
 
 
                         <TextView
@@ -356,9 +625,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="身材：偏胖  患病风险：低"
                             android:textColor="@color/Gray"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp"
+                            tools:text="身材：偏胖  患病风险：低"/>
 
                     </LinearLayout>
 
@@ -434,9 +703,13 @@
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/mLineChart"
                         android:layout_width="match_parent"
-                        android:layout_height="171dp"
-                        android:layout_margin="@dimen/dimen_16"
-                        android:focusable="false"/>
+                        android:layout_height="115dp"
+                        android:layout_marginLeft="45dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:focusable="false"
+                        android:paddingLeft="50dp"/>
 
                     <TextView
                         android:id="@+id/tv_currentWeight"
@@ -452,7 +725,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginLeft="23dp"
+                        android:layout_marginLeft="40dp"
                         android:layout_marginRight="23dp"
                         android:orientation="horizontal">
 
@@ -520,6 +793,7 @@
                             android:id="@+id/tv_weight_chart_7"
                             android:layout_width="22dp"
                             android:layout_height="11dp"
+                            android:layout_marginLeft="12dp"
                             android:gravity="center"
                             android:text="07/04"
                             android:textColor="@color/white"
@@ -537,7 +811,6 @@
 
             <!--饮食记录-->
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -759,7 +1032,6 @@
 
             <!--运动记录-->
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -1190,10 +1462,78 @@
             </LinearLayout>
 
 
+            <RelativeLayout
+                android:id="@+id/layout_shareTitle"
+                android:layout_width="match_parent"
+                android:layout_height="77dp"
+                android:background="@color/Gray"
+                android:paddingLeft="24dp"
+                android:paddingTop="24dp"
+                android:paddingRight="24dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+
+                <com.vondear.rxtools.view.layout.RxImageView
+                    android:id="@+id/img_userImg3"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    app:icon_src_normal="@color/orange_FF7200"
+                    app:is_circle="true"/>
+
+
+                <TextView
+                    android:id="@+id/tv_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@+id/img_userImg3"
+                    android:lineSpacingExtra="4dp"
+                    android:text="周大兔\n我在 timetofit 第 6 天"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"/>
+
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="11/1"
+                    android:textColor="@color/white"
+                    android:textSize="23sp"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#605768"/>
+
+            </RelativeLayout>
+
+
         </LinearLayout>
 
 
     </android.support.v4.widget.NestedScrollView>
 
+    <ImageView
+        android:id="@+id/img_head"
+        android:layout_width="match_parent"
+        android:layout_height="134dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/bg_slimming_record"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/img_email"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:padding="14dp"
+        android:src="@mipmap/icon_share"
+        android:tint="@color/white"/>
 
 </RelativeLayout>

@@ -16,4 +16,5 @@
     <item name="id_search" type="id"/>
     <item name="main" type="id"/>
     <item name="tv_skip" type="id"/>
+    <item name="img_share" type="id"/>
 </resources>

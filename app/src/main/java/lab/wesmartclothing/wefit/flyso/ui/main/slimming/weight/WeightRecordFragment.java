@@ -25,6 +25,7 @@ import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -37,6 +38,7 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -305,7 +307,7 @@ public class WeightRecordFragment extends BaseActivity {
 
     private void initLineChart(final WeightDataBean bean) {
         list = bean.getWeightList().getList();
-
+        Collections.reverse(list);
         List<Unit> lines_weight = new ArrayList<>();
         List<Unit> lines_bodyFat = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -318,6 +320,7 @@ public class WeightRecordFragment extends BaseActivity {
         LineBean weightLine = new LineBean();
         weightLine.setUnits(lines_weight);
         weightLine.setShowPoint(true);
+        weightLine.setLineWidth(RxUtils.dp2px(2));
         weightLine.setColor(0x7fffffff);
 
 
@@ -371,7 +374,7 @@ public class WeightRecordFragment extends BaseActivity {
     public void onViewClicked(View view) {
         if (view.getId() == R.id.layout_sports) {
             if (list == null || list.size() == 0) return;
-            bundle.putString(Key.BUNDLE_WEIGHT_GID, currentGid);
+            bundle.putString(Key.BUNDLE_DATA_GID, currentGid);
             RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
         } else {
             //上一次体重为0则表示用户没有上称

@@ -9,11 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.vondear.rxtools.R;
+import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxBarUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxSPUtils;
 import com.vondear.rxtools.view.RxBarCode;
-import com.vondear.rxtools.view.RxQRCode;
 import com.vondear.rxtools.view.RxTitle;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.ticker.RxTickerUtils;
@@ -165,7 +165,6 @@ public class ActivityCodeTool extends ActivityBase {
         mLlScaner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RxActivityUtils.skipActivity(mContext, ActivityScanerCode.class);
             }
         });
 

@@ -9,13 +9,21 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
@@ -23,6 +31,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -33,11 +42,11 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -62,10 +71,18 @@ public class SmartClothingFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
+    @BindView(R.id.btn_strongTip)
+    QMUIRoundButton mBtnStrongTip;
     @BindView(R.id.layout_StrongTip)
     RelativeLayout mLayoutStrongTip;
+    @BindView(R.id.suitlines)
+    SuitLines mSuitlines;
+    @BindView(R.id.layout_lenged)
+    LinearLayout mLayoutLenged;
     @BindView(R.id.iv_sports)
     ImageView mIvSports;
+    @BindView(R.id.tv_sportDate)
+    TextView mTvSportDate;
     @BindView(R.id.layout_sports)
     RelativeLayout mLayoutSports;
     @BindView(R.id.iv_heatKacl)
@@ -80,29 +97,13 @@ public class SmartClothingFragment extends BaseActivity {
     TextView mTvSportsTimeTitle;
     @BindView(R.id.tv_Sports_Time)
     TextView mTvSportsTime;
-    @BindView(R.id.iv_tip)
-    ImageView mIvTip;
-    @BindView(R.id.line)
-    View mLine;
+    @BindView(R.id.recycler_Sporting)
+    RecyclerView mRecyclerSporting;
     Unbinder unbinder;
-    @BindView(R.id.btn_strongTip)
-    QMUIRoundButton mBtnStrongTip;
-    @BindView(R.id.suitlines)
-    SuitLines mSuitlines;
-    @BindView(R.id.layout_sportTip)
-    RelativeLayout mLayoutSportTip;
-    @BindView(R.id.tv_tip)
-    TextView mTvTip;
-    @BindView(R.id.tv_sportDate)
-    TextView mTvSportDate;
-
-
     private Button btn_Connect;
     private long currentDate = 0;
-
-
-    private List<AthleticsInfo.PageInfoBean.ListBean> list;
-
+    private List<AthleticsInfo.ListBean> list;
+    private BaseQuickAdapter adapter;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -129,7 +130,7 @@ public class SmartClothingFragment extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             mLayoutStrongTip.setVisibility(View.GONE);
-                            RxActivityUtils.skipActivity(mActivity, SportingFragment.class);
+                            RxActivityUtils.skipActivity(mActivity, SportingActivity.class);
                         }
                     });
                 }
@@ -145,7 +146,6 @@ public class SmartClothingFragment extends BaseActivity {
                     mLayoutStrongTip.setVisibility(View.GONE);
                 }
             }
-
         }
     };
 
@@ -180,6 +180,49 @@ public class SmartClothingFragment extends BaseActivity {
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
         checkStatus();
         initData();
+        initSportingList();
+    }
+
+    private void initSportingList() {
+        mRecyclerSporting.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerSporting.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        adapter = new BaseQuickAdapter<AthleticsInfo.ListBean.AthlListBean, BaseViewHolder>(R.layout.item_sporting_list) {
+            @Override
+            protected void convert(BaseViewHolder helper, AthleticsInfo.ListBean.AthlListBean item) {
+                String timeSection = RxFormat.setFormatDate(item.getStartTime(), RxFormat.Date_Time) + "-"
+                        + RxFormat.setFormatDate(item.getEndTime(), RxFormat.Date_Time);
+
+                SpannableStringBuilder timeBuilder = RxTextUtils.getBuilder("运动时间段\n")
+                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .append(timeSection).setProportion(0.8f)
+                        .create();
+
+                SpannableStringBuilder kcalBuilder = RxTextUtils.getBuilder("消耗热量\n")
+                        .setProportion(0.8f).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .append(item.getCalorie() + "").setProportion(0.8f)
+                        .append("\tkcal").setProportion(0.8f)
+                        .create();
+
+                //getPlanFlag():0是自由运动，1是课程运动
+                helper.setText(R.id.tv_sportingType, item.getPlanFlag() != 1 ? "自由运动" : "课程运动")
+                        .setText(R.id.tv_sportingTime, timeBuilder)
+                        .setTypeface(MyAPP.typeface, R.id.tv_sportingTime, R.id.tv_sportingKcal)
+                        .setText(R.id.tv_sportingKcal, kcalBuilder);
+            }
+        };
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Bundle bundle = new Bundle();
+                AthleticsInfo.ListBean.AthlListBean item = (AthleticsInfo.ListBean.AthlListBean) adapter.getItem(position % adapter.getData().size());
+                if (item == null) return;
+                bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
+                bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
+                RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
+
+            }
+        });
+        mRecyclerSporting.setAdapter(adapter);
     }
 
     private void initMRxBus() {
@@ -204,22 +247,18 @@ public class SmartClothingFragment extends BaseActivity {
     private void initData() {
         btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ?
                 R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected));
-
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsInfo(1, 100))
+        RxManager.getInstance().doNetSubscribe(dxyService.fetchAthleticsListDetail(1, 100))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchAthleticsListDetail", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        Logger.json(s);
                         AthleticsInfo bean = MyAPP.getGson().fromJson(s, AthleticsInfo.class);
+                        updateUI(bean);
 
-                        mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
-                        //今日目标是否已经达成
-                        mTvTip.setText(bean.getNeedAthl() <= 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, RxFormatValue.fromat4S5R(Math.abs(bean.getNeedAthl() / 1000f), 2)));
-                        list = bean.getPageInfo().getList();
-                        initLineChart(list);
                     }
 
                     @Override
@@ -228,6 +267,11 @@ public class SmartClothingFragment extends BaseActivity {
                         RxToast.normal(error);
                     }
                 });
+    }
+
+    private void updateUI(AthleticsInfo bean) {
+        list = bean.getList();
+        initLineChart(list);
     }
 
 
@@ -248,11 +292,13 @@ public class SmartClothingFragment extends BaseActivity {
         }
     }
 
-    private void initLineChart(final List<AthleticsInfo.PageInfoBean.ListBean> list) {
+    private void initLineChart(final List<AthleticsInfo.ListBean> list) {
+        if (list == null) return;
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
+        Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
-            AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
+            AthleticsInfo.ListBean.DayAthlBean bean = list.get(i).getDayAthl();
             Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, "");
 
@@ -263,11 +309,13 @@ public class SmartClothingFragment extends BaseActivity {
         LineBean heatLine = new LineBean();
         heatLine.setUnits(lines_Heat);
         heatLine.setShowPoint(true);
+        heatLine.setLineWidth(RxUtils.dp2px(2));
         heatLine.setColor(Color.parseColor("#F2A49C"));
 
         LineBean timeLine = new LineBean();
         timeLine.setShowPoint(true);
         timeLine.setUnits(lines_Time);
+        timeLine.setLineWidth(RxUtils.dp2px(2));
         timeLine.setColor(Color.parseColor("#F2A49C"));
         timeLine.setDashed(true);
 
@@ -279,14 +327,15 @@ public class SmartClothingFragment extends BaseActivity {
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
             @Override
             public void selectItem(int valueX) {
-                AthleticsInfo.PageInfoBean.ListBean bean = list.get(valueX);
+                AthleticsInfo.ListBean.DayAthlBean bean = list.get(valueX).getDayAthl();
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
                 mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
                 currentDate = bean.getAthlDate();
+
+                adapter.setNewData(list.get(valueX).getAthlList());
             }
         });
-
     }
 
     private void initTopBar() {
@@ -301,19 +350,6 @@ public class SmartClothingFragment extends BaseActivity {
                 getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
-    }
-
-
-    @OnClick({R.id.layout_sports})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.layout_sports:
-                if (list == null || list.size() == 0) return;
-                Bundle args = new Bundle();
-                args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
-                RxActivityUtils.skipActivity(mActivity, SportsDetailsFragment.class, args);
-                break;
-        }
     }
 
 

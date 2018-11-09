@@ -15,6 +15,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
@@ -395,13 +396,34 @@ public class RxImageTools {
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache(true);
         view.getDrawingCache(true);
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(),
                 Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         view.setDrawingCacheEnabled(false);
 
         return bitmap;
+    }
+
+    public static Bitmap view2Bitmap(View v, @ColorInt int bgColor) {
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        c.drawColor(bgColor);
+        v.draw(c);
+        return bmp;
+    }
+
+
+    public static Bitmap convertViewToBitmap(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        Bitmap shareBitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+        return shareBitmap;
     }
 
 

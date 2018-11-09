@@ -1273,29 +1273,5 @@ public class PlanBean {
         }
     }
 
-    public static class AthlPlanListBean {
-        /**
-         * range : 1
-         * duration : 5
-         */
 
-        private int range;
-        private int duration;
-
-        public int getRange() {
-            return range;
-        }
-
-        public void setRange(int range) {
-            this.range = range;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public void setDuration(int duration) {
-            this.duration = duration;
-        }
-    }
 }

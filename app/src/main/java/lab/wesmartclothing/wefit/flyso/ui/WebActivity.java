@@ -22,7 +22,6 @@ public class WebActivity extends BaseWebActivity {
     }
 
 
-
     @Nullable
     @Override
     protected String getUrl() {

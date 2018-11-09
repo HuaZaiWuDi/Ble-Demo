@@ -76,8 +76,7 @@ public class WeightAddFragment extends BaseActivity {
         setContentView(R.layout.fragment_add_weight);
         unbinder = ButterKnife.bind(this);
         initView();
-        if (!BleTools.getBleManager().isBlueEnable())
-            BleTools.getBleManager().enableBluetooth();
+
     }
 
     private QNScaleData mQnScaleData;
@@ -85,7 +84,8 @@ public class WeightAddFragment extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-
+        if (!BleTools.getBleManager().isBlueEnable())
+            BleTools.getBleManager().enableBluetooth();
     }
 
     @Override
@@ -245,10 +245,9 @@ public class WeightAddFragment extends BaseActivity {
                             RxBus.getInstance().post(bean);
                         } else {
                             Bundle bundle = new Bundle();
-                            bundle.putString(Key.BUNDLE_WEIGHT_GID, s);
+                            bundle.putString(Key.BUNDLE_DATA_GID, s);
                             RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
                         }
-
 
                     }
 

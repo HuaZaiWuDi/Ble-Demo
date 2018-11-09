@@ -43,8 +43,8 @@
                 android:layout_width="289dp"
                 android:layout_height="48dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/dimen_8"
                 android:layout_marginTop="@dimen/dimen_8"
+                android:layout_marginBottom="@dimen/dimen_8"
                 android:text="检测到您未开启手机蓝牙，开启蓝牙"
                 android:textColor="@color/Gray"
                 android:textSize="13sp"
@@ -83,9 +83,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/dimen_10"
-                android:layout_marginRight="@dimen/dimen_16"
                 android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_16"
+                android:layout_marginBottom="@dimen/dimen_10"
                 android:orientation="horizontal">
 
                 <TextView
@@ -115,6 +115,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/bg_F7F7F9"
                 android:orientation="vertical">
 
 
@@ -144,22 +145,6 @@
                         android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"/>
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="34dp"
-                        android:text="查看详情"
-                        android:textColor="@color/GrayWrite"
-                        android:textSize="13sp"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:background="@mipmap/icon_goto"/>
 
 
                 </RelativeLayout>
@@ -283,52 +268,15 @@
 
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:id="@+id/layout_sportTip"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_Sporting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:background="@color/white"
-                    android:padding="16dp">
+                    android:nestedScrollingEnabled="false">
 
 
-                    <ImageView
-                        android:id="@+id/iv_tip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@mipmap/icon_tip"/>
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dimen_8"
-                        android:layout_toRightOf="@+id/iv_tip"
-                        android:text="小贴士"
-                        android:textColor="@color/Gray"
-                        android:textSize="15sp"
-                        android:textStyle="bold"/>
-
-                    <View
-                        android:id="@+id/line"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dimen_0.5"
-                        android:layout_below="@+id/iv_tip"
-                        android:layout_marginTop="18dp"
-                        android:background="@color/line"/>
-
-
-                    <TextView
-                        android:id="@+id/tv_tip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/line"
-                        android:layout_marginTop="@dimen/dimen_16"
-                        android:text="今天还差300cal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。"
-                        android:textColor="@color/GrayWrite"/>
-
-                </RelativeLayout>
-
+                </android.support.v7.widget.RecyclerView>
             </LinearLayout>
 
 

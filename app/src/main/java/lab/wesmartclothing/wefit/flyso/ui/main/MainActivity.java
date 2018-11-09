@@ -88,7 +88,6 @@ public class MainActivity extends BaseALocationActivity {
         }
         setContentView(R.layout.activity_main);
 
-//        StatusBarUtil.setTranslucent(this);
 
         ButterKnife.bind(this);
         initView();

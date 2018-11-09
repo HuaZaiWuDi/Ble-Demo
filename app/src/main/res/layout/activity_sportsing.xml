@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Gray"
+    android:orientation="vertical"
+    tools:context=".ui.main.slimming.sports.SportingActivity">
+
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/Gray"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        />
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:id="@+id/sportsStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_16"
+                android:layout_marginTop="2dp"
+                android:text="运动状态："
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:id="@+id/tv_sportsStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/sportsStatus"
+                android:text="开始热身"
+                android:textColor="@color/brown_ABA08E"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_16"
+                android:layout_toLeftOf="@+id/sw_music"
+                android:text="提示音\t\t"
+                android:textColor="@color/GrayWrite"
+                android:textSize="13sp"/>
+
+
+            <com.vondear.rxtools.view.SwitchView
+                android:id="@+id/sw_music"
+                android:layout_width="40dp"
+                android:layout_height="@dimen/dimen_20"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dimen_16"
+                app:hasShadow="true"
+                app:isOpened="true"
+                app:offColor="@color/GrayWrite"
+                app:offColorDark="@color/GrayWrite"
+                app:primaryColor="@color/green_61D97F"
+                />
+
+
+            <TextView
+                android:id="@+id/tv_kcal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/sw_music"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:text="00"
+                android:textColor="@color/white"
+                android:textSize="72sp"
+                android:textStyle="bold"
+                tools:text="68.7kcal"/>
+
+
+            <com.vondear.rxtools.view.layout.RxRelativeLayout
+                android:id="@+id/layout_sporting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_kcal"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
+                android:elevation="2dp"
+                android:padding="15dp"
+                android:translationZ="2dp"
+                app:background_normal="@color/white"
+                app:corner_radius="4dp">
+
+
+                <RelativeLayout
+                    android:id="@+id/layout_legend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_heartCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5/5"
+                        android:textColor="@color/Gray"
+                        android:textSize="12sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_expectKcal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_toRightOf="@+id/tv_heartCount"
+                        android:text="@string/expectKcal"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="8sp"/>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="2dp"
+                            android:background="@color/yellow_E4CA9F"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:text="计划"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="8sp"/>
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black_312C35"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="实时"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="8sp"/>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="94dp"
+                    android:layout_below="@+id/layout_legend"
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="bpm"
+                        android:textColor="@color/black_312C35"
+                        android:textSize="6sp"/>
+
+                    <LinearLayout
+                        android:layout_width="300dp"
+                        android:layout_height="74dp"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
+
+                        <!--危险-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <com.vondear.rxtools.view.layout.RxTextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:background="@color/red"
+                                android:gravity="center"
+                                android:text="危险"
+                                android:textColor="@color/white"
+                                android:textSize="7sp"
+                                app:corner_radius_top_left="4dp"/>
+
+                            <com.vondear.rxtools.view.layout.RxView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/red"
+                                app:corner_radius_top_right="4dp"/>
+
+
+                        </LinearLayout>
+                        <!--无氧-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:background="@color/orange_FF7200"
+                                android:gravity="center"
+                                android:text="无氧"
+                                android:textColor="@color/white"
+                                android:textSize="7sp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/orange_FF7200"/>
+
+                        </LinearLayout>
+                        <!--有氧-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:background="@color/green_61D97F"
+                                android:gravity="center"
+                                android:text="有氧"
+                                android:textColor="@color/white"
+                                android:textSize="7sp"/>
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/green_61D97F"/>
+
+                        </LinearLayout>
+                        <!--燃脂-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:background="@color/yellow_FFBC00"
+                                android:gravity="center"
+                                android:text="燃脂"
+                                android:textColor="@color/white"
+                                android:textSize="7sp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/yellow_FFBC00"/>
+
+
+                        </LinearLayout>
+                        <!--热身-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/brown_ABA08E"
+                                android:gravity="center"
+                                android:text="热身"
+                                android:textColor="@color/white"
+                                android:textSize="7sp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/brown_ABA08E"/>
+
+
+                        </LinearLayout>
+                        <!--静息-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <com.vondear.rxtools.view.layout.RxTextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/Gray_DCDAE6"
+                                android:gravity="center"
+                                android:text="静息"
+                                android:textColor="@color/white"
+                                android:textSize="7sp"
+                                app:corner_radius_bottom_left="4dp"/>
+
+                            <com.vondear.rxtools.view.layout.RxView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/Gray_DCDAE6"
+                                app:corner_radius_bottom_right="4dp"/>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:text="time"
+                        android:textColor="@color/black_312C35"
+                        android:textSize="6sp"/>
+
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/chart_HeartRate"
+                        android:layout_width="300dp"
+                        android:layout_height="74dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="24dp"
+                        >
+
+                    </com.github.mikephil.charting.charts.LineChart>
+
+
+                </RelativeLayout>
+
+
+            </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_pro"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_below="@+id/layout_sporting"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+
+                <TextView
+                    android:id="@+id/tv_startSportingTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="8sp"
+                    tools:text="15:00"/>
+
+
+                <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                    android:id="@+id/pro_sportingTime"
+                    android:layout_width="207dp"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    app:rcBackgroundColor="@color/GrayWrite"
+                    app:rcProgressColor="@color/white">
+
+                </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+
+                <TextView
+                    android:id="@+id/tv_endSportingTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="8sp"
+                    tools:text="20:00"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_pro"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_sporting_decorate"/>
+
+                <com.vondear.rxtools.view.layout.RxLinearLayout
+                    android:layout_width="278dp"
+                    android:layout_height="38dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"
+                    app:background_normal="#514758"
+                    app:corner_radius="14dp">
+
+
+                    <com.vondear.rxtools.view.RxTextviewVertical
+                        android:id="@+id/tv_verticalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+
+                </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_sporting_decorate"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_sports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_tip"
+                android:layout_marginBottom="36dp"
+                android:orientation="horizontal"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_av_heartrate"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="当前心率"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_avHeartRate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLength="3"
+                            android:text="--"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            tools:text="110"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="\tbpm"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="18sp"/>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_max_heartrate"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="最大心率"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_maxHeartRate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLength="3"
+                            android:text="--"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            tools:text="110"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="\tbpm"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="18sp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_sportingTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_time"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="运动时长"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_sportsTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="12'02''"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_sportingKcal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="@mipmap/icon_sporting_kcal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="消耗热量"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_sportskcal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="12'02''"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>

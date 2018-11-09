@@ -33,7 +33,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity android:name=".activity.ActivityWebView"/>
-        <activity android:name=".activity.ActivityScanerCode"></activity>
         <activity android:name=".activity.ActivityCodeTool"></activity>
 
 

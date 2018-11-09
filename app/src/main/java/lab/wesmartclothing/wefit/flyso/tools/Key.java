@@ -37,8 +37,8 @@ public interface Key {
 
     String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";//跳转制定页面
 
-    String BUNDLE_SPORTING_DATE = "BUNDLE_SPORTING_DATE";//运动的日期
-    String BUNDLE_WEIGHT_GID = "BUNDLE_SPORTING_DATE";//体重的GID
+    String BUNDLE_DATE_TIME = "BUNDLE_DATE_TIME";//日期
+    String BUNDLE_DATA_GID = "BUNDLE_DATA_GID";//数据的GID
 
     String BUNDLE_IS_CONNECT = "BUNDLE_IS_CONNECT";//传递蓝牙的链接状态
 
@@ -64,6 +64,8 @@ public interface Key {
 
     //计划的状态
     String BUNDLE_PLAN_STATUS = "BUNDLE_PLAN_STATUS";
+
+    String BUNDLE_SPORTING_PLAN="BUNDLE_SPORTING_PLAN";
 
 
 

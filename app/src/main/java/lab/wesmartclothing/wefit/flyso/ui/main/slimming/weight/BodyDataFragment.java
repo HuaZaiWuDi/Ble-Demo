@@ -46,6 +46,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
@@ -109,7 +110,10 @@ public class BodyDataFragment extends BaseActivity {
         Typeface typeface = MyAPP.typeface;
         mTvHealthScore.setTypeface(typeface);
 
-        gid = getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_GID);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            gid = extras.getString(Key.BUNDLE_DATA_GID);
+        }
 
         initTopBar();
         initRecyclerView();
@@ -134,10 +138,11 @@ public class BodyDataFragment extends BaseActivity {
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
     private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
         mHealthyList.clear();
-
+        UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         //体重
         Healthy healthy0 = new Healthy();
         mHealthyList.add(healthy0);
+
 
         //体脂率
         Healthy healthy = new Healthy();
@@ -147,6 +152,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy.setSectionLabels(new String[]{"11.0%", "21.0%", "26.0%"});
         healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
         mHealthyList.add(healthy);
+
         //BMI
         Healthy healthy2 = new Healthy();
         healthy2.setSections(new double[]{18.5, 25});
@@ -172,7 +178,6 @@ public class BodyDataFragment extends BaseActivity {
          充足=大于标准体重*80%
          *
          * */
-        UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {
             standardWeight = (int) ((userInfo.getHeight() - 80) * 0.7);
@@ -396,7 +401,6 @@ public class BodyDataFragment extends BaseActivity {
                     protected void _onNext(String s) {
 //                        RxToast.normal("删除成功");
                         //刷新数据
-                        //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
                         onBackPressed();
                     }
@@ -428,6 +432,7 @@ public class BodyDataFragment extends BaseActivity {
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        RxActivityUtils.skipActivityAndFinish(mContext, WeightRecordFragment.class);
+        //跳转回主页
+        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
     }
 }

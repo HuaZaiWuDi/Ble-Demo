@@ -9,16 +9,16 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
-import com.zchu.rxcache.data.CacheResult;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,13 +26,14 @@ import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ble.BleService;
-import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
+import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -72,7 +73,7 @@ public class SplashActivity extends BaseActivity {
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
         initView();
 //        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, TestBleScanActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(mContext, SportsDetailsFragment.class);
     }
 
     public void initView() {
@@ -83,9 +84,34 @@ public class SplashActivity extends BaseActivity {
             ServiceAPI.switchURL(baseUrl);
         }
 
+        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+
         initData();
         initUserInfo();
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
+
+
+        List<HeartRateTab> heartLists = new ArrayList<>();
+        HeartRateTab heartRateTab = new HeartRateTab();
+        heartRateTab.setHeartRate(180);
+        heartRateTab.setHeartTime(System.currentTimeMillis());
+        heartRateTab.setStepTime(10);
+        heartRateTab.setIsfree(true);
+        heartLists.add(heartRateTab);
+
+        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, heartLists, CacheTarget.Disk)
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        RxLogUtils.d("心率保存成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        RxLogUtils.e("RxCache:心率", e);
+                    }
+                });
 
     }
 
@@ -211,19 +237,6 @@ public class SplashActivity extends BaseActivity {
      * 判断本地是否有之前保存的心率数据：有则上传
      */
     public void uploadHistoryData() {
-        RxCache.getDefault().<List<HeartRateBean.AthlList>>load(Key.CACHE_ATHL_RECORD, new TypeToken<List<HeartRateBean.AthlList>>() {
-        }.getType())
-                .map(new CacheResult.MapFunc<List<HeartRateBean.AthlList>>())
-                .subscribe(new RxSubscriber<List<HeartRateBean.AthlList>>() {
-                    @Override
-                    protected void _onNext(List<HeartRateBean.AthlList> athlLists) {
-                        if (athlLists != null && !athlLists.isEmpty()) {
-                            HeartRateBean mHeartRateBean = new HeartRateBean();
-                            mHeartRateBean.setAthlList(athlLists);
-                            mHeartRateBean.saveHeartRate(mHeartRateBean);
-
-                        }
-                    }
-                });
+        new HeartRateUtil().uploadHeartRate();
     }
 }
