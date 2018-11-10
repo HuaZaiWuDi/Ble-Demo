@@ -24,7 +24,24 @@ public class HeartRateBean {
     private double athlScore;
     private int planFlag;//定制课程：1
     private int stepNumber;
+    private double complete;
     private List<HeartRateTab> heartList;
+
+
+    public double getComplete() {
+        return complete;
+    }
+
+    public void setComplete(double complete) {
+        this.complete = complete;
+    }
+
+    public HeartRateBean() {
+    }
+
+    public HeartRateBean(int planFlag) {
+        this.planFlag = planFlag;
+    }
 
     public String getAthlDate() {
         return athlDate;

@@ -18,9 +18,9 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.smartclothing.blelibrary.BleKey;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.aboutCarmera.RxImageUtils;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -48,6 +48,7 @@ import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -174,6 +175,7 @@ public class SportsDetailsFragment extends BaseActivity {
     int calmTime = 0;
     private HeartLineChartUtils lineChartUtils;
     private boolean isFreeSporting = true;//是否是自由运动
+    private boolean goBack = false;
 
     @Override
     protected int layoutId() {
@@ -269,18 +271,32 @@ public class SportsDetailsFragment extends BaseActivity {
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
         isFreeSporting = !bundle.getBoolean(Key.BUNDLE_SPORTING_PLAN);
+        goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
 
         RxTextUtils.getBuilder("0.0")
                 .append(isFreeSporting ? "kcal" : "分").setProportion(0.1f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvKcal);
+
+        RxTextUtils.getBuilder("0")
+                .append("bpm").setProportion(0.5f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .into(mTvAvHeartRate);
+
         if (isFreeSporting) {
             mTvDetailTitle.setText("消耗热量");
             mLayoutLegend.setVisibility(View.GONE);
+
+            RxTextUtils.getBuilder("0")
+                    .append("bpm").setProportion(0.5f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .into(mTvMaxHeartRate);
+
         } else {
             mTvDetailTitle.setText("运动评分");
             mLayoutSportingKcal.setVisibility(View.VISIBLE);
             mLayoutMaxHeart.setVisibility(View.GONE);
+
             RxTextUtils.getBuilder("0.0")
                     .append("kcal").setProportion(0.5f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
@@ -322,19 +338,47 @@ public class SportsDetailsFragment extends BaseActivity {
     }
 
     private void updateUI(SportingDetailBean heartRateBean) {
-        mTvKcal.setText(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1));
-        mTvAvHeartRate.setText(heartRateBean.getAvgHeart() + "");
-        mTvMaxHeartRate.setText(heartRateBean.getMaxHeart() + "");
+        if (isFreeSporting) {
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1))
+                    .append("kcal").setProportion(0.3f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .into(mTvKcal);
+
+            RxTextUtils.getBuilder(heartRateBean.getMaxHeart() + "")
+                    .append("bpm").setProportion(0.5f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .into(mTvMaxHeartRate);
+
+        } else {
+            RxTextUtils.getBuilder(heartRateBean.getAthlScore() + "")
+                    .append("分").setProportion(0.3f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .into(mTvKcal);
+
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1))
+                    .append("kcal").setProportion(0.5f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .into(mTvSportskcal);
+        }
+
+
+        RxTextUtils.getBuilder(heartRateBean.getAvgHeart() + "")
+                .append("bpm").setProportion(0.5f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .into(mTvAvHeartRate);
+
 
         int sunTime = 0;
         for (AthlPlanListBean bean : heartRateBean.getPlanAthlList()) {
             sunTime += bean.getDuration();
             bean.setTime(sunTime);
         }
-
         mQMUIAppBarLayout.setTitle(RxFormat.setFormatDate(heartRateBean.getAthlDate(), RxFormat.Date_CH));
         mTvExpectKcal.setText(getString(R.string.expectKcal, sunTime, heartRateBean.getPlanTotalDeplete()));
-        mTvHeartCount.setText(heartRateBean.getPlanAthlList().size() + "/" + heartRateBean.getPlanAthlList().size());
+
+        int i = (int) (heartRateBean.getPlanAthlList().size() * heartRateBean.getComplete());
+        mTvHeartCount.setText(i + "/" + heartRateBean.getPlanAthlList().size());
+
 
         heartRateStatistics(heartRateBean.getRealAthlList());
         updateBar(heartRateBean);
@@ -387,12 +431,12 @@ public class SportsDetailsFragment extends BaseActivity {
         mChartHeartRate.animateX(1000);
 
         if (totalTime == 0) return;
+        mProCalm.setProgress(calmTime * 100 / totalTime);
         mProWarm.setProgress((warmTime * 100) / totalTime);
         mProGrease.setProgress(greaseTime * 100 / totalTime);
         mProAerobic.setProgress(aerobicTime * 100 / totalTime);
         mProAnaerobic.setProgress(anaerobicTime * 100 / totalTime);
         mProLimit.setProgress(limitTime * 100 / totalTime);
-        mProCalm.setProgress(calmTime * 100 / totalTime);
 
         mTvSportsTime.setText(RxFormat.setSec2MS(totalTime));
         mTvWarmTime.setText(RxFormat.setSec2MS(warmTime));
@@ -407,24 +451,26 @@ public class SportsDetailsFragment extends BaseActivity {
 
     private void checkHeartRate(SportingDetailBean.RealAthlListBean bean) {
         int heart = bean.getHeartRate();
-        byte[] heartRates = BleKey.heartRates;
+        byte[] heartRates = Key.HRART_SECTION;
         int heart_0 = heartRates[0] & 0xff;
         int heart_1 = heartRates[1] & 0xff;
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;
         int heart_4 = heartRates[4] & 0xff;
+        int heart_5 = heartRates[5] & 0xff;
+        int heart_6 = heartRates[6] & 0xff;
 
-        if (heart >= heart_0 && heart <= heart_1) {
+        if (heart >= heart_1 && heart <= heart_2) {
             warmTime += bean.getStepTime();
-        } else if (heart >= heart_1 && heart < heart_2) {
-            greaseTime += bean.getStepTime();
         } else if (heart >= heart_2 && heart < heart_3) {
-            aerobicTime += bean.getStepTime();
+            greaseTime += bean.getStepTime();
         } else if (heart >= heart_3 && heart < heart_4) {
+            aerobicTime += bean.getStepTime();
+        } else if (heart >= heart_4 && heart < heart_5) {
             anaerobicTime += bean.getStepTime();
-        } else if (heart >= heart_4) {
+        } else if (heart >= heart_5) {
             limitTime += bean.getStepTime();
-        } else if (heart < heart_0) {
+        } else if (heart < heart_1) {
             calmTime += bean.getStepTime();
         }
     }
@@ -489,4 +535,12 @@ public class SportsDetailsFragment extends BaseActivity {
     };
 
 
+    @Override
+    public void onBackPressed() {
+        if (goBack) {
+            super.onBackPressed();
+        } else {
+            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+        }
+    }
 }

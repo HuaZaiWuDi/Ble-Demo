@@ -129,7 +129,7 @@ public interface RetrofitService {
 
     //获取运动列表记录详情（包括多次运动）
     @FormUrlEncoded
-    @POST("/athl/fetchAthleticsListDetail")
+    @POST("athl/fetchAthleticsListDetail")
     Observable<String> fetchAthleticsListDetail(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
     //获取运动列表记录
@@ -148,7 +148,7 @@ public interface RetrofitService {
     Observable<String> singleAthlDetail(@Body RequestBody body);
 
     //获取某一天定制课程运动记录信息
-    @POST("/athl/courseAthlDetail")
+    @POST("athl/courseAthlDetail")
     Observable<String> courseAthlDetail(@Body RequestBody body);
 
 

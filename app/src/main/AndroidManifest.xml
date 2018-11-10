@@ -310,23 +310,42 @@
             android:name=".ui.guide.GuideActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
-        <activity android:name=".ui.main.slimming.plan.PlanMatterActivity">
+        <activity
+            android:name=".ui.main.slimming.plan.PlanMatterActivity"
+            android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.plan.WelcomeActivity">
+        <activity
+            android:name=".ui.main.slimming.plan.WelcomeActivity"
+            android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.plan.PlanDetailsActivity">
+        <activity
+            android:name=".ui.main.slimming.plan.PlanDetailsActivity"
+            android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.plan.RecordInfoActivity">
+        <activity
+            android:name=".ui.main.slimming.plan.RecordInfoActivity"
+            android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.heat.RecipesActivity">
+        <activity
+            android:name=".ui.main.slimming.heat.RecipesActivity"
+            android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.energy.EnergyActivity">
+        <activity
+            android:name=".ui.main.slimming.energy.EnergyActivity"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".ui.toolui.Main2Activity"
-            android:label="@string/title_activity_main2">
+            android:label="@string/title_activity_main2"
+            android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.sports.PlanSportingActivity"/>
+        <activity
+            android:name=".ui.main.slimming.sports.PlanSportingActivity"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".ui.main.slimming.plan.PlanActivity"
+            android:launchMode="singleTop">
+        </activity>
     </application>
 
 </manifest>

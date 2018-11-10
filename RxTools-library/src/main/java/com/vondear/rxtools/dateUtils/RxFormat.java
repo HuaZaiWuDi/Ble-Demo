@@ -110,6 +110,13 @@ public class RxFormat {
         return String.format("%02d", (int) (second / 60)) + "'" + String.format("%02d", (int) (second % 60)) + "''";
     }
 
+    /**
+     * 秒转换成分钟：未满一小时，只显示分钟，满小时，显示小时分钟
+     */
+    public static String setS2MS(int second) {
+        return String.format("%02d", (int) (second / 60)) + ":" + String.format("%02d", (int) (second % 60));
+    }
+
 
     public static long getDateMillis(String dateString, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);

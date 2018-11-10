@@ -32,14 +32,11 @@ import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
-import com.vondear.rxtools.interfaces.onRequestPermissionsListener;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxPermissionsUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
@@ -56,10 +53,10 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
@@ -125,6 +122,7 @@ public class BleService extends Service {
         initHeartRate();
         connectScaleCallBack();
         initBroadcast();
+
     }
 
     private void initBroadcast() {
@@ -151,18 +149,8 @@ public class BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        RxPermissionsUtils.requestLoaction(this, new onRequestPermissionsListener() {
-            @Override
-            public void onRequestBefore() {
-                RxLogUtils.d("验证权限");
-                RxToast.warning(getString(R.string.open_loaction));
-            }
-
-            @Override
-            public void onRequestLater() {
-                initBle();
-            }
-        });
+        if (BleTools.getBleManager().isBlueEnable())
+            initBle();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -495,6 +483,10 @@ public class BleService extends Service {
 
 
     private void initHeartRate() {
+
+        String string = SPUtils.getString(SPKey.SP_UserInfo);
+        final UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+
         BleTools.getInstance().setBleCallBack(new BleCallBack() {
             @Override
             public void onNotify(byte[] data) {
@@ -505,20 +497,40 @@ public class BleService extends Service {
 
                 mHeartRateUtil.addRealTimeData(data);
 
-                if (BleService.clothingFinish) {
-                    RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
-                            .setContent("运动已开始，是否进入运动界面？")
-                            .setSure("进入")
-                            .setSureListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
-                                }
-                            });
-                    rxDialog.show();
+//                if (BleService.clothingFinish) {
+//                    BleService.clothingFinish = false;
+//                    if (info.getPlanState() == 3) {
+//                        RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+//                                .setContent("运动已开始，是否进入自由运动界面？")
+//                                .setCancel("自由运动")
+//                                .setCancelListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
+//                                    }
+//                                })
+//                                .setSure("课程运动")
+//                                .setSureListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class);
+//                                    }
+//                                });
+//                        rxDialog.show();
+//                    } else {
+//                        RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+//                                .setContent("运动已开始，是否进入自由运动界面？")
+//                                .setSure("进入")
+//                                .setSureListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
+//                                    }
+//                                });
+//                        rxDialog.show();
+//                    }
+//                }
 
-                }
-                BleService.clothingFinish = false;
             }
         });
     }

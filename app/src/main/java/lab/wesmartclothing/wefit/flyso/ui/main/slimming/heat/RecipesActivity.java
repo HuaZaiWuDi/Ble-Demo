@@ -118,6 +118,7 @@ public class RecipesActivity extends BaseActivity {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
+        mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), "推荐食材"));
         mMRecyclerBreakfast.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerLunch.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerDinner.setLayoutManager(new LinearLayoutManager(mContext));

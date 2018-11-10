@@ -3,11 +3,9 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.google.gson.reflect.TypeToken;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
@@ -40,8 +38,6 @@ import okhttp3.RequestBody;
  */
 public class HeartRateUtil {
     private List<Integer> heartRateLists = new ArrayList<>();
-    private List<HeartRateTab> heartLists = new ArrayList<>();
-    private boolean isFree = true;
     private int maxHeart = 0;//最大心率
     private int minHeart = 0;//最小心率
     private double kcalTotal = 0;//总卡路里
@@ -53,10 +49,6 @@ public class HeartRateUtil {
     private long lastTime = 0;//历史记录上一条时间
     private int packageCounts = 0;//历史数据包序号
 
-
-    public HeartRateUtil(boolean isFree) {
-        this.isFree = isFree;
-    }
 
     public HeartRateUtil() {
     }
@@ -77,22 +69,6 @@ public class HeartRateUtil {
 
         long time = ByteUtil.bytesToLongD4(bytes, 3) * 1000;
 
-        heartRateLists.add(heartRate);
-        HeartRateTab heartRateTab = new HeartRateTab();
-        heartRateTab.setHeartRate(heartRate);
-        heartRateTab.setHeartTime(time);
-        heartRateTab.setStepTime(2);
-        heartRateTab.setIsfree(isFree);
-        heartLists.add(heartRateTab);
-
-        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, heartLists, CacheTarget.Disk)
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        RxLogUtils.d("心率保存成功");
-                    }
-                });
-
 
         maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
         minHeart = heartRate < minHeart ? heartRate : minHeart;
@@ -108,7 +84,7 @@ public class HeartRateUtil {
         mSportsDataTab.setTemp((bytes[10] & 0xff));
         mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
         mSportsDataTab.setData(bytes);
-        mSportsDataTab.setDate(RxFormat.setFormatDate(ByteUtil.bytesToLongD4(bytes, 3) * 1000, RxFormat.Date_Date_CH));
+        mSportsDataTab.setDate(time);
         mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mHeartRateBean.setStepNumber(mSportsDataTab.getSteps());
         //卡路里累加计算
@@ -140,63 +116,42 @@ public class HeartRateUtil {
             lastTime = time;
             int heartRate = bytes[8] & 0xff;
 
-
-            HeartRateTab heartRateTab = new HeartRateTab();
-            heartRateTab.setHeartRate(heartRate);
-            heartRateTab.setHeartTime(time * 1000);
-            heartRateTab.setStepTime(10);
-            heartRateTab.setIsfree(true);
-            heartLists.add(heartRateTab);
-
-            RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, heartLists, CacheTarget.Disk)
-                    .subscribe(new RxSubscriber<Boolean>() {
-                        @Override
-                        protected void _onNext(Boolean aBoolean) {
-                            RxLogUtils.d("心率保存成功");
-                        }
-                    });
         }
     }
 
 
-    public void setSportingScore(double score) {
-        mHeartRateBean.setAthlScore(score);
-    }
-
-
-    /**
-     * 运动停止
-     */
-    public void stopSporting() {
-        lastHeartRate = 0;
-        if (BuildConfig.DEBUG)
-            RxToast.success("运动结束");
-        uploadHeartRate();
-    }
-
-
     public void uploadHeartRate() {
-        RxCache.getDefault().<List<HeartRateTab>>load(Key.CACHE_ATHL_RECORD, new TypeToken<List<HeartRateTab>>() {
+        RxCache.getDefault().<List<HeartRateTab>>load(Key.CACHE_ATHL_RECORD_PLAN, new TypeToken<List<HeartRateTab>>() {
+        }.getType()).map(new CacheResult.MapFunc<List<HeartRateTab>>())
+                .subscribe(new RxSubscriber<List<HeartRateTab>>() {
+                    @Override
+                    protected void _onNext(List<HeartRateTab> heartRateTabs) {
+                        List<HeartRateTab> unFreeLists = new ArrayList<>();
+                        for (HeartRateTab tab : heartRateTabs) {
+                            if (!tab.isIsfree()) {
+                                unFreeLists.add(tab);
+                            }
+                        }
+                        if (!unFreeLists.isEmpty()) {
+                            mHeartRateBean.setHeartList(unFreeLists);
+                            mHeartRateBean.setPlanFlag(1);
+                            saveHeartRate(mHeartRateBean);
+                        }
+                    }
+                });
+        RxCache.getDefault().<List<HeartRateTab>>load(Key.CACHE_ATHL_RECORD_FREE, new TypeToken<List<HeartRateTab>>() {
         }.getType()).map(new CacheResult.MapFunc<List<HeartRateTab>>())
                 .subscribe(new RxSubscriber<List<HeartRateTab>>() {
                     @Override
                     protected void _onNext(List<HeartRateTab> heartRateTabs) {
                         List<HeartRateTab> isFreeLists = new ArrayList<>();
-                        List<HeartRateTab> unFreeLists = new ArrayList<>();
                         for (HeartRateTab tab : heartRateTabs) {
                             if (tab.isIsfree()) {
                                 isFreeLists.add(tab);
-                            } else {
-                                unFreeLists.add(tab);
                             }
                         }
-                        if (isFreeLists.isEmpty()) {
+                        if (!isFreeLists.isEmpty()) {
                             mHeartRateBean.setHeartList(isFreeLists);
-                            saveHeartRate(mHeartRateBean);
-                        }
-                        if (unFreeLists.isEmpty()) {
-                            mHeartRateBean.setHeartList(unFreeLists);
-                            mHeartRateBean.setPlanFlag(1);
                             saveHeartRate(mHeartRateBean);
                         }
                     }
@@ -212,27 +167,20 @@ public class HeartRateUtil {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        if (mSaveComplete != null && heartRateBean.getPlanFlag() == 1) {
-                            mSaveComplete.complete(s);
-                        }
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
-                        RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD);
+                        clearData();
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
                         if (BuildConfig.DEBUG)
                             RxToast.success("数据上传成功");
                     }
+
                 });
     }
 
-
-    public interface SaveComplete {
-        void complete(String gid);
+    public void clearData() {
+        RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_PLAN);
+        RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_FREE);
     }
 
-    private SaveComplete mSaveComplete;
-
-    public void setSaveComplete(SaveComplete saveComplete) {
-        mSaveComplete = saveComplete;
-    }
 }

@@ -102,13 +102,14 @@
     <string name="must_input">最多可以输入%1$d字</string>
     <string name="plan">感谢使用TimeToFit为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n1.身体质量指数（BMI）在 18.5-40 之间； \n2.年龄在 18-60 之间； \n3.产后女性已不在哺乳期，且距离上次生产一年以上； \n4.未患有心血管疾病且近期未有其他影响饮食或运动的病症。</string>
     <string name="phone_email">客服电话：43046554 \n客服邮箱：466113124@wesma</string>
-    <string name="empty_recipes">亲爱的%1$s，，营养师正在努力定制中，请耐心等待…</string>
+    <string name="empty_recipes">亲爱的%1$s，营养师正在努力定制中，请耐心等待…</string>
     <string name="empty_record">亲爱的%1$s，此日期没有任何记录哦，点击按钮可以补录饮食…</string>
+    <string name="empty_plan">亲爱的%1$s，服务人员正在努力为您定制课程，请耐心等待…</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>
         <item>@string/nav_record</item>
-        <item>@string/nav_store</item>
+        <item>@string/nav_find</item>
         <item>@string/nav_me</item>
     </string-array>
 
@@ -180,5 +181,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="expectKcal">此次共计%1$d min,预计消耗热量%2$d kcal</string>
+    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你定制的是%2$s。  养成良好的饮食习惯健康科学的营养搭配能够更加快速健康的达到目标哦，加油！</string>
 
 </resources>

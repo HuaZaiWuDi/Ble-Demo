@@ -33,6 +33,8 @@ public class PlanBean {
      * todayHeatVO : {"planIntake":0,"realIntake":0,"planDeplete":1860,"realDeplete":0,"planSurplus":1860,"realSurplus":0}
      */
 
+    private String athlPlanBelongUser;
+    private String dietPlanBelongUser;
     private String clothesMacAddr;
     private String scalesMacAddr;
     private int planState;
@@ -42,7 +44,7 @@ public class PlanBean {
     private double maxNormalWeight;
     private WeightChangeVOBean weightChangeVO;
     private TargetInfoBean targetInfo;
-    private int complete;
+    private double complete;
     private int hasDays;
     private HeatInfoVOBean heatInfoVO;
     private int totalTime;
@@ -50,6 +52,15 @@ public class PlanBean {
     private AthlDataBean athlData;
     private TodayHeatVOBean todayHeatVO;
     private List<AthlPlanListBean> athlPlanList;
+
+
+    public String getAthlPlanBelongUser() {
+        return athlPlanBelongUser;
+    }
+
+    public String getDietPlanBelongUser() {
+        return dietPlanBelongUser;
+    }
 
     public String getClothesMacAddr() {
         return clothesMacAddr;
@@ -123,11 +134,11 @@ public class PlanBean {
         this.targetInfo = targetInfo;
     }
 
-    public int getComplete() {
+    public double getComplete() {
         return complete;
     }
 
-    public void setComplete(int complete) {
+    public void setComplete(double complete) {
         this.complete = complete;
     }
 

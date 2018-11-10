@@ -130,7 +130,7 @@ public class EnergyActivity extends BaseActivity {
         timeLine.setColor(Color.parseColor("#FFFFFF"));
         timeLine.setDashed(true);
 
-
+        mSuitlines.setSpaceMin(RxUtils.dp2px(4));
         new SuitLines.LineBuilder()
                 .add(heatLine)
                 .add(timeLine)
@@ -143,8 +143,8 @@ public class EnergyActivity extends BaseActivity {
                 currentDate = bean.getRecordDate();
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
 
-                int surplusHeat = bean.getAthlCalorie() + bean.getHeatCalorie() - bean.getHeatCalorie();
-                RxTextUtils.getBuilder(surplusHeat + "")
+                int surplusHeat = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+                RxTextUtils.getBuilder(Math.abs(surplusHeat) + "")
                         .append("\tkacl").setProportion(0.5f)
                         .into(mTvSurplusHeat);
 

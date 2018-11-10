@@ -182,7 +182,7 @@ public class WeightDataActivity extends BaseActivity {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setContent("你还有未领取的体重数据，\n离开后将全部被忽略？")
+                .setContent("你还有未领取的体重数据，离开后将全部被忽略？")
                 .setSure(getString(R.string.btn_continue))
                 .setSureListener(new View.OnClickListener() {
                     @Override

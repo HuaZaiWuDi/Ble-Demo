@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialog;
@@ -96,11 +98,20 @@ public class AddOrUpdateFoodDialog {
 
         if (listBean.getFoodCount() != 0)
             mEtFoodG.setText(listBean.getFoodCount() + "");
-
+//        RxKeyboardUtils.showSoftInput(mEtFoodG);
+        RxKeyboardUtils.toggleSoftInput();
         mTvHeat.setText(listBean.getUnitCalorie() + "kcal/" + listBean.getUnitCount() + listBean.getUnit());
 
         if (dialog.isShowing()) dialog.dismiss();
         dialog.show();
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                RxKeyboardUtils.toggleSoftInput();
+            }
+        });
+
     }
 
 
@@ -123,14 +134,6 @@ public class AddOrUpdateFoodDialog {
                         listBean = addedHeatInfo;
                         listBean.setFoodImg(foodImg);
                         showAddFoodDialog();
-//                        if ("".equals(addedHeatInfo.getGid())) {
-//                            showAddFoodDialog();
-//                            listBean.setFoodId(listBean.getGid());
-//                        } else {
-//                            listBean.setFoodCount(addedHeatInfo.getFoodCount());//已经添加过，把后台的数量赋值给当前展示
-//                            listBean.setGid(addedHeatInfo.getGid());
-//                            showAddFoodDialog();
-//                        }
                     }
 
                     @Override
@@ -181,7 +184,8 @@ public class AddOrUpdateFoodDialog {
 
     public int isExist(List<FoodListBean> addedLists, FoodListBean needFood) {
         for (int i = 0; i < addedLists.size(); i++) {
-            if (needFood.getFoodId().equals(addedLists.get(i).getFoodId())) {
+            RxLogUtils.d("食材：" + addedLists.get(i).toString());
+            if (needFood.getGid().equals(addedLists.get(i).getGid())) {
                 return i;
             }
         }
@@ -208,6 +212,7 @@ public class AddOrUpdateFoodDialog {
 
 
     public void deleteData(Context context, final FoodListBean listBean) {
+        RxLogUtils.d("删除食材：" + listBean);
         JsonObject object = new JsonObject();
         object.addProperty("gid", listBean.getGid());
 

@@ -39,7 +39,25 @@ public class UserInfo implements Serializable {
     private String province;
     private boolean isChange = false;
     private long registerTime;
+    private int planState;
+    private int age;
 
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getPlanState() {
+        return planState;
+    }
+
+    public void setPlanState(int planState) {
+        this.planState = planState;
+    }
 
     public long getRegisterTime() {
         return RxTimeUtils.getIntervalTime(System.currentTimeMillis(), registerTime, RxConstUtils.TimeUnit.DAY);

@@ -69,7 +69,7 @@
                         <View
                             android:layout_width="4dp"
                             android:layout_height="15dp"
-                            android:background="@color/black_312B36"/>
+                            android:background="@color/orange_FF7200"/>
 
 
                         <TextView
@@ -133,7 +133,7 @@
                         <View
                             android:layout_width="4dp"
                             android:layout_height="15dp"
-                            android:background="@color/black_312B36"/>
+                            android:background="@color/orange_FF7200"/>
 
 
                         <TextView
@@ -197,7 +197,7 @@
                         <View
                             android:layout_width="4dp"
                             android:layout_height="15dp"
-                            android:background="@color/black_312B36"/>
+                            android:background="@color/orange_FF7200"/>
 
 
                         <TextView
@@ -261,7 +261,7 @@
                         <View
                             android:layout_width="4dp"
                             android:layout_height="15dp"
-                            android:background="@color/black_312B36"/>
+                            android:background="@color/orange_FF7200"/>
 
 
                         <TextView

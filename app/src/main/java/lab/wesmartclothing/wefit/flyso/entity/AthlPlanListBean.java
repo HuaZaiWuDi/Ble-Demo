@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+
 public class AthlPlanListBean {
     /**
      * range : 0：静息，1：热身，2：燃脂，3：有氧，4：无氧，5：危险
@@ -19,21 +21,30 @@ public class AthlPlanListBean {
     }
 
     public int getRange() {
+        byte[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0] & 0xff;
+        int heart_1 = heartRates[1] & 0xff;
+        int heart_2 = heartRates[2] & 0xff;
+        int heart_3 = heartRates[3] & 0xff;
+        int heart_4 = heartRates[4] & 0xff;
+        int heart_5 = heartRates[5] & 0xff;
+        int heart_6 = heartRates[6] & 0xff;
+
         switch (range) {
             case 0:
-                return 80;
+                return heart_0;
             case 1:
-                return 100;
+                return heart_1;
             case 2:
-                return 120;
+                return heart_2;
             case 3:
-                return 140;
+                return heart_3;
             case 4:
-                return 160;
+                return heart_4;
             case 5:
-                return 180;
+                return heart_5;
         }
-        return 100;
+        return heart_6;
     }
 
     public void setRange(int range) {

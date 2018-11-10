@@ -172,7 +172,6 @@ public class AddedFoodFragment extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //显示删除
                 dialog.setFoodInfo(mContext, true, foodType, currentTime, (FoodListBean) adapter.getData().get(position));
             }
         });

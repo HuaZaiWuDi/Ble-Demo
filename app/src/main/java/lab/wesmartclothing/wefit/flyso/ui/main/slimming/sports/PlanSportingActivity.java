@@ -17,23 +17,27 @@ import android.widget.TextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.zchu.rxcache.CacheTarget;
+import com.zchu.rxcache.RxCache;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,17 +47,25 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
+import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
+import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.rx.NetManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/7/19.
@@ -108,12 +120,13 @@ public class PlanSportingActivity extends BaseActivity {
 
 
     private Button btn_Connect;
-    private int currentTime = 0;
+    private int currentTime = 0, currentHeart = 0;
     private int type = -1;//运动上一次状态
     private HeartLineChartUtils lineChartUtils;
-    private HeartRateUtil mHeartRateUtil = new HeartRateUtil(false);
     private List<AthlPlanListBean> planList;
-    private double sportingScore = 0, sportingKcal = 0;
+    private double sportingScore = 0, sportingKcal = 0, totalSum;
+    private HeartRateBean mHeartRateBean = new HeartRateBean(1);
+    private List<HeartRateTab> heartLists = new ArrayList<>();
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -124,7 +137,11 @@ public class PlanSportingActivity extends BaseActivity {
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
                 //瘦身衣运动结束
-                stopSporting();
+                if (mContext == null) return;
+                timer.stopTimer();
+                currentTime = 0;
+                speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
+                saveHeartRate();
             }
         }
     };
@@ -154,14 +171,14 @@ public class PlanSportingActivity extends BaseActivity {
                 .into(mTvKcal);
 
         if (BleTools.getInstance().isConnect())
-            speakAdd("运动模式已启动、让我们开始运动瘦身课程训练吧！");
+            speakAdd("设备已连接、让我们开始运动瘦身课程训练吧！");
     }
 
     private void initVerticalText() {
         mTvVerticalText.setText(11, 0, ContextCompat.getColor(mContext, R.color.GrayWrite));
         mTvVerticalText.setAnimTime(500);
         mTvVerticalText.setTextStillTime(3000);
-        mTvVerticalText.setTextList(Arrays.asList("保持燃脂衣与app的连接，可提高数据数据准确性", "如关闭或脱掉减肥衣将自动结束本次运动"));
+        mTvVerticalText.setTextList(Arrays.asList("保持燃脂衣与app的连接，可提高数据准确性", "如关闭或脱掉减肥衣将自动结束本次运动"));
     }
 
 
@@ -207,11 +224,10 @@ public class PlanSportingActivity extends BaseActivity {
         mLayoutPro.setVisibility(View.VISIBLE);
         mLayoutSportingTime.setVisibility(View.GONE);
         mLayoutSportingKcal.setVisibility(View.VISIBLE);
-        mTvStartSportingTime.setText(RxFormat.setFormatDate(0, RxFormat.Date_Time_MS));
-        mTvEndSportingTime.setText(RxFormat.setFormatDate(sunTime * 60 * 1000, RxFormat.Date_Time_MS));
+        mTvStartSportingTime.setText(RxFormat.setS2MS(0));
+        mTvEndSportingTime.setText(RxFormat.setS2MS(sunTime * 60));
         lineChartUtils.setPlanLineData(planList);
         mProSportingTime.setMax(sunTime * 60);
-        timer.startTimer();
 
         RxTextUtils.getBuilder("0.0")
                 .append("分").setProportion(0.5f)
@@ -241,70 +257,61 @@ public class PlanSportingActivity extends BaseActivity {
                         timer.startTimer();
                         lineChartUtils.setRealTimeData(sportsDataTab.getCurHeart());
 
-                        planSportingTextSpeak();
+                        currentHeart = sportsDataTab.getCurHeart();
 
-                        freeTextSpeak(sportsDataTab.getCurHeart());
-
-                        sportingScore(sportsDataTab.getCurHeart());
 
                         mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
                         mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
-                        sportingKcal = sportsDataTab.getKcal();
-                        RxTextUtils.getBuilder(sportsDataTab.getKcal() + "")
+                        sportingKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
+
+                        RxTextUtils.getBuilder(sportingKcal + "")
                                 .append("kcal").setProportion(0.5f)
                                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                                 .into(mTvSportskcal);
+
+
+                        HeartRateTab heartRateTab = new HeartRateTab();
+                        heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
+                        heartRateTab.setHeartTime(sportsDataTab.getDate());
+                        heartRateTab.setStepTime(2);
+                        heartRateTab.setIsfree(true);
+                        heartLists.add(heartRateTab);
+                        mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
+
                     }
                 });
     }
 
 
     /**
-     * 定制语音播报逻辑：
-     * 1、在已连接状态穿上衣服或者进入实时训练界面时（2 秒后）：运动模式已启动、让我们开始运动瘦身课程训练吧！
-     * 2、检测到用户在运动时本次运动时间 XXX 分钟，开始热身，READY GO！
-     * 3、热身阶段心率区间时您当前处于热身阶段，请保持匀速 XX 分钟。3、5 分钟倒计时结束后播报恭喜您完成热身训练，请提高运动量进行燃脂训练 XXX 分
-     * 4、燃脂阶段心率区间时
-     * 您当前处于燃脂阶段，请保持匀速 XXX 分钟。
-     * 5、当燃脂阶段完成后提示：
-     * 恭喜您完成燃脂训练，请提高运动量进行有氧训练 XX 分钟。
-     * 6、当完成有氧训练心率区间时
-     * 您当前处于有氧训练阶段，请保持匀速 XX 分钟。
+     * 全程语音按照课程的每个层级时间和频率进行指导，语音播报逻辑：
+     * 1.进入课程实时运动页面（检测到心率）：
+     * 运动模式已启动，本次运动时间XXX分钟，开始运动，READY GO！
+     * 第一节 xx运动，请调节心率至xx运动区间，保持匀速xxx分钟。
+     * 恭喜您完成xx训练，下一节xx运动，请调节心率至xx运动区间，保持匀速xxx分钟。
      * 当完成后提示：
-     * 恭喜您完成有氧训练，让我们放松一下吧，请降低运动量至燃脂训练 5 分
-     * 钟。
+     * 好棒呀，恭喜您完成本次瘦身训练。运动完记得做一组拉伸运动哦！本次训练共计燃烧XXX卡路里，再接再厉。
+     * 当用户处于危险心率超过3分钟
+     * 您当前运动量已超过身体最大极限，请立刻降低运动强度，防止意外损伤！
+     * 当处于训练过程中，运动节奏高于（低于）当前要求的水平
+     * 请提高（降低）运动强度，保持匀速有节奏的运动才能高效瘦身哦。
      * <p>
-     * 当完成后提示：
-     * 恭喜您完成放松训练，请降低运动量至热身阶段 XXX 分钟。
-     * 当完成后提示：
-     * 好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！
-     * 本次训练共计燃烧 XXX 卡路里，请继续保持。
-     * 6、当用户运动到无氧阶段时
-     * 您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢
-     * 率。建议运动时长不超过 15 分钟
-     * 7、当用户处于极限训练阶段时
-     * 您当前处于极限训练阶段，请慢一点。高负荷运动不利于运动效果，还容易
-     * 导致身体损伤哦，科学运动才能达到良好的训练效果。
-     * 8、当用户极限运动超过 3 分钟
-     * 您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！
-     * 9、系统默认的课程计划还没结束，用户提前放弃的。
-     * 本次训练计划还未达标哦，加油加油，今天的坚持是为了更美的明天。
-     * 10、当处于训练过程中，运动节奏超过当前要求的水平，快了或者慢了。
-     * 请快（慢）一点，保持匀速有节奏的运动才能高效瘦身哦。
+     * 连续语音播报时间间隔：30s；
      */
+
     private void planSportingTextSpeak() {
         //运动开始语音
-        if (currentTime == 2) {
-            speakAdd("本次运动时间 " + planList.get(planList.size() - 1).getTime() + " 分钟，开始热身，READY GO！");
-            intoHeartRange(planList.get(0));
-            mTvHeartCount.setText("1/" + planList.size());
+        if (currentTime == 1) {
+            speakAdd("运动模式已启动，本次课程时间 " + planList.get(planList.size() - 1).getTime() + " 分钟，开始运动");
+            mTvHeartCount.setText("0/" + planList.size());
+            speakAdd("第一节热身运动 请调节心率至热身运动区间，保持匀速" + planList.get(0).getTime() + " 分钟");
         }
 
         for (int i = 0; i < planList.size(); i++) {
             AthlPlanListBean bean = planList.get(i);
             if (currentTime == bean.getTime() * 60) {
-                completeHeartRange(bean);
-                intoHeartRange(bean);
+                if ((i + 1) < planList.size())
+                    completeHeartRange(bean, planList.get((i + 1) % planList.size()));
                 mTvHeartCount.setText((i + 1) + "/" + planList.size());
             }
         }
@@ -314,73 +321,36 @@ public class PlanSportingActivity extends BaseActivity {
             speakAdd("好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！本次训练共计燃烧"
                     + Number2Chinese.number2Chinese(sportingKcal) + "卡路里，请继续保持。");
             timer.stopTimer();
-            mHeartRateUtil.setSportingScore(sportingScore);
-            mHeartRateUtil.setSaveComplete(new HeartRateUtil.SaveComplete() {
-                @Override
-                public void complete(String gid) {
-                    if (mContext != null) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Key.BUNDLE_DATA_GID, gid);
-                        bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, true);
-                        RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
-                    }
-                }
-            });
-            mHeartRateUtil.uploadHeartRate();
+            saveHeartRate();
         }
     }
 
-
-    /**
-     * 进入运动区间
-     *
-     * @param bean
-     */
-    private void intoHeartRange(AthlPlanListBean bean) {
-        switch (bean.getRange()) {
-            case 80:
-                break;
-            case 100:
-                speakAdd("您当前处于热身阶段，请保持匀速运动" + bean.getDuration() + "分钟");
-                break;
-            case 120:
-                speakAdd("您当前处于燃脂阶段，请保持匀速运动" + bean.getDuration() + "分钟");
-                break;
-            case 140:
-                speakAdd("您当前处于有氧阶段，请保持匀速运动" + bean.getDuration() + "分钟");
-                break;
-            case 160:
-                speakAdd("您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢\n" +
-                        "率。建议运动时长不超过 15 分钟。");
-                break;
-            case 180:
-                speakAdd("您当前处于极限训练阶段，请慢一点。高负荷运动不利于运动效果，还容易\n" +
-                        "导致身体损伤哦，科学运动才能达到良好的训练效果。");
-                break;
-        }
-    }
 
     /**
      * 完成运动区间
      *
      * @param bean
      */
-    private void completeHeartRange(AthlPlanListBean bean) {
+    private void completeHeartRange(AthlPlanListBean bean, AthlPlanListBean nextBean) {
         switch (bean.getRange()) {
             case 80:
                 break;
             case 100:
-                speakAdd("恭喜您完成热身训练，请提高运动量进行燃脂训练");
+//                speakAdd("恭喜您完成热身训练，请提高运动量进行燃脂训练");
+                speakAdd(" 恭喜您完成热身训练，下一节燃脂运动，请调节心率至燃脂运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
             case 120:
-                speakAdd("恭喜您完成燃脂训练，请提高运动量进行有氧训练");
+//                speakAdd("恭喜您完成燃脂训练，请提高运动量进行有氧训练");
+                speakAdd(" 恭喜您完成燃脂训练，下一节有氧运动，请调节心率至有氧运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
             case 140:
-                speakAdd("恭喜您完成有氧训练，让我们放松一下吧，请降低运动量至燃脂训练");
+//                speakAdd("恭喜您完成有氧训练，让我们放松一下吧，请降低运动量至燃脂训练");
+                speakAdd(" 恭喜您完成有氧训练，下一节无氧运动，请调节心率至无氧运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
             case 160:
                 speakAdd("您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢\n" +
                         "率。建议运动时长不超过 15 分钟。");
+//                speakAdd(" 恭喜您完成无氧训练，下一节无氧运动，请调节心率至无氧运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
             case 180:
                 break;
@@ -401,40 +371,37 @@ public class PlanSportingActivity extends BaseActivity {
             int count = realTimeSet.getEntryCount();
             int tatolCount = defaultSet.getEntryCount();
             if (count >= tatolCount) return;
-            double totalScore = 0;
-            int totalSum = 0;
+
             int score = 0;
             float abs = Math.abs(defaultSet.getEntryForIndex(count).getY() - currentValue);
-            if (abs < 2) {
+            if (abs <= 2) {
                 score = 50;
-            } else if (abs >= 2 && abs < 4) {
+            } else if (abs > 2 && abs <= 4) {
                 score = 40;
-            } else if (abs >= 4 && abs < 6) {
+            } else if (abs > 4 && abs <= 6) {
                 score = 30;
-            } else if (abs >= 6 && abs < 8) {
+            } else if (abs > 6 && abs <= 8) {
                 score = 20;
-            } else if (abs >= 8 && abs < 10) {
+            } else if (abs > 8 && abs <= 10) {
                 score = 20;
-            } else {
-                score = 0;
             }
             totalSum += score;
             if (count > 0)
-                totalScore = totalSum / count + count / tatolCount * 50f;
+                sportingScore = totalSum / count + count * 50 / tatolCount;
 
-            sportingScore = totalScore;
-
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(totalScore, 1))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingScore, 1))
                     .append("分").setProportion(0.5f)
                     .into(mTvKcal);
 
-
-//            //这里当运动比计划心率差值大于20提示用户块（慢）点
-//            if (defaultSet.getEntryForIndex(count).getY() - currentValue > 20) {
-//                speakFlush("请快一点，保持匀速有节奏的运动才能高效瘦身哦");
-//            } else if (defaultSet.getEntryForIndex(count).getY() - currentValue < -20) {
-//                speakFlush("请慢一点，保持匀速有节奏的运动才能高效瘦身哦");
-//            }
+            if (currentTime >= 30 && currentTime % 30 == 0) {
+                int section = (Key.HRART_SECTION[6] & 0xFF) - (Key.HRART_SECTION[5] & 0xFF);
+                //这里当运动比计划心率差值大于20提示用户块（慢）点
+                if ((defaultSet.getEntryForIndex(count).getY() - currentValue) >= section) {
+                    speakFlush("请快一点，保持匀速有节奏的运动才能高效瘦身");
+                } else if ((defaultSet.getEntryForIndex(count).getY() - currentValue) <= -section) {
+                    speakFlush("请慢一点，保持匀速有节奏的运动才能高效瘦身");
+                }
+            }
         }
     }
 
@@ -482,48 +449,46 @@ public class PlanSportingActivity extends BaseActivity {
 
 
     private void freeTextSpeak(int heart) {
-        byte[] heartRates = BleKey.heartRates;
+        byte[] heartRates = Key.HRART_SECTION;
         int heart_0 = heartRates[0] & 0xff;
         int heart_1 = heartRates[1] & 0xff;
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;
         int heart_4 = heartRates[4] & 0xff;
-        if (heart_0 <= heart && heart <= heart_1) {
+        int heart_5 = heartRates[5] & 0xff;
+        int heart_6 = heartRates[6] & 0xff;
+        if (heart >= heart_1 && heart <= heart_2) {
             if (type != 0) {
                 mTvSportsStatus.setText("热身");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
             }
-        } else if (heart >= heart_1 && heart < heart_2) {
+        } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 1) {
                 mTvSportsStatus.setText("燃脂");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
             }
-        } else if (heart >= heart_2 && heart < heart_3) {
+        } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 2) {
                 mTvSportsStatus.setText("有氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
 
             }
-        } else if (heart >= heart_3 && heart < heart_4) {
+        } else if (heart >= heart_4 && heart < heart_5) {
             if (type != 3) {
                 mTvSportsStatus.setText("无氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
 
             }
-        } else if (heart >= heart_4) {
+        } else if (heart >= heart_5) {
             if (type != 4) {
                 mTvSportsStatus.setText("极限");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
-                limitTimer.startTimer();
             }
-        } else if (heart < heart_0) {
+        } else if (heart < heart_1) {
             if (type != 5) {
                 mTvSportsStatus.setText("静息");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.Gray_DCDAE6));
             }
-        }
-        if (type != 4) {
-            limitTimer.stopTimer();
         }
     }
 
@@ -542,16 +507,22 @@ public class PlanSportingActivity extends BaseActivity {
             currentTime++;
             mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
             mProSportingTime.setProgress(currentTime, false);
-            mTvStartSportingTime.setText(RxFormat.setFormatDate(currentTime * 1000, RxFormat.Date_Time_MS));
+            mTvStartSportingTime.setText(RxFormat.setS2MS(currentTime));
 
-
-            int heart = (int) (Math.random() * 120 + 80);
-            lineChartUtils.setRealTimeData(heart);
+            if (currentTime % 180 == 0) {
+                speakAdd(getString(R.string.speech_currentKcal) +
+                        Number2Chinese.number2Chinese(sportingKcal) + "卡路里的能量");
+            }
 
             planSportingTextSpeak();
-            freeTextSpeak(heart);
-            sportingScore(heart);
+            freeTextSpeak(currentHeart);
+            sportingScore(currentHeart);
 
+            if (type == 4) {
+                limitTimer.startTimer();
+            } else {
+                limitTimer.stopTimer();
+            }
         }
     });
 
@@ -569,21 +540,23 @@ public class PlanSportingActivity extends BaseActivity {
 
     }
 
-    //运动停止
-    private void stopSporting() {
-        timer.stopTimer();
-        currentTime = 0;
-        speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
-    }
 
     @Override
     public void onBackPressed() {
-        //异常情况
-        //       用户当前运动时间<3min，提示用户此次记录将不被保存
-        if (currentTime < 180) {
+        //未开启运动直接结束
+        if (currentTime == 0) {
+            RxActivityUtils.finishActivity();
+        } else if (currentTime < 180) {
+            //       用户当前运动时间<3min，提示用户此次记录将不被保存
             new RxDialogSure(mContext)
                     .setTitle("运动提示")
-                    .setSure("您当前运动时间过短，此次运动记录将不会被保存！")
+                    .setContent("您当前运动时间过短，此次运动记录将不会被保存！")
+                    .setSureListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RxActivityUtils.finishActivity();
+                        }
+                    })
                     .show();
         } else {
             new RxDialogSureCancel(mContext)
@@ -592,23 +565,58 @@ public class PlanSportingActivity extends BaseActivity {
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mHeartRateUtil.setSportingScore(sportingScore);
-                            mHeartRateUtil.setSaveComplete(new HeartRateUtil.SaveComplete() {
-                                @Override
-                                public void complete(String gid) {
-                                    if (mContext != null) {
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString(Key.BUNDLE_DATA_GID, gid);
-                                        bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, true);
-                                        RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
-                                    }
-                                }
-                            });
-                            mHeartRateUtil.uploadHeartRate();
+                            saveHeartRate();
                         }
                     }).show();
         }
     }
+
+    public void saveHeartRate() {
+        String[] split = mTvHeartCount.getText().toString().split("/");
+        double complete = RxDataUtils.stringToInt(split[0]) * 1f / RxDataUtils.stringToInt(split[1]);
+        mHeartRateBean.setComplete(complete);
+        mHeartRateBean.setPlanFlag(1);
+        mHeartRateBean.setAthlScore(sportingScore);
+        mHeartRateBean.setHeartList(heartLists);
+        String s = MyAPP.getGson().toJson(mHeartRateBean, HeartRateBean.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.addAthleticsInfo(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        if (RxDataUtils.isNullString(s)) {
+                            RxToast.normal("数据保存失败");
+                            return;
+                        }
+                        RxLogUtils.d("添加心率：保存成功删除本地缓存：");
+                        //这里因为是后台上传数据，并不是跳转，使用RxBus方式
+                        RxBus.getInstance().post(new RefreshSlimming());
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Key.BUNDLE_DATA_GID, s);
+                        bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, true);
+                        RxActivityUtils.skipActivityAndFinish(mContext, SportsDetailsFragment.class, bundle);
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        super._onError(error);
+                        //如果上传失败则保存本地
+                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_PLAN, heartLists, CacheTarget.Disk)
+                                .subscribe(new RxSubscriber<Boolean>() {
+                                    @Override
+                                    protected void _onNext(Boolean aBoolean) {
+                                        RxLogUtils.d("心率保存成功");
+                                    }
+                                });
+                        RxActivityUtils.finishActivity();
+                    }
+                });
+    }
+
 
     private void speakFlush(String text) {
         if (mSwMusic.isOpened())

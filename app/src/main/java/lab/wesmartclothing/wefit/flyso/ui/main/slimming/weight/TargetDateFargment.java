@@ -2,7 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
@@ -19,9 +19,7 @@ import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -58,7 +56,6 @@ public class TargetDateFargment extends BaseActivity {
     RxTextView mBtnConfirm;
     @BindView(R.id.tv_tips)
     TextView mTvTips;
-    Unbinder unbinder;
 
 
     private float stillNeed = 1;
@@ -66,15 +63,21 @@ public class TargetDateFargment extends BaseActivity {
     private Bundle bundle;
     private TargetInfoBean mInfoBean = new TargetInfoBean();
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_target_date);
-        unbinder = ButterKnife.bind(this);
-        initView();
+    protected int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.white);
     }
 
+    @Override
+    protected int layoutId() {
+        return R.layout.fragment_target_date;
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
+        initView();
+    }
 
     private void initView() {
         initTopBar();
@@ -150,7 +153,7 @@ public class TargetDateFargment extends BaseActivity {
         double realWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         double targetWeight = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         mInfoBean.setCount(weeks);
-        mInfoBean.setInitialWeight(realWeight);
+        mInfoBean.setInitialWeight(RxFormatValue.format4S5R(realWeight, 1));
         mInfoBean.setTargetWeight(targetWeight);
 
         if (RecordInfoActivity.mSubmitInfoFrom == null) {
@@ -173,10 +176,10 @@ public class TargetDateFargment extends BaseActivity {
                         RecordInfoActivity.mSubmitInfoFrom = null;
                         RxLogUtils.d("心率数据：" + s);
                         //关闭之前的设置目标体重和目标周期的界面
+                        RxBus.getInstance().post(new RefreshSlimming());
                         //直接跳转到指定的Fragment（同时清栈）
                         RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class);
 
-                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
@@ -198,6 +201,7 @@ public class TargetDateFargment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         //关闭之前的设置目标体重和目标周期的界面
+                        RxBus.getInstance().post(new RefreshSlimming());
                         //直接跳转到指定的Fragment（同时清栈）
                         RxActivityUtils.skipActivity(mContext, MainActivity.class);
                     }

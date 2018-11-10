@@ -105,7 +105,7 @@
                             <View
                                 android:layout_width="4dp"
                                 android:layout_height="15dp"
-                                android:background="@color/black_312B36"/>
+                                android:background="@color/yellow_E4CA9F"/>
 
 
                             <TextView
@@ -169,7 +169,7 @@
                             <View
                                 android:layout_width="4dp"
                                 android:layout_height="15dp"
-                                android:background="@color/black_312B36"/>
+                                android:background="@color/yellow_E4CA9F"/>
 
 
                             <TextView
@@ -231,7 +231,7 @@
                             <View
                                 android:layout_width="4dp"
                                 android:layout_height="15dp"
-                                android:background="@color/black_312B36"/>
+                                android:background="@color/yellow_E4CA9F"/>
 
 
                             <TextView
@@ -296,7 +296,7 @@
                             <View
                                 android:layout_width="4dp"
                                 android:layout_height="15dp"
-                                android:background="@color/black_312B36"/>
+                                android:background="@color/yellow_E4CA9F"/>
 
 
                             <TextView
@@ -384,7 +384,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginBottom="16dp"
                             android:gravity="left"
-                            android:text="亲爱的（用户昵称），了解到您过往的饮食习惯与爱好，今天为你定制的是（计划方案名称）。 \n养成良好的饮食习惯健康科学的营养搭配能够更加快速健康的达到目标哦，加油！"
+                            android:text="@string/DietitianTip"
                             android:textColor="@color/Gray"
                             android:textSize="12sp"/>
 

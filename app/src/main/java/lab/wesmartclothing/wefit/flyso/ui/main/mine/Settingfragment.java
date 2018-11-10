@@ -125,12 +125,12 @@ public class Settingfragment extends BaseActivity {
                         RxActivityUtils.skipActivity(mContext, AccountFragment.class);
                     }
                 })
-                .addItemView(clothing, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
-                    }
-                })
+//                .addItemView(clothing, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+////                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
+//                    }
+//                })
                 .setUseTitleViewForSectionSpace(false)
                 .addTo(mGroupListView);
 

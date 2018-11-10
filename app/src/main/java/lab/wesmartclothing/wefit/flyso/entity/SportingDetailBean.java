@@ -76,6 +76,12 @@ public class SportingDetailBean {
     private List<AthlPlanListBean> planAthlList;
     private List<RealAthlListBean> realAthlList;
     private int planTotalDeplete;
+    private double complete;
+
+
+    public double getComplete() {
+        return complete;
+    }
 
     public int getPlanTotalDeplete() {
         return planTotalDeplete;

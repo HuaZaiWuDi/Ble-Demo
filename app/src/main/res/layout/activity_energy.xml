@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:background="@mipmap/icon_weight"/>
+                android:background="@mipmap/icon_energy"/>
 
             <TextView
                 android:id="@+id/tv_sportDate"
@@ -157,7 +157,7 @@
             android:layout_marginTop="155dp"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="5dp"
-            android:elevation="4dp"
+            android:elevation="2dp"
             android:padding="15dp"
             android:translationZ="2dp"
             app:background_normal="@color/white"
@@ -195,7 +195,7 @@
             android:layout_marginTop="155dp"
             android:layout_marginRight="18dp"
             android:layout_marginBottom="5dp"
-            android:elevation="4dp"
+            android:elevation="2dp"
             android:padding="15dp"
             android:translationZ="2dp"
             app:background_normal="@color/white"

@@ -65,9 +65,8 @@ public interface Key {
     //计划的状态
     String BUNDLE_PLAN_STATUS = "BUNDLE_PLAN_STATUS";
 
-    String BUNDLE_SPORTING_PLAN="BUNDLE_SPORTING_PLAN";
-
-
+    String BUNDLE_SPORTING_PLAN = "BUNDLE_SPORTING_PLAN";
+    String BUNDLE_GO_BCAK = "BUNDLE_GO_BCAK";
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播
@@ -123,10 +122,31 @@ public interface Key {
     public static final String CACHE_USER_INFO = "CACHE_USER_INFO";
     public static final String CACHE_WEIGHT_INFO = "CACHE_WEIGHT_INFO";
     public static final String CACHE_BIND_INFO = "CACHE_BIND_INFO";
-    String CACHE_ATHL_RECORD = "CACHE_ATHL_RECORD";
+    String CACHE_ATHL_RECORD_FREE = "CACHE_ATHL_RECORD_FREE";
+    String CACHE_ATHL_RECORD_PLAN = "CACHE_ATHL_RECORD_PLAN";
     ///////////////////////////////////////////////////////////////////////////
-    // 蓝牙设备名字
+    // 常量
     ///////////////////////////////////////////////////////////////////////////
+    //饮食类型
+    int TYPE_BREAKFAST = 1;
+    int TYPE_LUNCH = 2;
+    int TYPE_DINNER = 3;
+    int TYPED_MEAL = 5;
 
+    //心率阈值
+    //100-120-140-160-180
+    byte[] heartRates = new byte[]{0x64, 0x78, (byte) 0x8c, (byte) 0xa0, (byte) 0xb4};
+
+
+    /**
+     * 1.静息（最小心率）
+     * 2.热身
+     * 3.燃脂
+     * 4.有氧
+     * 5.无氧
+     * 6.危险
+     * 7.最大心率
+     */
+    byte[] HRART_SECTION = new byte[7];
 
 }

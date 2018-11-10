@@ -218,6 +218,7 @@ public class SmartClothingFragment extends BaseActivity {
                 if (item == null) return;
                 bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
                 bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
+                bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
                 RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
 
             }

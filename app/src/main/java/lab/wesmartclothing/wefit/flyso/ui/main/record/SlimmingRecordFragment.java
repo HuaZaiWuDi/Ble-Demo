@@ -24,11 +24,11 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -384,7 +384,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
 
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), mImgUserImg);
+
             RxTextUtils.getBuilder(info.getUserName() + "\n")
                     .append("我在 Timetofit 第 " + info.getRegisterTime() + " 天").setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
@@ -795,21 +795,22 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             mTvHealthDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "yyyy/MM/dd"));
             return;
         }
-        RxTextUtils.getBuilder(weightInfo.getWeight() + "")
+
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(weightInfo.getWeight(), 1))
                 .append("\t体重(kg)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .append(weightInfo.getBmi() + "")
+                .append(RxFormatValue.fromat4S5R(weightInfo.getBmi(), 1))
                 .append("\tBMI\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .append(weightInfo.getBodyFat() + "")
+                .append(RxFormatValue.fromat4S5R(weightInfo.getBodyFat(), 1))
                 .append("\t体脂率(%)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .append(weightInfo.getBmr() + "")
+                .append(RxFormatValue.fromat4S5R(weightInfo.getBmr(), 1))
                 .append("\t基础代谢(kcal)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvWeightInfo);
 
-        RxTextUtils.getBuilder(weightInfo.getHealthScore() + "")
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(weightInfo.getHealthScore(), 1))
                 .append("\t分").setProportion(0.5f)
                 .into(mTvHealthScore);
 
@@ -971,8 +972,8 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     //控件转图片
                     Bitmap bitmap = RxImageTools.view2Bitmap(mPrant, ContextCompat.getColor(mContext, R.color.white));
                     //微信分享图片最大尺寸32KB
-                    Bitmap compressBitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
-                    showSimpleBottomSheetGrid(compressBitmap);
+//                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
+                    showSimpleBottomSheetGrid(bitmap);
                     share(false);
                 }
             }, 500);

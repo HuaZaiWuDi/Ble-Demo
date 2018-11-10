@@ -15,29 +15,38 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -94,6 +103,7 @@ public class FoodRecommend extends BaseActivity {
 
     private long currentTime = System.currentTimeMillis();
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
+    private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
 
     @Override
     protected int statusBarColor() {
@@ -118,7 +128,45 @@ public class FoodRecommend extends BaseActivity {
                 foodRecord(millis);
             }
         });
+
+        dialog.setLifecycleSubject(lifecycleSubject);
+        dialog.setDeleteFoodListener(new AddOrUpdateFoodDialog.DeleteFoodListener() {
+            @Override
+            public void deleteFood(FoodListBean listBean) {
+                foodRecord(currentTime);
+                RxBus.getInstance().post(new RefreshSlimming());
+            }
+        });
+        dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
+            @Override
+            public void complete(FoodListBean listBean) {
+                switch (listBean.getEatType()) {
+                    case Key.TYPE_BREAKFAST:
+                        update(breakfastAdapter, listBean, listBean.getEatType());
+                        break;
+                    case Key.TYPE_LUNCH:
+                        update(lunchAdapter, listBean, listBean.getEatType());
+                        break;
+                    case Key.TYPE_DINNER:
+                        update(dinnerAdapter, listBean, listBean.getEatType());
+                        break;
+                    case Key.TYPED_MEAL:
+                        update(mealAdapter, listBean, listBean.getEatType());
+                        break;
+                }
+            }
+        });
     }
+
+
+    private void update(BaseQuickAdapter adapter, FoodListBean listBean, int eatType) {
+        int exist = dialog.isExist(adapter.getData(), listBean);
+        if (exist >= 0) {
+            adapter.setData(exist, listBean);
+            updateFood(listBean, eatType);
+        }
+    }
+
 
     private void initRecycler() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
@@ -134,13 +182,29 @@ public class FoodRecommend extends BaseActivity {
         dinnerAdapter = createAdapter();
         mealAdapter = createAdapter();
 
+        deleteOrUpdate(breakfastAdapter, Key.TYPE_BREAKFAST);
+        deleteOrUpdate(lunchAdapter, Key.TYPE_LUNCH);
+        deleteOrUpdate(dinnerAdapter, Key.TYPE_DINNER);
+        deleteOrUpdate(mealAdapter, Key.TYPED_MEAL);
+
         mMRecyclerBreakfast.setAdapter(breakfastAdapter);
         mMRecyclerLunch.setAdapter(lunchAdapter);
         mMRecyclerDinner.setAdapter(dinnerAdapter);
         mMRecyclerMeal.setAdapter(mealAdapter);
-
     }
 
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initNetData();
+                    }
+                });
+    }
 
     @Override
     protected void initNetData() {
@@ -252,16 +316,92 @@ public class FoodRecommend extends BaseActivity {
                 MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), (QMUIRadiusImageView) helper.getView(R.id.img_food));
 
                 helper.setText(R.id.tv_foodName, item.getFoodName());
-                RxTextUtils.getBuilder(item.getUnitCalorie() + "")
+                RxTextUtils.getBuilder(item.getCalorie() + "")
                         .append("kcal/")
                         .setProportion(0.6f)
-                        .append(RxFormat.setFormatNum(item.getUnitCount(), "0.0") + item.getUnit())
+                        .append(RxFormat.setFormatNum(item.getFoodCount(), "0.0") + item.getUnit())
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.GrayWrite))
                         .into((TextView) helper.getView(R.id.tv_kcal));
                 helper.setTypeface(R.id.tv_kcal, MyAPP.typeface);
             }
         };
+    }
+
+    private void deleteOrUpdate(final BaseQuickAdapter adapter, final int eatType) {
+        //点击更改
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                dialog.setFoodInfo(mContext, true, eatType, currentTime, (FoodListBean) adapter.getData().get(position));
+            }
+        });
+
+        //长按删除
+        adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final BaseQuickAdapter adapter, View view, final int position) {
+                //显示删除
+                RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                        .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                        .setContent("确定要删除此条记录么？")
+                        .setSureListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                RxLogUtils.d("今日食品类型：" + eatType);
+                                FoodListBean item = (FoodListBean) adapter.getItem(position);
+                                item.setEatType(eatType);
+                                dialog.deleteData(mContext, item);
+                            }
+                        });
+                rxDialog.show();
+                return true;
+            }
+        });
+    }
+
+
+    private void updateFood(FoodListBean foodListBean, int eatType) {
+        AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
+        intakeList.setFoodId(foodListBean.getFoodId());
+        intakeList.setFoodName(foodListBean.getFoodName());
+        intakeList.setFoodCount(foodListBean.getFoodCount());
+        intakeList.setUnit(foodListBean.getUnit());
+        intakeList.setGid(foodListBean.getGid());
+        intakeList.setUnitCount(foodListBean.getUnitCount());
+        intakeList.setFoodImg(foodListBean.getFoodImg());
+        intakeList.setRemark(foodListBean.getRemark());
+        intakeList.setCalorie(foodListBean.getCalorie());
+        intakeList.setHeatDate(currentTime);
+        intakeList.setUnitCalorie(foodListBean.getUnitCalorie());
+
+        AddFoodItem foodItem = new AddFoodItem();
+        foodItem.setAddDate(currentTime);
+        foodItem.setEatType(eatType);
+        ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();
+        lists.add(intakeList);
+        foodItem.setIntakeLists(lists);
+        String s = MyAPP.getGson().toJson(foodItem);
+
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("修改食物成功");
+                        foodRecord(currentTime);
+                        RxBus.getInstance().post(new RefreshSlimming());
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        RxToast.normal(error);
+                    }
+                });
     }
 
 }

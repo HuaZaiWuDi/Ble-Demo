@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -91,38 +88,47 @@ public class BodyDataFragment extends BaseActivity {
 
     private BodyDataUtil bodyDataUtil;
     private double[] bodyValue = new double[13];
-
+    private boolean goBack = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_body_data);
-        StatusBarUtils.from(this)
-                .setStatusBarColor(getResources().getColor(R.color.white))
-                .setLightStatusBar(true)
-                .process();
-        unbinder = ButterKnife.bind(this);
-        initView();
+    protected int layoutId() {
+        return R.layout.fragment_body_data;
     }
 
-    private void initView() {
+    @Override
+    protected int statusBarColor() {
+        return getResources().getColor(R.color.white);
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         bodys = getResources().getStringArray(R.array.bodyShape);
         Typeface typeface = MyAPP.typeface;
         mTvHealthScore.setTypeface(typeface);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            gid = extras.getString(Key.BUNDLE_DATA_GID);
-        }
 
         initTopBar();
         initRecyclerView();
-        initData();
-        initRxBus();
     }
 
 
-    public void initRxBus() {
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        gid = bundle.getString(Key.BUNDLE_DATA_GID);
+        goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+        initData();
+    }
+
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
         RxBus.getInstance().register2(OpenAddWeight.class)
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
@@ -134,6 +140,7 @@ public class BodyDataFragment extends BaseActivity {
                     }
                 });
     }
+
 
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
     private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
@@ -399,7 +406,6 @@ public class BodyDataFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                        RxToast.normal("删除成功");
                         //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
                         onBackPressed();
@@ -431,8 +437,10 @@ public class BodyDataFragment extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         //跳转回主页
-        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+        if (goBack) {
+            super.onBackPressed();
+        } else
+            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
     }
 }

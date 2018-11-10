@@ -209,7 +209,7 @@ public class SuitLines extends View {
     /**
      * 图标上下间距
      */
-    private float space = .5f;
+    private int space = 0;
 
     /**
      * 画辅助线
@@ -660,7 +660,7 @@ public class SuitLines extends View {
 
                 if (isUnifiedInterval) {
                     unit.setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
-                            linesArea.top + linesArea.height() * (1 - (unit.getValue() - minValueY) / (maxValueY - minValueY))));
+                            linesArea.top - space + linesArea.height() * (1 - (unit.getValue() - minValueY) / (maxValueY - minValueY))));
                 } else {
                     unit.setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
                             linesArea.top + linesArea.height() * (1 - (unit.getValue() - mLineBeans.get(j).getMinValue())
@@ -722,7 +722,7 @@ public class SuitLines extends View {
     /**
      * 图形上下显示的区域
      */
-    public void setSpaceMaxMin(float space) {
+    public void setSpaceMin(int space) {
         this.space = space;
     }
 

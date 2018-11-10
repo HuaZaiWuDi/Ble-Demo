@@ -27,6 +27,7 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarGroupChart;
+import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.layout.RxTextView;
@@ -52,18 +53,19 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
+import lab.wesmartclothing.wefit.flyso.ui.toolui.Main2Activity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -116,8 +118,8 @@ public class SlimmingFragment extends BaseAcFragment {
     TextView mTvTargetWeight;
     @BindView(R.id.layout_slimmingTerget)
     LinearLayout mLayoutSlimmingTerget;
-    @BindView(R.id.img_recipes)
-    RxImageView mImgRecipes;
+    @BindView(R.id.layout_recipes)
+    RelativeLayout mImgRecipes;
     @BindView(R.id.tv_IngestionHeat)
     TextView mTvIngestionHeat;
     @BindView(R.id.circleProgressBar)
@@ -216,6 +218,16 @@ public class SlimmingFragment extends BaseAcFragment {
     RelativeLayout mLayoutLineChart;
     @BindView(R.id.scroll)
     NestedScrollView mScroll;
+    @BindView(R.id.tv_Nutrition)
+    TextView mTvNutrition;
+    @BindView(R.id.tv_Bodybuilding)
+    TextView mTvBodybuilding;
+    @BindView(R.id.layout_gotoPlanSporting)
+    RelativeLayout mLayoutGotoPlanSporting;
+    @BindView(R.id.img_weight_tip)
+    ImageView mImgWeightTip;
+    @BindView(R.id.img_sporting_tip)
+    ImageView mImgSportingTip;
 
 
     private PlanBean bean;
@@ -342,6 +354,7 @@ public class SlimmingFragment extends BaseAcFragment {
         notifyData();
     }
 
+
     /**
      * 今日运动
      *
@@ -349,6 +362,13 @@ public class SlimmingFragment extends BaseAcFragment {
      */
     private void toDaySporting(List<AthlPlanListBean> athlPlanList) {
         if (athlPlanList == null || athlPlanList.isEmpty()) return;
+        int sunTime = 0;
+        for (AthlPlanListBean bean : athlPlanList) {
+            sunTime += bean.getDuration();
+            bean.setTime(sunTime);
+            RxLogUtils.d("计划:" + bean.toString());
+        }
+
         lineChartUtils.setPlanLineData(athlPlanList);
         getCurrentRealHeart();
         RxTextUtils.getBuilder(RxFormat.setSec2MS(bean.getTotalTime() * 60))
@@ -357,7 +377,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setProportion(0.8f)
                 .into(mTvSportingTime);
 
-        RxTextUtils.getBuilder(bean.getTotalDeplete() + "")
+        RxTextUtils.getBuilder(bean.getTotalDeplete() + "\t")
                 .append("预计消耗热量(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvSportingKcal);
@@ -376,7 +396,6 @@ public class SlimmingFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Logger.json(s);
                         List<SportingDetailBean.RealAthlListBean> realAthlList = MyAPP.getGson().fromJson(s, new TypeToken<List<SportingDetailBean.RealAthlListBean>>() {
                         }.getType());
                         List<Integer> realLists = new ArrayList<>();
@@ -390,7 +409,6 @@ public class SlimmingFragment extends BaseAcFragment {
                     @Override
                     protected void _onError(String error, int code) {
                         super._onError(error, code);
-                        RxToast.normal(error);
                     }
                 });
 
@@ -402,6 +420,8 @@ public class SlimmingFragment extends BaseAcFragment {
      */
     private void notifyData() {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
+        mTvNutrition.setText(bean.getDietPlanBelongUser() + "老师 为您推挤搭配");
+        mTvBodybuilding.setText(bean.getAthlPlanBelongUser() + "老师 为您定制课程");
     }
 
     /**
@@ -415,27 +435,22 @@ public class SlimmingFragment extends BaseAcFragment {
         RxLogUtils.d("最大值：" + maxValue);
         //饮食摄入预计
         mProDietPlan.setTopValue(todayHeatVO.getPlanIntake());
-        mProDietPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
         mProDietPlan.setProgress(todayHeatVO.getPlanIntake() * 100 / maxValue);
 
         //饮食摄入实际
         mProDietReal.setTopValue(todayHeatVO.getRealIntake());
-        mProDietReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
         mProDietReal.setProgress(todayHeatVO.getRealIntake() * 100 / maxValue);
 
         //运动预计
         mProSportPlan.setTopValue(todayHeatVO.getPlanDeplete());
-        mProSportPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
         mProSportPlan.setProgress(todayHeatVO.getPlanDeplete() * 100 / maxValue);
 
         //运动实际
         mProSportReal.setTopValue(todayHeatVO.getRealDeplete());
-        mProSportReal.setColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00));
         mProSportReal.setProgress(todayHeatVO.getRealDeplete() * 100 / maxValue);
 
         //盈余预计
         mProHeatPlan.setTopValue(todayHeatVO.getPlanSurplus());
-        mProHeatPlan.setColor(ContextCompat.getColor(mContext, R.color.BrightGray));
         mProHeatPlan.setProgress(todayHeatVO.getPlanSurplus() * 100 / maxValue);
 
         //盈余热量：运动+基础代谢-摄入，正值为良好，负值为盈余
@@ -488,22 +503,22 @@ public class SlimmingFragment extends BaseAcFragment {
         }
 
         RxTextUtils.getBuilder(weight + "")
-                .append("体重(kg)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append(" 体重(kg)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.5f).into(mTvWeight);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBodyFat() + "")
                 .append(" 体脂率(%)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .setProportion(0.8f)
+                .setProportion(0.6f)
                 .into(mTvBodyFat);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmi() + "")
                 .append(" BMI").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .setProportion(0.8f)
+                .setProportion(0.6f)
                 .into(mTvBmi);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmr() + "")
                 .append(" 基础代谢率(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .setProportion(0.8f)
+                .setProportion(0.6f)
                 .into(mTvBmr);
 
 
@@ -603,7 +618,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgress(5);
         } else if (bean.getComplete() > 0) {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
-            mProTarget.setProgress(bean.getComplete());
+            mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
     }
 
@@ -619,11 +634,13 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgSeeRecord.setVisibility(View.GONE);
             mLayoutSlimmingTerget.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.GONE);
-        } else {
+        } else if (planState == 3) {
             mImgRecipes.setVisibility(View.VISIBLE);
             mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
             mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
+        } else {
+            mImgSeeRecord.setVisibility(View.VISIBLE);
         }
 
         //瘦身衣状态
@@ -672,7 +689,7 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.img_seeRecord,
             R.id.img_planMark,
             R.id.resetTarget,
-            R.id.img_recipes,
+            R.id.layout_recipes,
             R.id.layout_breakfast,
             R.id.layout_lunch,
             R.id.layout_dinner,
@@ -682,6 +699,9 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.reWeigh,
             R.id.btn_goBind_scale,
             R.id.btn_goBind_clothing,
+            R.id.layout_gotoPlanSporting,
+            R.id.img_weight_tip,
+            R.id.img_sporting_tip
     })
     public void onViewClicked(View view) {
         Bundle bundle = new Bundle();
@@ -694,9 +714,10 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.img_seeRecord:
                 if (bean.getPlanState() == 3) {
-                    bundle.putString(Key.BUNDLE_TITLE, "timetofit健康报告");
-                    bundle.putString(Key.BUNDLE_WEB_URL, "");
-                    RxActivityUtils.skipActivity(mContext, WebTitleActivity.class, bundle);
+//                    bundle.putString(Key.BUNDLE_TITLE, "timetofit健康报告");
+//                    bundle.putString(Key.BUNDLE_WEB_URL, "");
+//                    RxActivityUtils.skipActivity(mContext, WebTitleActivity.class, bundle);
+                    RxActivityUtils.skipActivity(mContext, Main2Activity.class);
                 } else if (bean.getPlanState() != 0) {
                     bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
                     RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
@@ -708,7 +729,7 @@ public class SlimmingFragment extends BaseAcFragment {
             case R.id.resetTarget:
                 RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
                 break;
-            case R.id.img_recipes:
+            case R.id.layout_recipes:
                 RxActivityUtils.skipActivity(mContext, RecipesActivity.class);
                 break;
             case R.id.layout_breakfast:
@@ -751,12 +772,35 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.tv_curriculumSporting:
                 if (bean.getPlanState() != 3) {
+                    bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
+                    RxActivityUtils.skipActivity(mContext, PlanActivity.class, bundle);
+                } else if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                    bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
+                    //进入实时运动界面，定制课程
+                    RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                }
+                break;
+            case R.id.layout_gotoPlanSporting:
+                if (bean.getPlanState() != 3) {
                     showFreeSportDialog();
                 } else if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
                     bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
                     //进入实时运动界面，定制课程
                     RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
                 }
+                break;
+            case R.id.img_weight_tip:
+                new RxDialogSure(mContext)
+                        .setTitle("今日体重")
+                        .setContent("今日体重是您今日使用体脂秤称重获得的数据，数据变化趋势是与您第一次称重数据进行对比")
+
+                        .show();
+                break;
+            case R.id.img_sporting_tip:
+                new RxDialogSure(mContext)
+                        .setTitle("今日能量")
+                        .setContent("今日能量包含计划能量和实际能量，盈余热量是通过运动消耗加上基础代谢减去饮食摄入所得热量")
+                        .show();
                 break;
         }
     }
@@ -777,4 +821,6 @@ public class SlimmingFragment extends BaseAcFragment {
                 });
         rxDialog.show();
     }
+
+
 }

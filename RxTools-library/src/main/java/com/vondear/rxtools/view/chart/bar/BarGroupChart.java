@@ -29,7 +29,7 @@ public class BarGroupChart extends View {
     private int mWidth, mHeight, barWidth = RxUtils.dp2px(10), barHeight;
     private Paint textPaint, progressPaint;
     private float round;//圆角
-    private float progressHeight = 0;//进度高度
+    private float progress = 0;//进度高度
     private ValueAnimator mAnimator;
     private boolean isAnimating;
     private RectF rf = new RectF();
@@ -87,13 +87,14 @@ public class BarGroupChart extends View {
         //进度最高高度
         barHeight = (int) (mHeight * 0.9f);
 
-        float progress = (progressHeight / 100f * barHeight);
+        float progressHeight = (progress / 100f * barHeight);
 
-        float top = progressHeight != 0 ? mHeight - progress : mHeight - round * 2;
+        float top = mHeight - progressHeight > mHeight - round * 2 ? mHeight - round * 2 : mHeight - progressHeight;
 
-        rf.left = mWidth / 2 - round;
+
+        rf.left = mWidth / 2 - barWidth / 2;
         rf.top = top;
-        rf.right = mWidth / 2 + round;
+        rf.right = mWidth / 2 + barWidth / 2;
         rf.bottom = mHeight;
         /*绘制圆角矩形，背景色为画笔颜色*/
         canvas.drawRoundRect(rf, round, round, progressPaint);
@@ -104,7 +105,7 @@ public class BarGroupChart extends View {
 
 
     public void setProgress(int progress, boolean anim) {
-        float oldValue = this.progressHeight;
+        float oldValue = this.progress;
 
         if (progress < 0) progress = 0;
         if (progress > 100) progress = 100;
@@ -134,7 +135,7 @@ public class BarGroupChart extends View {
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                progressHeight = (float) animation.getAnimatedValue();
+                progress = (float) animation.getAnimatedValue();
                 oldValue = (int) (topValue * ((float) animation.getAnimatedValue() + 100 - end) / 100);
                 invalidate();
             }

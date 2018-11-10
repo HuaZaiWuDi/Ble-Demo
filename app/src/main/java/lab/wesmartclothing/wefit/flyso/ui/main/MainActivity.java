@@ -146,9 +146,9 @@ public class MainActivity extends BaseALocationActivity {
     private void initBottomTab() {
         String[] tab_text = getResources().getStringArray(R.array.tab_text);
         int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_record,
-                R.mipmap.icon_shopping_unselect, R.mipmap.icon_mine_unselect};
+                R.mipmap.icon_find_unselect, R.mipmap.icon_mine_unselect};
         int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_record_unselect,
-                R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
+                R.mipmap.icon_find_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
             mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
@@ -167,7 +167,7 @@ public class MainActivity extends BaseALocationActivity {
             @Override
             public void onTabReselect(int position) {
                 //双击或三击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == 2 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
+                if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
                             .addItem(ServiceAPI.BASE_URL_208)

@@ -2,7 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
@@ -18,7 +18,6 @@ import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -53,22 +52,27 @@ public class SettingTargetFragment extends BaseActivity {
 
     private float maxWeight, minWeight, targetWeight, initWeight = 0, stillNeed;
 
-
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_setting_target);
-        unbinder = ButterKnife.bind(this);
-        initView();
+    protected int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.white);
     }
 
-    private void initView() {
+    @Override
+    protected int layoutId() {
+        return R.layout.fragment_setting_target;
+    }
+
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         bestWeight();
         Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
         mTvTips.setTypeface(typeface);
     }
+
 
     /**
      * 男性：(身高cm－80)×70﹪=标准体重

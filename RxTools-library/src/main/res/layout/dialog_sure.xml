@@ -28,8 +28,6 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:textColor="#333333"
@@ -42,8 +40,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:gravity="center"
-            android:maxHeight="200dp"
-            android:maxLines="1"
             android:textColor="@color/black"
             tools:text="我是上细纹"/>
 

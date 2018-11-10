@@ -23,6 +23,7 @@ public interface BleKey {
     //100-120-140-160-180
     byte[] heartRates = new byte[]{0x64, 0x78, (byte) 0x8c, (byte) 0xa0, (byte) 0xb4};
 
+    //硬件心率三个档位
     //120-140-200
     byte[] heartRates2 = new byte[]{0x78, (byte) 0x8c, (byte) 0xc8};
 

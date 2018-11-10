@@ -245,6 +245,10 @@ public class EnergyBean {
         private int basalCalorie;
 
 
+        public int getBasalCalorie() {
+            return basalCalorie;
+        }
+
         public void setAthlCalorie(int athlCalorie) {
             this.athlCalorie = athlCalorie;
         }

@@ -289,16 +289,37 @@
                     android:layout_height="1dp"
                     android:background="@color/line"/>
 
-                <com.vondear.rxtools.view.layout.RxImageView
-                    android:id="@+id/img_recipes"
+
+                <RelativeLayout
+                    android:id="@+id/layout_recipes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="16dp"
                     android:visibility="gone"
-                    app:icon_src_normal="@mipmap/icon_recipes"
-                    />
+                    tools:visibility="visible">
+
+                    <com.vondear.rxtools.view.layout.RxImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="0dp"
+                        app:icon_src_normal="@mipmap/icon_recipes"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_Nutrition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="108dp"
+                        android:layout_marginTop="54dp"
+                        android:text="NO.006 营养师 为您推荐搭配"
+                        android:textColor="@color/black_312C35"
+                        android:textSize="8sp"/>
+
+
+                </RelativeLayout>
 
 
                 <RelativeLayout
@@ -644,10 +665,29 @@
                     android:orientation="vertical"
                     android:padding="15dp">
 
-                    <ImageView
+                    <RelativeLayout
+                        android:id="@+id/layout_gotoPlanSporting"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/icon_curriculum"/>
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/icon_curriculum"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_Bodybuilding"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="95dp"
+                            android:layout_marginTop="50dp"
+                            android:text="NO.006 营养师 为您推荐搭配"
+                            android:textColor="@color/black_312C35"
+                            android:textSize="8sp"/>
+
+                    </RelativeLayout>
+
 
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
@@ -851,6 +891,7 @@
                         android:textSize="14sp"/>
 
                     <ImageView
+                        android:id="@+id/img_weight_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
@@ -883,8 +924,9 @@
                         android:id="@+id/tv_weight_status"
                         android:layout_width="35dp"
                         android:layout_height="14dp"
-                        android:layout_alignBottom="@+id/tv_weight"
+                        android:layout_alignTop="@+id/tv_weight"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
                         android:layout_toRightOf="@+id/tv_weight"
                         android:gravity="center"
                         android:text="标准"
@@ -900,6 +942,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_weight"
+                        android:drawablePadding="4dp"
                         android:textColor="@color/Gray"
                         android:textSize="14sp"
                         tools:text="2222222"/>
@@ -910,6 +953,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_weight"
                         android:layout_centerHorizontal="true"
+                        android:drawablePadding="4dp"
                         android:textColor="@color/Gray"
                         android:textSize="14sp"
                         tools:text="2222222"/>
@@ -920,6 +964,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/tv_weight"
                         android:layout_alignParentRight="true"
+                        android:drawablePadding="4dp"
                         android:textColor="@color/Gray"
                         android:textSize="14sp"
                         tools:text="2222222"/>
@@ -953,7 +998,7 @@
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     android:visibility="visible"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
 
                     <ImageView
@@ -1029,6 +1074,7 @@
                         android:textSize="14sp"/>
 
                     <ImageView
+                        android:id="@+id/img_sporting_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
@@ -1101,6 +1147,7 @@
                             android:id="@+id/pro_diet_plan"
                             android:layout_width="20dp"
                             android:layout_height="match_parent"
+                            app:proBarColor="@color/Gray_ECEBF0"
                             />
 
                         <com.vondear.rxtools.view.chart.bar.BarGroupChart
@@ -1108,6 +1155,7 @@
                             android:layout_width="20dp"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
+                            app:proBarColor="@color/yellow_FFBC00"
                             />
 
 
@@ -1116,6 +1164,7 @@
                             android:layout_width="20dp"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="50dp"
+                            app:proBarColor="@color/Gray_ECEBF0"
                             />
 
                         <com.vondear.rxtools.view.chart.bar.BarGroupChart
@@ -1123,6 +1172,7 @@
                             android:layout_width="20dp"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
+                            app:proBarColor="@color/yellow_FFBC00"
                             />
 
 
@@ -1131,6 +1181,7 @@
                             android:layout_width="20dp"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="50dp"
+                            app:proBarColor="@color/Gray_ECEBF0"
                             />
 
                         <com.vondear.rxtools.view.chart.bar.BarGroupChart
@@ -1138,6 +1189,7 @@
                             android:layout_width="20dp"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
+                            app:proBarColor="@color/yellow_FFBC00"
                             />
 
 

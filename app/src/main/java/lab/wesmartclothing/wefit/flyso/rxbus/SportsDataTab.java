@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ public class SportsDataTab {
     byte[] data;//原始数据
     int temp;//温度
     int voltage;//电压
-    String date;//时间
+    long date;//时间
     double score;//分数
 
     public double getScore() {
@@ -48,11 +47,11 @@ public class SportsDataTab {
         this.voltage = voltage;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -187,7 +186,6 @@ public class SportsDataTab {
                 ", realHeart=" + realHeart +
                 ", isPower=" + getPower() +
                 ", lightColor=" + byte2Color(lightColor) +
-                ", data=" + Arrays.toString(data) +
                 ", temp=" + temp + "°C" +
                 ", voltage=" + voltage +
                 ", date='" + date + '\'' +

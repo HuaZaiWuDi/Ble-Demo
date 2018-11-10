@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.utils
@@ -52,11 +53,10 @@ public class HeartLineChartUtils {
         leftAxis.setDrawLabels(false);
 
         YAxis yAxis = mLineChart.getAxisLeft();
-        yAxis.setAxisMaximum(200);
-        yAxis.setAxisMinimum(80);
+        yAxis.setAxisMaximum((Key.HRART_SECTION[6] & 0xFF));
+        yAxis.setAxisMinimum((Key.HRART_SECTION[0] & 0xFF));
 
         mLineChart.setData(new LineData());
-
         mLineChart.invalidate();
     }
 
@@ -65,7 +65,7 @@ public class HeartLineChartUtils {
         LineDataSet set = new LineDataSet(heartValues, "heartPlan");
         set.setDrawIcons(false);
         set.setDrawValues(false);
-        set.setColor(Color.parseColor("#D2C6B3"));
+        set.setColor(Color.parseColor("#E4CA9F"));
         set.setDrawCircleHole(false);
         set.setDrawCircles(false);
         set.setLineWidth(1.5f);
@@ -95,7 +95,12 @@ public class HeartLineChartUtils {
     }
 
 
-    public void setRealTimeData(int value) {
+    public void setRealTimeData(float value) {
+        if (value > (Key.HRART_SECTION[6] & 0xFF)) {
+            value = (Key.HRART_SECTION[6] & 0xFF);
+        } else if (value < (Key.HRART_SECTION[0] & 0xFF)) {
+            value = (Key.HRART_SECTION[0] & 0xFF);
+        }
         LineDataSet realTimeSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
         if (realTimeSet == null) {
             createRealTimeSet(null);
@@ -112,7 +117,13 @@ public class HeartLineChartUtils {
         if (athlList == null || athlList.isEmpty()) return;
         List<Entry> heartValues = new ArrayList<>();
         for (int i = 0; i < athlList.size(); i++) {
-            heartValues.add(new Entry(i, athlList.get(i)));
+            int value = athlList.get(i);
+            if (value > (Key.HRART_SECTION[6] & 0xFF)) {
+                value = (Key.HRART_SECTION[6] & 0xFF);
+            } else if (value < (Key.HRART_SECTION[0] & 0xFF)) {
+                value = (Key.HRART_SECTION[0] & 0xFF);
+            }
+            heartValues.add(new Entry(i, value));
         }
 
         LineDataSet defaultSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
@@ -143,9 +154,12 @@ public class HeartLineChartUtils {
             int endYValue = index + 1 >= planList.size() ? planList.get(planList.size() - 1).getRange()
                     : planList.get(index + 1).getRange();
 
+
+            int section = (Key.HRART_SECTION[6] & 0xFF) - (Key.HRART_SECTION[5] & 0xFF);
+
             //画最后一个点，判断最后一个点是上升还是下降
             if (index + 1 >= planList.size()) {
-                endYValue = endYValue + ((planList.get(index).getRange() - planList.get(index - 1).getRange() > 0) ? 20 : -20);
+                endYValue = endYValue + ((planList.get(index).getRange() - planList.get(index - 1).getRange() > 0) ? section : -section);
             }
 
             //区间前一个点，
@@ -174,7 +188,6 @@ public class HeartLineChartUtils {
         mLineChart.getData().notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
-        mLineChart.animateX(500);
     }
 
 }

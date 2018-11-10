@@ -4,30 +4,25 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.zchu.rxcache.CacheTarget;
-import com.zchu.rxcache.RxCache;
+import com.vondear.rxtools.utils.StatusBarUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
-import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
@@ -42,7 +37,6 @@ import lab.wesmartclothing.wefit.netlib.net.StoreService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 public class SplashActivity extends BaseActivity {
 
@@ -63,55 +57,38 @@ public class SplashActivity extends BaseActivity {
         }
     };
 
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        RxLogUtils.i("启动时长：引导页开始");
-        setContentView(R.layout.activity_spalsh);
+    protected int layoutId() {
+        return R.layout.activity_spalsh;
+    }
+
+
+    @Override
+    protected void initViews() {
+        super.initViews();
+
+        StatusBarUtils.from(this).setHindStatusBar(true).process();
+
         startService(new Intent(mContext, BleService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-        initView();
-//        TODO 切换下网络请求框架的设置，现在是手动解析的，之后改为GSON工厂配置，这样能减少因为后台问题导致的崩溃问题
-//        RxActivityUtils.skipActivityAndFinish(mContext, SportsDetailsFragment.class);
-    }
 
-    public void initView() {
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 //        NetManager.getInstance().setUserIdToken("e3e35aaff6b84cc29195f270ab7b95a1", SPUtils.getString(SPKey.SP_token));
         if (!RxDataUtils.isNullString(baseUrl)) {
             ServiceAPI.switchURL(baseUrl);
         }
-
-        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-
-        initData();
-        initUserInfo();
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
 
+    }
 
-        List<HeartRateTab> heartLists = new ArrayList<>();
-        HeartRateTab heartRateTab = new HeartRateTab();
-        heartRateTab.setHeartRate(180);
-        heartRateTab.setHeartTime(System.currentTimeMillis());
-        heartRateTab.setStepTime(10);
-        heartRateTab.setIsfree(true);
-        heartLists.add(heartRateTab);
-
-        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD, heartLists, CacheTarget.Disk)
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        RxLogUtils.d("心率保存成功");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        RxLogUtils.e("RxCache:心率", e);
-                    }
-                });
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+        initData();
+        initUserInfo();
 
     }
 
@@ -136,18 +113,25 @@ public class SplashActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
-                        JsonParser parser = new JsonParser();
-                        JsonObject object = (JsonObject) parser.parse(s);
-                        int sex = object.get("sex").getAsInt();
+                        UserInfo userInfo = MyAPP.getGson().fromJson(s, UserInfo.class);
+
+                        int sex = userInfo.getSex();
+                        SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
+                        SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
                         isSaveUserInfo = sex == 0;
 
-                        String clothesMacAddr = object.get("clothesMacAddr").getAsString();
-                        String scalesMacAddr = object.get("scalesMacAddr").getAsString();
-                        SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
-                        SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
+
+                        int maxHeart = (int) ((220 - userInfo.getAge()) * 0.8);
+                        Key.HRART_SECTION[0] = (byte) (maxHeart * 0.4);
+                        Key.HRART_SECTION[1] = (byte) (maxHeart * 0.5);
+                        Key.HRART_SECTION[2] = (byte) (maxHeart * 0.6);
+                        Key.HRART_SECTION[3] = (byte) (maxHeart * 0.7);
+                        Key.HRART_SECTION[4] = (byte) (maxHeart * 0.8);
+                        Key.HRART_SECTION[5] = (byte) (maxHeart * 0.9);
+                        Key.HRART_SECTION[6] = (byte) (maxHeart);
+                        RxLogUtils.d("心率区间：" + Arrays.toString(Key.HRART_SECTION));
                     }
                 });
     }
