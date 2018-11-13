@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,9 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -64,7 +61,6 @@ public class FoodDetailsFragment extends BaseActivity {
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.mRecyclerView)
     RecyclerView mMRecyclerView;
-    Unbinder unbinder;
     @BindView(R.id.recyclerAddFoods)
     RecyclerView mRecyclerAddFoods;
     @BindView(R.id.btn_mark)
@@ -80,7 +76,7 @@ public class FoodDetailsFragment extends BaseActivity {
     private int foodType = 0;
     private long currentTime = System.currentTimeMillis();
     private int pageNum = 0;//页码
-    private boolean SlimmingPage = false;
+    private boolean SlimmingPage = false;//是否是从首页跳转
     private Bundle bundle;
     private BaseQuickAdapter adapter;
     private BaseQuickAdapter adapterAddFoods;
@@ -89,41 +85,17 @@ public class FoodDetailsFragment extends BaseActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_food_detail);
-        ButterKnife.bind(this);
-        initView();
-
+    protected int layoutId() {
+        return R.layout.fragment_food_detail;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (addedLists.size() > 0) {
-            mLayoutAddFoods.setVisibility(View.VISIBLE);
-            List<Object> addedFoods = new ArrayList<>();
-            for (int i = 0; i < addedLists.size(); i++) {
-                addedFoods.add(addedLists.get(i).getFoodImg());
-            }
-            mBtnMark.setVisibility(addedFoods.size() > 10 ? View.VISIBLE : View.GONE);
-            if (addedFoods.size() > 10) {
-                mBtnMark.setText(addedLists.size() + "");
-                addedFoods = addedFoods.subList(addedFoods.size() - 10, addedFoods.size());
-//                addedFoods.set(0, R.mipmap.icon_ellipsis);
-            }
-
-            adapterAddFoods.setNewData(addedFoods);
-        }
-    }
-
-    private void initView() {
-        initBundle();
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         initRecyclerView();
         initAddFoodRecyclerView();
         pageNum = 1;
-        initData();
 
         dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
@@ -154,6 +126,26 @@ public class FoodDetailsFragment extends BaseActivity {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (addedLists.size() > 0) {
+            mLayoutAddFoods.setVisibility(View.VISIBLE);
+            List<Object> addedFoods = new ArrayList<>();
+            for (int i = 0; i < addedLists.size(); i++) {
+                addedFoods.add(addedLists.get(i).getFoodImg());
+            }
+            mBtnMark.setVisibility(addedFoods.size() > 10 ? View.VISIBLE : View.GONE);
+            if (addedFoods.size() > 10) {
+                mBtnMark.setText(addedLists.size() + "");
+                addedFoods = addedFoods.subList(addedFoods.size() - 10, addedFoods.size());
+//                addedFoods.set(0, R.mipmap.icon_ellipsis);
+            }
+
+            adapterAddFoods.setNewData(addedFoods);
+        }
+    }
+
 
     private void initAddFoodRecyclerView() {
         mRecyclerAddFoods.setLayoutManager(new OverlapLayoutManager(mContext));
@@ -176,14 +168,16 @@ public class FoodDetailsFragment extends BaseActivity {
 //        });
     }
 
-    private void initBundle() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
-            currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
-            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
-        }
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        this.bundle = bundle;
+        foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
+        currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
+        SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME, true);
     }
+
 
     private void initRecyclerView() {
         adapter = new BaseQuickAdapter<FoodListBean, BaseViewHolder>(R.layout.item_add_food) {
@@ -226,7 +220,6 @@ public class FoodDetailsFragment extends BaseActivity {
             }
         });
 
-
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
     }
@@ -251,6 +244,12 @@ public class FoodDetailsFragment extends BaseActivity {
                 });
     }
 
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+        initData();
+    }
 
     private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

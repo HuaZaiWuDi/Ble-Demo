@@ -42,7 +42,6 @@ public class HeartRateToKcal {
         float W = SPUtils.getFloat(SPKey.SP_realWeight, SPUtils.getInt(SPKey.SP_weight));
         long birthDayMillis = info.getBirthday();
 
-
         Calendar calendar = Calendar.getInstance();
         int newYear = calendar.get(Calendar.YEAR);
         calendar.setTimeInMillis(birthDayMillis);

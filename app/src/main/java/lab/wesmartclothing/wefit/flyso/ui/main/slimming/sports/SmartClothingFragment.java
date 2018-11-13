@@ -300,7 +300,7 @@ public class SmartClothingFragment extends BaseActivity {
         Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
             AthleticsInfo.ListBean.DayAthlBean bean = list.get(i).getDayAthl();
-            Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
+            Unit unit_heat = new Unit((float) bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, "");
 
             lines_Heat.add(unit_heat);
@@ -320,6 +320,7 @@ public class SmartClothingFragment extends BaseActivity {
         timeLine.setColor(Color.parseColor("#F2A49C"));
         timeLine.setDashed(true);
 
+        mSuitlines.setSpaceMin(RxUtils.dp2px(4));
         new SuitLines.LineBuilder()
                 .add(heatLine)
                 .add(timeLine)

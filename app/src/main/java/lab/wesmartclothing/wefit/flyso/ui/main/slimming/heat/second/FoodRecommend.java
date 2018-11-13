@@ -289,6 +289,8 @@ public class FoodRecommend extends BaseActivity {
     @OnClick({R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal})
     public void onViewClicked(View view) {
         Bundle bundle = new Bundle();
+        bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
+        bundle.putBoolean(Key.ADD_FOOD_NAME, false);//是否是主页跳转的
         switch (view.getId()) {
             case R.id.layout_breakfast:
                 bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);

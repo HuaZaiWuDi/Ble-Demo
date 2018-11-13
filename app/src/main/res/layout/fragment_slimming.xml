@@ -291,20 +291,19 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/layout_recipes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/layout_gotoRecipes"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
                     android:visibility="gone"
                     tools:visibility="visible">
 
                     <com.vondear.rxtools.view.layout.RxImageView
+                        android:id="@+id/img_Recipes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginRight="16dp"
-                        android:layout_marginBottom="0dp"
                         app:icon_src_normal="@mipmap/icon_recipes"/>
 
 
@@ -702,9 +701,7 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:paddingLeft="8dp"
-                            android:paddingRight="8dp"
-                            android:paddingBottom="8dp"
+                            android:padding="8dp"
                             >
 
 
@@ -1209,7 +1206,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/barChart"
-                        android:layout_marginLeft="45dp"
+                        android:layout_marginLeft="50dp"
                         android:layout_marginBottom="8dp"
                         android:text="饮食摄入 (kcal)"
                         android:textColor="@color/GrayWrite"
@@ -1231,7 +1228,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/barChart"
-                        android:layout_marginLeft="255dp"
+                        android:layout_marginLeft="250dp"
                         android:layout_marginBottom="8dp"
                         android:text="盈余热量 (kcal)"
                         android:textColor="@color/GrayWrite"

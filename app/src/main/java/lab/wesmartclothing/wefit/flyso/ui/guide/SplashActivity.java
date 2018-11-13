@@ -21,6 +21,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleService;
+import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -166,56 +167,30 @@ public class SplashActivity extends BaseActivity {
             //没有网络直接返回
             return;
         }
-        getStoreAddr();
-        getOrderUrl();
-        getShoppingAddress();
+        getSystemConfig();
         uploadHistoryData();
     }
 
     /**
-     * 获取商城地址
+     * 获取app配置信息
      */
-    private void getStoreAddr() {
+    private void getSystemConfig() {
         StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getMallAddress())
+        RxManager.getInstance().doNetSubscribe(dxyService.getSystemConfig())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        ServiceAPI.Store_Addr = s;
+                        SystemConfigBean configBean = MyAPP.getGson().fromJson(s, SystemConfigBean.class);
+                        ServiceAPI.Order_Url = configBean.getOrderAddress();
+                        ServiceAPI.Shopping_Address = configBean.getShppingAddress();
+//                        ServiceAPI.Store_Addr = configBean.get
+                        ServiceAPI.SHARE_INFORM_URL = configBean.getShareInformUrl();
+                        ServiceAPI.APP_DOWN_LOAD_URL = configBean.getAppDownloadUrl();
                     }
                 });
     }
 
-    /**
-     * 获取商城订单地址
-     */
-    private void getOrderUrl() {
-        StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getOrderUrl())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
-                        ServiceAPI.Order_Url = s;
-                    }
-                });
-    }
-
-    /**
-     * 获取商城购物车地址
-     */
-    private void getShoppingAddress() {
-        StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getShoppingAddress())
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
-                        ServiceAPI.Shopping_Address = s;
-                    }
-                });
-    }
 
     /**
      * 判断本地是否有之前保存的心率数据：有则上传

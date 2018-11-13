@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -36,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
@@ -51,6 +49,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout;
@@ -104,11 +103,30 @@ public class SearchHistoryFragment extends BaseActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_history);
-        ButterKnife.bind(this);
-        initView();
+    protected int layoutId() {
+        return R.layout.activity_search_history;
+    }
+
+
+    @Override
+    protected void initViews() {
+        super.initViews();
+
+        dialog.setLifecycleSubject(lifecycleSubject);
+        new RxPermissions(mActivity)
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Permission>() {
+                    @Override
+                    protected void _onNext(Permission permission) {
+                        isStorage = permission.granted;
+                    }
+                });
+
+        init();
+        initTopBar();
+        initRecyclerView();
+        initAddFoodRecyclerView();
     }
 
     @Override
@@ -130,33 +148,13 @@ public class SearchHistoryFragment extends BaseActivity {
         }
     }
 
-    public void initView() {
-        dialog.setLifecycleSubject(lifecycleSubject);
-        new RxPermissions(mActivity)
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Permission>() {
-                    @Override
-                    protected void _onNext(Permission permission) {
-                        isStorage = permission.granted;
-                    }
-                });
 
-
-        initBundle();
-        init();
-        initTopBar();
-        initRecyclerView();
-        initAddFoodRecyclerView();
-    }
-
-    private void initBundle() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
-            currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
-            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);//是否是从首页跳转
-        }
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
+        currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
+        SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME, true);//是否是从首页跳转
     }
 
 
@@ -409,7 +407,6 @@ public class SearchHistoryFragment extends BaseActivity {
         foodItem.setEatType(foodType);
 
         List<AddFoodItem.intakeList> mIntakeLists = new ArrayList<>();
-
         for (int i = 0; i < FoodDetailsFragment.addedLists.size(); i++) {
             FoodListBean foodListBean = FoodDetailsFragment.addedLists.get(i);
             AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
@@ -437,11 +434,16 @@ public class SearchHistoryFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                        RxToast.success("添加成功");
                         FoodDetailsFragment.addedLists.clear();
                         //刷新数据
-                        RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         RxBus.getInstance().post(new RefreshSlimming());
+
+                        if (SlimmingPage) {
+                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                        } else {
+                            RxActivityUtils.finishActivity(FoodDetailsFragment.class);
+                            RxActivityUtils.skipActivityAndFinish(mContext, FoodRecommend.class);
+                        }
                     }
 
                     @Override

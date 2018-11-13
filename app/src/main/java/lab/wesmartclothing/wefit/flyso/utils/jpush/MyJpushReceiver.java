@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 
@@ -17,7 +19,9 @@ import java.util.Iterator;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.service.PushService;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * 自定义接收器
@@ -66,6 +70,16 @@ public class MyJpushReceiver extends BroadcastReceiver {
                 RxLogUtils.d(TAG, "[MyJpushReceiver] 接收到推送下来的通知");
                 int notifactionId = bundle.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);
                 RxLogUtils.d(TAG, "[MyJpushReceiver] 接收到推送下来的通知的ID: " + notifactionId);
+
+
+                String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
+                JsonParser parser = new JsonParser();
+                JsonObject object = (JsonObject) parser.parse(extra);
+                String openTarget = object.get("openTarget").getAsString();
+
+                if ("planIndex".equals(openTarget)) {
+                    RxBus.getInstance().post(new RefreshSlimming());
+                }
 
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
                 RxLogUtils.d(TAG, "[MyJpushReceiver] 用户点击打开了通知");

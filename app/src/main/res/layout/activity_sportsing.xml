@@ -109,7 +109,9 @@
                 <RelativeLayout
                     android:id="@+id/layout_legend"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/tv_heartCount"
@@ -176,7 +178,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="94dp"
                     android:layout_below="@+id/layout_legend"
-                    android:layout_marginTop="15dp"
                     android:orientation="vertical">
 
                     <TextView

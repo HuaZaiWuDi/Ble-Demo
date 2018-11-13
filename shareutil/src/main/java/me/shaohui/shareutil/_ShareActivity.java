@@ -68,10 +68,10 @@ public class _ShareActivity extends Activity {
         super.onResume();
         ShareLogger.i("onResume:" + isNew);
         ShareLogger.i(INFO.ACTIVITY_RESUME);
-//        if (isNew) {
-//            isNew = false;
-//        } else
-//            finish();
+        if (isNew) {
+            isNew = false;
+        } else
+            finish();
     }
 
     @Override
@@ -117,4 +117,10 @@ public class _ShareActivity extends Activity {
         }
         finish();
     }
+
+
+    public void finishAc() {
+        finish();
+    }
+
 }

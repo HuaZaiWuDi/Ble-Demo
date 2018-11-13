@@ -53,7 +53,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
-import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -483,10 +482,6 @@ public class BleService extends Service {
 
 
     private void initHeartRate() {
-
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        final UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
-
         BleTools.getInstance().setBleCallBack(new BleCallBack() {
             @Override
             public void onNotify(byte[] data) {
@@ -496,41 +491,6 @@ public class BleService extends Service {
                 if (data.length < 17) return;
 
                 mHeartRateUtil.addRealTimeData(data);
-
-//                if (BleService.clothingFinish) {
-//                    BleService.clothingFinish = false;
-//                    if (info.getPlanState() == 3) {
-//                        RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
-//                                .setContent("运动已开始，是否进入自由运动界面？")
-//                                .setCancel("自由运动")
-//                                .setCancelListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
-//                                    }
-//                                })
-//                                .setSure("课程运动")
-//                                .setSureListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class);
-//                                    }
-//                                });
-//                        rxDialog.show();
-//                    } else {
-//                        RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
-//                                .setContent("运动已开始，是否进入自由运动界面？")
-//                                .setSure("进入")
-//                                .setSureListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
-//                                    }
-//                                });
-//                        rxDialog.show();
-//                    }
-//                }
-
             }
         });
     }

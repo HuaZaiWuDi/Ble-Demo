@@ -43,7 +43,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -64,6 +63,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragm
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -323,7 +323,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     @Override
     protected void initViews() {
         super.initViews();
-
         initWareView();
         initTextTypeface();
         initChart(mMLineChart);
@@ -386,17 +385,16 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
 
             RxTextUtils.getBuilder(info.getUserName() + "\n")
-                    .append("我在 Timetofit 第 " + info.getRegisterTime() + " 天").setProportion(0.8f)
+                    .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvUserName);
             mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
 
             RxTextUtils.getBuilder("让 你 健 康 瘦\n")
-                    .append("Tiemtofit v" + RxDeviceUtils.getAppVersionName())
+                    .append(getString(R.string.appName) + "v" + RxDeviceUtils.getAppVersionName())
                     .setProportion(0.5f)
                     .into(mTvAppVersion);
         }
-
     }
 
     private void getData() {
@@ -408,7 +406,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Logger.json(s);
+//                        Logger.json(s);
                         SlimmingRecordBean bean = MyAPP.getGson().fromJson(s, SlimmingRecordBean.class);
                         Logger.d("记录数据：" + bean.toString());
                         updateUI(bean);
@@ -475,9 +473,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             }
         }
 
-        Logger.d("食材消耗最大值：" + dietMax);
-        Logger.d("食材消耗：" + Arrays.toString(item.toArray()));
-        Logger.d("食材日期：" + Arrays.toString(dates.toArray()));
 
         mTvDietChart7.setText(dates.get(0));
         mTvDietChart6.setText(dates.get(1));
@@ -541,9 +536,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             }
         }
 
-        Logger.d("能量消耗最大值：" + max);
-        Logger.d("能量消耗：" + Arrays.toString(item.toArray()));
-        Logger.d("能量日期：" + Arrays.toString(dates.toArray()));
 
         mEnergyProgress7.setProgress((int) (item.get(0) * 100 / max));
         mEnergyProgress6.setProgress((int) (item.get(1) * 100 / max));
@@ -604,9 +596,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             }
         }
 
-        Logger.d("运动消耗最大值：" + max);
-        Logger.d("运动消耗：" + Arrays.toString(item.toArray()));
-        Logger.d("运动日期：" + Arrays.toString(dates.toArray()));
 
         mSportingProgress7.setProgress((int) (item.get(0) * 100 / max));
         mSportingProgress6.setProgress((int) (item.get(1) * 100 / max));
@@ -743,18 +732,24 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
     //添加提示线
     public void addLimitLine2Y(BarLineChartBase lineChartBase, float value, String label) {
+        YAxis y = lineChartBase.getAxisLeft();
+        LimitLine.LimitLabelPosition pos = LimitLine.LimitLabelPosition.LEFT_TOP;
+        if (y.mAxisMaximum - value < 5) {
+            pos = LimitLine.LimitLabelPosition.LEFT_BOTTOM;
+        }
         //提示线，
         LimitLine ll = new LimitLine(value, label);//线条颜色宽度等
         ll.setLineColor(getResources().getColor(R.color.gray_ECEBF0));
         ll.setLineWidth(1f);
         ll.enableDashedLine(10f, 10f, 0f);
-        ll.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);//文字颜色、大小
+        ll.setLabelPosition(pos);//文字颜色、大小
         ll.setTextColor(getResources().getColor(R.color.GrayWrite));
         ll.setTextSize(10f);
-        YAxis y = lineChartBase.getAxisLeft();
+
         y.removeAllLimitLines();
         //加入到 mXAxis 或 mYAxis
         y.addLimitLine(ll);
+
     }
 
     /**
@@ -927,6 +922,12 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        ShareUtil.recycle();
+    }
+
     @OnClick({
             R.id.img_email,
             R.id.layout_weight_title,
@@ -959,8 +960,8 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mLayoutShareTitle.setVisibility(isStart ? View.VISIBLE : View.GONE);
 
         if (isStart) {
-            tipDialog.show("正在分享...", 5000);
-            RxQRCode.builder("Jcak")
+            tipDialog.show("正在分享...", 3000);
+            RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
@@ -977,7 +978,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     share(false);
                 }
             }, 500);
-
         }
     }
 

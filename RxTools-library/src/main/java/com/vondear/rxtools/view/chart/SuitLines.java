@@ -622,10 +622,10 @@ public class SuitLines extends View {
     private void calcAreas() {
         RectF validArea = new RectF(getPaddingLeft() + basePadding, getPaddingTop() + basePadding,
                 getMeasuredWidth() - getPaddingRight() - basePadding, getMeasuredHeight() - getPaddingBottom());
-        yArea = new RectF(validArea.left, validArea.top,
-                validArea.left,
-                validArea.bottom - Util.getTextHeight(xyPaint) - basePadding * 2);
-        xArea = new RectF(validArea.left, yArea.top, validArea.right, validArea.top);
+//        yArea = new RectF(validArea.left, validArea.top,
+//                validArea.left,
+//                validArea.bottom - Util.getTextHeight(xyPaint) - basePadding * 2);
+        xArea = new RectF(validArea.left, validArea.top, validArea.right, validArea.top + Util.getTextHeight(xyPaint));
 
         linesArea = new RectF(validArea.left, xArea.bottom, validArea.right, validArea.bottom);
     }
@@ -660,7 +660,7 @@ public class SuitLines extends View {
 
                 if (isUnifiedInterval) {
                     unit.setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
-                            linesArea.top - space + linesArea.height() * (1 - (unit.getValue() - minValueY) / (maxValueY - minValueY))));
+                            linesArea.top - space + linesArea.height() * (1f - (unit.getValue() - minValueY) / (maxValueY - minValueY))));
                 } else {
                     unit.setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
                             linesArea.top + linesArea.height() * (1 - (unit.getValue() - mLineBeans.get(j).getMinValue())

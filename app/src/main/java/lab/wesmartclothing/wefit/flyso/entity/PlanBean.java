@@ -54,6 +54,14 @@ public class PlanBean {
     private List<AthlPlanListBean> athlPlanList;
 
 
+    public void setAthlPlanBelongUser(String athlPlanBelongUser) {
+        this.athlPlanBelongUser = athlPlanBelongUser;
+    }
+
+    public void setDietPlanBelongUser(String dietPlanBelongUser) {
+        this.dietPlanBelongUser = dietPlanBelongUser;
+    }
+
     public String getAthlPlanBelongUser() {
         return athlPlanBelongUser;
     }

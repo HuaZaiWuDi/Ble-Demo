@@ -17,6 +17,15 @@ public class FoodRecommendBean {
     private FoodPlanBean foodPlan;
     private boolean hasFoodPlan;
     private List<Long> dateList;
+    private String planName;
+
+    public String getPlanName() {
+        return planName;
+    }
+
+    public void setPlanName(String planName) {
+        this.planName = planName;
+    }
 
     public FoodPlanBean getFoodPlan() {
         return foodPlan;

@@ -47,6 +47,39 @@ public class AthlPlanListBean {
         return heart_6;
     }
 
+    public int getRange3() {
+        return range;
+    }
+
+
+    public int getRange2() {
+        byte[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0] & 0xff;
+        int heart_1 = heartRates[1] & 0xff;
+        int heart_2 = heartRates[2] & 0xff;
+        int heart_3 = heartRates[3] & 0xff;
+        int heart_4 = heartRates[4] & 0xff;
+        int heart_5 = heartRates[5] & 0xff;
+        int heart_6 = heartRates[6] & 0xff;
+
+        switch (range) {
+            case 0:
+                return heart_1;
+            case 1:
+                return heart_2;
+            case 2:
+                return heart_3;
+            case 3:
+                return heart_4;
+            case 4:
+                return heart_5;
+            case 5:
+                return heart_6;
+        }
+        return heart_6;
+    }
+
+
     public void setRange(int range) {
         this.range = range;
     }

@@ -41,4 +41,8 @@ public interface SPKey {
 
     String SP_SET_PLAN = "SP_SET_PLAN";//是否定制计划
 
+
+    String SP_DIET_PLAN_USER = "SP_DIET_PLAN_USER";
+
+    String SP_ATHL_PLAN_USER = "SP_ATHL_PLAN_USER";
 }

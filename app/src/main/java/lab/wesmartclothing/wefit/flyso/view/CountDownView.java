@@ -75,7 +75,6 @@ public class CountDownView extends LinearLayout {
 
 
     public void setCountDownDays(long time) {
-        Logger.d("当前时间：" + time);
         long day = RxTimeUtils.getIntervalByNow(time, RxConstUtils.TimeUnit.DAY);
         mTickerDays.setText(day + "", true);
         if (countDownTimer != null) countDownTimer.cancel();

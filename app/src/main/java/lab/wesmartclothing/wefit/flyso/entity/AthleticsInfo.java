@@ -268,7 +268,7 @@ public class AthleticsInfo {
             private String athlDesc;
             private String athlRecord;
             private int avgHeart;
-            private int calorie;
+            private double calorie;
             private int duration;
             private int heartCount;
             private int height;
@@ -294,7 +294,7 @@ public class AthleticsInfo {
                 return avgHeart;
             }
 
-            public int getCalorie() {
+            public double getCalorie() {
                 return calorie;
             }
 
@@ -365,9 +365,9 @@ public class AthleticsInfo {
             private long athlDate;
             private String athlDesc;
             private String athlRecord;
-            private int athlScore;
+            private double athlScore;
             private int avgHeart;
-            private int calorie;
+            private double calorie;
             private int duration;
             private long endTime;
             private int heartCount;
@@ -395,7 +395,7 @@ public class AthleticsInfo {
                 return athlRecord;
             }
 
-            public int getAthlScore() {
+            public double getAthlScore() {
                 return athlScore;
             }
 
@@ -403,7 +403,7 @@ public class AthleticsInfo {
                 return avgHeart;
             }
 
-            public int getCalorie() {
+            public double getCalorie() {
                 return calorie;
             }
 

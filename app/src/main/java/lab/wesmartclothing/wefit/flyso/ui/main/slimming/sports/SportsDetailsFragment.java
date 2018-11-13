@@ -19,7 +19,6 @@ import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.tool.RxQRCode;
@@ -52,6 +51,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
+import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
@@ -217,8 +217,8 @@ public class SportsDetailsFragment extends BaseActivity {
         mLayoutQRcode.setVisibility(startShare ? View.VISIBLE : View.GONE);
 
         if (startShare) {
-            tipDialog.show("正在分享...", 5000);
-            RxQRCode.builder("Jcak")
+            tipDialog.show("正在分享...", 3000);
+            RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
@@ -230,8 +230,8 @@ public class SportsDetailsFragment extends BaseActivity {
                     //控件转图片
                     Bitmap bitmap = RxImageTools.view2Bitmap(mLayoutContent, ContextCompat.getColor(mContext, R.color.Gray));
                     //微信分享图片最大尺寸32KB
-                    Bitmap compressBitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
-                    showSimpleBottomSheetGrid(compressBitmap);
+//                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
+                    showSimpleBottomSheetGrid(bitmap);
                     share(false);
                 }
             }, 500);
@@ -253,15 +253,15 @@ public class SportsDetailsFragment extends BaseActivity {
         mTvDate.setTypeface(typeface);
 
         RxTextUtils.getBuilder("让 你 健 康 瘦\n")
-                .append("Tiemtofit v" + RxDeviceUtils.getAppVersionName())
+                .append(getString(R.string.appName) + " v" + RxDeviceUtils.getAppVersionName())
                 .setProportion(0.5f)
                 .into(mTvAppVersion);
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
-        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), mImgUserImg);
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
         RxTextUtils.getBuilder(info.getUserName() + "\n")
-                .append("我在 Timetofit 第 " + info.getRegisterTime() + " 天").setProportion(0.8f)
+                .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvUserName);
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));

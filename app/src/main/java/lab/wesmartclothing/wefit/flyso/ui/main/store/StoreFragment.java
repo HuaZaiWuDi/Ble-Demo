@@ -2,11 +2,8 @@ package lab.wesmartclothing.wefit.flyso.ui.main.store;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -15,7 +12,6 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
@@ -37,15 +33,23 @@ public class StoreFragment extends BaseWebFragment {
 
 
     @Override
-    public void initData() {
-
+    protected void initViews() {
+        super.initViews();
+        initTopBar();
     }
 
-    public void initView() {
-        initTopBar();
+
+    @Override
+    protected void onVisible() {
+        super.onVisible();
         initWebView(mParent);
     }
 
+
+    @Override
+    protected int layoutId() {
+        return R.layout.fragment_shore;
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -96,16 +100,6 @@ public class StoreFragment extends BaseWebFragment {
                 RxLogUtils.d("页面开始");
             }
         };
-    }
-
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = View.inflate(getContext(), R.layout.fragment_shore, null);
-        ButterKnife.bind(this, view);
-        initView();
-        return view;
     }
 
 

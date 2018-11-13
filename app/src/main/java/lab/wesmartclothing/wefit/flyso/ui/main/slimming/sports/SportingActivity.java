@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -30,7 +31,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
-import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
@@ -162,14 +162,45 @@ public class SportingActivity extends BaseActivity {
         filter.addAction(Key.ACTION_CLOTHING_CONNECT);
         filter.addAction(Key.ACTION_CLOTHING_STOP);
         registerReceiver(registerReceiver, filter);
+
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
+
+        XAxis xAxis = mChartHeartRate.getXAxis();
+        xAxis.setAxisMaximum(30);
+        mChartHeartRate.invalidate();
+
         mLayoutLegend.setVisibility(View.GONE);
 
         RxTextUtils.getBuilder("0.0")
                 .append("kcal").setProportion(0.5f)
                 .into(mTvKcal);
-
     }
+
+
+    float text = 100;
+    boolean b = false;
+    MyTimer test = new MyTimer(500, 100, new MyTimerListener() {
+        @Override
+        public void enterTimer() {
+            if (mChartHeartRate.getData().getEntryCount() > 30) {
+                XAxis xAxis = mChartHeartRate.getXAxis();
+                xAxis.resetAxisMaximum();
+            }
+
+            if (mChartHeartRate.getData().getEntryCount() % 100 == 0) {
+                b = !b;
+            } else if (mChartHeartRate.getData().getEntryCount() % 49 == 0) {
+                b = !b;
+            }
+            if (b) {
+                text++;
+            } else {
+                text--;
+            }
+            lineChartUtils.setRealTimeData(text);
+        }
+    });
+
 
     private void initVerticalText() {
         mTvVerticalText.setText(11, 0, ContextCompat.getColor(mContext, R.color.GrayWrite));
@@ -219,6 +250,12 @@ public class SportingActivity extends BaseActivity {
                         timer.startTimer();
 
                         lineChartUtils.setRealTimeData(sportsDataTab.getCurHeart());
+
+                        if (mChartHeartRate.getData().getEntryCount() > 30) {
+                            XAxis xAxis = mChartHeartRate.getXAxis();
+                            xAxis.resetAxisMaximum();
+                        }
+
 
                         HeartRateTab heartRateTab = new HeartRateTab();
                         heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
@@ -437,16 +474,16 @@ public class SportingActivity extends BaseActivity {
             RxActivityUtils.finishActivity();
         } else if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
-            new RxDialogSure(mContext)
+            new RxDialogSureCancel(mContext)
                     .setTitle("运动提示")
-                    .setContent("您当前运动时间过短，此次运动记录将不会被保存！")
+                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                    .setSure("确定")
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             RxActivityUtils.finishActivity();
                         }
-                    })
-                    .show();
+                    }).show();
         } else {
             //用户运动到达合理时间，想要退出，提示用户是否结束当前运动
             new RxDialogSureCancel(mContext)

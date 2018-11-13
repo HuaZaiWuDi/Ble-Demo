@@ -287,7 +287,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="101dp"
                     android:layout_marginTop="8dp"
-                    android:text="让 你 健 康 瘦\ntimetofit v1.0"
                     android:textColor="@color/white"
                     android:textSize="14sp"/>
 
@@ -704,8 +703,8 @@
                         android:id="@+id/mLineChart"
                         android:layout_width="match_parent"
                         android:layout_height="115dp"
+                        android:layout_below="@+id/tv_currentWeight"
                         android:layout_marginLeft="45dp"
-                        android:layout_marginTop="16dp"
                         android:layout_marginRight="16dp"
                         android:layout_marginBottom="16dp"
                         android:focusable="false"
@@ -716,7 +715,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_margin="23dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginRight="23dp"
                         android:textColor="@color/green_61D97F"
                         android:textSize="24sp"
                         tools:text="166"/>
@@ -1489,7 +1489,6 @@
                     android:layout_marginLeft="8dp"
                     android:layout_toRightOf="@+id/img_userImg3"
                     android:lineSpacingExtra="4dp"
-                    android:text="周大兔\n我在 timetofit 第 6 天"
                     android:textColor="@color/white"
                     android:textSize="12sp"/>
 

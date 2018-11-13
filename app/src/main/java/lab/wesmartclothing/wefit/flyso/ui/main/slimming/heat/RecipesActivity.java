@@ -92,7 +92,7 @@ public class RecipesActivity extends BaseActivity {
 
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
     private int totalKcal = 0;
-
+    private UserInfo info;
 
     @Override
     protected int layoutId() {
@@ -116,9 +116,10 @@ public class RecipesActivity extends BaseActivity {
 
     private void initRecycler() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        info = MyAPP.getGson().fromJson(string, UserInfo.class);
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
-        mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), "推荐食材"));
+
+        mTvDietitianName.setText("营养师 " + SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""));
         mMRecyclerBreakfast.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerLunch.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerDinner.setLayoutManager(new LinearLayoutManager(mContext));
@@ -140,7 +141,6 @@ public class RecipesActivity extends BaseActivity {
     @Override
     protected void initNetData() {
         super.initNetData();
-
         foodRecipes(System.currentTimeMillis());
 
     }
@@ -172,6 +172,7 @@ public class RecipesActivity extends BaseActivity {
                                     .append(totalKcal + "").setProportion(1.5f)
                                     .append("kcal")
                                     .into(mTvTotalKcal);
+                            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
                         }
                         mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
                         mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);

@@ -375,26 +375,13 @@ public class WeightRecordFragment extends BaseActivity {
     }
 
 
-    @OnClick({R.id.layout_sportTip, R.id.tv_settingTarget, R.id.layout_sports})
+    @OnClick({R.id.layout_sports})
     public void onViewClicked(View view) {
         if (view.getId() == R.id.layout_sports) {
             if (list == null || list.size() == 0) return;
             bundle.putString(Key.BUNDLE_DATA_GID, currentGid);
             bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
             RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
-        } else {
-            //上一次体重为0则表示用户没有上称
-            if (lastWeight == 0) {
-                RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
-                return;
-            }
-            if (isSettingTargetWeight) {
-                //跳转初始体重详情
-                RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class, bundle);
-            } else {
-                //传递初始体重信息
-                RxActivityUtils.skipActivity(mContext, SettingTargetFragment.class, bundle);
-            }
         }
     }
 

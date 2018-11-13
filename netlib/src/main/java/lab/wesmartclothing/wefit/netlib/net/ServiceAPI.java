@@ -43,6 +43,16 @@ public class ServiceAPI {
     public static String Shopping_Address = "http://10.10.11.208:15111";
 
 
+    //新闻课程
+    public static String SHARE_ROOT = "";
+
+    //查看报告地址
+    public static String SHARE_INFORM_URL = "";
+
+    //app下载链接
+    public static String APP_DOWN_LOAD_URL = "";
+
+
     //发现URL   判断网址是否隐藏底部导航栏，需要网址后面加/
     public static String FIND_Addr = "http://39.108.152.50:8088/find/";
 //    public static String FIND_Addr = "http://10.10.11.208:8208/";

@@ -19,8 +19,8 @@ import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -46,11 +46,13 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
@@ -61,11 +63,11 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFr
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
-import lab.wesmartclothing.wefit.flyso.ui.toolui.Main2Activity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -118,7 +120,7 @@ public class SlimmingFragment extends BaseAcFragment {
     TextView mTvTargetWeight;
     @BindView(R.id.layout_slimmingTerget)
     LinearLayout mLayoutSlimmingTerget;
-    @BindView(R.id.layout_recipes)
+    @BindView(R.id.layout_gotoRecipes)
     RelativeLayout mImgRecipes;
     @BindView(R.id.tv_IngestionHeat)
     TextView mTvIngestionHeat;
@@ -258,9 +260,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
         }
-
         getData();
-
     }
 
 
@@ -313,6 +313,49 @@ public class SlimmingFragment extends BaseAcFragment {
                         initNetData();
                     }
                 });
+
+        RxBus.getInstance().register2(SportsDataTab.class)
+                .compose(RxComposeUtils.<SportsDataTab>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<SportsDataTab>() {
+                    @Override
+                    protected void _onNext(SportsDataTab sportsDataTab) {
+                        if (BleService.clothingFinish
+                                && !"SportingActivity".equals(RxActivityUtils.currentActivity().getClass().getSimpleName())
+                                && !"PlanSportingActivity".equals(RxActivityUtils.currentActivity().getClass().getSimpleName())) {
+                            BleService.clothingFinish = false;
+                            if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                                RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+                                        .setContent("瘦身衣已连接，是否立即开始运动？")
+                                        .setCancel("自由运动")
+                                        .setCancelListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
+                                            }
+                                        })
+                                        .setSure("课程运动")
+                                        .setSureListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class);
+                                            }
+                                        });
+                                rxDialog.show();
+                            } else {
+                                RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+                                        .setContent("瘦身衣已连接，是否开始自由运动？")
+                                        .setSure("进入")
+                                        .setSureListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
+                                            }
+                                        });
+                                rxDialog.show();
+                            }
+                        }
+                    }
+                });
     }
 
 
@@ -328,9 +371,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Logger.json(s);
                         bean = JSON.parseObject(s, PlanBean.class);
-                        RxLogUtils.d("是否运行：" + bean);
                         updateUI();
                     }
 
@@ -361,7 +402,13 @@ public class SlimmingFragment extends BaseAcFragment {
      * @param athlPlanList
      */
     private void toDaySporting(List<AthlPlanListBean> athlPlanList) {
-        if (athlPlanList == null || athlPlanList.isEmpty()) return;
+        if (athlPlanList == null || athlPlanList.isEmpty()) {
+            mLayoutLineChart.setBackgroundResource(R.mipmap.bg_custom_plam);
+            return;
+        } else {
+            mLayoutLineChart.setBackground(null);
+        }
+
         int sunTime = 0;
         for (AthlPlanListBean bean : athlPlanList) {
             sunTime += bean.getDuration();
@@ -420,8 +467,14 @@ public class SlimmingFragment extends BaseAcFragment {
      */
     private void notifyData() {
         mIvNotify.setBackgroundResource(bean.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
-        mTvNutrition.setText(bean.getDietPlanBelongUser() + "老师 为您推挤搭配");
-        mTvBodybuilding.setText(bean.getAthlPlanBelongUser() + "老师 为您定制课程");
+        SPUtils.put(SPKey.SP_DIET_PLAN_USER, bean.getDietPlanBelongUser());
+        SPUtils.put(SPKey.SP_ATHL_PLAN_USER, bean.getAthlPlanBelongUser());
+
+        mTvNutrition.setText(getString(R.string.dietPlanUser, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, "")));
+        mTvBodybuilding.setText(getString(R.string.athlPlanUser, SPUtils.getString(SPKey.SP_ATHL_PLAN_USER, "")));
+
+        Logger.d("营养师：" + bean.getDietPlanBelongUser());
+        Logger.d("健身教练：" + bean.getAthlPlanBelongUser());
     }
 
     /**
@@ -480,10 +533,10 @@ public class SlimmingFragment extends BaseAcFragment {
     private void toDayWeight(PlanBean.WeightChangeVOBean weightChangeVO) {
         if (bean.getWeightChangeVO() == null || bean.getWeightChangeVO().getWeight() == null)
             return;
-        double weight = weightChangeVO.getWeight().getWeight();
+        double weight = RxFormatValue.format4S5R(weightChangeVO.getWeight().getWeight(), 1);
         boolean hasInitialWeight = bean.getWeightChangeVO().isHasInitialWeight();
-        double maxNormalWeight = bean.getMaxNormalWeight();
-        double minNormalWeight = bean.getMinNormalWeight();
+        double maxNormalWeight = RxFormatValue.format4S5R(bean.getMaxNormalWeight(), 1);
+        double minNormalWeight = RxFormatValue.format4S5R(bean.getMinNormalWeight(), 1);
 
         if (weight > minNormalWeight && minNormalWeight <= maxNormalWeight) {
             mTvWeightStatus.setText("标准");
@@ -596,9 +649,8 @@ public class SlimmingFragment extends BaseAcFragment {
      */
     private void slimmingTarget() {
         if (bean.getTargetInfo() == null || bean.getWeightChangeVO() == null) return;
-        Logger.d("当前时间：" + RxTimeUtils.milliseconds2String(bean.getTargetInfo().getTargetDate()));
         mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
-        RxTextUtils.getBuilder(bean.getWeightChangeVO().getWeight().getWeight() + "")
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1) + "")
                 .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
 
         RxTextUtils.getBuilder("起始体重\n")
@@ -650,7 +702,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mCardCurriculumSporting.setVisibility(View.GONE);
             mBtnGoBindClothing.setText(R.string.goBind);
             mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
-        } else if (planState == 0) {
+        } else if (planState != 3) {
             mLayoutClothingDefault.setVisibility(View.VISIBLE);
             mCardFreeSporting.setVisibility(View.GONE);
             mCardCurriculumSporting.setVisibility(View.GONE);
@@ -658,11 +710,6 @@ public class SlimmingFragment extends BaseAcFragment {
             mTvClothingTip.setText("今天还没运动哦~");
             mBtnGoBindClothing.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.orange_FF7200));
         } else {
-            if (planState != 3) {
-                mLayoutLineChart.setBackgroundResource(R.mipmap.bg_custom_plam);
-            } else {
-                mLayoutLineChart.setBackground(null);
-            }
             mLayoutClothingDefault.setVisibility(View.GONE);
             mCardFreeSporting.setVisibility(View.VISIBLE);
             mCardCurriculumSporting.setVisibility(View.VISIBLE);
@@ -689,7 +736,6 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.img_seeRecord,
             R.id.img_planMark,
             R.id.resetTarget,
-            R.id.layout_recipes,
             R.id.layout_breakfast,
             R.id.layout_lunch,
             R.id.layout_dinner,
@@ -701,9 +747,11 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.btn_goBind_clothing,
             R.id.layout_gotoPlanSporting,
             R.id.img_weight_tip,
-            R.id.img_sporting_tip
+            R.id.img_sporting_tip,
+            R.id.img_Recipes,
     })
     public void onViewClicked(View view) {
+        RxLogUtils.d("点击");
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.iv_userImg:
@@ -714,10 +762,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.img_seeRecord:
                 if (bean.getPlanState() == 3) {
-//                    bundle.putString(Key.BUNDLE_TITLE, "timetofit健康报告");
-//                    bundle.putString(Key.BUNDLE_WEB_URL, "");
-//                    RxActivityUtils.skipActivity(mContext, WebTitleActivity.class, bundle);
-                    RxActivityUtils.skipActivity(mContext, Main2Activity.class);
+                    RxActivityUtils.skipActivity(mContext, PlanWebActivity.class);
                 } else if (bean.getPlanState() != 0) {
                     bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
                     RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
@@ -729,7 +774,7 @@ public class SlimmingFragment extends BaseAcFragment {
             case R.id.resetTarget:
                 RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
                 break;
-            case R.id.layout_recipes:
+            case R.id.img_Recipes:
                 RxActivityUtils.skipActivity(mContext, RecipesActivity.class);
                 break;
             case R.id.layout_breakfast:
@@ -771,29 +816,28 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, SportingActivity.class);
                 break;
             case R.id.tv_curriculumSporting:
-                if (bean.getPlanState() != 3) {
-                    bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
-                    RxActivityUtils.skipActivity(mContext, PlanActivity.class, bundle);
-                } else if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
                     bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
                     //进入实时运动界面，定制课程
                     RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                } else {
+                    bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
+                    RxActivityUtils.skipActivity(mContext, PlanActivity.class, bundle);
                 }
                 break;
             case R.id.layout_gotoPlanSporting:
-                if (bean.getPlanState() != 3) {
-                    showFreeSportDialog();
-                } else if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
                     bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
                     //进入实时运动界面，定制课程
                     RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                } else {
+                    showFreeSportDialog();
                 }
                 break;
             case R.id.img_weight_tip:
                 new RxDialogSure(mContext)
                         .setTitle("今日体重")
                         .setContent("今日体重是您今日使用体脂秤称重获得的数据，数据变化趋势是与您第一次称重数据进行对比")
-
                         .show();
                 break;
             case R.id.img_sporting_tip:

@@ -30,7 +30,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
-import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
@@ -136,12 +135,7 @@ public class PlanSportingActivity extends BaseActivity {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                //瘦身衣运动结束
-                if (mContext == null) return;
-                timer.stopTimer();
-                currentTime = 0;
-                speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
-                saveHeartRate();
+                sportingFinish(currentTime == planList.get(planList.size() - 1).getTime() * 60);
             }
         }
     };
@@ -318,11 +312,22 @@ public class PlanSportingActivity extends BaseActivity {
 
         //运动结束
         if (currentTime == planList.get(planList.size() - 1).getTime() * 60) {
+            sportingFinish(true);
+        }
+    }
+
+    //瘦身衣运动结束
+    private void sportingFinish(boolean isComplete) {
+        if (mContext == null) return;
+        if (isComplete) {
             speakAdd("好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！本次训练共计燃烧"
                     + Number2Chinese.number2Chinese(sportingKcal) + "卡路里，请继续保持。");
-            timer.stopTimer();
-            saveHeartRate();
+        } else {
+            speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
         }
+        timer.stopTimer();
+        currentTime = 0;
+        saveHeartRate();
     }
 
 
@@ -548,16 +553,16 @@ public class PlanSportingActivity extends BaseActivity {
             RxActivityUtils.finishActivity();
         } else if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
-            new RxDialogSure(mContext)
+            new RxDialogSureCancel(mContext)
                     .setTitle("运动提示")
-                    .setContent("您当前运动时间过短，此次运动记录将不会被保存！")
+                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                    .setSure("确定")
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             RxActivityUtils.finishActivity();
                         }
-                    })
-                    .show();
+                    }).show();
         } else {
             new RxDialogSureCancel(mContext)
                     .setContent("运动未结束，是否保存数据？")
@@ -565,11 +570,12 @@ public class PlanSportingActivity extends BaseActivity {
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            saveHeartRate();
+                            sportingFinish(currentTime == planList.get(planList.size() - 1).getTime() * 60);
                         }
                     }).show();
         }
     }
+
 
     public void saveHeartRate() {
         String[] split = mTvHeartCount.getText().toString().split("/");

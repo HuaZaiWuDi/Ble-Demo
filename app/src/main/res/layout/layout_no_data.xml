@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="39dp"
-        android:text="跟着timetofit"
+        android:text="@string/follow"
         android:textColor="@color/GrayWrite"
         android:textSize="13sp"/>
 

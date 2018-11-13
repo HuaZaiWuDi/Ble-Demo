@@ -58,7 +58,6 @@
                     android:layout_marginLeft="8dp"
                     android:layout_toRightOf="@+id/img_userImg"
                     android:lineSpacingExtra="4dp"
-                    android:text="周大兔\n我在 timetofit 第 6 天"
                     android:textColor="@color/white"
                     android:textSize="12sp"/>
 
@@ -1034,7 +1033,6 @@
                     android:layout_marginLeft="158dp"
                     android:layout_marginTop="54dp"
                     android:lineSpacingExtra="4dp"
-                    android:text="让 你 健 康 瘦\ntimetofit v1.0"
                     android:textColor="@color/white"
                     android:textSize="14sp"/>
 

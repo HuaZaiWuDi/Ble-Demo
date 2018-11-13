@@ -84,6 +84,7 @@ public class ShareUtil {
                         mShareImageObject, activity, mShareListener);
                 break;
         }
+
     }
 
     public static void shareText(Context context, @SharePlatform.Platform int platform, String text,
@@ -156,8 +157,8 @@ public class ShareUtil {
                 ShareLogger.e(INFO.HANDLE_DATA_NULL);
             }
         } else {
-            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码："+data.toString());
-            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码："+mShareInstance);
+            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码：" + data.toString());
+            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码：" + mShareInstance);
         }
     }
 
@@ -290,4 +291,9 @@ public class ShareUtil {
             mShareListener.shareRequest();
         }
     }
+
+    static void finish(Activity activity) {
+        activity.finish();
+    }
+
 }

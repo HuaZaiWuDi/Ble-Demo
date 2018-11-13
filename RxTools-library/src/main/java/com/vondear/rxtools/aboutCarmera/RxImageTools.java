@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Base64;
 import android.view.View;
+import android.webkit.WebView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -413,6 +414,34 @@ public class RxImageTools {
         return bmp;
     }
 
+    /**
+     * 截WebView
+     *
+     * @param webView
+     * @return
+     */
+    public static Bitmap WebView2Bitmap(WebView webView) {
+        int height = (int) (webView.getContentHeight() * webView.getScale());
+        int width = webView.getWidth();
+        int pH = webView.getHeight();
+        Bitmap bm = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bm);
+        int top = height;
+        while (top > 0) {
+            if (top < pH) {
+                top = 0;
+            } else {
+                top -= pH;
+            }
+            canvas.save();
+            canvas.clipRect(0, top, width, top + pH);
+            webView.scrollTo(0, top);
+            webView.draw(canvas);
+            canvas.restore();
+        }
+        return bm;
+    }
+
 
     public static Bitmap convertViewToBitmap(View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
@@ -447,6 +476,8 @@ public class RxImageTools {
             if (!f.exists()) {
                 f.getParentFile().mkdirs();
                 f.createNewFile();
+            } else {
+                return f;
             }
             FileOutputStream out = new FileOutputStream(f);
             bm.compress(Bitmap.CompressFormat.PNG, 90, out);

@@ -60,7 +60,7 @@ public class UserInfo implements Serializable {
     }
 
     public long getRegisterTime() {
-        return RxTimeUtils.getIntervalTime(System.currentTimeMillis(), registerTime, RxConstUtils.TimeUnit.DAY);
+        return RxTimeUtils.getIntervalTime(System.currentTimeMillis(), registerTime, RxConstUtils.TimeUnit.DAY) + 1;
     }
 
     public void setRegisterTime(long registerTime) {
