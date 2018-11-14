@@ -53,6 +53,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
@@ -219,8 +220,7 @@ public class SportingActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-        if (!BleTools.getBleManager().isBlueEnable())
-            BleTools.getBleManager().enableBluetooth();
+
     }
 
 
@@ -263,6 +263,16 @@ public class SportingActivity extends BaseActivity {
                         heartRateTab.setStepTime(2);
                         heartRateTab.setIsfree(true);
                         heartLists.add(heartRateTab);
+
+                        //如果上传失败则保存本地
+                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, heartLists, CacheTarget.Disk)
+                                .subscribe(new RxSubscriber<Boolean>() {
+                                    @Override
+                                    protected void _onNext(Boolean aBoolean) {
+                                        RxLogUtils.d("心率保存成功");
+                                    }
+                                });
+
                         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 
                         freeTextSpeak(sportsDataTab.getCurHeart());
@@ -443,6 +453,7 @@ public class SportingActivity extends BaseActivity {
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
+                        new HeartRateUtil().clearData(mHeartRateBean);
 
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_DATA_GID, s);
@@ -453,14 +464,7 @@ public class SportingActivity extends BaseActivity {
                     @Override
                     protected void _onError(String error) {
                         super._onError(error);
-                        //如果上传失败则保存本地
-                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, heartLists, CacheTarget.Disk)
-                                .subscribe(new RxSubscriber<Boolean>() {
-                                    @Override
-                                    protected void _onNext(Boolean aBoolean) {
-                                        RxLogUtils.d("心率保存成功");
-                                    }
-                                });
+                        RxToast.normal("保存失败");
                         RxActivityUtils.finishActivity();
                     }
                 });

@@ -87,7 +87,6 @@ public class BarVerticalChart extends View {
         float top = mHeight - progressHeight > mHeight - round * 2 ? mHeight - round * 2 : mHeight - progressHeight;
 
 
-
         rf.left = mWidth / 2 - barWidth / 2;
         rf.top = top;
         rf.right = mWidth / 2 + barWidth / 2;

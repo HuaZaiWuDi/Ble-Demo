@@ -271,13 +271,12 @@ public class MainActivity extends BaseALocationActivity {
     }
 
     private void initRxBus() {
-
         RxBus.getInstance().register2(GoToFind.class)
                 .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<GoToFind>() {
                     @Override
                     protected void _onNext(GoToFind s) {
-                        mViewpager.setCurrentItem(1, true);
+                        mViewpager.setCurrentItem(2, true);
                     }
                 });
     }

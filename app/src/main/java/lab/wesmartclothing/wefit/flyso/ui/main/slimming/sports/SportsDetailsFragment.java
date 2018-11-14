@@ -398,24 +398,29 @@ public class SportsDetailsFragment extends BaseActivity {
         int totalKcal = restCalorie + warmCalorie + greaseCalorie + aerobicCalorie + anaerobicCalorie + limitCalorie;
 
         if (totalKcal == 0) return;
-
         mBarCalm.setProgress(restCalorie * 100 / totalKcal);
-        mTvCalm.setText((int) (restCalorie * 100 / totalKcal) + "%");
+        if (restCalorie * 100 / totalKcal > 0)
+            mTvCalm.setText((int) (restCalorie * 100 / totalKcal) + "%");
 
         mBarWarm.setProgress(warmCalorie * 100 / totalKcal);
-        mTvWarm.setText((int) (warmCalorie * 100 / totalKcal) + "%");
+        if (warmCalorie * 100 / totalKcal > 0)
+            mTvWarm.setText((int) (warmCalorie * 100 / totalKcal) + "%");
 
         mBarGrease.setProgress(greaseCalorie * 100 / totalKcal);
-        mTvGrease.setText(((int) greaseCalorie * 100 / totalKcal) + "%");
+        if (greaseCalorie * 100 / totalKcal > 0)
+            mTvGrease.setText(((int) greaseCalorie * 100 / totalKcal) + "%");
 
         mBarAerobic.setProgress(aerobicCalorie * 100 / totalKcal);
-        mTvAerobic.setText(((int) aerobicCalorie * 100 / totalKcal) + "%");
+        if (aerobicCalorie * 100 / totalKcal > 0)
+            mTvAerobic.setText(((int) aerobicCalorie * 100 / totalKcal) + "%");
 
         mBarAnaerobic.setProgress(anaerobicCalorie * 100 / totalKcal);
-        mTvAnaerobic.setText(((int) anaerobicCalorie * 100 / totalKcal) + "%");
+        if (anaerobicCalorie * 100 / totalKcal > 0)
+            mTvAnaerobic.setText(((int) anaerobicCalorie * 100 / totalKcal) + "%");
 
         mBarLimit.setProgress(limitCalorie * 100 / totalKcal);
-        mTvLimit.setText(((int) limitCalorie * 100 / totalKcal) + "%");
+        if (limitCalorie * 100 / totalKcal > 0)
+            mTvLimit.setText(((int) limitCalorie * 100 / totalKcal) + "%");
     }
 
     private void heartRateStatistics(List<SportingDetailBean.RealAthlListBean> realAthlList) {

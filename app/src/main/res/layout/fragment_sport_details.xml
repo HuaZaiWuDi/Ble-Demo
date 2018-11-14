@@ -264,7 +264,7 @@
                 android:layout_marginLeft="37dp"
                 android:layout_marginRight="37dp"
                 android:orientation="horizontal"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
 
                 <RelativeLayout
@@ -289,7 +289,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        android:text="0%"
+                        tools:text="0%"
                         android:textColor="@color/white"
                         android:textSize="10sp"/>
 
@@ -317,7 +317,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        android:text="0%"
+                        tools:text="0%"
                         android:textColor="@color/white"
                         android:textSize="10sp"/>
 
@@ -345,7 +345,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        android:text="0%"
+                        tools:text="0%"
                         android:textColor="@color/white"
                         android:textSize="10sp"/>
 
@@ -373,7 +373,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        android:text="0%"
+                        tools:text="0%"
                         android:textColor="@color/white"
                         android:textSize="10sp"/>
 
@@ -401,7 +401,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        android:text="0%"
+                        tools:text="0%"
                         android:textColor="@color/white"
                         android:textSize="10sp"/>
 
@@ -429,7 +429,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        android:text="0%"
+                        tools:text="0%"
                         android:textColor="@color/white"
                         android:textSize="10sp"/>
 

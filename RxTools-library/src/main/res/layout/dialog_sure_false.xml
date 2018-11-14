@@ -27,7 +27,9 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:visibility="gone"/>
+        android:textSize="18sp"
+        tools:text="111"
+        />
 
     <TextView
         android:id="@+id/tv_content"
@@ -37,11 +39,9 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:gravity="center"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
         android:text="是否退出登录？"
         android:textColor="#574D5F"
-        android:textSize="18dp"/>
+        android:textSize="13dp"/>
 
     <TextView
         android:id="@+id/textView12"

@@ -126,14 +126,8 @@ public class HeartRateUtil {
                 .subscribe(new RxSubscriber<List<HeartRateTab>>() {
                     @Override
                     protected void _onNext(List<HeartRateTab> heartRateTabs) {
-                        List<HeartRateTab> unFreeLists = new ArrayList<>();
-                        for (HeartRateTab tab : heartRateTabs) {
-                            if (!tab.isIsfree()) {
-                                unFreeLists.add(tab);
-                            }
-                        }
-                        if (!unFreeLists.isEmpty()) {
-                            mHeartRateBean.setHeartList(unFreeLists);
+                        if (!heartRateTabs.isEmpty()) {
+                            mHeartRateBean.setHeartList(heartRateTabs);
                             mHeartRateBean.setPlanFlag(1);
                             saveHeartRate(mHeartRateBean);
                         }
@@ -144,14 +138,8 @@ public class HeartRateUtil {
                 .subscribe(new RxSubscriber<List<HeartRateTab>>() {
                     @Override
                     protected void _onNext(List<HeartRateTab> heartRateTabs) {
-                        List<HeartRateTab> isFreeLists = new ArrayList<>();
-                        for (HeartRateTab tab : heartRateTabs) {
-                            if (tab.isIsfree()) {
-                                isFreeLists.add(tab);
-                            }
-                        }
-                        if (!isFreeLists.isEmpty()) {
-                            mHeartRateBean.setHeartList(isFreeLists);
+                        if (!heartRateTabs.isEmpty()) {
+                            mHeartRateBean.setHeartList(heartRateTabs);
                             saveHeartRate(mHeartRateBean);
                         }
                     }
@@ -168,7 +156,7 @@ public class HeartRateUtil {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
-                        clearData();
+                        clearData(heartRateBean);
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
                         if (BuildConfig.DEBUG)
@@ -178,9 +166,12 @@ public class HeartRateUtil {
                 });
     }
 
-    public void clearData() {
-        RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_PLAN);
-        RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_FREE);
+    public void clearData(HeartRateBean heartRateBean) {
+        if (heartRateBean.getPlanFlag() == 1) {
+            RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_PLAN);
+        } else {
+            RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_FREE);
+        }
     }
 
 }

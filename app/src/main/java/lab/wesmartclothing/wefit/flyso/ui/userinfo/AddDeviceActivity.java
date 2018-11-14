@@ -134,7 +134,6 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void startScan() {
         if (!BleTools.getBleManager().isBlueEnable()) {
-            RxToast.warning(getString(R.string.open_BLE));
             BleTools.getBleManager().enableBluetooth();
             return;
         }
@@ -339,7 +338,8 @@ public class AddDeviceActivity extends BaseActivity {
         }
         scanDevice.put(bean.getMac(), bean);
 
-        switchStatus(STATUS_FIND_DEVICE);
+        if (scanDevice.size() == 1)
+            switchStatus(STATUS_FIND_DEVICE);
         scanTimeout.stopTimer();
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -410,7 +410,6 @@ public class AddDeviceActivity extends BaseActivity {
             case STATUS_NO_DEVICE:
                 mTvTitle.setText("扫描设备失败");
                 mTvDetails.setText("没有搜索到设备，请确保设备电量充足");
-                RxToast.warning(getString(R.string.checkBle));
                 mImgScan.clearAnimation();
                 mBtnScan.setEnabled(true);
                 mBtnScan.setVisibility(View.VISIBLE);
