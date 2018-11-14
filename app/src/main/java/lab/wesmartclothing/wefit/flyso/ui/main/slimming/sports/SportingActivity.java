@@ -53,6 +53,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -264,8 +265,24 @@ public class SportingActivity extends BaseActivity {
                         heartRateTab.setIsfree(true);
                         heartLists.add(heartRateTab);
 
+                        mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
+
+                        freeTextSpeak(sportsDataTab.getCurHeart());
+                        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
+                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
+
+                        currentKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600), 1);
+
+                        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(currentKcal, 1))
+                                .append("kcal").setProportion(0.5f)
+                                .into(mTvKcal);
+
+                        mHeartRateBean.setTotalCalorie(currentKcal);
+                        mHeartRateBean.setHeartList(heartLists);
+
+
                         //如果上传失败则保存本地
-                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, heartLists, CacheTarget.Disk)
+                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, mHeartRateBean, CacheTarget.Disk)
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
@@ -273,16 +290,6 @@ public class SportingActivity extends BaseActivity {
                                     }
                                 });
 
-                        mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
-
-                        freeTextSpeak(sportsDataTab.getCurHeart());
-                        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
-
-                        currentKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
-                        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportsDataTab.getKcal(), 1))
-                                .append("kcal").setProportion(0.5f)
-                                .into(mTvKcal);
                     }
                 });
     }
@@ -436,7 +443,6 @@ public class SportingActivity extends BaseActivity {
     }
 
     public void saveHeartRate() {
-        mHeartRateBean.setHeartList(heartLists);
         String s = MyAPP.getGson().toJson(mHeartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

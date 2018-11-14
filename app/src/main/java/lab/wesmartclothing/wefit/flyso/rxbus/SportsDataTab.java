@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
+import com.vondear.rxtools.dateUtils.RxFormat;
+
 import java.util.List;
 
 /**
@@ -177,8 +179,7 @@ public class SportsDataTab {
     @Override
     public String toString() {
         return "SportsDataTab{" +
-                ", steps=" + steps +
-                ", duration=" + duration +
+                " steps=" + steps +
                 ", kcal=" + kcal +
                 ", maxHeart=" + maxHeart +
                 ", minHeart=" + minHeart +
@@ -188,7 +189,7 @@ public class SportsDataTab {
                 ", lightColor=" + byte2Color(lightColor) +
                 ", temp=" + temp + "°C" +
                 ", voltage=" + voltage +
-                ", date='" + date + '\'' +
+                ", date='" + RxFormat.setFormatDate(date, RxFormat.Date_Date) + '\'' +
                 '}';
     }
 }

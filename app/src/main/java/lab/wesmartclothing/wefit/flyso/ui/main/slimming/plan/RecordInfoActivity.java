@@ -16,7 +16,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -150,9 +149,9 @@ public class RecordInfoActivity extends BaseActivity {
         );
         gridView.setLayoutParams(params);
 
-        gridAdapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_record_grid) {
+        gridAdapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_record_grid) {
             @Override
-            protected void convert(BaseViewHolder helper, String item) {
+            protected void convert(BaseViewHolder helper, Object item) {
                 MyAPP.sImageLoader.displayImage(mActivity, item, R.drawable.ic_default_image,
                         (ImageView) helper.getView(R.id.img_item));
             }
@@ -161,10 +160,11 @@ public class RecordInfoActivity extends BaseActivity {
         gridView.setAdapter(gridAdapter);
         gridView.setNestedScrollingEnabled(false);
 
-//        gridAdapter.addData(R.mipmap.slimming_1);
-//        gridAdapter.addData(R.mipmap.slimming_2);
-//        gridAdapter.addData(R.mipmap.slimming_3);
-//        gridAdapter.addData(R.mipmap.slimming_4);
+
+        gridAdapter.addData(R.mipmap.slimming_1);
+        gridAdapter.addData(R.mipmap.slimming_2);
+        gridAdapter.addData(R.mipmap.slimming_3);
+        gridAdapter.addData(R.mipmap.slimming_4);
 
     }
 
@@ -203,15 +203,21 @@ public class RecordInfoActivity extends BaseActivity {
         QuestionListBean question = this.listBean.get((currentIndex - 1) % listBean.size());
         mTvInfoTitle.setText(question.getQuestion());
         adapter.setNewData(question.getOptionList());
-        if (!RxDataUtils.isNullString(question.getImgUrl())) {
-            String[] imgUrls = question.getImgUrl().split(",");
-            for (String url : imgUrls) {
-                gridAdapter.addData(url);
-            }
+
+        if (currentIndex == 2) {
             adapter.addHeaderView(gridView);
         } else {
             adapter.removeHeaderView(gridView);
         }
+//        if (!RxDataUtils.isNullString(question.getImgUrl())) {
+//            String[] imgUrls = question.getImgUrl().split(",");
+//            for (String url : imgUrls) {
+//                gridAdapter.addData(url);
+//            }
+//
+//        } else {
+//
+//        }
     }
 
 

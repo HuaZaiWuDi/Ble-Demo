@@ -47,6 +47,41 @@ public class AthlPlanListBean {
         return heart_6;
     }
 
+    /**
+     * 获取区间中间值
+     *
+     * @return
+     */
+    public int getMidRange() {
+        byte[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0] & 0xff;
+        int heart_1 = heartRates[1] & 0xff;
+        int heart_2 = heartRates[2] & 0xff;
+        int heart_3 = heartRates[3] & 0xff;
+        int heart_4 = heartRates[4] & 0xff;
+        int heart_5 = heartRates[5] & 0xff;
+        int heart_6 = heartRates[6] & 0xff;
+
+        int midValue = (heartRates[6] & 0xff - heartRates[5] & 0xff) / 2;
+
+        switch (range) {
+            case 0://静息
+                return heart_0;
+            case 1://热身
+                return heart_1 + midValue;
+            case 2://燃脂
+                return heart_2 + midValue;
+            case 3://有氧
+                return heart_3 + midValue;
+            case 4://无氧
+                return heart_4 + midValue;
+            case 5://极限
+                return heart_5 + midValue;
+        }
+        return heart_6;
+    }
+
+
     public int getRange3() {
         return range;
     }

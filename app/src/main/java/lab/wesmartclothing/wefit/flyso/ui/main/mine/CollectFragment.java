@@ -214,7 +214,7 @@ public class CollectFragment extends BaseActivity {
                         //如果成功，刷新列表，不加载数据
                         adapter.remove(position);
                         if (adapter.getData().size() == 0) {
-                            adapter.setEmptyView(emptyView);
+                            smartRefreshLayout.autoRefresh();
                         }
                         RxBus.getInstance().post(new RefreshMe());
                     }
@@ -227,9 +227,7 @@ public class CollectFragment extends BaseActivity {
     }
 
     public void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.collectionList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("collectionList" + pageNum, String.class, CacheStrategy.firstRemote()))
@@ -239,8 +237,6 @@ public class CollectFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         CollectBean collectBean = MyAPP.getGson().fromJson(s, CollectBean.class);
                         List<CollectBean.ListBean> list = collectBean.getList();
-                        RxLogUtils.d("收藏信息：" + list.size());
-                        RxLogUtils.d("页码：" + pageNum);
                         if (pageNum == 1) {
                             adapter.setNewData(list);
                         } else {
@@ -254,6 +250,9 @@ public class CollectFragment extends BaseActivity {
                             smartRefreshLayout.finishRefresh(true);
                         smartRefreshLayout.setEnableLoadMore(collectBean.isHasNextPage());
                         if (adapter.getData().size() == 0) {
+                            smartRefreshLayout.autoRefresh();
+                        }
+                        if (collectBean.getTotal() == 0) {
                             adapter.setEmptyView(emptyView);
                         }
                     }

@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
-import com.google.gson.reflect.TypeToken;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -15,7 +14,6 @@ import java.util.List;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
-import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -39,7 +37,7 @@ import okhttp3.RequestBody;
 public class HeartRateUtil {
     private List<Integer> heartRateLists = new ArrayList<>();
     private int maxHeart = 0;//最大心率
-    private int minHeart = 0;//最小心率
+    private int minHeart = 200;//最小心率
     private double kcalTotal = 0;//总卡路里
     private int lastHeartRate = 0;//上一次的心率值
     private int realHeartRate = 0;//真实心率
@@ -121,27 +119,21 @@ public class HeartRateUtil {
 
 
     public void uploadHeartRate() {
-        RxCache.getDefault().<List<HeartRateTab>>load(Key.CACHE_ATHL_RECORD_PLAN, new TypeToken<List<HeartRateTab>>() {
-        }.getType()).map(new CacheResult.MapFunc<List<HeartRateTab>>())
-                .subscribe(new RxSubscriber<List<HeartRateTab>>() {
+        RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_PLAN, HeartRateBean.class)
+                .map(new CacheResult.MapFunc<HeartRateBean>())
+                .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
-                    protected void _onNext(List<HeartRateTab> heartRateTabs) {
-                        if (!heartRateTabs.isEmpty()) {
-                            mHeartRateBean.setHeartList(heartRateTabs);
-                            mHeartRateBean.setPlanFlag(1);
-                            saveHeartRate(mHeartRateBean);
-                        }
+                    protected void _onNext(HeartRateBean mHeartRateBean) {
+                        saveHeartRate(mHeartRateBean);
                     }
                 });
-        RxCache.getDefault().<List<HeartRateTab>>load(Key.CACHE_ATHL_RECORD_FREE, new TypeToken<List<HeartRateTab>>() {
-        }.getType()).map(new CacheResult.MapFunc<List<HeartRateTab>>())
-                .subscribe(new RxSubscriber<List<HeartRateTab>>() {
+
+        RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_FREE, HeartRateBean.class)
+                .map(new CacheResult.MapFunc<HeartRateBean>())
+                .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
-                    protected void _onNext(List<HeartRateTab> heartRateTabs) {
-                        if (!heartRateTabs.isEmpty()) {
-                            mHeartRateBean.setHeartList(heartRateTabs);
-                            saveHeartRate(mHeartRateBean);
-                        }
+                    protected void _onNext(HeartRateBean mHeartRateBean) {
+                        saveHeartRate(mHeartRateBean);
                     }
                 });
     }

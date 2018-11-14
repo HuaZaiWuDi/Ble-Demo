@@ -315,14 +315,14 @@ public class SlimmingFragment extends BaseAcFragment {
                     }
                 });
 
+
         RxBus.getInstance().register2(SportsDataTab.class)
                 .compose(RxComposeUtils.<SportsDataTab>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<SportsDataTab>() {
                     @Override
                     protected void _onNext(SportsDataTab sportsDataTab) {
                         if (BleService.clothingFinish
-                                && !"SportingActivity".equals(RxActivityUtils.currentActivity().getClass().getSimpleName())
-                                && !"PlanSportingActivity".equals(RxActivityUtils.currentActivity().getClass().getSimpleName())) {
+                                && "MainActivity".equals(RxActivityUtils.currentActivity().getClass().getSimpleName())) {
                             BleService.clothingFinish = false;
                             if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
                                 RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
@@ -688,11 +688,12 @@ public class SlimmingFragment extends BaseAcFragment {
             mLayoutSlimmingTerget.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.GONE);
         } else if (planState == 3) {
-            mImgRecipes.setVisibility(View.VISIBLE);
             mImgPlanMark.setVisibility(View.GONE);
+            mImgRecipes.setVisibility(View.VISIBLE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
             mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
         } else {
+            mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
         }
 

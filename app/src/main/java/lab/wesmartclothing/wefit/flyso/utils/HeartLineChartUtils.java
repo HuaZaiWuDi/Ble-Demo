@@ -192,46 +192,8 @@ public class HeartLineChartUtils {
 
     //定制计划线条
     public void setPlanLineData(List<AthlPlanListBean> planList) {
-        if (planList == null || planList.isEmpty()) return;
-        List<Entry> heartValues = new ArrayList<>();
-        int index = 0, value = 0;
-        int endYValue = 0, startYValue = 0, startXValue = 0, endXValue = 0;
-        for (int i = 0; i < planList.get(planList.size() - 1).getTime() * 60 / 2; i++) {
-
-            if (planList.get(index).getTime() * 60 / 2 == i) {
-                index++;
-                startYValue = endYValue;
-                startXValue = endXValue;
-            }
-            //心率区间
-            if (index == 0) {
-                AthlPlanListBean first = planList.get(0);
-                startYValue = Key.HRART_SECTION[1] & 0xff;
-                endYValue = first.getRange2();
-                startXValue = 0;
-                //区间后一个点
-                endXValue = first.getTime() * 60 / 2;
-                value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
-            } else {
-                AthlPlanListBean firstBean = planList.get(index - 1);
-                AthlPlanListBean nextBean = planList.get(index);
-                //区间后一个点
-                endXValue = nextBean.getTime() * 60 / 2;
-                //上升
-                if (firstBean.getRange3() - nextBean.getRange3() < 0) {
-                    endYValue = nextBean.getRange2();
-
-                    value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
-                } else if (firstBean.getRange3() - nextBean.getRange3() > 0) {
-                    //下降
-                    endYValue = nextBean.getRange();
-
-                    value = (endXValue - heartValues.size()) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + endYValue;
-                }
-            }
-            heartValues.add(new Entry(i, value));
-        }
-
+        List<Entry> heartValues = drawPlanLine(planList);
+        if (heartValues == null || heartValues.isEmpty()) return;
         LineDataSet defaultSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("heartPlan", true);
         if (defaultSet == null) {
             createDefaultSet(heartValues);
@@ -243,4 +205,103 @@ public class HeartLineChartUtils {
         mLineChart.invalidate();
     }
 
+
+    private List<Entry> drawPlanLine(List<AthlPlanListBean> planList) {
+        if (planList == null || planList.isEmpty()) return null;
+        List<Entry> heartValues = new ArrayList<>();
+        int index = 0, value = 0;
+        int endYValue = 0, startYValue = 0, startXValue = 0, endXValue = 0;
+        for (int i = 0; i < planList.get(planList.size() - 1).getTime() * 60 / 2; i++) {
+
+            if (planList.get(index).getTime() * 60 / 2 == i) {
+                index++;
+//                startYValue = endYValue;
+//                startXValue = endXValue;
+            }
+
+            //心率区间
+            if (index == 0) {
+                AthlPlanListBean first = planList.get(0);
+                if (i <= 30) {
+                    startYValue = Key.HRART_SECTION[0] & 0xff;
+                    endYValue = first.getMidRange();
+                    startXValue = 0;
+                    endXValue = 30;
+                    value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
+                } else if (i <= first.getTime() * 30) {
+                    value = first.getMidRange();
+                }
+            } else {
+                AthlPlanListBean firstBean = planList.get(index - 1);
+                AthlPlanListBean nextBean = planList.get(index);
+
+                startYValue = firstBean.getMidRange();
+                startXValue = firstBean.getTime() * 30;
+
+                if (i >= firstBean.getTime() * 30 && i <= firstBean.getTime() * 30 + 30) {
+                    //区间后一个点
+                    endXValue = firstBean.getTime() * 30 + 30;
+                    //上升
+                    if (firstBean.getRange3() - nextBean.getRange3() < 0) {
+                        endYValue = nextBean.getMidRange();
+
+                        value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
+                    } else if (firstBean.getRange3() - nextBean.getRange3() > 0) {
+                        //下降
+                        endYValue = nextBean.getMidRange();
+
+                        value = (endXValue - heartValues.size()) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + endYValue;
+                    }
+                } else if (i <= nextBean.getTime() * 30) {
+                    value = nextBean.getMidRange();
+                }
+            }
+            heartValues.add(new Entry(i, value));
+        }
+        return heartValues;
+    }
+
+
+//    private List<Entry> drawPlanLine(List<AthlPlanListBean> planList) {
+//        if (planList == null || planList.isEmpty()) return null;
+//        List<Entry> heartValues = new ArrayList<>();
+//        int index = 0, value = 0;
+//        int endYValue = 0, startYValue = 0, startXValue = 0, endXValue = 0;
+//        for (int i = 0; i < planList.get(planList.size() - 1).getTime() * 60 / 2; i++) {
+//
+//            if (planList.get(index).getTime() * 60 / 2 == i) {
+//                index++;
+//                startYValue = endYValue;
+//                startXValue = endXValue;
+//            }
+//            //心率区间
+//            if (index == 0) {
+//                AthlPlanListBean first = planList.get(0);
+//                startYValue = Key.HRART_SECTION[1] & 0xff;
+//                endYValue = first.getRange2();
+//                startXValue = 0;
+//                //区间后一个点
+//                endXValue = first.getTime() * 60 / 2;
+//                value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
+//            } else {
+//                AthlPlanListBean firstBean = planList.get(index - 1);
+//                AthlPlanListBean nextBean = planList.get(index);
+//                //区间后一个点
+//                endXValue = nextBean.getTime() * 60 / 2;
+//                //上升
+//                if (firstBean.getRange3() - nextBean.getRange3() < 0) {
+//                    endYValue = nextBean.getRange2();
+//
+//                    value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
+//                } else if (firstBean.getRange3() - nextBean.getRange3() > 0) {
+//                    //下降
+//                    endYValue = nextBean.getRange();
+//
+//                    value = (endXValue - heartValues.size()) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + endYValue;
+//                }
+//            }
+//            heartValues.add(new Entry(i, value));
+//        }
+//        return heartValues;
+//    }
 }

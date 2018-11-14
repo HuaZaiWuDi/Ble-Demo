@@ -491,6 +491,7 @@ public class BleService extends Service {
                 if (data.length < 17) return;
 
                 mHeartRateUtil.addRealTimeData(data);
+
             }
         });
     }

@@ -54,6 +54,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateToKcal;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -252,12 +253,13 @@ public class PlanSportingActivity extends BaseActivity {
 
                         currentHeart = sportsDataTab.getCurHeart();
 
-
                         mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
                         mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
-                        sportingKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
 
-                        RxTextUtils.getBuilder(sportingKcal + "")
+
+                        sportingKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600), 1);
+
+                        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingKcal, 1))
                                 .append("kcal").setProportion(0.5f)
                                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                                 .into(mTvSportskcal);
@@ -270,8 +272,19 @@ public class PlanSportingActivity extends BaseActivity {
                         heartRateTab.setIsfree(true);
                         heartLists.add(heartRateTab);
 
+
+                        String[] split = mTvHeartCount.getText().toString().split("/");
+                        double complete = RxDataUtils.stringToInt(split[0]) * 1f / RxDataUtils.stringToInt(split[1]);
+                        mHeartRateBean.setComplete(complete);
+                        mHeartRateBean.setPlanFlag(1);
+                        mHeartRateBean.setAthlScore(sportingScore);
+                        mHeartRateBean.setTotalCalorie(sportingKcal);
+                        mHeartRateBean.setHeartList(heartLists);
+                        mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
+
+
                         //如果上传失败则保存本地
-                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_PLAN, heartLists, CacheTarget.Disk)
+                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_PLAN, mHeartRateBean, CacheTarget.Disk)
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
@@ -279,7 +292,6 @@ public class PlanSportingActivity extends BaseActivity {
                                     }
                                 });
 
-                        mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 
                     }
                 });
@@ -587,12 +599,6 @@ public class PlanSportingActivity extends BaseActivity {
 
 
     public void saveHeartRate() {
-        String[] split = mTvHeartCount.getText().toString().split("/");
-        double complete = RxDataUtils.stringToInt(split[0]) * 1f / RxDataUtils.stringToInt(split[1]);
-        mHeartRateBean.setComplete(complete);
-        mHeartRateBean.setPlanFlag(1);
-        mHeartRateBean.setAthlScore(sportingScore);
-        mHeartRateBean.setHeartList(heartLists);
         String s = MyAPP.getGson().toJson(mHeartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

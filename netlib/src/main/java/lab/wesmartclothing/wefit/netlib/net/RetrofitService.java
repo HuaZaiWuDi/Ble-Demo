@@ -317,7 +317,7 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
     //发现新连接
     @FormUrlEncoded
-    @POST("/find/detail.html")
+    @POST("find/detail.html")
     Observable<String> newsDetail(@Field("gid") String git);
 
 
@@ -333,11 +333,11 @@ public interface RetrofitService {
     // 问题和报告相关信息
     ///////////////////////////////////////////////////////////////////////////
     //查询问题列表
-    @POST("/questionInform/questionList")
+    @POST("questionInform/questionList")
     Observable<String> questionList();
 
     //提交报告接口
-    @POST("/questionInform/submitInform")
+    @POST("questionInform/submitInform")
     Observable<String> submitInform(@Body RequestBody body);
 
 

@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
@@ -7,7 +8,7 @@ import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
 /**
  * Created icon_hide_password jk on 2018/6/11.
  */
-public class HeartRateBean {
+public class HeartRateBean implements Serializable {
 
 
     /**
@@ -25,8 +26,17 @@ public class HeartRateBean {
     private int planFlag;//定制课程：1
     private int stepNumber;
     private double complete;
+    private double totalCalorie;
     private List<HeartRateTab> heartList;
 
+
+    public double getTotalCalorie() {
+        return totalCalorie;
+    }
+
+    public void setTotalCalorie(double totalCalorie) {
+        this.totalCalorie = totalCalorie;
+    }
 
     public double getComplete() {
         return complete;
