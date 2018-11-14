@@ -17,6 +17,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
+import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -77,6 +78,9 @@ public class LoginSuccessUtils {
                         Key.HRART_SECTION[5] = (byte) (maxHeart * 0.9);
                         Key.HRART_SECTION[6] = (byte) (maxHeart);
                         RxLogUtils.d("心率区间：" + Arrays.toString(Key.HRART_SECTION));
+
+                        JPushUtils.setAliasOrTags("");
+
                     }
 
                     @Override

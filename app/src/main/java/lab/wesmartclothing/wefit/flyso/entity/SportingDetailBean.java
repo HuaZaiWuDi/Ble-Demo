@@ -54,9 +54,9 @@ public class SportingDetailBean {
     private int anaerobicCalorie;
     private long athlDate;
     private String athlDesc;
-    private int athlScore;
+    private double athlScore;
     private int avgHeart;
-    private int calorie;
+    private double calorie;
     private int duration;
     private long endTime;
     private int greaseCalorie;
@@ -103,7 +103,7 @@ public class SportingDetailBean {
         return athlDesc;
     }
 
-    public int getAthlScore() {
+    public double getAthlScore() {
         return athlScore;
     }
 
@@ -111,7 +111,7 @@ public class SportingDetailBean {
         return avgHeart;
     }
 
-    public int getCalorie() {
+    public double getCalorie() {
         return calorie;
     }
 

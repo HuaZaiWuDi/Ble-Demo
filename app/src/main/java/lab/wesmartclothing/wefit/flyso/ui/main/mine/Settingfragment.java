@@ -97,26 +97,16 @@ public class Settingfragment extends BaseActivity {
                 .addItemView(clearCacheItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-                        dialog.getTvTitle().setVisibility(View.GONE);
-                        dialog.getTvContent().setText("清除缓存？");
-                        dialog.setCancel("清除");
-                        dialog.setCancelListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                RxFileUtils.clearAllCache(mContext.getApplicationContext());
-                                clearCacheItem.setDetailText("0MB");
-                            }
-                        });
-                        dialog.setSure("取消");
-                        dialog.setSureListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
+                        new RxDialogSureCancel(mActivity)
+                                .setTitle("清除缓存？")
+                                .setSure("清除")
+                                .setSureListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        RxFileUtils.clearAllCache(mContext.getApplicationContext());
+                                        clearCacheItem.setDetailText("0MB");
+                                    }
+                                }).show();
                     }
                 })
                 .addItemView(accountItem, new View.OnClickListener() {
@@ -133,7 +123,6 @@ public class Settingfragment extends BaseActivity {
 //                })
                 .setUseTitleViewForSectionSpace(false)
                 .addTo(mGroupListView);
-
     }
 
     private void initTopBar() {
@@ -151,7 +140,7 @@ public class Settingfragment extends BaseActivity {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setContent("退出登录？")
+                .setTitle("退出登录？")
                 .setSure("退出")
                 .setSureListener(new View.OnClickListener() {
                     @Override
@@ -160,7 +149,6 @@ public class Settingfragment extends BaseActivity {
                     }
                 });
         rxDialog.show();
-
     }
 
 

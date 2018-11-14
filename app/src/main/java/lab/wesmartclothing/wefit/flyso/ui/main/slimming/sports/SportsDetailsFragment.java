@@ -251,6 +251,8 @@ public class SportsDetailsFragment extends BaseActivity {
         mTvWarmTime.setTypeface(typeface);
         mTvUserName.setTypeface(typeface);
         mTvDate.setTypeface(typeface);
+        mTvCalmTime.setTypeface(typeface);
+
 
         RxTextUtils.getBuilder("让 你 健 康 瘦\n")
                 .append(getString(R.string.appName) + " v" + RxDeviceUtils.getAppVersionName())
@@ -324,7 +326,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
-                    protected void _onNext(String s) {
+                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         SportingDetailBean heartRateBean = MyAPP.getGson().fromJson(s, SportingDetailBean.class);
                         updateUI(heartRateBean);

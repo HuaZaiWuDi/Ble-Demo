@@ -35,7 +35,7 @@ public class RoundDisPlayView extends View {
 
     boolean isShowPoint = false;//是否显示点
     private int indexPoint = 0;//高亮的点
-    private boolean showProgress = true;
+    private boolean showProgress = false;
 
     public RoundDisPlayView(Context context) {
         this(context, null);

@@ -39,9 +39,9 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:gravity="center"
-        android:text="是否退出登录？"
         android:textColor="#574D5F"
-        android:textSize="13dp"/>
+        android:textSize="15dp"
+        tools:text="是否退出登录？"/>
 
     <TextView
         android:id="@+id/textView12"

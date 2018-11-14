@@ -30,6 +30,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
+import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
@@ -342,7 +343,7 @@ public class PlanSportingActivity extends BaseActivity {
         if (mContext == null) return;
         if (isComplete) {
             speakAdd("好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！本次训练共计燃烧"
-                    + Number2Chinese.number2Chinese(sportingKcal) + "卡路里，请继续保持。");
+                    + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里，请继续保持。");
         } else {
             speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
         }
@@ -535,9 +536,9 @@ public class PlanSportingActivity extends BaseActivity {
             mProSportingTime.setProgress(currentTime, false);
             mTvStartSportingTime.setText(RxFormat.setS2MS(currentTime));
 
-            if (currentTime % 180 == 0) {
+            if (currentTime % 120 == 0) {
                 speakAdd(getString(R.string.speech_currentKcal) +
-                        Number2Chinese.number2Chinese(sportingKcal) + "卡路里的能量");
+                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里的能量");
             }
 
             planSportingTextSpeak();
@@ -626,8 +627,16 @@ public class PlanSportingActivity extends BaseActivity {
                     @Override
                     protected void _onError(String error) {
                         super._onError(error);
-                        RxToast.normal("上传失败");
-                        RxActivityUtils.finishActivity();
+
+                        new RxDialogSure(mContext)
+                                .setContent("网络异常运动数据上传失败，您可选择在运动记录中进行查看")
+                                .setSureListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        RxActivityUtils.finishActivity();
+                                    }
+                                }).show();
+
                     }
                 });
     }

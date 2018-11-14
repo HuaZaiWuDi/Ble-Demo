@@ -44,7 +44,6 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
@@ -72,7 +71,6 @@ public class AddDeviceActivity extends BaseActivity {
 
     BindDeviceItem mBindDeviceItem = new BindDeviceItem();
 
-    QNBleTools mQNBleTools = QNBleTools.getInstance();
 
     boolean forceBind = true;//是否强制绑定
     @BindView(R.id.topBar)
@@ -160,7 +158,6 @@ public class AddDeviceActivity extends BaseActivity {
         @Override
         public void enterTimer() {
             switchStatus(STATUS_NO_DEVICE);
-
         }
     }, 15000);
 
@@ -334,6 +331,10 @@ public class AddDeviceActivity extends BaseActivity {
             return;
         }
         if (scanDevice.containsKey(bean.getMac())) {
+            return;
+        }
+
+        if (mImgScan.getAnimation() == null) {
             return;
         }
         scanDevice.put(bean.getMac(), bean);

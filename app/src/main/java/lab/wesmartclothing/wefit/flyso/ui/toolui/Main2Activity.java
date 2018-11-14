@@ -43,7 +43,7 @@ public class Main2Activity extends BaseActivity {
                         onBackPressed();
                     }
                 });
-        mTopBar.setTitle("Timetofit 健康报告");
+        mTopBar.setTitle(getString(R.string.appName) + " 健康报告");
 
         MyAPP.getImageLoader().displayImage(mActivity, R.drawable.pc_plan3, mImgSportingPlan);
     }

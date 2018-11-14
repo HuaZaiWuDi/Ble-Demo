@@ -31,6 +31,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
+import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
@@ -271,7 +272,8 @@ public class SportingActivity extends BaseActivity {
                         mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
                         mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
 
-                        currentKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600), 1);
+                        currentKcal += HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600);
+                        RxLogUtils.d("当前kacl：" + currentKcal);
 
                         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(currentKcal, 1))
                                 .append("kcal").setProportion(0.5f)
@@ -410,10 +412,9 @@ public class SportingActivity extends BaseActivity {
         public void enterTimer() {
             currentTime++;
             mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
-
-            if (currentTime % 180 == 0) {
+            if (currentTime % 120 == 0) {
                 speakAdd(getString(R.string.speech_currentKcal) +
-                        Number2Chinese.number2Chinese(currentKcal) + "卡路里的能量");
+                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "卡路里的能量");
             }
         }
     });
@@ -436,7 +437,7 @@ public class SportingActivity extends BaseActivity {
     private void stopSporting() {
         timer.stopTimer();
         currentTime = 0;
-        speakFlush("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(currentKcal) + "卡路里的能量");
+        speakFlush("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "卡路里的能量");
 
         //如果检测到运动已经结束，直接保存数据并进入详情页
         saveHeartRate();
@@ -470,8 +471,14 @@ public class SportingActivity extends BaseActivity {
                     @Override
                     protected void _onError(String error) {
                         super._onError(error);
-                        RxToast.normal("保存失败");
-                        RxActivityUtils.finishActivity();
+                        new RxDialogSure(mContext)
+                                .setContent("网络异常运动数据上传失败，您可选择在运动记录中进行查看")
+                                .setSureListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        RxActivityUtils.finishActivity();
+                                    }
+                                }).show();
                     }
                 });
     }

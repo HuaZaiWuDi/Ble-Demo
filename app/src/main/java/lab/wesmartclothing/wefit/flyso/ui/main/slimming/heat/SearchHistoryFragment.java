@@ -49,7 +49,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout;
@@ -441,8 +440,8 @@ public class SearchHistoryFragment extends BaseActivity {
                         if (SlimmingPage) {
                             RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         } else {
-                            RxActivityUtils.finishActivity(FoodDetailsFragment.class);
-                            RxActivityUtils.skipActivityAndFinish(mContext, FoodRecommend.class);
+                            RxActivityUtils.finishActivity();
+                            RxActivityUtils.finishActivity();
                         }
                     }
 

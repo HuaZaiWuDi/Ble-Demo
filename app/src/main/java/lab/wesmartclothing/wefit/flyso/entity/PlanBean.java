@@ -370,7 +370,7 @@ public class PlanBean {
             private int visfat;
             private int flesh;
             private int water;
-            private int healthScore;
+            private double healthScore;
 
             public String getGid() {
                 return gid;
@@ -628,7 +628,7 @@ public class PlanBean {
                 this.water = water;
             }
 
-            public int getHealthScore() {
+            public double getHealthScore() {
                 return healthScore;
             }
 

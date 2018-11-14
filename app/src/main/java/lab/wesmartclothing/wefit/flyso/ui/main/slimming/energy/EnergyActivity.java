@@ -144,6 +144,8 @@ public class EnergyActivity extends BaseActivity {
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
 
                 int surplusHeat = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+
+                mTvSurplusHeat.setTextColor(ContextCompat.getColor(mContext, surplusHeat < 0 ? R.color.red : R.color.orange_FF7200));
                 RxTextUtils.getBuilder(Math.abs(surplusHeat) + "")
                         .append("\tkacl").setProportion(0.5f)
                         .into(mTvSurplusHeat);

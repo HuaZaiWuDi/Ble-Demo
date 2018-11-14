@@ -100,7 +100,8 @@ public class BarGroupChart extends View {
         canvas.drawRoundRect(rf, round, round, progressPaint);
 
         textPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(String.valueOf(oldValue), mWidth / 2, top - (mHeight - barHeight) / 2, textPaint);
+        if (topValue != 0)
+            canvas.drawText(String.valueOf(oldValue), mWidth / 2, top - (mHeight - barHeight) / 2, textPaint);
     }
 
 

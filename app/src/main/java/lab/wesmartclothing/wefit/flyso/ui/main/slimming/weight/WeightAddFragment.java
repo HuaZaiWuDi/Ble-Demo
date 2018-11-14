@@ -111,7 +111,7 @@ public class WeightAddFragment extends BaseActivity {
         lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
         RxLogUtils.d("上一次体重数据：" + lastWeight);
 
-        mTvTip.setText("请上称");
+        mTvTip.setText("请上称...");
         mTvTitle.setText("测量体重");
     }
 
@@ -240,15 +240,14 @@ public class WeightAddFragment extends BaseActivity {
                         RxBus.getInstance().post(new RefreshSlimming());
 
                         if (RxActivityUtils.isExistActivity(WelcomeActivity.class)) {
-                            onBackPressed();
                             //把体重数据传递到欢迎界面
                             RxBus.getInstance().post(bean);
+                            onBackPressed();
                         } else {
                             Bundle bundle = new Bundle();
                             bundle.putString(Key.BUNDLE_DATA_GID, s);
                             RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
                         }
-
                     }
 
                     @Override

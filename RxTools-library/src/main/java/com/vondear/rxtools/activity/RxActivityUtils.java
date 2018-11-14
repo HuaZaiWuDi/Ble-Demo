@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.vondear.rxtools.utils.RxIntentUtils;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -84,10 +85,31 @@ public class RxActivityUtils {
      * 结束指定类名的Activity
      */
     public static void finishActivity(Class<?> cls) {
-        for (Activity activity : activityStack) {
+        //防止并发异常，使用迭代器遍历
+        Iterator<Activity> activitys = activityStack.iterator();
+        while (activitys.hasNext()) {
+            Activity activity = activitys.next();
             if (activity.getClass().equals(cls)) {
-                finishActivity();
+                finishActivity(activity);
+            }
+        }
+    }
 
+
+    /**
+     * 结束多个界面
+     *
+     * @param cls
+     */
+    public static void finishMultiAvtivity(Class<?>... cls) {
+        //防止并发异常，使用迭代器遍历
+        Iterator<Activity> activitys = activityStack.iterator();
+        while (activitys.hasNext()) {
+            Activity activity = activitys.next();
+            for (Class<?> finishAc : cls) {
+                if (activity.getClass().equals(finishAc)) {
+                    finishActivity(activity);
+                }
             }
         }
     }
@@ -148,6 +170,20 @@ public class RxActivityUtils {
         }
         return false;
     }
+
+    /**
+     * 判断界面是否在顶部
+     *
+     * @param cls
+     * @return
+     */
+    public static boolean isTopActivity(Class<?> cls) {
+        if (currentActivity().getClass().equals(cls)) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * 打开指定的Activity

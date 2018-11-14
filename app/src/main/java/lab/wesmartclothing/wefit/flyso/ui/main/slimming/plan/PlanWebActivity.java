@@ -96,7 +96,6 @@ public class PlanWebActivity extends BaseWebActivity {
     }
 
 
-
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {

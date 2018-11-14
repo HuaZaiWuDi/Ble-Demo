@@ -522,7 +522,10 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             SlimmingRecordBean.DataListBean bean = list.get(0);
             int value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
 
-            RxTextUtils.getBuilder(value + "")
+            mEnergyProgress7.setColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
+            mTvCurrentEnergy.setTextColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
+            mTvEnergyChart7.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
+            RxTextUtils.getBuilder(Math.abs(value) + "")
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentEnergy);
         } else {

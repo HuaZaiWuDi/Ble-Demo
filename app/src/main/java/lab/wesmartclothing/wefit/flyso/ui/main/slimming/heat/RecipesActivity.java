@@ -183,7 +183,6 @@ public class RecipesActivity extends BaseActivity {
                         RxToast.error(error);
                     }
                 });
-
     }
 
 

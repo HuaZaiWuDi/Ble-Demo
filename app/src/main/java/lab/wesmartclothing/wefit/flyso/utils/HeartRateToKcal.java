@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
@@ -54,7 +55,7 @@ public class HeartRateToKcal {
         } else {
             kcal = ((-20.4022 + (0.4472 * HR) - (0.1263 * W) + (0.074 * A)) / 4.184) * 60 * T;
         }
-        return Math.abs(kcal);
+        return RxFormatValue.format4S5R(Math.abs(kcal), 1);
     }
 
 

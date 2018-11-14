@@ -114,7 +114,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
         @Override
         public void loginFailure(Exception e) {
-            RxLogUtils.e("登录失败");
+            RxLogUtils.e("登录失败", e);
             RxToast.error("登录失败");
         }
 

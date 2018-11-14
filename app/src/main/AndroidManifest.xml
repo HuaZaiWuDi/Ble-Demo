@@ -346,7 +346,9 @@
             android:name=".ui.main.slimming.plan.PlanActivity"
             android:launchMode="singleTop">
         </activity>
-        <activity android:name=".ui.main.slimming.plan.PlanWebActivity">
+        <activity
+            android:name=".ui.main.slimming.plan.PlanWebActivity"
+            android:launchMode="singleTop">
         </activity>
     </application>
 

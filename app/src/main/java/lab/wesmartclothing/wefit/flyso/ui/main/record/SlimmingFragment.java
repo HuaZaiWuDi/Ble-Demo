@@ -321,8 +321,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .subscribe(new RxSubscriber<SportsDataTab>() {
                     @Override
                     protected void _onNext(SportsDataTab sportsDataTab) {
-                        if (BleService.clothingFinish
-                                && "MainActivity".equals(RxActivityUtils.currentActivity().getClass().getSimpleName())) {
+                        if (BleService.clothingFinish && isVisibled()) {
                             BleService.clothingFinish = false;
                             if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
                                 RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
@@ -693,6 +692,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgSeeRecord.setVisibility(View.VISIBLE);
             mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
         } else {
+            mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
             mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
         }
@@ -796,13 +796,22 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.reWeigh:
-                RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
-                break;
-            case R.id.btn_goBind_scale:
-                if (getString(R.string.goBind).equals(mBtnGoBindScale.getText().toString())) {
-                    RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
+                if (!BleTools.getBleManager().isBlueEnable()) {
+                    showOpenBlueTooth();
                 } else {
                     RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
+                }
+                break;
+            case R.id.btn_goBind_scale:
+                if (!BleTools.getBleManager().isBlueEnable()) {
+                    showOpenBlueTooth();
+                } else {
+                    if (getString(R.string.goBind).equals(mBtnGoBindScale.getText().toString())) {
+
+                        RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
+                    } else {
+                        RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
+                    }
                 }
                 break;
             case R.id.btn_goBind_clothing:
@@ -844,7 +853,6 @@ public class SlimmingFragment extends BaseAcFragment {
                         RxActivityUtils.skipActivity(mContext, PlanActivity.class, bundle);
                     }
                 }
-
                 break;
             case R.id.layout_gotoPlanSporting:
                 //进入实时运动界面，定制课程
@@ -900,8 +908,8 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setTitle("提示")
-                .setContent("您还未开启蓝牙请开启，请去开启蓝牙！")
-                .setSure("开启蓝牙")
+                .setContent("请先开启蓝牙，并允许新连接")
+                .setSure("开启")
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
