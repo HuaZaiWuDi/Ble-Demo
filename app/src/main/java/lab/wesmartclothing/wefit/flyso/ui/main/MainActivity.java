@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -113,6 +116,16 @@ public class MainActivity extends BaseALocationActivity {
 
             }
         });
+
+        new RxPermissions(mActivity)
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Permission>() {
+                    @Override
+                    protected void _onNext(Permission aBoolean) {
+                    }
+                });
     }
 
     @Override

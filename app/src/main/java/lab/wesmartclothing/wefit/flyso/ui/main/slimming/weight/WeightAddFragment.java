@@ -1,9 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,7 +21,6 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -69,17 +66,32 @@ public class WeightAddFragment extends BaseActivity {
 
     //最近一次体重
     private double lastWeight;
+    private QNScaleData mQnScaleData;
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_add_weight);
-        unbinder = ButterKnife.bind(this);
-        initView();
-
+    protected int layoutId() {
+        return R.layout.fragment_add_weight;
     }
 
-    private QNScaleData mQnScaleData;
+    @Override
+    protected void initViews() {
+        super.initViews();
+        Typeface typeface = MyAPP.typeface;
+        mTvTargetWeight.setTypeface(typeface);
+
+        lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
+        RxLogUtils.d("上一次体重数据：" + lastWeight);
+
+        mTvTip.setText("请上称...");
+        mTvTitle.setText("测量体重");
+    }
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        showWeightData(bundle);
+    }
 
     @Override
     public void onStart() {
@@ -96,31 +108,10 @@ public class WeightAddFragment extends BaseActivity {
     }
 
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        RxLogUtils.e("新开启个界面：" + intent);
-        showWeightData(intent);
-    }
-
-    private void initView() {
-        showWeightData(getIntent());
-        Typeface typeface = MyAPP.typeface;
-        mTvTargetWeight.setTypeface(typeface);
-
-        lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
-        RxLogUtils.d("上一次体重数据：" + lastWeight);
-
-        mTvTip.setText("请上称...");
-        mTvTitle.setText("测量体重");
-    }
-
-
-    private void showWeightData(Intent intent) {
-        Bundle extras = intent.getExtras();
+    private void showWeightData(Bundle extras) {
         if (extras == null) return;
         double unsteadyWeight = extras.getDouble(Key.BUNDLE_WEIGHT_UNSTEADY, 0);
-        final QNScaleData qnScaleData = MyAPP.getGson().fromJson(intent.getExtras().getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
+        final QNScaleData qnScaleData = MyAPP.getGson().fromJson(extras.getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
         if (unsteadyWeight > 0) {
             mTvTargetWeight.setText((float) unsteadyWeight + "");
             mTvTip.setText("称重中...");
@@ -131,8 +122,8 @@ public class WeightAddFragment extends BaseActivity {
                 mBtnSave.setVisibility(View.INVISIBLE);
                 mMRoundDisPlayView.showPoint(false);
                 mMRoundDisPlayView.startAnimation();
-                TimeOutTimer.startTimer();
             }
+            TimeOutTimer.startTimer();
         }
 
         if (qnScaleData != null) {

@@ -538,6 +538,8 @@ public class SlimmingFragment extends BaseAcFragment {
         double maxNormalWeight = RxFormatValue.format4S5R(bean.getMaxNormalWeight(), 1);
         double minNormalWeight = RxFormatValue.format4S5R(bean.getMinNormalWeight(), 1);
 
+        SPUtils.put(SPKey.SP_realWeight, (float) weight);
+
         if (weight > minNormalWeight && minNormalWeight <= maxNormalWeight) {
             mTvWeightStatus.setText("标准");
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
@@ -578,19 +580,23 @@ public class SlimmingFragment extends BaseAcFragment {
         if (hasInitialWeight) {
             Drawable drawable1 = ContextCompat.getDrawable(mContext, weightChangeVO.getWeightChange() < 0 ?
                     R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            mTvWeight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable1, null);
+            if (weightChangeVO.getWeightChange() != 0)
+                mTvWeight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable1, null);
 
             Drawable drawable2 = ContextCompat.getDrawable(mContext, weightChangeVO.getBodyFatChange() < 0 ?
                     R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            mTvBodyFat.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable2, null);
+            if (weightChangeVO.getBodyFatChange() != 0)
+                mTvBodyFat.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable2, null);
 
             Drawable drawable3 = ContextCompat.getDrawable(mContext, weightChangeVO.getBmiChange() < 0 ?
                     R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            mTvBmi.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable3, null);
+            if (weightChangeVO.getBmiChange() != 0)
+                mTvBmi.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable3, null);
 
             Drawable drawable4 = ContextCompat.getDrawable(mContext, weightChangeVO.getBmrChange() < 0 ?
                     R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            mTvBmr.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable4, null);
+            if (weightChangeVO.getBmrChange() != 0)
+                mTvBmr.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable4, null);
         }
 
 
@@ -650,7 +656,7 @@ public class SlimmingFragment extends BaseAcFragment {
     private void slimmingTarget() {
         if (bean.getTargetInfo() == null || bean.getWeightChangeVO() == null) return;
         mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
-        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1) + "")
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1))
                 .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
 
         RxTextUtils.getBuilder("起始体重\n")
@@ -672,6 +678,21 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
+
+        //目标已完成
+        if (bean.getComplete() == 1) {
+            new RxDialogSure(mContext)
+                    .setTitle("提示")
+                    .setContent("恭喜您的瘦身目标已达成")
+                    .setSure("开启新的目标")
+                    .setSureListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
+                        }
+                    }).show();
+        }
+
     }
 
 

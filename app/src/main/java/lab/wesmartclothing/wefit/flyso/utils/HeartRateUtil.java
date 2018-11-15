@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
+import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -66,7 +67,7 @@ public class HeartRateUtil {
         lastHeartRate = heartRate;
 
         long time = ByteUtil.bytesToLongD4(bytes, 3) * 1000;
-
+        RxLogUtils.d("硬件时间：" + RxFormat.setFormatDate(time, RxFormat.Date_Date));
 
         maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
         minHeart = heartRate < minHeart ? heartRate : minHeart;
@@ -82,7 +83,7 @@ public class HeartRateUtil {
         mSportsDataTab.setTemp((bytes[10] & 0xff));
         mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
         mSportsDataTab.setData(bytes);
-        mSportsDataTab.setDate(time);
+        mSportsDataTab.setDate(System.currentTimeMillis());
         mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mHeartRateBean.setStepNumber(mSportsDataTab.getSteps());
         //卡路里累加计算

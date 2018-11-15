@@ -8,7 +8,7 @@ public class Number2Chinese {
 
 
     public static void main(String[] a) {
-        System.out.println(number2Chinese(342.07 + ""));
+        System.out.println(number2Chinese(0.007 + ""));
     }
 
     public static String number2Chinese(String numStr) {
@@ -57,6 +57,10 @@ public class Number2Chinese {
             } else {
                 container.append(number + sign);
             }
+        }
+
+        if (numberStr.equals("0")) {
+            container.append(numCn[0]);
         }
 
         //计算小数点

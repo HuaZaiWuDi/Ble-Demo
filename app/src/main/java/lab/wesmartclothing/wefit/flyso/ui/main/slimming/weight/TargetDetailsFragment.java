@@ -133,6 +133,7 @@ public class TargetDetailsFragment extends BaseActivity {
                         bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
                         bundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
                         bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
+                        bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initialWeight);
                     }
 
                     @Override

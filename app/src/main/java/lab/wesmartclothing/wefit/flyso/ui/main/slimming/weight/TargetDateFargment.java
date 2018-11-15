@@ -150,10 +150,10 @@ public class TargetDateFargment extends BaseActivity {
 
     @OnClick(R.id.btn_confirm)
     public void onViewClicked() {
-        double realWeight = SPUtils.getFloat(SPKey.SP_realWeight);
+        double initWeight = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
         double targetWeight = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         mInfoBean.setCount(weeks);
-        mInfoBean.setInitialWeight(RxFormatValue.format4S5R(realWeight, 1));
+        mInfoBean.setInitialWeight(RxFormatValue.format4S5R(initWeight, 1));
         mInfoBean.setTargetWeight(targetWeight);
 
         if (RecordInfoActivity.mSubmitInfoFrom == null) {

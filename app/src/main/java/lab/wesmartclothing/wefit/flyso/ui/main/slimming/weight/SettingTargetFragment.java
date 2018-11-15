@@ -50,7 +50,7 @@ public class SettingTargetFragment extends BaseActivity {
     Unbinder unbinder;
 
 
-    private float maxWeight, minWeight, targetWeight, initWeight = 0, stillNeed;
+    private float maxWeight, minWeight, targetWeight, initWeight = SPUtils.getFloat(SPKey.SP_realWeight), stillNeed;
 
     @Override
     protected int statusBarColor() {
@@ -74,19 +74,21 @@ public class SettingTargetFragment extends BaseActivity {
     }
 
 
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        targetWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
+        //最新的体重
+        initWeight = (float) bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+        bestWeight();
+    }
+
     /**
      * 男性：(身高cm－80)×70﹪=标准体重
      * 女性：(身高cm－70)×60﹪=标准体重
      */
     private void bestWeight() {
-        //最新的体重
-        initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         float standardWeight = 0;
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            targetWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
-        }
-
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
         if (userInfo.getSex() == 1) {
@@ -142,9 +144,9 @@ public class SettingTargetFragment extends BaseActivity {
                 tv_targetDays.setCompoundDrawables(null, null, null, null);
 
                 if (targetWeight > maxWeight) {
-                    RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);
+                    RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～");
                 } else if (targetWeight < minWeight) {
-                    RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～", 2000);
+                    RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～");
                 }
             }
         });
@@ -169,6 +171,7 @@ public class SettingTargetFragment extends BaseActivity {
         Bundle mBundle = new Bundle();
         mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(targetWeight, 2));
         mBundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
+        mBundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
         RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
     }
 

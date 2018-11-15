@@ -90,7 +90,6 @@ public class SplashActivity extends BaseActivity {
         super.initNetData();
         initData();
         initUserInfo();
-
     }
 
 

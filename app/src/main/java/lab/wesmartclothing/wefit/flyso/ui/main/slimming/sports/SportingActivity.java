@@ -258,7 +258,6 @@ public class SportingActivity extends BaseActivity {
                             xAxis.resetAxisMaximum();
                         }
 
-
                         HeartRateTab heartRateTab = new HeartRateTab();
                         heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
                         heartRateTab.setHeartTime(sportsDataTab.getDate());
@@ -275,7 +274,7 @@ public class SportingActivity extends BaseActivity {
                         currentKcal += HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600);
                         RxLogUtils.d("当前kacl：" + currentKcal);
 
-                        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(currentKcal, 1))
+                        RxTextUtils.getBuilder(currentKcal + "")
                                 .append("kcal").setProportion(0.5f)
                                 .into(mTvKcal);
 
@@ -437,6 +436,7 @@ public class SportingActivity extends BaseActivity {
     private void stopSporting() {
         timer.stopTimer();
         currentTime = 0;
+
         speakFlush("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "卡路里的能量");
 
         //如果检测到运动已经结束，直接保存数据并进入详情页
@@ -472,6 +472,7 @@ public class SportingActivity extends BaseActivity {
                     protected void _onError(String error) {
                         super._onError(error);
                         new RxDialogSure(mContext)
+                                .setTitle("提示")
                                 .setContent("网络异常运动数据上传失败，您可选择在运动记录中进行查看")
                                 .setSureListener(new View.OnClickListener() {
                                     @Override

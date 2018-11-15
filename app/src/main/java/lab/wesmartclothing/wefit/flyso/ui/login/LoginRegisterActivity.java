@@ -121,7 +121,6 @@ public class LoginRegisterActivity extends BaseActivity {
         @Override
         public void loginCancel() {
             RxLogUtils.e("登录取消");
-            RxToast.normal("登录取消");
         }
     };
 

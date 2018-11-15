@@ -188,6 +188,20 @@ public abstract class BaseAcFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        lifecycleSubject.onNext(LifeCycleEvent.START);
+        RxLogUtils.i(TGA + "：onStart");
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        RxLogUtils.i(TGA + "：onResume");
+        lifecycleSubject.onNext(LifeCycleEvent.RESUME);
+        super.onResume();
+    }
+
+    @Override
     public void onPause() {
         RxLogUtils.i(TGA + "：onPause");
         lifecycleSubject.onNext(LifeCycleEvent.STOP);
@@ -199,14 +213,8 @@ public abstract class BaseAcFragment extends Fragment {
     public void onStop() {
         RxLogUtils.i(TGA + "：onStop");
         lifecycleSubject.onNext(LifeCycleEvent.STOP);
+        isVisible = false;
         super.onStop();
-    }
-
-    @Override
-    public void onResume() {
-        RxLogUtils.i(TGA + "：onResume");
-        lifecycleSubject.onNext(LifeCycleEvent.RESUME);
-        super.onResume();
     }
 
 
@@ -246,20 +254,12 @@ public abstract class BaseAcFragment extends Fragment {
     }
 
 
-    @Override
-    public void onStart() {
-        lifecycleSubject.onNext(LifeCycleEvent.START);
-        RxLogUtils.i(TGA + "：onStart");
-        super.onStart();
-    }
-
     protected void onVisible() {
         lazyLoad();
     }
 
     protected void onInvisible() {
     }
-
 
     public boolean isVisibled() {
         return isVisible;
