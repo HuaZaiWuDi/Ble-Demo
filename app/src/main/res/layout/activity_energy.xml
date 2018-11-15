@@ -242,7 +242,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:layout_below="@+id/layout_sportingEnergy"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="24dp"
                 android:drawableLeft="@mipmap/icon_tip"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
@@ -257,7 +257,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/layout_sportingEnergy"
-                android:layout_marginTop="61dp"
+                android:layout_marginTop="77dp"
                 android:background="@color/line"/>
 
 

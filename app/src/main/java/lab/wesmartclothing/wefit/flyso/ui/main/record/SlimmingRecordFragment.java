@@ -364,6 +364,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                         initNetData();
                     }
                 });
+
     }
 
 
@@ -378,23 +379,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     private void initUserInfo() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
-        if (info != null) {
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
-
-
-            RxTextUtils.getBuilder(info.getUserName() + "\n")
-                    .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
-                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .into(mTvUserName);
-            mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
-
-            RxTextUtils.getBuilder("让 你 健 康 瘦\n")
-                    .append(getString(R.string.appName) + "v" + RxDeviceUtils.getAppVersionName())
-                    .setProportion(0.5f)
-                    .into(mTvAppVersion);
-        }
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
     }
 
     private void getData() {
@@ -510,8 +495,8 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     SlimmingRecordBean.DataListBean bean = list.get(i);
                     dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
                     int value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
-                    max = Math.max(max, value);
-                    item.add(value);
+                    max = Math.max(max, Math.abs(value));
+                    item.add(Math.abs(value));
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -968,6 +953,22 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     .codeSide(800)
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
+
+            UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
+            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
+
+
+            RxTextUtils.getBuilder(info.getUserName() + "\n")
+                    .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .into(mTvUserName);
+            mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
+
+            RxTextUtils.getBuilder("让 你 健 康 瘦\n")
+                    .append(getString(R.string.appName) + "v" + RxDeviceUtils.getAppVersionName())
+                    .setProportion(0.5f)
+                    .into(mTvAppVersion);
             mProComplete2.setShowWave(true);
             //延迟500毫秒，需要等到控件显示
             new Handler().postDelayed(new Runnable() {

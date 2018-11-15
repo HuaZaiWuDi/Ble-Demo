@@ -102,6 +102,9 @@ public class DeviceFragment extends BaseActivity {
                 //监听瘦身衣连接情况
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
                 mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
+                if (state) {
+                    getVoltage();
+                }
             }
         }
     };
@@ -216,7 +219,9 @@ public class DeviceFragment extends BaseActivity {
             mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
         }
 
+    }
 
+    private void getVoltage() {
         BleAPI.getVoltage(new BleChartChangeCallBack() {
             @Override
             public void callBack(byte[] data) {
@@ -232,6 +237,7 @@ public class DeviceFragment extends BaseActivity {
             }
         });
     }
+
 
     private void deleteDeviceById(final String position) {
         String gid = "";

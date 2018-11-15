@@ -268,15 +268,22 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_Sporting"
+                <com.scwang.smartrefresh.layout.SmartRefreshLayout
+                    android:id="@+id/smartRefreshLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_Sporting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="true">
+
+                    </android.support.v7.widget.RecyclerView>
+                </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 
-                </android.support.v7.widget.RecyclerView>
             </LinearLayout>
 
 

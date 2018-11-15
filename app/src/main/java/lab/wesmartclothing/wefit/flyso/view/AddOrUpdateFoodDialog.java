@@ -2,12 +2,16 @@ package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
+import com.vondear.rxtools.editview.DecimalDigitsInputFilter;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -109,6 +113,26 @@ public class AddOrUpdateFoodDialog {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 RxKeyboardUtils.toggleSoftInput();
+            }
+        });
+
+        mEtFoodG.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(1)});
+        mEtFoodG.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (RxDataUtils.stringToDouble(String.valueOf(s)) > 999.0) {
+                    mEtFoodG.setText("999.0");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 

@@ -10,7 +10,6 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 
 public class Main2Activity extends BaseActivity {
 
@@ -45,7 +44,6 @@ public class Main2Activity extends BaseActivity {
                 });
         mTopBar.setTitle(getString(R.string.appName) + " 健康报告");
 
-        MyAPP.getImageLoader().displayImage(mActivity, R.drawable.pc_plan3, mImgSportingPlan);
     }
 
 }

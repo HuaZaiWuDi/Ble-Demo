@@ -259,7 +259,7 @@ public class BleService extends Service {
                 Bundle bundle = new Bundle();
                 bundle.putDouble(Key.BUNDLE_WEIGHT_UNSTEADY, v);
                 if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
-                        || !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
+                        && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
                     RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
             }
 
@@ -269,7 +269,7 @@ public class BleService extends Service {
                 Bundle bundle = new Bundle();
                 bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, MyAPP.getGson().toJson(qnScaleData));
                 if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
-                        || !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
+                        && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
                     RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
 //                RxBus.getInstance().post(qnScaleData);
             }

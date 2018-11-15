@@ -181,7 +181,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="expectKcal">此次共计%1$d min,预计消耗热量%2$d kcal</string>
-    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你定制的是%2$s。  养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标哦，加油！</string>
+    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你定制的是%2$s。  \n养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标哦，加油！</string>
     <string name="dietPlanUser">%1$s营养师 为您搭配饮食</string>
     <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
     <string name="follow">跟着智享瘦</string>

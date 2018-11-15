@@ -101,7 +101,7 @@ public class EnergyActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        mTopBar.setTitle("能量比记录");
+        mTopBar.setTitle("能量记录");
     }
 
     private void initLineChart(final List<EnergyBean.ListBean> list) {

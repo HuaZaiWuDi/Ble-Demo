@@ -627,9 +627,9 @@ public class PlanSportingActivity extends BaseActivity {
                     @Override
                     protected void _onError(String error) {
                         super._onError(error);
-
                         new RxDialogSure(mContext)
-                                .setContent("网络异常运动数据上传失败，您可选择在运动记录中进行查看")
+                                .setTitle("提示")
+                                .setContent("因网络异常，运动数据上传失败，您可在运动记录中进行查看")
                                 .setSureListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

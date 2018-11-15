@@ -26,6 +26,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -55,6 +58,7 @@ import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.ListPageUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -99,11 +103,17 @@ public class SmartClothingFragment extends BaseActivity {
     TextView mTvSportsTime;
     @BindView(R.id.recycler_Sporting)
     RecyclerView mRecyclerSporting;
+    @BindView(R.id.smartRefreshLayout)
+    SmartRefreshLayout mSmartRefreshLayout;
     Unbinder unbinder;
+
+
     private Button btn_Connect;
     private long currentDate = 0;
     private List<AthleticsInfo.ListBean> list;
     private BaseQuickAdapter adapter;
+    private List<AthleticsInfo.ListBean.AthlListBean> listBeans;
+    private int listCount = 1;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -184,6 +194,19 @@ public class SmartClothingFragment extends BaseActivity {
     }
 
     private void initSportingList() {
+        mSmartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshLayout) {
+                listCount++;
+                ListPageUtil<AthleticsInfo.ListBean.AthlListBean> listPageUtil = new ListPageUtil<>(listBeans, listCount, 10);
+                List<AthleticsInfo.ListBean.AthlListBean> pagedList = listPageUtil.getPagedList();
+                adapter.addData(pagedList);
+            }
+        });
+
+        mSmartRefreshLayout.setEnableLoadMore(true);
+        mSmartRefreshLayout.setEnableRefresh(false);
+
         mRecyclerSporting.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerSporting.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
         adapter = new BaseQuickAdapter<AthleticsInfo.ListBean.AthlListBean, BaseViewHolder>(R.layout.item_sporting_list) {
@@ -335,7 +358,11 @@ public class SmartClothingFragment extends BaseActivity {
                 mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
                 currentDate = bean.getAthlDate();
 
-                adapter.setNewData(list.get(valueX).getAthlList());
+                listCount = 1;
+                listBeans = list.get(valueX).getAthlList();
+                ListPageUtil<AthleticsInfo.ListBean.AthlListBean> listPageUtil = new ListPageUtil<>(listBeans, listCount, 10);
+                List<AthleticsInfo.ListBean.AthlListBean> pagedList = listPageUtil.getPagedList();
+                adapter.setNewData(pagedList);
             }
         });
     }

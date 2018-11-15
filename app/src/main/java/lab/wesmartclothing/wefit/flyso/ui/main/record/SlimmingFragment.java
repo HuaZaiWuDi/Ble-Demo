@@ -258,7 +258,6 @@ public class SlimmingFragment extends BaseAcFragment {
         RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
-
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
         }
         getData();

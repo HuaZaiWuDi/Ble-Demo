@@ -272,9 +272,10 @@ public class SportingActivity extends BaseActivity {
                         mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
 
                         currentKcal += HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600);
+                        currentKcal = RxFormatValue.format4S5R(currentKcal, 1);
                         RxLogUtils.d("当前kacl：" + currentKcal);
 
-                        RxTextUtils.getBuilder(currentKcal + "")
+                        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(currentKcal, 1))
                                 .append("kcal").setProportion(0.5f)
                                 .into(mTvKcal);
 
@@ -473,7 +474,7 @@ public class SportingActivity extends BaseActivity {
                         super._onError(error);
                         new RxDialogSure(mContext)
                                 .setTitle("提示")
-                                .setContent("网络异常运动数据上传失败，您可选择在运动记录中进行查看")
+                                .setContent("因网络异常，运动数据上传失败，您可在运动记录中进行查看")
                                 .setSureListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
