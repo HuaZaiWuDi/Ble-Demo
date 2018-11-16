@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,7 +35,6 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
-import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -74,7 +72,6 @@ public class MainActivity extends BaseALocationActivity {
     LinearLayout mBottomTab;
     @BindView(R.id.parent)
     RelativeLayout mParent;
-    private Intent bleIntent;
 
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
@@ -94,8 +91,7 @@ public class MainActivity extends BaseALocationActivity {
 
         ButterKnife.bind(this);
         initView();
-        bleIntent = new Intent(mContext, BleService.class);
-        startService(bleIntent);
+
     }
 
     public void initView() {

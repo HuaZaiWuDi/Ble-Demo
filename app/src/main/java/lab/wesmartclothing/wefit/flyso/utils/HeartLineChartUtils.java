@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -12,6 +14,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
@@ -36,8 +39,8 @@ public class HeartLineChartUtils {
     private void initLineChart() {
         mLineChart.getLegend().setEnabled(false);
         mLineChart.getDescription().setEnabled(false);
-        mLineChart.setTouchEnabled(true);//可以点击
-        mLineChart.setDragEnabled(true);
+        mLineChart.setTouchEnabled(false);//可以点击
+        mLineChart.setDragEnabled(false);
         mLineChart.setScaleEnabled(false);
         mLineChart.setPinchZoom(false);//X，Y轴缩放
         mLineChart.setViewPortOffsets(0, 0, 0, 0);
@@ -57,6 +60,7 @@ public class HeartLineChartUtils {
         yAxis.setAxisMinimum((Key.HRART_SECTION[0] & 0xFF));
 
         mLineChart.setData(new LineData());
+        createRealTimeSet(null);
         mLineChart.invalidate();
     }
 
@@ -65,10 +69,10 @@ public class HeartLineChartUtils {
         LineDataSet set = new LineDataSet(heartValues, "heartPlan");
         set.setDrawIcons(false);
         set.setDrawValues(false);
-        set.setColor(Color.parseColor("#E4CA9F"));
+        set.setColor(Color.parseColor("#3F3943"));
         set.setDrawCircleHole(false);
         set.setDrawCircles(false);
-        set.setLineWidth(1.5f);
+        set.setLineWidth(2f);
         set.setHighlightEnabled(false);
 //        set.setCircleColors();
 //        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
@@ -83,13 +87,26 @@ public class HeartLineChartUtils {
         LineDataSet set = new LineDataSet(heartValues, "RealTime");
         set.setDrawIcons(false);
         set.setDrawValues(false);
-        set.setColor(Color.parseColor("#312C35"));
+        set.setColor(Color.parseColor("#FFFFFF"));
         set.setDrawCircleHole(false);
         set.setDrawCircles(false);
         set.setLineWidth(1f);
-        set.setHighlightEnabled(false);
+
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set.setCubicIntensity(0.2f);
+
+        //渐变
+        set.setDrawFilled(true);
+        Drawable drawable = ContextCompat.getDrawable(mLineChart.getContext(), R.drawable.fade_write);
+        set.setFillDrawable(drawable);
+
+        //高亮
+        set.setHighlightEnabled(true);
+        set.setHighLightColor(Color.parseColor("#D8D8D8"));
+        set.setHighlightLineWidth(0.5f);
+        set.setDrawVerticalHighlightIndicator(true);
+        set.setDrawHorizontalHighlightIndicator(false);
+
         LineData data = mLineChart.getData();
         data.addDataSet(set);
     }
@@ -101,15 +118,16 @@ public class HeartLineChartUtils {
         } else if (value < (Key.HRART_SECTION[0] & 0xFF)) {
             value = (Key.HRART_SECTION[0] & 0xFF);
         }
+
         LineDataSet realTimeSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
-        if (realTimeSet == null) {
-            createRealTimeSet(null);
-        } else {
-            realTimeSet.addEntry(new Entry(realTimeSet.getEntryCount(), value));
-        }
+
+        mLineChart.highlightValue(realTimeSet.getEntryCount(), mLineChart.getData().getIndexOfDataSet(realTimeSet));
+        realTimeSet.addEntry(new Entry(realTimeSet.getEntryCount(), value));
+
         mLineChart.getData().notifyDataChanged();
         mLineChart.notifyDataSetChanged();
         mLineChart.invalidate();
+
     }
 
 

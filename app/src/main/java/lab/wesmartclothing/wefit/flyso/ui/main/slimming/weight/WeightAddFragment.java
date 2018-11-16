@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.Manifest;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +9,14 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 
@@ -39,6 +42,7 @@ import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.RequestBody;
 
 /**
@@ -77,6 +81,7 @@ public class WeightAddFragment extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
+        initPermissions();
         Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
 
@@ -246,6 +251,29 @@ public class WeightAddFragment extends BaseActivity {
                         RxToast.error(error);
                     }
                 });
+    }
 
+
+    private void initPermissions() {
+        new RxPermissions(mActivity)
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            new RxDialogSureCancel(mContext)
+                                    .setTitle("提示")
+                                    .setContent("不定位权限，手机将无法连接蓝牙")
+                                    .setSure("去开启")
+                                    .setSureListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            initPermissions();
+                                        }
+                                    }).show();
+                        }
+                    }
+                });
     }
 }

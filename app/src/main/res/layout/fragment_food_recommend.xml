@@ -374,7 +374,7 @@
             android:translationZ="2dp"
             app:background_normal="@color/white"
             app:corner_radius="27dp"
-            app:ripple_color="@color/GrayWrite"
+            app:ripple_color="@color/ripple_ECEAE6"
             >
 
 
@@ -408,7 +408,7 @@
             android:translationZ="2dp"
             app:background_normal="@color/white"
             app:corner_radius="27dp"
-            app:ripple_color="@color/GrayWrite"
+            app:ripple_color="@color/ripple_ECEAE6"
             >
 
 
@@ -451,7 +451,7 @@
             android:translationZ="2dp"
             app:background_normal="@color/white"
             app:corner_radius="27dp"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <LinearLayout
@@ -493,7 +493,7 @@
             android:translationZ="2dp"
             app:background_normal="@color/white"
             app:corner_radius="27dp"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <LinearLayout

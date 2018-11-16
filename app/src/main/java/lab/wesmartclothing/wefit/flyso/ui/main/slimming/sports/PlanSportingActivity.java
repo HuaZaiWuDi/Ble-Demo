@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
 import com.vondear.rxtools.view.RxToast;
@@ -33,7 +35,6 @@ import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
-import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
 
@@ -91,14 +92,6 @@ public class PlanSportingActivity extends BaseActivity {
     LineChart mChartHeartRate;
     @BindView(R.id.layout_sporting)
     RxRelativeLayout mLayoutSporting;
-    @BindView(R.id.tv_startSportingTime)
-    TextView mTvStartSportingTime;
-    @BindView(R.id.pro_sportingTime)
-    RxRoundProgressBar mProSportingTime;
-    @BindView(R.id.tv_endSportingTime)
-    TextView mTvEndSportingTime;
-    @BindView(R.id.layout_pro)
-    LinearLayout mLayoutPro;
     @BindView(R.id.layout_tip)
     LinearLayout mLayoutTip;
     @BindView(R.id.tv_avHeartRate)
@@ -117,6 +110,10 @@ public class PlanSportingActivity extends BaseActivity {
     LinearLayout mLayoutSportingTime;
     @BindView(R.id.tv_sportskcal)
     TextView mTvSportskcal;
+    @BindView(R.id.tv_endTime)
+    TextView mTvEndTime;
+    @BindView(R.id.tv_currentTime)
+    TextView mTvCurrentTime;
     @BindView(R.id.layout_sportingKcal)
     LinearLayout mLayoutSportingKcal;
 
@@ -127,7 +124,7 @@ public class PlanSportingActivity extends BaseActivity {
     private HeartLineChartUtils lineChartUtils;
     private List<AthlPlanListBean> planList;
     private double sportingScore = 0, sportingKcal = 0, totalSum;
-    private HeartRateBean mHeartRateBean = new HeartRateBean(1);
+    private HeartRateBean mHeartRateBean = new HeartRateBean();
     private List<HeartRateTab> heartLists = new ArrayList<>();
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
@@ -169,7 +166,9 @@ public class PlanSportingActivity extends BaseActivity {
 
         if (BleTools.getInstance().isConnect())
             speakAdd("设备已连接、让我们开始运动瘦身课程训练吧！");
+
     }
+
 
     private void initVerticalText() {
         mTvVerticalText.setText(11, 0, ContextCompat.getColor(mContext, R.color.GrayWrite));
@@ -215,14 +214,11 @@ public class PlanSportingActivity extends BaseActivity {
             bean.setTime(sunTime);
             RxLogUtils.d("计划:" + bean.toString());
         }
+        mTvEndTime.setText(RxFormat.setS2MS(sunTime * 60));
         mQMUIAppBarLayout.setTitle("定制运动中");
-        mLayoutPro.setVisibility(View.VISIBLE);
         mLayoutSportingTime.setVisibility(View.GONE);
         mLayoutSportingKcal.setVisibility(View.VISIBLE);
-        mTvStartSportingTime.setText(RxFormat.setS2MS(0));
-        mTvEndSportingTime.setText(RxFormat.setS2MS(sunTime * 60));
         lineChartUtils.setPlanLineData(planList);
-        mProSportingTime.setMax(sunTime * 60);
 
         RxTextUtils.getBuilder("0.0")
                 .append("分").setProportion(0.5f)
@@ -532,10 +528,9 @@ public class PlanSportingActivity extends BaseActivity {
         @Override
         public void enterTimer() {
             currentTime++;
-            mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
-            mProSportingTime.setProgress(currentTime, false);
-            mTvStartSportingTime.setText(RxFormat.setS2MS(currentTime));
 
+
+            mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
             if (currentTime % 120 == 0) {
                 speakAdd(getString(R.string.speech_currentKcal) +
                         Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里的能量");
@@ -550,6 +545,20 @@ public class PlanSportingActivity extends BaseActivity {
             } else {
                 limitTimer.stopTimer();
             }
+
+            LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
+            int count = realTimeSet.getEntryCount();
+
+            int width = RxUtils.dp2px(325) / 30 * count;
+            if (width < RxUtils.dp2px(23)) {
+                width = RxUtils.dp2px(23);
+            } else if (width > RxUtils.dp2px(325)) {
+                width = RxUtils.dp2px(320);
+            }
+
+            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
+            layoutParams.width = width;
+            mTvCurrentTime.setLayoutParams(layoutParams);
         }
     });
 
@@ -558,7 +567,6 @@ public class PlanSportingActivity extends BaseActivity {
     public void onDestroy() {
         unregisterReceiver(registerReceiver);
         timer.stopTimer();
-        TextSpeakUtils.stop();
         super.onDestroy();
     }
 

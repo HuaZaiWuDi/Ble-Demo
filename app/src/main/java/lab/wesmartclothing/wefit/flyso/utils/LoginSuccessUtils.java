@@ -9,11 +9,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
-import java.util.Arrays;
-
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
@@ -69,15 +66,8 @@ public class LoginSuccessUtils {
                             RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
                         }
 
-                        int maxHeart = (int) ((220 - userInfo.getAge()) * 0.8);
-                        Key.HRART_SECTION[0] = (byte) (maxHeart * 0.4);
-                        Key.HRART_SECTION[1] = (byte) (maxHeart * 0.5);
-                        Key.HRART_SECTION[2] = (byte) (maxHeart * 0.6);
-                        Key.HRART_SECTION[3] = (byte) (maxHeart * 0.7);
-                        Key.HRART_SECTION[4] = (byte) (maxHeart * 0.8);
-                        Key.HRART_SECTION[5] = (byte) (maxHeart * 0.9);
-                        Key.HRART_SECTION[6] = (byte) (maxHeart);
-                        RxLogUtils.d("心率区间：" + Arrays.toString(Key.HRART_SECTION));
+
+                        HeartSectionUtil.initMaxHeart();
 
                         JPushUtils.setAliasOrTags("");
 

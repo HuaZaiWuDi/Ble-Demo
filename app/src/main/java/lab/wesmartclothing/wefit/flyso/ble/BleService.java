@@ -38,6 +38,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
 import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
@@ -89,11 +90,10 @@ public class BleService extends Service {
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
                     int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
                     if (state == BluetoothAdapter.STATE_OFF) {
-                        BleTools.getInstance().stopScanByM();
+                        stopScan();
                     } else if (state == BluetoothAdapter.STATE_ON) {
                         initBle();
                     }
-
                     break;
                 case RxSystemBroadcastUtil.SCREEN_ON:
                     RxLogUtils.d("亮屏");
@@ -101,7 +101,7 @@ public class BleService extends Service {
                     break;
                 case RxSystemBroadcastUtil.SCREEN_OFF:
                     RxLogUtils.d("息屏");
-                    BleTools.getInstance().stopScanByM();
+                    stopScan();
                     break;
                 case Key.ACTION_CLOTHING_STOP:
                     clothingFinish = true;
@@ -123,7 +123,8 @@ public class BleService extends Service {
         initHeartRate();
         connectScaleCallBack();
         initBroadcast();
-
+        if (BleTools.getBleManager().isBlueEnable())
+            initBle();
     }
 
     private void initBroadcast() {
@@ -150,15 +151,13 @@ public class BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (BleTools.getBleManager().isBlueEnable())
-            initBle();
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     private void initBle() {
         BleScanConfig config = new BleScanConfig.Builder()
-                .setServiceUuids(BleKey.UUID_QN_SCALE, BleKey.UUID_Servie)
+                .setServiceUuids(BleKey.UUID_Servie)
 //                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
                 .setScanTimeOut(0)
                 .build();
@@ -169,28 +168,30 @@ public class BleService extends Service {
                 RxLogUtils.d("扫描扫描结果：" + result.toString());
                 BluetoothDevice device = result.getDevice();
 
-                if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
-//                        RxLogUtils.d("扫描到体脂称：" + device.getAddress());
-                    QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
-                    RxBus.getInstance().post(bleDevice);
-                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
-                            mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
-                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-                        mQNBleTools.connectDevice(bleDevice);
-                        mQNBleTools.setDevice(bleDevice);
-                        connectDevices.put(bleDevice.getMac(), bleDevice);
-                    }
-                } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
-                    BleDevice bleDevice = new BleDevice(device);//转换对象
+//                if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
+////                        RxLogUtils.d("扫描到体脂称：" + device.getAddress());
+//                    QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
+//                    RxBus.getInstance().post(bleDevice);
+//                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
+//                            mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
+//                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
+//                        mQNBleTools.connectDevice(bleDevice);
+//                        mQNBleTools.setDevice(bleDevice);
+//                        connectDevices.put(bleDevice.getMac(), bleDevice);
+//                    }
+//                } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
+//
+//                }
+
+                BleDevice bleDevice = new BleDevice(device);//转换对象
 //                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
-                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                            !BleTools.getInstance().connectedState() &&
-                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-                        connectClothing(bleDevice);
-                        connectDevices.put(bleDevice.getMac(), bleDevice);
-                    }
-                    RxBus.getInstance().post(bleDevice);
+                if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
+                        !BleTools.getInstance().connectedState() &&
+                        !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
+                    connectClothing(bleDevice);
+                    connectDevices.put(bleDevice.getMac(), bleDevice);
                 }
+                RxBus.getInstance().post(bleDevice);
             }
 
             @Override
@@ -205,37 +206,60 @@ public class BleService extends Service {
             @Override
             public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
                 super.onBatchScanResults(results);
+//                RxLogUtils.d("扫描扫描结果：" + results.size());
                 for (int i = 0; i < results.size(); i++) {
-//                    RxLogUtils.d("扫描扫描结果：" + results.get(0).toString());
-                    com.smartclothing.blelibrary.scanner.ScanResult result = results.get(0);
-                    BluetoothDevice device = result.getDevice();
-
-                    if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
-//                        RxLogUtils.d("扫描到体脂称：" + device.getAddress());
-                        QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
-                        RxBus.getInstance().post(bleDevice);
-                        if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
-                                mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
-                                !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-                            mQNBleTools.connectDevice(bleDevice);
-                            mQNBleTools.setDevice(bleDevice);
-                            connectDevices.put(bleDevice.getMac(), bleDevice);
-                        }
-                    } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
-                        BleDevice bleDevice = new BleDevice(device);//转换对象
+                    BluetoothDevice device = results.get(i).getDevice();
+                    BleDevice bleDevice = new BleDevice(device);//转换对象
 //                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
-                        if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                                !BleTools.getInstance().connectedState() &&
-                                !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-                            connectClothing(bleDevice);
-                            connectDevices.put(bleDevice.getMac(), bleDevice);
-                        }
-                        RxBus.getInstance().post(bleDevice);
+                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
+                            !BleTools.getInstance().connectedState() &&
+                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
+                        connectClothing(bleDevice);
+                        connectDevices.put(bleDevice.getMac(), bleDevice);
                     }
+                    RxBus.getInstance().post(bleDevice);
                 }
             }
         });
+
+        //扫描体脂称
+        MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
+            @Override
+            public void onDeviceDiscover(QNBleDevice bleDevice) {
+                RxBus.getInstance().post(bleDevice);
+                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
+                        mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
+                        !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
+                    mQNBleTools.connectDevice(bleDevice);
+                    mQNBleTools.setDevice(bleDevice);
+                    connectDevices.put(bleDevice.getMac(), bleDevice);
+                }
+            }
+
+            @Override
+            public void onStartScan() {
+                RxLogUtils.d("轻牛SDK ：开始扫描");
+            }
+
+            @Override
+            public void onStopScan() {
+                RxLogUtils.d("轻牛SDK ：停止扫描");
+            }
+
+            @Override
+            public void onScanFail(int i) {
+                RxLogUtils.d("轻牛SDK ：扫描失败");
+            }
+        });
+        mQNBleTools.scanBle();
     }
+
+
+    private void stopScan() {
+        BleTools.getInstance().stopScanByM();
+        mQNBleTools.stopScan();
+    }
+
 
     //通过UUID验证设备类型
     public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {

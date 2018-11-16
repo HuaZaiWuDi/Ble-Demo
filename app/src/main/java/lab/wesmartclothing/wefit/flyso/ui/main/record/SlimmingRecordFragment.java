@@ -36,6 +36,7 @@ import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarVerticalChart;
 import com.vondear.rxtools.view.layout.RxImageView;
+import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.waveview.RxWaveHelper;
 import com.vondear.rxtools.view.waveview.RxWaveView;
@@ -127,7 +128,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     @BindView(R.id.iv_weight)
     ImageView mIvWeight;
     @BindView(R.id.layout_weight_title)
-    RelativeLayout mLayoutWeightTitle;
+    RxLinearLayout mLayoutWeightTitle;
     @BindView(R.id.mLineChart)
     LineChart mMLineChart;
     @BindView(R.id.tv_currentWeight)
@@ -149,7 +150,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     @BindView(R.id.iv_diet)
     ImageView mIvDiet;
     @BindView(R.id.layout_diet_title)
-    RelativeLayout mLayoutDietTitle;
+    RxLinearLayout mLayoutDietTitle;
     @BindView(R.id.tv_currentDiet)
     TextView mTvCurrentDiet;
     @BindView(R.id.dietProgress_1)
@@ -187,7 +188,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     @BindView(R.id.iv_sports)
     ImageView mIvSports;
     @BindView(R.id.layout_sports_title)
-    RelativeLayout mLayoutSportsTitle;
+    RxLinearLayout mLayoutSportsTitle;
     @BindView(R.id.tv_currentKcal)
     TextView mTvCurrentKcal;
     @BindView(R.id.sportingProgress_1)
@@ -225,7 +226,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     @BindView(R.id.iv_energy)
     ImageView mIvEnergy;
     @BindView(R.id.layout_energy_title)
-    RelativeLayout mLayoutEnergyTitle;
+    RxLinearLayout mLayoutEnergyTitle;
     @BindView(R.id.tv_currentEnergy)
     TextView mTvCurrentEnergy;
     @BindView(R.id.energyProgress_1)

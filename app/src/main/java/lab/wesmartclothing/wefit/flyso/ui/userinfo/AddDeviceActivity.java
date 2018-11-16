@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,6 +22,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -31,6 +33,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
 import java.util.ArrayList;
@@ -121,6 +124,8 @@ public class AddDeviceActivity extends BaseActivity {
                 .setLightStatusBar(true)
                 .process();
 
+        initPermissions();
+
         if (getIntent().getExtras() != null) {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
         }
@@ -169,6 +174,7 @@ public class AddDeviceActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<BleDevice>() {
                     @Override
                     protected void _onNext(BleDevice device) {
+                        RxLogUtils.d("瘦身衣：" + device.getMac());
                         BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
                         isBind(bean);
                     }
@@ -179,6 +185,7 @@ public class AddDeviceActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<QNBleDevice>() {
                     @Override
                     protected void _onNext(QNBleDevice device) {
+                        RxLogUtils.d("体脂称：" + device.getMac());
                         BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
                         isBind(bean);
                     }
@@ -334,7 +341,7 @@ public class AddDeviceActivity extends BaseActivity {
             return;
         }
 
-        if (mImgScan.getAnimation() == null) {
+        if (stepState != STATUS_SCAN_DEVICE) {
             return;
         }
         scanDevice.put(bean.getMac(), bean);
@@ -437,4 +444,29 @@ public class AddDeviceActivity extends BaseActivity {
                 }
         }
     }
+
+
+    private void initPermissions() {
+        new RxPermissions(mActivity)
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            new RxDialogSureCancel(mContext)
+                                    .setTitle("提示")
+                                    .setContent("不定位权限，手机将无法连接蓝牙")
+                                    .setSure("去开启")
+                                    .setSureListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            initPermissions();
+                                        }
+                                    }).show();
+                        }
+                    }
+                });
+    }
+
 }

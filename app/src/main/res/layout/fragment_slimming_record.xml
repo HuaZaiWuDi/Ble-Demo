@@ -645,19 +645,20 @@
             </LinearLayout>
 
             <!--体重记录-->
-            <LinearLayout
+            <com.vondear.rxtools.view.layout.RxLinearLayout
+                android:id="@+id/layout_weight_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_8"
                 android:layout_marginBottom="@dimen/dimen_8"
                 android:orientation="vertical"
+                app:background_normal="@color/white"
+                app:ripple_color="@color/ripple_ECEAE6"
                 tools:visibility="visible">
 
                 <RelativeLayout
-                    android:id="@+id/layout_weight_title"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="@drawable/selector_ripple_bg_"
                     android:paddingLeft="@dimen/dimen_16"
                     android:paddingRight="@dimen/dimen_16">
 
@@ -807,21 +808,23 @@
                 </RelativeLayout>
 
 
-            </LinearLayout>
+            </com.vondear.rxtools.view.layout.RxLinearLayout>
 
             <!--饮食记录-->
-            <LinearLayout
+            <com.vondear.rxtools.view.layout.RxLinearLayout
+                android:id="@+id/layout_diet_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
+                app:background_normal="@color/white"
+                app:ripple_color="@color/ripple_ECEAE6"
                 tools:visibility="visible">
 
                 <RelativeLayout
-                    android:id="@+id/layout_diet_title"
+
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="@drawable/selector_ripple_bg_"
                     android:paddingLeft="@dimen/dimen_16"
                     android:paddingRight="@dimen/dimen_16">
 
@@ -1028,21 +1031,23 @@
                 </RelativeLayout>
 
 
-            </LinearLayout>
+            </com.vondear.rxtools.view.layout.RxLinearLayout>
 
             <!--运动记录-->
-            <LinearLayout
+            <com.vondear.rxtools.view.layout.RxLinearLayout
+                android:id="@+id/layout_sports_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
+                app:background_normal="@color/white"
+                app:ripple_color="@color/ripple_ECEAE6"
                 tools:visibility="visible">
 
                 <RelativeLayout
-                    android:id="@+id/layout_sports_title"
+
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="@drawable/selector_ripple_bg_"
                     android:paddingLeft="@dimen/dimen_16"
                     android:paddingRight="@dimen/dimen_16">
 
@@ -1243,22 +1248,22 @@
                 </RelativeLayout>
 
 
-            </LinearLayout>
+            </com.vondear.rxtools.view.layout.RxLinearLayout>
 
             <!--能量记录-->
-            <LinearLayout
-
+            <com.vondear.rxtools.view.layout.RxLinearLayout
+                android:id="@+id/layout_energy_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
+                app:background_normal="@color/white"
+                app:ripple_color="@color/ripple_ECEAE6"
                 tools:visibility="visible">
 
                 <RelativeLayout
-                    android:id="@+id/layout_energy_title"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:background="@drawable/selector_ripple_bg_"
                     android:paddingLeft="@dimen/dimen_16"
                     android:paddingRight="@dimen/dimen_16">
 
@@ -1459,7 +1464,7 @@
                 </RelativeLayout>
 
 
-            </LinearLayout>
+            </com.vondear.rxtools.view.layout.RxLinearLayout>
 
 
             <RelativeLayout

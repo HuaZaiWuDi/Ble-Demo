@@ -58,7 +58,7 @@
         android:textSize="14sp"
         app:background_normal="@color/GrayWrite"
         app:corner_radius="4dp"
-        app:ripple_color="@color/GrayWrite"/>
+        app:ripple_color="@color/ripple_ECEAE6"/>
 
 
     <com.vondear.rxtools.view.layout.RxTextView
@@ -77,6 +77,6 @@
         app:corner_radius="4dp"
         app:gradient_endColor="#FB910B"
         app:gradient_startColor="#FAC239"
-        app:ripple_color="@color/GrayWrite"/>
+        app:ripple_color="@color/ripple_ECEAE6"/>
 
 </RelativeLayout>

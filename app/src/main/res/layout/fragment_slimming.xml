@@ -48,10 +48,23 @@
             android:textSize="15sp"/>
 
 
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/img_seeRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            app:icon_src_normal="@mipmap/icon_see_record"
+            tools:visibility="visible"
+            />
+
+
         <LinearLayout
             android:id="@+id/layout_notify"
-            android:layout_width="@dimen/dimen_50"
-            android:layout_height="@dimen/dimen_50"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="16dp"
             android:gravity="top|right">
@@ -64,18 +77,6 @@
                 android:background="@mipmap/icon_email_white"/>
 
         </LinearLayout>
-
-
-        <com.vondear.rxtools.view.layout.RxTextView
-            android:id="@+id/img_seeRecord"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            app:icon_src_normal="@mipmap/icon_see_record"
-            />
 
 
     </RelativeLayout>
@@ -170,7 +171,7 @@
                         app:border_color_normal="@color/GrayWrite"
                         app:border_width_normal="1dp"
                         app:corner_radius="4dp"
-                        app:ripple_color="@color/GrayWrite"/>
+                        app:ripple_color="@color/ripple_ECEAE6"/>
 
 
                     <TextView
@@ -774,7 +775,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:icon_src_normal="@mipmap/icon_free_sporting"
-                        app:ripple_color="@color/GrayWrite"
+                        app:ripple_color="@color/ripple_ECEAE6"
                         />
 
                 </android.support.v7.widget.CardView>
@@ -800,7 +801,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:icon_src_normal="@mipmap/icon_curriculum_sporting"
-                        app:ripple_color="@color/GrayWrite"
+                        app:ripple_color="@color/ripple_ECEAE6"
                         />
 
 
@@ -844,7 +845,7 @@
                         android:textSize="18sp"
                         app:background_normal="@color/green_61D97F"
                         app:corner_radius="23dp"
-                        app:ripple_color="@color/GrayWrite"/>
+                        app:ripple_color="@color/ripple_ECEAE6"/>
 
 
                 </LinearLayout>
@@ -979,7 +980,7 @@
                         android:textSize="18sp"
                         app:background_normal="@color/green_61D97F"
                         app:corner_radius="22dp"
-                        app:ripple_color="@color/Gray"/>
+                        app:ripple_color="@color/ripple_ECEAE6"/>
 
 
                 </RelativeLayout>
@@ -1024,7 +1025,7 @@
                         android:textSize="18sp"
                         app:background_normal="@color/green_61D97F"
                         app:corner_radius="23dp"
-                        app:ripple_color="@color/GrayWrite"/>
+                        app:ripple_color="@color/ripple_ECEAE6"/>
 
 
                 </LinearLayout>

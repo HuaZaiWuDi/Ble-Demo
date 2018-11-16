@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.smartclothing.blelibrary.BleTools;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxAnimationUtils;
@@ -72,6 +74,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.CountDownView;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -235,6 +238,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
+    private boolean showed = false;//目标已经完成不在展示
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -253,9 +257,7 @@ public class SlimmingFragment extends BaseAcFragment {
     protected void initNetData() {
         super.initNetData();
 
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
-        RxLogUtils.d("用户数据:" + info);
+        UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
@@ -269,6 +271,7 @@ public class SlimmingFragment extends BaseAcFragment {
     @Override
     protected void initViews() {
         super.initViews();
+        initPermissions();
         mTvCurrentWeight.setTypeface(MyAPP.typeface);
         mTvInitWeight.setTypeface(MyAPP.typeface);
         mTvTargetWeight.setTypeface(MyAPP.typeface);
@@ -427,7 +430,6 @@ public class SlimmingFragment extends BaseAcFragment {
                 .append("预计消耗热量(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvSportingKcal);
-
     }
 
     private void getCurrentRealHeart() {
@@ -629,6 +631,11 @@ public class SlimmingFragment extends BaseAcFragment {
                 .into(mTvIngestionHeat);
 
 
+        if (warning) {
+            TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
+        }
+
+
         mCircleProgressBar.setProgressColor(ContextCompat.getColor(mContext, warning ? R.color.red : R.color.orange_FF7200));
         mCircleProgressBar.setProgress((int) (heatInfoVO.getIntakePercent() * 100));
 
@@ -679,7 +686,8 @@ public class SlimmingFragment extends BaseAcFragment {
         }
 
         //目标已完成
-        if (bean.getComplete() == 1) {
+        if (bean.getComplete() == 1 && !showed) {
+            showed = true;
             new RxDialogSure(mContext)
                     .setTitle("提示")
                     .setContent("恭喜您的瘦身目标已达成")
@@ -691,7 +699,6 @@ public class SlimmingFragment extends BaseAcFragment {
                         }
                     }).show();
         }
-
     }
 
 
@@ -937,6 +944,30 @@ public class SlimmingFragment extends BaseAcFragment {
                     }
                 });
         rxDialog.show();
+    }
+
+
+    private void initPermissions() {
+        new RxPermissions(mActivity)
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            new RxDialogSureCancel(mContext)
+                                    .setTitle("提示")
+                                    .setContent("不定位权限，手机将无法连接蓝牙")
+                                    .setSure("去开启")
+                                    .setSureListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            initPermissions();
+                                        }
+                                    }).show();
+                        }
+                    }
+                });
     }
 
 

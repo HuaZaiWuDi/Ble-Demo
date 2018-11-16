@@ -6,7 +6,6 @@ import android.support.annotation.IntDef;
 import com.clj.fastble.data.BleDevice;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
 import com.yolanda.health.qnblesdk.out.QNConfig;
@@ -70,15 +69,14 @@ public class QNBleTools {
     public void scanBle() {
         saveUserInfo();
         MyAPP.QNapi.startBleDeviceDiscovery(mQNResultCallback);
-        stopScan();
     }
 
-    public void saveUserInfo() {
+    private void saveUserInfo() {
         QNConfig config = MyAPP.QNapi.getConfig();
-        config.setDuration(1000);
+        config.setDuration(0);
         config.setOnlyScreenOn(false);
-        config.setAllowDuplicates(false);
-        config.setScanOutTime(1000);
+        config.setAllowDuplicates(true);
+        config.setScanOutTime(0);
         config.setUnit(0);
 
         config.save(new QNResultCallback() {
@@ -104,8 +102,7 @@ public class QNBleTools {
     }
 
     public QNUser createUser() {
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return null;
@@ -128,28 +125,6 @@ public class QNBleTools {
 
 
     public void connectDevice(QNBleDevice qnBleDevice) {
-        MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
-            @Override
-            public void onDeviceDiscover(QNBleDevice qnBleDevice) {
-                RxLogUtils.d("轻牛SDK ：发现设备" + qnBleDevice.getName());
-            }
-
-            @Override
-            public void onStartScan() {
-                RxLogUtils.d("轻牛SDK ：开始扫描");
-            }
-
-            @Override
-            public void onStopScan() {
-                RxLogUtils.d("轻牛SDK ：停止扫描");
-            }
-
-            @Override
-            public void onScanFail(int i) {
-                RxLogUtils.d("轻牛SDK ：扫描失败");
-            }
-        });
-        scanBle();
         MyAPP.QNapi.connectDevice(qnBleDevice, createUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {

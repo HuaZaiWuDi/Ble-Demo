@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -26,7 +28,9 @@ import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxRandom;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxTextviewVertical;
 import com.vondear.rxtools.view.RxToast;
@@ -34,7 +38,6 @@ import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
-import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
 
@@ -90,14 +93,6 @@ public class SportingActivity extends BaseActivity {
     LineChart mChartHeartRate;
     @BindView(R.id.layout_sporting)
     RxRelativeLayout mLayoutSporting;
-    @BindView(R.id.tv_startSportingTime)
-    TextView mTvStartSportingTime;
-    @BindView(R.id.pro_sportingTime)
-    RxRoundProgressBar mProSportingTime;
-    @BindView(R.id.tv_endSportingTime)
-    TextView mTvEndSportingTime;
-    @BindView(R.id.layout_pro)
-    LinearLayout mLayoutPro;
     @BindView(R.id.layout_tip)
     LinearLayout mLayoutTip;
     @BindView(R.id.tv_avHeartRate)
@@ -120,7 +115,8 @@ public class SportingActivity extends BaseActivity {
     LinearLayout mLayoutSportingKcal;
     @BindView(R.id.layout_legend)
     RelativeLayout mLayoutLegend;
-
+    @BindView(R.id.tv_currentTime)
+    TextView mTvCurrentTime;
 
     private Button btn_Connect;
     private int currentTime = 0;
@@ -167,6 +163,8 @@ public class SportingActivity extends BaseActivity {
         registerReceiver(registerReceiver, filter);
 
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
+//        mChartHeartRate.setViewPortOffsets(0, 0, RxUtils.dp2px(86), 0);
+
 
         XAxis xAxis = mChartHeartRate.getXAxis();
         xAxis.setAxisMaximum(30);
@@ -177,12 +175,13 @@ public class SportingActivity extends BaseActivity {
         RxTextUtils.getBuilder("0.0")
                 .append("kcal").setProportion(0.5f)
                 .into(mTvKcal);
+        test.startTimer();
     }
 
 
     float text = 100;
     boolean b = false;
-    MyTimer test = new MyTimer(500, 100, new MyTimerListener() {
+    MyTimer test = new MyTimer(500, 1000, new MyTimerListener() {
         @Override
         public void enterTimer() {
             if (mChartHeartRate.getData().getEntryCount() > 30) {
@@ -190,17 +189,23 @@ public class SportingActivity extends BaseActivity {
                 xAxis.resetAxisMaximum();
             }
 
-            if (mChartHeartRate.getData().getEntryCount() % 100 == 0) {
-                b = !b;
-            } else if (mChartHeartRate.getData().getEntryCount() % 49 == 0) {
-                b = !b;
+            lineChartUtils.setRealTimeData(RxRandom.getRandom(80, 180));
+
+            LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
+            int count = realTimeSet.getEntryCount();
+
+            int width = RxUtils.dp2px(325) / 30 * count;
+            if (width < RxUtils.dp2px(23)) {
+                width = RxUtils.dp2px(23);
+            } else if (width > RxUtils.dp2px(325)) {
+                width = RxUtils.dp2px(320);
             }
-            if (b) {
-                text++;
-            } else {
-                text--;
-            }
-            lineChartUtils.setRealTimeData(text);
+
+            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
+            layoutParams.width = width;
+            mTvCurrentTime.setLayoutParams(layoutParams);
+
+
         }
     });
 
@@ -222,7 +227,6 @@ public class SportingActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
 
@@ -416,6 +420,23 @@ public class SportingActivity extends BaseActivity {
                 speakAdd(getString(R.string.speech_currentKcal) +
                         Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "卡路里的能量");
             }
+
+            mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
+
+            LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
+            int count = realTimeSet.getEntryCount();
+
+            int width = RxUtils.dp2px(325) / 30 * count;
+            if (width < RxUtils.dp2px(23)) {
+                width = RxUtils.dp2px(23);
+            } else if (width > RxUtils.dp2px(325)) {
+                width = RxUtils.dp2px(320);
+            }
+
+            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
+            layoutParams.width = width;
+            mTvCurrentTime.setLayoutParams(layoutParams);
+
         }
     });
 
@@ -424,7 +445,6 @@ public class SportingActivity extends BaseActivity {
     public void onDestroy() {
         unregisterReceiver(registerReceiver);
         timer.stopTimer();
-        TextSpeakUtils.stop();
         super.onDestroy();
     }
 
@@ -526,4 +546,6 @@ public class SportingActivity extends BaseActivity {
         if (mSwMusic.isOpened())
             TextSpeakUtils.speakAdd(text);
     }
+
+
 }

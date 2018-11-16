@@ -13,7 +13,6 @@ import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Action;
@@ -24,12 +23,12 @@ import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
+import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
@@ -90,6 +89,8 @@ public class SplashActivity extends BaseActivity {
         super.initNetData();
         initData();
         initUserInfo();
+
+//        RxActivityUtils.skipActivityAndFinish(mContext, SportingActivity.class);
     }
 
 
@@ -122,22 +123,13 @@ public class SplashActivity extends BaseActivity {
                         SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
                         isSaveUserInfo = sex == 0;
 
-
-                        int maxHeart = (int) ((220 - userInfo.getAge()) * 0.8);
-                        Key.HRART_SECTION[0] = (byte) (maxHeart * 0.4);
-                        Key.HRART_SECTION[1] = (byte) (maxHeart * 0.5);
-                        Key.HRART_SECTION[2] = (byte) (maxHeart * 0.6);
-                        Key.HRART_SECTION[3] = (byte) (maxHeart * 0.7);
-                        Key.HRART_SECTION[4] = (byte) (maxHeart * 0.8);
-                        Key.HRART_SECTION[5] = (byte) (maxHeart * 0.9);
-                        Key.HRART_SECTION[6] = (byte) (maxHeart);
-                        RxLogUtils.d("心率区间：" + Arrays.toString(Key.HRART_SECTION));
                     }
                 });
     }
 
 
     private void gotoMain() {
+        HeartSectionUtil.initMaxHeart();
         RxLogUtils.d("跳转");
         //通过验证是否保存userId来判断是否登录
         if (RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {

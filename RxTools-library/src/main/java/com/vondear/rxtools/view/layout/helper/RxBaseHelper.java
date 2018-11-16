@@ -308,7 +308,7 @@ public class RxBaseHelper<T extends View> {
         if (mRippleColor != 0) {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Drawable contentDrawable = (mStateBackground == null ? mBackgroundPressed : mStateBackground);
-                RippleDrawable rippleDrawable = new RippleDrawable(ColorStateList.valueOf(mRippleColor), contentDrawable, contentDrawable);
+                RippleDrawable rippleDrawable = new RippleDrawable(ColorStateList.valueOf(mRippleColor), contentDrawable, null);
                 mView.setBackground(rippleDrawable);
             } else {
                 setBackgroundColorPressed(mRippleColor);
@@ -320,7 +320,6 @@ public class RxBaseHelper<T extends View> {
     /*********************
      * BackgroundColor
      ********************/
-
     public RxBaseHelper setStateBackgroundColor(int normal, int pressed, int unable) {
         mBackgroundColorNormal = normal;
         mBackgroundColorPressed = pressed;

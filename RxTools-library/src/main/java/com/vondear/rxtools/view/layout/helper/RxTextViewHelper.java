@@ -7,7 +7,6 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.TextUtils;
@@ -150,6 +149,7 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
 
         //设置渐变
         setGradient();
+
     }
 
 
@@ -212,20 +212,6 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
         mRipplePressed.setOrientation(mOrientation);
     }
 
-    /************************
-     * Ripple
-     ************************/
-    private void setRipple() {
-        if (mRippleColor != 0) {
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Drawable contentDrawable = mRipplePressed;
-                RippleDrawable rippleDrawable = new RippleDrawable(ColorStateList.valueOf(mRippleColor), contentDrawable, contentDrawable);
-                mView.setBackground(rippleDrawable);
-            } else {
-                setBackgroundColorPressed(mRippleColor);
-            }
-        }
-    }
 
     /************************
      * Typeface

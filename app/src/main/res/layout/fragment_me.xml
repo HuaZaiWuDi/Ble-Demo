@@ -269,7 +269,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_myDevice"
@@ -322,7 +322,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_Collect"
@@ -378,7 +378,7 @@
                 android:paddingRight="@dimen/dimen_16"
                 android:visibility="gone"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_Order"
@@ -423,7 +423,7 @@
                 android:paddingRight="@dimen/dimen_16"
                 android:visibility="gone"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_shoppingAddress"
@@ -463,7 +463,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_problem"
@@ -508,7 +508,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_aboutUs"

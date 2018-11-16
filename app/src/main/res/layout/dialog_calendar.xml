@@ -31,7 +31,7 @@
         android:textSize="12sp"
         app:background_normal="@color/black_312B36"
         app:corner_radius="15dp"
-        app:ripple_color="@color/GrayWrite"
+        app:ripple_color="@color/ripple_ECEAE6"
         />
 
 </RelativeLayout>

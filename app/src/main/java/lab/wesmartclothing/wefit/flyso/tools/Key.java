@@ -147,6 +147,6 @@ public interface Key {
      * 6.危险
      * 7.最大心率
      */
-    byte[] HRART_SECTION = new byte[7];
+    byte[] HRART_SECTION = new byte[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};
 
 }

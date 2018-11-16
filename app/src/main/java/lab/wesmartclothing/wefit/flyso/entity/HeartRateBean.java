@@ -30,6 +30,13 @@ public class HeartRateBean implements Serializable {
     private List<HeartRateTab> heartList;
 
 
+    public HeartRateBean() {
+    }
+
+    public HeartRateBean(int planFlag) {
+        this.planFlag = planFlag;
+    }
+
     public double getTotalCalorie() {
         return totalCalorie;
     }
@@ -46,12 +53,7 @@ public class HeartRateBean implements Serializable {
         this.complete = complete;
     }
 
-    public HeartRateBean() {
-    }
 
-    public HeartRateBean(int planFlag) {
-        this.planFlag = planFlag;
-    }
 
     public String getAthlDate() {
         return athlDate;

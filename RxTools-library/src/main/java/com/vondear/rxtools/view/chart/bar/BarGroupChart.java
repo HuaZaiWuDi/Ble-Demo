@@ -101,7 +101,7 @@ public class BarGroupChart extends View {
 
         textPaint.setTextAlign(Paint.Align.CENTER);
         if (topValue != 0) {
-            if (topValue > 9999) {
+            if (String.valueOf(topValue).length() > 4) {
                 textPaint.setTextSize(RxUtils.sp2px(5));
             }
             canvas.drawText(String.valueOf(oldValue), mWidth / 2, top - (mHeight - barHeight) / 2, textPaint);
