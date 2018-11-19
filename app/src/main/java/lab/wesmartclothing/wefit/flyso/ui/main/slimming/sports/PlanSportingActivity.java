@@ -309,26 +309,7 @@ public class PlanSportingActivity extends BaseActivity {
      */
 
     private void planSportingTextSpeak() {
-        //运动开始语音
-        if (currentTime == 1) {
-            speakAdd("运动模式已启动，本次课程时间 " + planList.get(planList.size() - 1).getTime() + " 分钟，开始运动");
-            mTvHeartCount.setText("1/" + planList.size());
-            speakAdd("第一节热身运动 请调节心率至热身运动区间，保持匀速" + planList.get(0).getTime() + " 分钟");
-        }
 
-        for (int i = 0; i < planList.size(); i++) {
-            AthlPlanListBean bean = planList.get(i);
-            if (currentTime == bean.getTime() * 60) {
-                if ((i + 1) < planList.size())
-                    completeHeartRange(bean, planList.get((i + 1) % planList.size()));
-                mTvHeartCount.setText((i + 2) + "/" + planList.size());
-            }
-        }
-
-        //运动结束
-        if (currentTime == planList.get(planList.size() - 1).getTime() * 60) {
-            sportingFinish(true);
-        }
     }
 
     //瘦身衣运动结束
@@ -389,6 +370,31 @@ public class PlanSportingActivity extends BaseActivity {
         if (defaultSet != null && realTimeSet != null) {
             int count = realTimeSet.getEntryCount();
             float tatolCount = defaultSet.getEntryCount();
+
+
+            //运动开始语音
+            if (count == 1) {
+                speakAdd("运动模式已启动，本次课程时间 " + planList.get(planList.size() - 1).getTime() + " 分钟，开始运动");
+                mTvHeartCount.setText("1/" + planList.size());
+                speakAdd("第一节热身运动 请调节心率至热身运动区间，保持匀速" + planList.get(0).getTime() + " 分钟");
+            }
+
+            for (int i = 0; i < planList.size(); i++) {
+                AthlPlanListBean bean = planList.get(i);
+                if (count * 2 == bean.getTime() * 60) {
+                    if ((i + 1) < planList.size())
+                        completeHeartRange(bean, planList.get((i + 1) % planList.size()));
+                    mTvHeartCount.setText((i + 2) + "/" + planList.size());
+                }
+            }
+
+
+            mHeartRateBean.setComplete(count / tatolCount);
+            //运动结束
+            if (count == tatolCount) {
+                sportingFinish(true);
+                return;
+            }
             if (count >= tatolCount) return;
 
             int score = 0;
@@ -408,8 +414,6 @@ public class PlanSportingActivity extends BaseActivity {
             if (count > 0)
                 sportingScore = totalSum / count + count * 50 / tatolCount;
 
-            mHeartRateBean.setComplete(count / tatolCount);
-
 
             RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingScore, 1))
                     .append("\t分").setProportion(0.3f)
@@ -426,6 +430,7 @@ public class PlanSportingActivity extends BaseActivity {
                 }
             }
 
+
             float width = RxUtils.dp2px(325) * 1f / defaultSet.getEntryCount() * realTimeSet.getEntryCount() + RxUtils.dp2px(23) * 0.5f;
             if (width < RxUtils.dp2px(23)) {
                 width = RxUtils.dp2px(23);
@@ -437,6 +442,7 @@ public class PlanSportingActivity extends BaseActivity {
             mTvCurrentTime.setLayoutParams(layoutParams);
         }
     }
+
 
     private void initTypeface() {
         Typeface typeface = MyAPP.typeface;
@@ -545,7 +551,6 @@ public class PlanSportingActivity extends BaseActivity {
                         Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里的能量");
             }
 
-            planSportingTextSpeak();
             freeTextSpeak(currentHeart);
             sportingScore(currentHeart);
 
