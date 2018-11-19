@@ -44,7 +44,6 @@ public class HeartRateUtil {
     private int realHeartRate = 0;//真实心率
     private static final int heartDeviation = 5;//心率误差值
     private static int heartSupplement = (int) (Math.random() * 3 + 2);//补差值：修改补差值为2-5的随机数
-    HeartRateBean mHeartRateBean = new HeartRateBean();
     private long lastTime = 0;//历史记录上一条时间
     private int packageCounts = 0;//历史数据包序号
 
@@ -85,7 +84,6 @@ public class HeartRateUtil {
         mSportsDataTab.setData(bytes);
         mSportsDataTab.setDate(System.currentTimeMillis());
         mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
-        mHeartRateBean.setStepNumber(mSportsDataTab.getSteps());
         //卡路里累加计算
         kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
 

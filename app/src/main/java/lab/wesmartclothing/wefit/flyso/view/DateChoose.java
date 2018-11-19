@@ -120,7 +120,7 @@ public class DateChoose extends RelativeLayout {
 
         notifyDate();
         nextIsEnable(isToday);
-        fetchPlanDate(calendar.getTimeInMillis());
+
     }
 
 
@@ -172,6 +172,7 @@ public class DateChoose extends RelativeLayout {
             }
         });
 
+        fetchPlanDate(calendar.getTimeInMillis());
         mCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
             @Override
             public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {

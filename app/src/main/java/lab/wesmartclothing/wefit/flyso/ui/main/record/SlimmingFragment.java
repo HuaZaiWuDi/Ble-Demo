@@ -2,6 +2,10 @@ package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +27,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxAnimationUtils;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -238,7 +243,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
-    private boolean showed = false;//目标已经完成不在展示
+    public static boolean showed = false;//目标已经完成不在展示
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -246,6 +251,22 @@ public class SlimmingFragment extends BaseAcFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+
+    BroadcastReceiver mRegisterReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //监听瘦身衣连接情况
+            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
+                int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+                if (state == BluetoothAdapter.STATE_ON) {
+                    tipDialog.dismiss();
+                } else if (state == BluetoothAdapter.STATE_TURNING_ON) {
+
+                }
+            }
+        }
+    };
 
 
     @Override
@@ -272,6 +293,8 @@ public class SlimmingFragment extends BaseAcFragment {
     protected void initViews() {
         super.initViews();
         initPermissions();
+        mActivity.registerReceiver(mRegisterReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+
         mTvCurrentWeight.setTypeface(MyAPP.typeface);
         mTvInitWeight.setTypeface(MyAPP.typeface);
         mTvTargetWeight.setTypeface(MyAPP.typeface);
@@ -325,7 +348,8 @@ public class SlimmingFragment extends BaseAcFragment {
                     protected void _onNext(SportsDataTab sportsDataTab) {
                         if (BleService.clothingFinish && isVisibled()) {
                             BleService.clothingFinish = false;
-                            if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+
+                            if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                                 RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
                                         .setContent("瘦身衣已连接，是否立即开始运动？")
                                         .setCancel("自由运动")
@@ -872,7 +896,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 } else if (!BleTools.getInstance().isConnect()) {
                     tipDialog.showInfo("您还未连接瘦身衣", 1500);
                 } else {
-                    if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                    if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                         bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
                         RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
                     } else {
@@ -888,7 +912,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 } else if (!BleTools.getInstance().isConnect()) {
                     tipDialog.showInfo("您还未连接瘦身衣", 1500);
                 } else {
-                    if (bean.getAthlPlanList() != null && !bean.getAthlPlanList().isEmpty()) {
+                    if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                         bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
                         RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
                     } else {
@@ -940,6 +964,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        tipDialog.show("正在开启蓝牙", 5000);
                         BleTools.getBleManager().enableBluetooth();
                     }
                 });

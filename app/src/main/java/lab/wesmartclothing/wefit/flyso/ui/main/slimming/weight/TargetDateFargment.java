@@ -28,6 +28,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.RecordInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -201,6 +202,7 @@ public class TargetDateFargment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         //关闭之前的设置目标体重和目标周期的界面
+                        SlimmingFragment.showed = false;
                         RxBus.getInstance().post(new RefreshSlimming());
                         //直接跳转到指定的Fragment（同时清栈）
                         RxActivityUtils.skipActivity(mContext, MainActivity.class);

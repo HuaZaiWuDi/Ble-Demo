@@ -51,7 +51,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
-import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -123,7 +123,7 @@ public class SportingActivity extends BaseActivity {
     private int type = -1;//运动上一次状态
     private HeartLineChartUtils lineChartUtils;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
-    private List<HeartRateTab> heartLists = new ArrayList<>();
+    private List<HeartRateItemBean> heartLists = new ArrayList<>();
     private double currentKcal = 0;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
@@ -137,7 +137,7 @@ public class SportingActivity extends BaseActivity {
 
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
                 //瘦身衣运动结束
-                if (mContext != null)
+                if (mContext != null && !heartLists.isEmpty())
                     stopSporting();
             }
         }
@@ -175,7 +175,6 @@ public class SportingActivity extends BaseActivity {
         RxTextUtils.getBuilder("0.0")
                 .append("kcal").setProportion(0.5f)
                 .into(mTvKcal);
-        test.startTimer();
     }
 
 
@@ -204,7 +203,6 @@ public class SportingActivity extends BaseActivity {
             ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
             layoutParams.width = width;
             mTvCurrentTime.setLayoutParams(layoutParams);
-
 
         }
     });
@@ -262,7 +260,7 @@ public class SportingActivity extends BaseActivity {
                             xAxis.resetAxisMaximum();
                         }
 
-                        HeartRateTab heartRateTab = new HeartRateTab();
+                        HeartRateItemBean heartRateTab = new HeartRateItemBean();
                         heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
                         heartRateTab.setHeartTime(sportsDataTab.getDate());
                         heartRateTab.setStepTime(2);

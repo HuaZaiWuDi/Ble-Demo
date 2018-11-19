@@ -40,12 +40,43 @@
                 />
 
 
+            <com.vondear.rxtools.view.roundprogressbar.RoundProgressBar
+                android:id="@+id/circleProgressBar"
+                android:layout_width="131dp"
+                android:layout_height="131dp"
+                android:layout_below="@+id/chooseDate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                app:pro_background_color="@color/BrightGray"
+                app:pro_max_value="100"
+                app:pro_progress_color="@color/orange_FF7200"
+                app:pro_stroke_round_cap="true"
+                app:pro_stroke_width="10dp"
+                app:pro_type="type_circle"
+                app:pro_value="0"/>
+
+
+            <TextView
+                android:id="@+id/tv_totalKcal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chooseDate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="75dp"
+                android:gravity="center"
+                android:lineSpacingExtra="8dp"
+                android:text="1964 kcal"
+                android:textColor="@color/orange_FF7200"
+                android:textSize="23sp"/>
+
+
             <!--今日三餐-->
             <LinearLayout
                 android:id="@+id/layout_foodList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/chooseDate"
+                android:layout_below="@+id/circleProgressBar"
                 android:orientation="vertical"
                 tools:visibility="visible">
 

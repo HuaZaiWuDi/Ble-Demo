@@ -863,11 +863,9 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             mWaveHelper = new RxWaveHelper(mProComplete);
             mWaveHelper.start();
         }
-        mTvProgress.setTextColor(ContextCompat.getColor(mContext, bean.getComplete() == 1 ? R.color.white : R.color.Gray));
         RxTextUtils.getBuilder(complete + "")
                 .append("\t%").setProportion(0.5f)
                 .into(mTvProgress);
-        mTvProgress2.setTextColor(ContextCompat.getColor(mContext, bean.getComplete() == 1 ? R.color.white : R.color.Gray));
         RxTextUtils.getBuilder(complete + "")
                 .append("\t%").setProportion(0.5f)
                 .into(mTvProgress2);

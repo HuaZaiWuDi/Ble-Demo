@@ -49,8 +49,8 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
-import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -125,7 +125,7 @@ public class PlanSportingActivity extends BaseActivity {
     private List<AthlPlanListBean> planList;
     private double sportingScore = 0, sportingKcal = 0, totalSum;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
-    private List<HeartRateTab> heartLists = new ArrayList<>();
+    private List<HeartRateItemBean> heartLists = new ArrayList<>();
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -135,7 +135,9 @@ public class PlanSportingActivity extends BaseActivity {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                sportingFinish(currentTime == planList.get(planList.size() - 1).getTime() * 60);
+                if (mContext != null && !heartLists.isEmpty()) {
+                    sportingFinish(currentTime == planList.get(planList.size() - 1).getTime() * 60);
+                }
             }
         }
     };
@@ -262,7 +264,7 @@ public class PlanSportingActivity extends BaseActivity {
                                 .into(mTvSportskcal);
 
 
-                        HeartRateTab heartRateTab = new HeartRateTab();
+                        HeartRateItemBean heartRateTab = new HeartRateItemBean();
                         heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
                         heartRateTab.setHeartTime(sportsDataTab.getDate());
                         heartRateTab.setStepTime(2);
@@ -336,7 +338,6 @@ public class PlanSportingActivity extends BaseActivity {
 
     //瘦身衣运动结束
     private void sportingFinish(boolean isComplete) {
-        if (mContext == null) return;
         if (isComplete) {
             speakAdd("好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！本次训练共计燃烧"
                     + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里，请继续保持。");

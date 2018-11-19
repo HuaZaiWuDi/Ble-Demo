@@ -62,6 +62,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
+import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
@@ -83,6 +84,8 @@ public class BleService extends Service {
 
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
 
+    private TipDialog mTipDialog;
+
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -93,6 +96,7 @@ public class BleService extends Service {
                         stopScan();
                     } else if (state == BluetoothAdapter.STATE_ON) {
                         initBle();
+                    } else if (state == BluetoothAdapter.STATE_TURNING_ON) {//正在开启蓝牙
                     }
                     break;
                 case RxSystemBroadcastUtil.SCREEN_ON:

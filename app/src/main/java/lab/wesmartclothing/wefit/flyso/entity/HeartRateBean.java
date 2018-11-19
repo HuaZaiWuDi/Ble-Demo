@@ -3,8 +3,6 @@ package lab.wesmartclothing.wefit.flyso.entity;
 import java.io.Serializable;
 import java.util.List;
 
-import lab.wesmartclothing.wefit.flyso.entity.sql.HeartRateTab;
-
 /**
  * Created icon_hide_password jk on 2018/6/11.
  */
@@ -27,14 +25,10 @@ public class HeartRateBean implements Serializable {
     private int stepNumber;
     private double complete;
     private double totalCalorie;
-    private List<HeartRateTab> heartList;
+    private List<HeartRateItemBean> heartList;
 
 
     public HeartRateBean() {
-    }
-
-    public HeartRateBean(int planFlag) {
-        this.planFlag = planFlag;
     }
 
     public double getTotalCalorie() {
@@ -52,7 +46,6 @@ public class HeartRateBean implements Serializable {
     public void setComplete(double complete) {
         this.complete = complete;
     }
-
 
 
     public String getAthlDate() {
@@ -95,11 +88,11 @@ public class HeartRateBean implements Serializable {
         this.stepNumber = stepNumber;
     }
 
-    public List<HeartRateTab> getHeartList() {
+    public List<HeartRateItemBean> getHeartList() {
         return heartList;
     }
 
-    public void setHeartList(List<HeartRateTab> heartList) {
+    public void setHeartList(List<HeartRateItemBean> heartList) {
         this.heartList = heartList;
     }
 

@@ -21,6 +21,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxLinearLayout;
+import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -100,6 +101,10 @@ public class FoodRecommend extends BaseActivity {
     LinearLayout mLayoutAddFood;
     @BindView(R.id.tv_empty)
     TextView mTvEmpty;
+    @BindView(R.id.circleProgressBar)
+    RoundProgressBar mCircleProgressBar;
+    @BindView(R.id.tv_totalKcal)
+    TextView mTvTotalKcal;
 
     private long currentTime = System.currentTimeMillis();
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
@@ -156,6 +161,13 @@ public class FoodRecommend extends BaseActivity {
                 }
             }
         });
+
+        RxTextUtils.getBuilder("摄入热量\n")
+                .setProportion(0.4f).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append("0")
+                .append("\tkcal").setProportion(0.5f)
+                .into(mTvTotalKcal);
+
     }
 
 
@@ -273,6 +285,16 @@ public class FoodRecommend extends BaseActivity {
                 .append("kcal").setProportion(0.5f)
                 .into(mTvMealKcal);
 
+
+        int totalKcal = bean.getBreakfast().getCalorie() + bean.getLunch().getCalorie() + bean.getDinner().getCalorie()
+                + bean.getSnacks().getCalorie();
+        RxTextUtils.getBuilder("摄入热量\n")
+                .setProportion(0.4f).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append(totalKcal + "")
+                .append("\tkcal").setProportion(0.5f)
+                .into(mTvTotalKcal);
+
+        mCircleProgressBar.setProgress((int) (bean.getIntakePercent() * 100));
     }
 
 
@@ -386,7 +408,7 @@ public class FoodRecommend extends BaseActivity {
         foodItem.setIntakeLists(lists);
         String s = MyAPP.getGson().toJson(foodItem);
 
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
