@@ -130,6 +130,7 @@ public class FoodRecommend extends BaseActivity {
         mChooseDate.setOnDateChangeListener(new DateChoose.OnDateChangeListener() {
             @Override
             public void onDateChangeListener(int year, int month, int day, long millis) {
+                currentTime = millis;
                 foodRecord(millis);
             }
         });

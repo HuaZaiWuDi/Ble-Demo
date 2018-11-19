@@ -106,6 +106,7 @@ public class SmartClothingFragment extends BaseActivity {
     private List<AthleticsInfo.ListBean> list;
     private BaseQuickAdapter adapter;
 
+
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -185,7 +186,6 @@ public class SmartClothingFragment extends BaseActivity {
     }
 
     private void initSportingList() {
-
         mRecyclerSporting.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerSporting.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
         adapter = new BaseQuickAdapter<AthleticsInfo.ListBean.AthlListBean, BaseViewHolder>(R.layout.item_sporting_list) {
@@ -196,13 +196,13 @@ public class SmartClothingFragment extends BaseActivity {
 
                 SpannableStringBuilder timeBuilder = RxTextUtils.getBuilder("运动时间段\n")
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                        .append(timeSection).setProportion(0.8f)
+                        .append(timeSection)
                         .create();
 
                 SpannableStringBuilder kcalBuilder = RxTextUtils.getBuilder("消耗热量\n")
-                        .setProportion(0.8f).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                        .append(item.getCalorie() + "").setProportion(0.8f)
-                        .append("\tkcal").setProportion(0.8f)
+                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .append(item.getCalorie() + "")
+                        .append("\tkcal")
                         .create();
 
                 //getPlanFlag():0是自由运动，1是课程运动
@@ -261,7 +261,6 @@ public class SmartClothingFragment extends BaseActivity {
                         Logger.json(s);
                         AthleticsInfo bean = MyAPP.getGson().fromJson(s, AthleticsInfo.class);
                         updateUI(bean);
-
                     }
 
                     @Override
@@ -336,7 +335,7 @@ public class SmartClothingFragment extends BaseActivity {
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
                 mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
 
-                adapter.setNewData(list.get(valueX).getAthlList().size() > 20 ? list.get(valueX).getAthlList().subList(0, 20) : list.get(valueX).getAthlList());
+                adapter.setNewData(list.get(valueX).getAthlList().size() > 10 ? list.get(valueX).getAthlList().subList(0, 10) : list.get(valueX).getAthlList());
             }
         });
     }

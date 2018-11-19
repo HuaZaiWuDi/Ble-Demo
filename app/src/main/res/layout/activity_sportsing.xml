@@ -283,7 +283,7 @@
                     android:id="@+id/tv_heartCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5/5"
+                    tools:text="5/5"
                     android:textColor="@color/white"
                     android:textSize="12sp"/>
 

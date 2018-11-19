@@ -162,10 +162,6 @@ public class PlanSportingActivity extends BaseActivity {
         registerReceiver(registerReceiver, filter);
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
 
-        RxTextUtils.getBuilder("0.0")
-                .append("分").setProportion(0.5f)
-                .into(mTvKcal);
-
         if (BleTools.getInstance().isConnect())
             speakAdd("设备已连接、让我们开始运动瘦身课程训练吧！");
 
@@ -223,10 +219,11 @@ public class PlanSportingActivity extends BaseActivity {
         lineChartUtils.setPlanLineData(planList);
 
         RxTextUtils.getBuilder("0.0")
-                .append("分").setProportion(0.5f)
+                .append("\t分").setProportion(0.3f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvKcal);
 
-        RxTextUtils.getBuilder("0.0")
+        RxTextUtils.getBuilder("0")
                 .append("kcal").setProportion(0.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvSportskcal);
@@ -259,7 +256,7 @@ public class PlanSportingActivity extends BaseActivity {
                         sportingKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600), 1);
 
                         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingKcal, 1))
-                                .append("kcal").setProportion(0.5f)
+                                .append("\tkcal").setProportion(0.5f)
                                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                                 .into(mTvSportskcal);
 
@@ -271,10 +268,8 @@ public class PlanSportingActivity extends BaseActivity {
                         heartRateTab.setIsfree(true);
                         heartLists.add(heartRateTab);
 
+                        mHeartRateBean.setAthlDesc(mTvHeartCount.getText().toString());
 
-                        String[] split = mTvHeartCount.getText().toString().split("/");
-                        double complete = RxDataUtils.stringToInt(split[0]) * 1f / RxDataUtils.stringToInt(split[1]);
-                        mHeartRateBean.setComplete(complete);
                         mHeartRateBean.setPlanFlag(1);
                         mHeartRateBean.setAthlScore(sportingScore);
                         mHeartRateBean.setTotalCalorie(sportingKcal);
@@ -317,7 +312,7 @@ public class PlanSportingActivity extends BaseActivity {
         //运动开始语音
         if (currentTime == 1) {
             speakAdd("运动模式已启动，本次课程时间 " + planList.get(planList.size() - 1).getTime() + " 分钟，开始运动");
-            mTvHeartCount.setText("0/" + planList.size());
+            mTvHeartCount.setText("1/" + planList.size());
             speakAdd("第一节热身运动 请调节心率至热身运动区间，保持匀速" + planList.get(0).getTime() + " 分钟");
         }
 
@@ -326,7 +321,7 @@ public class PlanSportingActivity extends BaseActivity {
             if (currentTime == bean.getTime() * 60) {
                 if ((i + 1) < planList.size())
                     completeHeartRange(bean, planList.get((i + 1) % planList.size()));
-                mTvHeartCount.setText((i + 1) + "/" + planList.size());
+                mTvHeartCount.setText((i + 2) + "/" + planList.size());
             }
         }
 
@@ -393,7 +388,7 @@ public class PlanSportingActivity extends BaseActivity {
         LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
         if (defaultSet != null && realTimeSet != null) {
             int count = realTimeSet.getEntryCount();
-            int tatolCount = defaultSet.getEntryCount();
+            float tatolCount = defaultSet.getEntryCount();
             if (count >= tatolCount) return;
 
             int score = 0;
@@ -413,8 +408,12 @@ public class PlanSportingActivity extends BaseActivity {
             if (count > 0)
                 sportingScore = totalSum / count + count * 50 / tatolCount;
 
+            mHeartRateBean.setComplete(count / tatolCount);
+
+
             RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingScore, 1))
-                    .append("分").setProportion(0.5f)
+                    .append("\t分").setProportion(0.3f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
             if (currentTime >= 30 && currentTime % 30 == 0) {
@@ -426,6 +425,16 @@ public class PlanSportingActivity extends BaseActivity {
                     speakFlush("请慢一点，保持匀速有节奏的运动才能高效瘦身");
                 }
             }
+
+            float width = RxUtils.dp2px(325) * 1f / defaultSet.getEntryCount() * realTimeSet.getEntryCount() + RxUtils.dp2px(23) * 0.5f;
+            if (width < RxUtils.dp2px(23)) {
+                width = RxUtils.dp2px(23);
+            } else if (width > RxUtils.dp2px(325)) {
+                width = RxUtils.dp2px(320);
+            }
+            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
+            layoutParams.width = (int) width;
+            mTvCurrentTime.setLayoutParams(layoutParams);
         }
     }
 
@@ -530,7 +539,6 @@ public class PlanSportingActivity extends BaseActivity {
         public void enterTimer() {
             currentTime++;
 
-
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
             if (currentTime % 120 == 0) {
                 speakAdd(getString(R.string.speech_currentKcal) +
@@ -547,19 +555,6 @@ public class PlanSportingActivity extends BaseActivity {
                 limitTimer.stopTimer();
             }
 
-            LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
-            int count = realTimeSet.getEntryCount();
-
-            int width = RxUtils.dp2px(325) / 30 * count;
-            if (width < RxUtils.dp2px(23)) {
-                width = RxUtils.dp2px(23);
-            } else if (width > RxUtils.dp2px(325)) {
-                width = RxUtils.dp2px(320);
-            }
-
-            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
-            layoutParams.width = width;
-            mTvCurrentTime.setLayoutParams(layoutParams);
         }
     });
 
@@ -596,6 +591,7 @@ public class PlanSportingActivity extends BaseActivity {
                     }).show();
         } else {
             new RxDialogSureCancel(mContext)
+                    .setTitle("运动提示")
                     .setContent("运动未结束，是否保存数据？")
                     .setSure("保存")
                     .setSureListener(new View.OnClickListener() {

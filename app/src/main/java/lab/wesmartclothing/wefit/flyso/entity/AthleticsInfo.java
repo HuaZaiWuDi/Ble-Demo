@@ -367,7 +367,7 @@ public class AthleticsInfo {
             private String athlRecord;
             private double athlScore;
             private int avgHeart;
-            private double calorie;
+            private int calorie;
             private int duration;
             private long endTime;
             private int heartCount;
@@ -403,7 +403,7 @@ public class AthleticsInfo {
                 return avgHeart;
             }
 
-            public double getCalorie() {
+            public int getCalorie() {
                 return calorie;
             }
 

@@ -5,14 +5,12 @@ import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
@@ -150,19 +148,20 @@ public class HeartRateUtil {
                         clearData(heartRateBean);
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
-                        if (BuildConfig.DEBUG)
-                            RxToast.success("数据上传成功");
                     }
 
                 });
     }
 
     public void clearData(HeartRateBean heartRateBean) {
+        boolean remove;
         if (heartRateBean.getPlanFlag() == 1) {
-            RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_PLAN);
+            remove = RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_PLAN);
         } else {
-            RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_FREE);
+            remove = RxCache.getDefault().remove(Key.CACHE_ATHL_RECORD_FREE);
         }
+        RxLogUtils.d("删除成功：" + heartRateBean.toString());
+        RxLogUtils.d("删除成功remove：" + remove);
     }
 
 }

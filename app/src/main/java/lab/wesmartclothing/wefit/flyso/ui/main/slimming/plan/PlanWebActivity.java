@@ -59,15 +59,13 @@ public class PlanWebActivity extends BaseWebActivity {
         super.initViews();
         initTopBar();
         initWebView(mPrant);
-
     }
 
 
     @Nullable
     @Override
     protected String getUrl() {
-//        return ServiceAPI.SHARE_INFORM_URL;
-        return "https://www.apple.com/cn/search/%E8%80%B3%E6%9C%BA?sel=accessories&src=serp" + SPUtils.getString(SPKey.SP_UserId) + "&sign=" + true;
+        return ServiceAPI.SHARE_INFORM_URL;
     }
 
 

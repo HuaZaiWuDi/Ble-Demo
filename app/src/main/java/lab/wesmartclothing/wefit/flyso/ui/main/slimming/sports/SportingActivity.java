@@ -38,7 +38,6 @@ import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
-import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
 
 import java.util.ArrayList;
@@ -173,7 +172,7 @@ public class SportingActivity extends BaseActivity {
         mLayoutLegend.setVisibility(View.GONE);
 
         RxTextUtils.getBuilder("0.0")
-                .append("kcal").setProportion(0.5f)
+                .append("\tkcal").setProportion(0.3f)
                 .into(mTvKcal);
     }
 
@@ -214,7 +213,6 @@ public class SportingActivity extends BaseActivity {
         mTvVerticalText.setTextStillTime(3000);
         mTvVerticalText.setTextList(Arrays.asList("保持燃脂衣与app的连接，可提高数据准确性", "如关闭或脱掉减肥衣将自动结束本次运动"));
     }
-
 
     @Override
     protected void initNetData() {
@@ -278,19 +276,17 @@ public class SportingActivity extends BaseActivity {
                         RxLogUtils.d("当前kacl：" + currentKcal);
 
                         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(currentKcal, 1))
-                                .append("kcal").setProportion(0.5f)
+                                .append("\tkcal").setProportion(0.3f)
                                 .into(mTvKcal);
 
                         mHeartRateBean.setTotalCalorie(currentKcal);
                         mHeartRateBean.setHeartList(heartLists);
 
 
-                        //如果上传失败则保存本地
-                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, mHeartRateBean, CacheTarget.Disk)
+                        RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, mHeartRateBean)
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
-                                        RxLogUtils.d("心率保存成功");
                                     }
                                 });
 

@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -189,6 +190,7 @@ public class SportsDetailsFragment extends BaseActivity {
         initTopBar();
         initTypeface();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
+        lineChartUtils.setPlanLineColor(Color.parseColor("#3F3943"), Color.parseColor("#FFFFFF"));
     }
 
     private void initTopBar() {
@@ -204,7 +206,6 @@ public class SportsDetailsFragment extends BaseActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RxToast.normal("分享");
                 share(true);
             }
         });
@@ -275,13 +276,13 @@ public class SportsDetailsFragment extends BaseActivity {
         isFreeSporting = !bundle.getBoolean(Key.BUNDLE_SPORTING_PLAN);
         goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
 
-        RxTextUtils.getBuilder("0.0")
+        RxTextUtils.getBuilder(isFreeSporting ? "0" : "0.0")
                 .append(isFreeSporting ? "kcal" : "分").setProportion(0.1f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvKcal);
 
         RxTextUtils.getBuilder("0")
-                .append("bpm").setProportion(0.5f)
+                .append("\tbpm").setProportion(0.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvAvHeartRate);
 
@@ -290,7 +291,7 @@ public class SportsDetailsFragment extends BaseActivity {
             mLayoutLegend.setVisibility(View.GONE);
 
             RxTextUtils.getBuilder("0")
-                    .append("bpm").setProportion(0.5f)
+                    .append("\tbpm").setProportion(0.5f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvMaxHeartRate);
 
@@ -299,8 +300,8 @@ public class SportsDetailsFragment extends BaseActivity {
             mLayoutSportingKcal.setVisibility(View.VISIBLE);
             mLayoutMaxHeart.setVisibility(View.GONE);
 
-            RxTextUtils.getBuilder("0.0")
-                    .append("kcal").setProportion(0.5f)
+            RxTextUtils.getBuilder("0")
+                    .append("\tkcal").setProportion(0.5f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvSportskcal);
         }
@@ -326,7 +327,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
-                     protected void _onNext(String s) {
+                    protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         SportingDetailBean heartRateBean = MyAPP.getGson().fromJson(s, SportingDetailBean.class);
                         updateUI(heartRateBean);
@@ -341,31 +342,31 @@ public class SportsDetailsFragment extends BaseActivity {
 
     private void updateUI(SportingDetailBean heartRateBean) {
         if (isFreeSporting) {
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 0))
                     .append("kcal").setProportion(0.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
             RxTextUtils.getBuilder(heartRateBean.getMaxHeart() + "")
-                    .append("bpm").setProportion(0.5f)
+                    .append("\tbpm").setProportion(0.5f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvMaxHeartRate);
 
         } else {
-            RxTextUtils.getBuilder(heartRateBean.getAthlScore() + "")
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getAthlScore(), 1))
                     .append("分").setProportion(0.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1))
-                    .append("kcal").setProportion(0.5f)
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 0))
+                    .append("\tkcal").setProportion(0.5f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvSportskcal);
         }
 
 
         RxTextUtils.getBuilder(heartRateBean.getAvgHeart() + "")
-                .append("bpm").setProportion(0.5f)
+                .append("\tbpm").setProportion(0.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvAvHeartRate);
 
@@ -378,9 +379,7 @@ public class SportsDetailsFragment extends BaseActivity {
         mQMUIAppBarLayout.setTitle(RxFormat.setFormatDate(heartRateBean.getAthlDate(), RxFormat.Date_CH));
         mTvExpectKcal.setText(getString(R.string.expectKcal, sunTime, heartRateBean.getPlanTotalDeplete()));
 
-        int i = (int) (heartRateBean.getPlanAthlList().size() * heartRateBean.getComplete());
-        mTvHeartCount.setText(i + "/" + heartRateBean.getPlanAthlList().size());
-
+        mTvHeartCount.setText(heartRateBean.getAthlDesc());
 
         heartRateStatistics(heartRateBean.getRealAthlList());
         updateBar(heartRateBean);

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -244,6 +245,7 @@ public class SlimmingFragment extends BaseAcFragment {
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
     public static boolean showed = false;//目标已经完成不在展示
+    private int lastKcal = 0;
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -306,6 +308,7 @@ public class SlimmingFragment extends BaseAcFragment {
         mTvBmi.setTypeface(MyAPP.typeface);
         mTvBmr.setTypeface(MyAPP.typeface);
         lineChartUtils = new HeartLineChartUtils(mLineChart);
+        lineChartUtils.setPlanLineColor(Color.parseColor("#E4CA9F"),Color.parseColor("#312C35"));
 
         mScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
@@ -351,6 +354,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
                             if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                                 RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+                                        .setTitle("运动提示")
                                         .setContent("瘦身衣已连接，是否立即开始运动？")
                                         .setCancel("自由运动")
                                         .setCancelListener(new View.OnClickListener() {
@@ -363,7 +367,9 @@ public class SlimmingFragment extends BaseAcFragment {
                                         .setSureListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
+                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class, bundle);
                                             }
                                         });
                                 rxDialog.show();
@@ -624,7 +630,6 @@ public class SlimmingFragment extends BaseAcFragment {
                 mTvBmr.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable4, null);
         }
 
-
     }
 
 
@@ -655,10 +660,10 @@ public class SlimmingFragment extends BaseAcFragment {
                 .into(mTvIngestionHeat);
 
 
-        if (warning) {
+        if (warning && !TextSpeakUtils.isSpeak() && lastKcal != heatInfoVO.getAbleIntake()) {
+            lastKcal = heatInfoVO.getAbleIntake();
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
-
 
         mCircleProgressBar.setProgressColor(ContextCompat.getColor(mContext, warning ? R.color.red : R.color.orange_FF7200));
         mCircleProgressBar.setProgress((int) (heatInfoVO.getIntakePercent() * 100));

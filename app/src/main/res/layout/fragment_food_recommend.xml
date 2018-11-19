@@ -539,7 +539,7 @@
                     android:layout_height="wrap_content"
                     android:drawableTop="@mipmap/icon_meal"
                     android:gravity="right"
-                    android:text="晚餐"
+                    android:text="加餐"
                     android:textColor="@color/GrayWrite"
                     android:textSize="10sp"
                     />

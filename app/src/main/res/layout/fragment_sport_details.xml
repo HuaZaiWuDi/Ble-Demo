@@ -289,9 +289,9 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        tools:text="0%"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        tools:text="0%"/>
 
                 </RelativeLayout>
 
@@ -317,9 +317,9 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        tools:text="0%"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        tools:text="0%"/>
 
                 </RelativeLayout>
 
@@ -345,9 +345,9 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        tools:text="0%"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        tools:text="0%"/>
 
                 </RelativeLayout>
 
@@ -373,9 +373,9 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        tools:text="0%"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        tools:text="0%"/>
 
                 </RelativeLayout>
 
@@ -401,9 +401,9 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        tools:text="0%"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        tools:text="0%"/>
 
                 </RelativeLayout>
 
@@ -429,116 +429,137 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
-                        tools:text="0%"
                         android:textColor="@color/white"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        tools:text="0%"/>
 
                 </RelativeLayout>
 
             </LinearLayout>
 
 
+            <RelativeLayout
+                android:id="@+id/layout_legend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_sports"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="8dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tv_heartCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="5/5"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"/>
+
+
+                <TextView
+                    android:id="@+id/tv_expectKcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toRightOf="@+id/tv_heartCount"
+                    android:text="@string/expectKcal"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="8sp"/>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="2dp"
+                        android:background="@color/black_3F3943"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:text="计划"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="8sp"/>
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="2dp"
+                        android:background="@color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="实时"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="8sp"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_sporting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_kcal"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="24dp"
-                android:elevation="2dp"
-                android:padding="15dp"
-                android:translationZ="2dp"
-                app:background_normal="@color/white"
-                app:corner_radius="4dp"
-                tools:visibility="visible">
+                android:layout_below="@+id/layout_legend"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="31dp"
+                >
 
 
-                <RelativeLayout
-                    android:id="@+id/layout_legend"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    tools:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/tv_heartCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5/5"
-                        android:textColor="@color/Gray"
-                        android:textSize="12sp"/>
-
-
-                    <TextView
-                        android:id="@+id/tv_expectKcal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_toRightOf="@+id/tv_heartCount"
-                        android:text="@string/expectKcal"
-                        android:textColor="@color/GrayWrite"
-                        android:textSize="8sp"/>
+                    android:orientation="vertical">
 
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
 
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="2dp"
-                            android:background="@color/yellow_E4CA9F"/>
+                        <TextView
+                            android:layout_width="24dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="bpm"
+                            android:textColor="@color/white"
+                            android:textSize="6sp"/>
+
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tv_currentTime"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
-                            android:text="计划"
-                            android:textColor="@color/GrayWrite"
-                            android:textSize="8sp"/>
+                            android:gravity="right"
+                            android:text="00:00"
+                            android:textColor="@color/white"
+                            android:textSize="8dp"/>
 
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="2dp"
-                            android:background="@color/black_312C35"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
-                            android:text="实时"
-                            android:textColor="@color/GrayWrite"
-                            android:textSize="8sp"/>
 
                     </LinearLayout>
 
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="94dp"
-                    android:layout_below="@+id/layout_legend"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="bpm"
-                        android:textColor="@color/black_312C35"
-                        android:textSize="6sp"/>
 
                     <LinearLayout
-                        android:layout_width="300dp"
-                        android:layout_height="74dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="138dp"
                         android:layout_centerInParent="true"
                         android:orientation="vertical">
 
@@ -553,18 +574,18 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:alpha="1"
-                                android:background="@color/red"
                                 android:gravity="center"
                                 android:text="危险"
-                                android:textColor="@color/white"
-                                android:textSize="7sp"
-                                app:corner_radius_top_left="4dp"/>
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"
+                                />
 
                             <com.vondear.rxtools.view.layout.RxView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
                                 android:background="@color/red"
+                                app:corner_radius_top_left="4dp"
                                 app:corner_radius_top_right="4dp"/>
 
 
@@ -580,11 +601,10 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:alpha="1"
-                                android:background="@color/orange_FF7200"
                                 android:gravity="center"
                                 android:text="无氧"
-                                android:textColor="@color/white"
-                                android:textSize="7sp"/>
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
 
                             <View
                                 android:layout_width="match_parent"
@@ -604,11 +624,10 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:alpha="1"
-                                android:background="@color/green_61D97F"
                                 android:gravity="center"
                                 android:text="有氧"
-                                android:textColor="@color/white"
-                                android:textSize="7sp"/>
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
 
 
                             <View
@@ -629,11 +648,10 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:alpha="1"
-                                android:background="@color/yellow_FFBC00"
                                 android:gravity="center"
                                 android:text="燃脂"
-                                android:textColor="@color/white"
-                                android:textSize="7sp"/>
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
 
                             <View
                                 android:layout_width="match_parent"
@@ -653,11 +671,10 @@
                             <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
-                                android:background="@color/brown_ABA08E"
                                 android:gravity="center"
                                 android:text="热身"
-                                android:textColor="@color/white"
-                                android:textSize="7sp"/>
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
 
                             <View
                                 android:layout_width="match_parent"
@@ -677,18 +694,18 @@
                             <com.vondear.rxtools.view.layout.RxTextView
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
-                                android:background="@color/Gray_DCDAE6"
                                 android:gravity="center"
                                 android:text="静息"
-                                android:textColor="@color/white"
-                                android:textSize="7sp"
-                                app:corner_radius_bottom_left="4dp"/>
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"
+                                />
 
                             <com.vondear.rxtools.view.layout.RxView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
                                 android:background="@color/Gray_DCDAE6"
+                                app:corner_radius_bottom_left="4dp"
                                 app:corner_radius_bottom_right="4dp"/>
 
 
@@ -697,27 +714,30 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tv_endTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="8dp"
                         android:text="time"
-                        android:textColor="@color/black_312C35"
+                        android:textColor="@color/white"
                         android:textSize="6sp"/>
 
 
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/chart_HeartRate"
-                        android:layout_width="300dp"
-                        android:layout_height="74dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="24dp"
-                        >
-
-                    </com.github.mikephil.charting.charts.LineChart>
+                </LinearLayout>
 
 
-                </RelativeLayout>
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/chart_HeartRate"
+                    android:layout_width="325dp"
+                    android:layout_height="138dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    >
+
+                </com.github.mikephil.charting.charts.LineChart>
 
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>

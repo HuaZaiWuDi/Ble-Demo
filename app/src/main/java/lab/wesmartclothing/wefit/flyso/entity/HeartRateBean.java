@@ -97,4 +97,17 @@ public class HeartRateBean implements Serializable {
     }
 
 
+    @Override
+    public String toString() {
+        return "HeartRateBean{" +
+                "athlDate='" + athlDate + '\'' +
+                ", athlDesc='" + athlDesc + '\'' +
+                ", athlScore=" + athlScore +
+                ", planFlag=" + planFlag +
+                ", stepNumber=" + stepNumber +
+                ", complete=" + complete +
+                ", totalCalorie=" + totalCalorie +
+                ", heartList=" + heartList +
+                '}';
+    }
 }

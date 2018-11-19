@@ -176,6 +176,8 @@ public class FoodDetailsFragment extends BaseActivity {
         foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
         currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
         SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME, true);
+        final String[] add_food = getResources().getStringArray(R.array.add_food);
+        mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)]);
     }
 
 
@@ -226,7 +228,7 @@ public class FoodDetailsFragment extends BaseActivity {
 
 
     private void initTopBar() {
-        final String[] add_food = getResources().getStringArray(R.array.add_food);
+
 
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,7 +236,7 @@ public class FoodDetailsFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)]);
+
         mQMUIAppBarLayout.addRightImageButton(R.mipmap.icon_search, R.id.id_search)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
