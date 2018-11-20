@@ -1,16 +1,17 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.aboutCarmera.RxCameraUtils;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -24,6 +25,8 @@ import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -65,32 +68,7 @@ public class PlanWebActivity extends BaseWebActivity {
     @Nullable
     @Override
     protected String getUrl() {
-        return ServiceAPI.SHARE_INFORM_URL;
-    }
-
-
-    @Nullable
-    @Override
-    protected WebViewClient getWebViewClient() {
-        return new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                RxLogUtils.d("页面结束");
-            }
-
-            @Override
-            public void onPageCommitVisible(WebView view, String url) {
-                super.onPageCommitVisible(view, url);
-                view.loadUrl("javascript:setUserId(\"" + SPUtils.getString(SPKey.SP_UserId) + "\");");
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                RxLogUtils.d("页面开始");
-            }
-        };
+        return ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
     }
 
 
@@ -143,6 +121,22 @@ public class PlanWebActivity extends BaseWebActivity {
         })
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<File>showDialog(tipDialog))
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(final Disposable disposable) throws Exception {
+                        new RxPermissions(mActivity)
+                                .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                                .subscribe(new RxSubscriber<Boolean>() {
+                                    @Override
+                                    protected void _onNext(Boolean aBoolean) {
+                                        if (!aBoolean) {
+                                            disposable.dispose();
+                                        }
+                                    }
+                                });
+                    }
+                })
                 .subscribe(new RxSubscriber<File>() {
                     @Override
                     protected void _onNext(File file) {
@@ -163,7 +157,7 @@ public class PlanWebActivity extends BaseWebActivity {
         tipDialog.show("正在分享...", 3000);
         showSimpleBottomSheetGrid(BitmapFactory.decodeResource(getResources(), R.drawable.img_plan_share),
                 "想知道怎样的瘦身方式才是健康的？一键获得健康报告，您想知道的全都有。",
-                "营养食谱随心吃，科学训练自由动，不瘦？怎么可能……", ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=" + false);
+                "营养食谱随心吃，科学训练自由动，不瘦？怎么可能……", ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=false");
     }
 
 

@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -38,6 +40,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.entity.FoodTypeBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryFragment;
@@ -71,7 +74,8 @@ public class FoodDetailsFragment extends BaseActivity {
     RelativeLayout mLayoutAddFoods;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
-
+    @BindView(R.id.tabLayout)
+    TabLayout mTabLayout;
 
     private int foodType = 0;
     private long currentTime = System.currentTimeMillis();
@@ -82,7 +86,7 @@ public class FoodDetailsFragment extends BaseActivity {
     private BaseQuickAdapter adapterAddFoods;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     public static List<FoodListBean> addedLists = new ArrayList<>();//已经添加的食物列表
-
+    private String typeId = "";
 
     @Override
     protected int layoutId() {
@@ -95,6 +99,7 @@ public class FoodDetailsFragment extends BaseActivity {
         initTopBar();
         initRecyclerView();
         initAddFoodRecyclerView();
+
         pageNum = 1;
 
         dialog.setLifecycleSubject(lifecycleSubject);
@@ -124,6 +129,55 @@ public class FoodDetailsFragment extends BaseActivity {
                 adapterAddFoods.notifyDataSetChanged();
             }
         });
+    }
+
+    private void initTabLayout() {
+        //默认加载全部
+        TabLayout.Tab tab = mTabLayout.newTab();
+        tab.setText("全部");
+        tab.setTag("");
+        mTabLayout.addTab(tab);
+
+        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
+        RxManager.getInstance().doNetSubscribe(dxyService.getFoodType())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodType", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        List<FoodTypeBean> list = MyAPP.getGson().fromJson(s, new TypeToken<List<FoodTypeBean>>() {
+                        }.getType());
+                        for (int i = 0; i < list.size(); i++) {
+                            FoodTypeBean bean = list.get(i);
+                            TabLayout.Tab tab = mTabLayout.newTab();
+                            tab.setText(bean.getTypeName());
+                            tab.setTag(bean.getGid());
+                            mTabLayout.addTab(tab);
+                        }
+                    }
+                });
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                RxLogUtils.d("Tab:" + tab.getText());
+                typeId = (String) tab.getTag();
+                initData();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
     }
 
     @Override
@@ -251,13 +305,15 @@ public class FoodDetailsFragment extends BaseActivity {
     protected void initNetData() {
         super.initNetData();
         initData();
+        initTabLayout();
     }
 
     private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 20))
+        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 20, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + pageNum, String.class, CacheStrategy.firstRemote()))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + typeId + pageNum, String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

@@ -33,9 +33,15 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
 
 
+    //获取食物列表信息
     @FormUrlEncoded
     @POST("heat/getFoodInfo")
-    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize,@Field("typeId") String typeId);
+
+    //        获取食物分类信息
+    @POST("heat/getFoodType")
+    Observable<String> getFoodType();
+
 
     @FormUrlEncoded
     @POST("heat/searchFoodInfo")

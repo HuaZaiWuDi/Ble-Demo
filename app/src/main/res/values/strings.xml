@@ -176,6 +176,19 @@
         <item>五</item>
         <item>六</item>
     </string-array>
+
+    <string-array name="foodTab">
+        <item>全部</item>
+        <item>主食</item>
+        <item>蛋/肉制品</item>
+        <item>奶制品</item>
+        <item>蔬果/菌藻</item>
+        <item>坚果/豆制品</item>
+        <item>饮料</item>
+        <item>零食/点心/冷饮</item>
+
+    </string-array>
+
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>

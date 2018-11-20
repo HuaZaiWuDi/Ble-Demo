@@ -44,6 +44,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -279,14 +280,13 @@ public class PlanSportingActivity extends BaseActivity {
 
                         //如果上传失败则保存本地
                         RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_PLAN, mHeartRateBean, CacheTarget.Disk)
+                                .subscribeOn(Schedulers.io())
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
-                                        RxLogUtils.d("心率保存成功");
+                                        RxLogUtils.d("心率保存" + aBoolean);
                                     }
                                 });
-
-
                     }
                 });
     }

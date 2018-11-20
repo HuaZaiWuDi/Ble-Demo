@@ -54,6 +54,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -112,6 +113,9 @@ public class BleService extends Service {
                     BleAPI.clothingStop();
                     shopSporting();
                     break;
+                case Intent.ACTION_DATE_CHANGED://日期的变化
+                    RxBus.getInstance().post(new RefreshSlimming());
+                    break;
             }
         }
     };
@@ -137,6 +141,7 @@ public class BleService extends Service {
         filter.addAction(RxSystemBroadcastUtil.SCREEN_ON);
         filter.addAction(RxSystemBroadcastUtil.SCREEN_OFF);
         filter.addAction(Key.ACTION_CLOTHING_STOP);
+        filter.addAction(Intent.ACTION_DATE_CHANGED);
         registerReceiver(mBroadcastReceiver, filter);
     }
 

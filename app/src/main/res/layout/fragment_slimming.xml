@@ -322,12 +322,15 @@
                 </RelativeLayout>
 
 
-                <RelativeLayout
+                <com.vondear.rxtools.view.layout.RxRelativeLayout
+                    android:id="@+id/layout_foodRecord"
                     android:layout_width="match_parent"
                     android:layout_height="108dp"
                     android:paddingLeft="24dp"
                     android:paddingTop="24dp"
-                    android:paddingBottom="24dp">
+                    android:paddingBottom="24dp"
+                    app:background_normal="@color/white"
+                    app:ripple_color="@color/ripple_ECEAE6">
 
                     <TextView
                         android:id="@+id/tv_IngestionHeat"
@@ -439,7 +442,7 @@
                         android:textSize="10sp"/>
 
 
-                </RelativeLayout>
+                </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
 
                 <LinearLayout

@@ -46,6 +46,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -284,9 +285,11 @@ public class SportingActivity extends BaseActivity {
 
 
                         RxCache.getDefault().save(Key.CACHE_ATHL_RECORD_FREE, mHeartRateBean)
+                                .subscribeOn(Schedulers.io())
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
+                                        RxLogUtils.d("心率保存"+aBoolean);
                                     }
                                 });
 

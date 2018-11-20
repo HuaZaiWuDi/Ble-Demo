@@ -242,6 +242,8 @@ public class CollectFragment extends BaseActivity {
                         } else {
                             adapter.addData(list);
                         }
+
+
                         if (smartRefreshLayout.isLoading()) {
                             pageNum++;
                             smartRefreshLayout.finishLoadMore(true);
@@ -249,11 +251,13 @@ public class CollectFragment extends BaseActivity {
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(true);
                         smartRefreshLayout.setEnableLoadMore(collectBean.isHasNextPage());
-                        if (adapter.getData().size() == 0) {
-                            smartRefreshLayout.autoRefresh();
-                        }
+
                         if (collectBean.getTotal() == 0) {
                             adapter.setEmptyView(emptyView);
+                        } else {
+                            if (adapter.getData().size() == 0) {
+                                smartRefreshLayout.autoRefresh();
+                            }
                         }
                     }
 

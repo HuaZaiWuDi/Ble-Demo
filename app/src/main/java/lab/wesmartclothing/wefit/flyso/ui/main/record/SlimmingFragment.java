@@ -68,6 +68,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
@@ -241,7 +242,6 @@ public class SlimmingFragment extends BaseAcFragment {
     @BindView(R.id.img_sporting_tip)
     ImageView mImgSportingTip;
 
-
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
     public static boolean showed = false;//目标已经完成不在展示
@@ -308,7 +308,7 @@ public class SlimmingFragment extends BaseAcFragment {
         mTvBmi.setTypeface(MyAPP.typeface);
         mTvBmr.setTypeface(MyAPP.typeface);
         lineChartUtils = new HeartLineChartUtils(mLineChart);
-        lineChartUtils.setPlanLineColor(Color.parseColor("#E4CA9F"),Color.parseColor("#312C35"));
+        lineChartUtils.setPlanLineColor(Color.parseColor("#E4CA9F"), Color.parseColor("#312C35"));
 
         mScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
@@ -375,6 +375,7 @@ public class SlimmingFragment extends BaseAcFragment {
                                 rxDialog.show();
                             } else {
                                 RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
+                                        .setTitle("运动提示")
                                         .setContent("瘦身衣已连接，是否开始自由运动？")
                                         .setSure("进入")
                                         .setSureListener(new View.OnClickListener() {
@@ -807,6 +808,7 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.img_weight_tip,
             R.id.img_sporting_tip,
             R.id.img_Recipes,
+            R.id.layout_foodRecord
     })
     public void onViewClicked(View view) {
         RxLogUtils.d("点击");
@@ -924,7 +926,6 @@ public class SlimmingFragment extends BaseAcFragment {
                         showFreeSportDialog();
                     }
                 }
-
                 break;
             case R.id.img_weight_tip:
                 new RxDialogSure(mContext)
@@ -937,6 +938,9 @@ public class SlimmingFragment extends BaseAcFragment {
                         .setTitle("今日能量")
                         .setContent("今日能量包含计划能量和实际能量，盈余热量是通过运动消耗加上基础代谢减去饮食摄入所得热量")
                         .show();
+                break;
+            case R.id.layout_foodRecord:
+                RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
                 break;
         }
     }
