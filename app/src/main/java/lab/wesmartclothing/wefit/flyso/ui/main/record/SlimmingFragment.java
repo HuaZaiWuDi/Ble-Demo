@@ -129,8 +129,6 @@ public class SlimmingFragment extends BaseAcFragment {
     RxRoundProgressBar mProTarget;
     @BindView(R.id.tv_targetWeight)
     TextView mTvTargetWeight;
-    @BindView(R.id.layout_slimmingTerget)
-    LinearLayout mLayoutSlimmingTerget;
     @BindView(R.id.layout_gotoRecipes)
     RelativeLayout mImgRecipes;
     @BindView(R.id.tv_IngestionHeat)
@@ -241,10 +239,21 @@ public class SlimmingFragment extends BaseAcFragment {
     ImageView mImgWeightTip;
     @BindView(R.id.img_sporting_tip)
     ImageView mImgSportingTip;
+    @BindView(R.id.layout_targetTitle)
+    RelativeLayout mLayoutTargetTitle;
+    @BindView(R.id.layout_targetContent)
+    RelativeLayout mLayoutTargetContent;
+    @BindView(R.id.tv_targetComplete)
+    TextView mTvTargetComplete;
+    @BindView(R.id.tv_resetTarget)
+    RxTextView mTvResetTarget;
+    @BindView(R.id.layout_targetComplete)
+    LinearLayout mLayoutTargetComplete;
+    @BindView(R.id.layout_slimmingTarget)
+    RelativeLayout mLayoutSlimmingTarget;
 
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
-    public static boolean showed = false;//目标已经完成不在展示
     private int lastKcal = 0;
 
     public static SlimmingFragment newInstance() {
@@ -692,6 +701,13 @@ public class SlimmingFragment extends BaseAcFragment {
     private void slimmingTarget() {
         if (bean.getTargetInfo() == null || bean.getWeightChangeVO() == null) return;
         mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
+        mMCountDownView.setCountDownFinishCallBack(new CountDownView.CountDownFinishCallBack() {
+            @Override
+            public void finish(boolean isComplete) {
+                targetComplete(true, isComplete);
+            }
+        });
+
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1))
                 .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
 
@@ -715,20 +731,18 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
 
-        //目标已完成
-        if (bean.getComplete() == 1 && !showed) {
-            showed = true;
-            new RxDialogSure(mContext)
-                    .setTitle("提示")
-                    .setContent("恭喜您的瘦身目标已达成")
-                    .setSure("开启新的目标")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
-                        }
-                    }).show();
-        }
+        targetComplete(bean.getComplete() == 1, bean.getComplete() == 1);
+
+    }
+
+
+    private void targetComplete(boolean finish, boolean complete) {
+        mLayoutTargetTitle.setAlpha(finish ? 0.3f : 1f);
+        mLayoutTargetContent.setAlpha(finish ? 0.3f : 1f);
+        mResetTarget.setEnabled(!finish);
+        mLayoutTargetComplete.setVisibility(finish ? View.VISIBLE : View.GONE);
+        mTvTargetComplete.setText(complete ? "恭喜您已达成瘦身目标！" : "很遗憾，您的瘦身目标未达成！");
+        mTvResetTarget.setText(complete ? "开启新目标" : "重置目标");
     }
 
 
@@ -741,15 +755,15 @@ public class SlimmingFragment extends BaseAcFragment {
         if (planState == 0) {
             mImgPlanMark.setVisibility(View.VISIBLE);
             mImgSeeRecord.setVisibility(View.GONE);
-            mLayoutSlimmingTerget.setVisibility(View.GONE);
+            mLayoutSlimmingTarget.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.GONE);
         } else if (planState == 3) {
             mImgPlanMark.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.VISIBLE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
-            mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
+            mLayoutSlimmingTarget.setVisibility(View.VISIBLE);
         } else {
-            mLayoutSlimmingTerget.setVisibility(View.VISIBLE);
+            mLayoutSlimmingTarget.setVisibility(View.VISIBLE);
             mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
         }
@@ -808,6 +822,7 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.img_weight_tip,
             R.id.img_sporting_tip,
             R.id.img_Recipes,
+            R.id.tv_resetTarget,
             R.id.layout_foodRecord
     })
     public void onViewClicked(View view) {
@@ -941,6 +956,9 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.layout_foodRecord:
                 RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
+                break;
+            case R.id.tv_resetTarget:
+                RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
                 break;
         }
     }

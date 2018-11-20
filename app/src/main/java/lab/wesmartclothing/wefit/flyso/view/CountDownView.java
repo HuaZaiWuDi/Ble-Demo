@@ -8,12 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.ticker.RxTickerUtils;
 import com.vondear.rxtools.view.ticker.RxTickerView;
 
@@ -23,7 +21,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.view
@@ -81,10 +78,10 @@ public class CountDownView extends LinearLayout {
 
 
     public void setCountDownDays(final long time) {
+        defaultState();
         long day = RxTimeUtils.getIntervalByNow(time, RxConstUtils.TimeUnit.DAY);
         mTickerDays.setText(day + "", true);
-        mTickerHour.setText("0", true);
-        mTickerMin.setText("0", true);
+
         if (countDownTimer != null) countDownTimer.cancel();
         countDownTimer = new CountDownTimer(time, 1000) {
             @Override
@@ -106,37 +103,43 @@ public class CountDownView extends LinearLayout {
                 }
                 mTickerSec.setText(sec + "", true);
 
-
                 if (System.currentTimeMillis() >= time) {
                     onFinish();
                 }
-
             }
 
             @Override
             public void onFinish() {
                 cancel();
-                mTickerSec.setText("0", true);
+                defaultState();
                 RxLogUtils.d("结束");
                 float realWeight = SPUtils.getFloat(SPKey.SP_realWeight);
                 UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
                 boolean isComplete = realWeight <= info.getTargetWeight();
 
-                //目标已完成
-                new RxDialogSure(mContext)
-                        .setTitle("提示")
-                        .setContent(isComplete ? "恭喜您的瘦身目标已达成" : "很遗憾，您的目标未完成")
-                        .setSure(isComplete ? "开启新的目标" : "重置目标")
-                        .setSureListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
-                            }
-                        }).show();
 
+                if (mCountDownFinishCallBack != null) {
+                    mCountDownFinishCallBack.finish(isComplete);
+                }
             }
         }.start();
 
     }
 
+    private void defaultState() {
+        mTickerDays.setText("0", false);
+        mTickerHour.setText("0", false);
+        mTickerMin.setText("0", false);
+        mTickerSec.setText("0", false);
+    }
+
+   public interface CountDownFinishCallBack {
+        void finish(boolean isComplete);
+    }
+
+    private CountDownFinishCallBack mCountDownFinishCallBack;
+
+    public void setCountDownFinishCallBack(CountDownFinishCallBack countDownFinishCallBack) {
+        mCountDownFinishCallBack = countDownFinishCallBack;
+    }
 }

@@ -350,12 +350,14 @@ public class BleTools {
         }
 
         stopScanByM();
+
+
         Log.d("bleManager", "开始扫描");
         BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
         ScanSettings scanSettings = new ScanSettings.Builder()
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//回调所以设备
+                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//回调所有设备
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
-//                .setReportDelay(800)
+                .setReportDelay(2000)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
         List<ScanFilter> filters = new ArrayList<>();
@@ -374,6 +376,7 @@ public class BleTools {
         }
 
         scannerCompat.startScan(filters, scanSettings, scanCallback);
+
 
         isScanning = true;
         if (timeOut <= 0) {
@@ -429,6 +432,19 @@ public class BleTools {
     public boolean isBind(String Mac) {
         return BluetoothAdapter.checkBluetoothAddress(Mac);
     }
+
+
+//    public void scanByM() {
+//        List<android.bluetooth.le.ScanFilter> filters = new ArrayList<>();
+//        android.bluetooth.le.ScanSettings scanSettings=new  android.bluetooth.le.ScanSettings.Builder()
+//                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+//                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+//                .setMatchMode()
+//
+//
+//        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+//        adapter.getBluetoothLeScanner().startScan(filters, scanSettings, scanCallback);
+//    }
 
 
 }

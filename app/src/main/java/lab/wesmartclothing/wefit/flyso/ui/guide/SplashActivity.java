@@ -90,6 +90,8 @@ public class SplashActivity extends BaseActivity {
         initData();
         initUserInfo();
 
+        RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
+
 //        RxActivityUtils.skipActivityAndFinish(mContext, SportingActivity.class);
     }
 

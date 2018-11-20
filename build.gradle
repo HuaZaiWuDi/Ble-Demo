@@ -32,16 +32,19 @@ allprojects {
         maven { url 'https://dl.bintray.com/zchu/maven/' }
     }
 
+    //Git每次提交的版本号
+    def cmd = 'git rev-list HEAD --count'
+    def gitVersion = cmd.execute().text.trim().toInteger()
+
     ext {
         compileSdkVersion = 26
         minSdkVersion = 21
         targetSdkVersion = 25
         buildToolsVersion = '26.0.2'
         supportVersion = "27.1.1"
-        versionCode = 6
-        versionName = "2.1.1"
+        versionCode = gitVersion
+        versionName = "2.1."+gitVersion
     }
-
 }
 
 

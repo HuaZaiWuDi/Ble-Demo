@@ -176,22 +176,6 @@ public class BleService extends Service {
                 super.onScanResult(callbackType, result);
                 RxLogUtils.d("扫描扫描结果：" + result.toString());
                 BluetoothDevice device = result.getDevice();
-
-//                if (BleContainsUUID(result, BleKey.UUID_QN_SCALE)) {
-////                        RxLogUtils.d("扫描到体脂称：" + device.getAddress());
-//                    QNBleDevice bleDevice = mQNBleTools.bleDevice2QNDevice(result);
-//                    RxBus.getInstance().post(bleDevice);
-//                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
-//                            mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
-//                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-//                        mQNBleTools.connectDevice(bleDevice);
-//                        mQNBleTools.setDevice(bleDevice);
-//                        connectDevices.put(bleDevice.getMac(), bleDevice);
-//                    }
-//                } else if (BleContainsUUID(result, BleKey.UUID_Servie)) {
-//
-//                }
-
                 BleDevice bleDevice = new BleDevice(device);//转换对象
 //                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
                 if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
@@ -219,14 +203,19 @@ public class BleService extends Service {
                 for (int i = 0; i < results.size(); i++) {
                     BluetoothDevice device = results.get(i).getDevice();
                     BleDevice bleDevice = new BleDevice(device);//转换对象
-//                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
+                    RxBus.getInstance().post(bleDevice);
+                }
+
+
+                if (results.size() >= 1) {
+                    BluetoothDevice device = results.get(0).getDevice();
+                    BleDevice bleDevice = new BleDevice(device);//转换对象
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
                             !BleTools.getInstance().connectedState() &&
                             !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                         connectClothing(bleDevice);
                         connectDevices.put(bleDevice.getMac(), bleDevice);
                     }
-                    RxBus.getInstance().post(bleDevice);
                 }
             }
         });

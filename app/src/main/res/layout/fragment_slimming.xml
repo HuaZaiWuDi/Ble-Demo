@@ -107,20 +107,22 @@
 
 
             <!--瘦身目标-->
-            <LinearLayout
-                android:id="@+id/layout_slimmingTerget"
+            <RelativeLayout
+                android:id="@+id/layout_slimmingTarget"
                 android:layout_width="match_parent"
                 android:layout_height="196dp"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="gone"
+                tools:visibility="visible"
                 >
 
 
                 <RelativeLayout
+                    android:id="@+id/layout_targetTitle"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    android:padding="15dp">
+                    android:padding="15dp"
+                    tools:alpha="0.3">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -150,12 +152,16 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginTop="54dp"
                     android:background="@color/line"/>
 
                 <RelativeLayout
+                    android:id="@+id/layout_targetContent"
                     android:layout_width="match_parent"
                     android:layout_height="141dp"
-                    android:padding="15dp">
+                    android:layout_marginTop="54dp"
+                    android:padding="15dp"
+                    tools:alpha="0.3">
 
 
                     <com.vondear.rxtools.view.layout.RxTextView
@@ -248,9 +254,45 @@
 
                     </RelativeLayout>
 
+
                 </RelativeLayout>
 
-            </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_targetComplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_targetComplete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="很遗憾，您的瘦身目标未达成！"
+                        android:textColor="@color/black_312C35"
+                        android:textSize="14sp"/>
+
+
+                    <com.vondear.rxtools.view.layout.RxTextView
+                        android:id="@+id/tv_resetTarget"
+                        android:layout_width="115dp"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="23dp"
+                        android:gravity="center"
+                        android:text="重置目标"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:background_normal="@color/green_61D97F"
+                        app:corner_radius="3dp"
+                        app:ripple_color="@color/ripple_ECEAE6"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
 
 
             <!--今日热量-->
