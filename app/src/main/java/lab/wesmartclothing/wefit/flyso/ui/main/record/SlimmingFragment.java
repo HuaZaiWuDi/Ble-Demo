@@ -52,6 +52,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -60,6 +61,7 @@ import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -288,7 +290,6 @@ public class SlimmingFragment extends BaseAcFragment {
     @Override
     protected void initNetData() {
         super.initNetData();
-
         UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
@@ -351,6 +352,16 @@ public class SlimmingFragment extends BaseAcFragment {
                         initNetData();
                     }
                 });
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        if (netWorkType.isBoolean())
+                            initNetData();
+                    }
+                });
 
 
         RxBus.getInstance().register2(SportsDataTab.class)
@@ -410,9 +421,11 @@ public class SlimmingFragment extends BaseAcFragment {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+//                       bean=MyAPP.getGson().fromJson(s,PlanBean.class);
                         bean = JSON.parseObject(s, PlanBean.class);
                         updateUI();
                     }
@@ -479,8 +492,9 @@ public class SlimmingFragment extends BaseAcFragment {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.courseAthlDetail(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("courseAthlDetail", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 import org.reactivestreams.Publisher;
 
 import io.reactivex.Flowable;
@@ -76,12 +78,14 @@ public class RxComposeUtils {
                     public void accept(Disposable disposable) throws Exception {
                         if (dialog != null)
                             dialog.show();
+                        RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
                     }
                 }).doFinally(new Action() {
                     @Override
                     public void run() throws Exception {
                         if (dialog != null)
                             dialog.dismiss();
+                        RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
                     }
                 });
             }
@@ -124,6 +128,29 @@ public class RxComposeUtils {
                     @Override
                     public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
                         return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH;
+                    }
+                }));
+            }
+        };
+    }
+
+    /**
+     * 绑定生命周期，在AC和Fragment在显示后才加载
+     *
+     * @param <T> 指定的泛型类型
+     * @return Observable
+     * <p>
+     * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
+     */
+    public static <T> ObservableTransformer<T, T> bindLifeResume(final BehaviorSubject<LifeCycleEvent> subject) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.takeUntil(subject.skipWhile(new Predicate<LifeCycleEvent>() {
+                    @Override
+                    public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
+                        return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH
+                                && activityLifeCycleEvent != LifeCycleEvent.CREATE && activityLifeCycleEvent != LifeCycleEvent.ATTACH;
                     }
                 }));
             }

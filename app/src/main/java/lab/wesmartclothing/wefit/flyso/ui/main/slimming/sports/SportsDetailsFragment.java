@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -166,7 +167,8 @@ public class SportsDetailsFragment extends BaseActivity {
     LinearLayout mLayoutContent;
     @BindView(R.id.scroll)
     NestedScrollView mScroll;
-
+    @BindView(R.id.tv_currentTime)
+    TextView mTvCurrentTime;
 
     int warmTime = 0;
     int greaseTime = 0;
@@ -325,6 +327,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -444,6 +447,7 @@ public class SportsDetailsFragment extends BaseActivity {
         mProAnaerobic.setProgress(anaerobicTime * 100 / totalTime);
         mProLimit.setProgress(limitTime * 100 / totalTime);
 
+        mTvCurrentTime.setText(RxFormat.setSec2MS(totalTime));
         mTvSportsTime.setText(RxFormat.setSec2MS(totalTime));
         mTvWarmTime.setText(RxFormat.setSec2MS(warmTime));
         mTvGreaseTime.setText(RxFormat.setSec2MS(greaseTime));

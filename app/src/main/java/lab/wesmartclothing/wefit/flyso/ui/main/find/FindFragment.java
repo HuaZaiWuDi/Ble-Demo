@@ -30,9 +30,13 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
@@ -65,11 +69,35 @@ public class FindFragment extends BaseWebFragment {
         initWebView();
     }
 
+
     @Override
     protected void onVisible() {
         super.onVisible();
     }
 
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+
+    }
+
+    @Override
+    protected void initRxBus() {
+        super.initRxBus();
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        RxLogUtils.d("网络状态：" + netWorkType);
+                        if (netWorkType.isBoolean()) {
+                            mAgentWeb.getUrlLoader().reload();
+                        }
+                    }
+                });
+    }
 
     private void initWebView() {
         mBridgeWebView = new BridgeWebView(mActivity);

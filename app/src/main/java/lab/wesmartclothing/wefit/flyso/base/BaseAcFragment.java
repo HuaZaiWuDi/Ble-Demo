@@ -21,8 +21,12 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by cgspine on 2018/1/7.

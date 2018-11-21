@@ -311,10 +311,6 @@ public class PlanSportingActivity extends BaseActivity {
      * 连续语音播报时间间隔：30s；
      */
 
-    private void planSportingTextSpeak() {
-
-    }
-
     //瘦身衣运动结束
     private void sportingFinish(boolean isComplete) {
         if (isComplete) {
@@ -573,6 +569,7 @@ public class PlanSportingActivity extends BaseActivity {
     public void onDestroy() {
         unregisterReceiver(registerReceiver);
         timer.stopTimer();
+        TextSpeakUtils.stop();
         super.onDestroy();
     }
 

@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -283,6 +284,7 @@ public class BodyDataFragment extends BaseActivity {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

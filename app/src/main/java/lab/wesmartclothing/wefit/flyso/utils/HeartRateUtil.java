@@ -13,6 +13,7 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -137,6 +138,14 @@ public class HeartRateUtil {
 
 
     public void saveHeartRate(final HeartRateBean heartRateBean) {
+        if (heartRateBean == null) return;
+        int sumTime = 0;
+        List<HeartRateItemBean> heartList = heartRateBean.getHeartList();
+        if (heartList != null) {
+            sumTime = heartList.size() * 2;
+        }
+        if (sumTime < 3 * 60) return;
+
         String s = MyAPP.getGson().toJson(heartRateBean, HeartRateBean.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);

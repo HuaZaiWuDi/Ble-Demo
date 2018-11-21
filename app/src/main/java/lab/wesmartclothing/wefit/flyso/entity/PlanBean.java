@@ -221,13 +221,13 @@ public class PlanBean {
 
         private WeightBean weight;
         private boolean hasInitialWeight;
-        private int weightChange;
-        private int bmiChange;
-        private int bmrChange;
-        private int bodyFatChange;
-        private int basalHeatChange;
-        private int sinewChange;
-        private int bodyAgeChange;
+        private double weightChange;
+        private double bmiChange;
+        private double bmrChange;
+        private double bodyFatChange;
+        private double basalHeatChange;
+        private double sinewChange;
+        private double bodyAgeChange;
 
         public WeightBean getWeight() {
             return weight;
@@ -245,60 +245,32 @@ public class PlanBean {
             this.hasInitialWeight = hasInitialWeight;
         }
 
-        public int getWeightChange() {
+        public double getWeightChange() {
             return weightChange;
         }
 
-        public void setWeightChange(int weightChange) {
-            this.weightChange = weightChange;
-        }
-
-        public int getBmiChange() {
+        public double getBmiChange() {
             return bmiChange;
         }
 
-        public void setBmiChange(int bmiChange) {
-            this.bmiChange = bmiChange;
-        }
-
-        public int getBmrChange() {
+        public double getBmrChange() {
             return bmrChange;
         }
 
-        public void setBmrChange(int bmrChange) {
-            this.bmrChange = bmrChange;
-        }
-
-        public int getBodyFatChange() {
+        public double getBodyFatChange() {
             return bodyFatChange;
         }
 
-        public void setBodyFatChange(int bodyFatChange) {
-            this.bodyFatChange = bodyFatChange;
-        }
-
-        public int getBasalHeatChange() {
+        public double getBasalHeatChange() {
             return basalHeatChange;
         }
 
-        public void setBasalHeatChange(int basalHeatChange) {
-            this.basalHeatChange = basalHeatChange;
-        }
-
-        public int getSinewChange() {
+        public double getSinewChange() {
             return sinewChange;
         }
 
-        public void setSinewChange(int sinewChange) {
-            this.sinewChange = sinewChange;
-        }
-
-        public int getBodyAgeChange() {
+        public double getBodyAgeChange() {
             return bodyAgeChange;
-        }
-
-        public void setBodyAgeChange(int bodyAgeChange) {
-            this.bodyAgeChange = bodyAgeChange;
         }
 
         public static class WeightBean {
@@ -678,7 +650,7 @@ public class PlanBean {
         private String userId;
         private int count;
         private long targetDate;
-        private int initialWeight;
+        private double initialWeight;
         private double targetWeight;
 
         public String getGid() {
@@ -753,12 +725,9 @@ public class PlanBean {
             this.targetDate = targetDate;
         }
 
-        public int getInitialWeight() {
-            return initialWeight;
-        }
 
-        public void setInitialWeight(int initialWeight) {
-            this.initialWeight = initialWeight;
+        public double getInitialWeight() {
+            return initialWeight;
         }
 
         public double getTargetWeight() {

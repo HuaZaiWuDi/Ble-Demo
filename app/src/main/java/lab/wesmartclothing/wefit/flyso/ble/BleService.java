@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ParcelUuid;
@@ -35,8 +36,10 @@ import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
 import com.yolanda.health.qnblesdk.listener.QNDataListener;
@@ -54,6 +57,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -85,6 +89,7 @@ public class BleService extends Service {
 
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
 
+    private static boolean isFirstJoin = true;
     private TipDialog mTipDialog;
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -116,6 +121,21 @@ public class BleService extends Service {
                 case Intent.ACTION_DATE_CHANGED://日期的变化
                     RxBus.getInstance().post(new RefreshSlimming());
                     break;
+                case ConnectivityManager.CONNECTIVITY_ACTION:
+                    int workType = RxNetUtils.getNetWorkType(context);
+                    if (isFirstJoin) {
+                        isFirstJoin = false;
+                        if (workType != -1 && workType != 5) {
+
+                        } else {
+                            RxToast.normal(RxNetUtils.getNetType(workType));
+                        }
+                    } else {
+                        RxToast.normal(RxNetUtils.getNetType(workType));
+                        RxBus.getInstance().post(new NetWorkType(workType, workType != -1 && workType != 5));
+                    }
+                    RxLogUtils.d("网络状态：" + workType);
+                    break;
             }
         }
     };
@@ -133,6 +153,7 @@ public class BleService extends Service {
         initBroadcast();
         if (BleTools.getBleManager().isBlueEnable())
             initBle();
+
     }
 
     private void initBroadcast() {
@@ -142,7 +163,9 @@ public class BleService extends Service {
         filter.addAction(RxSystemBroadcastUtil.SCREEN_OFF);
         filter.addAction(Key.ACTION_CLOTHING_STOP);
         filter.addAction(Intent.ACTION_DATE_CHANGED);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mBroadcastReceiver, filter);
+
     }
 
 

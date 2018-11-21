@@ -36,6 +36,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -380,6 +381,7 @@ public class SearchHistoryFragment extends BaseActivity {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

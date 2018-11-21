@@ -20,10 +20,12 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
@@ -133,10 +135,20 @@ public class MeFragment extends BaseAcFragment {
                 .subscribe(new RxSubscriber<RefreshMe>() {
                     @Override
                     protected void _onNext(RefreshMe hearRateUpload) {
-                        initMineData();
+                        initNetData();
                     }
                 });
 
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        if (netWorkType.isBoolean())
+                            initNetData();
+                    }
+                });
     }
 
     private void initTypeface() {
@@ -165,6 +177,7 @@ public class MeFragment extends BaseAcFragment {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

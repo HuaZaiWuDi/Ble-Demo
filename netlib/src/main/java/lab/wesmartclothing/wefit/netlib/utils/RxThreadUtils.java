@@ -123,6 +123,7 @@ public class RxThreadUtils {
                 try {
                     emitter.onNext(t);
                     emitter.onComplete();
+                    Log.d("createData当前线程：", Thread.currentThread().getName());
                 } catch (Exception e) {
                     emitter.onError(e);
                     Log.e("createData", "subscribe: ", e);
@@ -204,6 +205,7 @@ public class RxThreadUtils {
                 return upstream.flatMap(new Function<T, ObservableSource<T>>() {
                     @Override
                     public ObservableSource<T> apply(T t) throws Exception {
+                        Log.d("handleResult当前线程：", Thread.currentThread().getName());
                         if (t instanceof String) {
                             JSONObject object = null;
 

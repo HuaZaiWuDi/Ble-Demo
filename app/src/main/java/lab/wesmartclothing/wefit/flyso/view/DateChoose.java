@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DietPlanBean;
@@ -260,6 +261,7 @@ public class DateChoose extends RelativeLayout {
         RxManager.getInstance().doNetSubscribe(Theme == TYPE_FOOD_RECORD ? dxyService.fetchPlanDate(body) : dxyService.fetchDietRecordDate(body))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchPlanDate" + time, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

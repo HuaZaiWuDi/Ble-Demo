@@ -289,7 +289,7 @@ public class SportingActivity extends BaseActivity {
                                 .subscribe(new RxSubscriber<Boolean>() {
                                     @Override
                                     protected void _onNext(Boolean aBoolean) {
-                                        RxLogUtils.d("心率保存"+aBoolean);
+                                        RxLogUtils.d("心率保存" + aBoolean);
                                     }
                                 });
 
@@ -442,6 +442,7 @@ public class SportingActivity extends BaseActivity {
     public void onDestroy() {
         unregisterReceiver(registerReceiver);
         timer.stopTimer();
+        TextSpeakUtils.stop();
         super.onDestroy();
     }
 

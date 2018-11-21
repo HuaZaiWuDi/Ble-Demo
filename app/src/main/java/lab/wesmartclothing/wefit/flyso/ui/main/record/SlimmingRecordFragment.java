@@ -50,11 +50,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SlimmingRecordBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.energy.EnergyActivity;
@@ -365,6 +367,16 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                         initNetData();
                     }
                 });
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        if (netWorkType.isBoolean())
+                            initNetData();
+                    }
+                });
 
     }
 
@@ -389,6 +401,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -142,6 +143,7 @@ public class FoodDetailsFragment extends BaseActivity {
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getFoodType", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -316,6 +318,7 @@ public class FoodDetailsFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        Log.d("_onNext当前线程：", Thread.currentThread().getName());
                         FoodInfoItem item = MyAPP.getGson().fromJson(s, FoodInfoItem.class);
                         smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
                         smartRefreshLayout.finishLoadMore(true);

@@ -19,8 +19,12 @@ import com.vondear.rxtools.utils.StatusBarUtils;
 import butterknife.ButterKnife;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created icon_hide_password 华 on 2017/5/2.
@@ -104,7 +108,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initRxBus2() {
-
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        if (netWorkType.isBoolean()) {
+                            ((BaseActivity) RxActivityUtils.currentActivity()).initNetData();
+                        }
+                    }
+                });
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -154,6 +155,7 @@ public class RecipesActivity extends BaseActivity {
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
                         RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
