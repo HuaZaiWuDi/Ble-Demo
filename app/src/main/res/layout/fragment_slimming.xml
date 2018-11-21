@@ -1276,7 +1276,7 @@
                         android:layout_below="@+id/barChart"
                         android:layout_marginLeft="250dp"
                         android:layout_marginBottom="8dp"
-                        android:text="盈余热量 (kcal)"
+                        android:text="综合消耗 (kcal)"
                         android:textColor="@color/GrayWrite"
                         android:textSize="10sp"/>
 

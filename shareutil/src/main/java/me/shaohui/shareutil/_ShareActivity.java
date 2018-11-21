@@ -118,9 +118,4 @@ public class _ShareActivity extends Activity {
         finish();
     }
 
-
-    public void finishAc() {
-        finish();
-    }
-
 }

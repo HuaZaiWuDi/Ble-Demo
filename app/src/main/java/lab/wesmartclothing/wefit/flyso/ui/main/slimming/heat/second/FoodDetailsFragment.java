@@ -304,7 +304,6 @@ public class FoodDetailsFragment extends BaseActivity {
     @Override
     protected void initNetData() {
         super.initNetData();
-        initData();
         initTabLayout();
     }
 

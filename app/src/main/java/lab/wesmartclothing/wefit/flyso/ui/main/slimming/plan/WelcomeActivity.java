@@ -96,7 +96,7 @@ public class WelcomeActivity extends BaseActivity {
                                     .append("BMI\t\t\t").setProportion(0.8f)
                                     .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
                                     .append(weightBean.getBmr() + " ")
-                                    .append("基础代谢率(kcal)").setProportion(0.8f)
+                                    .append("基础代谢(kcal)").setProportion(0.8f)
                                     .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
                                     .into(mTvWeightInfo);
 

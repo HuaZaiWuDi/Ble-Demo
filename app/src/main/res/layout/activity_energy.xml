@@ -138,7 +138,7 @@
                 android:layout_below="@+id/layout_energy_title"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
-                android:text="盈余能量"
+                android:text="综合消耗"
                 android:textColor="@color/GrayWrite"
                 android:textSize="10sp"/>
 
@@ -266,7 +266,7 @@
                 android:layout_height="69dp"
                 android:layout_below="@+id/line"
                 android:padding="16dp"
-                android:text="盈余能量是综合您的运动消耗、基础代谢率及饮食摄入能量计算所得，盈余能量值越高瘦身效果越棒哦！"
+                android:text="综合消耗是综合您的运动消耗、基础代谢及饮食摄入能量计算所得，综合消耗值越高瘦身效果越棒哦！"
                 android:textColor="@color/GrayWrite"
                 android:textSize="12sp"/>
 

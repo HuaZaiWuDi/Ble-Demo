@@ -11,7 +11,6 @@ import com.zchu.rxcache.data.CacheResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
@@ -155,16 +154,8 @@ public class HeartRateUtil {
     }
 
     public void clearData(HeartRateBean heartRateBean) {
-        RxCache.getDefault().save(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
-                Key.CACHE_ATHL_RECORD_FREE, null)
-                .subscribeOn(Schedulers.io())
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean b) {
-                        RxLogUtils.d("心率保存" + b);
-                    }
-                });
-
+        RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
+                Key.CACHE_ATHL_RECORD_FREE);
     }
 
 }

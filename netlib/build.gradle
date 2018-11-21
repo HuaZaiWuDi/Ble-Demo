@@ -42,7 +42,7 @@ dependencies {
     //Http日志库
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
     //缓存框架
-    compile('com.zchu:rxcache:2.3.1') {
+    compile('com.zchu:rxcache:2.3.3') {
         exclude group: 'com.android.support'
     }
 }

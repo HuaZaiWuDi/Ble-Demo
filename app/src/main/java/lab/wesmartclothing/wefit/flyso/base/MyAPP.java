@@ -19,6 +19,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
+import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxThreadPoolUtils;
@@ -27,6 +28,8 @@ import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
+
+import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -76,17 +79,28 @@ public class MyAPP extends Application {
         super.onCreate();
         RxLogUtils.i("启动时长：初始化");
         initQN();
+
+
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
             public void run() {
+                RxUtils.init(MyAPP.this);
                 RxManager.getInstance().setAPPlication(MyAPP.this);
                 ScreenAdapter.init(MyAPP.this);
                 MultiDex.install(MyAPP.this);
                 initDB();
                 initShareLogin();
                 initLeakCanary();
-                RxUtils.init(MyAPP.this);
+                /**
+                 * 过滤开发设备
+                 *
+                 * */
+                String[] androidIds = {"171e7dfb5b3005f2", "54409e1a3d1be330"};
+                boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
+                RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
+
+                Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
                 Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");

@@ -613,7 +613,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .into(mTvBmi);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmr() + "")
-                .append(" 基础代谢率(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append(" 基础代谢(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.6f)
                 .into(mTvBmr);
 
@@ -945,13 +945,13 @@ public class SlimmingFragment extends BaseAcFragment {
             case R.id.img_weight_tip:
                 new RxDialogSure(mContext)
                         .setTitle("今日体重")
-                        .setContent("今日体重是您今日使用体脂秤称重获得的数据，数据变化趋势是与您第一次称重数据进行对比")
+                        .setContent("您今日的体重数据，变化趋势是与第一次体重数据进行对比")
                         .show();
                 break;
             case R.id.img_sporting_tip:
                 new RxDialogSure(mContext)
                         .setTitle("今日能量")
-                        .setContent("今日能量包含计划能量和实际能量，盈余热量是通过运动消耗加上基础代谢减去饮食摄入所得热量")
+                        .setContent("您今日的能量摄入与消耗，综合消耗是通过摄入、运动消耗、基础代谢综合计算所得")
                         .show();
                 break;
             case R.id.layout_foodRecord:
