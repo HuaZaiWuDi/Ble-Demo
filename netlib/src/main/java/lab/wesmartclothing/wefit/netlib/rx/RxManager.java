@@ -59,8 +59,8 @@ public class RxManager {
 
     public <T> Observable<T> doNetSubscribe(Observable<T> observable) {
         return observable
-                .compose(RxThreadUtils.<T>rxThreadHelper())
                 .compose(RxThreadUtils.<T>handleResult())
+                .compose(RxThreadUtils.<T>rxThreadHelper())
                 ;
     }
 

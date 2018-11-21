@@ -54,8 +54,6 @@ public class FoodInfoItem {
 
 
 
-
-
     public int getPageNum() {
         return pageNum;
     }

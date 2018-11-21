@@ -33,6 +33,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -100,8 +101,6 @@ public class FoodDetailsFragment extends BaseActivity {
         initRecyclerView();
         initAddFoodRecyclerView();
 
-        pageNum = 1;
-
         dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
             @Override
@@ -163,6 +162,7 @@ public class FoodDetailsFragment extends BaseActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 RxLogUtils.d("Tab:" + tab.getText());
                 typeId = (String) tab.getTag();
+                pageNum = 1;
                 initData();
             }
 
@@ -282,8 +282,6 @@ public class FoodDetailsFragment extends BaseActivity {
 
 
     private void initTopBar() {
-
-
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -305,43 +303,36 @@ public class FoodDetailsFragment extends BaseActivity {
     protected void initNetData() {
         super.initNetData();
         initTabLayout();
+        initData();
     }
 
     private void initData() {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 20, typeId))
+        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 15, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + typeId + pageNum, String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("历史数据：" + s);
                         FoodInfoItem item = MyAPP.getGson().fromJson(s, FoodInfoItem.class);
+                        smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
+                        smartRefreshLayout.finishLoadMore(true);
+                        smartRefreshLayout.finishRefresh(true);
+
                         List<FoodListBean> beans = item.getList();
-                        if (pageNum == 1) {
+                        if (item.getPageNum() == 1) {
                             adapter.setNewData(beans);
                         } else {
                             adapter.addData(beans);
                         }
-                        if (smartRefreshLayout.isLoading()) {
-                            pageNum++;
-                            smartRefreshLayout.finishLoadMore(true);
-                        }
-                        if (smartRefreshLayout.isRefreshing())
-                            smartRefreshLayout.finishRefresh(true);
-                        smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
                     }
 
                     @Override
                     protected void _onError(String error, int errorCode) {
-                        RxToast.normal(error);
-                        if (smartRefreshLayout.isLoading()) {
-                            smartRefreshLayout.finishLoadMore(false);
-                        }
-                        if (smartRefreshLayout.isRefreshing())
-                            smartRefreshLayout.finishRefresh(false);
+                        smartRefreshLayout.finishLoadMore(false);
+                        smartRefreshLayout.finishRefresh(false);
                     }
                 });
     }

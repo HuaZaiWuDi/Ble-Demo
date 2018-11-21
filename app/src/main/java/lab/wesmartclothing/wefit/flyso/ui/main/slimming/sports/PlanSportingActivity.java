@@ -127,6 +127,7 @@ public class PlanSportingActivity extends BaseActivity {
     private double sportingScore = 0, sportingKcal = 0, totalSum;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
     private List<HeartRateItemBean> heartLists = new ArrayList<>();
+    private int maxHeart = 0;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -251,7 +252,9 @@ public class PlanSportingActivity extends BaseActivity {
                         currentHeart = sportsDataTab.getCurHeart();
 
                         mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
+
+                        maxHeart = Math.max(sportsDataTab.getCurHeart(), maxHeart);
+                        mTvMaxHeartRate.setText(maxHeart + "");
 
 
                         sportingKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600), 1);
@@ -421,7 +424,9 @@ public class PlanSportingActivity extends BaseActivity {
                     .into(mTvKcal);
 
             if (currentTime >= 30 && currentTime % 30 == 0) {
-                int section = (Key.HRART_SECTION[6] & 0xFF) - (Key.HRART_SECTION[5] & 0xFF);
+                int section = Math.abs((Key.HRART_SECTION[6] & 0xFF) - (Key.HRART_SECTION[5] & 0xFF));
+
+                RxLogUtils.d("心率区间：" + section);
                 //这里当运动比计划心率差值大于20提示用户块（慢）点
                 if ((defaultSet.getEntryForIndex(count).getY() - currentValue) >= section) {
                     speakFlush("请快一点，保持匀速有节奏的运动才能高效瘦身");
