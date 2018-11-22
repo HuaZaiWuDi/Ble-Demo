@@ -78,6 +78,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.SettingTargetFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
@@ -372,7 +373,7 @@ public class SlimmingFragment extends BaseAcFragment {
                         if (BleService.clothingFinish && isVisibled()) {
                             BleService.clothingFinish = false;
 
-                            if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
+                            if (bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                                 RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
                                         .setTitle("运动提示")
                                         .setContent("瘦身衣已连接，是否立即开始运动？")
@@ -972,7 +973,9 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
                 break;
             case R.id.tv_resetTarget:
-                RxActivityUtils.skipActivity(mContext, TargetDetailsFragment.class);
+                bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, bean.getTargetInfo().getTargetWeight());
+                bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, bean.getWeightChangeVO().getWeight().getWeight());
+                RxActivityUtils.skipActivity(mContext, SettingTargetFragment.class, bundle);
                 break;
         }
     }

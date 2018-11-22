@@ -77,6 +77,7 @@ public class SettingTargetFragment extends BaseActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
+
         targetWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         //最新的体重
         initWeight = (float) bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);

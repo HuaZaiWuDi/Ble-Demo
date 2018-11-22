@@ -121,7 +121,7 @@ public class HeartLineChartUtils {
 
 
     private void createRealTimeSet2(List<Entry> heartValues) {
-        LineDataSet set = new LineDataSet(heartValues, "RealTime");
+        LineDataSet set = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
         set.setDrawIcons(false);
         set.setDrawValues(false);
         set.setColor(realTimeColor);
@@ -144,8 +144,7 @@ public class HeartLineChartUtils {
 //        set.setDrawVerticalHighlightIndicator(true);
 //        set.setDrawHorizontalHighlightIndicator(false);
 
-        LineData data = mLineChart.getData();
-        data.addDataSet(set);
+        set.setValues(heartValues);
     }
 
 
@@ -182,7 +181,8 @@ public class HeartLineChartUtils {
         }
 
         if (realTimeColor == Color.parseColor("#FFFFFF")) {
-            createRealTimeSet(heartValues);
+            LineDataSet realTimeSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
+            realTimeSet.setValues(heartValues);
         } else
             createRealTimeSet2(heartValues);
 

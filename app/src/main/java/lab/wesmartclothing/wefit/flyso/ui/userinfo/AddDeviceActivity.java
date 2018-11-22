@@ -310,6 +310,9 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加绑定设备：" + s);
+
+                        RxBus.getInstance().post(new RefreshSlimming());
+                        RxBus.getInstance().post(new RefreshMe());
                         //跳转主页
                         if (!forceBind) {
                             RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
@@ -326,8 +329,7 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     public void onComplete() {
                         super.onComplete();
-                        RxBus.getInstance().post(new RefreshSlimming());
-                        RxBus.getInstance().post(new RefreshMe());
+
                     }
                 });
     }
@@ -341,13 +343,13 @@ public class AddDeviceActivity extends BaseActivity {
             return;
         }
 
-        if (stepState != STATUS_SCAN_DEVICE) {
-            return;
-        }
+        if (mBtnScan.isEnabled()) return;
+
         scanDevice.put(bean.getMac(), bean);
 
         if (scanDevice.size() == 1)
             switchStatus(STATUS_FIND_DEVICE);
+
         scanTimeout.stopTimer();
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
@@ -371,7 +373,7 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onError(String error) {
                         //网络获取异常不可用
-                        RxToast.normal(error);
+                        adapter.addData(bean);
                     }
                 });
     }

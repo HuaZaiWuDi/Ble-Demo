@@ -116,7 +116,6 @@
                 tools:visibility="visible"
                 >
 
-
                 <RelativeLayout
                     android:id="@+id/layout_targetTitle"
                     android:layout_width="match_parent"

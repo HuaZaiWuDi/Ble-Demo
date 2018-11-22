@@ -136,9 +136,24 @@ public class SportingActivity extends BaseActivity {
                 speakFlush(state ? "设备已连接" : "设备连接已断开");
 
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                //瘦身衣运动结束
-                if (mContext != null && !heartLists.isEmpty())
-                    stopSporting();
+                if(mContext == null)return;
+                if (currentTime < 180) {
+                    //       用户当前运动时间<3min，提示用户此次记录将不被保存
+                    new RxDialogSureCancel(mContext)
+                            .setTitle("运动提示")
+                            .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                            .setSure("确定")
+                            .setSureListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    RxActivityUtils.finishActivity();
+                                }
+                            }).show();
+                } else {
+                    //瘦身衣运动结束
+                    if ( !heartLists.isEmpty())
+                        stopSporting();
+                }
             }
         }
     };

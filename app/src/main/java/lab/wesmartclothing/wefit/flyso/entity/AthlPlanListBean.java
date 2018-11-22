@@ -20,6 +20,25 @@ public class AthlPlanListBean {
         this.time = time;
     }
 
+
+    public String strRange(){
+        switch (range) {
+            case 0:
+                return "静息";
+            case 1:
+                return "热身";
+            case 2:
+                return "燃脂";
+            case 3:
+                return "有氧";
+            case 4:
+                return "无氧";
+            case 5:
+                return "危险";
+        }
+        return "静息";
+    }
+
     public int getRange() {
         byte[] heartRates = Key.HRART_SECTION;
         int heart_0 = heartRates[0] & 0xff;

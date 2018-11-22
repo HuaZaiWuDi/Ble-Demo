@@ -33,16 +33,22 @@
         android:textColor="@color/Gray"
         android:textSize="18sp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_Title"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:lineSpacingExtra="8dp"
-        android:text="@string/plan"
-        android:textColor="@color/GrayWrite"
-        android:textSize="13sp"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@+id/tv_Title">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:text="@string/plan"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"/>
+
+    </android.support.v4.widget.NestedScrollView>
 
 
     <com.vondear.rxtools.view.layout.RxTextView

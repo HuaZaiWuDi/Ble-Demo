@@ -227,12 +227,8 @@ public class BleService extends Service {
                     BluetoothDevice device = results.get(i).getDevice();
                     BleDevice bleDevice = new BleDevice(device);//转换对象
                     RxBus.getInstance().post(bleDevice);
-                }
 
-
-                if (results.size() >= 1) {
-                    BluetoothDevice device = results.get(0).getDevice();
-                    BleDevice bleDevice = new BleDevice(device);//转换对象
+                    //连接设备
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
                             !BleTools.getInstance().connectedState() &&
                             !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
