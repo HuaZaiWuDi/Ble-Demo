@@ -312,6 +312,7 @@ public class FoodDetailsFragment extends BaseActivity {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 15, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + typeId + pageNum, String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())

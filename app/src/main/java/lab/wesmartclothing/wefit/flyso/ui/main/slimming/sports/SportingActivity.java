@@ -136,7 +136,7 @@ public class SportingActivity extends BaseActivity {
                 speakFlush(state ? "设备已连接" : "设备连接已断开");
 
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                if(mContext == null)return;
+                if (mContext == null) return;
                 if (currentTime < 180) {
                     //       用户当前运动时间<3min，提示用户此次记录将不被保存
                     new RxDialogSureCancel(mContext)
@@ -151,7 +151,7 @@ public class SportingActivity extends BaseActivity {
                             }).show();
                 } else {
                     //瘦身衣运动结束
-                    if ( !heartLists.isEmpty())
+                    if (!heartLists.isEmpty())
                         stopSporting();
                 }
             }
@@ -209,8 +209,8 @@ public class SportingActivity extends BaseActivity {
             int count = realTimeSet.getEntryCount();
 
             int width = RxUtils.dp2px(325) / 30 * count;
-            if (width < RxUtils.dp2px(23)) {
-                width = RxUtils.dp2px(23);
+            if (width < RxUtils.dp2px(24)) {
+                width = RxUtils.dp2px(24);
             } else if (width > RxUtils.dp2px(325)) {
                 width = RxUtils.dp2px(320);
             }

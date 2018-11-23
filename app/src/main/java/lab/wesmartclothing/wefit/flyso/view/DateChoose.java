@@ -22,7 +22,9 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -165,11 +167,16 @@ public class DateChoose extends RelativeLayout {
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                calendar.set(date.getYear(), date.getMonth(), date.getDay());
-                isToday = isToday();
-                nextIsEnable(isToday);
-                notifyDate();
-                show.dismiss();
+                if (date.getCalendar().getTimeInMillis() > System.currentTimeMillis()) {
+                    RxLogUtils.d("超过今天");
+                    RxToast.normal("不能选择未来的日期");
+                } else {
+                    calendar = date.getCalendar();
+                    isToday = isToday();
+                    nextIsEnable(isToday);
+                    notifyDate();
+                    show.dismiss();
+                }
             }
         });
 

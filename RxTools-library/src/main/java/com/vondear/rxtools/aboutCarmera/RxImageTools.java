@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
@@ -442,7 +443,35 @@ public class RxImageTools {
         return bm;
     }
 
+    /**
+     * 没有加载的View
+     *
+     * @param v
+     * @param width  截取的宽
+     * @param height 截取的高
+     * @return
+     */
+    public Bitmap layout2Bitmap(View v, int width, int height) {
+        //测量使得view指定大小
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+        v.measure(measuredWidth, measuredHeight);
+        //调用layout方法布局后，可以得到view的尺寸大小
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        c.drawColor(Color.WHITE);
+        v.draw(c);
+        return bmp;
+    }
 
+
+    /**
+     * 没有加载的View
+     *
+     * @param view
+     * @return
+     */
     public static Bitmap convertViewToBitmap(View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));

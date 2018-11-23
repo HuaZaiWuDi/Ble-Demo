@@ -434,9 +434,9 @@ public class PlanSportingActivity extends BaseActivity {
                     .into(mTvKcal);
 
 
-            float width = RxUtils.dp2px(325) * 1f / defaultSet.getEntryCount() * realTimeSet.getEntryCount() + RxUtils.dp2px(23) * 0.5f;
-            if (width < RxUtils.dp2px(23)) {
-                width = RxUtils.dp2px(23);
+            float width = RxUtils.dp2px(325) * 1f / defaultSet.getEntryCount() * realTimeSet.getEntryCount() + RxUtils.dp2px(24) * 0.5f;
+            if (width < RxUtils.dp2px(24)) {
+                width = RxUtils.dp2px(24);
             } else if (width > RxUtils.dp2px(325)) {
                 width = RxUtils.dp2px(320);
             }

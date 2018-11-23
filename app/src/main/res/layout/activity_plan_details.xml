@@ -172,13 +172,15 @@
         android:lineSpacingExtra="8dp"
         android:text="@string/phone_email"
         android:textColor="@color/Gray"
-        android:textSize="12sp"/>
+        android:textSize="12sp"
+        android:visibility="gone"/>
 
 
     <com.vondear.rxtools.view.layout.RxTextView
         android:id="@+id/tv_ok"
         android:layout_width="187dp"
         android:layout_height="44dp"
+        android:layout_marginTop="60dp"
         android:layout_marginBottom="36dp"
         android:gravity="center"
         android:text="@string/ok"
