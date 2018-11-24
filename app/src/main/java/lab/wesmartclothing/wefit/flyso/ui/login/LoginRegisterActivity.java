@@ -329,7 +329,6 @@ public class LoginRegisterActivity extends BaseActivity {
                 });
         rxDialog.show();
 
-
     }
 
 

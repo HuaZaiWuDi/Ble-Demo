@@ -32,6 +32,7 @@
 -keep public class * extends android.app.Service
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
+-keep public class * com.activeandroid.app.Application
 
 
 # 序列化的类
@@ -188,6 +189,7 @@
 #数据库类，实体类还有自定义控件类
 -keep class lab.wesmartclothing.wefit.flyso.entity { *; }
 -keep class lab.wesmartclothing.wefit.flyso.view { *; }
+-keep class lab.wesmartclothing.wefit.flyso.base.MyAPP
 
 # Retrofit
 -dontnote retrofit2.Platform

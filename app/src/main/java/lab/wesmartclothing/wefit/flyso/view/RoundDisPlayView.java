@@ -185,7 +185,6 @@ public class RoundDisPlayView extends View {
 
     public void startAnimation() {
         if (cgAnima1 == null) {
-
             cgAnima1 = ValueAnimator.ofInt(0, 360);
             cgAnima1.setInterpolator(new LinearInterpolator());
             cgAnima1.setDuration(2000);

@@ -55,6 +55,7 @@ import java.util.Map;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
@@ -151,8 +152,6 @@ public class BleService extends Service {
         initHeartRate();
         connectScaleCallBack();
         initBroadcast();
-        if (BleTools.getBleManager().isBlueEnable())
-            initBle();
 
     }
 
@@ -183,6 +182,8 @@ public class BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (BleTools.getBleManager().isBlueEnable())
+            initBle();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -206,7 +207,9 @@ public class BleService extends Service {
                     connectClothing(bleDevice);
                     connectDevices.put(bleDevice.getMac(), bleDevice);
                 }
-                RxBus.getInstance().post(bleDevice);
+
+                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), result.getRssi());
+                RxBus.getInstance().post(bindDeviceBean);
             }
 
             @Override
@@ -225,7 +228,9 @@ public class BleService extends Service {
                 for (int i = 0; i < results.size(); i++) {
                     BluetoothDevice device = results.get(i).getDevice();
                     BleDevice bleDevice = new BleDevice(device);//转换对象
-                    RxBus.getInstance().post(bleDevice);
+
+                    BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), results.get(i).getRssi());
+                    RxBus.getInstance().post(bindDeviceBean);
 
                     //连接设备
                     if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
@@ -242,7 +247,10 @@ public class BleService extends Service {
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
-                RxBus.getInstance().post(bleDevice);
+
+                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
+                RxBus.getInstance().post(bindDeviceBean);
+
                 if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
                         mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接

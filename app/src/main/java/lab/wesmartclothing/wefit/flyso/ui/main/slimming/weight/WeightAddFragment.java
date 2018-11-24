@@ -120,8 +120,8 @@ public class WeightAddFragment extends BaseActivity {
         if (unsteadyWeight > 0) {
             mTvTargetWeight.setText((float) unsteadyWeight + "");
             mTvTip.setText("称重中...");
-            mTvTitle.setText("正在测量体重");
-            if (mTvTip.getVisibility() == View.INVISIBLE) {
+            if (!mTvTitle.getText().toString().equals("正在测量体重")) {
+                mTvTitle.setText("正在测量体重");
                 mTvTip.setVisibility(View.VISIBLE);
                 mBtnForget.setVisibility(View.INVISIBLE);
                 mBtnSave.setVisibility(View.INVISIBLE);

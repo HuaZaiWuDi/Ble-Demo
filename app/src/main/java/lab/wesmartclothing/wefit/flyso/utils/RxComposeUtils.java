@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import android.os.Looper;
+
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.reactivestreams.Publisher;
@@ -73,21 +75,24 @@ public class RxComposeUtils {
         return new ObservableTransformer<T, T>() {
             @Override
             public ObservableSource<T> apply(Observable<T> observable) {
-                return observable.doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        if (dialog != null)
-                            dialog.show();
-                        RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
-                    }
-                }).doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        if (dialog != null)
-                            dialog.dismiss();
-                        RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
-                    }
-                });
+                return observable
+                        .doOnSubscribe(new Consumer<Disposable>() {
+                            @Override
+                            public void accept(Disposable disposable) throws Exception {
+                                if (Looper.getMainLooper() == Looper.myLooper())
+                                    if (dialog != null)
+                                        dialog.show();
+                                RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
+                            }
+                        }).doFinally(new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                if (Looper.getMainLooper() == Looper.myLooper())
+                                    if (dialog != null)
+                                        dialog.dismiss();
+                                RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
+                            }
+                        });
             }
         };
     }

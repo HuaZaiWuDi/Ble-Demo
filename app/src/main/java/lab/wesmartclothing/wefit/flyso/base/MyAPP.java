@@ -5,8 +5,6 @@ import android.graphics.Typeface;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Configuration;
 import com.activeandroid.app.Application;
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
@@ -33,7 +31,6 @@ import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
@@ -45,7 +42,6 @@ import me.shaohui.shareutil.ShareManager;
  * Created icon_hide_password jk on 2018/5/8.
  */
 public class MyAPP extends Application {
-
 
     public static QNBleApi QNapi;
     public static Typeface typeface;
@@ -89,7 +85,7 @@ public class MyAPP extends Application {
                 RxManager.getInstance().setAPPlication(MyAPP.this);
                 ScreenAdapter.init(MyAPP.this);
                 MultiDex.install(MyAPP.this);
-                initDB();
+//                initDB();
                 initShareLogin();
                 initLeakCanary();
                 /**
@@ -102,6 +98,7 @@ public class MyAPP extends Application {
 
                 Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
                 Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+                RxLogUtils.setLogSwitch(!BuildConfig.DEBUG);
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
                 BleTools.initBLE(MyAPP.this);
@@ -175,13 +172,13 @@ public class MyAPP extends Application {
     }
 
     private void initDB() {
-        Configuration.Builder builder = new Configuration.Builder(this);
-        //手动的添加模型类
-        builder.addModelClasses(SearchWordTab.class)
-                .setDatabaseName("Wefit.db")
-                .setDatabaseVersion(3);
-
-        ActiveAndroid.initialize(builder.create());
+//        Configuration.Builder builder = new Configuration.Builder(this);
+//        //手动的添加模型类
+//        builder.addModelClasses(SearchWordTab.class)
+//                .setDatabaseName("Wefit.db")
+//                .setDatabaseVersion(3);
+//
+//        ActiveAndroid.initialize(builder.create());
     }
 
 

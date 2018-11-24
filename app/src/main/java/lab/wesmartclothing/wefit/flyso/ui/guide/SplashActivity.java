@@ -81,7 +81,7 @@ public class SplashActivity extends BaseActivity {
             ServiceAPI.switchURL(baseUrl);
         }
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-
+        RxLogUtils.e("用户ID：" + baseUrl);
     }
 
     @Override

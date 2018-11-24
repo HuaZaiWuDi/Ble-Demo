@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -22,6 +23,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
@@ -111,6 +113,7 @@ public class GuideActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<Boolean>() {
                     @Override
                     protected void _onNext(Boolean aBoolean) {
+                        startService(new Intent(mContext, BleService.class));
                         RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
                     }
                 });

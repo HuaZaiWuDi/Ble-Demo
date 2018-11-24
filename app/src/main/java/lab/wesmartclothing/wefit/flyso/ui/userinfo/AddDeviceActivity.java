@@ -10,18 +10,19 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.clj.fastble.data.BleDevice;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
+import com.smartclothing.blelibrary.util.MathUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
@@ -29,12 +30,12 @@ import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
-import com.yolanda.health.qnblesdk.out.QNBleDevice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,28 +169,15 @@ public class AddDeviceActivity extends BaseActivity {
 
 
     private void initRxBus() {
-        //瘦身衣
-        RxBus.getInstance().register2(BleDevice.class)
-                .compose(RxComposeUtils.<BleDevice>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<BleDevice>() {
+        RxBus.getInstance().register2(BindDeviceBean.class)
+                .compose(RxComposeUtils.<BindDeviceBean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<BindDeviceBean>() {
                     @Override
-                    protected void _onNext(BleDevice device) {
-                        RxLogUtils.d("瘦身衣：" + device.getMac());
-                        BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
-                        isBind(bean);
+                    protected void _onNext(BindDeviceBean device) {
+                        isBind(device);
                     }
                 });
-        //体脂称
-        RxBus.getInstance().register2(QNBleDevice.class)
-                .compose(RxComposeUtils.<QNBleDevice>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<QNBleDevice>() {
-                    @Override
-                    protected void _onNext(QNBleDevice device) {
-                        RxLogUtils.d("体脂称：" + device.getMac());
-                        BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
-                        isBind(bean);
-                    }
-                });
+
     }
 
 
@@ -236,7 +224,7 @@ public class AddDeviceActivity extends BaseActivity {
         adapter = new BaseQuickAdapter<BindDeviceBean, BaseViewHolder>(R.layout.item_bind_device) {
             @Override
             protected void convert(BaseViewHolder helper, BindDeviceBean item) {
-                helper.setImageResource(R.id.img_weight, item.getDeivceType() == 0 ? R.mipmap.icon_scale_view : R.mipmap.icon_clothing_view);
+                helper.setImageResource(R.id.img_weight, BleKey.TYPE_SCALE.equals(item.getDeivceType()) ? R.mipmap.icon_scale_view : R.mipmap.icon_clothing_view);
                 if (item.isBind()) {
                     helper.getView(R.id.tv_Bind).setVisibility(View.GONE);
                     helper.setVisible(R.id.tv_bindings, true);
@@ -244,7 +232,13 @@ public class AddDeviceActivity extends BaseActivity {
                     helper.getView(R.id.tv_bindings).setVisibility(View.GONE);
                     helper.setVisible(R.id.tv_Bind, true);
                 }
-                helper.setText(R.id.tv_weight_data, item.getDeivceName());
+
+                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceName())
+                        .append("(距离：" + MathUtils.div(-item.getRssi(), 100, 2) + "米)")
+                        .setProportion(0.8f)
+                        .create();
+
+                helper.setText(R.id.tv_weight_data, stringBuilder);
                 helper.addOnClickListener(R.id.tv_Bind);
             }
         };
@@ -255,11 +249,11 @@ public class AddDeviceActivity extends BaseActivity {
                     RxLogUtils.d("点击了绑定");
 
                     final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
-                    if (item.getDeivceType() == 0 && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                    if (BleKey.TYPE_SCALE.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
                         RxToast.normal("已绑定体脂称");
                         return;
                     }
-                    if (item.getDeivceType() == 1 && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                    if (BleKey.TYPE_CLOTHING.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
                         RxToast.normal("已绑定瘦身衣");
                         return;
                     }
@@ -289,13 +283,13 @@ public class AddDeviceActivity extends BaseActivity {
                     deviceList.setCountry(MyAPP.aMapLocation.getCountry());
                     deviceList.setProvince(MyAPP.aMapLocation.getProvince());
                 }
-                deviceList.setMacAddr(bean.getMac());
-                deviceList.setDeviceNo(bean.getDeivceType() == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
+                deviceList.setMacAddr(bean.getDeviceMac());
+                deviceList.setDeviceNo(bean.getDeivceType());
                 mDeviceLists.add(deviceList);
-                if (bean.getDeivceType() == 0) {
-                    SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
+                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
                 } else {
-                    SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
+                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
                 }
             }
         }
@@ -335,17 +329,17 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
-        if (bean.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) ||
-                bean.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+        if (bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) ||
+                bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
             return;
         }
-        if (scanDevice.containsKey(bean.getMac())) {
+        if (scanDevice.containsKey(bean.getDeviceMac())) {
             return;
         }
 
         if (mBtnScan.isEnabled()) return;
 
-        scanDevice.put(bean.getMac(), bean);
+        scanDevice.put(bean.getDeviceMac(), bean);
 
         if (scanDevice.size() == 1)
             switchStatus(STATUS_FIND_DEVICE);
@@ -353,17 +347,17 @@ public class AddDeviceActivity extends BaseActivity {
         scanTimeout.stopTimer();
 
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
+        RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         if ("true".equals(s)) {
-                            if (bean.getDeivceType() == 0) {
-                                SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
+                            if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                                SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
                             } else {
-                                SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
+                                SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
                             }
                         }
                         bean.setBind("true".equals(s));

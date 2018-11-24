@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -312,14 +311,13 @@ public class FoodDetailsFragment extends BaseActivity {
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 15, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + typeId + pageNum, String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Log.d("_onNext当前线程：", Thread.currentThread().getName());
+
                         FoodInfoItem item = MyAPP.getGson().fromJson(s, FoodInfoItem.class);
                         smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
                         smartRefreshLayout.finishLoadMore(true);
@@ -335,6 +333,7 @@ public class FoodDetailsFragment extends BaseActivity {
 
                     @Override
                     protected void _onError(String error, int errorCode) {
+                        RxToast.normal(error);
                         smartRefreshLayout.finishLoadMore(false);
                         smartRefreshLayout.finishRefresh(false);
                     }
