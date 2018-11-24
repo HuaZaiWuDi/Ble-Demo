@@ -160,7 +160,7 @@
                     android:layout_height="141dp"
                     android:layout_marginTop="54dp"
                     android:padding="15dp"
-                    tools:alpha="0.3">
+                    >
 
 
                     <com.vondear.rxtools.view.layout.RxTextView

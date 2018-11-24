@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -306,28 +305,6 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     }
 
-    public void showWeight() {
-        NumberPicker picker = new NumberPicker(this);
-        picker.setGravity(Gravity.BOTTOM);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setOffset(2);//偏移量
-        picker.setRange(35, 90, 1);//数字范围
-        picker.setSelectedItem(mUserInfo.getTargetWeight());
-        picker.setTextSize(25);
-        picker.setLabel("kg");
-        picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
-            @Override
-            public void onNumberPicked(int index, Number item) {
-                RxLogUtils.d("体重：" + item);
-                tv_bottom.setText(item + "kg");
-                SPUtils.put(SPKey.SP_weight, (int) item);
-                mUserInfo.setTargetWeight((int) item);
-            }
-        });
-        picker.show();
-    }
 
 
     private void saveUserInfo(boolean isSkip) {

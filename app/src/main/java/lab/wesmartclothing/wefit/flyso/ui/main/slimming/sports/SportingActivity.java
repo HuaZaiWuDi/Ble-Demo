@@ -210,7 +210,7 @@ public class SportingActivity extends BaseActivity {
 
             int width = RxUtils.dp2px(325) / 30 * count;
             if (width < RxUtils.dp2px(24)) {
-                width = RxUtils.dp2px(24);
+                width = RxUtils.dp2px(30);
             } else if (width > RxUtils.dp2px(325)) {
                 width = RxUtils.dp2px(320);
             }
@@ -307,6 +307,22 @@ public class SportingActivity extends BaseActivity {
                                         RxLogUtils.d("心率保存" + aBoolean);
                                     }
                                 });
+
+
+                        LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
+                        int count = realTimeSet.getEntryCount();
+
+                        int width = RxUtils.dp2px(325) / 30 * count;
+                        if (width < RxUtils.dp2px(24)) {
+                            width = RxUtils.dp2px(30);
+                        } else if (width > RxUtils.dp2px(325)) {
+                            width = RxUtils.dp2px(320);
+                        }
+
+                        ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
+                        layoutParams.width = width;
+                        mTvCurrentTime.setLayoutParams(layoutParams);
+
 
                     }
                 });
@@ -435,19 +451,6 @@ public class SportingActivity extends BaseActivity {
 
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
 
-            LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
-            int count = realTimeSet.getEntryCount();
-
-            int width = RxUtils.dp2px(325) / 30 * count;
-            if (width < RxUtils.dp2px(23)) {
-                width = RxUtils.dp2px(23);
-            } else if (width > RxUtils.dp2px(325)) {
-                width = RxUtils.dp2px(320);
-            }
-
-            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
-            layoutParams.width = width;
-            mTvCurrentTime.setLayoutParams(layoutParams);
 
         }
     });

@@ -38,6 +38,7 @@ import lab.wesmartclothing.wefit.flyso.entity.EnergyBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
+import lab.wesmartclothing.wefit.flyso.utils.EnergyUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
@@ -144,7 +145,9 @@ public class EnergyActivity extends BaseActivity {
                 currentDate = bean.getRecordDate();
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
 
-                int surplusHeat = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+//                int surplusHeat = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+
+                int surplusHeat = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
 
                 mTvSurplusHeat.setTextColor(ContextCompat.getColor(mContext, surplusHeat < 0 ? R.color.red : R.color.orange_FF7200));
                 RxTextUtils.getBuilder(Math.abs(surplusHeat) + "")

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lzy.imagepicker.ImagePicker;
@@ -47,7 +46,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.picker.AddressPickTask;
@@ -71,8 +69,6 @@ public class UserInfofragment extends BaseActivity {
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.iv_userImg)
     QMUIRadiusImageView mIvUserImg;
-    @BindView(R.id.layout_userImg)
-    RelativeLayout mLayoutUserImg;
     Unbinder unbinder;
     @BindView(R.id.tv_userName)
     TextView mTvUserName;
@@ -90,10 +86,6 @@ public class UserInfofragment extends BaseActivity {
     TextView mTvUserHeight;
     @BindView(R.id.layout_userHeight)
     RxRelativeLayout mLayoutUserHeight;
-    @BindView(R.id.tv_userWeight)
-    TextView mTvUserWeight;
-    @BindView(R.id.layout_userWeight)
-    RxRelativeLayout mLayoutUserWeight;
     @BindView(R.id.tv_userCity)
     TextView mTvUserCity;
     @BindView(R.id.layout_userCity)
@@ -115,7 +107,6 @@ public class UserInfofragment extends BaseActivity {
         setContentView(R.layout.fragment_user_info);
         unbinder = ButterKnife.bind(this);
         initView();
-
     }
 
 
@@ -175,7 +166,6 @@ public class UserInfofragment extends BaseActivity {
         mTvUserSex.setText(info.getSex() == 1 ? "男" : "女");
         mTvBirth.setText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
         mTvUserHeight.setText(info.getHeight() + "\tcm");
-        mTvUserWeight.setText(info.getTargetWeight() + "\tkg");
         if (!RxDataUtils.isNullString(info.getProvince()) && !RxDataUtils.isNullString(info.getCity()))
             mTvUserCity.setText(info.getProvince() + "," + info.getCity());
         if (!RxDataUtils.isNullString(info.getSignature()))
@@ -369,8 +359,6 @@ public class UserInfofragment extends BaseActivity {
                         }
                     });
             rxDialog.show();
-
-
         } else
             super.onBackPressed();
     }
@@ -381,7 +369,6 @@ public class UserInfofragment extends BaseActivity {
             R.id.layout_userSex,
             R.id.layout_userBirth,
             R.id.layout_userHeight,
-            R.id.layout_userWeight,
             R.id.layout_userCity,
             R.id.layout_userSign})
     public void onViewClicked(View view) {
@@ -401,13 +388,7 @@ public class UserInfofragment extends BaseActivity {
             case R.id.layout_userHeight:
                 showHeight();
                 break;
-            case R.id.layout_userWeight:
-                if (SPUtils.getFloat(SPKey.SP_realWeight) <= 0) {
-                    RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
-                    return;
-                }
-                RxActivityUtils.skipActivity(mActivity, TargetDetailsFragment.class);
-                break;
+
             case R.id.layout_userCity:
                 showAddress();
                 break;

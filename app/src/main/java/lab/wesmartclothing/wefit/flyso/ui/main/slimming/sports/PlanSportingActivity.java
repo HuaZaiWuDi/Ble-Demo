@@ -436,14 +436,15 @@ public class PlanSportingActivity extends BaseActivity {
 
             float width = RxUtils.dp2px(325) * 1f / defaultSet.getEntryCount() * realTimeSet.getEntryCount() + RxUtils.dp2px(24) * 0.5f;
             if (width < RxUtils.dp2px(24)) {
-                width = RxUtils.dp2px(24);
+                width = RxUtils.dp2px(30);
             } else if (width > RxUtils.dp2px(325)) {
                 width = RxUtils.dp2px(320);
             }
+
+            RxLogUtils.d("宽度：" + width);
             ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
             layoutParams.width = (int) width;
             mTvCurrentTime.setLayoutParams(layoutParams);
-
         }
     }
 

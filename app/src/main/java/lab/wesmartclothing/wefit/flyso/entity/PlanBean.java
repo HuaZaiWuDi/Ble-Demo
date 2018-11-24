@@ -54,6 +54,8 @@ public class PlanBean {
     private List<AthlPlanListBean> athlPlanList;
 
 
+
+
     public void setAthlPlanBelongUser(String athlPlanBelongUser) {
         this.athlPlanBelongUser = athlPlanBelongUser;
     }
@@ -271,6 +273,35 @@ public class PlanBean {
 
         public double getBodyAgeChange() {
             return bodyAgeChange;
+        }
+
+
+        public void setWeightChange(double weightChange) {
+            this.weightChange = weightChange;
+        }
+
+        public void setBmiChange(double bmiChange) {
+            this.bmiChange = bmiChange;
+        }
+
+        public void setBmrChange(double bmrChange) {
+            this.bmrChange = bmrChange;
+        }
+
+        public void setBodyFatChange(double bodyFatChange) {
+            this.bodyFatChange = bodyFatChange;
+        }
+
+        public void setBasalHeatChange(double basalHeatChange) {
+            this.basalHeatChange = basalHeatChange;
+        }
+
+        public void setSinewChange(double sinewChange) {
+            this.sinewChange = sinewChange;
+        }
+
+        public void setBodyAgeChange(double bodyAgeChange) {
+            this.bodyAgeChange = bodyAgeChange;
         }
 
         public static class WeightBean {
@@ -728,6 +759,10 @@ public class PlanBean {
 
         public double getInitialWeight() {
             return initialWeight;
+        }
+
+        public void setInitialWeight(double initialWeight) {
+            this.initialWeight = initialWeight;
         }
 
         public double getTargetWeight() {

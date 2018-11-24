@@ -811,7 +811,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .append("\t分").setProportion(0.5f)
                 .into(mTvHealthScore);
 
-
         RxTextUtils.getBuilder("身材：\t").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .append(weightInfo.getBodyType())
@@ -1001,9 +1000,9 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
         builder.addItem(R.mipmap.wechat, "微信好友", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
                 .addItem(R.mipmap.fr, "朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "QQ好友", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.zone, "QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
                 .addItem(R.mipmap.weib, "新浪微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.qq, "QQ好友", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+//                .addItem(R.mipmap.zone, "QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView) {

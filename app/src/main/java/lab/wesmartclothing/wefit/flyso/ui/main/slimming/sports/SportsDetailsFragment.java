@@ -490,9 +490,9 @@ public class SportsDetailsFragment extends BaseActivity {
         QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
         builder.addItem(R.mipmap.wechat, "微信好友", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
                 .addItem(R.mipmap.fr, "朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "QQ好友", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.zone, "QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
                 .addItem(R.mipmap.weib, "新浪微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+                .addItem(R.mipmap.qq, "QQ好友", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
+//                .addItem(R.mipmap.zone, "QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
                 .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
                     @Override
                     public void onClick(QMUIBottomSheet dialog, View itemView) {
@@ -511,9 +511,9 @@ public class SportsDetailsFragment extends BaseActivity {
                             case 4:
                                 ShareUtil.shareImage(mActivity, SharePlatform.QQ, imgUrl, shareListener);
                                 break;
-                            case 5:
-                                ShareUtil.shareImage(mActivity, SharePlatform.QZONE, imgUrl, shareListener);
-                                break;
+//                            case 5:
+//                                ShareUtil.shareImage(mActivity, SharePlatform.QZONE, imgUrl, shareListener);
+//                                break;
 
                         }
                     }

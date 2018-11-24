@@ -82,7 +82,7 @@ public class QNBleTools {
         config.save(new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
-                RxLogUtils.d("轻牛SDK ：保存用户信息" + i + "----" + s);
+                RxLogUtils.d("轻牛SDK ：保存设备配置" + i + "----" + s);
             }
         });
     }

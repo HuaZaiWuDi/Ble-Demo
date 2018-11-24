@@ -47,6 +47,60 @@ public class AddFoodItem {
         private int unitCalorie;
 
 
+
+
+        public String getFoodId() {
+            return foodId;
+        }
+
+        public String getFoodName() {
+            return foodName;
+        }
+
+        public double getFoodCount() {
+            return foodCount;
+        }
+
+        public String getUnit() {
+            return unit;
+        }
+
+        public String getWeight() {
+            return weight;
+        }
+
+        public String getWeightType() {
+            return weightType;
+        }
+
+        public String getGid() {
+            return gid;
+        }
+
+        public int getUnitCount() {
+            return unitCount;
+        }
+
+        public String getRemark() {
+            return remark;
+        }
+
+        public int getCalorie() {
+            return calorie;
+        }
+
+        public String getFoodImg() {
+            return foodImg;
+        }
+
+        public long getHeatDate() {
+            return heatDate;
+        }
+
+        public int getUnitCalorie() {
+            return unitCalorie;
+        }
+
         public void setUnitCalorie(int unitCalorie) {
             this.unitCalorie = unitCalorie;
         }

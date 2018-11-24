@@ -596,7 +596,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
         SPUtils.put(SPKey.SP_realWeight, (float) weight);
 
-        if (weight > minNormalWeight && minNormalWeight <= maxNormalWeight) {
+        if (weight > minNormalWeight && weight <= maxNormalWeight) {
             mTvWeightStatus.setText("标准");
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.green_61D97F))
@@ -634,25 +634,45 @@ public class SlimmingFragment extends BaseAcFragment {
 
 
         if (hasInitialWeight) {
-            Drawable drawable1 = ContextCompat.getDrawable(mContext, weightChangeVO.getWeightChange() < 0 ?
-                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            if (weightChangeVO.getWeightChange() != 0)
-                mTvWeight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable1, null);
+            RxLogUtils.d("开启"+weightChangeVO.getWeightChange());
+            RxLogUtils.d("开启"+weightChangeVO.getBodyFatChange());
+            RxLogUtils.d("开启"+weightChangeVO.getBmiChange());
+            RxLogUtils.d("开启"+weightChangeVO.getBmrChange());
+            Drawable drawable1 = null;
+            if (weightChangeVO.getWeightChange() > 0) {
+                drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.icon_red_up);
+            } else if (weightChangeVO.getWeightChange() < 0) {
+                drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.icon_green_down);
+            }
+            mTvWeight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable1, null);
 
-            Drawable drawable2 = ContextCompat.getDrawable(mContext, weightChangeVO.getBodyFatChange() < 0 ?
-                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            if (weightChangeVO.getBodyFatChange() != 0)
-                mTvBodyFat.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable2, null);
 
-            Drawable drawable3 = ContextCompat.getDrawable(mContext, weightChangeVO.getBmiChange() < 0 ?
-                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            if (weightChangeVO.getBmiChange() != 0)
-                mTvBmi.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable3, null);
+            Drawable drawable2 = null;
+            if (weightChangeVO.getBodyFatChange() > 0) {
+                drawable2 = ContextCompat.getDrawable(mContext, R.mipmap.icon_red_up);
+            } else if (weightChangeVO.getBodyFatChange() < 0) {
+                drawable2 = ContextCompat.getDrawable(mContext, R.mipmap.icon_green_down);
+            }
+            mTvBodyFat.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable2, null);
 
-            Drawable drawable4 = ContextCompat.getDrawable(mContext, weightChangeVO.getBmrChange() < 0 ?
-                    R.mipmap.icon_green_down : R.mipmap.icon_red_up);
-            if (weightChangeVO.getBmrChange() != 0)
-                mTvBmr.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable4, null);
+
+            Drawable drawable3 = null;
+            if (weightChangeVO.getBmiChange() > 0) {
+                drawable3 = ContextCompat.getDrawable(mContext, R.mipmap.icon_red_up);
+            } else if (weightChangeVO.getBmiChange() < 0) {
+                drawable3 = ContextCompat.getDrawable(mContext, R.mipmap.icon_green_down);
+            }
+            mTvBmi.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable3, null);
+
+
+            Drawable drawable4 = null;
+            if (weightChangeVO.getBmrChange() > 0) {
+                drawable4 = ContextCompat.getDrawable(mContext, R.mipmap.icon_red_up);
+            } else if (weightChangeVO.getBmrChange() < 0) {
+                drawable4 = ContextCompat.getDrawable(mContext, R.mipmap.icon_green_down);
+            }
+            mTvBmr.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable4, null);
+
         }
 
     }
@@ -718,8 +738,8 @@ public class SlimmingFragment extends BaseAcFragment {
         mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
         mMCountDownView.setCountDownFinishCallBack(new CountDownView.CountDownFinishCallBack() {
             @Override
-            public void finish(boolean isComplete) {
-                targetComplete(true, isComplete);
+            public void finish() {
+                targetComplete(true, bean.getComplete() == 1);
             }
         });
 

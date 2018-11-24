@@ -69,6 +69,7 @@ public class PlanWebActivity extends BaseWebActivity {
     @Override
     protected String getUrl() {
         return ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
+//        return "https://www.cnblogs.com/a-d-a-m/p/5878737.html";
     }
 
 
@@ -140,8 +141,8 @@ public class PlanWebActivity extends BaseWebActivity {
                 .subscribe(new RxSubscriber<File>() {
                     @Override
                     protected void _onNext(File file) {
-                        RxToast.normal("保存成功");
                         RxCameraUtils.NotifyAlbum(mContext, file.getPath());
+                        RxToast.normal("保存成功:" + file.getPath(), 2000);
                     }
 
                     @Override

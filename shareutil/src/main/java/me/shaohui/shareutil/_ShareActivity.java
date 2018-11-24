@@ -36,6 +36,7 @@ public class _ShareActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_share_login);
         ShareLogger.i(INFO.ACTIVITY_CREATE);
         isNew = true;
         ShareLogger.i("onCreate:");
@@ -60,7 +61,8 @@ public class _ShareActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        ShareLogger.i("onStart:");
+        ShareLogger.i("onStart:" + isNew);
+
     }
 
     @Override
@@ -68,16 +70,6 @@ public class _ShareActivity extends Activity {
         super.onResume();
         ShareLogger.i("onResume:" + isNew);
         ShareLogger.i(INFO.ACTIVITY_RESUME);
-        if (isNew) {
-            isNew = false;
-        } else
-            finish();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        ShareLogger.i("onStop:" + isNew);
 //        if (isNew) {
 //            isNew = false;
 //        } else
@@ -85,9 +77,20 @@ public class _ShareActivity extends Activity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        ShareLogger.i("onStop:" + isNew);
+        if (isNew) {
+            isNew = false;
+        } else
+            finish();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         ShareLogger.i("onDestroy:" + isNew);
+        ShareLogger.i("onDestroy:" + mType);
 //        ShareUtil.recycle();
 //        LoginUtil.recycle();
     }

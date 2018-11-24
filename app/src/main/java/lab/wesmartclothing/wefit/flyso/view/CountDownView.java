@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import com.vondear.rxtools.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.ticker.RxTickerUtils;
 import com.vondear.rxtools.view.ticker.RxTickerView;
 
@@ -19,8 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.view
@@ -78,9 +75,14 @@ public class CountDownView extends LinearLayout {
 
 
     public void setCountDownDays(final long time) {
+
         defaultState();
         long day = RxTimeUtils.getIntervalByNow(time, RxConstUtils.TimeUnit.DAY);
         mTickerDays.setText(day + "", true);
+
+        if (System.currentTimeMillis() >= time) {
+            return;
+        }
 
         if (countDownTimer != null) countDownTimer.cancel();
         countDownTimer = new CountDownTimer(time, 1000) {
@@ -113,17 +115,13 @@ public class CountDownView extends LinearLayout {
                 cancel();
                 defaultState();
                 RxLogUtils.d("结束");
-                float realWeight = SPUtils.getFloat(SPKey.SP_realWeight);
-                UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
-                boolean isComplete = realWeight <= info.getTargetWeight();
 
 
                 if (mCountDownFinishCallBack != null) {
-                    mCountDownFinishCallBack.finish(isComplete);
+                    mCountDownFinishCallBack.finish();
                 }
             }
         }.start();
-
     }
 
     private void defaultState() {
@@ -133,8 +131,8 @@ public class CountDownView extends LinearLayout {
         mTickerSec.setText("0", false);
     }
 
-   public interface CountDownFinishCallBack {
-        void finish(boolean isComplete);
+    public interface CountDownFinishCallBack {
+        void finish();
     }
 
     private CountDownFinishCallBack mCountDownFinishCallBack;

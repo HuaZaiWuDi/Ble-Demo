@@ -109,6 +109,7 @@ public class DeviceFragment extends BaseActivity {
         }
     };
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,12 +136,12 @@ public class DeviceFragment extends BaseActivity {
         super.onStart();
         initData();
         notifyData();
+        getVoltage();
     }
 
     @Override
     public void onDestroy() {
         unregisterReceiver(registerReceiver);
-        BleAPI.getVoltage(null);
         super.onDestroy();
     }
 

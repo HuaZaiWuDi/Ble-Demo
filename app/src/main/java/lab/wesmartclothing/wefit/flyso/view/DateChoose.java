@@ -22,9 +22,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.dateUtils.RxFormat;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
-import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -160,6 +158,8 @@ public class DateChoose extends RelativeLayout {
         mCalendarView.setCurrentDate(calendar);
         mCalendarView.setDateSelected(calendar, true);
         mCalendarView.setSelectionColor(Color.parseColor(Theme == TYPE_FOOD_RECORD ? "#FF7200" : "#312C35"));
+//        mCalendarView.selectRange(CalendarDay.from(1990, 01, 01), CalendarDay.today());
+        mCalendarView.state().edit().setMaximumDate(CalendarDay.today()).commit();
 
         mCalendarView.addDecorator(new EventDecorator(Color.parseColor(Theme == TYPE_FOOD_RECORD ? "#FF7200" : "#E4CA9F"), calendarDays));
         mCalendarView.invalidateDecorators();
@@ -167,16 +167,11 @@ public class DateChoose extends RelativeLayout {
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                if (date.getCalendar().getTimeInMillis() > System.currentTimeMillis()) {
-                    RxLogUtils.d("超过今天");
-                    RxToast.normal("不能选择未来的日期");
-                } else {
-                    calendar = date.getCalendar();
-                    isToday = isToday();
-                    nextIsEnable(isToday);
-                    notifyDate();
-                    show.dismiss();
-                }
+                calendar = date.getCalendar();
+                isToday = isToday();
+                nextIsEnable(isToday);
+                notifyDate();
+                show.dismiss();
             }
         });
 

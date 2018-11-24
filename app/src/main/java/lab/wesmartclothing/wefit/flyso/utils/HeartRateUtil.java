@@ -163,8 +163,9 @@ public class HeartRateUtil {
     }
 
     public void clearData(HeartRateBean heartRateBean) {
-        RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
-                Key.CACHE_ATHL_RECORD_FREE);
+        if (heartRateBean != null)
+            RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
+                    Key.CACHE_ATHL_RECORD_FREE);
     }
 
 }

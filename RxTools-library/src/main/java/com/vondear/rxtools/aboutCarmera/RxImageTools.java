@@ -495,6 +495,7 @@ public class RxImageTools {
                 Environment.MEDIA_MOUNTED);
     }
 
+
     /**
      * 将图片存到本地
      */
@@ -520,7 +521,6 @@ public class RxImageTools {
         }
         return null;
     }
-
 
     /**
      * Save image to the SD card 保存图片到sd卡
