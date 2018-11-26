@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
+import com.vondear.rxtools.aboutCarmera.BitmapUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
@@ -303,6 +305,7 @@ public class ProblemFragemnt extends BaseActivity {
             if (data != null && requestCode == IMAGE_PICKER) {
                 imageLists = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 ArrayList<Object> images = new ArrayList<>();
+
                 images.addAll(0, imageLists);
                 images.add(R.mipmap.icon_add_white);
                 if (images.size() == 5) {
@@ -361,18 +364,22 @@ public class ProblemFragemnt extends BaseActivity {
     public void feedbackImg() {
         List<File> files = new ArrayList<>();
         for (int i = 0; i < imageLists.size(); i++) {
-            File file = new File(imageLists.get(i).path);
+            File file = new File(BitmapUtil.compressImage(imageLists.get(i).path));
             files.add(file);
+            Log.d("上传图片", "feedbackImg: " + file.getAbsolutePath());
+            Log.d("上传图片", " file.length();: " + file.length());
         }
 
         List<MultipartBody.Part> body = filesToMultipartBodyParts(files);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.feedbackImg(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("上传多张图片成功" + s);
+                        Log.d("上传图片", "_onNext: " + s);
                         commitData(s);
                     }
 

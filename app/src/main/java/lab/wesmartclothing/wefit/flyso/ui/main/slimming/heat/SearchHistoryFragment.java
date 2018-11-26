@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -26,6 +27,7 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -45,7 +47,6 @@ import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
-import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -99,8 +100,7 @@ public class SearchHistoryFragment extends BaseActivity {
     private boolean SlimmingPage = false;
     private int foodType = 0;
     private long currentTime = 0;
-    private Bundle bundle;
-
+    private List<String> searchKeyLists = new ArrayList<>();
 
     @Override
     protected int layoutId() {
@@ -233,6 +233,18 @@ public class SearchHistoryFragment extends BaseActivity {
                 mSearchView.setQuery(((TextView) v).getText().toString(), true);
             }
         });
+
+        RxCache.getDefault().<List<String>>load(Key.CACHE_SEARCH_KEY, new TypeToken<List<String>>() {
+        }.getType())
+                .map(new CacheResult.MapFunc<List<String>>())
+                .subscribe(new RxSubscriber<List<String>>() {
+                    @Override
+                    protected void _onNext(List<String> strings) {
+                        if (!RxDataUtils.isEmpty(strings)) {
+                            searchKeyLists = strings;
+                        }
+                    }
+                });
     }
 
     @Override
@@ -322,29 +334,28 @@ public class SearchHistoryFragment extends BaseActivity {
     }
 
     private void addSearchKey(String query) {
-        if (isStorage) {
-            if (SearchWordTab.getKey(query) == null) {
-                SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), query);
-                keyTab.save();
-            } else {
-                SearchWordTab.update(System.currentTimeMillis(), query);
-            }
-        }
+
+        boolean remove = searchKeyLists.remove(query);
+        RxLogUtils.d("是否存在：" + remove);
+
+        searchKeyLists.add(0, query);
+
+
+        RxCache.getDefault().save(Key.CACHE_SEARCH_KEY, searchKeyLists)
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        RxLogUtils.d("最近搜索保存成功");
+                    }
+                });
 
         notifySearchKey();
     }
 
-    private void notifySearchKey() {
-        if (isStorage) {
-            List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
-            List<String> list = new ArrayList<>();
 
-            for (int i = 0; i < all.size(); i++) {
-                list.add(all.get(i).searchKey);
-            }
-            mTagFlowLayoutLately.setTags(list);
-            mlayoutSearchKey.setVisibility(list.size() == 0 ? View.GONE : View.VISIBLE);
-        }
+    private void notifySearchKey() {
+        mTagFlowLayoutLately.setTags(searchKeyLists);
+        mlayoutSearchKey.setVisibility(searchKeyLists.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
 
@@ -457,7 +468,8 @@ public class SearchHistoryFragment extends BaseActivity {
 
     @OnClick(R.id.tv_delete)
     public void onViewClicked() {
-        SearchWordTab.deleteAll();
+        RxCache.getDefault().remove(Key.CACHE_SEARCH_KEY);
+        searchKeyLists.clear();
         notifySearchKey();
     }
 

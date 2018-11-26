@@ -575,8 +575,8 @@ public class Slimming2Fragment extends BaseAcFragment {
                     }
 
                     @Override
-                    protected void _onError(String error, int code) {
-                        super._onError(error, code);
+                    protected void _onError(String error) {
+                        super._onError(error);
                         RxToast.normal(error);
                     }
                 });

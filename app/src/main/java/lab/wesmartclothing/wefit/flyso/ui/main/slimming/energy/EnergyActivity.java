@@ -13,6 +13,7 @@ import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
@@ -109,6 +110,7 @@ public class EnergyActivity extends BaseActivity {
     private void initLineChart(final List<EnergyBean.ListBean> list) {
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
+        if (RxDataUtils.isEmpty(list)) return;
         Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
             EnergyBean.ListBean bean = list.get(i);
@@ -196,8 +198,8 @@ public class EnergyActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error, int code) {
-                        super._onError(error, code);
+                    protected void _onError(String error) {
+                        super._onError(error);
                         RxToast.normal(error);
                     }
                 });

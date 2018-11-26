@@ -24,7 +24,7 @@ import retrofit2.http.Url;
  * 创建人：Jack
  * 创建时间：2017/5/24
  */
-public interface RetrofitService {
+public interface RetrofitService  {
     String BASE_URL = ServiceAPI.BASE_URL;
 
 
@@ -36,7 +36,7 @@ public interface RetrofitService {
     //获取食物列表信息
     @FormUrlEncoded
     @POST("heat/getFoodInfo")
-    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize,@Field("typeId") String typeId);
+    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize, @Field("typeId") String typeId);
 
     //        获取食物分类信息
     @POST("heat/getFoodType")

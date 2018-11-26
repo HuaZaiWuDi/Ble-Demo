@@ -446,7 +446,7 @@ public class SportingActivity extends BaseActivity {
             mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
             if (currentTime % 120 == 0) {
                 speakAdd(getString(R.string.speech_currentKcal) +
-                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "卡路里的能量");
+                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
             }
 
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
@@ -474,7 +474,7 @@ public class SportingActivity extends BaseActivity {
         timer.stopTimer();
         currentTime = 0;
 
-        speakFlush("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "卡路里的能量");
+        speakFlush("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
 
         //如果检测到运动已经结束，直接保存数据并进入详情页
         saveHeartRate();

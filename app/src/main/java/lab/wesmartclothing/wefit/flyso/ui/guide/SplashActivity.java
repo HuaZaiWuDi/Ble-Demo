@@ -77,9 +77,15 @@ public class SplashActivity extends BaseActivity {
         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
         NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
 //        NetManager.getInstance().setUserIdToken("e3e35aaff6b84cc29195f270ab7b95a1", SPUtils.getString(SPKey.SP_token));
+
+        //开发版直接使用发布版API
+//        if (!BuildConfig.DEBUG) {
+//            ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
+//        }
         if (!RxDataUtils.isNullString(baseUrl)) {
             ServiceAPI.switchURL(baseUrl);
         }
+
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
         RxLogUtils.e("用户ID：" + baseUrl);
     }

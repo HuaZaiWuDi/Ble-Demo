@@ -191,6 +191,8 @@ public class LineBean {
      */
     private void checkMaxAndMinValue(List<Unit> datas) {
 
+        if (datas == null || datas.isEmpty()) return;
+
         float max, min;
 
         // 再拷贝，防止引用问题

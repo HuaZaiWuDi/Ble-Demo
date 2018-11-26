@@ -14,6 +14,7 @@ import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.vondear.rxtools.aboutCarmera.BitmapUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -284,7 +285,7 @@ public class UserInfofragment extends BaseActivity {
     }
 
     private void uploadImage() {
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(info.getImgUrl()));
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(BitmapUtil.compressImage(info.getImgUrl())));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", info.getImgUrl(), requestFile);
         RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
         RxManager.getInstance().doNetSubscribe(dxyService.uploadUserImg(body))

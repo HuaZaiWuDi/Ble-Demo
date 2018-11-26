@@ -208,7 +208,7 @@ public class RxThreadUtils {
                         Log.d("handleResult当前线程：", Thread.currentThread().getName());
                         if (t instanceof String) {
                             JSONObject object = null;
-
+//                            Log.d("返回数据：", (String) t);
                             try {
                                 object = new JSONObject((String) t);
                                 int code = object.getInt("code");

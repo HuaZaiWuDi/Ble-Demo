@@ -38,7 +38,7 @@ public class SportingActivity extends AppCompatActivity {
             @Override
             public void accept(SportsDataTab sportsDataTab) throws Exception {
                 setHeartRateData(sportsDataTab.getCurHeart());
-                tv_HeartRate.append("当前心率:" + sportsDataTab.getCurHeart() + "--真实心率：" + sportsDataTab.getRealHeart() + "--卡路里：" + sportsDataTab.getKcal() + "\n");
+                tv_HeartRate.append("当前心率:" + sportsDataTab.getCurHeart() + "--真实心率：" + sportsDataTab.getRealHeart() + "--千卡：" + sportsDataTab.getKcal() + "\n");
             }
         });
         RxBus.getInstance().addSubscription(this, register);

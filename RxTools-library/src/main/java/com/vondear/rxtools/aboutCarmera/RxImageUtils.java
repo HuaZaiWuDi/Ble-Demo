@@ -1696,6 +1696,7 @@ public class RxImageUtils {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
     }
 
+
     /**
      * 缩略图工具类，
      * 可以根据本地视频文件源、

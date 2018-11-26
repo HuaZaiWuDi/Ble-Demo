@@ -177,8 +177,6 @@ public class FoodDetailsFragment extends BaseActivity {
 
             }
         });
-
-
     }
 
     @Override

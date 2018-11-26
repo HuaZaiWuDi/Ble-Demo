@@ -37,6 +37,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Scroller;
 
+import com.vondear.rxtools.utils.RxDataUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -317,7 +319,7 @@ public class SuitLines extends View {
     }
 
     private void notifyValueChange() {
-        if (mLineChartSelectItemListener != null && !mLineBeans.isEmpty()) {
+        if (mLineChartSelectItemListener != null && clickIndexs[0] >= 0) {
             mLineChartSelectItemListener.selectItem(clickIndexs[0]);
         }
     }
@@ -503,7 +505,9 @@ public class SuitLines extends View {
      * @param canvas
      */
     public void drawClickHint(Canvas canvas) {
+
         for (int i = 0; i < mLineBeans.size(); i++) {
+            if (RxDataUtils.isEmpty(mLineBeans.get(i).getUnits())) continue;
             Unit unit = mLineBeans.get(i).getUnits().get(clickIndexs[0]);
             if (mLineBeans.get(i).isShowPoint())
                 canvas.drawCircle(unit.getXY().x, unit.getXY().y, 15f, selectPaint);
@@ -574,11 +578,17 @@ public class SuitLines extends View {
      */
     private void feedInternal(final List<LineBean> mLineBeans) {
         reset(); // 该方法调用了datas.clear();
-        if (mLineBeans.isEmpty()) {
+
+        if (mLineBeans == null || mLineBeans.isEmpty()) {
+            invalidate();
+            Log.d(TAG, "feedInternal: line is empty");
+            return;
+        } else if (RxDataUtils.isEmpty(mLineBeans.get(0).getUnits())) {
             invalidate();
             Log.d(TAG, "feedInternal: data is empty");
             return;
         }
+
         this.mLineBeans = mLineBeans;
         calcAreas();
         calcUnitXY();
@@ -611,7 +621,6 @@ public class SuitLines extends View {
                 scrollLast();
             }
         });
-
 
     }
 

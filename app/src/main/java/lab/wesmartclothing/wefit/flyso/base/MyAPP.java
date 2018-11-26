@@ -1,11 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.activeandroid.app.Application;
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
 import com.orhanobut.logger.AndroidLogAdapter;
@@ -73,7 +73,9 @@ public class MyAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        RxLogUtils.i("启动时长：初始化");
+        Logger.d("Myapp" + BuildConfig.DEBUG);
+        Log.d("Myapp", BuildConfig.DEBUG + "");
+        RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
 
 
@@ -85,7 +87,6 @@ public class MyAPP extends Application {
                 RxManager.getInstance().setAPPlication(MyAPP.this);
                 ScreenAdapter.init(MyAPP.this);
                 MultiDex.install(MyAPP.this);
-//                initDB();
                 initShareLogin();
                 initLeakCanary();
                 /**
@@ -98,7 +99,7 @@ public class MyAPP extends Application {
 
                 Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
                 Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
-                RxLogUtils.setLogSwitch(!BuildConfig.DEBUG);
+                RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
                 BleTools.initBLE(MyAPP.this);
@@ -171,16 +172,6 @@ public class MyAPP extends Application {
         });
     }
 
-    private void initDB() {
-//        Configuration.Builder builder = new Configuration.Builder(this);
-//        //手动的添加模型类
-//        builder.addModelClasses(SearchWordTab.class)
-//                .setDatabaseName("Wefit.db")
-//                .setDatabaseVersion(3);
-//
-//        ActiveAndroid.initialize(builder.create());
-    }
-
 
     /**
      * 内存泄露
@@ -206,11 +197,5 @@ public class MyAPP extends Application {
         MultiDex.install(base);
     }
 
-
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-//        ActiveAndroid.dispose();
-    }
 
 }

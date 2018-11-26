@@ -38,7 +38,9 @@ import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.ExplainException;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxHttpsException;
 import me.shaohui.shareutil.login.LoginPlatform;
 import me.shaohui.shareutil.login.LoginResult;
 
@@ -174,8 +176,13 @@ public class BindPhoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            RxToast.normal(((ExplainException) e).getMsg());
+                        } else {
+                            RxToast.normal(new RxHttpsException().handleResponseError(e));
+                        }
                     }
                 });
     }
@@ -207,12 +214,15 @@ public class BindPhoneActivity extends BaseActivity {
                         new LoginSuccessUtils(mContext, s);
                     }
 
+
                     @Override
-                    protected void _onError(String error, int code) {
-                        if (code == 10031) {
-                            //手机号已经被绑定
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            RxToast.normal(((ExplainException) e).getMsg());
+                        } else {
+                            RxToast.normal(new RxHttpsException().handleResponseError(e));
                         }
-                        RxToast.error(error);
                     }
                 });
     }

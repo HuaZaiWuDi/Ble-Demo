@@ -8,7 +8,6 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import lab.wesmartclothing.wefit.netlib.BuildConfig;
 import lab.wesmartclothing.wefit.netlib.utils.DeviceUtil;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -102,20 +101,20 @@ public class NetManager {
 
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if (BuildConfig.DEBUG) {
-            //日志显示级别
-            HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
-            //新建log拦截器
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                @Override
-                public void log(String message) {
-                    Log.w("【NetManager】", message);
-                }
-            });
-            loggingInterceptor.setLevel(level);
-            //OkHttp进行添加拦截器loggingInterceptor
-            builder.addInterceptor(loggingInterceptor);
-        }
+//        if (BuildConfig.DEBUG) {
+        //日志显示级别
+        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
+        //新建log拦截器
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                Log.w("【NetManager】", message);
+            }
+        });
+        loggingInterceptor.setLevel(level);
+        //OkHttp进行添加拦截器loggingInterceptor
+        builder.addInterceptor(loggingInterceptor);
+//        }
         builder.addInterceptor(NetInterceptor);
 //        builder.addInterceptor(new XInterceptor.CommonNoNetCache(60 * 60 * 24 * 7, RxManager.getInstance().application));
 //        builder.addInterceptor(new XInterceptor.CommonNetCache(2));

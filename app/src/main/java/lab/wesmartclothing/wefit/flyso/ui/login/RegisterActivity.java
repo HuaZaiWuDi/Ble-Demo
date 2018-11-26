@@ -41,6 +41,8 @@ import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.ExplainException;
+import lab.wesmartclothing.wefit.netlib.utils.RxHttpsException;
 
 public class RegisterActivity extends BaseActivity {
 
@@ -225,8 +227,13 @@ public class RegisterActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            RxToast.normal(((ExplainException) e).getMsg());
+                        } else {
+                            RxToast.normal(new RxHttpsException().handleResponseError(e));
+                        }
                     }
                 });
     }
@@ -259,8 +266,13 @@ public class RegisterActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error, int code) {
-                        RxToast.error(error);
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            RxToast.normal(((ExplainException) e).getMsg());
+                        } else {
+                            RxToast.normal(new RxHttpsException().handleResponseError(e));
+                        }
                     }
                 });
     }

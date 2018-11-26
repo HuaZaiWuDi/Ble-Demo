@@ -318,7 +318,7 @@ public class PlanSportingActivity extends BaseActivity {
      * 第一节 xx运动，请调节心率至xx运动区间，保持匀速xxx分钟。
      * 恭喜您完成xx训练，下一节xx运动，请调节心率至xx运动区间，保持匀速xxx分钟。
      * 当完成后提示：
-     * 好棒呀，恭喜您完成本次瘦身训练。运动完记得做一组拉伸运动哦！本次训练共计燃烧XXX卡路里，再接再厉。
+     * 好棒呀，恭喜您完成本次瘦身训练。运动完记得做一组拉伸运动哦！本次训练共计燃烧XXX千卡，再接再厉。
      * 当用户处于危险心率超过3分钟
      * 您当前运动量已超过身体最大极限，请立刻降低运动强度，防止意外损伤！
      * 当处于训练过程中，运动节奏高于（低于）当前要求的水平
@@ -331,7 +331,7 @@ public class PlanSportingActivity extends BaseActivity {
     private void sportingFinish(boolean isComplete) {
         if (isComplete) {
             speakAdd("好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！本次训练共计燃烧"
-                    + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里，请继续保持。");
+                    + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "千卡，请继续保持。");
         } else {
             speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
         }
@@ -552,9 +552,8 @@ public class PlanSportingActivity extends BaseActivity {
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
             if (currentTime % 120 == 0) {
                 speakAdd(getString(R.string.speech_currentKcal) +
-                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "卡路里的能量");
+                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "千卡的能量");
             }
-
 
             if (type == 4) {
                 limitTimer.startTimer();
@@ -578,7 +577,6 @@ public class PlanSportingActivity extends BaseActivity {
                     speakFlush("请慢一点，保持匀速有节奏的运动才能高效瘦身");
                 }
             }
-
 
         }
     });

@@ -124,6 +124,9 @@ public interface Key {
     public static final String CACHE_BIND_INFO = "CACHE_BIND_INFO";
     String CACHE_ATHL_RECORD_FREE = "CACHE_ATHL_RECORD_FREE";
     String CACHE_ATHL_RECORD_PLAN = "CACHE_ATHL_RECORD_PLAN";
+
+    String CACHE_SEARCH_KEY = "CACHE_SEARCH_KEY";//历史搜索词
+
     ///////////////////////////////////////////////////////////////////////////
     // 常量
     ///////////////////////////////////////////////////////////////////////////

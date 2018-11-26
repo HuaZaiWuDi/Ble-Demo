@@ -2,10 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -53,6 +49,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -267,22 +264,6 @@ public class SlimmingFragment extends BaseAcFragment {
     }
 
 
-    BroadcastReceiver mRegisterReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //监听瘦身衣连接情况
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-                int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
-                if (state == BluetoothAdapter.STATE_ON) {
-                    tipDialog.dismiss();
-                } else if (state == BluetoothAdapter.STATE_TURNING_ON) {
-
-                }
-            }
-        }
-    };
-
-
     @Override
     protected int layoutId() {
         return R.layout.fragment_slimming;
@@ -306,7 +287,6 @@ public class SlimmingFragment extends BaseAcFragment {
     protected void initViews() {
         super.initViews();
         initPermissions();
-        mActivity.registerReceiver(mRegisterReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 
         mTvCurrentWeight.setTypeface(MyAPP.typeface);
         mTvInitWeight.setTypeface(MyAPP.typeface);
@@ -432,8 +412,8 @@ public class SlimmingFragment extends BaseAcFragment {
                     }
 
                     @Override
-                    protected void _onError(String error, int code) {
-                        super._onError(error, code);
+                    protected void _onError(String error) {
+                        super._onError(error);
                         RxToast.normal(error);
                     }
                 });
@@ -510,8 +490,8 @@ public class SlimmingFragment extends BaseAcFragment {
                     }
 
                     @Override
-                    protected void _onError(String error, int code) {
-                        super._onError(error, code);
+                    protected void _onError(String error) {
+                        super._onError(error);
                     }
                 });
 
@@ -531,6 +511,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
         Logger.d("营养师：" + bean.getDietPlanBelongUser());
         Logger.d("健身教练：" + bean.getAthlPlanBelongUser());
+        Logger.d("MYAPP：" + BuildConfig.DEBUG);
     }
 
     /**
@@ -634,10 +615,10 @@ public class SlimmingFragment extends BaseAcFragment {
 
 
         if (hasInitialWeight) {
-            RxLogUtils.d("开启"+weightChangeVO.getWeightChange());
-            RxLogUtils.d("开启"+weightChangeVO.getBodyFatChange());
-            RxLogUtils.d("开启"+weightChangeVO.getBmiChange());
-            RxLogUtils.d("开启"+weightChangeVO.getBmrChange());
+            RxLogUtils.d("开启" + weightChangeVO.getWeightChange());
+            RxLogUtils.d("开启" + weightChangeVO.getBodyFatChange());
+            RxLogUtils.d("开启" + weightChangeVO.getBmiChange());
+            RxLogUtils.d("开启" + weightChangeVO.getBmrChange());
             Drawable drawable1 = null;
             if (weightChangeVO.getWeightChange() > 0) {
                 drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.icon_red_up);
@@ -734,7 +715,10 @@ public class SlimmingFragment extends BaseAcFragment {
      * 瘦身目标
      */
     private void slimmingTarget() {
-        if (bean.getTargetInfo() == null || bean.getWeightChangeVO() == null) return;
+        if (bean.getTargetInfo() == null
+                || bean.getWeightChangeVO() == null
+                || bean.getWeightChangeVO().getWeight() == null)
+            return;
         mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
         mMCountDownView.setCountDownFinishCallBack(new CountDownView.CountDownFinishCallBack() {
             @Override
@@ -1028,7 +1012,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        tipDialog.show("正在开启蓝牙", 5000);
+                        tipDialog.show("正在开启蓝牙", 3000);
                         BleTools.getBleManager().enableBluetooth();
                     }
                 });
@@ -1059,5 +1043,10 @@ public class SlimmingFragment extends BaseAcFragment {
                 });
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
 }

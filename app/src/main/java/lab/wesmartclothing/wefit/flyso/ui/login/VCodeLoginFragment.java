@@ -31,7 +31,9 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.ExplainException;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxHttpsException;
 
 /**
  * Created icon_hide_password jk on 2018/7/2.
@@ -157,8 +159,13 @@ public class VCodeLoginFragment extends BaseFragment {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            RxToast.normal(((ExplainException) e).getMsg());
+                        } else {
+                            RxToast.normal(new RxHttpsException().handleResponseError(e));
+                        }
                     }
                 });
     }

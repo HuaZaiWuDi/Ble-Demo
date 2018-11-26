@@ -44,7 +44,9 @@ import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
 import lab.wesmartclothing.wefit.netlib.rx.NetManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.netlib.utils.ExplainException;
 import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxHttpsException;
 import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import me.shaohui.shareutil.LoginUtil;
 import me.shaohui.shareutil.login.LoginListener;
@@ -258,6 +260,13 @@ public class LoginRegisterActivity extends BaseActivity {
 
                     @Override
                     protected void _onError(String error) {
+                        super._onError(error);
+                        RxToast.error(error);
+                    }
+
+                    @Override
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
                         RxToast.error(error);
                     }
                 });
@@ -290,6 +299,16 @@ public class LoginRegisterActivity extends BaseActivity {
                             showDialog2settingPassword();
                         } else {
                             RxToast.error(error);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            RxToast.normal(((ExplainException) e).getMsg());
+                        } else {
+                            RxToast.normal(new RxHttpsException().handleResponseError(e));
                         }
                     }
                 });
@@ -360,8 +379,13 @@ public class LoginRegisterActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error, int code) {
-                        RxToast.error(error);
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        if (e instanceof ExplainException) {
+                            _onError(((ExplainException) e).getMsg(), ((ExplainException) e).getCode());
+                        } else {
+                            _onError(new RxHttpsException().handleResponseError(e));
+                        }
                     }
                 });
     }
