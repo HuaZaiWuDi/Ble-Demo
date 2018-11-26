@@ -203,7 +203,7 @@ public class BodyDataFragment extends BaseActivity {
 
         //基础代谢
         float bmr = SPUtils.getFloat(SPKey.SP_BMR);
-        bmr = bmr == 0 ? 903 : bmr;
+        bmr = bmr <= 0 ? 903 : bmr;
         Healthy healthy5 = new Healthy();
         healthy5.setSections(new double[]{bmr});
         healthy5.setSectionLabels(new String[]{bmr + "kcal"});

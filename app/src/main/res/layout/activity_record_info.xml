@@ -67,9 +67,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="1/5"
                 android:textColor="@color/Gray"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                tools:text="1/5"/>
 
             <TextView
                 android:id="@+id/tv_next"
@@ -92,10 +92,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="23dp"
             android:layout_marginBottom="16dp"
-            android:text="攀爬楼梯是否吃力："
             android:textColor="@color/Gray"
             android:textSize="14sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            tools:text="攀爬楼梯是否吃力："/>
 
 
         <android.support.v7.widget.RecyclerView

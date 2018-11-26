@@ -61,7 +61,7 @@ public class RecordInfoActivity extends BaseActivity {
     private int seeIndex = 0;//已经查看的页面下标
     //通过静态变量传递数据到设置目标界面提交信息
     public static SubmitInfoFrom mSubmitInfoFrom;
-
+    private boolean isOver = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +131,7 @@ public class RecordInfoActivity extends BaseActivity {
                         }
 
                         if (currentIndex == listBean.size()) {
+                            isOver = true;
                             mTvNextWay.setVisibility(View.VISIBLE);
                         } else {
                             mTvNextWay.setVisibility(View.GONE);
@@ -200,9 +201,18 @@ public class RecordInfoActivity extends BaseActivity {
 
         mTvCount.setText(currentIndex + "/" + listBean.size());
 
+
+        if (currentIndex < listBean.size()) {
+            mTvNextWay.setVisibility(View.GONE);
+        } else if (currentIndex == listBean.size() && isOver) {
+            mTvNextWay.setVisibility(View.VISIBLE);
+        }
+
+
         QuestionListBean question = this.listBean.get((currentIndex - 1) % listBean.size());
         mTvInfoTitle.setText(question.getQuestion());
         adapter.setNewData(question.getOptionList());
+
 
         if (currentIndex == 2) {
             adapter.addHeaderView(gridView);

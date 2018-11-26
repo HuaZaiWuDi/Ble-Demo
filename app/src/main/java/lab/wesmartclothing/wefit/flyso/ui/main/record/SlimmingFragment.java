@@ -578,6 +578,9 @@ public class SlimmingFragment extends BaseAcFragment {
 
         SPUtils.put(SPKey.SP_realWeight, (float) weight);
 
+        //基础代谢
+        SPUtils.put(SPKey.SP_BMR, (float) bean.getWeightChangeVO().getBasalHeatChange());
+
         if (weight > minNormalWeight && weight <= maxNormalWeight) {
             mTvWeightStatus.setText("标准");
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
