@@ -34,6 +34,7 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -242,6 +243,7 @@ public class SearchHistoryFragment extends BaseActivity {
                     protected void _onNext(List<String> strings) {
                         if (!RxDataUtils.isEmpty(strings)) {
                             searchKeyLists = strings;
+                            notifySearchKey();
                         }
                     }
                 });
@@ -340,7 +342,7 @@ public class SearchHistoryFragment extends BaseActivity {
 
         searchKeyLists.add(0, query);
 
-
+        RxLogUtils.d("最近搜索:" + Arrays.asList(searchKeyLists.toArray()));
         RxCache.getDefault().save(Key.CACHE_SEARCH_KEY, searchKeyLists)
                 .subscribe(new RxSubscriber<Boolean>() {
                     @Override

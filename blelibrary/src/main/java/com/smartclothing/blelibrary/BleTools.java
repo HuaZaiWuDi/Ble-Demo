@@ -336,6 +336,9 @@ public class BleTools {
     private ScanCallback scanCallback;
 
     public void startScan(BleScanConfig config, ScanCallback scanCallback) {
+
+        stopScanByM();
+
         this.scanCallback = scanCallback;
         final long timeOut = config.getScanTimeOut();
 
@@ -349,14 +352,11 @@ public class BleTools {
             return;
         }
 
-        stopScanByM();
-
-
         Log.d("bleManager", "开始扫描");
         BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
         ScanSettings scanSettings = new ScanSettings.Builder()
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//回调所有设备
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)//扫描模式功耗最高，速度最快仅在app处于前台时使用
                 .setReportDelay(2000)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
@@ -377,7 +377,6 @@ public class BleTools {
 
         scannerCompat.startScan(filters, scanSettings, scanCallback);
 
-
         isScanning = true;
         if (timeOut <= 0) {
             return;
@@ -397,6 +396,7 @@ public class BleTools {
                 Log.d("bleManager", "结束扫描");
                 scanner.stopScan(scanCallback);
                 isScanning = false;
+                scanCallback = null;
             }
         }
     }

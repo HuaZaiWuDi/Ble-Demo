@@ -155,6 +155,7 @@ public class BleService extends Service {
 
     }
 
+
     private void initBroadcast() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -188,6 +189,7 @@ public class BleService extends Service {
     }
 
     private void initBle() {
+        stopScan();
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_Servie)
 //                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
@@ -224,7 +226,7 @@ public class BleService extends Service {
             @Override
             public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
                 super.onBatchScanResults(results);
-//                RxLogUtils.d("扫描扫描结果：" + results.size());
+                RxLogUtils.d("扫描扫描结果：" + results.size());
                 for (int i = 0; i < results.size(); i++) {
                     BluetoothDevice device = results.get(i).getDevice();
                     BleDevice bleDevice = new BleDevice(device);//转换对象
@@ -243,11 +245,31 @@ public class BleService extends Service {
             }
         });
 
+        mQNBleTools.scanBle();
+    }
+
+
+    private void stopScan() {
+        BleTools.getInstance().stopScanByM();
+        mQNBleTools.stopScan();
+    }
+
+
+    //通过UUID验证设备类型
+    public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {
+        List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
+        for (ParcelUuid uuid : uuids) {
+            if (UUID.equals(uuid.getUuid().toString())) return true;
+        }
+        return false;
+    }
+
+    private void connectScaleCallBack() {
         //扫描体脂称
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
-
+                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac());
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 
@@ -275,26 +297,7 @@ public class BleService extends Service {
                 RxLogUtils.d("轻牛SDK ：扫描失败");
             }
         });
-        mQNBleTools.scanBle();
-    }
 
-
-    private void stopScan() {
-        BleTools.getInstance().stopScanByM();
-        mQNBleTools.stopScan();
-    }
-
-
-    //通过UUID验证设备类型
-    public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {
-        List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
-        for (ParcelUuid uuid : uuids) {
-            if (UUID.equals(uuid.getUuid().toString())) return true;
-        }
-        return false;
-    }
-
-    private void connectScaleCallBack() {
         /**
          * 2018-10-16
          * 修改逻辑判断有实时数据或者稳定数据时在跳转

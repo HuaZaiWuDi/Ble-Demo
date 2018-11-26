@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -914,6 +915,7 @@ public class SlimmingFragment extends BaseAcFragment {
                         showOpenBlueTooth();
                     } else if (!BleTools.getInstance().isConnect()) {
                         tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                        mActivity.startService(new Intent(mContext, BleService.class));
                     } else {
                         RxActivityUtils.skipActivity(mContext, SportingActivity.class);
                     }
@@ -925,6 +927,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
                     tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                    mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     //进入实时运动界面，没有定制课程
                     RxActivityUtils.skipActivity(mContext, SportingActivity.class);
@@ -936,6 +939,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
                     tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                    mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                         bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
@@ -952,6 +956,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
                     tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                    mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                         bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));

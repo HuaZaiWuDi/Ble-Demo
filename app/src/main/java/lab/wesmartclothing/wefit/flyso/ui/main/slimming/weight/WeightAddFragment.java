@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,8 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -90,6 +93,11 @@ public class WeightAddFragment extends BaseActivity {
 
         mTvTip.setText("请上称...");
         mTvTitle.setText("测量体重");
+
+        if (!QNBleTools.getInstance().isConnect()) {
+            startService(new Intent(mContext, BleService.class));
+        }
+
     }
 
     @Override

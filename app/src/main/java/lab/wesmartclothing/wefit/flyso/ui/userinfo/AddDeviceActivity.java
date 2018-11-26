@@ -48,6 +48,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
@@ -108,6 +109,8 @@ public class AddDeviceActivity extends BaseActivity {
                 mBtnScan.setEnabled(true);
 
                 mImgScan.clearAnimation();
+
+                switchStatus(STATUS_SCAN_DEVICE);
                 RxToast.warning(getString(R.string.checkBle));
             } else if (state == BluetoothAdapter.STATE_ON) {
                 startScan();
@@ -134,6 +137,7 @@ public class AddDeviceActivity extends BaseActivity {
         registerReceiver(systemBleReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         initView();
         initRxBus();
+
     }
 
     private void startScan() {
@@ -152,11 +156,13 @@ public class AddDeviceActivity extends BaseActivity {
 
         mDeviceLists.clear();
         scanDevice.clear();
+        adapter.setNewData(null);
         mImgScan.startAnimation(RxAnimationUtils.RotateAnim(15));
         mBtnScan.setEnabled(false);
         scanTimeout.stopTimer();
         scanTimeout.startTimer();
 
+        startService(new Intent(mContext, BleService.class));
         RxLogUtils.d("开启动画");
     }
 
@@ -177,7 +183,6 @@ public class AddDeviceActivity extends BaseActivity {
                         isBind(device);
                     }
                 });
-
     }
 
 
@@ -333,6 +338,7 @@ public class AddDeviceActivity extends BaseActivity {
                 bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
             return;
         }
+
         if (scanDevice.containsKey(bean.getDeviceMac())) {
             return;
         }
