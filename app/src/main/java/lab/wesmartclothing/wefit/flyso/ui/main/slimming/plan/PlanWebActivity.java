@@ -3,11 +3,15 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.Nullable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
+import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -25,6 +29,7 @@ import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -42,8 +47,10 @@ public class PlanWebActivity extends BaseWebActivity {
     @BindView(R.id.topBar)
     QMUITopBar mTopBar;
     @BindView(R.id.prant)
-    LinearLayout mPrant;
+    FrameLayout mPrant;
 
+
+    private WebView mWebView;
 
     @Override
     protected int statusBarColor() {
@@ -62,15 +69,109 @@ public class PlanWebActivity extends BaseWebActivity {
         super.initViews();
         initTopBar();
         initWebView(mPrant);
+//        initWebView();
     }
-
 
     @Nullable
     @Override
     protected String getUrl() {
         return ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
-//        return "https://www.cnblogs.com/a-d-a-m/p/5878737.html";
     }
+
+    private void initWebView() {
+        mWebView = new WebView(getApplicationContext());//使用应用级别的context，避免对Activity的引用
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mPrant.addView(mWebView, layoutParams);
+
+
+//        mWebView.setWebViewClient(new MyWebViewClient());
+
+//        JSMethodManager jsMethodManager = new JSMethodManager();
+//        mWebView.addJavascriptInterface(new InJavaScriptLocalObj(), "java_obj");
+
+
+//        RxWebViewTool.initWebView(mContext, mWebView);
+        mWebView.loadUrl(ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true");
+//        RxWebViewTool.loadData(mWebView, ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true");
+    }
+
+
+    // web视图客户端
+    public class MyWebViewClient extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            // 在开始加载网页时会回调
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // 拦截 url 跳转,在里边添加点击链接跳转或者操作
+            //Android8.0以下的需要返回true 并且需要loadUrl；8.0之后效果相反
+            if (Build.VERSION.SDK_INT < 26) {
+                view.loadUrl(url);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // 在结束加载网页时会回调
+
+//            // 获取页面内容
+//            view.loadUrl("javascript:window.java_obj.showSource("
+//                    + "document.getElementsByTagName('html')[0].innerHTML);");
+//
+//            // 获取解析<meta name="share-description" content="获取到的值">
+//            view.loadUrl("javascript:window.java_obj.showDescription("
+//                    + "document.querySelector('meta[name=\"share-description\"]').getAttribute('content')"
+//                    + ");");
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode,
+                                    String description, String failingUrl) {
+            // 加载错误的时候会回调，在其中可做错误处理，比如再请求加载一次，或者提示404的错误页面
+            super.onReceivedError(view, errorCode, description, failingUrl);
+
+            // 断网或者网络连接超时
+            if (errorCode == ERROR_HOST_LOOKUP || errorCode == ERROR_CONNECT || errorCode == ERROR_TIMEOUT) {
+                view.loadUrl("about:blank"); // 避免出现默认的错误界面
+//                view.loadUrl(LOAD_NOT_FIND);
+
+//                String summary = "<html><body>You scored <b>192</b> points.</body></html>";
+//                view.loadData(summary, "text/html", null);
+//                webView.loadUrl("file:///android_asset/web/test.html");//加载本地assets的web子文件夹下的资源
+
+            }
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view,
+                                                          WebResourceRequest request) {
+            // 在每一次请求资源时，都会通过这个函数来回调
+            return super.shouldInterceptRequest(view, request);
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+
+    }
+
+
+    //    @Nullable
+//    @Override
+//    protected String getUrl() {
+//        return ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
+////        return "http://www.baidu.com";
+//    }
 
 
     private void initTopBar() {
@@ -98,7 +199,6 @@ public class PlanWebActivity extends BaseWebActivity {
                         share();
                     }
                 });
-
     }
 
 
@@ -108,7 +208,7 @@ public class PlanWebActivity extends BaseWebActivity {
             @Override
             public void subscribe(ObservableEmitter<File> emitter) throws Exception {
                 //控件转图片
-                WebView webView = mAgentWeb.getWebCreator().getWebView();
+                WebView webView = mWebView;
                 Bitmap bitmap = RxImageTools.WebView2Bitmap(webView);
                 //微信分享图片最大尺寸32KB
                 File timetofit = RxImageTools.saveBitmap(bitmap, "/Timetofit/", "plan_" + System.currentTimeMillis());

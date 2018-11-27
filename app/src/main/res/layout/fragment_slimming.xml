@@ -17,6 +17,7 @@
         android:background="@color/Gray"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        tools:layout_height="64dp"
         tools:visibility="visible">
 
 
@@ -25,11 +26,12 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/dimen_16"
             app:corner_radius="32dp"
             app:icon_src_normal="@mipmap/userimg"
             app:icon_src_pressed="@color/GrayWrite"
             app:is_circle="true"
+            tools:scaleX="0.5"
+            tools:scaleY="0.5"
             />
 
 
@@ -37,6 +39,7 @@
             android:id="@+id/tv_userName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_toLeftOf="@+id/layout_notify"
             android:layout_toRightOf="@+id/iv_userImg"

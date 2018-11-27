@@ -24,9 +24,14 @@ import com.just.agentweb.MiddlewareWebClientBase;
 import com.just.agentweb.PermissionInterceptor;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.vondear.rxtools.utils.RxLogUtils;
 
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.netlib.utils.RxBus;
+import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created icon_hide_password jk on 2018/5/24.
@@ -71,6 +76,20 @@ public abstract class BaseWebFragment extends BaseAcFragment implements Fragment
         webSettings.setLoadWithOverviewMode(true);
 //                自适应屏幕(导致活动页面显示出错了)
         webSettings.setUseWideViewPort(true);
+
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        RxLogUtils.d("网络状态：" + netWorkType);
+                        if (netWorkType.isBoolean()) {
+                            mAgentWeb.getUrlLoader().reload();
+                        }
+                    }
+                });
+
     }
 
 

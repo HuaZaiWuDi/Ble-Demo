@@ -316,7 +316,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     isFold = true;
                     //收缩
                     RxAnimationUtils.animateHeight(RxUtils.dp2px(95), RxUtils.dp2px(64), mLayoutTitle);
-                    mIvUserImg.animate().scaleX(0.5f).scaleY(0.5f).setDuration(500).start();
+                    mIvUserImg.animate().scaleX(0.45f).scaleY(0.45f).setDuration(500).start();
                     mImgSeeRecord.animate().scaleX(0f).scaleY(0f).setDuration(500).alpha(0f).start();
                     mImgSeeRecord.setEnabled(false);
                 }

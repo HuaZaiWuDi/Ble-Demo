@@ -70,7 +70,7 @@ public class RxHttpsException {
         } else if (t instanceof ConnectException) {
             msg = "请求网络失败";
         } else if (t instanceof ExplainException) {//返回后台解释性异常码
-            msg = "操作失败";
+            msg = "请求网络失败";
         }
         return msg;
     }
