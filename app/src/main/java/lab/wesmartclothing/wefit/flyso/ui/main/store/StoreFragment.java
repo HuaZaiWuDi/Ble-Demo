@@ -14,7 +14,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 
 /**
  * Created icon_hide_password jk on 2018/5/7.

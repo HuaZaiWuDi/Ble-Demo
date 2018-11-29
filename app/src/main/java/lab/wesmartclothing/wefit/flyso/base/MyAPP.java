@@ -17,11 +17,13 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.tencent.bugly.Bugly;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxThreadPoolUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
@@ -31,10 +33,13 @@ import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
 
@@ -121,9 +126,23 @@ public class MyAPP extends Application {
                 } catch (Exception e) {
                     RxLogUtils.e(e);
                 }
+
+                //开发版直接使用发布版API
+                if (!BuildConfig.DEBUG) {
+                    ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
+                } else {
+                    String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
+                    if (!RxDataUtils.isNullString(baseUrl)) {
+                        ServiceAPI.switchURL(baseUrl);
+                    }
+                }
+
+                NetManager.getInstance();
                 RxLogUtils.i("启动时长：初始化结束");
             }
         });
+
+
     }
 
 

@@ -126,6 +126,8 @@ public class VerticalProgress extends View {
             }
 
             startAnimation(oldValue, progress);
+        } else {
+            this.progressHeight = progress;
         }
         postInvalidate();
     }

@@ -11,8 +11,8 @@ import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.vondear.rxtools.activity.RxActivityUtils;
 
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 
 /**
  * Created by cgspine on 2018/1/7.

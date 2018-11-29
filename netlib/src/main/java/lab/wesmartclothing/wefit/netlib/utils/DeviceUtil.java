@@ -6,13 +6,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-
 /**
  * Created by jk on 2018/6/15.
  */
 public class DeviceUtil {
-
 
     private static Application application = RxManager.getInstance().getApplication();
 

@@ -58,6 +58,11 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -72,12 +77,6 @@ import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/7/13.
@@ -561,8 +560,7 @@ public class Slimming2Fragment extends BaseAcFragment {
     ///////////////////////////////////////////////////////////////////////////
 
     private void getFirstPageData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -608,8 +606,6 @@ public class Slimming2Fragment extends BaseAcFragment {
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
 
-        //当前体重
-        SPUtils.put(SPKey.SP_realWeight, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getWeight());
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
         mTvCurrentkg.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
@@ -618,8 +614,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvHealthyLevel.switchLevel(bean.getWeightInfo() == null ? "" : bean.getSickLevel());
         mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
 
-        //基础代谢
-        SPUtils.put(SPKey.SP_BMR, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getBasalHeat());
+
+
 
         int targetProgress = (int) (bean.getComplete() * 100);
         mProWeight.setProgress(targetProgress);

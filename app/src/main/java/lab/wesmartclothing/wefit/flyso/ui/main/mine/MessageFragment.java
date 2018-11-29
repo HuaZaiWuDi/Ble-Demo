@@ -40,17 +40,16 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
 import lab.wesmartclothing.wefit.flyso.entity.ReadedBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
@@ -203,8 +202,7 @@ public class MessageFragment extends BaseActivity {
 
 
     public void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.message(pageNum, 10))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().message(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("message", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -258,8 +256,7 @@ public class MessageFragment extends BaseActivity {
             RxToast.normal("没有未读消息");
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.readedAll())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().readedAll())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -285,10 +282,7 @@ public class MessageFragment extends BaseActivity {
         final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
         if (item == null) return;
         String gid = item.getGid();
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.readed(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().readed(gid))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -324,10 +318,7 @@ public class MessageFragment extends BaseActivity {
 
     private void deleteItemById(final int position) {
         String gid = ((MessageBean.ListBean) adapter.getData().get(position)).getGid();
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.removeAppMessage(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeAppMessage(gid))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {

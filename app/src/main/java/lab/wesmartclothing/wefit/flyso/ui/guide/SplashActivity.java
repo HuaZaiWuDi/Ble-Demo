@@ -23,6 +23,11 @@ import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.net.StoreService;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -31,12 +36,6 @@ import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.net.StoreService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 public class SplashActivity extends BaseActivity {
 
@@ -74,20 +73,10 @@ public class SplashActivity extends BaseActivity {
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
 
-        String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
-        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-//        NetManager.getInstance().setUserIdToken("e3e35aaff6b84cc29195f270ab7b95a1", SPUtils.getString(SPKey.SP_token));
 
-        //开发版直接使用发布版API
-//        if (!BuildConfig.DEBUG) {
-//            ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
-//        }
-        if (!RxDataUtils.isNullString(baseUrl)) {
-            ServiceAPI.switchURL(baseUrl);
-        }
+
 
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-        RxLogUtils.e("用户ID：" + baseUrl);
     }
 
     @Override
@@ -109,8 +98,7 @@ public class SplashActivity extends BaseActivity {
             RxActivityUtils.skipActivityAndFinish(mActivity, GuideActivity.class);
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
                 .timeout(3, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .doFinally(new Action() {

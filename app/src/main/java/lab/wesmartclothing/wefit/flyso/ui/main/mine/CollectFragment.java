@@ -38,16 +38,15 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
@@ -202,10 +201,7 @@ public class CollectFragment extends BaseActivity {
 
     private void deleteItemById(final int position) {
         String gid = ((CollectBean.ListBean) adapter.getData().get(position)).getGid();
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.removeCollection(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeCollection(gid))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -228,8 +224,7 @@ public class CollectFragment extends BaseActivity {
     }
 
     public void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.collectionList(pageNum, 10))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().collectionList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("collectionList" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())

@@ -3,10 +3,9 @@ package lab.wesmartclothing.wefit.flyso.entity;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -59,8 +58,7 @@ public class DeviceLink {
         }
         String s = MyAPP.getGson().toJson(deviceLink, DeviceLink.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.deviceLink(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().deviceLink(body))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

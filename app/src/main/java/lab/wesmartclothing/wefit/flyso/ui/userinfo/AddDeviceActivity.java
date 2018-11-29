@@ -51,20 +51,17 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class AddDeviceActivity extends BaseActivity {
 
@@ -300,9 +297,8 @@ public class AddDeviceActivity extends BaseActivity {
         }
         mBindDeviceItem.setDeviceList(mDeviceLists);
         String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addBindDevice(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .addBindDevice(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -352,8 +348,7 @@ public class AddDeviceActivity extends BaseActivity {
 
         scanTimeout.stopTimer();
 
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getDeviceMac()))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

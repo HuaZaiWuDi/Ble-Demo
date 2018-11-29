@@ -21,7 +21,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -56,6 +55,12 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SlimmingRecordBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -65,13 +70,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFrag
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
@@ -396,8 +394,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     }
 
     private void getData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -405,9 +402,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                        Logger.json(s);
                         SlimmingRecordBean bean = MyAPP.getGson().fromJson(s, SlimmingRecordBean.class);
-                        Logger.d("记录数据：" + bean.toString());
                         updateUI(bean);
                     }
 
@@ -481,13 +476,13 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mTvDietChart2.setText(dates.get(5));
         mTvDietChart1.setText(dates.get(6));
 
-        mDietProgress7.setProgress((int) (item.get(0) * 100 / dietMax));
-        mDietProgress6.setProgress((int) (item.get(1) * 100 / dietMax));
-        mDietProgress5.setProgress((int) (item.get(2) * 100 / dietMax));
-        mDietProgress4.setProgress((int) (item.get(3) * 100 / dietMax));
-        mDietProgress3.setProgress((int) (item.get(4) * 100 / dietMax));
-        mDietProgress2.setProgress((int) (item.get(5) * 100 / dietMax));
-        mDietProgress1.setProgress((int) (item.get(6) * 100 / dietMax));
+        mDietProgress7.setProgress((int) (item.get(0) * 100 / dietMax), false);
+        mDietProgress6.setProgress((int) (item.get(1) * 100 / dietMax), false);
+        mDietProgress5.setProgress((int) (item.get(2) * 100 / dietMax), false);
+        mDietProgress4.setProgress((int) (item.get(3) * 100 / dietMax), false);
+        mDietProgress3.setProgress((int) (item.get(4) * 100 / dietMax), false);
+        mDietProgress2.setProgress((int) (item.get(5) * 100 / dietMax), false);
+        mDietProgress1.setProgress((int) (item.get(6) * 100 / dietMax), false);
     }
 
     /**
@@ -539,13 +534,13 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         }
 
 
-        mEnergyProgress7.setProgress((int) (item.get(0) * 100 / max));
-        mEnergyProgress6.setProgress((int) (item.get(1) * 100 / max));
-        mEnergyProgress5.setProgress((int) (item.get(2) * 100 / max));
-        mEnergyProgress4.setProgress((int) (item.get(3) * 100 / max));
-        mEnergyProgress3.setProgress((int) (item.get(4) * 100 / max));
-        mEnergyProgress2.setProgress((int) (item.get(5) * 100 / max));
-        mEnergyProgress1.setProgress((int) (item.get(6) * 100 / max));
+        mEnergyProgress7.setProgress((int) (item.get(0) * 100 / max), false);
+        mEnergyProgress6.setProgress((int) (item.get(1) * 100 / max), false);
+        mEnergyProgress5.setProgress((int) (item.get(2) * 100 / max), false);
+        mEnergyProgress4.setProgress((int) (item.get(3) * 100 / max), false);
+        mEnergyProgress3.setProgress((int) (item.get(4) * 100 / max), false);
+        mEnergyProgress2.setProgress((int) (item.get(5) * 100 / max), false);
+        mEnergyProgress1.setProgress((int) (item.get(6) * 100 / max), false);
 
 
         mTvEnergyChart7.setText(dates.get(0));
@@ -599,13 +594,13 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         }
 
 
-        mSportingProgress7.setProgress((int) (item.get(0) * 100 / max));
-        mSportingProgress6.setProgress((int) (item.get(1) * 100 / max));
-        mSportingProgress5.setProgress((int) (item.get(2) * 100 / max));
-        mSportingProgress4.setProgress((int) (item.get(3) * 100 / max));
-        mSportingProgress3.setProgress((int) (item.get(4) * 100 / max));
-        mSportingProgress2.setProgress((int) (item.get(5) * 100 / max));
-        mSportingProgress1.setProgress((int) (item.get(6) * 100 / max));
+        mSportingProgress7.setProgress((int) (item.get(0) * 100 / max), false);
+        mSportingProgress6.setProgress((int) (item.get(1) * 100 / max), false);
+        mSportingProgress5.setProgress((int) (item.get(2) * 100 / max), false);
+        mSportingProgress4.setProgress((int) (item.get(3) * 100 / max), false);
+        mSportingProgress3.setProgress((int) (item.get(4) * 100 / max), false);
+        mSportingProgress2.setProgress((int) (item.get(5) * 100 / max), false);
+        mSportingProgress1.setProgress((int) (item.get(6) * 100 / max), false);
 
         mTvSportingChart7.setText(dates.get(0));
         mTvSportingChart6.setText(dates.get(1));

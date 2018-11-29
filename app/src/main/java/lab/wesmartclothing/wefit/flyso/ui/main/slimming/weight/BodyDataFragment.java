@@ -40,6 +40,11 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -48,12 +53,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -278,9 +277,8 @@ public class BodyDataFragment extends BaseActivity {
     private void initData() {
         JsonObject object = new JsonObject();
         object.addProperty("gid", gid);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .fetchWeightDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -400,9 +398,8 @@ public class BodyDataFragment extends BaseActivity {
     private void deleteWeight() {
         JsonObject object = new JsonObject();
         object.addProperty("gid", gid);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeWeightInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .removeWeightInfo(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .subscribe(new RxNetSubscriber<String>() {

@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.netlib.rx;
+package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.util.Log;
 

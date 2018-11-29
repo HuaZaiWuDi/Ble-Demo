@@ -59,6 +59,11 @@ import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
@@ -84,14 +89,6 @@ import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.CountDownView;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.ui.main.record
@@ -398,8 +395,7 @@ public class SlimmingFragment extends BaseAcFragment {
     // 接口
     ///////////////////////////////////////////////////////////////////////////
     private void getData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.planIndex())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().planIndex())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -470,9 +466,8 @@ public class SlimmingFragment extends BaseAcFragment {
     private void getCurrentRealHeart() {
         JsonObject object = new JsonObject();
         object.addProperty("athlDate", System.currentTimeMillis());
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.courseAthlDetail(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .courseAthlDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("courseAthlDetail", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -526,29 +521,29 @@ public class SlimmingFragment extends BaseAcFragment {
         RxLogUtils.d("最大值：" + maxValue);
         //饮食摄入预计
         mProDietPlan.setTopValue(todayHeatVO.getPlanIntake());
-        mProDietPlan.setProgress(todayHeatVO.getPlanIntake() * 100 / maxValue);
+        mProDietPlan.setProgress(todayHeatVO.getPlanIntake() * 100 / maxValue, false);
 
         //饮食摄入实际
         mProDietReal.setTopValue(todayHeatVO.getRealIntake());
-        mProDietReal.setProgress(todayHeatVO.getRealIntake() * 100 / maxValue);
+        mProDietReal.setProgress(todayHeatVO.getRealIntake() * 100 / maxValue, false);
 
         //运动预计
         mProSportPlan.setTopValue(todayHeatVO.getPlanDeplete());
-        mProSportPlan.setProgress(todayHeatVO.getPlanDeplete() * 100 / maxValue);
+        mProSportPlan.setProgress(todayHeatVO.getPlanDeplete() * 100 / maxValue, false);
 
         //运动实际
         mProSportReal.setTopValue(todayHeatVO.getRealDeplete());
-        mProSportReal.setProgress(todayHeatVO.getRealDeplete() * 100 / maxValue);
+        mProSportReal.setProgress(todayHeatVO.getRealDeplete() * 100 / maxValue, false);
 
         //盈余预计
         mProHeatPlan.setTopValue(todayHeatVO.getPlanSurplus());
-        mProHeatPlan.setProgress(todayHeatVO.getPlanSurplus() * 100 / maxValue);
+        mProHeatPlan.setProgress(todayHeatVO.getPlanSurplus() * 100 / maxValue, false);
 
         //盈余热量：运动+基础代谢-摄入，正值为良好，负值为盈余
         //盈余实际
-        mProHeatReal.setProgress(Math.abs(todayHeatVO.getRealSurplus()) * 100 / maxValue);
         mProHeatReal.setTopValue(Math.abs(todayHeatVO.getRealSurplus()));
         mProHeatReal.setColor(ContextCompat.getColor(mContext, todayHeatVO.getRealSurplus() < 0 ? R.color.red : R.color.yellow_FFBC00));
+        mProHeatReal.setProgress(Math.abs(todayHeatVO.getRealSurplus()) * 100 / maxValue, false);
     }
 
     private int checkMaxValue(PlanBean.TodayHeatVOBean todayHeatVO) {

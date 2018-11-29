@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.service.PushService;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * 自定义接收器

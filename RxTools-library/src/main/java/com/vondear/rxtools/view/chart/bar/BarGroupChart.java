@@ -124,6 +124,7 @@ public class BarGroupChart extends View {
             startAnimation(oldValue, progress);
         } else {
             this.oldValue = topValue;
+            this.progress = progress;
         }
         postInvalidate();
     }

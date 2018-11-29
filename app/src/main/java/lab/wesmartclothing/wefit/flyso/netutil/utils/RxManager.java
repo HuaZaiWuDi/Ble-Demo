@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.netlib.rx;
+package lab.wesmartclothing.wefit.flyso.netutil.utils;
 
 
 import android.app.Application;
@@ -11,9 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
-import lab.wesmartclothing.wefit.netlib.utils.HttpResult;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
-import lab.wesmartclothing.wefit.netlib.utils.RxThreadUtils;
 
 /**
  * 项目名称：BleCar

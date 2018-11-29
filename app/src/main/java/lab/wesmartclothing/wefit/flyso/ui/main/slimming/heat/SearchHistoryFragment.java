@@ -31,8 +31,6 @@ import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +46,11 @@ import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -55,14 +58,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsF
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 
 public class SearchHistoryFragment extends BaseActivity {
@@ -363,8 +358,7 @@ public class SearchHistoryFragment extends BaseActivity {
 
     private void initSearchData(final String key) {
         mlayoutSearchData.setVisibility(View.VISIBLE);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.searchFoodInfo(key))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().searchFoodInfo(key))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -387,10 +381,8 @@ public class SearchHistoryFragment extends BaseActivity {
     }
 
     private void initHotData() {
-        JSONObject jsonObject = new JSONObject();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getKeyWord(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .getKeyWord())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
@@ -440,9 +432,8 @@ public class SearchHistoryFragment extends BaseActivity {
         foodItem.setIntakeLists(mIntakeLists);
 
         String s = MyAPP.getGson().toJson(foodItem);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .addHeatInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {

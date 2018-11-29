@@ -29,12 +29,11 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -145,8 +144,7 @@ public class AddOrUpdateFoodDialog {
 
         String s = MyAPP.getGson().toJson(heatInfo, AddedHeatInfo.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getAddedHeatInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getAddedHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -241,8 +239,7 @@ public class AddOrUpdateFoodDialog {
         object.addProperty("gid", listBean.getGid());
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeHeatInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(context)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {

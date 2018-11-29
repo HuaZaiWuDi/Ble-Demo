@@ -18,8 +18,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 public class SportingActivity extends AppCompatActivity {
     LineChart mMLineChart;

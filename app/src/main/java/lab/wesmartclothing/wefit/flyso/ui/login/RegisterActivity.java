@@ -32,17 +32,16 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.ExplainException;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxHttpsException;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.ExplainException;
-import lab.wesmartclothing.wefit.netlib.utils.RxHttpsException;
 
 public class RegisterActivity extends BaseActivity {
 
@@ -209,8 +208,7 @@ public class RegisterActivity extends BaseActivity {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone, "register"))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().sendCode(phone, "register"))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -255,8 +253,7 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.register(phone, vCode, RxEncryptUtils.encryptMD5ToString(password)))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().register(phone, vCode, RxEncryptUtils.encryptMD5ToString(password)))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

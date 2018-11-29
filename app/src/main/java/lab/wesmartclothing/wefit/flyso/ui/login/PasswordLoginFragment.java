@@ -17,9 +17,9 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.PasswordLoginBus;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created icon_hide_password jk on 2018/7/2.

@@ -12,8 +12,8 @@ import com.amap.api.location.AMapLocationListener;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.utils.RxLogUtils;
 
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created icon_hide_password jk on 2018/6/4.

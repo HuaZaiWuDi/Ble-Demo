@@ -19,12 +19,12 @@ import com.vondear.rxtools.utils.StatusBarUtils;
 import butterknife.ButterKnife;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created icon_hide_password 华 on 2017/5/2.
@@ -86,6 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return ContextCompat.getColor(mContext, R.color.Gray);
     }
 
+    //初始化布局Id
     protected @LayoutRes
     int layoutId() {
         return 0;

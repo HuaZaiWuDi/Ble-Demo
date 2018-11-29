@@ -153,7 +153,7 @@ dependencies {
 
     //工具库
     compile project(':RxTools-library')
-    compile project(':netlib')
+//    compile project(':netlib')
 
     //快速开发顶部、底部导航栏
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
@@ -214,6 +214,6 @@ dependencies {
 
     //    //轻牛体重秤SDK
     implementation files('libs/qnsdk-0.3.4.jar')
-    compile project(path: ':netlib')
+//    compile project(path: ':netlib')
     compile 'com.haibin:calendarview:3.4.8'
 }

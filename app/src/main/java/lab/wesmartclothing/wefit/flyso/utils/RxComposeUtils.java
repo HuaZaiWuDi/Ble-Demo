@@ -20,8 +20,8 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 
 /**
  * 项目名称：MyProject

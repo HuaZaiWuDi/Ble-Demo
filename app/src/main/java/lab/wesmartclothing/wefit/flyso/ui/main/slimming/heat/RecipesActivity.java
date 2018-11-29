@@ -31,15 +31,12 @@ import lab.wesmartclothing.wefit.flyso.entity.DietPlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodRecommendBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class RecipesActivity extends BaseActivity {
 
@@ -147,9 +144,8 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void foodRecipes(long foodTime) {
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(new DietPlanBean(foodTime)));
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.fetchDietPlan(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .fetchDietPlan(NetManager.fetchRequest(JSON.toJSONString(new DietPlanBean(foodTime)))))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
