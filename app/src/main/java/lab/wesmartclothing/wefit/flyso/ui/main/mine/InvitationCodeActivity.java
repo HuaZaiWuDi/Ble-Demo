@@ -7,8 +7,11 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
+import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 
@@ -16,6 +19,15 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class InvitationCodeActivity extends BaseActivity {
 
@@ -28,6 +40,8 @@ public class InvitationCodeActivity extends BaseActivity {
     @BindView(R.id.tv_start)
     RxTextView mTvStart;
 
+
+    private UserInfo mUserInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
 
     @Override
     protected int statusBarColor() {
@@ -47,6 +61,7 @@ public class InvitationCodeActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
+        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
         mEditInvitation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -80,6 +95,30 @@ public class InvitationCodeActivity extends BaseActivity {
 
     @OnClick(R.id.tv_start)
     public void onViewClicked() {
-        RxToast.normal("验证邀请码");
+        String invitation = mEditInvitation.getText().toString();
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .verifyInvitationCode(invitation))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        if (Boolean.parseBoolean(s)) {
+                            if (mUserInfo != null && mUserInfo.getSex() == 0) {
+                                RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
+                            } else {
+                                RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
+                            }
+                        } else {
+                            RxToast.normal("验证码不合法");
+                        }
+                    }
+
+                    @Override
+                    protected void _onError(String error) {
+                        super._onError(error);
+                        RxToast.normal(error);
+                    }
+                });
     }
 }

@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -212,7 +213,7 @@ public class CollectBean {
         this.navigatepageNums = navigatepageNums;
     }
 
-    public static class ListBean {
+    public static class ListBean implements Serializable {
         /**
          * gid : 267555b511124457930a6d386dfa7897
          * status : null

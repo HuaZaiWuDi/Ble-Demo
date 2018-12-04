@@ -47,7 +47,7 @@ public class ServiceAPI {
     public static String SHARE_ROOT = "";
 
     //查看报告地址
-    public static String SHARE_INFORM_URL = "";
+    public static String SHARE_INFORM_URL = "http://39.108.152.50:8088/wisenfit/build/html/healthReport.html?userId=";
 
     //app下载链接
     public static String APP_DOWN_LOAD_URL = "";

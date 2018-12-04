@@ -87,7 +87,6 @@ public class MainActivity extends BaseALocationActivity {
         }
         setContentView(R.layout.activity_main);
 
-
         ButterKnife.bind(this);
         initView();
 

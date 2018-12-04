@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.ble;
+package lab.wesmartclothing.wefit.flyso.service;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -55,6 +55,7 @@ import java.util.Map;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
@@ -72,7 +73,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
-import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 public class BleService extends Service {
     static boolean isFirst = true;//固件升级检查弹窗提示
@@ -88,7 +88,6 @@ public class BleService extends Service {
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
 
     private static boolean isFirstJoin = true;
-    private TipDialog mTipDialog;
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -149,7 +148,6 @@ public class BleService extends Service {
         initHeartRate();
         connectScaleCallBack();
         initBroadcast();
-
     }
 
 

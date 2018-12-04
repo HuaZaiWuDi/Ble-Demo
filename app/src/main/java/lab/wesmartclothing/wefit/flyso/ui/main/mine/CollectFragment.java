@@ -79,13 +79,13 @@ public class CollectFragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initRecycler();
+        pageNum = 1;
+        initData();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        pageNum = 1;
-        initData();
     }
 
     private void initRecycler() {
@@ -194,6 +194,7 @@ public class CollectFragment extends BaseActivity {
             Bundle bundle = new Bundle();
             //打开URL
             bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
+            bundle.putSerializable(Key.BUNDLE_DATA, bean);
             RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
         }
     };

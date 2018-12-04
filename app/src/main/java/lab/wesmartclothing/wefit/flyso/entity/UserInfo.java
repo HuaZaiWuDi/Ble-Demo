@@ -40,7 +40,16 @@ public class UserInfo implements Serializable {
     private long registerTime;
     private int planState;
     private int age;
+    private boolean hasInviteCode;
 
+
+    public boolean isHasInviteCode() {
+        return hasInviteCode;
+    }
+
+    public void setHasInviteCode(boolean hasInviteCode) {
+        this.hasInviteCode = hasInviteCode;
+    }
 
     public int getAge() {
         return age;

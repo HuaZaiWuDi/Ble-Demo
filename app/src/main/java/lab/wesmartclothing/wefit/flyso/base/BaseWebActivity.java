@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -49,7 +50,7 @@ public abstract class BaseWebActivity extends BaseActivity {
                 .setWebView(getWebView())
                 .setWebLayout(getWebLayout())
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
-                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
+                .setSecurityType(AgentWeb.SecurityType.DEFAULT_CHECK)
                 .useMiddlewareWebChrome(getMiddleWareWebChrome())
                 .useMiddlewareWebClient(getMiddleWareWebClient())
                 .setWebViewClient(getWebViewClient())//WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
@@ -65,11 +66,15 @@ public abstract class BaseWebActivity extends BaseActivity {
 
         AgentWebConfig.debug();
 
-
         // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
         WebView webView = mAgentWeb.getWebCreator().getWebView();
         webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);//始终可以滑动
 
+        WebSettings webSettings = mAgentWeb.getWebCreator().getWebView().getSettings();
+//        设置默认加载的可视范围是大视野范围
+        webSettings.setLoadWithOverviewMode(true);
+//                自适应屏幕(导致活动页面显示出错了)
+        webSettings.setUseWideViewPort(true);
     }
 
 
@@ -84,9 +89,7 @@ public abstract class BaseWebActivity extends BaseActivity {
     public void onPause() {
         if (mAgentWeb != null) {
             mAgentWeb.getWebLifeCycle().onPause(); //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
-
         }
-
         super.onPause();
     }
 
@@ -95,7 +98,7 @@ public abstract class BaseWebActivity extends BaseActivity {
     protected void onDestroy() {
         if (mAgentWeb != null) {
             RxLogUtils.d("清除缓存");
-            AgentWebConfig.clearDiskCache(mContext);
+//            AgentWebConfig.clearDiskCache(mContext);
             mAgentWeb.getWebLifeCycle().onDestroy();
         }
         super.onDestroy();
@@ -210,7 +213,7 @@ public abstract class BaseWebActivity extends BaseActivity {
             public void onScaleChanged(WebView view, float oldScale, float newScale) {
                 super.onScaleChanged(view, oldScale, newScale);
 
-                view.reload();
+//                view.reload();
                 RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
             }
 

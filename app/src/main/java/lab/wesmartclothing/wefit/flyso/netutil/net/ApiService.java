@@ -307,6 +307,11 @@ public interface ApiService {
     @POST("user/fetchBindingOuterInfo")
     Observable<String> fetchBindingOuterInfo();
 
+    //验证邀请码
+    @FormUrlEncoded
+    @POST("user/verifyInvitationCode")
+    Observable<String> verifyInvitationCode(@Field("invitationCode") String invitationCode);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 数据统计

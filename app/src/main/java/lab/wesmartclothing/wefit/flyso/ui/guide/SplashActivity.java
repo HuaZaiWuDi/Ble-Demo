@@ -19,7 +19,6 @@ import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -28,6 +27,8 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.net.StoreService;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
+import lab.wesmartclothing.wefit.flyso.service.WebProcessService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -41,6 +42,7 @@ import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 public class SplashActivity extends BaseActivity {
 
     private boolean isSaveUserInfo = false;
+    private boolean hasInviteCode = false;
 
     BroadcastReceiver APPReplacedReceiver = new BroadcastReceiver() {
         @Override
@@ -67,25 +69,26 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-
         StatusBarUtils.from(this).setHindStatusBar(true).process();
 
         startService(new Intent(mContext, BleService.class));
+        startService(new Intent(mContext, WebProcessService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
 
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
+
     }
 
     @Override
     protected void initNetData() {
         super.initNetData();
-//        initData();
-//        initUserInfo();
+        initData();
+        initUserInfo();
 
         RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
 
-        RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
     }
 
 
@@ -116,7 +119,7 @@ public class SplashActivity extends BaseActivity {
                         SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
                         SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
                         isSaveUserInfo = sex == 0;
-
+                        hasInviteCode = userInfo.isHasInviteCode();
                     }
                 });
     }
@@ -127,12 +130,15 @@ public class SplashActivity extends BaseActivity {
         RxLogUtils.d("跳转");
         //通过验证是否保存userId来判断是否登录
         if (RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
+            RxActivityUtils.skipActivity(mActivity, LoginRegisterActivity.class);
+        } else if (!hasInviteCode) {
+            RxActivityUtils.skipActivity(mActivity, InvitationCodeActivity.class);
         } else if (isSaveUserInfo) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
+            RxActivityUtils.skipActivity(mActivity, UserInfoActivity.class);
         } else {
-            RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
+            RxActivityUtils.skipActivity(mActivity, MainActivity.class);
         }
+        RxActivityUtils.finishActivity();
         RxLogUtils.i("启动时长：引导页结束");
     }
 

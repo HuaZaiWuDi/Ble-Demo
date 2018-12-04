@@ -16,6 +16,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.antishake.AntiShake;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -83,13 +84,14 @@ public class MessageFragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initRecycler();
+        pageNum = 1;
+        initData();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        pageNum = 1;
-        initData();
+
     }
 
     private void initRecycler() {
@@ -102,7 +104,6 @@ public class MessageFragment extends BaseActivity {
 
             @Override
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
-
                 MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
                 helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
                         .setText(R.id.tv_title, item.getTitle())
@@ -246,7 +247,6 @@ public class MessageFragment extends BaseActivity {
                 }
             }
         }
-
         return false;
     }
 
@@ -288,8 +288,14 @@ public class MessageFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        item.setReadState(1);
-                        adapter.setData(position, item);
+                        if (item.getReadState() != 1) {
+                            item.setReadState(1);
+                            adapter.setData(position, item);
+                        }
+                        if (RxDataUtils.isNullString(s)) {
+                            return;
+                        }
+
                         ReadedBean readedBean = MyAPP.getGson().fromJson(s, ReadedBean.class);
                         if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_ACTIVITY) {
                             RxBus.getInstance().post(readedBean.getOpenTarget());

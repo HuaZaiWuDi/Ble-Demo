@@ -93,25 +93,39 @@ public abstract class BaseAcFragment extends Fragment {
     }
 
 
-    protected abstract @LayoutRes
-    int layoutId();
+    /**
+     * 初始化布局Id
+     */
+    protected @LayoutRes
+    int layoutId() {
+        return 0;
+    }
 
 
-    //初始化Bundle数据
+    /**
+     * 初始化Bundle数据
+     */
     protected void initBundle(Bundle bundle) {
 
     }
 
-    //初始化布局逻辑
+    /**
+     * 初始化布局逻辑
+     */
     protected void initViews() {
 
     }
 
-    //初始化网络数据
+    /**
+     * 初始化网络数据
+     */
     protected void initNetData() {
 
     }
 
+    /**
+     * 初始化事件总成
+     */
     protected void initRxBus() {
 
     }

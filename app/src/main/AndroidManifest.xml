@@ -150,16 +150,18 @@
         <activity
             android:name=".ui.WebActivity"
             android:launchMode="singleTop"
+            android:process=":web"
             android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".ui.WebTitleActivity"
             android:launchMode="singleTop"
+            android:process=":web"
             android:screenOrientation="nosensor">
         </activity>
 
         <service
-            android:name=".ble.BleService"
+            android:name=".service.BleService"
             android:enabled="true"
             android:exported="true">
         </service>
@@ -171,6 +173,7 @@
         <activity
             android:name=".ui.main.mine.CollectWebActivity"
             android:launchMode="singleTop"
+            android:process=":web"
             android:screenOrientation="nosensor">
         </activity>
         <activity
@@ -348,10 +351,18 @@
         </activity>
         <activity
             android:name=".ui.main.slimming.plan.PlanWebActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:process=":web">
         </activity>
         <activity android:name=".ui.main.mine.InvitationCodeActivity">
         </activity>
+
+        <!--开启一个空IntentService，左右启动web进程-->
+        <service
+            android:name=".service.WebProcessService"
+            android:exported="false"
+            android:process=":web">
+        </service>
     </application>
 
 </manifest>

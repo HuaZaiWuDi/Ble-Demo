@@ -10,8 +10,8 @@
 
 
     <ImageView
-        android:layout_width="292dp"
-        android:layout_height="517dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:src="@mipmap/bg_invitation"/>
 
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="87dp"
+        android:layout_marginTop="104dp"
         android:src="@mipmap/icon_invitation_img"/>
 
 
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="250dp"
         android:text="请输入邀请码"
         android:textColor="@color/Gray"
         android:textSize="20sp"

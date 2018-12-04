@@ -20,10 +20,6 @@ import butterknife.ButterKnife;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
-import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
@@ -50,12 +46,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         mActivity = this;
-        //屏幕沉浸
-        StatusBarUtils.from(this)
-                .setStatusBarColor(statusBarColor())
-                .setLightStatusBar(statusBarColor() != ContextCompat.getColor(mContext, R.color.Gray))
-                .process();
 
+        initStatusBar();
 
         RxActivityUtils.addActivity(this);
 
@@ -86,40 +78,53 @@ public abstract class BaseActivity extends AppCompatActivity {
         return ContextCompat.getColor(mContext, R.color.Gray);
     }
 
-    //初始化布局Id
+
+    /**
+     * 初始化状态栏
+     */
+    protected void initStatusBar() {
+        //屏幕沉浸
+        StatusBarUtils.from(this)
+                .setStatusBarColor(statusBarColor())
+                .setLightStatusBar(statusBarColor() != ContextCompat.getColor(mContext, R.color.Gray))
+                .process();
+    }
+
+
+    /**
+     * 初始化布局Id
+     */
     protected @LayoutRes
     int layoutId() {
         return 0;
     }
 
 
-    //初始化Bundle数据
+    /**
+     * 初始化Bundle数据
+     */
     protected void initBundle(Bundle bundle) {
 
     }
 
-    //初始化布局逻辑
+    /**
+     * 初始化布局逻辑
+     */
     protected void initViews() {
 
     }
-
-    //初始化网络数据
+    /**
+     * 初始化网络数据
+     */
     protected void initNetData() {
 
     }
 
+    /**
+     * 初始化事件总成
+     */
     protected void initRxBus2() {
-        //只有在显示时才会网络请求
-        RxBus.getInstance().register2(NetWorkType.class)
-                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
-                .subscribe(new RxSubscriber<NetWorkType>() {
-                    @Override
-                    protected void _onNext(NetWorkType netWorkType) {
-                        if (netWorkType.isBoolean()) {
-                            ((BaseActivity) RxActivityUtils.currentActivity()).initNetData();
-                        }
-                    }
-                });
+
     }
 
     @Override
