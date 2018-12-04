@@ -4,13 +4,13 @@ package lab.wesmartclothing.wefit.flyso.netutil.net;
 import android.util.Log;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.DeviceUtil;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -89,10 +89,10 @@ public class NetManager {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request().newBuilder()
                     .header("userId", SPUtils.getString(SPKey.SP_UserId))
-                    .header("version", DeviceUtil.getAppVersionName())
-                    .header("phoneType", DeviceUtil.getBuildMANUFACTURER())
+                    .header("version", RxDeviceUtils.getAppVersionName())
+                    .header("phoneType", RxDeviceUtils.getBuildMANUFACTURER())
                     .header("system", "Android")
-                    .header("macAddr", DeviceUtil.getAndroidId())
+                    .header("macAddr", RxDeviceUtils.getAndroidId())
                     .header("token", SPUtils.getString(SPKey.SP_token)).build();
             return chain.proceed(request);
         }

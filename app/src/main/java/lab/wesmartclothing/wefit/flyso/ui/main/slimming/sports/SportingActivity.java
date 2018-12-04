@@ -550,12 +550,12 @@ public class SportingActivity extends BaseActivity {
     }
 
     private void speakFlush(String text) {
-        if (mSwMusic.isOpened())
+        if (mSwMusic.isOpened() && isVisibility())
             TextSpeakUtils.speakFlush(text);
     }
 
     private void speakAdd(String text) {
-        if (mSwMusic.isOpened())
+        if (mSwMusic.isOpened() && isVisibility())
             TextSpeakUtils.speakAdd(text);
     }
 

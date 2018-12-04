@@ -36,8 +36,10 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_below="@+id/tv_Title">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_unAgree"
+        android:layout_below="@+id/tv_Title"
+        android:layout_marginBottom="40dp">
 
         <TextView
             android:layout_width="match_parent"

@@ -225,7 +225,6 @@ public class LoginRegisterActivity extends BaseActivity {
             @Override
             public void onTabSelect(int position) {
                 mViewPager.setCurrentItem(position);
-
             }
 
             @Override
@@ -302,9 +301,7 @@ public class LoginRegisterActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
-                        if (e instanceof ExplainException) {
-                            RxToast.normal(((ExplainException) e).getMsg());
-                        } else {
+                        if (!(e instanceof ExplainException)) {
                             RxToast.normal(new RxHttpsException().handleResponseError(e));
                         }
                     }
@@ -341,10 +338,10 @@ public class LoginRegisterActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         mCommonTabLayout.setCurrentTab(1);
+                        mViewPager.setCurrentItem(1);
                     }
                 });
         rxDialog.show();
-
     }
 
 

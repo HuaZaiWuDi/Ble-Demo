@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.vondear.rxtools.utils.RxNetUtils;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 

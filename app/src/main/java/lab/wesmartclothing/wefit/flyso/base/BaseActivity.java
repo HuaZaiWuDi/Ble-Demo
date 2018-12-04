@@ -36,7 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Activity mActivity;
     protected final BehaviorSubject<LifeCycleEvent> lifecycleSubject = BehaviorSubject.create();
     public TipDialog tipDialog;
-
+    public boolean isVisibility = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,6 +130,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        isVisibility = false;
         lifecycleSubject.onNext(LifeCycleEvent.STOP);
         super.onStop();
     }
@@ -142,6 +143,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        isVisibility = true;
         lifecycleSubject.onNext(LifeCycleEvent.RESUME);
         super.onResume();
     }
@@ -200,4 +202,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+    public boolean isVisibility() {
+        return isVisibility;
+    }
 }

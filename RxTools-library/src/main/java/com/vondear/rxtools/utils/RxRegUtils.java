@@ -352,7 +352,7 @@ public class RxRegUtils {
     }
 
     /**
-     * 正则：密码，取值范围为a-z,A-Z,0-9用户名必须是6-20位
+     * 正则：验证码，取值范围为0-9用户名必须是4-6位
      *
      * @param string 待验证文本
      * @return {@code true}: 匹配<br>{@code false}: 不匹配
@@ -360,7 +360,6 @@ public class RxRegUtils {
     public static boolean isVCode(String string) {
         return isMatch(RxConstUtils.REGEX_VCODE, string);
     }
-
 
 
     /**

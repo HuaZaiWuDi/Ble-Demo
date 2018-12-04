@@ -31,6 +31,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
@@ -73,21 +74,18 @@ public class SplashActivity extends BaseActivity {
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
 
-
-
-
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
     }
 
     @Override
     protected void initNetData() {
         super.initNetData();
-        initData();
-        initUserInfo();
+//        initData();
+//        initUserInfo();
 
         RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
 
-//        RxActivityUtils.skipActivityAndFinish(mContext, SportingActivity.class);
+        RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
     }
 
 

@@ -117,10 +117,10 @@ public class RxImageTakerHelper {
      * <p>
      * 调用onActivityResult()获取图片
      */
-    public static void openCamera(Activity activity,String authority ) {
+    public static void openCamera(Activity activity, String authority) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, getOutputPictureUri(activity.getApplicationContext(),authority));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, getOutputPictureUri(activity.getApplicationContext(), authority));
         activity.startActivityForResult(intent, REQUEST_CAMERA);
     }
 

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
  * 项目名称：BleCar
@@ -50,14 +51,14 @@ public class RxManager {
                 .throttleFirst(1, TimeUnit.SECONDS)  //两秒只发生第一时间
                 .timeout(1, TimeUnit.SECONDS)   //两秒超时重新发送
                 .retry(2)  //重试两次
-                .compose(RxThreadUtils.<T>rxThreadHelper());
+                .compose(RxComposeUtils.<T>rxThreadHelper());
     }
 
 
     public <T> Observable<T> doNetSubscribe(Observable<T> observable) {
         return observable
-                .compose(RxThreadUtils.<T>handleResult())
-                .compose(RxThreadUtils.<T>rxThreadHelper())
+                .compose(RxComposeUtils.<T>handleResult())
+                .compose(RxComposeUtils.<T>rxThreadHelper())
                 ;
     }
 
@@ -68,9 +69,9 @@ public class RxManager {
                                             IObservableStrategy strategy
     ) {
         return observable
-                .compose(RxThreadUtils.<T>handleResult2())
-                .compose(RxThreadUtils.<T>rxThreadHelper())
-                .compose(RxThreadUtils.<T>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<T>handleResult2())
+                .compose(RxComposeUtils.<T>rxThreadHelper())
+                .compose(RxComposeUtils.<T>bindLife(lifecycleSubject))
                 .compose(RxCache.getDefault().<T>transformObservable(cacheKey, type, strategy))
                 .map(new CacheResult.MapFunc<T>())
                 ;
@@ -80,15 +81,15 @@ public class RxManager {
                                             BehaviorSubject<LifeCycleEvent> lifecycleSubject
     ) {
         return observable
-                .compose(RxThreadUtils.<T>handleResult2())
-                .compose(RxThreadUtils.<T>rxThreadHelper())
-                .compose(RxThreadUtils.<T>bindLife(lifecycleSubject));
+                .compose(RxComposeUtils.<T>handleResult2())
+                .compose(RxComposeUtils.<T>rxThreadHelper())
+                .compose(RxComposeUtils.<T>bindLife(lifecycleSubject));
     }
 
 
     public <T> Observable<T> doLoadDownSubscribe(Observable<T> observable) {
         return observable
-                .compose(RxThreadUtils.<T>rxThreadHelper());
+                .compose(RxComposeUtils.<T>rxThreadHelper());
     }
 
 }
