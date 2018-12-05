@@ -56,6 +56,7 @@ public class PlanMatterActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.tv_unAgree:
                 onBackPressed();
+                RecordInfoActivity.mSubmitInfoFrom = null;
                 break;
             case R.id.tv_Agree:
                 RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);

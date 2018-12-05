@@ -65,8 +65,7 @@ public class FindFragment extends BaseWebFragment {
     @Override
     protected void initViews() {
         super.initViews();
-        mBridgeWebView = new BridgeWebView(mActivity);
-        initWebView();
+
     }
 
 
@@ -79,7 +78,8 @@ public class FindFragment extends BaseWebFragment {
     @Override
     protected void initNetData() {
         super.initNetData();
-
+        mBridgeWebView = new BridgeWebView(mActivity);
+        initWebView();
     }
 
     @Override

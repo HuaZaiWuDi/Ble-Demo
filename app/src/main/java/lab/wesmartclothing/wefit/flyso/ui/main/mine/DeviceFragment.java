@@ -190,8 +190,8 @@ public class DeviceFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -267,9 +267,11 @@ public class DeviceFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
+                    protected void _onError(String error, int code) {
                         RxToast.error("删除失败");
                     }
+
+
                 });
     }
 }

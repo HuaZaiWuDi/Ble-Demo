@@ -409,8 +409,8 @@ public class SlimmingFragment extends BaseAcFragment {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        super._onError(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
                         RxToast.normal(error);
                     }
                 });
@@ -484,10 +484,10 @@ public class SlimmingFragment extends BaseAcFragment {
                         lineChartUtils.setRealTimeData(realLists);
                         mLineChart.animateX(1000);
                     }
-
                     @Override
-                    protected void _onError(String error) {
-                        super._onError(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
                 });
 

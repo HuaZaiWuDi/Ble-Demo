@@ -41,12 +41,11 @@
         <activity
             android:name="me.shaohui.shareutil._ShareActivity"
             android:launchMode="singleTask"
-            android:process=":web"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
-            <intent-filter>
-                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
+            <!--<intent-filter>-->
+            <!--<action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>-->
+            <!--<category android:name="android.intent.category.DEFAULT"/>-->
+            <!--</intent-filter>-->
         </activity>
 
         <activity-alias

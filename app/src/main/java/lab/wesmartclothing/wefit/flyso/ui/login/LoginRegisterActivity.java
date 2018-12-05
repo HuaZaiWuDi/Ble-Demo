@@ -36,9 +36,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.ExplainException;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxHttpsException;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
@@ -256,15 +254,9 @@ public class LoginRegisterActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        super._onError(error);
-                        RxToast.error(error);
-                    }
-
-                    @Override
                     protected void _onError(String error, int code) {
                         super._onError(error, code);
-                        RxToast.error(error);
+                        RxToast.normal(error);
                     }
                 });
     }
@@ -298,13 +290,6 @@ public class LoginRegisterActivity extends BaseActivity {
                         }
                     }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        if (!(e instanceof ExplainException)) {
-                            RxToast.normal(new RxHttpsException().handleResponseError(e));
-                        }
-                    }
                 });
     }
 
@@ -372,23 +357,11 @@ public class LoginRegisterActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        if (e instanceof ExplainException) {
-                            _onError(((ExplainException) e).getMsg(), ((ExplainException) e).getCode());
-                        } else {
-                            _onError(new RxHttpsException().handleResponseError(e));
-                        }
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
                 });
-    }
-
-
-    //不退出app，而是隐藏当前的app
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
-        super.onBackPressed();
     }
 
 

@@ -56,11 +56,6 @@ public class UpdateAppBean {
                         RxLogUtils.d("统计接口：" + s);
                     }
 
-                    @Override
-                    protected void _onError(String error) {
-                        RxLogUtils.e("统计接口：" + error);
-//                        RxToast.error(error);
-                    }
                 });
     }
 

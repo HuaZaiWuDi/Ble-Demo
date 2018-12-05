@@ -317,14 +317,13 @@ public class AddDeviceActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
 
                     @Override
                     public void onComplete() {
                         super.onComplete();
-
                     }
                 });
     }
@@ -366,10 +365,10 @@ public class AddDeviceActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        //网络获取异常不可用
+                    protected void _onError(String error, int code) {
                         adapter.addData(bean);
                     }
+
                 });
     }
 

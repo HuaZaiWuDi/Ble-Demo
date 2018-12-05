@@ -221,8 +221,8 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.normal(error,code);
                     }
                 });
     }
@@ -243,8 +243,8 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -291,8 +291,8 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.normal(error,code);
                     }
                 });
     }

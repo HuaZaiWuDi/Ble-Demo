@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -62,6 +63,7 @@ public class ShareUtil {
 
         // 防止之后调用 NullPointException
         if (mShareListener == null) {
+            ShareLogger.i("ShareUtil:" + mShareListener);
             activity.finish();
             return;
         }
@@ -141,6 +143,7 @@ public class ShareUtil {
         mTitle = title;
         mShareListener = buildProxyListener(listener);
 
+        Log.d("分享", "shareMedia: " + mShareListener);
         context.startActivity(_ShareActivity.newInstance(context, TYPE));
     }
 
@@ -292,8 +295,5 @@ public class ShareUtil {
         }
     }
 
-    static void finish(Activity activity) {
-        activity.finish();
-    }
 
 }

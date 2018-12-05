@@ -28,7 +28,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.StoreService;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
-import lab.wesmartclothing.wefit.flyso.service.WebProcessService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -72,7 +71,7 @@ public class SplashActivity extends BaseActivity {
         StatusBarUtils.from(this).setHindStatusBar(true).process();
 
         startService(new Intent(mContext, BleService.class));
-        startService(new Intent(mContext, WebProcessService.class));
+//        startService(new Intent(mContext, WebProcessService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
 

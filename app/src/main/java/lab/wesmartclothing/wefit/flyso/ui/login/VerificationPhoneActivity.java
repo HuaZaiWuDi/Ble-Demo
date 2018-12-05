@@ -25,8 +25,6 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.ExplainException;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxHttpsException;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -148,9 +146,11 @@ public class VerificationPhoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
                         RxToast.normal(error);
                     }
+
                 });
     }
 
@@ -180,14 +180,11 @@ public class VerificationPhoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        if (e instanceof ExplainException) {
-                            RxToast.normal(((ExplainException) e).getMsg());
-                        } else {
-                            RxToast.normal(new RxHttpsException().handleResponseError(e));
-                        }
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
+
                 });
     }
 

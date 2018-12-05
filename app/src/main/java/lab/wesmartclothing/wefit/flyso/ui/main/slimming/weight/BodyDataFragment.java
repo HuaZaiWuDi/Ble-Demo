@@ -53,8 +53,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/7/27.
@@ -301,8 +299,8 @@ public class BodyDataFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -411,8 +409,8 @@ public class BodyDataFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

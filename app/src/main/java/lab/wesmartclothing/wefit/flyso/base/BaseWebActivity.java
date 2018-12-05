@@ -6,9 +6,13 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -45,12 +49,11 @@ public abstract class BaseWebActivity extends BaseActivity {
         //3.创建mAgentWeb
         mAgentWeb = AgentWeb.with(mActivity)//
                 .setAgentWebParent(parent, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//传入AgentWeb的父控件。
-//                .useDefaultIndicator()
                 .useDefaultIndicator(getIndicatorColor(), getIndicatorHeight())
                 .setWebView(getWebView())
                 .setWebLayout(getWebLayout())
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
-                .setSecurityType(AgentWeb.SecurityType.DEFAULT_CHECK)
+                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
                 .useMiddlewareWebChrome(getMiddleWareWebChrome())
                 .useMiddlewareWebClient(getMiddleWareWebClient())
                 .setWebViewClient(getWebViewClient())//WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
@@ -66,9 +69,10 @@ public abstract class BaseWebActivity extends BaseActivity {
 
         AgentWebConfig.debug();
 
-        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
-        WebView webView = mAgentWeb.getWebCreator().getWebView();
-        webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);//始终可以滑动
+
+//        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
+//        WebView webView = mAgentWeb.getWebCreator().getWebView();
+//        webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);//始终可以滑动
 
         WebSettings webSettings = mAgentWeb.getWebCreator().getWebView().getSettings();
 //        设置默认加载的可视范围是大视野范围
@@ -195,6 +199,7 @@ public abstract class BaseWebActivity extends BaseActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 tipDialog.show();
+                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.GONE);
             }
 
             @Override
@@ -212,7 +217,7 @@ public abstract class BaseWebActivity extends BaseActivity {
             @Override
             public void onScaleChanged(WebView view, float oldScale, float newScale) {
                 super.onScaleChanged(view, oldScale, newScale);
-
+                mAgentWeb.getUrlLoader().reload();
 //                view.reload();
                 RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
             }
@@ -227,6 +232,19 @@ public abstract class BaseWebActivity extends BaseActivity {
             public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
                 tipDialog.dismiss();
+                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+//                mAgentWeb.getUrlLoader().loadUrl("http://www.unkownwebsiteblog.me");
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                super.onReceivedHttpError(view, request, errorResponse);
+
             }
         };
     }

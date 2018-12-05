@@ -65,10 +65,6 @@ public class DeviceLink {
                         RxLogUtils.d("统计接口：" + s);
                     }
 
-                    @Override
-                    protected void _onError(String error) {
-                        RxLogUtils.e("统计接口：" + error);
-                    }
                 });
     }
 

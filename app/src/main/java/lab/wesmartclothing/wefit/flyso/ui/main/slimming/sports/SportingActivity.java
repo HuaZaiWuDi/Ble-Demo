@@ -502,8 +502,8 @@ public class SportingActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        super._onError(error);
+                    protected void _onError(String error,int code) {
+                        super._onError(error,code);
                         new RxDialogSure(mContext)
                                 .setTitle("提示")
                                 .setContent("因网络异常，运动数据上传失败，您可在运动记录中进行查看")

@@ -229,7 +229,7 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    public void _onError(String e) {
+                    public void _onError(String e, int code) {
                         if (smartRefreshLayout.isLoading())
                             smartRefreshLayout.finishLoadMore(false);
                         if (smartRefreshLayout.isRefreshing())
@@ -271,8 +271,8 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    public void _onError(String e) {
-                        RxToast.normal(e);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -316,7 +316,7 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    public void _onError(String e) {
+                    public void _onError(String e,int code) {
                         RxToast.normal(e);
                     }
                 });
@@ -336,8 +336,8 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }

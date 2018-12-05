@@ -216,4 +216,13 @@ dependencies {
     implementation files('libs/qnsdk-0.3.4.jar')
 //    compile project(path: ':netlib')
     compile 'com.haibin:calendarview:3.4.8'
+
+    //友盟社会化分享
+//    compile 'com.umeng.sdk:common:latest.integration'
+//    compile 'com.umeng.sdk:utdid:latest.integration'
+//    compile 'com.umeng.sdk:share-core:6.9.1'
+//    compile 'com.umeng.sdk:share-qq:6.9.1.1'
+//    compile 'com.umeng.sdk:share-wechat:6.9.1'
+//    compile 'com.umeng.sdk:share-sina:6.9.1'
+
 }

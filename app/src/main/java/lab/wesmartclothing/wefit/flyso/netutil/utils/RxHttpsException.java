@@ -70,7 +70,12 @@ public class RxHttpsException {
         } else if (t instanceof ConnectException) {
             msg = "请求网络失败";
         } else if (t instanceof ExplainException) {//返回后台解释性异常码
-            msg = "请求网络失败";
+            ExplainException exception = (ExplainException) t;
+            if ("0006".equals(exception.getCode())) {
+                msg = "请求网络失败";
+            } else {
+                msg = exception.getMsg();
+            }
         }
         return msg;
     }

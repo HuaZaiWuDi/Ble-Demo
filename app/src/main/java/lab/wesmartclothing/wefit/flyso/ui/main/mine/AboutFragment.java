@@ -169,10 +169,12 @@ public class AboutFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
                         checkState(false);
                     }
+
                 });
     }
 

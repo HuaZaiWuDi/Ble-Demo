@@ -100,6 +100,7 @@ public class CollectWebActivity extends BaseWebActivity {
                                 ShareUtil.shareMedia(mActivity, SharePlatform.WEIBO, title, desc, url, imgUrl, shareListener);
                                 break;
                             case 4:
+                                RxLogUtils.e("分享：" + shareListener);
                                 ShareUtil.shareMedia(mActivity, SharePlatform.QQ, title, desc, url, imgUrl, shareListener);
                                 break;
                             case 5:

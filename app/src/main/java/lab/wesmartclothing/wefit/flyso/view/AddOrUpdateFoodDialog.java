@@ -159,8 +159,8 @@ public class AddOrUpdateFoodDialog {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -253,8 +253,8 @@ public class AddOrUpdateFoodDialog {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
 
                 });

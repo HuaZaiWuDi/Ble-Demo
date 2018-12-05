@@ -98,6 +98,7 @@ public class TargetDateFargment extends BaseActivity {
         }
 
         weeks = (int) (stillNeed / 0.5f);
+        weeks = (weeks < 1 ? 1 : weeks);
         mTvTargetDays.setText((weeks * 7) + "天");
         String tips = "每周减重目标 " + 0.5 + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
@@ -154,6 +155,8 @@ public class TargetDateFargment extends BaseActivity {
         mInfoBean.setInitialWeight(RxFormatValue.format4S5R(initWeight, 1));
         mInfoBean.setTargetWeight(targetWeight);
 
+
+        RxLogUtils.d("mSubmitInfoFrom：" + RecordInfoActivity.mSubmitInfoFrom);
         if (RecordInfoActivity.mSubmitInfoFrom == null) {
             settingTarget();
         } else {
@@ -180,8 +183,8 @@ public class TargetDateFargment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -189,7 +192,7 @@ public class TargetDateFargment extends BaseActivity {
 
     private void settingTarget() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .setTargetWeight(NetManager.fetchRequest( MyAPP.getGson().toJson(mInfoBean))))
+                .setTargetWeight(NetManager.fetchRequest(MyAPP.getGson().toJson(mInfoBean))))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -203,8 +206,8 @@ public class TargetDateFargment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }

@@ -2,11 +2,9 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.MutableContextWrapper;
 import android.graphics.Typeface;
 import android.support.multidex.MultiDex;
 import android.util.Log;
-import android.webkit.WebView;
 
 import com.amap.api.location.AMapLocation;
 import com.google.gson.Gson;
@@ -144,7 +142,6 @@ public class MyAPP extends Application {
             }
         });
 
-
     }
 
 
@@ -167,7 +164,6 @@ public class MyAPP extends Application {
                 .wxSecret(Key.WX_SECRET);
         ShareManager.init(config);
     }
-
 
     public static RxCache getRxCache() {
         return RxCache.getDefault();

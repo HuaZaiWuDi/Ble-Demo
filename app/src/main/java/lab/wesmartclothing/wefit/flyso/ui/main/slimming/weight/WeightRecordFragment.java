@@ -262,8 +262,8 @@ public class WeightRecordFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        super._onError(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
                         RxToast.normal(error);
                     }
                 });

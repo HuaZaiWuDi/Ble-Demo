@@ -30,7 +30,9 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
 //            Toast.makeText(RxManager.getInstance().getApplication(), e.getMessage(), Toast.LENGTH_LONG).show();
         if (e instanceof ExplainException)
             _onError(((ExplainException) e).getMsg(), ((ExplainException) e).getCode());
-        _onError(new RxHttpsException().handleResponseError(e));
+        else {
+            _onError(new RxHttpsException().handleResponseError(e), -1);
+        }
     }
 
     @Override
@@ -44,11 +46,6 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     }
 
     protected abstract void _onNext(T t);
-
-
-    protected void _onError(String error) {
-
-    }
 
     protected void _onError(String error, int code) {
 
