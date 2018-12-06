@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
@@ -44,6 +45,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         super.onCreate(savedInstanceState);
+        LeakCanary.enableDisplayLeakActivity(this);
+
         mContext = this;
         mActivity = this;
 
@@ -113,6 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initViews() {
 
     }
+
     /**
      * 初始化网络数据
      */
@@ -175,30 +179,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         mContext = null;
         mActivity = null;
     }
-
-//    private static final String LAYOUT_LINEARLAYOUT = "LinearLayout";
-//    private static final String LAYOUT_FRAMELAYOUT = "FrameLayout";
-//    private static final String LAYOUT_RELATIVELAYOUT = "RelativeLayout";
-//
-//    @Override
-//    public View onCreateView(String name, Context context, AttributeSet attrs) {
-//        View view = null;
-//        if (LAYOUT_FRAMELAYOUT.equals(name)) {
-//            view = new AutoFrameLayout(context, attrs);
-//        }
-//
-//        if (LAYOUT_LINEARLAYOUT.equals(name)) {
-//            view = new AutoLinearLayout(context, attrs);
-//        }
-//
-//        if (LAYOUT_RELATIVELAYOUT.equals(name)) {
-//            view = new AutoRelativeLayout(context, attrs);
-//        }
-//
-//        if (view != null) return view;
-//
-//        return super.onCreateView(name, context, attrs);
-//    }
 
 
     @Override

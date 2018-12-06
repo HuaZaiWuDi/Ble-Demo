@@ -25,10 +25,10 @@ import java.lang.reflect.Field;
  */
 public final class RxKeyboardUtils {
 
-    private static int                        sDecorViewInvisibleHeightPre;
-    private static OnGlobalLayoutListener     onGlobalLayoutListener;
+    private static int sDecorViewInvisibleHeightPre;
+    private static OnGlobalLayoutListener onGlobalLayoutListener;
     private static OnSoftInputChangedListener onSoftInputChangedListener;
-    private static int                        sContentViewInvisibleHeightPre5497;
+    private static int sContentViewInvisibleHeightPre5497;
 
     private RxKeyboardUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
@@ -232,8 +232,8 @@ public final class RxKeyboardUtils {
         if (contentView == null) return sContentViewInvisibleHeightPre5497;
         final Rect outRect = new Rect();
         contentView.getWindowVisibleDisplayFrame(outRect);
-        Log.d("KeyboardUtils", "getContentViewInvisibleHeight: "
-                + (contentView.getBottom() - outRect.bottom));
+//        Log.d("KeyboardUtils", "getContentViewInvisibleHeight: "
+//                + (contentView.getBottom() - outRect.bottom));
         int delta = Math.abs(contentView.getBottom() - outRect.bottom);
         if (delta <= getStatusBarHeight() + getNavBarHeight()) {
             return 0;

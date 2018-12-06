@@ -1,5 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by jk on 2018/8/31.
  * 数字转大写中文汉字
@@ -9,7 +12,31 @@ public class Number2Chinese {
 
     public static void main(String[] a) {
         System.out.println(number2Chinese(0.007 + ""));
+
+//        System.out.println(MathUtils.div(50, 100, 2));
+
+        int value = -5;
+        int index = 0;
+
+
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(-0, -1, -2, -3, -4, -6, -7));
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) <= value) {
+                index = i;
+                break;
+            } else {
+                index = i + 1;
+            }
+        }
+
+        System.out.println(index);
+        list.add(index, value);
+
+
+        System.out.println(Arrays.toString(list.toArray()));
+
     }
+
 
     public static String number2Chinese(String numStr) {
         //12345

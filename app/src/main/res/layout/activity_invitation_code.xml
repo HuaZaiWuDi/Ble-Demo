@@ -16,55 +16,65 @@
         android:src="@mipmap/bg_invitation"/>
 
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layout_edit"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="104dp"
-        android:src="@mipmap/icon_invitation_img"/>
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/tv_invitation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="250dp"
-        android:text="请输入邀请码"
-        android:textColor="@color/Gray"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/icon_invitation_img"/>
 
 
-    <EditText
-        android:id="@+id/edit_invitation"
-        android:layout_width="185dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_invitation"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:maxLength="5"
-        android:textColor="@color/Gray"
-        android:textSize="36sp"
-        tools:text="233333"/>
+        <TextView
+            android:id="@+id/tv_invitation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:text="请输入邀请码"
+            android:textColor="@color/Gray"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
 
-    <com.vondear.rxtools.view.layout.RxTextView
-        android:id="@+id/tv_start"
-        android:layout_width="196dp"
-        android:layout_height="46dp"
-        android:layout_below="@+id/edit_invitation"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:enabled="false"
-        android:gravity="center"
-        android:text="开\t始\t验\t证"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:background_normal="@color/BrightGray"
-        app:corner_radius="23dp"
-        app:ripple_color="@color/ripple_ECEAE6"/>
+        <EditText
+            android:id="@+id/edit_invitation"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_invitation"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:maxLength="5"
+            android:textColor="@color/Gray"
+            android:textSize="36sp"
+            tools:text="233333"/>
+
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_start"
+            android:layout_width="196dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/edit_invitation"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="开\t始\t验\t证"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:background_normal="@color/BrightGray"
+            app:corner_radius="23dp"
+            app:ripple_color="@color/ripple_ECEAE6"/>
+
+    </LinearLayout>
 
 
     <TextView

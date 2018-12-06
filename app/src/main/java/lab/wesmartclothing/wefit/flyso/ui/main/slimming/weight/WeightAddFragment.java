@@ -95,7 +95,6 @@ public class WeightAddFragment extends BaseActivity {
         if (!QNBleTools.getInstance().isConnect()) {
             startService(new Intent(mContext, BleService.class));
         }
-
     }
 
     @Override
@@ -252,8 +251,8 @@ public class WeightAddFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

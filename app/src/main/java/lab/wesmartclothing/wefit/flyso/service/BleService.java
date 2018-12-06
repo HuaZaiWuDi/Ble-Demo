@@ -166,9 +166,9 @@ public class BleService extends Service {
 
     @Override
     public void onDestroy() {
+        stopScan();
         unregisterReceiver(mBroadcastReceiver);
-        BleTools.getInstance().disConnect();
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.LeakCanary) {
             RefWatcher refWatcher = LeakCanary.installedRefWatcher();
             // We expect schrodingerCat to be gone soon (or not), let's watch it.
             refWatcher.watch(this);
@@ -221,9 +221,9 @@ public class BleService extends Service {
             @Override
             public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
                 super.onBatchScanResults(results);
-                RxLogUtils.d("扫描扫描结果：" + results.size());
                 for (int i = 0; i < results.size(); i++) {
                     BluetoothDevice device = results.get(i).getDevice();
+                    RxLogUtils.d("扫描扫描结果：" + device.getAddress() + "：" + results.get(i).getRssi());
                     BleDevice bleDevice = new BleDevice(device);//转换对象
 
                     BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), results.get(i).getRssi());
@@ -264,7 +264,7 @@ public class BleService extends Service {
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
-                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac());
+                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi());
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 

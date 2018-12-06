@@ -650,7 +650,6 @@ public class PlanSportingActivity extends BaseActivity {
                     }
 
 
-
                     @Override
                     protected void _onError(String error, int code) {
                         super._onError(error, code);

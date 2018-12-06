@@ -5,11 +5,15 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxAnimationUtils;
+import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -39,7 +43,8 @@ public class InvitationCodeActivity extends BaseActivity {
     EditText mEditInvitation;
     @BindView(R.id.tv_start)
     RxTextView mTvStart;
-
+    @BindView(R.id.layout_edit)
+    LinearLayout mLinearLayoutEdit;
 
     private UserInfo mUserInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
 
@@ -78,6 +83,8 @@ public class InvitationCodeActivity extends BaseActivity {
                     mTvStart.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, R.color.BrightGray));
                     mTvStart.setEnabled(false);
                 }
+
+
             }
 
             @Override
@@ -85,6 +92,18 @@ public class InvitationCodeActivity extends BaseActivity {
 
             }
         });
+        RxKeyboardUtils.registerSoftInputChangedListener(mActivity, new RxKeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                RxLogUtils.e("软键盘高度：" + height);
+                if (height < 300) {
+                    RxAnimationUtils.animateMaginTop(RxUtils.dp2px(16), RxUtils.dp2px(100), mLinearLayoutEdit);
+                } else {
+                    RxAnimationUtils.animateMaginTop(RxUtils.dp2px(100), RxUtils.dp2px(16), mLinearLayoutEdit);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -92,6 +111,12 @@ public class InvitationCodeActivity extends BaseActivity {
         super.initBundle(bundle);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        RxKeyboardUtils.unregisterSoftInputChangedListener(mActivity);
+        super.onDestroy();
+    }
 
     @OnClick(R.id.tv_start)
     public void onViewClicked() {
@@ -110,7 +135,7 @@ public class InvitationCodeActivity extends BaseActivity {
                                 RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
                             }
                         } else {
-                            RxToast.normal("验证码不合法");
+                            RxToast.normal("验证不通过");
                         }
                     }
 

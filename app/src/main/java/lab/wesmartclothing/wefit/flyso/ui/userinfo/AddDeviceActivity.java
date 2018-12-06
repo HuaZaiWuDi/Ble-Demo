@@ -22,7 +22,6 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
-import com.smartclothing.blelibrary.util.MathUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
@@ -48,7 +47,6 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -58,9 +56,11 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.utils.BLEUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class AddDeviceActivity extends BaseActivity {
@@ -174,6 +174,7 @@ public class AddDeviceActivity extends BaseActivity {
     private void initRxBus() {
         RxBus.getInstance().register2(BindDeviceBean.class)
                 .compose(RxComposeUtils.<BindDeviceBean>bindLife(lifecycleSubject))
+//                .throttleFirst(1, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<BindDeviceBean>() {
                     @Override
                     protected void _onNext(BindDeviceBean device) {
@@ -235,8 +236,8 @@ public class AddDeviceActivity extends BaseActivity {
                     helper.setVisible(R.id.tv_Bind, true);
                 }
 
-                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceName())
-                        .append("(距离：" + MathUtils.div(-item.getRssi(), 100, 2) + "米)")
+                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceMac())
+                        .append("(距离：" + BLEUtil.rssi2Distance(item.getRssi(), 2) + "米)")
                         .setProportion(0.8f)
                         .create();
 
@@ -317,8 +318,8 @@ public class AddDeviceActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
 
                     @Override
@@ -342,10 +343,11 @@ public class AddDeviceActivity extends BaseActivity {
 
         scanDevice.put(bean.getDeviceMac(), bean);
 
-        if (scanDevice.size() == 1)
+        if (scanDevice.size() == 1) {
             switchStatus(STATUS_FIND_DEVICE);
+            scanTimeout.stopTimer();
+        }
 
-        scanTimeout.stopTimer();
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -361,15 +363,36 @@ public class AddDeviceActivity extends BaseActivity {
                             }
                         }
                         bean.setBind("true".equals(s));
-                        adapter.addData(bean);
+//                        adapter.addData(bean);
+                        sortList(bean);
                     }
 
                     @Override
                     protected void _onError(String error, int code) {
-                        adapter.addData(bean);
+//                        adapter.addData(bean);
+                        sortList(bean);
                     }
 
                 });
+    }
+
+    /**
+     * 排序，信号（rssi）值越小，越靠前
+     *
+     * @param bean
+     */
+    private void sortList(BindDeviceBean bean) {
+        int index = 0;
+        List<BindDeviceBean> list = adapter.getData();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getRssi() <= bean.getRssi()) {
+                index = i;
+                break;
+            } else {
+                index = i + 1;
+            }
+        }
+        adapter.addData(index, bean);
     }
 
 

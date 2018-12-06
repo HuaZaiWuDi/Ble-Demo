@@ -245,6 +245,14 @@ public abstract class BaseAcFragment extends Fragment {
         }
         RxLogUtils.i(TGA + "：onDestroyView");
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY_VIEW);
+
+        if (BuildConfig.LeakCanary) {
+            final RefWatcher refWatcher = LeakCanary.installedRefWatcher();
+            View view = getView();
+            if (view != null) {
+                refWatcher.watch(view);
+            }
+        }
         super.onDestroyView();
     }
 
@@ -253,9 +261,8 @@ public abstract class BaseAcFragment extends Fragment {
         RxLogUtils.i(TGA + "：onDestroy");
         lifecycleSubject.onNext(LifeCycleEvent.DESTROY);
         super.onDestroy();
-        if (BuildConfig.DEBUG) {
-            RefWatcher refWatcher = LeakCanary.installedRefWatcher();
-// We expect schrodingerCat to be gone soon (or not), let's watch it.
+        if (BuildConfig.LeakCanary) {
+            final RefWatcher refWatcher = LeakCanary.installedRefWatcher();
             refWatcher.watch(this);
         }
     }
