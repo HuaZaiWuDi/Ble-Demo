@@ -1,13 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
 import android.Manifest;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,8 +24,10 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextDrawable;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxEditText;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -65,7 +66,7 @@ public class SearchHistoryFragment extends BaseActivity {
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.mSearchView)
-    SearchView mSearchView;
+    RxEditText mSearchView;
     @BindView(R.id.tagFlowLayout_lately)
     DynamicTagFlowLayout mTagFlowLayoutLately;
     @BindView(R.id.tv_delete)
@@ -91,7 +92,6 @@ public class SearchHistoryFragment extends BaseActivity {
 
     private List<String> hotLists = new ArrayList<>();
     private BaseQuickAdapter searchListAdapter, adapterAddFoods;
-    private boolean isStorage = false;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     private boolean SlimmingPage = false;
     private int foodType = 0;
@@ -115,7 +115,6 @@ public class SearchHistoryFragment extends BaseActivity {
                 .subscribe(new RxSubscriber<Permission>() {
                     @Override
                     protected void _onNext(Permission permission) {
-                        isStorage = permission.granted;
                     }
                 });
 
@@ -219,14 +218,18 @@ public class SearchHistoryFragment extends BaseActivity {
         mTagFlowLayoutHot.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
             @Override
             public void onClick(View v) {
-                mSearchView.setQuery(((TextView) v).getText().toString(), true);
+                String string = ((TextView) v).getText().toString();
+                mSearchView.setText(string);
+                mSearchView.setSelection(string.length());
             }
         });
 
         mTagFlowLayoutLately.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
             @Override
             public void onClick(View v) {
-                mSearchView.setQuery(((TextView) v).getText().toString(), true);
+                String string = ((TextView) v).getText().toString();
+                mSearchView.setText(string);
+                mSearchView.setSelection(string.length());
             }
         });
 
@@ -283,47 +286,32 @@ public class SearchHistoryFragment extends BaseActivity {
 
 
     private void initLateLyData() {
-        /*------------------ SearchView有三种默认展开搜索框的设置方式，区别如下： ------------------*/
-//        //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
-//        mSearchView.setIconified(false);
-//        //设置搜索框直接展开显示。左侧有放大镜(在搜索框外) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-//        mSearchView.setIconifiedByDefault(false);
-//        //设置搜索框直接展开显示。左侧有无放大镜(在搜索框中) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-//        mSearchView.onActionViewExpanded();
-        //修改搜索框底部的横线
-        mSearchView.findViewById(R.id.search_plate).setBackgroundColor(getResources().getColor(R.color.GrayWrite));
-        //修改搜索框的字体颜色及大小
-        EditText textView = mSearchView
-                .findViewById(
-                        android.support.v7.appcompat.R.id.search_src_text
-                );
-        textView.setTextColor(Color.WHITE);//字体颜色
-        textView.setTextSize(15);//字体、提示字体大小
-        textView.setHintTextColor(Color.WHITE);//提示字体颜色**
-
-        mSearchView.setOnClickListener(new View.OnClickListener() {
+        mSearchView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                mSearchView.setIconifiedByDefault(false);
-            }
-        });
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //用户点击搜索才会响应
-                addSearchKey(query);
-                return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String newText = s.toString();
                 RxLogUtils.e("newText：" + newText);
                 //文字改变就会响应
                 if (!RxDataUtils.isNullString(newText) && newText.length() <= 20)
                     initSearchData(newText);
                 else mlayoutSearchData.setVisibility(View.GONE);
-                return true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        RxTextDrawable.addTextDrawableListener(mSearchView, RxTextDrawable.O_RIGHT, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.setText("");
             }
         });
 
@@ -357,6 +345,7 @@ public class SearchHistoryFragment extends BaseActivity {
 
 
     private void initSearchData(final String key) {
+
         mlayoutSearchData.setVisibility(View.VISIBLE);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().searchFoodInfo(key))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -370,11 +359,14 @@ public class SearchHistoryFragment extends BaseActivity {
                             searchListAdapter.setEmptyView(R.layout.layout_search_no_data);
                             TextView noData = searchListAdapter.getEmptyView().findViewById(R.id.tv_noData);
                             noData.setText(getString(R.string.search_noData, key));
+                        } else {
+                            addSearchKey(key);
                         }
                     }
+
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -399,8 +391,8 @@ public class SearchHistoryFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -451,8 +443,8 @@ public class SearchHistoryFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

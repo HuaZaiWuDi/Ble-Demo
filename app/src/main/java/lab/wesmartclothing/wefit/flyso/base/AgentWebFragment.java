@@ -9,11 +9,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -22,9 +20,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -46,14 +42,8 @@ import lab.wesmartclothing.wefit.flyso.R;
 
 public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
-    private ImageView mBackImageView;
-    private View mLineView;
-    private ImageView mFinishImageView;
-    private TextView mTitleTextView;
     protected AgentWeb mAgentWeb;
     public static final String URL_KEY = "url_key";
-    private ImageView mMoreImageView;
-    private PopupMenu mPopupMenu;
     /**
      * 用于方便打印测试
      */
@@ -82,11 +72,6 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
         AgentWebConfig.debug();
 
-
-        // AgentWeb 4.0 开始，删除该类以及删除相关的API
-//        DefaultMsgConfig.DownloadMsgConfig mDownloadMsgConfig = mAgentWeb.getDefaultMsgConfig().getDownloadMsgConfig();
-        //  mDownloadMsgConfig.setCancel("放弃");  // 修改下载提示信息，这里可以语言切换
-
         // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
         mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         //mAgentWeb.getWebCreator().getWebView()  获取WebView .
@@ -96,9 +81,6 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 //                自适应屏幕(导致活动页面显示出错了)
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webSettings.setUseWideViewPort(true);
-
-
-//		mAgentWeb.getWebCreator().getWebView().setOnLongClickListener();
 
     }
 
@@ -127,13 +109,7 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
      * @return mUrl
      */
     public String getUrl() {
-        String target = "";
-
-        if (TextUtils.isEmpty(target = this.getArguments().getString(URL_KEY))) {
-            target = "http://www.jd.com/";
-        }
-
-        return target;
+        return "";
     }
 
     protected WebChromeClient mWebChromeClient = new WebChromeClient() {

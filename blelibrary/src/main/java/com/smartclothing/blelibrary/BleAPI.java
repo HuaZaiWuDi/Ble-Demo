@@ -39,9 +39,17 @@ public class BleAPI {
      * 11	数据应答
      * 00	命令请求
      * 01	命令应答
+     * <p>
+     * 配置设置参数
+     *
+     * @param heartSection   硬件心率区间
+     * @param heat           温度
+     * @param LED            灯光
+     * @param heatState      加热状态
+     * @param bleChartChange 回调
      */
 
-    public static void syncSetting(int heat, int LED, boolean heatState, BleChartChangeCallBack bleChartChange) {
+    public static void syncSetting(byte[] heartSection, int heat, int LED, boolean heatState, BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 //        0x02 0x11 0x01
         byte[] bytes = new byte[20];
@@ -51,8 +59,9 @@ public class BleAPI {
 
         //心率阈值
         bytes[3] = 0x01;
-        System.arraycopy(BleKey.heartRates2, 0, bytes, 4, BleKey.heartRates2.length);
-        int index = 3 + BleKey.heartRates2.length;
+
+        System.arraycopy(heartSection, 0, bytes, 4, BleKey.heartRates2.length);
+        int index = 3 + heartSection.length;
 
         if (heat >= 0) {
             index++;

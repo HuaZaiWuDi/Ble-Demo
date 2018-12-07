@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
-import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
@@ -223,7 +222,7 @@ public class BleService extends Service {
                 super.onBatchScanResults(results);
                 for (int i = 0; i < results.size(); i++) {
                     BluetoothDevice device = results.get(i).getDevice();
-                    RxLogUtils.d("扫描扫描结果：" + device.getAddress() + "：" + results.get(i).getRssi());
+//                    RxLogUtils.d("扫描扫描结果：" + device.getAddress() + "：" + results.get(i).getRssi());
                     BleDevice bleDevice = new BleDevice(device);//转换对象
 
                     BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), results.get(i).getRssi());
@@ -264,7 +263,7 @@ public class BleService extends Service {
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
-                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi());
+//                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi());
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 
@@ -345,10 +344,12 @@ public class BleService extends Service {
                 mQNBleTools.setConnectState(QNBleTools.QN_CONNECED);
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, true);
 
+
                 DeviceLink deviceLink = new DeviceLink();
-                deviceLink.setMacAddr(qnBleDevice.getMac());
-                deviceLink.setDeviceName(getString(R.string.scale));//测试数据
+                deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_scaleMAC));
+                deviceLink.setDeviceNo(BleKey.TYPE_SCALE);
                 deviceLink.deviceLink(deviceLink);
+
             }
 
             @Override
@@ -419,11 +420,6 @@ public class BleService extends Service {
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
                 if (dfuStarting) return;
 
-                //设备统计
-                DeviceLink deviceLink = new DeviceLink();
-                deviceLink.setMacAddr(bleDevice.getMac());
-                deviceLink.setDeviceName(getString(R.string.clothing));//测试数据
-                deviceLink.deviceLink(deviceLink);
 
                 BleTools.getInstance().setBleDevice(bleDevice);
                 BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
@@ -459,7 +455,7 @@ public class BleService extends Service {
     }
 
     private void syncSetting() {
-        BleAPI.syncSetting(60, 50, true, new BleChartChangeCallBack() {
+        BleAPI.syncSetting(Key.heartRates, 60, 50, true, new BleChartChangeCallBack() {
             @Override
             public void callBack(byte[] data) {
                 RxLogUtils.d("配置参数");
@@ -500,6 +496,14 @@ public class BleService extends Service {
                     object.addProperty("hwVersion", ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
                     object.addProperty("firmwareVersion", firmwareVersion);//当前固件版本
                     checkFirmwareVersion(object);
+
+                    //设备统计
+                    DeviceLink deviceLink = new DeviceLink();
+                    deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
+                    deviceLink.setFirmwareVersion(firmwareVersion);
+                    deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
+                    deviceLink.deviceLink(deviceLink);
+
                 }
             });
         }

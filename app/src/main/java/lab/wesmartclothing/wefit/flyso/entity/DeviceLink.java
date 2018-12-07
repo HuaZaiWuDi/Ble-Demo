@@ -49,7 +49,6 @@ public class DeviceLink {
 
     //数据统计接口
     public void deviceLink(DeviceLink deviceLink) {
-        if (deviceLink == null) return;
         deviceLink.setLinkStatus(1);
         if (MyAPP.aMapLocation != null) {
             deviceLink.setCity(MyAPP.aMapLocation.getCity());

@@ -97,9 +97,9 @@ public class MainActivity extends BaseALocationActivity {
         initRxBus();
         startLocation(null);
 
-        RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
-        RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
-        RxLogUtils.d("UserId" + SPUtils.getString(SPKey.SP_UserId));
+        RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress(mContext));
+        RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
+        RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
 
         initMyViewPager();
         initBottomTab();
@@ -172,7 +172,7 @@ public class MainActivity extends BaseALocationActivity {
 
             @Override
             public void onTabReselect(int position) {
-                //双击或三击我的按钮，出现切换网络界面，同时需要退出重新登录
+                //双击我的按钮，出现切换网络界面，同时需要退出重新登录
                 if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
@@ -192,7 +192,6 @@ public class MainActivity extends BaseALocationActivity {
                             })
                             .build()
                             .show();
-//                    showLocalNotify();
                 }
             }
         });

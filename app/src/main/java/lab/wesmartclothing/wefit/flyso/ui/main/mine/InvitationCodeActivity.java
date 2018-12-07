@@ -21,6 +21,7 @@ import com.vondear.rxtools.view.layout.RxTextView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -83,8 +84,6 @@ public class InvitationCodeActivity extends BaseActivity {
                     mTvStart.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, R.color.BrightGray));
                     mTvStart.setEnabled(false);
                 }
-
-
             }
 
             @Override
@@ -104,6 +103,9 @@ public class InvitationCodeActivity extends BaseActivity {
             }
         });
 
+        if (BuildConfig.DEBUG) {
+            mEditInvitation.setText("94P9H");
+        }
     }
 
     @Override

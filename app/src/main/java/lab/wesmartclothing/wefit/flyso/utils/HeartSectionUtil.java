@@ -38,8 +38,14 @@ public class HeartSectionUtil {
             Key.HRART_SECTION[5] = (byte) (maxHeart * 0.9);
             Key.HRART_SECTION[6] = (byte) (maxHeart);
             RxLogUtils.d("心率区间：" + Arrays.toString(Key.HRART_SECTION));
-        }
 
+
+            Key.heartRates[0] = (byte) (maxHeart * 0.5);
+            Key.heartRates[1] = (byte) (maxHeart * 0.6);
+            Key.heartRates[2] = (byte) (maxHeart * 0.7);
+            Key.heartRates[3] = (byte) (maxHeart * 0.8);
+            Key.heartRates[4] = (byte) (maxHeart * 0.9);
+        }
     }
 
 }

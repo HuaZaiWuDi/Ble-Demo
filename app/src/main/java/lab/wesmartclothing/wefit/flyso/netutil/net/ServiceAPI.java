@@ -26,7 +26,7 @@ public class ServiceAPI {
     public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/mix/";//测试版本
 
 
-    public static String BASE_URL = BASE_URL_192;
+    public static String BASE_URL = BASE_DEBUG;
 
 
     public static void switchURL(String baseUrl) {
@@ -59,7 +59,8 @@ public class ServiceAPI {
 
 
     //服务协议
-    public static String Term_Service = "file:///android_asset/TermService.html";
+//    public static String Term_Service = "file:///android_asset/TermService.html";
+    public static String Term_Service = "http://119.23.225.125:8080/TermService/TermService.html";
 
     //收藏地址
     public static String Detail = "http://39.108.152.50:8088/find/detail.html?gid=";
