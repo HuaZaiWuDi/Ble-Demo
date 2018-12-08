@@ -131,7 +131,11 @@ public class SportingActivity extends BaseActivity {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
                 speakFlush(state ? "设备已连接" : "设备连接已断开");
-
+                if (state) {
+                    timer.startTimer();
+                } else {
+                    timer.stopTimer();
+                }
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
                 if (mContext == null) return;
                 if (currentTime < 180) {
@@ -502,8 +506,8 @@ public class SportingActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        super._onError(error,code);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
                         new RxDialogSure(mContext)
                                 .setTitle("提示")
                                 .setContent("因网络异常，运动数据上传失败，您可在运动记录中进行查看")

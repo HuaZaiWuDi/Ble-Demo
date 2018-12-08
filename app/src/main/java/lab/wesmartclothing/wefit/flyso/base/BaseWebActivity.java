@@ -6,13 +6,9 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -199,7 +195,6 @@ public abstract class BaseWebActivity extends BaseActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 tipDialog.show();
-                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.GONE);
             }
 
             @Override
@@ -213,14 +208,13 @@ public abstract class BaseWebActivity extends BaseActivity {
                 return false;
             }
 
-
-            @Override
-            public void onScaleChanged(WebView view, float oldScale, float newScale) {
-                super.onScaleChanged(view, oldScale, newScale);
-                mAgentWeb.getUrlLoader().reload();
-//                view.reload();
-                RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
-            }
+//            @Override
+//            public void onScaleChanged(WebView view, float oldScale, float newScale) {
+//                super.onScaleChanged(view, oldScale, newScale);
+//                mAgentWeb.getUrlLoader().reload();
+////                view.reload();
+//                RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
+//            }
 
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -232,20 +226,8 @@ public abstract class BaseWebActivity extends BaseActivity {
             public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
                 tipDialog.dismiss();
-                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.VISIBLE);
             }
 
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-//                mAgentWeb.getUrlLoader().loadUrl("http://www.unkownwebsiteblog.me");
-            }
-
-            @Override
-            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-                super.onReceivedHttpError(view, request, errorResponse);
-
-            }
         };
     }
 }

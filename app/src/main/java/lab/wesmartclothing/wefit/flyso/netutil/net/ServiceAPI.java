@@ -42,10 +42,6 @@ public class ServiceAPI {
 
     public static String Shopping_Address = "http://10.10.11.208:15111";
 
-
-    //新闻课程
-    public static String SHARE_ROOT = "";
-
     //查看报告地址
     public static String SHARE_INFORM_URL = "http://39.108.152.50:8088/wisenfit/build/html/healthReport.html?userId=";
 

@@ -133,6 +133,12 @@ public class PlanSportingActivity extends BaseActivity {
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
+                if (state) {
+                    timer.startTimer();
+                } else {
+                    timer.stopTimer();
+                }
+
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
                 if (mContext == null) return;
                 if (currentTime < 180) {

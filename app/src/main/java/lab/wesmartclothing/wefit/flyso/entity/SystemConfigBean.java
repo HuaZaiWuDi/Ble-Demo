@@ -12,56 +12,53 @@ public class SystemConfigBean {
 
 
     /**
-     * appDownloadUrl : string
-     * orderAddress : string
-     * shareInformUrl : string
-     * shareRootUrl : string
-     * shppingAddress : string
+     * confDesc : string
+     * confName : string
+     * confValue : string
+     * createTime : 1511248354000
+     * createUser : 1
+     * gid : 1
+     * status : 101
+     * updateTime : 1511248354000
+     * updateUser : 1
      */
 
-    private String appDownloadUrl;
-    private String orderAddress;
-    private String shareInformUrl;
-    private String shareRootUrl;
-    private String shppingAddress;
+    private String confDesc;
+    private String confName;
+    private String confValue;
 
-    public String getAppDownloadUrl() {
-        return appDownloadUrl;
+
+    public String getConfDesc() {
+        return confDesc;
     }
 
-    public void setAppDownloadUrl(String appDownloadUrl) {
-        this.appDownloadUrl = appDownloadUrl;
+    public void setConfDesc(String confDesc) {
+        this.confDesc = confDesc;
     }
 
-    public String getOrderAddress() {
-        return orderAddress;
+    public String getConfName() {
+        return confName;
     }
 
-    public void setOrderAddress(String orderAddress) {
-        this.orderAddress = orderAddress;
+    public void setConfName(String confName) {
+        this.confName = confName;
     }
 
-    public String getShareInformUrl() {
-        return shareInformUrl;
+    public String getConfValue() {
+        return confValue;
     }
 
-    public void setShareInformUrl(String shareInformUrl) {
-        this.shareInformUrl = shareInformUrl;
+    public void setConfValue(String confValue) {
+        this.confValue = confValue;
     }
 
-    public String getShareRootUrl() {
-        return shareRootUrl;
-    }
 
-    public void setShareRootUrl(String shareRootUrl) {
-        this.shareRootUrl = shareRootUrl;
-    }
-
-    public String getShppingAddress() {
-        return shppingAddress;
-    }
-
-    public void setShppingAddress(String shppingAddress) {
-        this.shppingAddress = shppingAddress;
+    @Override
+    public String toString() {
+        return "SystemConfigBean{" +
+                "confDesc='" + confDesc + '\'' +
+                ", confName='" + confName + '\'' +
+                ", confValue='" + confValue + '\'' +
+                '}';
     }
 }

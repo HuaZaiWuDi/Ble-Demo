@@ -3,9 +3,11 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -76,6 +78,51 @@ public class PlanWebActivity extends BaseWebActivity {
 //        return TEST_URL;
     }
 
+
+    @android.support.annotation.Nullable
+    @Override
+    protected WebViewClient getWebViewClient() {
+        return new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                tipDialog.show();
+                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.GONE);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // 拦截 url 跳转,在里边添加点击链接跳转或者操作
+                //Android8.0以下的需要返回true 并且需要loadUrl；8.0之后效果相反
+                if (Build.VERSION.SDK_INT < 26) {
+                    view.loadUrl(url);
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onScaleChanged(WebView view, float oldScale, float newScale) {
+                super.onScaleChanged(view, oldScale, newScale);
+                mAgentWeb.getUrlLoader().reload();
+                RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                RxLogUtils.d("网页地址：" + url);
+            }
+
+            @Override
+            public void onPageCommitVisible(WebView view, String url) {
+                super.onPageCommitVisible(view, url);
+                tipDialog.dismiss();
+                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.VISIBLE);
+            }
+
+        };
+    }
 
     @Override
     protected void onDestroy() {

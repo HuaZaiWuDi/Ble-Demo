@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -13,6 +14,7 @@ import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Action;
@@ -87,7 +89,7 @@ public class SplashActivity extends BaseActivity {
 
         RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
 
-//        RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
     }
 
 
@@ -170,13 +172,41 @@ public class SplashActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
-                        SystemConfigBean configBean = MyAPP.getGson().fromJson(s, SystemConfigBean.class);
-                        ServiceAPI.Order_Url = configBean.getOrderAddress();
-                        ServiceAPI.Shopping_Address = configBean.getShppingAddress();
-//                        ServiceAPI.Store_Addr = configBean.get
-                        ServiceAPI.SHARE_INFORM_URL = configBean.getShareInformUrl();
-                        ServiceAPI.APP_DOWN_LOAD_URL = configBean.getAppDownloadUrl();
+                        List<SystemConfigBean> configBeans = MyAPP.getGson().fromJson(s, new TypeToken<List<SystemConfigBean>>() {
+                        }.getType());
+
+                        for (SystemConfigBean bean : configBeans) {
+                            RxLogUtils.d("系统配置：" + bean);
+                            switch (bean.getConfName()) {
+                                case "find.detail.url"://发现模块详情地址
+                                    ServiceAPI.Detail = bean.getConfValue();
+                                    break;
+                                case "find.addr.url"://发现模块地址
+                                    ServiceAPI.FIND_Addr = bean.getConfValue();
+                                    break;
+                                case "terms.agreement.url"://免责声明协议条款URL
+                                    ServiceAPI.Term_Service = bean.getConfValue();
+                                    break;
+                                case "share.inform.url"://查看报告URL
+                                    ServiceAPI.SHARE_INFORM_URL = bean.getConfValue();
+                                    break;
+                                case "app.download.url"://app下载URL
+                                    ServiceAPI.APP_DOWN_LOAD_URL = bean.getConfValue();
+                                    break;
+                                case "share.root.url"://分享消息URL
+//                                    ServiceAPI.Detail = bean.getConfValue();
+                                    break;
+                                case "order.address"://订单地址
+                                    ServiceAPI.Order_Url = bean.getConfValue();
+                                    break;
+                                case "shpping.address"://商城地址
+                                    ServiceAPI.Shopping_Address = bean.getConfValue();
+                                    break;
+                                case "mall.address"://购物车地址
+                                    ServiceAPI.Store_Addr = bean.getConfValue();
+                                    break;
+                            }
+                        }
                     }
                 });
     }

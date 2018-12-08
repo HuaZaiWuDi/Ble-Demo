@@ -1,9 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.toolui;
 
 import android.support.v4.content.ContextCompat;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 
@@ -16,8 +17,8 @@ public class Main2Activity extends BaseActivity {
 
     @BindView(R.id.topBar)
     QMUITopBar mTopBar;
-    @BindView(R.id.img_sportingPlan)
-    ImageView mImgSportingPlan;
+    @BindView(R.id.text)
+    TextView mText;
     @BindView(R.id.container)
     LinearLayout mContainer;
 
@@ -35,6 +36,9 @@ public class Main2Activity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
+
+        mText.setMovementMethod(ScrollingMovementMethod.getInstance());
+
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
