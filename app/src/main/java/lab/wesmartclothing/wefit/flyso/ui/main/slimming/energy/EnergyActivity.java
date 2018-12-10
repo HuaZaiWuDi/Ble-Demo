@@ -88,7 +88,7 @@ public class EnergyActivity extends BaseActivity {
     protected void initViews() {
         super.initViews();
         //屏幕沉浸
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                 .setLightStatusBar(false)
                 .process();

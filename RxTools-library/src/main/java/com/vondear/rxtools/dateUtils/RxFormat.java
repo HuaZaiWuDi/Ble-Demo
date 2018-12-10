@@ -33,6 +33,12 @@ public class RxFormat {
     public static final String Date_Month_Day = "MM月dd日";
 
 
+    public static String setFormatDate(long value) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Date_Date, Locale.getDefault());
+        return dateFormat.format(value);
+    }
+
+
     public static String setFormatDate(long value, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         return dateFormat.format(value);
@@ -56,6 +62,7 @@ public class RxFormat {
         return dateFormat.format(value);
     }
 
+
     public static String setFormatDateG8(Date date, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
@@ -66,6 +73,11 @@ public class RxFormat {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         return dateFormat.format(calendar.getTime());
+    }
+
+    public static String setFormatDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Date_Date, Locale.getDefault());
+        return dateFormat.format(date);
     }
 
     public static String setFormatDate(Date date, String format) {

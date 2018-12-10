@@ -77,7 +77,7 @@ public class BindPhoneActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bind_phone);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(true)
                 .process();

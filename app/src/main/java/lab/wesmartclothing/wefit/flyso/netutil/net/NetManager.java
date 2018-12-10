@@ -34,6 +34,7 @@ public class NetManager {
     private Retrofit retrofit = null;
     private OkHttpClient.Builder builder;
     private static ApiService mApiService;
+    private static SystemService mSystemService;
 
     public synchronized static NetManager getInstance() {
         if (netManager == null) {
@@ -75,8 +76,19 @@ public class NetManager {
 
         mApiService = retrofit.create(ApiService.class);
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(builder.build())
+                .baseUrl(SystemService.BASE_URL)
+                .build();
+        mSystemService = retrofit.create(SystemService.class);
+
     }
 
+    public static SystemService getSystemService() {
+        return mSystemService;
+    }
 
     public static ApiService getApiService() {
         return mApiService;
@@ -122,24 +134,6 @@ public class NetManager {
             return chain.proceed(newRequest);
         }
     };
-
-
-    /**
-     * 返回原始的值
-     *
-     * @param service
-     * @param <S>
-     * @return
-     */
-    public <S> S createString(Class<S> service) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(builder.build())
-                .baseUrl(StoreService.BASE_URL)
-                .build();
-        return retrofit.create(service);
-    }
 
 
     public static RequestBody fetchRequest(String body) {

@@ -38,8 +38,10 @@ public class HeartRateUtil {
     private double kcalTotal = 0;//总卡路里
     private int lastHeartRate = 0;//上一次的心率值
     private int realHeartRate = 0;//真实心率
-    private static final int heartDeviation = 5;//心率误差值
-    private static int heartSupplement = (int) (Math.random() * 3 + 2);//补差值：修改补差值为2-5的随机数
+    private static final int heartDeviation = 6;//心率误差值
+    //补差值
+    private static int heartUpSupplement = (int) (Math.random() * 4 + 2);
+    private static int heartDownSupplement = (int) (Math.random() * 4 + 1);
     private long lastTime = 0;//历史记录上一条时间
     private int packageCounts = 0;//历史数据包序号
 
@@ -50,15 +52,14 @@ public class HeartRateUtil {
     public void addRealTimeData(byte[] bytes) {
         int heartRate = realHeartRate = bytes[8] & 0xff;
 
-        if (lastHeartRate == 0) {
-            lastHeartRate = heartRate;
+        if (lastHeartRate != 0) {
+            if (lastHeartRate - heartRate > heartDeviation) {
+                heartRate = lastHeartRate - heartUpSupplement;
+            } else if (lastHeartRate - heartRate < -heartDeviation) {
+                heartRate = lastHeartRate + heartDownSupplement;
+            }
         }
 
-        if (lastHeartRate - heartRate > heartDeviation) {
-            heartRate = lastHeartRate - heartSupplement;
-        } else if (lastHeartRate - heartRate < -heartDeviation) {
-            heartRate = lastHeartRate + heartSupplement;
-        }
         lastHeartRate = heartRate;
 
         long time = ByteUtil.bytesToLongD4(bytes, 3) * 1000;

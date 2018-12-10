@@ -232,8 +232,8 @@ public class RxImageTools {
                 break;
         }
 
-        // 保存
-        cv.save(Canvas.ALL_SAVE_FLAG);
+
+        cv.save();
         // 存储
         cv.restore();
         return newb;

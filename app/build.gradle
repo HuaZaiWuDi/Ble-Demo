@@ -147,9 +147,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    //注解
-    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
-    implementation "org.androidannotations:androidannotations-api:$AAVersion"
+//    //注解
+//    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
+//    implementation "org.androidannotations:androidannotations-api:$AAVersion"
 
     //工具库
     compile project(':RxTools-library')
@@ -158,14 +158,13 @@ dependencies {
     //快速开发顶部、底部导航栏
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
-    //弘扬的自定义布局
-    implementation 'com.zhy:autolayout:1.4.5'
+//    //弘扬的自定义布局
+//    implementation 'com.zhy:autolayout:1.4.5'
 
     //数据库
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 
     //BUGly
-
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
     compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
 
@@ -184,8 +183,8 @@ dependencies {
         exclude group: 'com.android.support'
     }
 
-    //腾讯急速加载网页
-    compile 'com.tencent.sonic:sdk:3.0.0'
+//    //腾讯急速加载网页
+//    compile 'com.tencent.sonic:sdk:3.0.0'
 
     //jsbridge
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
@@ -196,7 +195,7 @@ dependencies {
     //高德定位SDK
     compile 'com.amap.api:location:latest.integration'
     compile project(path: ':shareutil')
-    implementation 'com.qmuiteam:arch:0.1.3'
+//    implementation 'com.qmuiteam:arch:0.1.3'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
@@ -215,14 +214,6 @@ dependencies {
     //    //轻牛体重秤SDK
     implementation files('libs/qnsdk-0.3.4.jar')
 //    compile project(path: ':netlib')
-    compile 'com.haibin:calendarview:3.4.8'
 
-    //友盟社会化分享
-//    compile 'com.umeng.sdk:common:latest.integration'
-//    compile 'com.umeng.sdk:utdid:latest.integration'
-//    compile 'com.umeng.sdk:share-core:6.9.1'
-//    compile 'com.umeng.sdk:share-qq:6.9.1.1'
-//    compile 'com.umeng.sdk:share-wechat:6.9.1'
-//    compile 'com.umeng.sdk:share-sina:6.9.1'
 
 }

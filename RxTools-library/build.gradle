@@ -25,9 +25,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 
     //design包
     api "com.android.support:design:$supportVersion"
@@ -64,6 +61,7 @@ dependencies {
     //UI库 http://qmuiteam.com/android/get-started
     api 'com.qmuiteam:qmui:1.1.3'
 
+    //上拉刷新框架
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5'
 //    compile 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.5'//没有使用特殊Header，可以不加这行
 
@@ -80,6 +78,8 @@ dependencies {
     //Zxing核心包
     implementation 'com.google.zxing:core:3.3.3'
 
+    //https://github.com/huanghaibin-dev/CalendarView
+    compile 'com.haibin:calendarview:3.4.8'
 
     //网络Retrofit2+Rxjava
     //RxJava2

@@ -42,7 +42,7 @@ public class BodyFatFragment extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_body_fat);
         unbinder = ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(false)
                 .process();

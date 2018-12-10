@@ -157,7 +157,7 @@ public class SmartClothingFragment extends BaseActivity {
         setContentView(R.layout.fragment_smart_clothing);
         unbinder = ButterKnife.bind(this);
 
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.red))
                 .setLightStatusBar(true)
                 .process();

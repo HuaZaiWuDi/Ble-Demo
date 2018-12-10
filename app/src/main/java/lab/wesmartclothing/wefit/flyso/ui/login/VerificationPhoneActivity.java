@@ -50,7 +50,7 @@ public class VerificationPhoneActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verification_phone);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(true)
                 .process();

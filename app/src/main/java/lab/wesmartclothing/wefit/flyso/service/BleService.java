@@ -88,6 +88,8 @@ public class BleService extends Service {
 
     private static boolean isFirstJoin = true;
 
+    public static List<QNScaleStoreData> historyWeightData;
+
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -322,6 +324,7 @@ public class BleService extends Service {
             @Override
             public void onGetStoredScale(QNBleDevice qnBleDevice, final List<QNScaleStoreData> list) {
                 RxLogUtils.d("历史数据：" + list.size());
+                historyWeightData = list;
                 RxBus.getInstance().post(new ScaleHistoryData(list));
             }
         });

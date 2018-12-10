@@ -87,7 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected void initStatusBar() {
         //屏幕沉浸
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(statusBarColor())
                 .setLightStatusBar(statusBarColor() != ContextCompat.getColor(mContext, R.color.Gray))
                 .process();

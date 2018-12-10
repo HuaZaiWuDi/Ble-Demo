@@ -49,10 +49,6 @@ public class InvitationCodeActivity extends BaseActivity {
 
     private UserInfo mUserInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
 
-    @Override
-    protected int statusBarColor() {
-        return ContextCompat.getColor(mContext, R.color.white);
-    }
 
     @Override
     protected int layoutId() {
@@ -64,10 +60,16 @@ public class InvitationCodeActivity extends BaseActivity {
         super.initNetData();
     }
 
+
+    @Override
+    protected void initStatusBar() {
+        StatusBarUtils.from(mActivity).setTransparentStatusbar(true).process();
+    }
+
     @Override
     protected void initViews() {
         super.initViews();
-        StatusBarUtils.from(this).setTransparentStatusbar(true).process();
+
         mEditInvitation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

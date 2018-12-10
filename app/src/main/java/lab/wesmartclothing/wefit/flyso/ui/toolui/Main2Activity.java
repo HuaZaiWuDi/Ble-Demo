@@ -22,6 +22,8 @@ public class Main2Activity extends BaseActivity {
     @BindView(R.id.container)
     LinearLayout mContainer;
 
+
+
     @Override
     protected int statusBarColor() {
         return ContextCompat.getColor(mContext, R.color.white);

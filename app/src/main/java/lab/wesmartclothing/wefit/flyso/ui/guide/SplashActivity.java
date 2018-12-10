@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 
 import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -26,7 +27,6 @@ import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netutil.net.StoreService;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
@@ -68,9 +68,13 @@ public class SplashActivity extends BaseActivity {
 
 
     @Override
+    protected void initStatusBar() {
+        StatusBarUtils.from(mActivity).setHindStatusBar(true).process();
+    }
+
+    @Override
     protected void initViews() {
         super.initViews();
-        StatusBarUtils.from(this).setHindStatusBar(true).process();
 
         startService(new Intent(mContext, BleService.class));
 //        startService(new Intent(mContext, WebProcessService.class));
@@ -161,14 +165,30 @@ public class SplashActivity extends BaseActivity {
         }
         getSystemConfig();
         uploadHistoryData();
+        fetchSystemTime();
+    }
+
+    /**
+     * 获取系统时间
+     */
+    private void fetchSystemTime() {
+        RxManager.getInstance().doNetSubscribe(NetManager.getSystemService()
+                .getServerTime())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        RxLogUtils.d("服务器时间：" + RxFormat.setFormatDate(Long.parseLong(s)) +
+                                "当前时间：" + RxFormat.setFormatDate(System.currentTimeMillis()));
+                    }
+                });
     }
 
     /**
      * 获取app配置信息
      */
     private void getSystemConfig() {
-        StoreService dxyService = NetManager.getInstance().createString(StoreService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getSystemConfig())
+        RxManager.getInstance().doNetSubscribe(NetManager.getSystemService()
+                .getSystemConfig())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

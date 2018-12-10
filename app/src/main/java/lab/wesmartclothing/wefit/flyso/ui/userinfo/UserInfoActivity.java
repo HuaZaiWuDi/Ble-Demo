@@ -142,7 +142,7 @@ public class UserInfoActivity extends BaseALocationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(false)
                 .process();
