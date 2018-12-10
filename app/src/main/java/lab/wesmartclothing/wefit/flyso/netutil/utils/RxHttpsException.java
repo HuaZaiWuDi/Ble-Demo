@@ -12,6 +12,7 @@ import org.json.JSONException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 import retrofit2.HttpException;
 
@@ -71,7 +72,7 @@ public class RxHttpsException {
             msg = "请求网络失败";
         } else if (t instanceof ExplainException) {//返回后台解释性异常码
             ExplainException exception = (ExplainException) t;
-            if ("0006".equals(exception.getCode())) {
+            if (Arrays.toString(Arrays.asList("0006", "-1").toArray()).contains(exception.getCode() + "")) {
                 msg = "请求网络失败";
             } else {
                 msg = exception.getMsg();

@@ -25,6 +25,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
+
         Log.e(TAG, "onError: " + e.toString());
 //        if (BuildConfig.DEBUG)
 //            Toast.makeText(RxManager.getInstance().getApplication(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -42,6 +43,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
 
     @Override
     public void onNext(T t) {
+        Log.e(TAG, "onNext线程: " + Thread.currentThread().getName());
         _onNext(t);
     }
 

@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -198,15 +199,17 @@ public class AddDeviceActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        if (!forceBind)
-            mTopBar.addRightTextButton("跳过", R.id.tv_skip)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //跳转主页
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-                        }
-                    });
+        if (!forceBind) {
+            Button skip = mTopBar.addRightTextButton("跳过", R.id.tv_skip);
+            skip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //跳转主页
+                    RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                }
+            });
+            skip.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
+        }
     }
 
 

@@ -15,7 +15,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 
@@ -60,10 +59,9 @@ public class InvitationCodeActivity extends BaseActivity {
         super.initNetData();
     }
 
-
     @Override
-    protected void initStatusBar() {
-        StatusBarUtils.from(mActivity).setTransparentStatusbar(true).process();
+    protected int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.white);
     }
 
     @Override
@@ -132,6 +130,7 @@ public class InvitationCodeActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        RxLogUtils.d(s);
                         if (Boolean.parseBoolean(s)) {
                             if (mUserInfo != null && mUserInfo.getSex() == 0) {
                                 RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
@@ -139,7 +138,8 @@ public class InvitationCodeActivity extends BaseActivity {
                                 RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
                             }
                         } else {
-                            RxToast.normal("验证不通过");
+                            RxToast.normal("邀请码无效，请正确输入有效邀请码");
+//                            RxToast.showToast("邀请码无效，请正确输入有效邀请码");
                         }
                     }
 
