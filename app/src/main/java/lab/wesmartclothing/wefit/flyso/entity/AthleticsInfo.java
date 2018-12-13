@@ -329,6 +329,58 @@ public class AthleticsInfo {
             public int getStepNumber() {
                 return stepNumber;
             }
+
+            public void setAthlDate(long athlDate) {
+                this.athlDate = athlDate;
+            }
+
+            public void setAthlDesc(String athlDesc) {
+                this.athlDesc = athlDesc;
+            }
+
+            public void setAthlRecord(String athlRecord) {
+                this.athlRecord = athlRecord;
+            }
+
+            public void setAvgHeart(int avgHeart) {
+                this.avgHeart = avgHeart;
+            }
+
+            public void setCalorie(double calorie) {
+                this.calorie = calorie;
+            }
+
+            public void setDuration(int duration) {
+                this.duration = duration;
+            }
+
+            public void setHeartCount(int heartCount) {
+                this.heartCount = heartCount;
+            }
+
+            public void setHeight(int height) {
+                this.height = height;
+            }
+
+            public void setKilometers(int kilometers) {
+                this.kilometers = kilometers;
+            }
+
+            public void setMaxHeart(int maxHeart) {
+                this.maxHeart = maxHeart;
+            }
+
+            public void setMinHeart(int minHeart) {
+                this.minHeart = minHeart;
+            }
+
+            public void setPlanflag(int planflag) {
+                this.planflag = planflag;
+            }
+
+            public void setStepNumber(int stepNumber) {
+                this.stepNumber = stepNumber;
+            }
         }
 
         public static class AthlListBean {
@@ -445,6 +497,74 @@ public class AthleticsInfo {
 
             public int getStepNumber() {
                 return stepNumber;
+            }
+
+            public void setGid(String gid) {
+                this.gid = gid;
+            }
+
+            public void setAthlDate(long athlDate) {
+                this.athlDate = athlDate;
+            }
+
+            public void setAthlDesc(String athlDesc) {
+                this.athlDesc = athlDesc;
+            }
+
+            public void setAthlRecord(String athlRecord) {
+                this.athlRecord = athlRecord;
+            }
+
+            public void setAthlScore(double athlScore) {
+                this.athlScore = athlScore;
+            }
+
+            public void setAvgHeart(int avgHeart) {
+                this.avgHeart = avgHeart;
+            }
+
+            public void setCalorie(int calorie) {
+                this.calorie = calorie;
+            }
+
+            public void setDuration(int duration) {
+                this.duration = duration;
+            }
+
+            public void setEndTime(long endTime) {
+                this.endTime = endTime;
+            }
+
+            public void setHeartCount(int heartCount) {
+                this.heartCount = heartCount;
+            }
+
+            public void setHeight(int height) {
+                this.height = height;
+            }
+
+            public void setKilometers(int kilometers) {
+                this.kilometers = kilometers;
+            }
+
+            public void setMaxHeart(int maxHeart) {
+                this.maxHeart = maxHeart;
+            }
+
+            public void setMinHeart(int minHeart) {
+                this.minHeart = minHeart;
+            }
+
+            public void setPlanFlag(int planFlag) {
+                this.planFlag = planFlag;
+            }
+
+            public void setStartTime(long startTime) {
+                this.startTime = startTime;
+            }
+
+            public void setStepNumber(int stepNumber) {
+                this.stepNumber = stepNumber;
             }
         }
     }

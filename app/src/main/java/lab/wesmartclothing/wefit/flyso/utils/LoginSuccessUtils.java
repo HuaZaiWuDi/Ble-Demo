@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import android.content.Context;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -9,7 +10,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
@@ -52,7 +52,7 @@ public class LoginSuccessUtils {
                         RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
-                        UserInfo userInfo = MyAPP.getGson().fromJson(s, UserInfo.class);
+                        UserInfo userInfo = JSON.parseObject(s, UserInfo.class);
 
                         int sex = userInfo.getSex();
                         SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());

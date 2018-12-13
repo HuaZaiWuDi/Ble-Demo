@@ -48,4 +48,6 @@ public class FirmwareVersionUpdate {
     public void setMustUpgrade(int mustUpgrade) {
         this.mustUpgrade = mustUpgrade;
     }
+
+
 }

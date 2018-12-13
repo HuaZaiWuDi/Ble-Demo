@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -121,7 +122,7 @@ public class WeightAddFragment extends BaseActivity {
     private void showWeightData(Bundle extras) {
         if (extras == null) return;
         double unsteadyWeight = extras.getDouble(Key.BUNDLE_WEIGHT_UNSTEADY, 0);
-        final QNScaleData qnScaleData = MyAPP.getGson().fromJson(extras.getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
+        final QNScaleData qnScaleData = JSON.parseObject(extras.getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
         if (unsteadyWeight > 0) {
             mTvTargetWeight.setText((float) unsteadyWeight + "");
             mTvTip.setText("称重中...");
@@ -222,7 +223,7 @@ public class WeightAddFragment extends BaseActivity {
             WeightTools.ble2Backstage(item, bean);
         }
 
-        String s = MyAPP.getGson().toJson(bean, WeightAddBean.class);
+        String s = JSON.toJSONString(bean);
         SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addWeightInfo(NetManager.fetchRequest(s)))

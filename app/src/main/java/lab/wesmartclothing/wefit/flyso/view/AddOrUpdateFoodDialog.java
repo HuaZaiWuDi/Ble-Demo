@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.editview.DecimalDigitsInputFilter;
@@ -142,7 +143,8 @@ public class AddOrUpdateFoodDialog {
         AddedHeatInfo heatInfo = new AddedHeatInfo();
         listBean2Added(listBean, heatInfo);
 
-        String s = MyAPP.getGson().toJson(heatInfo, AddedHeatInfo.class);
+        String s = JSON.toJSONString(heatInfo);
+
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getAddedHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
@@ -151,7 +153,7 @@ public class AddOrUpdateFoodDialog {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        FoodListBean addedHeatInfo = MyAPP.getGson().fromJson(s, FoodListBean.class);
+                        FoodListBean addedHeatInfo = JSON.parseObject(s, FoodListBean.class);
                         String foodImg = listBean.getFoodImg();
                         listBean = addedHeatInfo;
                         listBean.setFoodImg(foodImg);

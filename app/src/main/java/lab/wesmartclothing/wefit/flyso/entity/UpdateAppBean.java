@@ -1,8 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -47,7 +47,7 @@ public class UpdateAppBean {
     //APP升级监听
     public void addDeviceVersion(UpdateAppBean updateApp) {
 
-        String s = MyAPP.getGson().toJson(updateApp, UpdateAppBean.class);
+        String s = JSON.toJSONString(updateApp);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addDeviceVersion(body))
                 .subscribe(new RxNetSubscriber<String>() {

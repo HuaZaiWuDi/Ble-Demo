@@ -5,13 +5,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.SPUtils;
 
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
@@ -48,7 +48,7 @@ public class PlanActivity extends BaseActivity {
                 });
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         mTvPlanTip.setText(getString(R.string.empty_plan, info.getUserName()));
     }
 

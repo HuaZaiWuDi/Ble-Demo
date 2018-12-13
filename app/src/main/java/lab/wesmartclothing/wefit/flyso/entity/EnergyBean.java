@@ -264,5 +264,17 @@ public class EnergyBean {
         public long getRecordDate() {
             return recordDate;
         }
+
+        public void setHeatCalorie(int heatCalorie) {
+            this.heatCalorie = heatCalorie;
+        }
+
+        public void setRecordDate(long recordDate) {
+            this.recordDate = recordDate;
+        }
+
+        public void setBasalCalorie(int basalCalorie) {
+            this.basalCalorie = basalCalorie;
+        }
     }
 }

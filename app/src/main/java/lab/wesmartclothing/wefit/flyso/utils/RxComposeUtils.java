@@ -71,6 +71,9 @@ public class RxComposeUtils {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
+
+
+
     }
 
     /**
@@ -147,11 +150,15 @@ public class RxComposeUtils {
                                 int code = object.getInt("code");
                                 String msg = object.getString("msg");
                                 if (code == 0) {
-                                    String data = object.getString("data");
-                                    if (TextUtils.isEmpty(data)) {
-                                        return Observable.error(new Throwable("数据异常"));
+                                    if (object.has("data")) {
+                                        String data = object.getString("data");
+                                        if (TextUtils.isEmpty(data)) {
+                                            return Observable.error(new Throwable("数据异常"));
+                                        }
+                                        return createData((T) data);
+                                    } else {
+                                        return createData((T) "");
                                     }
-                                    return createData((T) data);
                                 } else {
                                     return Observable.error(new ExplainException(msg, code));
                                 }

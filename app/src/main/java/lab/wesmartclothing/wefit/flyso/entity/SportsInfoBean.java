@@ -147,6 +147,22 @@ public class SportsInfoBean {
         private List<ListBean> list;
         private List<Integer> navigatepageNums;
 
+        public boolean isFirstPage() {
+            return isFirstPage;
+        }
+
+        public void setFirstPage(boolean firstPage) {
+            isFirstPage = firstPage;
+        }
+
+        public boolean isLastPage() {
+            return isLastPage;
+        }
+
+        public void setLastPage(boolean lastPage) {
+            isLastPage = lastPage;
+        }
+
         public int getPageNum() {
             return pageNum;
         }
@@ -519,8 +535,12 @@ public class SportsInfoBean {
             }
 
             public void setUseEndTime(Object useEndTime) {
+
+
                 this.useEndTime = useEndTime;
             }
+
+
         }
     }
 }

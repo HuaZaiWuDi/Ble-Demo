@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.ref.WeakReference;
@@ -13,7 +14,6 @@ import java.util.List;
 import cn.qqtheme.framework.entity.Province;
 import cn.qqtheme.framework.picker.AddressPicker;
 import cn.qqtheme.framework.util.ConvertUtils;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 
 /**
  * 获取地址数据并显示地址选择器
@@ -79,7 +79,7 @@ public class AddressPickTask extends AsyncTask<String, Void, ArrayList<Province>
             Activity activity = activityReference.get();
             if (activity != null) {
                 String json = ConvertUtils.toString(activity.getAssets().open("city.json"));
-                List<Province> provinces = MyAPP.getGson().fromJson(json, new TypeToken<List<Province>>() {
+                List<Province> provinces = JSON.parseObject(json, new TypeToken<List<Province>>() {
                 }.getType());
                 data.addAll(provinces);
             }

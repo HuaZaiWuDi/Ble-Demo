@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ble;
 import android.bluetooth.BluetoothAdapter;
 import android.support.annotation.IntDef;
 
+import com.alibaba.fastjson.JSON;
 import com.clj.fastble.data.BleDevice;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -102,7 +103,7 @@ public class QNBleTools {
     }
 
     public QNUser createUser() {
-        UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        UserInfo info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return null;

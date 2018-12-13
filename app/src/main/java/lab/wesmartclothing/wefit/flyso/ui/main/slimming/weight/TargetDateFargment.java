@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -167,7 +168,7 @@ public class TargetDateFargment extends BaseActivity {
     private void submitPlan() {
         RecordInfoActivity.mSubmitInfoFrom.setTargetInfo(mInfoBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .submitInform(NetManager.fetchRequest(MyAPP.getGson().toJson(RecordInfoActivity.mSubmitInfoFrom))))
+                .submitInform(NetManager.fetchRequest(JSON.toJSONString(RecordInfoActivity.mSubmitInfoFrom))))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -192,7 +193,7 @@ public class TargetDateFargment extends BaseActivity {
 
     private void settingTarget() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .setTargetWeight(NetManager.fetchRequest(MyAPP.getGson().toJson(mInfoBean))))
+                .setTargetWeight(NetManager.fetchRequest(JSON.toJSONString(mInfoBean))))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {

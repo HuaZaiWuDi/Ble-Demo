@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -482,7 +483,7 @@ public class SportingActivity extends BaseActivity {
     }
 
     public void saveHeartRate() {
-        String s = MyAPP.getGson().toJson(mHeartRateBean, HeartRateBean.class);
+        String s = JSON.toJSONString(mHeartRateBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addAthleticsInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))

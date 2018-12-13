@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -143,7 +144,7 @@ public class BodyDataFragment extends BaseActivity {
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
     private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
         mHealthyList.clear();
-        UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        UserInfo userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         //体重
         Healthy healthy0 = new Healthy();
         mHealthyList.add(healthy0);
@@ -285,7 +286,7 @@ public class BodyDataFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
-                        WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
+                        WeightDetailsBean detailsBean = JSON.parseObject(s, WeightDetailsBean.class);
                         mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
                         mTvHealthScore.setText(detailsBean.getWeightInfo().getHealthScore() + "");
                         Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);

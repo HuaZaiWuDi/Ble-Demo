@@ -85,7 +85,7 @@ public class MyJpushReceiver extends BroadcastReceiver {
                 RxLogUtils.d(TAG, "[MyJpushReceiver] 用户点击打开了通知");
 
                 //打开自定义的Activity
-                RxActivityUtils.skipActivityTop(context, MainActivity.class, bundle);
+                RxActivityUtils.skipActivity(context, MainActivity.class, bundle);
 
             } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
                 RxLogUtils.d(TAG, "[MyJpushReceiver] 用户收到到自定义图标的回调: " + bundle.getString(JPushInterface.EXTRA_EXTRA));

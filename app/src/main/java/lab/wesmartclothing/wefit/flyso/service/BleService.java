@@ -11,9 +11,9 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.ParcelUuid;
 import android.view.View;
 
+import com.alibaba.fastjson.JSON;
 import com.clj.fastble.callback.BleGattCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
@@ -186,6 +186,12 @@ public class BleService extends Service {
 
     private void initBle() {
         stopScan();
+
+        scanClothing();
+        mQNBleTools.scanBle();
+    }
+
+    private void scanClothing() {
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_Servie)
 //                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
@@ -236,12 +242,58 @@ public class BleService extends Service {
                             !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                         connectClothing(bleDevice);
                         connectDevices.put(bleDevice.getMac(), bleDevice);
+
+                        //连接成功停止扫描
+                        BleTools.getInstance().stopScanByM();
                     }
                 }
             }
         });
 
-        mQNBleTools.scanBle();
+
+//        BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
+//                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
+//                .setScanTimeOut(0)
+//                .build();
+//        BleTools.getBleManager().initScanRule(bleConfig);
+//
+//        BleTools.getBleManager().scanAndConnect(new BleScanAndConnectCallback() {
+//            @Override
+//            public void onScanFinished(BleDevice scanResult) {
+//
+//            }
+//
+//            @Override
+//            public void onStartConnect() {
+//
+//            }
+//
+//            @Override
+//            public void onConnectFail(BleDevice bleDevice, BleException exception) {
+//
+//            }
+//
+//            @Override
+//            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
+//
+//            }
+//
+//            @Override
+//            public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
+//
+//            }
+//
+//            @Override
+//            public void onScanStarted(boolean success) {
+//
+//            }
+//
+//            @Override
+//            public void onScanning(BleDevice bleDevice) {
+//
+//            }
+//        });
+
     }
 
 
@@ -250,15 +302,6 @@ public class BleService extends Service {
         mQNBleTools.stopScan();
     }
 
-
-    //通过UUID验证设备类型
-    public boolean BleContainsUUID(com.smartclothing.blelibrary.scanner.ScanResult result, String UUID) {
-        List<ParcelUuid> uuids = result.getScanRecord().getServiceUuids();
-        for (ParcelUuid uuid : uuids) {
-            if (UUID.equals(uuid.getUuid().toString())) return true;
-        }
-        return false;
-    }
 
     private void connectScaleCallBack() {
         //扫描体脂称
@@ -275,6 +318,8 @@ public class BleService extends Service {
                     mQNBleTools.connectDevice(bleDevice);
                     mQNBleTools.setDevice(bleDevice);
                     connectDevices.put(bleDevice.getMac(), bleDevice);
+
+                    mQNBleTools.stopScan();
                 }
             }
 
@@ -314,7 +359,7 @@ public class BleService extends Service {
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
                 Bundle bundle = new Bundle();
-                bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, MyAPP.getGson().toJson(qnScaleData));
+                bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, JSON.toJSONString(qnScaleData));
                 if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
                         && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
                     RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
@@ -367,6 +412,8 @@ public class BleService extends Service {
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
                 RxLogUtils.e("断开连接:");
                 connectDevices.remove(qnBleDevice.getMac());
+
+                mQNBleTools.scanBle();
             }
 
             @Override
@@ -377,6 +424,8 @@ public class BleService extends Service {
 //                RxToast.info(getString(R.string.connectError));
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
                 connectDevices.remove(qnBleDevice.getMac());
+
+                mQNBleTools.scanBle();
             }
 
             @Override
@@ -414,6 +463,8 @@ public class BleService extends Service {
                 BleTools.getBleManager().disconnect(bleDevice);
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 connectDevices.remove(bleDevice.getMac());
+
+                scanClothing();
             }
 
             @Override
@@ -422,7 +473,6 @@ public class BleService extends Service {
 
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
                 if (dfuStarting) return;
-
 
                 BleTools.getInstance().setBleDevice(bleDevice);
                 BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
@@ -439,6 +489,8 @@ public class BleService extends Service {
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 connectDevices.remove(device.getMac());
                 sportingStopTimer.startTimer();
+
+                scanClothing();
             }
         });
     }
@@ -580,7 +632,7 @@ public class BleService extends Service {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        final FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
+                        final FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
                             RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())

@@ -3,20 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d_250">
+    android:layout_height="96dp"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <ImageView
+        tools:src="@mipmap/icon_scale_view"
         android:id="@+id/img_weight"
-        android:layout_width="@dimen/d_80"
-        android:layout_height="@dimen/d_80"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/d_100"
-        android:layout_marginRight="@dimen/d_50"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
         />
 
 
     <TextView
+        android:lineSpacingExtra="2dp"
         android:id="@+id/tv_weight_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +27,7 @@
         android:layout_toRightOf="@+id/img_weight"
         android:text="我是你的燃脂衣"
         android:textColor="@color/textColor"
-        android:textSize="@dimen/d_45"/>
+        android:textSize="16sp"/>
 
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton

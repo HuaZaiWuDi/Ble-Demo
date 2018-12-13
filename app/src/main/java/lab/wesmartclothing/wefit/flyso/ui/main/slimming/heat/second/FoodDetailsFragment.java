@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
@@ -143,7 +144,7 @@ public class FoodDetailsFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        List<FoodTypeBean> list = MyAPP.getGson().fromJson(s, new TypeToken<List<FoodTypeBean>>() {
+                        List<FoodTypeBean> list = JSON.parseObject(s, new TypeToken<List<FoodTypeBean>>() {
                         }.getType());
                         for (int i = 0; i < list.size(); i++) {
                             FoodTypeBean bean = list.get(i);
@@ -312,7 +313,7 @@ public class FoodDetailsFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
 
-                        FoodInfoItem item = MyAPP.getGson().fromJson(s, FoodInfoItem.class);
+                        FoodInfoItem item = JSON.parseObject(s, FoodInfoItem.class);
                         smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
                         smartRefreshLayout.finishLoadMore(true);
                         smartRefreshLayout.finishRefresh(true);
@@ -360,7 +361,7 @@ public class FoodDetailsFragment extends BaseActivity {
         }
         foodItem.setIntakeLists(mIntakeLists);
 
-        String s = MyAPP.getGson().toJson(foodItem);
+        String s = JSON.toJSONString(foodItem);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addHeatInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))

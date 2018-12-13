@@ -114,7 +114,7 @@ public class RecipesActivity extends BaseActivity {
 
     private void initRecycler() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        info = JSON.parseObject(string, UserInfo.class);
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
 
         mTvDietitianName.setText("营养师 " + SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""));
@@ -155,7 +155,7 @@ public class RecipesActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FoodRecommendBean recommendBean = MyAPP.getGson().fromJson(s, FoodRecommendBean.class);
+                        FoodRecommendBean recommendBean = JSON.parseObject(s, FoodRecommendBean.class);
                         if (recommendBean.isHasFoodPlan()) {
                             breakfastAdapter.setNewData(recommendBean.getFoodPlan().getBreakfastList());
                             lunchAdapter.setNewData(recommendBean.getFoodPlan().getLunchList());

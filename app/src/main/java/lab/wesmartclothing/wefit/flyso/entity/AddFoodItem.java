@@ -47,8 +47,6 @@ public class AddFoodItem {
         private int unitCalorie;
 
 
-
-
         public String getFoodId() {
             return foodId;
         }
@@ -165,6 +163,8 @@ public class AddFoodItem {
                     ", gid='" + gid + '\'' +
                     '}';
         }
+
+
     }
 
     public void setUserId(String userId) {
@@ -181,5 +181,26 @@ public class AddFoodItem {
 
     public void setIntakeLists(List<intakeList> intakeLists) {
         intakeList = intakeLists;
+    }
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public long getAddDate() {
+        return addDate;
+    }
+
+    public int getEatType() {
+        return eatType;
+    }
+
+    public List<AddFoodItem.intakeList> getIntakeList() {
+        return intakeList;
+    }
+
+    public void setIntakeList(List<AddFoodItem.intakeList> intakeList) {
+        this.intakeList = intakeList;
     }
 }

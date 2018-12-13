@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -233,7 +234,7 @@ public class CollectFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        CollectBean collectBean = MyAPP.getGson().fromJson(s, CollectBean.class);
+                        CollectBean collectBean = JSON.parseObject(s, CollectBean.class);
                         List<CollectBean.ListBean> list = collectBean.getList();
                         if (pageNum == 1) {
                             adapter.setNewData(list);

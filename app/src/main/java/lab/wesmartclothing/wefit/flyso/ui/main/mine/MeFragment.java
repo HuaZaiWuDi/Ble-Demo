@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -173,8 +173,7 @@ public class MeFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Gson gson = MyAPP.getGson();
-                        UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
+                        UserCenterBean user = JSON.parseObject(s, UserCenterBean.class);
 
                         MyAPP.getImageLoader().displayImage(mActivity, user.getImgUrl(), R.mipmap.userimg, mIvUserImg);
 

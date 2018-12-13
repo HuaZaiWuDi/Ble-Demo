@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
@@ -163,7 +164,7 @@ public class HeatDetailFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         heatData = s;
-                        FetchHeatInfoBean bean = MyAPP.getGson().fromJson(s, FetchHeatInfoBean.class);
+                        FetchHeatInfoBean bean = JSON.parseObject(s, FetchHeatInfoBean.class);
                         refreshData(bean);
                     }
 

@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
@@ -260,7 +261,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 .into(mTvAppVersion);
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
         RxTextUtils.getBuilder(info.getUserName() + "\n")
                 .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
@@ -328,7 +329,7 @@ public class SportsDetailsFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
-                        SportingDetailBean heartRateBean = MyAPP.getGson().fromJson(s, SportingDetailBean.class);
+                        SportingDetailBean heartRateBean = JSON.parseObject(s, SportingDetailBean.class);
                         updateUI(heartRateBean);
                     }
 

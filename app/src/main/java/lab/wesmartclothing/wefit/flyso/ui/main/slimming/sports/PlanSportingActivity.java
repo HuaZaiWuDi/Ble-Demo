@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -223,7 +224,7 @@ public class PlanSportingActivity extends BaseActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
-        PlanBean planBean = MyAPP.getGson().fromJson(bundle.getString(Key.BUNDLE_SPORTING_PLAN), PlanBean.class);
+        PlanBean planBean = JSON.parseObject(bundle.getString(Key.BUNDLE_SPORTING_PLAN), PlanBean.class);
         planList = planBean.getAthlPlanList();
         int sunTime = 0;
         for (AthlPlanListBean bean : planList) {
@@ -632,7 +633,7 @@ public class PlanSportingActivity extends BaseActivity {
 
 
     public void saveHeartRate() {
-        String s = MyAPP.getGson().toJson(mHeartRateBean, HeartRateBean.class);
+        String s = JSON.toJSONString(mHeartRateBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addAthleticsInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))

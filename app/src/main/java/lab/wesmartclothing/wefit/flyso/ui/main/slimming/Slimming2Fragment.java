@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
@@ -263,7 +264,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         getFirstPageData();
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
@@ -568,7 +569,7 @@ public class Slimming2Fragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FirstPageBean bean = MyAPP.getGson().fromJson(s, FirstPageBean.class);
+                        FirstPageBean bean = JSON.parseObject(s, FirstPageBean.class);
                         notifyData(bean);
                     }
 

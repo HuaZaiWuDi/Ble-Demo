@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -211,7 +212,7 @@ public class MessageFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        MessageBean bean = MyAPP.getGson().fromJson(s, MessageBean.class);
+                        MessageBean bean = JSON.parseObject(s, MessageBean.class);
                         List<MessageBean.ListBean> list = bean.getList();
                         if (pageNum == 1) {
                             adapter.setNewData(list);
@@ -296,7 +297,7 @@ public class MessageFragment extends BaseActivity {
                             return;
                         }
 
-                        ReadedBean readedBean = MyAPP.getGson().fromJson(s, ReadedBean.class);
+                        ReadedBean readedBean = JSON.parseObject(s, ReadedBean.class);
                         if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_ACTIVITY) {
                             RxBus.getInstance().post(readedBean.getOpenTarget());
                             onBackPressed();

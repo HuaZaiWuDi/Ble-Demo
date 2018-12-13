@@ -19,6 +19,7 @@ public class WebActivity extends BaseWebActivity {
         setContentView(R.layout.activity_software_protocol_activiy);
         parent = findViewById(R.id.parent);
         initWebView(parent);
+
     }
 
 
@@ -26,5 +27,6 @@ public class WebActivity extends BaseWebActivity {
     @Override
     protected String getUrl() {
         return getIntent().getStringExtra(Key.BUNDLE_WEB_URL);
+//        return "http://www.baidu.com";
     }
 }

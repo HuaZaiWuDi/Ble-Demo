@@ -15,7 +15,7 @@ import java.util.Map;
  * 创建人：Jack
  * 创建时间：2018/4/17
  */
-public class RxFileBySystem {
+public class RxOpenFileBySystem {
 
 
     private static Map<String, String> FileType;

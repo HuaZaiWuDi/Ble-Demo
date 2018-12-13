@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -11,7 +12,6 @@ import com.zchu.rxcache.data.CacheResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -144,7 +144,7 @@ public class HeartRateUtil {
         }
         if (sumTime < 3 * 60) return;
 
-        String s = MyAPP.getGson().toJson(heartRateBean, HeartRateBean.class);
+        String s = JSON.toJSONString(heartRateBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addAthleticsInfo(NetManager.fetchRequest(s)))
                 .subscribe(new RxNetSubscriber<String>() {

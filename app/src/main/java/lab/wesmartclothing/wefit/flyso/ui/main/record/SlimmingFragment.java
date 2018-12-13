@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.orhanobut.logger.Logger;
 import com.smartclothing.blelibrary.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -50,11 +49,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
@@ -67,6 +64,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
@@ -270,7 +268,7 @@ public class SlimmingFragment extends BaseAcFragment {
     @Override
     protected void initNetData() {
         super.initNetData();
-        UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        UserInfo info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
@@ -367,7 +365,7 @@ public class SlimmingFragment extends BaseAcFragment {
                                             @Override
                                             public void onClick(View v) {
                                                 Bundle bundle = new Bundle();
-                                                bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
+                                                bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
                                                 RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class, bundle);
                                             }
                                         });
@@ -475,7 +473,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        List<SportingDetailBean.RealAthlListBean> realAthlList = MyAPP.getGson().fromJson(s, new TypeToken<List<SportingDetailBean.RealAthlListBean>>() {
+                        List<SportingDetailBean.RealAthlListBean> realAthlList = JSON.parseObject(s, new TypeToken<List<SportingDetailBean.RealAthlListBean>>() {
                         }.getType());
                         List<Integer> realLists = new ArrayList<>();
                         for (SportingDetailBean.RealAthlListBean bean : realAthlList) {
@@ -505,9 +503,6 @@ public class SlimmingFragment extends BaseAcFragment {
         mTvNutrition.setText(getString(R.string.dietPlanUser, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, "")));
         mTvBodybuilding.setText(getString(R.string.athlPlanUser, SPUtils.getString(SPKey.SP_ATHL_PLAN_USER, "")));
 
-        Logger.d("营养师：" + bean.getDietPlanBelongUser());
-        Logger.d("健身教练：" + bean.getAthlPlanBelongUser());
-        Logger.d("MYAPP：" + BuildConfig.DEBUG);
     }
 
     /**
@@ -940,7 +935,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                        bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
+                        bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
                         RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
                     } else {
                         bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
@@ -957,7 +952,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                        bundle.putString(Key.BUNDLE_SPORTING_PLAN, MyAPP.getGson().toJson(bean));
+                        bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
                         RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
                     } else {
                         showFreeSportDialog();

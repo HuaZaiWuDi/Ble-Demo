@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
@@ -181,7 +182,7 @@ public class FoodRecommend extends BaseActivity {
 
     private void initRecycler() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         mTvEmpty.setText(getString(R.string.empty_record, info.getUserName()));
         mMRecyclerBreakfast.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerLunch.setLayoutManager(new LinearLayoutManager(mContext));
@@ -245,7 +246,7 @@ public class FoodRecommend extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FetchHeatInfoBean bean = MyAPP.getGson().fromJson(s, FetchHeatInfoBean.class);
+                        FetchHeatInfoBean bean = JSON.parseObject(s, FetchHeatInfoBean.class);
                         updateUI(bean);
                     }
 
@@ -406,7 +407,7 @@ public class FoodRecommend extends BaseActivity {
         ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();
         lists.add(intakeList);
         foodItem.setIntakeLists(lists);
-        String s = MyAPP.getGson().toJson(foodItem);
+        String s = JSON.toJSONString(foodItem);
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addHeatInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

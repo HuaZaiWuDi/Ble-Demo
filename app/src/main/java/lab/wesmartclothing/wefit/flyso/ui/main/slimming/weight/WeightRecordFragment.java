@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
@@ -261,7 +262,7 @@ public class WeightRecordFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        WeightDataBean bean = MyAPP.getGson().fromJson(s, WeightDataBean.class);
+                        WeightDataBean bean = JSON.parseObject(s, WeightDataBean.class);
                         updateUI(bean);
                     }
 

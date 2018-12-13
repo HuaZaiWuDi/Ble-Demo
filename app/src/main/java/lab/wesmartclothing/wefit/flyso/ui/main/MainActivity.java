@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -45,7 +44,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
@@ -77,24 +76,54 @@ public class MainActivity extends BaseALocationActivity {
 
 
     @Override
+    protected int layoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
         //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
         if (savedInstanceState != null) {
             RxActivityUtils.skipActivityAndFinish(mActivity, SplashActivity.class);
             return;
         }
-        setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState);
+    }
 
-        ButterKnife.bind(this);
+    @Override
+    protected void initViews() {
+        super.initViews();
         initView();
+    }
 
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+    }
+
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        RxLogUtils.d("bundle:" + bundle.toString());
+        initReceiverPush(bundle);
+    }
+
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
+        RxBus.getInstance().register2(GoToFind.class)
+                .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<GoToFind>() {
+                    @Override
+                    protected void _onNext(GoToFind s) {
+                        mViewpager.setCurrentItem(2, true);
+                    }
+                });
     }
 
     public void initView() {
-        initReceiverPush();
-        initRxBus();
         startLocation(null);
 
         RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress(mContext));
@@ -125,27 +154,6 @@ public class MainActivity extends BaseALocationActivity {
     protected void onResume() {
         super.onResume();
         RxLogUtils.d("启动时长" + "主页可交互");
-    }
-
-    private void openActivity(String openTarget) {
-        switch (openTarget) {
-            case MyJpushReceiver.ACTIVITY_SLIM:
-                mViewpager.setCurrentItem(0, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_FIND:
-                mViewpager.setCurrentItem(1, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_SHOP:
-                mViewpager.setCurrentItem(2, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_USER:
-                mViewpager.setCurrentItem(3, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_MESSAGE:
-                //跳转消息通知
-                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
-                break;
-        }
     }
 
 
@@ -243,10 +251,7 @@ public class MainActivity extends BaseALocationActivity {
      * "openTarget":""      //operation：2（ slim-瘦身首页，find-发现首页，shop-商城首页，user-我的首页，message-站内信,url）
      * }
      */
-    private void initReceiverPush() {
-        Bundle bundle = getIntent().getExtras();
-        RxLogUtils.d("点击通知：" + bundle);
-        if (bundle == null) return;
+    private void initReceiverPush(Bundle bundle) {
         String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
         JsonParser parser = new JsonParser();
         JsonObject object = (JsonObject) parser.parse(extra);
@@ -263,27 +268,33 @@ public class MainActivity extends BaseALocationActivity {
             case TYPE_OPEN_URL:
                 //打开URL
                 bundle.putString(Key.BUNDLE_WEB_URL, openTarget);
-                RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
+                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.appName));
+                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
                 break;
         }
         pushMessageReaded(msgId);
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    private void initRxBus() {
-        RxBus.getInstance().register2(GoToFind.class)
-                .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<GoToFind>() {
-                    @Override
-                    protected void _onNext(GoToFind s) {
-                        mViewpager.setCurrentItem(2, true);
-                    }
-                });
+    private void openActivity(String openTarget) {
+        switch (openTarget) {
+            case MyJpushReceiver.ACTIVITY_SLIM:
+                mViewpager.setCurrentItem(0, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_FIND:
+                mViewpager.setCurrentItem(1, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_SHOP:
+                mViewpager.setCurrentItem(2, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_USER:
+                mViewpager.setCurrentItem(3, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_MESSAGE:
+                //跳转消息通知
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
+                break;
+        }
     }
 
 

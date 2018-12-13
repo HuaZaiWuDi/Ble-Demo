@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -114,7 +115,7 @@ public class UserInfofragment extends BaseActivity {
         initTopBar();
         initImagePicker();
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        info = JSON.parseObject(string, UserInfo.class);
         info.setChange(false);
         notifyData(info);
     }
@@ -304,7 +305,7 @@ public class UserInfofragment extends BaseActivity {
 
     /*保存按钮，提交用户数据*/
     private void requestSaveUserInfo() {
-        final String gson = MyAPP.getGson().toJson(info, UserInfo.class);
+        final String gson = JSON.toJSONString(info);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().saveUserInfo(NetManager.fetchRequest(gson)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

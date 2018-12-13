@@ -92,7 +92,11 @@ public class BleTools {
 //        bleManager.disableBluetooth();//关闭蓝牙
         bleManager.enableLog(false);//是否开启蓝牙日志
         bleManager.setMaxConnectCount(1);
-        bleManager.setOperateTimeout(500000);//设置超时时间
+        bleManager.setOperateTimeout(2000);//设置操作超时时间
+
+        bleManager.setReConnectCount(3, 3000);
+        bleManager.setConnectOverTime(15000);
+
     }
 
     public void setBleDevice(BleDevice bleDevice) {
@@ -433,18 +437,6 @@ public class BleTools {
         return BluetoothAdapter.checkBluetoothAddress(Mac);
     }
 
-
-//    public void scanByM() {
-//        List<android.bluetooth.le.ScanFilter> filters = new ArrayList<>();
-//        android.bluetooth.le.ScanSettings scanSettings=new  android.bluetooth.le.ScanSettings.Builder()
-//                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-//                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-//                .setMatchMode()
-//
-//
-//        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-//        adapter.getBluetoothLeScanner().startScan(filters, scanSettings, scanCallback);
-//    }
 
 
 }

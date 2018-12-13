@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -104,7 +105,7 @@ public class AddedFoodFragment extends BaseActivity {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
             String heatData = bundle.getString(Key.ADD_FOOD_INFO);
-            FetchHeatInfoBean bean = MyAPP.getGson().fromJson(heatData, FetchHeatInfoBean.class);
+            FetchHeatInfoBean bean = JSON.parseObject(heatData, FetchHeatInfoBean.class);
             RxLogUtils.d("加载食材：" + bean);
             if (bean != null) {
                 List<FoodListBean> list = null;
@@ -233,7 +234,8 @@ public class AddedFoodFragment extends BaseActivity {
         ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();
         lists.add(intakeList);
         foodItem.setIntakeLists(lists);
-        String s = MyAPP.getGson().toJson(foodItem);
+        String s = JSON.toJSONString(foodItem);
+
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addHeatInfo(body))
@@ -246,8 +248,8 @@ public class AddedFoodFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

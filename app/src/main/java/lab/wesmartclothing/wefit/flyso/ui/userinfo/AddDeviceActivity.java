@@ -16,9 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
@@ -239,9 +239,11 @@ public class AddDeviceActivity extends BaseActivity {
                     helper.setVisible(R.id.tv_Bind, true);
                 }
 
-                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceMac())
-                        .append("(距离：" + BLEUtil.rssi2Distance(item.getRssi(), 2) + "米)")
-                        .setProportion(0.8f)
+                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceName() + "\t" +
+                        item.getDeviceMac().substring(12, item.getDeviceMac().length()) + "\n")
+                        .append("距离：" + BLEUtil.rssi2Distance(item.getRssi(), 2) + "米")
+                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .setProportion(0.73f)
                         .create();
 
                 helper.setText(R.id.tv_weight_data, stringBuilder);
@@ -300,7 +302,7 @@ public class AddDeviceActivity extends BaseActivity {
             }
         }
         mBindDeviceItem.setDeviceList(mDeviceLists);
-        String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
+        String s = JSON.toJSONString(mBindDeviceItem);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addBindDevice(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

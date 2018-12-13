@@ -8,7 +8,6 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
-import com.google.gson.Gson;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -52,7 +51,6 @@ public class MyAPP extends Application {
 
     public static QNBleApi QNapi;
     public static Typeface typeface;
-    private static Gson sGson;
     public static AMapLocation aMapLocation = null;//定位信息
     public static GlideImageLoader sImageLoader;
 
@@ -123,7 +121,7 @@ public class MyAPP extends Application {
                             .diskConverter(new SerializableDiskConverter())
                             .diskMax((20 * 1024 * 1024))
                             .memoryMax((20 * 1024 * 1024))
-                            .setDebug(true)
+                            .setDebug(false)
                             .build());
                 } catch (Exception e) {
                     RxLogUtils.e(e);
@@ -171,12 +169,6 @@ public class MyAPP extends Application {
         return RxCache.getDefault();
     }
 
-    public static Gson getGson() {
-        if (sGson == null) {
-            sGson = new Gson();
-        }
-        return sGson;
-    }
 
     private void initQN() {
         QNapi = QNBleApi.getInstance(this);

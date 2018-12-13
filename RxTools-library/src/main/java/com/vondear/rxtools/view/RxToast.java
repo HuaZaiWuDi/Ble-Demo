@@ -231,7 +231,7 @@ public class RxToast {
 
     @CheckResult
     public static Toast custom(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor, @ColorInt int tintColor, int duration, boolean withIcon, boolean shouldTint) {
-        //在某些手机(VOVI)上面，使用全局唯一单例的Toast视图多次点击显示一次之后不再显示。
+        //在某些手机(VIVO)上面，使用全局唯一单例的Toast视图多次点击显示一次之后不再显示。
         // 这里修改为每次都使用新的，防止占用内存以及Toast压栈，这里关闭之前的Toast并置为null
         if (currentToast != null) {
             currentToast.cancel();

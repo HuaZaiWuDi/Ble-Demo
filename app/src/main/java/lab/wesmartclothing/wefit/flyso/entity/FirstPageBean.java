@@ -374,6 +374,102 @@ public class FirstPageBean {
         public void setBasalHeat(double basalHeat) {
             this.basalHeat = basalHeat;
         }
+
+        public void setBmr(double bmr) {
+            this.bmr = bmr;
+        }
+
+        public void setBodyAge(double bodyAge) {
+            this.bodyAge = bodyAge;
+        }
+
+        public void setBodyFat(double bodyFat) {
+            this.bodyFat = bodyFat;
+        }
+
+        public void setBodyFfm(double bodyFfm) {
+            this.bodyFfm = bodyFfm;
+        }
+
+        public void setBodyType(String bodyType) {
+            this.bodyType = bodyType;
+        }
+
+        public void setBone(double bone) {
+            this.bone = bone;
+        }
+
+        public void setCreateTime(long createTime) {
+            this.createTime = createTime;
+        }
+
+        public void setCreateUser(String createUser) {
+            this.createUser = createUser;
+        }
+
+        public void setFlesh(double flesh) {
+            this.flesh = flesh;
+        }
+
+        public void setGid(String gid) {
+            this.gid = gid;
+        }
+
+        public void setHealthScore(double healthScore) {
+            this.healthScore = healthScore;
+        }
+
+        public void setMeasureTime(String measureTime) {
+            this.measureTime = measureTime;
+        }
+
+        public void setMuscle(double muscle) {
+            this.muscle = muscle;
+        }
+
+        public void setProtein(double protein) {
+            this.protein = protein;
+        }
+
+        public void setSinew(double sinew) {
+            this.sinew = sinew;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public void setSubfat(double subfat) {
+            this.subfat = subfat;
+        }
+
+        public void setUpdateTime(long updateTime) {
+            this.updateTime = updateTime;
+        }
+
+        public void setUpdateUser(String updateUser) {
+            this.updateUser = updateUser;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public void setVisfat(double visfat) {
+            this.visfat = visfat;
+        }
+
+        public void setWater(double water) {
+            this.water = water;
+        }
+
+        public void setWeight(double weight) {
+            this.weight = weight;
+        }
+
+        public void setWeightDate(long weightDate) {
+            this.weightDate = weightDate;
+        }
     }
 
     public static class AthleticsInfoListBean {
@@ -481,6 +577,75 @@ public class FirstPageBean {
 
         public String getUserId() {
             return userId;
+        }
+
+
+        public void setAthlDate(long athlDate) {
+            this.athlDate = athlDate;
+        }
+
+        public void setAthlDesc(String athlDesc) {
+            this.athlDesc = athlDesc;
+        }
+
+        public void setAthlRecord(String athlRecord) {
+            this.athlRecord = athlRecord;
+        }
+
+        public void setAvgHeart(int avgHeart) {
+            this.avgHeart = avgHeart;
+        }
+
+        public void setCalorie(int calorie) {
+            this.calorie = calorie;
+        }
+
+        public void setCreateTime(long createTime) {
+            this.createTime = createTime;
+        }
+
+        public void setCreateUser(String createUser) {
+            this.createUser = createUser;
+        }
+
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
+
+        public void setGid(String gid) {
+            this.gid = gid;
+        }
+
+        public void setKilometers(double kilometers) {
+            this.kilometers = kilometers;
+        }
+
+        public void setMaxHeart(int maxHeart) {
+            this.maxHeart = maxHeart;
+        }
+
+        public void setMinHeart(int minHeart) {
+            this.minHeart = minHeart;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public void setStepNumber(int stepNumber) {
+            this.stepNumber = stepNumber;
+        }
+
+        public void setUpdateTime(long updateTime) {
+            this.updateTime = updateTime;
+        }
+
+        public void setUpdateUser(String updateUser) {
+            this.updateUser = updateUser;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
     }
 
@@ -637,6 +802,106 @@ public class FirstPageBean {
 
         public long getWeightDate() {
             return weightDate;
+        }
+
+        public void setBmi(double bmi) {
+            this.bmi = bmi;
+        }
+
+        public void setBmr(double bmr) {
+            this.bmr = bmr;
+        }
+
+        public void setBodyAge(int bodyAge) {
+            this.bodyAge = bodyAge;
+        }
+
+        public void setBodyFat(double bodyFat) {
+            this.bodyFat = bodyFat;
+        }
+
+        public void setBodyFfm(double bodyFfm) {
+            this.bodyFfm = bodyFfm;
+        }
+
+        public void setBodyType(String bodyType) {
+            this.bodyType = bodyType;
+        }
+
+        public void setBone(double bone) {
+            this.bone = bone;
+        }
+
+        public void setCreateTime(long createTime) {
+            this.createTime = createTime;
+        }
+
+        public void setCreateUser(String createUser) {
+            this.createUser = createUser;
+        }
+
+        public void setFlesh(double flesh) {
+            this.flesh = flesh;
+        }
+
+        public void setGid(String gid) {
+            this.gid = gid;
+        }
+
+        public void setHealthScore(double healthScore) {
+            this.healthScore = healthScore;
+        }
+
+        public void setMeasureTime(long measureTime) {
+            this.measureTime = measureTime;
+        }
+
+        public void setMuscle(double muscle) {
+            this.muscle = muscle;
+        }
+
+        public void setProtein(double protein) {
+            this.protein = protein;
+        }
+
+        public void setSinew(double sinew) {
+            this.sinew = sinew;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public void setSubfat(double subfat) {
+            this.subfat = subfat;
+        }
+
+        public void setUpdateTime(long updateTime) {
+            this.updateTime = updateTime;
+        }
+
+        public void setUpdateUser(String updateUser) {
+            this.updateUser = updateUser;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public void setVisfat(double visfat) {
+            this.visfat = visfat;
+        }
+
+        public void setWater(double water) {
+            this.water = water;
+        }
+
+        public void setWeight(double weight) {
+            this.weight = weight;
+        }
+
+        public void setWeightDate(long weightDate) {
+            this.weightDate = weightDate;
         }
     }
 

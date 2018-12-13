@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -55,7 +56,7 @@ public class DeviceLink {
             deviceLink.setCountry(MyAPP.aMapLocation.getCountry());
             deviceLink.setProvince(MyAPP.aMapLocation.getProvince());
         }
-        String s = MyAPP.getGson().toJson(deviceLink, DeviceLink.class);
+        String s = JSON.toJSONString(deviceLink);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().deviceLink(body))
                 .subscribe(new RxNetSubscriber<String>() {

@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -138,7 +139,7 @@ public class WeightDataActivity extends BaseActivity {
                 WeightTools.ble2Backstage(item, bean);
             }
         bean.setWeight(qnScaleData.getWeight());
-        String s = MyAPP.getGson().toJson(bean, WeightAddBean.class);
+        String s = JSON.toJSONString(bean);
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addWeightInfo(NetManager.fetchRequest(s)))

@@ -21,9 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
@@ -258,8 +258,8 @@ public class SmartClothingFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Logger.json(s);
-                        AthleticsInfo bean = MyAPP.getGson().fromJson(s, AthleticsInfo.class);
+//                        Logger.json(s);
+                        AthleticsInfo bean = JSON.parseObject(s, AthleticsInfo.class);
                         updateUI(bean);
                     }
                     @Override

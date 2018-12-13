@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -21,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -93,7 +93,9 @@ public class SplashActivity extends BaseActivity {
 
         RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
 
-//        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
+        RxLogUtils.d("APP版本号：" + "1.10.1".compareTo("2.1.5"));
+
+//        RxActivityUtils.skipActivityAndFinish(mContext, WebActivity.class);
     }
 
 
@@ -118,7 +120,7 @@ public class SplashActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
-                        UserInfo userInfo = MyAPP.getGson().fromJson(s, UserInfo.class);
+                        UserInfo userInfo = JSON.parseObject(s, UserInfo.class);
 
                         int sex = userInfo.getSex();
                         SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
@@ -192,7 +194,7 @@ public class SplashActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        List<SystemConfigBean> configBeans = MyAPP.getGson().fromJson(s, new TypeToken<List<SystemConfigBean>>() {
+                        List<SystemConfigBean> configBeans = JSON.parseObject(s, new TypeToken<List<SystemConfigBean>>() {
                         }.getType());
 
                         for (SystemConfigBean bean : configBeans) {

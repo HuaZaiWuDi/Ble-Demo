@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
@@ -84,7 +85,7 @@ public class RecordInfoActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        listBean = MyAPP.getGson().fromJson(s, new TypeToken<List<QuestionListBean>>() {
+                        listBean = JSON.parseObject(s, new TypeToken<List<QuestionListBean>>() {
                         }.getType());
                         switchQuestion();
 

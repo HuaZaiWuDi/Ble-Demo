@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -191,7 +192,7 @@ public class EnergyActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         Logger.json(s);
-                        EnergyBean bean = MyAPP.getGson().fromJson(s, EnergyBean.class);
+                        EnergyBean bean = JSON.parseObject(s, EnergyBean.class);
                         updateUI(bean);
                     }
 

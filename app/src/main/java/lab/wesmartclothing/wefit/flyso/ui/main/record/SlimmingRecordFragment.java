@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
@@ -389,7 +390,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
     private void initUserInfo() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
     }
 
@@ -402,7 +403,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        SlimmingRecordBean bean = MyAPP.getGson().fromJson(s, SlimmingRecordBean.class);
+                        SlimmingRecordBean bean = JSON.parseObject(s, SlimmingRecordBean.class);
                         updateUI(bean);
                     }
 
@@ -620,7 +621,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     private void weightRecord(SlimmingRecordBean bean) {
         setLineChartData(bean);
         if (bean.getNormWeight() != 0)
-            addLimitLine2Y(mMLineChart, (float) bean.getNormWeight(), bean.getNormWeight() + "kg");
+            addLimitLine2Y(mMLineChart, (float) (double) bean.getNormWeight(), bean.getNormWeight() + "kg");
     }
 
 
@@ -648,7 +649,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
     private void setLineChartData(SlimmingRecordBean bean) {
         dates.clear();
-        List<SlimmingRecordBean.WeightInfoBean> list = bean.getWeightInfoList();
+        List<SlimmingRecordBean.WeightInfoListBean> list = bean.getWeightInfoList();
         Calendar calendar = Calendar.getInstance();
         ArrayList<Entry> lineEntry = new ArrayList<>();
         float max = 0;
@@ -659,7 +660,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             int size = list.size();
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
-                    float weight = (float) list.get(i).getWeight();
+                    float weight = (float) (double) list.get(i).getWeight();
                     lineEntry.add(new Entry(6 - i, weight));
                     dates.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "MM/dd"));
                     max = Math.max(max, weight);
@@ -960,7 +961,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
 
-            UserInfo info = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+            UserInfo info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
 

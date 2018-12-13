@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -151,7 +152,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     public void initView() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        mUserInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
+        mUserInfo = JSON.parseObject(string, UserInfo.class);
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
@@ -311,7 +312,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             mUserInfo.setCity("");
         }
 
-        String s = MyAPP.getGson().toJson(mUserInfo, UserInfo.class);
+        String s = JSON.toJSONString(mUserInfo);
         SPUtils.put(SPKey.SP_UserInfo, s);
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()

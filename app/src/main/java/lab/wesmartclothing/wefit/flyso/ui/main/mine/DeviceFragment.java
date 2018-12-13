@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
@@ -34,7 +35,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -178,7 +178,7 @@ public class DeviceFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
 
-                        DeviceListbean deviceListbean = MyAPP.getGson().fromJson(s, DeviceListbean.class);
+                        DeviceListbean deviceListbean = JSON.parseObject(s, DeviceListbean.class);
                         beanList = deviceListbean.getList();
                         for (int i = 0; i < beanList.size(); i++) {
                             DeviceListbean.ListBean device = beanList.get(i);

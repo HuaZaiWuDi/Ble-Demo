@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.reflect.TypeToken;
@@ -352,7 +353,7 @@ public class SearchHistoryFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        SearchListItem item = MyAPP.getGson().fromJson(s, SearchListItem.class);
+                        SearchListItem item = JSON.parseObject(s, SearchListItem.class);
                         List<FoodListBean> beans = item.getList();
                         searchListAdapter.setNewData(beans);
                         if (beans.size() == 0) {
@@ -381,7 +382,7 @@ public class SearchHistoryFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        HotKeyItem item = MyAPP.getGson().fromJson(s, HotKeyItem.class);
+                        HotKeyItem item = JSON.parseObject(s, HotKeyItem.class);
                         hotLists.clear();
                         List<HotKeyItem.ListBean> list = item.getList();
                         for (HotKeyItem.ListBean bean : list) {
@@ -422,7 +423,7 @@ public class SearchHistoryFragment extends BaseActivity {
         }
         foodItem.setIntakeLists(mIntakeLists);
 
-        String s = MyAPP.getGson().toJson(foodItem);
+        String s = JSON.toJSONString(foodItem);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addHeatInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

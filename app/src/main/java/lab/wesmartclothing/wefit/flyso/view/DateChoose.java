@@ -266,7 +266,7 @@ public class DateChoose extends RelativeLayout {
                     @Override
                     protected void _onNext(String s) {
                         if (mContext == null) return;
-                        List<Long> dates = MyAPP.getGson().fromJson(s, new TypeToken<List<Long>>() {
+                        List<Long> dates = JSON.parseObject(s, new TypeToken<List<Long>>() {
                         }.getType());
                         setRecipesDates(dates);
                         mCalendarView.addDecorator(new EventDecorator(Color.parseColor(Theme == TYPE_FOOD_RECORD ? "#FF7200" : "#E4CA9F"), calendarDays));
