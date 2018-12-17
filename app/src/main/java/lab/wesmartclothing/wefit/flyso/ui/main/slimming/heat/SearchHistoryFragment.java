@@ -436,7 +436,7 @@ public class SearchHistoryFragment extends BaseActivity {
                         RxBus.getInstance().post(new RefreshSlimming());
 
                         if (SlimmingPage) {
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         } else {
                             RxActivityUtils.finishActivity();
                             RxActivityUtils.finishActivity();

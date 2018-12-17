@@ -4,9 +4,9 @@ import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.view.layout.RxTextView;
 
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -18,7 +18,7 @@ public class Main2Activity extends BaseActivity {
     @BindView(R.id.topBar)
     QMUITopBar mTopBar;
     @BindView(R.id.text)
-    TextView mText;
+    RxTextView mText;
     @BindView(R.id.container)
     LinearLayout mContainer;
 
@@ -34,11 +34,17 @@ public class Main2Activity extends BaseActivity {
     }
 
 
+    private boolean f;
+
     @Override
     protected void initViews() {
         super.initViews();
-
+//        RxTextUtils.getBuilder(getString(R.string.plan))
+//                .setBackgroundColor(R.drawable.fade_write)
+//                .into(mText);
+////        mText.setTextColor(R.drawable.fade_write);
         mText.setMovementMethod(ScrollingMovementMethod.getInstance());
+
 
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
@@ -48,6 +54,14 @@ public class Main2Activity extends BaseActivity {
                     }
                 });
         mTopBar.setTitle(getString(R.string.appName) + " 健康报告");
+
+        mText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                f = !f;
+                mText.getHelper().setTextGradientOpen(f);
+            }
+        });
 
     }
 

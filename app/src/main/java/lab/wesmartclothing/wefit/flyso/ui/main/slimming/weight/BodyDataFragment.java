@@ -200,7 +200,7 @@ public class BodyDataFragment extends BaseActivity {
         mHealthyList.add(healthy4);
 
         //基础代谢
-        float bmr = SPUtils.getFloat(SPKey.SP_BMR);
+        float bmr = weightInfo.getBasalHeat();
         bmr = bmr <= 0 ? 903 : bmr;
         Healthy healthy5 = new Healthy();
         healthy5.setSections(new double[]{bmr});
@@ -439,6 +439,6 @@ public class BodyDataFragment extends BaseActivity {
         if (goBack) {
             super.onBackPressed();
         } else
-            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+            RxActivityUtils.skipActivity(mContext, MainActivity.class);
     }
 }

@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +33,6 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -46,8 +43,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
-import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -66,34 +62,41 @@ public class MessageFragment extends BaseActivity {
     SwipeMenuRecyclerView mRvCollect;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
-    Unbinder unbinder;
 
 
     private BaseQuickAdapter adapter;
     private int pageNum = 1;
     private View emptyView;
+    private boolean changeReadState = false;
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_message);
-        unbinder = ButterKnife.bind(this);
-        initView();
+    protected int layoutId() {
+        return R.layout.fragment_message;
     }
 
-
-    private void initView() {
+    @Override
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         initRecycler();
+
+
+    }
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
         pageNum = 1;
         initData();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
 
     private void initRecycler() {
         /*侧滑删除*/
@@ -179,7 +182,6 @@ public class MessageFragment extends BaseActivity {
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
             if (AntiShake.getInstance().check()) return;
-            final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
             readed(position);
         }
     };
@@ -219,6 +221,7 @@ public class MessageFragment extends BaseActivity {
                         } else {
                             adapter.addData(list);
                         }
+
                         if (smartRefreshLayout.isLoading()) {
                             pageNum++;
                             smartRefreshLayout.finishLoadMore(true);
@@ -240,7 +243,7 @@ public class MessageFragment extends BaseActivity {
     }
 
     //是否含有未读
-    private boolean hasRead() {
+    private boolean hasUnRead() {
         if (adapter != null) {
             for (MessageBean.ListBean bean : (List<MessageBean.ListBean>) adapter.getData()) {
                 if (bean.getReadState() != 1) {
@@ -253,7 +256,7 @@ public class MessageFragment extends BaseActivity {
 
 
     private void readAllRequest() {
-        if (!hasRead()) {
+        if (!hasUnRead()) {
             RxToast.normal("没有未读消息");
             return;
         }
@@ -269,11 +272,12 @@ public class MessageFragment extends BaseActivity {
                             bean.setReadState(1);
                         }
                         adapter.setNewData(listBeans);
+                        changeReadState = true;
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -292,6 +296,7 @@ public class MessageFragment extends BaseActivity {
                         if (item.getReadState() != 1) {
                             item.setReadState(1);
                             adapter.setData(position, item);
+                            changeReadState = true;
                         }
                         if (RxDataUtils.isNullString(s)) {
                             return;
@@ -317,7 +322,7 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    public void _onError(String e,int code) {
+                    public void _onError(String e, int code) {
                         RxToast.normal(e);
                     }
                 });
@@ -337,8 +342,8 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -346,9 +351,8 @@ public class MessageFragment extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!hasRead()) {
-            RxBus.getInstance().post(new RefreshMe());
-            RxBus.getInstance().post(new RefreshSlimming());
+        if (changeReadState && !hasUnRead()) {
+            RxBus.getInstance().post(new MessageChangeBus());
         }
         super.onBackPressed();
     }

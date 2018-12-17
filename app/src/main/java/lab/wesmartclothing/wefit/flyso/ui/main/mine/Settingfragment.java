@@ -12,11 +12,9 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
-import com.zchu.rxcache.RxCache;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +27,6 @@ import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
@@ -168,24 +165,13 @@ public class Settingfragment extends BaseActivity {
                         BleTools.getInstance().disConnect();
                         QNBleTools.getInstance().disConnectDevice();
 
-                        RxCache.getDefault().clear()
-                                .subscribe(new RxSubscriber<Boolean>() {
-                                    @Override
-                                    protected void _onNext(Boolean aBoolean) {
-                                        RxLogUtils.d("删除是否成功：" + aBoolean);
-                                    }
-
-                                    @Override
-                                    public void onComplete() {
-                                        super.onComplete();
-                                        RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
-                                    }
-                                });
+                        RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
 
                     }
+
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.normal(error, code);
                     }
                 });
     }

@@ -16,7 +16,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 
@@ -62,12 +61,13 @@ public class LoginSuccessUtils {
 
                         JPushUtils.setAliasOrTags("");
 
-                        if (!userInfo.isHasInviteCode()) {
-                            RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
-                        } else if (sex == 0) {
+//                        if (!userInfo.isHasInviteCode()) {
+//                            RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
+//                        } else
+                        if (sex == 0) {
                             RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity.class);
                         } else {
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         }
 
                     }

@@ -513,6 +513,22 @@
         <attr name="gradient_gradientRadius"/>
         <attr name="gradient_type"/>
 
+        <!--text渐变-->
+        <attr name="text_gradient_orientation" format="enum">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+        <attr name="text_gradient_centerColor" format="color"/>
+        <attr name="text_gradient_endColor" format="color"/>
+        <attr name="text_gradient_startColor" format="color"/>
+        <!--是否开启text渐变-->
+        <attr name="text_gradient_open" format="boolean"/>
+        <attr name="text_gradient_tileMode" format="enum">
+            <enum name="CLAMP" value="0"/>
+            <enum name="REPEAT" value="1"/>
+            <enum name="MIRROR" value="2"/>
+        </attr>
+
     </declare-styleable>
 
     <!-- REditText -->

@@ -61,6 +61,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
@@ -340,6 +341,16 @@ public class SlimmingFragment extends BaseAcFragment {
                     }
                 });
 
+        //消息通知
+        RxBus.getInstance().register2(MessageChangeBus.class)
+                .compose(RxComposeUtils.<MessageChangeBus>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<MessageChangeBus>() {
+                    @Override
+                    protected void _onNext(MessageChangeBus messageChangeBus) {
+                        mIvNotify.setBackgroundResource(R.mipmap.icon_email_white);
+                    }
+                });
+
 
         RxBus.getInstance().register2(SportsDataTab.class)
                 .compose(RxComposeUtils.<SportsDataTab>bindLife(lifecycleSubject))
@@ -482,6 +493,7 @@ public class SlimmingFragment extends BaseAcFragment {
                         lineChartUtils.setRealTimeData(realLists);
                         mLineChart.animateX(1000);
                     }
+
                     @Override
                     protected void _onError(String error, int code) {
                         super._onError(error, code);
@@ -568,9 +580,6 @@ public class SlimmingFragment extends BaseAcFragment {
 
         SPUtils.put(SPKey.SP_realWeight, (float) weight);
 
-        //基础代谢
-        SPUtils.put(SPKey.SP_BMR, (float) bean.getWeightChangeVO().getBasalHeatChange());
-
         if (weight > minNormalWeight && weight <= maxNormalWeight) {
             mTvWeightStatus.setText("标准");
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
@@ -609,10 +618,6 @@ public class SlimmingFragment extends BaseAcFragment {
 
 
         if (hasInitialWeight) {
-            RxLogUtils.d("开启" + weightChangeVO.getWeightChange());
-            RxLogUtils.d("开启" + weightChangeVO.getBodyFatChange());
-            RxLogUtils.d("开启" + weightChangeVO.getBmiChange());
-            RxLogUtils.d("开启" + weightChangeVO.getBmrChange());
             Drawable drawable1 = null;
             if (weightChangeVO.getWeightChange() > 0) {
                 drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.icon_red_up);

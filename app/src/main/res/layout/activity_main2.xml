@@ -21,13 +21,32 @@
         tools:visibility="visible"
         />
 
-    <TextView
+    <com.vondear.rxtools.view.layout.RxTextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scrollbars="vertical"
-        tools:text="@string/plan"/>
+        android:text="@string/plan"
+        app:text_gradient_endColor="@color/yellow_FFBC00"
+        app:text_gradient_open="true"
+        app:text_gradient_orientation="vertical"
+        app:text_gradient_startColor="@color/red"/>
 
-
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:layout_marginLeft="100dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:text="我的世界"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        app:gradient_angle="BOTTOM_TOP"
+        app:gradient_endColor="@color/orange_FF7200"
+        app:gradient_startColor="@color/green"
+        app:text_gradient_centerColor="@color/colorWhite"
+        app:text_gradient_endColor="@color/yellow_FFBC00"
+        app:text_gradient_open="true"
+        app:text_gradient_orientation="vertical"
+        app:text_gradient_startColor="@color/red"/>
 
 </LinearLayout>

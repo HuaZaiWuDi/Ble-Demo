@@ -4,15 +4,20 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import com.vondear.rxtools.R;
@@ -27,6 +32,7 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
 
     //default value
     public static final int ICON_DIR_LEFT = 1, ICON_DIR_TOP = 2, ICON_DIR_RIGHT = 3, ICON_DIR_BOTTOM = 4;
+    public static final int ORIENTATION_HORIZONTAL = 0, ORIENTATION_VERTICAL = 1;
 
     //icon
     private int mIconHeight;
@@ -55,8 +61,19 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
     //ripple
     private int mRippleColor = 0;
 
+    //text渐变
+    public int mTextGradientOrientation = 0;
+    private int mTextGradientCenterColor = 0;
+    private int mTextGradientEndColor = 0;
+    private int mTextGradientSatrtColor = 0;
+    public boolean mTextGradientOpen = false;
+    public int mTextGradientTileMode = 0;
+    public int[] mTextGradientColors;
+    public Shader textShader;
+
     //手势检测
     private GestureDetector mGestureDetector;
+
 
     public RxTextViewHelper(Context context, TextView view, AttributeSet attrs) {
         super(context, view, attrs);
@@ -116,6 +133,23 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
         mGradientRadius = a.getDimensionPixelSize(R.styleable.RBaseView_gradient_gradientRadius, 0);
         mGradientType = a.getInt(R.styleable.RBaseView_gradient_type, GRADIENT_TYPE_LINEAR);
 
+
+        //text渐变
+        mTextGradientOrientation = a.getInteger(R.styleable.RxTextView_text_gradient_orientation, 0);
+        mTextGradientCenterColor = a.getColor(R.styleable.RxTextView_text_gradient_centerColor, 0);
+        mTextGradientEndColor = a.getColor(R.styleable.RxTextView_text_gradient_endColor, 0);
+        mTextGradientSatrtColor = a.getColor(R.styleable.RxTextView_text_gradient_startColor, 0);
+        mTextGradientOpen = a.getBoolean(R.styleable.RxTextView_text_gradient_open, false);
+        mTextGradientTileMode = a.getInt(R.styleable.RxTextView_text_gradient_tileMode, 0);
+
+
+        if (mTextGradientCenterColor == 0) {
+            mTextGradientColors = new int[]{mTextGradientSatrtColor, mTextGradientEndColor};
+        } else {
+            mTextGradientColors = new int[]{mTextGradientSatrtColor,
+                    mTextGradientCenterColor, mTextGradientEndColor};
+        }
+
         a.recycle();
 
         //setup
@@ -150,6 +184,13 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
         //设置渐变
         setGradient();
 
+
+        mView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                setTextGradient();
+            }
+        });
     }
 
 
@@ -394,6 +435,58 @@ public class RxTextViewHelper extends RxBaseHelper<TextView> {
         mTextColorStateList = new ColorStateList(states, colors);
         mView.setTextColor(mTextColorStateList);
     }
+
+    public RxTextViewHelper setTextGradientOrientation(@IntRange(from = 0, to = 1) int orientation) {
+        this.mTextGradientOrientation = orientation;
+        mTextGradientOpen = true;
+        setTextGradient();
+        return this;
+    }
+
+    public RxTextViewHelper setTextGradientOpen(boolean textGradientOpen) {
+        mTextGradientOpen = textGradientOpen;
+        setTextGradient();
+        return this;
+    }
+
+    public RxTextViewHelper setTextGradientColorList(@ColorInt int[] colors) {
+        if (colors.length < 3) {
+            throw new NullPointerException("colors 长度必须大于2");
+        }
+        mTextGradientOpen = true;
+        mTextGradientColors = colors;
+        setTextGradient();
+        return this;
+    }
+
+    private void setTextGradient() {
+        if (!mTextGradientOpen) {
+            mView.getPaint().setShader(null);
+            mView.invalidate();
+            return;
+        }
+        Shader.TileMode mode = Shader.TileMode.CLAMP;
+        switch (mTextGradientTileMode) {
+            case 0:
+                mode = Shader.TileMode.CLAMP;
+                break;
+            case 1:
+                mode = Shader.TileMode.REPEAT;
+                break;
+            case 2:
+                mode = Shader.TileMode.MIRROR;
+                break;
+        }
+
+        if (mTextGradientOrientation != 0)
+            textShader = new LinearGradient(0, 0, 0, mView.getHeight(), mTextGradientColors, null, mode);
+        else {
+            textShader = new LinearGradient(0, 0, mView.getWidth(), 0, mTextGradientColors, null, mode);
+        }
+        mView.getPaint().setShader(textShader);
+        mView.invalidate();
+    }
+
 
     /**
      * 设置是否启用

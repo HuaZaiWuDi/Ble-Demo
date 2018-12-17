@@ -205,7 +205,7 @@ public class AddDeviceActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     //跳转主页
-                    RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                    RxActivityUtils.skipActivity(mContext, MainActivity.class);
                 }
             });
             skip.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
@@ -316,7 +316,7 @@ public class AddDeviceActivity extends BaseActivity {
                         RxBus.getInstance().post(new RefreshMe());
                         //跳转主页
                         if (!forceBind) {
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         } else {
                             onBackPressed();
                         }

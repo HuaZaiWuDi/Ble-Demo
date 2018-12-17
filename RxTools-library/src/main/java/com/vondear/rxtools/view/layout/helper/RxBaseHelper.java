@@ -69,6 +69,8 @@ public class RxBaseHelper<T extends View> {
     int mGradientSatrtColor = 0;
     int mGradientRadius = 0;
     int mGradientType = GRADIENT_TYPE_LINEAR;
+
+
     private GradientDrawable mGradient;
 
     protected int[][] states = new int[4][];
@@ -246,8 +248,10 @@ public class RxBaseHelper<T extends View> {
 
 
     private void setGradient() {
+
         if (mGradientCenterX != 0 && mGradientCenterY != 0) {
             mBackgroundNormal.setGradientCenter(mGradientCenterX, mGradientCenterY);
+
         }
         if (mGradientSatrtColor != 0 && mGradientEndColor != 0) {
             int[] colors;

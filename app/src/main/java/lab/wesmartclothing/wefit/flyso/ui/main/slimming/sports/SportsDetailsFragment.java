@@ -322,7 +322,7 @@ public class SportsDetailsFragment extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .singleAthlDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail" + gid, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail" + gid, String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -547,7 +547,7 @@ public class SportsDetailsFragment extends BaseActivity {
         if (goBack) {
             super.onBackPressed();
         } else {
-            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+            RxActivityUtils.skipActivity(mContext, MainActivity.class);
         }
     }
 }

@@ -40,6 +40,7 @@ public class RxTextView extends android.support.v7.widget.AppCompatTextView impl
         }
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mHelper != null) {

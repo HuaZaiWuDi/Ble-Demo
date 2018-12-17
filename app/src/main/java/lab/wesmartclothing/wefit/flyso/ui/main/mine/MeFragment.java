@@ -31,6 +31,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -142,6 +143,17 @@ public class MeFragment extends BaseAcFragment {
                             initNetData();
                     }
                 });
+
+        //消息通知
+        RxBus.getInstance().register2(MessageChangeBus.class)
+                .compose(RxComposeUtils.<MessageChangeBus>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<MessageChangeBus>() {
+                    @Override
+                    protected void _onNext(MessageChangeBus messageChangeBus) {
+                        mIvNotify.setBackgroundResource(R.mipmap.icon_email_white);
+                    }
+                });
+
     }
 
     private void initTypeface() {
@@ -191,8 +203,8 @@ public class MeFragment extends BaseAcFragment {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

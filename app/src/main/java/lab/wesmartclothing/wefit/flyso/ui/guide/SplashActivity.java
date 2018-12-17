@@ -17,7 +17,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -33,7 +32,6 @@ import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
@@ -95,7 +93,7 @@ public class SplashActivity extends BaseActivity {
 
         RxLogUtils.d("APP版本号：" + "1.10.1".compareTo("2.1.5"));
 
-//        RxActivityUtils.skipActivityAndFinish(mContext, WebActivity.class);
+//        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
     }
 
 
@@ -107,7 +105,6 @@ public class SplashActivity extends BaseActivity {
             return;
         }
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
-                .timeout(3, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .doFinally(new Action() {
                     @Override
@@ -138,9 +135,11 @@ public class SplashActivity extends BaseActivity {
         //通过验证是否保存userId来判断是否登录
         if (RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivity(mActivity, LoginRegisterActivity.class);
-        } else if (!hasInviteCode) {
-            RxActivityUtils.skipActivity(mActivity, InvitationCodeActivity.class);
-        } else if (isSaveUserInfo) {
+        }
+//        else if (!hasInviteCode) {
+//            RxActivityUtils.skipActivity(mActivity, InvitationCodeActivity.class);
+//        }
+        else if (isSaveUserInfo) {
             RxActivityUtils.skipActivity(mActivity, UserInfoActivity.class);
         } else {
             RxActivityUtils.skipActivity(mActivity, MainActivity.class);

@@ -137,11 +137,16 @@ public class MyAPP extends Application {
                     }
                 }
 
+                ActivityLifecycle();
                 NetManager.getInstance();
                 RxLogUtils.i("启动时长：初始化结束");
             }
         });
 
+    }
+
+    private void ActivityLifecycle() {
+        registerActivityLifecycleCallbacks(new ActivityLifecycleImpl());
     }
 
 

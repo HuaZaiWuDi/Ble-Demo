@@ -135,7 +135,7 @@ public class InvitationCodeActivity extends BaseActivity {
                             if (mUserInfo != null && mUserInfo.getSex() == 0) {
                                 RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
                             } else {
-                                RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
+                                RxActivityUtils.skipActivity(mActivity, MainActivity.class);
                             }
                         } else {
                             RxToast.normal("邀请码无效，请正确输入有效邀请码");

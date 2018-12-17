@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
-import com.squareup.leakcanary.LeakCanary;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
@@ -45,7 +44,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         super.onCreate(savedInstanceState);
-        LeakCanary.enableDisplayLeakActivity(this);
 
         mContext = this;
         mActivity = this;
