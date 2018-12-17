@@ -32,6 +32,7 @@ import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
@@ -135,11 +136,9 @@ public class SplashActivity extends BaseActivity {
         //通过验证是否保存userId来判断是否登录
         if (RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivity(mActivity, LoginRegisterActivity.class);
-        }
-//        else if (!hasInviteCode) {
-//            RxActivityUtils.skipActivity(mActivity, InvitationCodeActivity.class);
-//        }
-        else if (isSaveUserInfo) {
+        } else if (!hasInviteCode) {
+            RxActivityUtils.skipActivity(mActivity, InvitationCodeActivity.class);
+        } else if (isSaveUserInfo) {
             RxActivityUtils.skipActivity(mActivity, UserInfoActivity.class);
         } else {
             RxActivityUtils.skipActivity(mActivity, MainActivity.class);
