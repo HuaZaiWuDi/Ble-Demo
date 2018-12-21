@@ -24,6 +24,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.aboutCarmera.RxImageTools;
+import com.vondear.rxtools.aboutCarmera.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.tool.RxQRCode;
@@ -984,7 +985,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     //控件转图片
                     Bitmap bitmap = RxImageTools.view2Bitmap(mPrant, ContextCompat.getColor(mContext, R.color.white));
                     //微信分享图片最大尺寸32KB
-//                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
+                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
                     showSimpleBottomSheetGrid(bitmap);
                     share(false);
                 }

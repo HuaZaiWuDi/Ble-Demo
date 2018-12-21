@@ -204,7 +204,7 @@ public class BleService extends Service {
                 RxLogUtils.d("扫描扫描结果：" + result.toString());
                 BluetoothDevice device = result.getDevice();
                 BleDevice bleDevice = new BleDevice(device);//转换对象
-                        RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
+                RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
                 if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
                         !BleTools.getInstance().connectedState() &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接

@@ -17,8 +17,8 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import io.reactivex.functions.Action;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
@@ -40,9 +40,8 @@ import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 
 public class SplashActivity extends BaseActivity {
-
-    private boolean isSaveUserInfo = false;
-    private boolean hasInviteCode = false;
+    private String userInfoStr;
+    private boolean isSaveUserInfo, hasInviteCode = true;
 
     BroadcastReceiver APPReplacedReceiver = new BroadcastReceiver() {
         @Override
@@ -107,44 +106,61 @@ public class SplashActivity extends BaseActivity {
         }
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .doFinally(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        gotoMain();
-                    }
-                })
+                .timeout(3, TimeUnit.SECONDS)
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         SPUtils.put(SPKey.SP_UserInfo, s);
+                        gotoMain(s);
+                    }
 
-                        UserInfo userInfo = JSON.parseObject(s, UserInfo.class);
-
-                        int sex = userInfo.getSex();
-                        SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
-                        SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
-                        isSaveUserInfo = sex == 0;
-                        hasInviteCode = userInfo.isHasInviteCode();
+                    @Override
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        goError(code);
                     }
                 });
     }
 
+    private void gotoMain(String userInfoStr) {
+        UserInfo userInfo = JSON.parseObject(userInfoStr, UserInfo.class);
+        if (userInfo != null) {
+            int sex = userInfo.getSex();
+            SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
+            SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
+            isSaveUserInfo = sex == 0;
+            hasInviteCode = userInfo.isHasInviteCode();
 
-    private void gotoMain() {
-        HeartSectionUtil.initMaxHeart();
+            HeartSectionUtil.initMaxHeart(userInfo);
+        }
+
         RxLogUtils.d("跳转");
         //通过验证是否保存userId来判断是否登录
-        if (RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
-            RxActivityUtils.skipActivity(mActivity, LoginRegisterActivity.class);
-        } else if (!hasInviteCode) {
-            RxActivityUtils.skipActivity(mActivity, InvitationCodeActivity.class);
-        } else if (isSaveUserInfo) {
-            RxActivityUtils.skipActivity(mActivity, UserInfoActivity.class);
-        } else {
-            RxActivityUtils.skipActivity(mActivity, MainActivity.class);
+        if (userInfo == null || RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
+            return;
         }
-        RxActivityUtils.finishActivity();
+        //默认不进入，只有请求到数据才进入
+        if (!hasInviteCode) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, InvitationCodeActivity.class);
+            return;
+        }
+        //默认不进入，只有请求到数据才进入
+        if (isSaveUserInfo) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);
+            return;
+        }
+
+        RxActivityUtils.skipActivityAndFinish(mActivity, MainActivity.class);
         RxLogUtils.i("启动时长：引导页结束");
+    }
+
+    private void goError(int code) {
+        if (code == -99) {//token验证失败
+            RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
+        } else {
+            gotoMain(SPUtils.getString(SPKey.SP_UserInfo));
+        }
     }
 
 
@@ -229,6 +245,7 @@ public class SplashActivity extends BaseActivity {
                         }
                     }
                 });
+
     }
 
 

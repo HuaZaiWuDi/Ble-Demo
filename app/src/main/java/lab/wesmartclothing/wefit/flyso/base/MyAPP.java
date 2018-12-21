@@ -83,7 +83,6 @@ public class MyAPP extends Application {
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
 
-
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
