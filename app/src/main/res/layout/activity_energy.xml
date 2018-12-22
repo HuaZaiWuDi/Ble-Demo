@@ -26,7 +26,7 @@
         android:background="@color/yellow_FFBC00">
 
 
-        <com.vondear.rxtools.view.chart.SuitLines
+        <com.vondear.rxtools.view.chart.line.SuitLines
             android:id="@+id/suitlines"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

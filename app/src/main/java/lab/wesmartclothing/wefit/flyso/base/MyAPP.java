@@ -101,8 +101,8 @@ public class MyAPP extends Application {
                 boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
                 RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
 
-                Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
                 Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+                Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
                 RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");

@@ -24,6 +24,11 @@ public class RxDateUtil {
     public static String FORMAT_HM = "HH:mm";
 
     /**
+     * 英文简写如：12:01
+     */
+    public static String FORMAT_MS = "mm:ss";
+
+    /**
      * 英文简写如：1-12 12:01
      */
     public static String FORMAT_MDHM = "MM-dd HH:mm";
@@ -49,7 +54,7 @@ public class RxDateUtil {
     public static String FORMAT_FULL = "yyyy-MM-dd HH:mm:ss.S";
 
     /**
-     * 精确到毫秒的完整时间    如：yyyy-MM-dd HH:mm:ss.S
+     * 精确到毫秒的完整时间    如：yyyyMMddHHmmssS
      */
     public static String FORMAT_FULL_SN = "yyyyMMddHHmmssS";
 
@@ -78,8 +83,9 @@ public class RxDateUtil {
      */
     public static String FORMAT_FULL_CN = "yyyy年MM月dd日 HH时mm分ss秒SSS毫秒";
 
-    public static Calendar calendar = null;
     private static final String FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    public static Calendar calendar = null;
 
 
     public static Date str2Date(String str) {

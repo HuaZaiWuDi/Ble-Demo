@@ -29,15 +29,16 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.chart.LineBean;
-import com.vondear.rxtools.view.chart.SuitLines;
-import com.vondear.rxtools.view.chart.Unit;
+import com.vondear.rxtools.view.chart.line.LineBean;
+import com.vondear.rxtools.view.chart.line.SuitLines;
+import com.vondear.rxtools.view.chart.line.Unit;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -161,7 +162,7 @@ public class WeightRecordFragment extends BaseActivity {
     private double lastWeight = 0;//最后一条体重数据
     private List<WeightDataBean.WeightListBean.ListBean> list;
     private Bundle bundle = new Bundle();
-
+    private int pageNum = 1;
 
     @Override
     protected int layoutId() {
@@ -253,10 +254,9 @@ public class WeightRecordFragment extends BaseActivity {
     private void initData() {
         btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
                 mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected));
-
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchWeightInfo(1, 100))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchWeightInfo(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -309,14 +309,40 @@ public class WeightRecordFragment extends BaseActivity {
         tvEndWeight.setText((float) bean.getTargetWeight() + "kg");
         proLimit.setProgress((float) (bean.getComplete() * 100));
 
-        if (bean.getWeightList() != null) {
-            initLineChart(bean);
+        if (bean.getWeightList() == null) {
+            return;
+        }
+
+        Map<Float, String> map = new HashMap<>();
+        map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
+        mSuitlines.setlimitLabels(map);
+
+        if (pageNum == 1) {
+            list = bean.getWeightList().getList();
+            initLineChart();
+            pageNum++;
+        } else {
+            if (RxDataUtils.isEmpty(bean.getWeightList().getList()))
+                return;
+            Collections.reverse(bean.getWeightList().getList());//
+            list.addAll(0, bean.getWeightList().getList());
+
+            List<Unit> lines_weight = new ArrayList<>();
+            List<Unit> lines_bodyFat = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
+                Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
+                Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
+                lines_weight.add(unit_weight);
+                lines_bodyFat.add(unit_bodyFat);
+            }
+            mSuitlines.addDataChart(Arrays.asList(lines_weight, lines_bodyFat));
+            pageNum++;
         }
     }
 
 
-    private void initLineChart(final WeightDataBean bean) {
-        list = bean.getWeightList().getList();
+    private void initLineChart() {
         Collections.reverse(list);
         List<Unit> lines_weight = new ArrayList<>();
         List<Unit> lines_bodyFat = new ArrayList<>();
@@ -340,9 +366,6 @@ public class WeightRecordFragment extends BaseActivity {
         bodyFatLine.setUnits(lines_bodyFat);
         bodyFatLine.setColor(0x7fffffff);
 
-        Map<Float, String> map = new HashMap<>();
-        map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
-        mSuitlines.setlimitLabels(map);
 
         new SuitLines.LineBuilder()
                 .add(weightLine)
@@ -360,6 +383,19 @@ public class WeightRecordFragment extends BaseActivity {
                 currentGid = list.get(valueX).getGid();
             }
         });
+
+        mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
+            @Override
+            public void leftEdge() {
+                initData();
+            }
+
+            @Override
+            public void rightEdge() {
+
+            }
+        });
+
     }
 
     private void checkStatus() {

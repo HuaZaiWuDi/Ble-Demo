@@ -79,8 +79,9 @@ public interface ApiService {
     Observable<String> fetchDietRecordDate(@Body RequestBody body);
 
     //获取能量记录列表信息
+    @FormUrlEncoded
     @POST("slim/fetchHeatList")
-    Observable<String> fetchHeatList();
+    Observable<String> fetchHeatList(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
 
     //获取操作首页信息接口

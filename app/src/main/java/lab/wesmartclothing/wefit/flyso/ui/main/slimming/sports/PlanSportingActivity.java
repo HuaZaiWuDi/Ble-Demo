@@ -337,7 +337,7 @@ public class PlanSportingActivity extends BaseActivity {
             speakAdd("好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动哦！本次训练共计燃烧"
                     + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingKcal, 1)) + "千卡，请继续保持。");
         } else {
-            speakFlush("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
+            speakAdd("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
         }
 
         timer.stopTimer();
@@ -477,7 +477,7 @@ public class PlanSportingActivity extends BaseActivity {
                 TextSpeakUtils.stop();
             }
         });
-        mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, false));
+        mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, true));
 
     }
 
@@ -543,7 +543,7 @@ public class PlanSportingActivity extends BaseActivity {
     MyTimer limitTimer = new MyTimer(3 * 60 * 1000, 3 * 60 * 1000, new MyTimerListener() {
         @Override
         public void enterTimer() {
-            speakFlush("您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！");
+            speakAdd("您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！");
         }
     });
 
@@ -576,9 +576,9 @@ public class PlanSportingActivity extends BaseActivity {
                 RxLogUtils.d("心率区间：" + section);
                 //这里当运动比计划心率差值大于20提示用户块（慢）点
                 if ((defaultSet.getEntryForIndex(realTimeSet.getEntryCount()).getY() - currentHeart) >= section) {
-                    speakFlush("请快一点，保持匀速有节奏的运动才能高效瘦身");
+                    speakAdd("请快一点，保持匀速有节奏的运动才能高效瘦身");
                 } else if ((defaultSet.getEntryForIndex(realTimeSet.getEntryCount()).getY() - currentHeart) <= -section) {
-                    speakFlush("请慢一点，保持匀速有节奏的运动才能高效瘦身");
+                    speakAdd("请慢一点，保持匀速有节奏的运动才能高效瘦身");
                 }
             }
 
@@ -670,14 +670,7 @@ public class PlanSportingActivity extends BaseActivity {
                                     }
                                 }).show();
                     }
-
                 });
-    }
-
-
-    private void speakFlush(String text) {
-        if (mSwMusic.isOpened() && isVisibility())
-            TextSpeakUtils.speakFlush(text);
     }
 
     private void speakAdd(String text) {

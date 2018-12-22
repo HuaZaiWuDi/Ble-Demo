@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vondear.rxtools.view.chart;
+package com.vondear.rxtools.view.chart.line;
 
 import android.content.Context;
 import android.content.res.Resources;

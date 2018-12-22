@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package com.vondear.rxtools.view.chart;
+package com.vondear.rxtools.view.chart.line;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.graphics.PointF;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * https://github.com/whataa
@@ -78,7 +81,6 @@ public class Unit implements Comparable<Unit>, Cloneable {
     public void setLineStyle(int lineStyle) {
         this.lineStyle = lineStyle;
     }
-
 
 
     public int[] getColor() {
@@ -215,4 +217,25 @@ public class Unit implements Comparable<Unit>, Cloneable {
         }
         return null;
     }
+
+
+    public static void main(String[] arrs) {
+
+        int size = 80;
+        System.out.println("数据大小：" + size);
+        List<List> outerList = new ArrayList();
+        List<Integer> list = null;
+        for (int i = 0; i <= size; i++) {
+            if (i % 25 == 0) {
+                list = new ArrayList();
+                outerList.add(list);
+            }
+            list.add(i);
+        }
+        for (List temp : outerList) {
+            System.out.println(temp.size());
+        }
+
+    }
+
 }

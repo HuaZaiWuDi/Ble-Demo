@@ -131,7 +131,7 @@ public class SportingActivity extends BaseActivity {
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
-                speakFlush(state ? "设备已连接" : "设备连接已断开");
+                speakAdd(state ? "设备已连接" : "设备连接已断开");
                 if (state) {
                     timer.startTimer();
                 } else {
@@ -192,6 +192,9 @@ public class SportingActivity extends BaseActivity {
         RxTextUtils.getBuilder("0.0")
                 .append("\tkcal").setProportion(0.3f)
                 .into(mTvKcal);
+
+        speakAdd("运动模式已启动，让我们开始自由运动瘦身训练吧");
+
     }
 
 
@@ -355,7 +358,7 @@ public class SportingActivity extends BaseActivity {
                 TextSpeakUtils.stop();
             }
         });
-        mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, false));
+        mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, true));
 
     }
 
@@ -476,7 +479,7 @@ public class SportingActivity extends BaseActivity {
         timer.stopTimer();
         currentTime = 0;
 
-        speakFlush("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
+        speakAdd("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
 
         //如果检测到运动已经结束，直接保存数据并进入详情页
         saveHeartRate();
@@ -554,10 +557,6 @@ public class SportingActivity extends BaseActivity {
         }
     }
 
-    private void speakFlush(String text) {
-        if (mSwMusic.isOpened() && isVisibility())
-            TextSpeakUtils.speakFlush(text);
-    }
 
     private void speakAdd(String text) {
         if (mSwMusic.isOpened() && isVisibility())

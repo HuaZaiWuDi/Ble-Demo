@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
@@ -19,14 +18,15 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.chart.LineBean;
-import com.vondear.rxtools.view.chart.SuitLines;
-import com.vondear.rxtools.view.chart.Unit;
+import com.vondear.rxtools.view.chart.line.LineBean;
+import com.vondear.rxtools.view.chart.line.SuitLines;
+import com.vondear.rxtools.view.chart.line.Unit;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,6 +78,8 @@ public class EnergyActivity extends BaseActivity {
 
 
     private long currentDate = System.currentTimeMillis();
+    private int pageNum = 1;
+    private List<EnergyBean.ListBean> list;
 
     @Override
     protected int layoutId() {
@@ -172,6 +174,19 @@ public class EnergyActivity extends BaseActivity {
 
             }
         });
+
+        mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
+            @Override
+            public void leftEdge() {
+                getData();
+            }
+
+            @Override
+            public void rightEdge() {
+
+            }
+        });
+
     }
 
 
@@ -183,15 +198,14 @@ public class EnergyActivity extends BaseActivity {
 
 
     private void getData() {
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchHeatList())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchHeatList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchHeatList", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchHeatList" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Logger.json(s);
                         EnergyBean bean = JSON.parseObject(s, EnergyBean.class);
                         updateUI(bean);
                     }
@@ -206,7 +220,28 @@ public class EnergyActivity extends BaseActivity {
     }
 
     private void updateUI(EnergyBean bean) {
-        initLineChart(bean.getList());
+        if (pageNum == 1) {
+            list = bean.getList();
+            initLineChart(list);
+            pageNum++;
+        } else {
+            if ( RxDataUtils.isEmpty(bean.getList())) return;
+            Collections.reverse(bean.getList());//
+            list.addAll(0, bean.getList());
+
+            List<Unit> lines_Heat = new ArrayList<>();
+            List<Unit> lines_Time = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                EnergyBean.ListBean listBean = list.get(i);
+                Unit unit_heat = new Unit(listBean.getHeatCalorie(), RxFormat.setFormatDate(listBean.getRecordDate(), "MM/dd"));
+                Unit unit_time = new Unit(listBean.getAthlCalorie());
+
+                lines_Heat.add(unit_heat);
+                lines_Time.add(unit_time);
+            }
+            mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Time));
+            pageNum++;
+        }
     }
 
 

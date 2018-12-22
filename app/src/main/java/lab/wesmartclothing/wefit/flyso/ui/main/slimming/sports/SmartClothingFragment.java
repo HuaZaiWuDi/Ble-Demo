@@ -29,19 +29,22 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.chart.LineBean;
-import com.vondear.rxtools.view.chart.SuitLines;
-import com.vondear.rxtools.view.chart.Unit;
+import com.vondear.rxtools.view.chart.line.LineBean;
+import com.vondear.rxtools.view.chart.line.SuitLines;
+import com.vondear.rxtools.view.chart.line.Unit;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -105,6 +108,7 @@ public class SmartClothingFragment extends BaseActivity {
     private Button btn_Connect;
     private List<AthleticsInfo.ListBean> list;
     private BaseQuickAdapter adapter;
+    private int pageNum = 1;
 
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
@@ -250,18 +254,19 @@ public class SmartClothingFragment extends BaseActivity {
     private void initData() {
         btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ?
                 R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected));
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchAthleticsListDetail(1, 100))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchAthleticsListDetail(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchAthleticsListDetail", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchAthleticsListDetail" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                        Logger.json(s);
                         AthleticsInfo bean = JSON.parseObject(s, AthleticsInfo.class);
                         updateUI(bean);
+
                     }
+
                     @Override
                     protected void _onError(String error, int code) {
                         super._onError(error, code);
@@ -271,8 +276,29 @@ public class SmartClothingFragment extends BaseActivity {
     }
 
     private void updateUI(AthleticsInfo bean) {
-        list = bean.getList();
-        initLineChart(list);
+        if (pageNum == 1) {
+            list = bean.getList();
+            initLineChart(list);
+            pageNum++;
+        } else {
+            if (RxDataUtils.isEmpty(bean.getList())) return;
+            Collections.reverse(bean.getList());//
+            list.addAll(0, bean.getList());
+
+            List<Unit> lines_Heat = new ArrayList<>();
+            List<Unit> lines_Time = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                AthleticsInfo.ListBean.DayAthlBean athlBean = list.get(i).getDayAthl();
+                Unit unit_heat = new Unit((float) athlBean.getCalorie(), RxFormat.setFormatDate(athlBean.getAthlDate(), "MM/dd"));
+                Unit unit_time = new Unit(athlBean.getDuration() < 60 ? 1 : athlBean.getDuration() / 60, "");
+
+                lines_Heat.add(unit_heat);
+                lines_Time.add(unit_time);
+            }
+            mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Time));
+            pageNum++;
+        }
+
     }
 
 
@@ -297,7 +323,7 @@ public class SmartClothingFragment extends BaseActivity {
         if (list == null) return;
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
-        Collections.reverse(list);
+        Collections.reverse(list);//
         for (int i = 0; i < list.size(); i++) {
             AthleticsInfo.ListBean.DayAthlBean bean = list.get(i).getDayAthl();
             Unit unit_heat = new Unit((float) bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
@@ -333,10 +359,29 @@ public class SmartClothingFragment extends BaseActivity {
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
                 mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
-
-                adapter.setNewData(list.get(valueX).getAthlList().size() > 10 ? list.get(valueX).getAthlList().subList(0, 10) : list.get(valueX).getAthlList());
             }
         });
+
+        mSuitlines.setLineChartStopItemListener(new SuitLines.LineChartStopItemListener() {
+            @Override
+            public void stopItem(int valueX) {
+                RxLogUtils.e("滑动停止：" + valueX);
+                adapter.setNewData(list.get(valueX).getAthlList());
+            }
+        });
+
+        mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
+            @Override
+            public void leftEdge() {
+                initData();
+            }
+
+            @Override
+            public void rightEdge() {
+
+            }
+        });
+
     }
 
     private void initTopBar() {

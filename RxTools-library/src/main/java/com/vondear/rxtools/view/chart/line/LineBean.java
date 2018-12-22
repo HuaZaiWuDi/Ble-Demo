@@ -1,8 +1,9 @@
-package com.vondear.rxtools.view.chart;
+package com.vondear.rxtools.view.chart.line;
 
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +70,7 @@ public class LineBean {
     /**
      * 路劲
      */
-    private Path mPath = new Path();
+    private List<Path> mPaths = new ArrayList<>();
 
 
     /**
@@ -151,12 +152,20 @@ public class LineBean {
         mPaint = paint;
     }
 
-    public Path getPath() {
-        return mPath;
+    public List<Path> getPaths() {
+        return mPaths;
     }
 
-    public void setPath(Path path) {
-        mPath = path;
+    public void setPaths(List<Path> paths) {
+        mPaths = paths;
+    }
+
+    public void setLineType(int lineType) {
+        this.lineType = lineType;
+    }
+
+    public void setLineStyle(int lineStyle) {
+        this.lineStyle = lineStyle;
     }
 
     public int getLineWidth() {
@@ -179,7 +188,7 @@ public class LineBean {
                 ", minValue=" + minValue +
                 ", color=" + Arrays.toString(color) +
                 ", mPaint=" + mPaint +
-                ", mPath=" + mPath +
+                ", mPaths=" + mPaths +
                 ", lineWidth=" + lineWidth +
                 '}';
     }
@@ -208,6 +217,8 @@ public class LineBean {
         max = bakUnits_1.get(bakUnits_1.size() - 1).getValue();
         min = bakUnits_1.get(0).getValue();
 
+
+        Log.d("max", "checkMaxAndMinValue: " + max);
 
         setMaxValue(max);
         setMinValue(min);

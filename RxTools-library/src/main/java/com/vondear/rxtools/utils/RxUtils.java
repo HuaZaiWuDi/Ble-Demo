@@ -39,7 +39,7 @@ public class RxUtils {
      */
     public static void init(Application context) {
         RxUtils.context = context.getApplicationContext();
-        RxCrashUtils.getInstance(context).init();
+//        RxCrashUtils.getInstance(context).init();
         SPUtils.getInstance(context);
         DrawUtil.resetDensity(context);
     }

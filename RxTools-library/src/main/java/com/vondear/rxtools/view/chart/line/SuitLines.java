@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vondear.rxtools.view.chart;
+package com.vondear.rxtools.view.chart.line;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -186,6 +186,11 @@ public class SuitLines extends View {
      */
     private float maxOffset;
 
+    /**
+     * 更新数据之前的偏移
+     */
+    private float lastOffset;
+
     private VelocityTracker velocityTracker;
     private Scroller scroller;
 
@@ -193,6 +198,12 @@ public class SuitLines extends View {
      * 实际的点击位置，0为x索引，1为某条line
      */
     private int[] clickIndexs = new int[2];
+
+    /**
+     * 上次点击的点
+     */
+    private int lastIndex = -1;
+
     /**
      * 控制是否强制重新生成path，当改变lineType/paint时需要
      */
@@ -218,10 +229,17 @@ public class SuitLines extends View {
      */
     private Map<Float, String> limits;
 
+    //滑动的位置包含经过的地方
     public interface LineChartSelectItemListener {
         void selectItem(int valueX);
     }
 
+    //滑动最好停留的地方
+    public interface LineChartStopItemListener {
+        void stopItem(int valueX);
+    }
+
+    //滑动到边缘的地方
     public interface LineChartScrollEdgeListener {
         void leftEdge();
 
@@ -229,7 +247,12 @@ public class SuitLines extends View {
     }
 
     private LineChartSelectItemListener mLineChartSelectItemListener;
+    private LineChartStopItemListener mLineChartStopItemListener;
     private LineChartScrollEdgeListener mLineChartScrollEdgeListener;
+
+    public void setLineChartStopItemListener(LineChartStopItemListener lineChartStopItemListener) {
+        mLineChartStopItemListener = lineChartStopItemListener;
+    }
 
     public void setLineChartSelectItemListener(LineChartSelectItemListener lineChartSelectItemListener) {
         mLineChartSelectItemListener = lineChartSelectItemListener;
@@ -276,6 +299,7 @@ public class SuitLines extends View {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                //停止所有的动画
                 scroller.forceFinished(true);
                 mLastX = xPosition;
                 mMove = 0;
@@ -302,16 +326,15 @@ public class SuitLines extends View {
         if (offset <= maxOffset) {
             offset = maxOffset;
             mMove = 0;
-            scroller.forceFinished(true);
         } else if (offset >= 0) {
             offset = 0;
             mMove = 0;
-            scroller.forceFinished(true);
         }
 
         int click = clickIndexs[0];
 
         clickIndexs[0] = (Math.round(Math.abs(offset) * 1.0f / realBetween));
+//        Log.e(TAG, "正在滑动changeMoveAndValue: " + clickIndexs[0]);
         if (click != clickIndexs[0]) {
             notifyValueChange();
         }
@@ -321,6 +344,12 @@ public class SuitLines extends View {
     private void notifyValueChange() {
         if (mLineChartSelectItemListener != null && clickIndexs[0] >= 0) {
             mLineChartSelectItemListener.selectItem(clickIndexs[0]);
+        }
+    }
+
+    private void notifyValueStopChange() {
+        if (mLineChartStopItemListener != null && clickIndexs[0] >= 0) {
+            mLineChartStopItemListener.stopItem(clickIndexs[0]);
         }
     }
 
@@ -338,13 +367,15 @@ public class SuitLines extends View {
                 mLineChartScrollEdgeListener.leftEdge();
         }
 
+
         mLastX = 0;
         mMove = 0;
 
         clickIndexs[0] = (Math.round(Math.abs(offset) * 1.0f / realBetween));
         offset = -clickIndexs[0] * realBetween; // 矫正位置,保证不会停留在两个相邻刻度之间
-        Log.e(TAG, "countMoveEnd: ");
+        Log.e(TAG, "滑动停止countMoveEnd: " + clickIndexs[0]);
         notifyValueChange();
+        notifyValueStopChange();
         postInvalidate();
     }
 
@@ -359,7 +390,12 @@ public class SuitLines extends View {
     @Override
     public void computeScroll() {
         if (scroller.computeScrollOffset()) {
-            if (scroller.getCurrX() == scroller.getFinalX()) { // over
+//            Log.d(TAG, "computeScroll--isFinished: " + scroller.isFinished());
+//            Log.d(TAG, "computeScroll--getCurrX: " + scroller.getCurrX());
+//            Log.d(TAG, "computeScroll--getFinalX: " + scroller.getFinalX());
+//            Log.d(TAG, "computeScroll--getStartX: " + scroller.getStartX());
+
+            if (scroller.isFinished()) { // over
                 countMoveEnd();
             } else {
                 int xPosition = scroller.getCurrX();
@@ -387,19 +423,20 @@ public class SuitLines extends View {
             drawLines(canvas);
         }
 
-        //画选中效果
-        drawClickHint(canvas);
-        //画线上的点
-        drawPoint(canvas);
         // X轴
         drawX(canvas);
+
+        //画线上的点
+        drawPoint(canvas);
+        //画选中效果
+        drawClickHint(canvas);
 
         forceToDraw = false;
         canvas.restore();
 
         // 不位移
         drawHintLine(canvas);
-        //Y轴
+
     }
 
     //画辅助线
@@ -439,12 +476,6 @@ public class SuitLines extends View {
     }
 
 
-    public void scrollLast() {
-        offset = maxOffset;
-        invalidate();
-    }
-
-
     /**
      * 开始连接每条线的各个点<br>
      * 最耗费性能的地方：canvas.drawPath
@@ -452,13 +483,54 @@ public class SuitLines extends View {
      * @param canvas
      */
     private void drawLines(Canvas canvas) {
-        for (int i = 0; i < mLineBeans.size(); i++) {
-            for (int j = 0; j < mLineBeans.get(i).getUnits().size(); j++) {
-                Unit current = mLineBeans.get(i).getUnits().get(j);
-                Path path = mLineBeans.get(i).getPath();
+        Path path = null;
+        List<Path> paths;
 
-                float curY = linesArea.bottom - (linesArea.bottom - current.getXY().y) * current.getPercent();
-                if (j == 0) {
+        for (int i = 0; i < mLineBeans.size(); i++) {
+            paths = mLineBeans.get(i).getPaths();
+            paths.clear();
+
+            /**
+             *  for (int i = 0; i <= size; i++) {
+             *             if (i % 25 == 0) {
+             *                 list = new ArrayList();
+             *                 outerList.add(list);
+             *             }
+             *             list.add(i);
+             *         }
+             *
+             *
+             * */
+
+            int size = mLineBeans.get(i).getUnits().size();
+
+            for (int j = 0; j < size; j++) {
+                Unit current = mLineBeans.get(i).getUnits().get(j);
+                float curY = current.getXY().y;
+
+                //每30个点分一个path保存，防止出现一个Path保存的数据过大的问题
+                if (j % 30 == 0) {
+                    if (j != 0) {
+                        if (mLineBeans.get(i).getLineType() == SEGMENT) {
+                            path.lineTo(current.getXY().x, curY);
+                        } else if (mLineBeans.get(i).getLineType() == CURVE) {
+                            // 到这里肯定不是起始点，所以可以减1
+                            Unit previous = mLineBeans.get(i).getUnits().get(j - 1);
+                            // 两个锚点的坐标x为中点的x，y分别是两个连接点的y
+                            path.cubicTo((previous.getXY().x + current.getXY().x) / 2,
+                                    linesArea.bottom - (linesArea.bottom - previous.getXY().y) * previous.getPercent(),
+                                    (previous.getXY().x + current.getXY().x) / 2, curY,
+                                    current.getXY().x, curY);
+                        }
+                        //绘制阴影需要连接底部的点
+                        if (mLineBeans.get(i).isFill() && j == mLineBeans.get(i).getUnits().size() - 1) {
+                            path.lineTo(current.getXY().x, linesArea.bottom);
+                            path.lineTo(mLineBeans.get(i).getUnits().get(0).getXY().x, linesArea.bottom);
+                            path.close();
+                        }
+                    }
+                    path = new Path();
+                    paths.add(path);
                     path.reset();
                     path.moveTo(current.getXY().x, curY);
                     continue;
@@ -494,8 +566,10 @@ public class SuitLines extends View {
      */
     private void drawExsitDirectly(Canvas canvas) {
         // TODO 需要优化
-        for (int j = 0; j < mLineBeans.size(); j++) {
-            canvas.drawPath(mLineBeans.get(j).getPath(), mLineBeans.get(j).getPaint());
+        for (int i = 0; i < mLineBeans.size(); i++) {
+            for (Path path : mLineBeans.get(i).getPaths()) {
+                canvas.drawPath(path, mLineBeans.get(i).getPaint());
+            }
         }
     }
 
@@ -507,10 +581,20 @@ public class SuitLines extends View {
     public void drawClickHint(Canvas canvas) {
 
         for (int i = 0; i < mLineBeans.size(); i++) {
-            if (RxDataUtils.isEmpty(mLineBeans.get(i).getUnits())) continue;
-            Unit unit = mLineBeans.get(i).getUnits().get(clickIndexs[0]);
-            if (mLineBeans.get(i).isShowPoint())
+            LineBean lineBean = mLineBeans.get(i);
+            if (RxDataUtils.isEmpty(lineBean.getUnits())) continue;
+
+//            if (lastIndex != -1 && lastIndex != clickIndexs[0]) {
+//                Unit lastUnit = lineBean.getUnits().get(lastIndex);
+//                if (lineBean.isShowPoint()) {
+//                    canvas.drawCircle(lastUnit.getXY().x, lastUnit.getXY().y, 10f, selectPaint);
+//                }
+//            }
+            Unit unit = lineBean.getUnits().get(clickIndexs[0]);
+            if (lineBean.isShowPoint()) {
                 canvas.drawCircle(unit.getXY().x, unit.getXY().y, 15f, selectPaint);
+                lastIndex = clickIndexs[0];
+            }
         }
     }
 
@@ -579,24 +663,22 @@ public class SuitLines extends View {
     private void feedInternal(final List<LineBean> mLineBeans) {
         reset(); // 该方法调用了datas.clear();
 
-        if (mLineBeans == null || mLineBeans.isEmpty()) {
-            invalidate();
+        this.mLineBeans = mLineBeans;
+        if (mLineBeans.isEmpty()) {
             Log.d(TAG, "feedInternal: line is empty");
             return;
         } else if (RxDataUtils.isEmpty(mLineBeans.get(0).getUnits())) {
-            invalidate();
             Log.d(TAG, "feedInternal: data is empty");
             return;
         }
 
-        this.mLineBeans = mLineBeans;
         calcAreas();
         calcUnitXY();
         forceToDraw = true;
 
         clickIndexs = new int[]{mLineBeans.get(0).getUnits().size() - 1, 0};
         notifyValueChange();
-
+        notifyValueStopChange();
         postAction(new Runnable() {
             @Override
             public void run() {
@@ -615,10 +697,49 @@ public class SuitLines extends View {
             }
         });
 
+        /**
+         * 滑动的右边
+         */
         postAction(new Runnable() {
             @Override
             public void run() {
-                scrollLast();
+                offset = maxOffset;
+                lastOffset = maxOffset;
+                postInvalidate();
+            }
+        });
+    }
+
+
+    /**
+     * 更新图表数据
+     */
+    public void addDataChart(List<List<Unit>> linePoint) {
+        if (mLineBeans == null || mLineBeans.isEmpty()) {
+            Log.d(TAG, "feedInternal: line is empty");
+            return;
+        }
+
+        if (linePoint == null || linePoint.size() != mLineBeans.size()) {
+            Log.d(TAG, "feedInternal: update is error");
+            return;
+        }
+
+        for (int i = 0; i < mLineBeans.size(); i++) {
+            mLineBeans.get(i).setUnits(linePoint.get(i));
+        }
+
+        calcUnitXY();
+        forceToDraw = true;
+
+        postAction(new Runnable() {
+            @Override
+            public void run() {
+                offset = maxOffset - lastOffset;
+
+//                scroller.startScroll((int) maxOffset, 0, (int) (maxOffset - lastOffset), 0);
+                lastOffset = maxOffset;
+                postInvalidate();
             }
         });
 
@@ -637,6 +758,9 @@ public class SuitLines extends View {
         xArea = new RectF(validArea.left, validArea.top, validArea.right, validArea.top + Util.getTextHeight(xyPaint));
 
         linesArea = new RectF(validArea.left, xArea.bottom, validArea.right, validArea.bottom);
+
+        realBetween = linesArea.width() / maxOfVisible;
+
     }
 
     /**
@@ -645,24 +769,32 @@ public class SuitLines extends View {
      */
     private void calcUnitXY() {
         if (mLineBeans.isEmpty()) return;
+        maxValueY = 0;
+        minValueY = 100;
+
         if (limits != null && limits.size() > 0) {
             Set<Float> integers = limits.keySet();
             for (float value : integers) {
-                maxValueY = value > maxValueY ? value : maxValueY;
-                minValueY = value < minValueY ? value : minValueY;
+                maxValueY = Math.max(value, maxValueY);
+                minValueY = Math.min(value, minValueY);
             }
         }
 
         //统一的最大最小值
         if (isUnifiedInterval) {
             for (int i = 0; i < mLineBeans.size(); i++) {
-                maxValueY = mLineBeans.get(i).getMaxValue() > maxValueY ? mLineBeans.get(i).getMaxValue() : maxValueY;
-                minValueY = mLineBeans.get(i).getMinValue() < minValueY ? mLineBeans.get(i).getMinValue() : minValueY;
+                maxValueY = Math.max(mLineBeans.get(i).getMaxValue(), maxValueY);
+                minValueY = Math.min(mLineBeans.get(i).getMinValue(), minValueY);
             }
         }
+
+        Log.d(TAG, "calcUnitXY666666: maxValueY：" + maxValueY);
+
         minValueY = minValueY * 0.8f;
         maxValueY = maxValueY * 1.1f;
-        realBetween = linesArea.width() / maxOfVisible;
+
+        Log.d(TAG, "calcUnitXY: maxValueY：" + maxValueY);
+
         for (int i = 0; i < mLineBeans.get(0).getUnits().size(); i++) {
             for (int j = 0; j < mLineBeans.size(); j++) {
                 Unit unit = mLineBeans.get(j).getUnits().get(i);
@@ -692,41 +824,10 @@ public class SuitLines extends View {
         offset = 0;
         realBetween = 0;
         mLineBeans.clear();
+        mLineBeans = null;
     }
 
     ///APIs/////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 设置xy轴文字的颜色
-     *
-     * @param color 默认为Color.GRAY
-     */
-    public void setXyColor(int color) {
-        defaultXyColor = color;
-        xyPaint.setColor(defaultXyColor);
-        if (!mLineBeans.isEmpty()) {
-            forceToDraw = true;
-            postInvalidate();
-        }
-    }
-
-    /**
-     * 设置xy轴文字大小
-     *
-     * @param sp
-     */
-    public void setXySize(float sp) {
-        defaultXySize = sp;
-        xyPaint.setTextSize(Util.size2sp(defaultXySize, getContext()));
-        if (!mLineBeans.isEmpty()) {
-            calcAreas();
-            calcUnitXY();
-            offset = 0;
-            forceToDraw = true;
-            postInvalidate();
-        }
-    }
-
 
     /**
      * 图形上下显示的区域
@@ -777,6 +878,7 @@ public class SuitLines extends View {
             return this;
         }
 
+
         /**
          * 调用该方法开始填充数据，该方法需要保证SuitLines已经初始化
          *
@@ -790,6 +892,8 @@ public class SuitLines extends View {
                 }
             });
         }
+
+
     }
 
 }
