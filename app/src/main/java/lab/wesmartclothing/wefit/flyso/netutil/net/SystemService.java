@@ -9,7 +9,7 @@ import retrofit2.http.GET;
 public interface SystemService {
     //        String BASE_URL = "https://dev.wesmartclothing.com/system/";
 //    String BASE_URL = "http://10.10.11.208:15320/";
-    String BASE_URL = "http://39.108.152.50:15320/";
+    String BASE_URL = ServiceAPI.BASE_SERVICE;
 
 
     //系统配置

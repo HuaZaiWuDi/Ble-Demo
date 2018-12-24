@@ -82,11 +82,23 @@ public class MyAPP extends Application {
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
 
+
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
             public void run() {
                 RxUtils.init(MyAPP.this);
+
+                //开发版直接使用发布版API
+                if (!BuildConfig.DEBUG) {
+                    ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
+                } else {
+                    String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL, ServiceAPI.BASE_URL);
+                    if (!RxDataUtils.isNullString(baseUrl)) {
+                        ServiceAPI.switchURL(baseUrl);
+                    }
+                }
+
                 RxManager.getInstance().setAPPlication(MyAPP.this);
                 ScreenAdapter.init(MyAPP.this);
                 MultiDex.install(MyAPP.this);
@@ -125,15 +137,6 @@ public class MyAPP extends Application {
                     RxLogUtils.e(e);
                 }
 
-                //开发版直接使用发布版API
-                if (!BuildConfig.DEBUG) {
-                    ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
-                } else {
-                    String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
-                    if (!RxDataUtils.isNullString(baseUrl)) {
-                        ServiceAPI.switchURL(baseUrl);
-                    }
-                }
 
                 ActivityLifecycle();
 
@@ -218,6 +221,8 @@ public class MyAPP extends Application {
 
         RxLogUtils.i("启动时长：开始启动");
         MultiDex.install(base);
+
+
     }
 
 
