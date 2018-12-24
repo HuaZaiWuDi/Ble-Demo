@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

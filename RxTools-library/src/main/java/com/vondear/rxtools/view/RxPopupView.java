@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxDeviceUtils;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.bean.ActionItem;
 
 import java.util.ArrayList;

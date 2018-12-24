@@ -22,7 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import com.smartclothing.blelibrary.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -967,7 +967,7 @@ public class SlimmingFragment extends BaseAcFragment {
             case R.id.img_weight_tip:
                 new RxDialogSure(mContext)
                         .setTitle("今日体重")
-                        .setContent("您今日的体重数据，变化趋势是与第一次体重数据进行对比")
+                        .setContent("您今日的体重数据，变化趋势是与您首次称重数据进行对比")
                         .show();
                 break;
             case R.id.img_sporting_tip:

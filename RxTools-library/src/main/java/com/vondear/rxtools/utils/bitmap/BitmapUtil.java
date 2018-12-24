@@ -1,12 +1,8 @@
-package com.vondear.rxtools.aboutCarmera;
+package com.vondear.rxtools.utils.bitmap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.media.ExifInterface;
 
 import java.io.File;
@@ -70,19 +66,6 @@ public class BitmapUtil {
 
     }
 
-    //转换为圆形状的bitmap
-    public static Bitmap createCircleImage(Bitmap source) {
-        int length = source.getWidth() < source.getHeight() ? source.getWidth() : source.getHeight();
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        Bitmap target = Bitmap.createBitmap(length, length, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(target);
-        canvas.drawCircle(length / 2, length / 2, length / 2, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(source, 0, 0, paint);
-        return target;
-    }
-
 
     /**
      * 图片压缩-质量(50)压缩
@@ -128,7 +111,7 @@ public class BitmapUtil {
     /**
      * 根据路径获得图片信息并按比例压缩，返回bitmap
      */
-    public static Bitmap getSmallBitmap(String filePath) {
+    private static Bitmap getSmallBitmap(String filePath) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//只解析图片边沿，获取宽高
         BitmapFactory.decodeFile(filePath, options);
@@ -140,7 +123,7 @@ public class BitmapUtil {
     }
 
 
-    public static int calculateInSampleSize(BitmapFactory.Options options,
+    private static int calculateInSampleSize(BitmapFactory.Options options,
                                             int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;

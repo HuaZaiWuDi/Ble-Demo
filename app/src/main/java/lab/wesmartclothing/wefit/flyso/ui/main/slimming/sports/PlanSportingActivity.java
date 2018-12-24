@@ -21,7 +21,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -224,6 +224,7 @@ public class PlanSportingActivity extends BaseActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
+        RxLogUtils.e("计划：" + bundle.getString(Key.BUNDLE_SPORTING_PLAN));
         PlanBean planBean = JSON.parseObject(bundle.getString(Key.BUNDLE_SPORTING_PLAN), PlanBean.class);
         planList = planBean.getAthlPlanList();
         int sunTime = 0;
@@ -352,7 +353,7 @@ public class PlanSportingActivity extends BaseActivity {
      * @param bean
      */
     private void completeHeartRange(AthlPlanListBean bean, AthlPlanListBean nextBean) {
-        switch (bean.getRange()) {
+        switch (bean.getHeartRange()) {
             case 80:
                 break;
             case 100:

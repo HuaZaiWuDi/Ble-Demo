@@ -13,8 +13,8 @@ import android.widget.FrameLayout;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.vondear.rxtools.aboutCarmera.RxCameraUtils;
-import com.vondear.rxtools.aboutCarmera.RxImageTools;
+import com.vondear.rxtools.utils.bitmap.RxCameraUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxProcessUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -166,9 +166,9 @@ public class PlanWebActivity extends BaseWebActivity {
             public void subscribe(ObservableEmitter<File> emitter) throws Exception {
                 //控件转图片
                 WebView webView = mAgentWeb.getWebCreator().getWebView();
-                Bitmap bitmap = RxImageTools.WebView2Bitmap(webView);
+                Bitmap bitmap = RxImageUtils.WebView2Bitmap(webView);
                 //微信分享图片最大尺寸32KB
-                File timetofit = RxImageTools.saveBitmap(bitmap, "/Timetofit/", "plan_" + System.currentTimeMillis());
+                File timetofit = RxImageUtils.saveBitmap(bitmap, "/Timetofit/", "plan_" + System.currentTimeMillis());
                 if (timetofit == null) {
                     emitter.onError(new Throwable(""));
                 } else {

@@ -10,7 +10,7 @@ import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import com.orhanobut.logger.Logger;
-import com.vondear.rxtools.aboutCarmera.RxImageTools;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class RxShareUtlis {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
 
-        File imgFile = RxImageTools.saveBitmap(bitmap, "/Share/", new Date().getTime() + "");
+        File imgFile = RxImageUtils.saveBitmap(bitmap, "/Share/", new Date().getTime() + "");
         Uri data = File2UriByN(context, imgFile, intent);
 
         intent.putExtra(Intent.EXTRA_STREAM, data);

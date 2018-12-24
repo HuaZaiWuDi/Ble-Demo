@@ -20,15 +20,15 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.vondear.rxtools.aboutCarmera.RxImageTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarVerticalChart;
 import com.vondear.rxtools.view.layout.RxImageView;
@@ -229,7 +229,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 @Override
                 public void run() {
                     //控件转图片
-                    Bitmap bitmap = RxImageTools.view2Bitmap(mLayoutContent, ContextCompat.getColor(mContext, R.color.Gray));
+                    Bitmap bitmap = RxImageUtils.view2Bitmap(mLayoutContent, ContextCompat.getColor(mContext, R.color.Gray));
                     //微信分享图片最大尺寸32KB
 //                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
                     showSimpleBottomSheetGrid(bitmap);

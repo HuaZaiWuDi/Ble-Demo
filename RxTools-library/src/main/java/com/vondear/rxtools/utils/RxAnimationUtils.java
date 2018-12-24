@@ -34,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.interfaces.onUpdateListener;
 
 /**

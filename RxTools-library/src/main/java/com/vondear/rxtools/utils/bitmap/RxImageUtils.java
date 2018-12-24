@@ -1,4 +1,4 @@
-package com.vondear.rxtools.aboutCarmera;
+package com.vondear.rxtools.utils.bitmap;
 
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
@@ -29,14 +29,18 @@ import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 
 import com.vondear.rxtools.R;
@@ -238,6 +242,23 @@ public class RxImageUtils {
      * @param drawable drawable对象
      * @return bitmap对象
      */
+    public static Bitmap drawable2BitmapByBD(Drawable drawable) {
+        Bitmap bmp = null;
+        //第一步，将Drawable对象转化为Bitmap对象
+        if (drawable instanceof BitmapDrawable) {
+            bmp = ((BitmapDrawable) drawable).getBitmap();
+        } else
+            bmp = drawable2Bitmap(drawable);
+        return bmp;
+    }
+
+
+    /**
+     * drawable转bitmap
+     *
+     * @param drawable drawable对象
+     * @return bitmap对象
+     */
     public static Bitmap drawable2Bitmap(Drawable drawable) {
         // 取 drawable 的长宽
         int w = drawable.getIntrinsicWidth();
@@ -303,6 +324,29 @@ public class RxImageUtils {
     }
 
     /**
+     * string转成bitmap
+     *
+     * @param st
+     */
+    public static Bitmap convertStringToIcon(String st) {
+        // OutputStream out;
+        Bitmap bitmap = null;
+        try {
+            // out = new FileOutputStream("/sdcard/aa.jpg");
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(st, Base64.DEFAULT);
+            bitmap =
+                    BitmapFactory.decodeByteArray(bitmapArray, 0,
+                            bitmapArray.length);
+            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return bitmap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    /**
      * 计算采样大小
      *
      * @param options   选项
@@ -320,6 +364,7 @@ public class RxImageUtils {
         }
         return inSampleSize;
     }
+
 
     /**
      * 获取bitmap
@@ -1284,6 +1329,57 @@ public class RxImageUtils {
         return ret;
     }
 
+    public static final int TOP_LEFT = 0;
+    public static final int TOP_RIGHT = 1;
+    public static final int BOTTOM_LEFT = 2;
+    public static final int BOTTOM_RIGHT = 3;
+
+    /**
+     * 水印
+     *
+     * @param src       图片
+     * @param watermark 水印
+     * @return bitmap 处理后的图片
+     */
+    public static Bitmap createBitmapForWatermark(Bitmap src, Bitmap watermark, int direction, int magin) {
+
+        if (src == null) {
+            return null;
+        }
+        //位图的宽高
+        int w = src.getWidth();
+        int h = src.getHeight();
+        //水印的宽高
+        int ww = watermark.getWidth();
+        int wh = watermark.getHeight();
+        // 创建一个新的和SRC长度宽度一样的位图
+        Bitmap newb = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas cv = new Canvas(newb);
+        // 在 0，0坐标开始画入src
+        cv.drawBitmap(src, 0, 0, null);
+        // 在src的右下角画入水印（距离底部和右边距离为5）
+        switch (direction) {
+            case TOP_LEFT:
+                cv.drawBitmap(watermark, magin, magin, null);
+                break;
+            case TOP_RIGHT:
+                cv.drawBitmap(watermark, w - ww + magin, magin, null);
+                break;
+            case BOTTOM_LEFT:
+                cv.drawBitmap(watermark, magin, h - wh + magin, null);
+                break;
+            case BOTTOM_RIGHT:
+                cv.drawBitmap(watermark, w - ww + magin, h - wh + magin, null);
+                break;
+        }
+
+
+        cv.save();
+        // 存储
+        cv.restore();
+        return newb;
+    }
+
     /**
      * 转为alpha位图
      *
@@ -1368,6 +1464,38 @@ public class RxImageUtils {
         canvas.drawBitmap(src, 0, 0, paint);
         if (recycle && !src.isRecycled()) src.recycle();
         return grayBitmap;
+    }
+
+
+    /**
+     * 图片去色,返回灰度图片
+     *
+     * @param bmpOriginal 传入的图片
+     * @return 去色后的图片
+     */
+    public static Bitmap toGrayscale(Bitmap bmpOriginal) {
+        int width, height;
+        // 获取宽高
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+        // 按照一定画质新建bitmap
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height,
+                Bitmap.Config.RGB_565);
+        // 建画布
+        Canvas c = new Canvas(bmpGrayscale);
+        // 建画笔
+        Paint paint = new Paint();
+        // 颜色矩阵
+        ColorMatrix cm = new ColorMatrix();
+        // 设置灰阶
+        cm.setSaturation(0);
+        // 颜色矩阵颜色过滤对象,传入设置的颜色矩阵
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        // 设置画笔的颜色过滤,传入颜色矩阵颜色过滤对象
+        paint.setColorFilter(f);
+        // 在画布用画笔画传入的图片
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
     }
 
     /**
@@ -1796,5 +1924,346 @@ public class RxImageUtils {
                 true);
         return bit1Scale;
     }
+
+
+    /**
+     * 读取路径中的图片，然后将其转化为缩放后的bitmap
+     *
+     * @param path
+     */
+    public static Bitmap saveBefore(String path) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        // 获取这个图片的宽和高
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options); // 此时返回bm为空
+        options.inJustDecodeBounds = false;
+        // 计算缩放比
+        int be = (int) (options.outHeight / (float) 200);
+        if (be <= 0) {
+            be = 1;
+        }
+        options.inSampleSize = 2; // 图片长宽各缩小二分之一
+        // 重新读入图片，注意这次要把options.inJustDecodeBounds 设为 false哦
+        bitmap = BitmapFactory.decodeFile(path, options);
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        System.out.println(w + "    " + h);
+        // savePNG_After(bitmap,path);
+        saveJPGE_After(bitmap, path);
+        return bitmap;
+    }
+
+    /**
+     * 保存图片为JPEG
+     *
+     * @param bitmap
+     * @param path
+     */
+    public static void saveJPGE_After(Bitmap bitmap, String path) {
+        File file = new File(path);
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 控件转成bitmap
+     *
+     * @param view
+     */
+    public static Bitmap TranslateBitmap(View view) {
+        // Bitmap bitmap = Bitmap.createBitmap(view.getWidth(),
+        // view.getHeight(),
+        // Bitmap.Config.RGB_565);
+        // // 利用bitmap生成画布
+        // Canvas canvas = new Canvas(bitmap);
+        // view.draw(canvas);
+
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache(true);
+        view.getDrawingCache(true);
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        view.setDrawingCacheEnabled(false);
+
+        return bitmap;
+    }
+
+    public static Bitmap view2Bitmap(View v, @ColorInt int bgColor) {
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        c.drawColor(bgColor);
+        v.draw(c);
+        return bmp;
+    }
+
+    /**
+     * 截WebView
+     *
+     * @param webView
+     * @return
+     */
+    public static Bitmap WebView2Bitmap(WebView webView) {
+        int height = (int) (webView.getContentHeight() * webView.getScale());
+        int width = webView.getWidth();
+        int pH = webView.getHeight();
+        Bitmap bm = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bm);
+        int top = height;
+        while (top > 0) {
+            if (top < pH) {
+                top = 0;
+            } else {
+                top -= pH;
+            }
+            canvas.save();
+            canvas.clipRect(0, top, width, top + pH);
+            webView.scrollTo(0, top);
+            webView.draw(canvas);
+            canvas.restore();
+        }
+        return bm;
+    }
+
+    /**
+     * 没有加载的View
+     *
+     * @param v
+     * @param width  截取的宽
+     * @param height 截取的高
+     * @return
+     */
+    public Bitmap layout2Bitmap(View v, int width, int height) {
+        //测量使得view指定大小
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+        v.measure(measuredWidth, measuredHeight);
+        //调用layout方法布局后，可以得到view的尺寸大小
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        c.drawColor(Color.WHITE);
+        v.draw(c);
+        return bmp;
+    }
+
+
+    /**
+     * 没有加载的View
+     *
+     * @param view
+     * @return
+     */
+    public static Bitmap convertViewToBitmap(View view) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        Bitmap shareBitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+        return shareBitmap;
+    }
+
+
+    /**
+     * Check the SD card 检测是否有SD卡
+     *
+     * @return
+     */
+    public static boolean checkSDCardAvailable() {
+        return Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED);
+    }
+
+
+    /**
+     * 将图片存到本地
+     */
+    public static File saveBitmap(Bitmap bm, String dicName, String picName) {
+        try {
+            String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + dicName + picName + ".jpg";
+            File f = new File(dir);
+            if (!f.exists()) {
+                f.getParentFile().mkdirs();
+                f.createNewFile();
+            } else {
+                return f;
+            }
+            FileOutputStream out = new FileOutputStream(f);
+            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+            return f;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Save image to the SD card 保存图片到sd卡
+     *
+     * @param photoBitmap 位图
+     * @param photoName   图片名
+     * @param path        存放路径
+     */
+    public static void savePhotoToSDCard(Bitmap photoBitmap, String path,
+                                         String photoName) {
+        // 判断是否存在sd卡
+        if (checkSDCardAvailable()) {
+            File dir = new File(path);
+            // 如果dir 文件不存在,新建
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            // 建图片文件路径,在文件路径下
+            File photoFile = new File(path, photoName + ".png");
+            // 新建文件输出流定为空
+            FileOutputStream fileOutputStream = null;
+            try {
+                fileOutputStream = new FileOutputStream(photoFile);
+                if (photoBitmap != null) {
+                    if (photoBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+                            fileOutputStream)) {
+                        fileOutputStream.flush(); // 这里才是输出数据
+                        fileOutputStream.close();
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                photoFile.delete();
+                e.printStackTrace();
+            } catch (IOException e) {
+                photoFile.delete();
+                e.printStackTrace();
+            } finally {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 获取图片的旋转角度
+     *
+     * @param filePath
+     * @return
+     */
+    public static int getRotateAngle(String filePath) {
+        int rotate_angle = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(filePath);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate_angle = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate_angle = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate_angle = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rotate_angle;
+    }
+
+    /**
+     * 旋转图片角度
+     *
+     * @param angle
+     * @param bitmap
+     * @return
+     */
+    public static Bitmap setRotateAngle(int angle, Bitmap bitmap) {
+
+        if (bitmap != null) {
+            Matrix m = new Matrix();
+            m.postRotate(angle);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                    bitmap.getHeight(), m, true);
+            return bitmap;
+        }
+        return bitmap;
+
+    }
+
+
+    /**
+     * 图片压缩-质量(50)压缩
+     *
+     * @param filePath 源图片路径
+     * @return 压缩后的路径
+     */
+
+    public static String compressImage(String filePath) {
+
+        //原文件
+        File oldFile = new File(filePath);
+
+
+        //压缩文件路径 照片路径/
+        String targetPath = oldFile.getPath();
+        int quality = 50;//压缩比例0-100
+        Bitmap bm = getSmallBitmap(filePath);//获取一定尺寸的图片
+        int degree = getRotateAngle(filePath);//获取相片拍摄角度
+
+        if (degree != 0) {//旋转照片角度，防止头像横着显示
+            bm = setRotateAngle(degree, bm);
+        }
+        File outputFile = new File(targetPath);
+        try {
+            if (!outputFile.exists()) {
+                outputFile.getParentFile().mkdirs();
+                //outputFile.createNewFile();
+            } else {
+                outputFile.delete();
+            }
+
+            FileOutputStream out = new FileOutputStream(outputFile);
+            bm.compress(Bitmap.CompressFormat.JPEG, quality, out);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return filePath;
+        }
+        return outputFile.getPath();
+    }
+
+    /**
+     * 根据路径获得图片信息并按比例压缩，返回bitmap
+     */
+    private static Bitmap getSmallBitmap(String filePath) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;//只解析图片边沿，获取宽高
+        BitmapFactory.decodeFile(filePath, options);
+        // 计算缩放比
+        options.inSampleSize = calculateInSampleSize(options, 480, 800);
+        // 完整解析图片返回bitmap
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filePath, options);
+    }
+
 
 }

@@ -15,9 +15,9 @@ import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.vondear.rxtools.aboutCarmera.BitmapUtil;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -285,7 +285,7 @@ public class UserInfofragment extends BaseActivity {
     }
 
     private void uploadImage() {
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(BitmapUtil.compressImage(info.getImgUrl())));
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(RxImageUtils.compressImage(info.getImgUrl())));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", info.getImgUrl(), requestFile);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().uploadUserImg(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

@@ -296,11 +296,11 @@ public class HeartLineChartUtils {
                     //区间后一个点
                     endXValue = firstBean.getTime() * 30 + 30;
                     //上升
-                    if (firstBean.getRange3() - nextBean.getRange3() < 0) {
+                    if (firstBean.getRange() - nextBean.getRange() < 0) {
                         endYValue = nextBean.getMidRange();
 
                         value = (heartValues.size() - startXValue) * Math.abs(startYValue - endYValue) / (endXValue - startXValue) + startYValue;
-                    } else if (firstBean.getRange3() - nextBean.getRange3() > 0) {
+                    } else if (firstBean.getRange() - nextBean.getRange() > 0) {
                         //下降
                         endYValue = nextBean.getMidRange();
 

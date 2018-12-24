@@ -1,4 +1,4 @@
-package com.vondear.rxtools.editview;
+package com.vondear.rxtools.view.editview;
 
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -23,7 +23,6 @@ public class DecimalDigitsInputFilter implements InputFilter {
                                Spanned dest,
                                int dstart,
                                int dend) {
-
 
         int dotPos = -1;
         int len = dest.length();

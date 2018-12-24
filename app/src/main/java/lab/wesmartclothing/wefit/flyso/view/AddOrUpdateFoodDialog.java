@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
-import com.vondear.rxtools.editview.DecimalDigitsInputFilter;
+import com.vondear.rxtools.view.editview.DecimalDigitsInputFilter;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -161,8 +161,8 @@ public class AddOrUpdateFoodDialog {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -255,8 +255,8 @@ public class AddOrUpdateFoodDialog {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
 
                 });

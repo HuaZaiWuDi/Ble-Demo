@@ -1,6 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 
 import java.util.List;
 

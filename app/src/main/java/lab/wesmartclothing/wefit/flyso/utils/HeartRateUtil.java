@@ -3,7 +3,7 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.alibaba.fastjson.JSON;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.zchu.rxcache.RxCache;
@@ -159,10 +159,19 @@ public class HeartRateUtil {
                 });
     }
 
+
+
     public void clearData(HeartRateBean heartRateBean) {
-        if (heartRateBean != null)
-            RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
-                    Key.CACHE_ATHL_RECORD_FREE);
+        if (heartRateBean != null) {
+            try {
+                //RxCache 库的一个Bug
+                RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
+                        Key.CACHE_ATHL_RECORD_FREE);
+            } finally {
+                RxLogUtils.e("RxCache LruDiskCache is null");
+            }
+
+        }
     }
 
 }

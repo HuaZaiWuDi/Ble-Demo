@@ -21,7 +21,12 @@ public class AthlPlanListBean {
     }
 
 
-    public String strRange(){
+    /**
+     * 获取心率区间名称
+     *
+     * @return
+     */
+    public String strRange() {
         switch (range) {
             case 0:
                 return "静息";
@@ -39,7 +44,12 @@ public class AthlPlanListBean {
         return "静息";
     }
 
-    public int getRange() {
+    /**
+     * 获取心率对应的范围
+     *
+     * @return
+     */
+    public int getHeartRange() {
         byte[] heartRates = Key.HRART_SECTION;
         int heart_0 = heartRates[0] & 0xff;
         int heart_1 = heartRates[1] & 0xff;
@@ -101,11 +111,6 @@ public class AthlPlanListBean {
     }
 
 
-    public int getRange3() {
-        return range;
-    }
-
-
     public int getRange2() {
         byte[] heartRates = Key.HRART_SECTION;
         int heart_0 = heartRates[0] & 0xff;
@@ -136,6 +141,10 @@ public class AthlPlanListBean {
 
     public void setRange(int range) {
         this.range = range;
+    }
+
+    public int getRange() {
+        return range;
     }
 
     public int getDuration() {

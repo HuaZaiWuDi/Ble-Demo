@@ -31,8 +31,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  */
 public class NetManager {
     private static NetManager netManager = null;
-    private Retrofit retrofit = null;
-    private OkHttpClient.Builder builder;
     private static ApiService mApiService;
     private static SystemService mSystemService;
 
@@ -45,7 +43,7 @@ public class NetManager {
 
 
     public NetManager() {
-        builder = new OkHttpClient.Builder();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -67,14 +65,14 @@ public class NetManager {
 
         builder.addInterceptor(NetInterceptor);
 
-        retrofit = new Retrofit.Builder()
+        Retrofit apiRetrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(builder.build())
                 .baseUrl(ApiService.BASE_URL)
                 .build();
 
-        mApiService = retrofit.create(ApiService.class);
+        mApiService = apiRetrofit.create(ApiService.class);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -87,10 +85,16 @@ public class NetManager {
     }
 
     public static SystemService getSystemService() {
+        if (mSystemService == null) {
+            getInstance();
+        }
         return mSystemService;
     }
 
     public static ApiService getApiService() {
+        if (mApiService == null) {
+            getInstance();
+        }
         return mApiService;
     }
 

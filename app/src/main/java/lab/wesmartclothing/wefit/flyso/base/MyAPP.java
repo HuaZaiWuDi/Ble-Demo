@@ -34,7 +34,6 @@ import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -137,7 +136,7 @@ public class MyAPP extends Application {
                 }
 
                 ActivityLifecycle();
-                NetManager.getInstance();
+
                 RxLogUtils.i("启动时长：初始化结束");
             }
         });

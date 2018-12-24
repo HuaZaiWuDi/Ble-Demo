@@ -25,7 +25,7 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
-import com.vondear.rxtools.aboutCarmera.BitmapUtil;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
@@ -350,8 +350,8 @@ public class ProblemFragemnt extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -360,7 +360,7 @@ public class ProblemFragemnt extends BaseActivity {
     public void feedbackImg() {
         List<File> files = new ArrayList<>();
         for (int i = 0; i < imageLists.size(); i++) {
-            File file = new File(BitmapUtil.compressImage(imageLists.get(i).path));
+            File file = new File(RxImageUtils.compressImage(imageLists.get(i).path));
             files.add(file);
             Log.d("上传图片", "feedbackImg: " + file.getAbsolutePath());
             Log.d("上传图片", " file.length();: " + file.length());
@@ -379,8 +379,8 @@ public class ProblemFragemnt extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

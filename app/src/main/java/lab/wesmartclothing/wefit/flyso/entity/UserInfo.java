@@ -1,6 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import com.vondear.rxtools.dateUtils.RxTimeUtils;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.utils.RxConstUtils;
 
 import java.io.Serializable;

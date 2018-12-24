@@ -1,4 +1,4 @@
-package com.vondear.rxtools.aboutCarmera;
+package com.vondear.rxtools.utils.bitmap;
 
 import android.app.Activity;
 import android.content.Context;

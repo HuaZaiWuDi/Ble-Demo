@@ -1,4 +1,4 @@
-package com.vondear.rxtools.dateUtils;
+package com.vondear.rxtools.utils.dateUtils;
 
 import com.vondear.rxtools.utils.RxFormatValue;
 
