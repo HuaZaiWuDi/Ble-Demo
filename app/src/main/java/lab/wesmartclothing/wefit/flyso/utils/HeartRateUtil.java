@@ -160,7 +160,6 @@ public class HeartRateUtil {
     }
 
 
-
     public void clearData(HeartRateBean heartRateBean) {
         if (heartRateBean != null) {
             try {
