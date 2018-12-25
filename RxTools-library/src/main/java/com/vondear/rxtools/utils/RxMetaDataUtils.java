@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
  *     blog  : http://blankj.com
  *     time  : 2018/05/15
  *     desc  : utils about meta-data
+ *     获取清单信息
  * </pre>
  */
 public final class RxMetaDataUtils {

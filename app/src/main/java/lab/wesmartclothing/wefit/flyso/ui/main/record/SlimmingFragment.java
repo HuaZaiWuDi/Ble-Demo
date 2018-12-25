@@ -744,7 +744,7 @@ public class SlimmingFragment extends BaseAcFragment {
         if (bean.getComplete() < 0) {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
             mProTarget.setProgress(5);
-        } else if (bean.getComplete() > 0) {
+        } else if (bean.getComplete() >= 0) {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }

@@ -1,4 +1,4 @@
-package com.vondear.rxtools.model.state;
+package com.vondear.rxtools.view.state;
 
 import android.app.Activity;
 import android.app.Fragment;

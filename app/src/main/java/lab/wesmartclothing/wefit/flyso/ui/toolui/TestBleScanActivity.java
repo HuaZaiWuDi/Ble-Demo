@@ -18,7 +18,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.vondear.rxtools.model.state.PageLayout;
+import com.vondear.rxtools.view.state.PageLayout;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;

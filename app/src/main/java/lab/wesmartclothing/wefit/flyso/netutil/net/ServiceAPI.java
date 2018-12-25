@@ -43,13 +43,13 @@ public class ServiceAPI {
     //商城地址
     public static String Store_Addr = "https://weidian.com/?userid=1063198383";
 
-    //商城URL
-    public static String Order_Url = "http://10.10.11.208:15111";
+    //商城订单URL
+    public static String Order_Url = "";
 
-    public static String Shopping_Address = "http://10.10.11.208:15111";
+    public static String Shopping_Address = "";
 
     //查看报告地址
-    public static String SHARE_INFORM_URL = "http://39.108.152.50:8088/wisenfit/build/html/healthReport.html?userId=";
+    public static String SHARE_INFORM_URL = "";
 
     //app下载链接
     public static String APP_DOWN_LOAD_URL = "";
@@ -62,10 +62,10 @@ public class ServiceAPI {
 
     //服务协议
 //    public static String Term_Service = "file:///android_asset/TermService.html";
-    public static String Term_Service = "http://119.23.225.125:8080/TermService/TermService.html";
+    public static String Term_Service = "";
 
     //收藏地址
-    public static String Detail = "http://39.108.152.50:8088/find/detail.html?gid=";
+    public static String Detail = "";
 
 
 }

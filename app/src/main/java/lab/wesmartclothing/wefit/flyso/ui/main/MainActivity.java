@@ -1,10 +1,14 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
 import android.Manifest;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +28,7 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +130,7 @@ public class MainActivity extends BaseALocationActivity {
 
     public void initView() {
         startLocation(null);
-
+        initSystemConfig();
         RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress(mContext));
         RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
@@ -139,6 +144,11 @@ public class MainActivity extends BaseALocationActivity {
             }
         });
 
+
+    }
+
+    private void initSystemConfig() {
+        //判断是否有权限
         new RxPermissions(mActivity)
                 .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -146,8 +156,32 @@ public class MainActivity extends BaseALocationActivity {
                 .subscribe(new RxSubscriber<Permission>() {
                     @Override
                     protected void _onNext(Permission aBoolean) {
+                        RxLogUtils.e("是否开启了权限：" + aBoolean);
                     }
                 });
+
+        //判断是否关闭了通知栏权限
+        RxLogUtils.e("通知栏权限：" + NotificationManagerCompat.from(mContext).areNotificationsEnabled());
+        if (!NotificationManagerCompat.from(mContext).areNotificationsEnabled()) {
+            new RxDialogSureCancel(mContext)
+                    .setTitle("提示")
+                    .setContent("您的通知权限未开启，可能影响APP的正常使用")
+                    .setSure("现在去开启")
+                    .setSureListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            /**
+                             * 跳到通知栏设置界面
+                             * @param context
+                             */
+                            Intent localIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            localIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                            localIntent.setData(Uri.parse("package:" + mContext.getPackageName()));
+                            mContext.startActivity(localIntent);
+                        }
+                    }).show();
+        }
+
     }
 
     @Override

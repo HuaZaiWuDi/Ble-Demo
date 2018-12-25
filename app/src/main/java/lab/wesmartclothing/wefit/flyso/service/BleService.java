@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
@@ -126,10 +127,12 @@ public class BleService extends Service {
                         if (workType != -1 && workType != 5) {
 
                         } else {
-                            RxToast.normal(RxNetUtils.getNetType(workType));
+                            if (ActivityLifecycleImpl.APP_IS_FOREGROUND)
+                                RxToast.normal(RxNetUtils.getNetType(workType));
                         }
                     } else {
-                        RxToast.normal(RxNetUtils.getNetType(workType));
+                        if (ActivityLifecycleImpl.APP_IS_FOREGROUND)
+                            RxToast.normal(RxNetUtils.getNetType(workType));
                         RxBus.getInstance().post(new NetWorkType(workType, workType != -1 && workType != 5));
                     }
                     RxLogUtils.d("网络状态：" + workType);
