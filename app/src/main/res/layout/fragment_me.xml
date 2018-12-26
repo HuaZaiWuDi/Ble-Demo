@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/Gray"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/bottom_padding">
+    android:orientation="vertical">
 
 
     <!--title-->
@@ -32,8 +31,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_userImg"
             android:layout_alignRight="@+id/iv_userImg"
+            android:layout_alignBottom="@+id/iv_userImg"
             android:src="@mipmap/icon_edit"/>
 
 
@@ -72,8 +71,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_toLeftOf="@+id/iv_notify"
-            android:paddingBottom="30dp"
             android:paddingLeft="22dp"
+            android:paddingBottom="30dp"
             android:src="@mipmap/icon_setting"/>
 
 
@@ -82,8 +81,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:paddingBottom="30dp"
             android:paddingLeft="22dp"
+            android:paddingBottom="30dp"
             android:src="@mipmap/icon_email_white"/>
 
 
@@ -270,7 +269,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_myDevice"
@@ -287,8 +286,7 @@
                     android:layout_toRightOf="@+id/iv_myDevice"
                     android:text="我的设备"
                     android:textColor="@color/Gray"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textSize="15sp"/>
 
 
                 <TextView
@@ -324,7 +322,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_Collect"
@@ -342,7 +340,7 @@
                     android:text="我的收藏"
                     android:textColor="@color/Gray"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    />
 
 
                 <TextView
@@ -378,8 +376,9 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
+                android:visibility="gone"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_Order"
@@ -397,7 +396,7 @@
                     android:text="我的订单"
                     android:textColor="@color/Gray"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    />
 
 
                 <ImageView
@@ -422,8 +421,9 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
+                android:visibility="gone"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_shoppingAddress"
@@ -441,7 +441,7 @@
                     android:text="我的购物车"
                     android:textColor="@color/Gray"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    />
 
 
                 <ImageView
@@ -463,7 +463,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_problem"
@@ -481,7 +481,7 @@
                     android:text="问题与反馈"
                     android:textColor="@color/Gray"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    />
 
 
                 <ImageView
@@ -508,7 +508,7 @@
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
-                app:ripple_color="@color/GrayWrite">
+                app:ripple_color="@color/ripple_ECEAE6">
 
                 <ImageView
                     android:id="@+id/iv_aboutUs"
@@ -526,7 +526,7 @@
                     android:text="关于我们"
                     android:textColor="@color/Gray"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    />
 
 
                 <ImageView

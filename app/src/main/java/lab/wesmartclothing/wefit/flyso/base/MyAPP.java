@@ -1,16 +1,13 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Configuration;
-import com.activeandroid.app.Application;
 import com.amap.api.location.AMapLocation;
-import com.google.gson.Gson;
-import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -18,21 +15,29 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
+import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
+import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxDeviceUtils;
+import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxThreadPoolUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.yolanda.health.qnblesdk.listener.QNResultCallback;
 import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
+
+import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
 
@@ -41,10 +46,8 @@ import me.shaohui.shareutil.ShareManager;
  */
 public class MyAPP extends Application {
 
-
     public static QNBleApi QNapi;
     public static Typeface typeface;
-    private static Gson sGson;
     public static AMapLocation aMapLocation = null;//定位信息
     public static GlideImageLoader sImageLoader;
 
@@ -69,46 +72,72 @@ public class MyAPP extends Application {
 //        });
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
-        RxLogUtils.i("启动时长：初始化");
+        Logger.d("Myapp" + BuildConfig.DEBUG);
+        Log.d("Myapp", BuildConfig.DEBUG + "");
+        RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
+
 
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
             @Override
             public void run() {
-                RxManager.getInstance().setAPPlication(MyAPP.this);
-                ScreenAdapter.init(MyAPP.this);
+                RxUtils.init(MyAPP.this);
+
+                //开发版直接使用发布版API
+                if (!BuildConfig.DEBUG) {
+                    ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
+                } else {
+                    String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL, ServiceAPI.BASE_URL);
+                    if (!RxDataUtils.isNullString(baseUrl)) {
+                        ServiceAPI.switchURL(baseUrl);
+                    }
+                }
                 MultiDex.install(MyAPP.this);
-                initDB();
                 initShareLogin();
                 initLeakCanary();
-                RxUtils.init(MyAPP.this);
+                /**
+                 * 过滤开发设备
+                 *
+                 * */
+                String[] androidIds = {"171e7dfb5b3005f2", "54409e1a3d1be330"};
+                boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
+                RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
+
                 Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+                Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
+
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
                 BleTools.initBLE(MyAPP.this);
-                Logger.addLogAdapter(new AndroidLogAdapter() {
-                    @Override
-                    public boolean isLoggable(int priority, String tag) {
-                        return BuildConfig.DEBUG;
-                    }
-                });
 
-//                RxCache.initializeDefault(new RxCache.Builder()
-//                        .appVersion(2)
-//                        .diskDir(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "Timetofit-cache"))
-//                        .diskConverter(new SerializableDiskConverter())
-//                        .diskMax((20 * 1024 * 1024))
-//                        .memoryMax((20 * 1024 * 1024))
-//                        .setDebug(true)
-//                        .build());
+                try {
+                    RxCache.initializeDefault(new RxCache.Builder()
+                            .appVersion(2)
+                            .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
+                            .diskConverter(new SerializableDiskConverter())
+                            .diskMax((20 * 1024 * 1024))
+                            .memoryMax((20 * 1024 * 1024))
+                            .setDebug(false)
+                            .build());
+                } catch (Exception e) {
+                    RxLogUtils.e(e);
+                }
+
+                ActivityLifecycle();
+
                 RxLogUtils.i("启动时长：初始化结束");
             }
         });
 
+    }
+
+    private void ActivityLifecycle() {
+        registerActivityLifecycleCallbacks(new ActivityLifecycleImpl());
     }
 
 
@@ -132,17 +161,10 @@ public class MyAPP extends Application {
         ShareManager.init(config);
     }
 
-
     public static RxCache getRxCache() {
         return RxCache.getDefault();
     }
 
-    public static Gson getGson() {
-        if (sGson == null) {
-            sGson = new Gson();
-        }
-        return sGson;
-    }
 
     private void initQN() {
         QNapi = QNBleApi.getInstance(this);
@@ -157,28 +179,27 @@ public class MyAPP extends Application {
         });
     }
 
-    private void initDB() {
-        Configuration.Builder builder = new Configuration.Builder(this);
-        //手动的添加模型类
-        builder.addModelClasses(SearchWordTab.class)
-                .setDatabaseName("Wefit.db")
-                .setDatabaseVersion(1);
-
-        ActiveAndroid.initialize(builder.create());
-    }
-
 
     /**
      * 内存泄露
      */
     private void initLeakCanary() {
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            // This process is dedicated to LeakCanary for heap analysis.
-//            // You should not init your app in this process.
-//            return;
-//        }
-//        LeakCanary.install(this);
+        if (BuildConfig.LeakCanary) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() //
+                    .detectAll() //
+                    .penaltyLog() //
+                    .penaltyDeath() //
+                    .build());
+
+            if (LeakCanary.isInAnalyzerProcess(this)) {
+                // This process is dedicated to LeakCanary for heap analysis.
+                // You should not init your app in this process.
+                return;
+            }
+            LeakCanary.install(this);
+        }
     }
+
 
     /**
      * oppo (Android4.4.4 , api19) 手机上运行项目,一直闪退 ,
@@ -190,13 +211,9 @@ public class MyAPP extends Application {
 
         RxLogUtils.i("启动时长：开始启动");
         MultiDex.install(base);
-    }
 
 
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-//        ActiveAndroid.dispose();
     }
+
 
 }

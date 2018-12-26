@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
@@ -34,9 +35,12 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -44,11 +48,6 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created by jk on 2018/8/10.
@@ -102,9 +101,13 @@ public class DeviceFragment extends BaseActivity {
                 //监听瘦身衣连接情况
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
                 mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
+                if (state) {
+                    getVoltage();
+                }
             }
         }
     };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,12 +135,12 @@ public class DeviceFragment extends BaseActivity {
         super.onStart();
         initData();
         notifyData();
+        getVoltage();
     }
 
     @Override
     public void onDestroy() {
         unregisterReceiver(registerReceiver);
-        BleAPI.getVoltage(null);
         super.onDestroy();
     }
 
@@ -168,17 +171,14 @@ public class DeviceFragment extends BaseActivity {
     }
 
     private void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.deviceList())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().deviceList())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
 
-                        DeviceListbean deviceListbean = MyAPP.getGson().fromJson(s, DeviceListbean.class);
+                        DeviceListbean deviceListbean = JSON.parseObject(s, DeviceListbean.class);
                         beanList = deviceListbean.getList();
                         for (int i = 0; i < beanList.size(); i++) {
                             DeviceListbean.ListBean device = beanList.get(i);
@@ -190,8 +190,8 @@ public class DeviceFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -216,7 +216,9 @@ public class DeviceFragment extends BaseActivity {
             mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
         }
 
+    }
 
+    private void getVoltage() {
         BleAPI.getVoltage(new BleChartChangeCallBack() {
             @Override
             public void callBack(byte[] data) {
@@ -233,6 +235,7 @@ public class DeviceFragment extends BaseActivity {
         });
     }
 
+
     private void deleteDeviceById(final String position) {
         String gid = "";
         if (beanList != null)
@@ -242,8 +245,7 @@ public class DeviceFragment extends BaseActivity {
                     gid = device.getGid();
                 }
             }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeBind(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeBind(gid))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -265,9 +267,11 @@ public class DeviceFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
+                    protected void _onError(String error, int code) {
                         RxToast.error("删除失败");
                     }
+
+
                 });
     }
 }

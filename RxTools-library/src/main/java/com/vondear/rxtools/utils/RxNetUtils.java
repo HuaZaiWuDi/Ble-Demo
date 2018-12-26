@@ -8,8 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 
-import com.vondear.rxtools.view.RxToast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +65,6 @@ public class RxNetUtils {
             switch (ni.getType()) {//获取当前网络的状态
                 case ConnectivityManager.TYPE_WIFI:// wifi的情况下
                     netType = NETWORK_WIFI;
-                    RxToast.success("切换到wifi环境下");
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
 
@@ -79,7 +76,7 @@ public class RxNetUtils {
                         case TelephonyManager.NETWORK_TYPE_1xRTT:
                         case TelephonyManager.NETWORK_TYPE_IDEN:
                             netType = NETWORK_2G;
-                            RxToast.info("切换到2G环境下");
+
                             break;
                         case TelephonyManager.NETWORK_TYPE_EVDO_A: // 电信3g
                         case TelephonyManager.NETWORK_TYPE_UMTS:
@@ -92,13 +89,12 @@ public class RxNetUtils {
                         case TelephonyManager.NETWORK_TYPE_HSPAP:
                         case NETWORK_TYPE_TD_SCDMA:
                             netType = NETWORK_3G;
-                            RxToast.info("切换到3G环境下");
+
                             break;
                         case TelephonyManager.NETWORK_TYPE_LTE:
 
                         case NETWORK_TYPE_IWLAN:
                             netType = NETWORK_4G;
-                            RxToast.info("切换到4G环境下");
                             break;
                         default:
 
@@ -110,20 +106,45 @@ public class RxNetUtils {
                             } else {
                                 netType = NETWORK_UNKNOWN;
                             }
-                            RxToast.normal("未知网络");
                     }
                     break;
                 default:
                     netType = 5;
-                    RxToast.normal("未知网络");
             }
 
         } else {
             netType = NETWORK_NO;
-            RxToast.error(context, "当前无网络连接").show();
+
         }
         return netType;
     }
+
+    public static String getNetType(int type) {
+        String netType = "未知网络";
+        switch (type) {
+            case -1:
+                netType = "当前无网络连接";
+                break;
+            case 1:
+                netType = "切换到WIFI的环境下";
+                break;
+            case 2:
+                netType = "切换到2G环境下";
+                break;
+            case 3:
+                netType = "切换到3G环境下";
+                break;
+            case 4:
+                netType = "切换到4G环境下";
+                break;
+            case 5:
+                netType = "未知网络";
+                break;
+
+        }
+        return netType;
+    }
+
 
     /**
      * 获取当前的网络类型(WIFI,2G,3G,4G)

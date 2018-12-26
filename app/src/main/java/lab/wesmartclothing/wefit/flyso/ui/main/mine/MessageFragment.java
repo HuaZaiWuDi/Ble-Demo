@@ -1,11 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
@@ -14,8 +14,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.model.antishake.AntiShake;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -32,24 +33,21 @@ import com.zchu.rxcache.stategy.CacheStrategy;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
 import lab.wesmartclothing.wefit.flyso.entity.ReadedBean;
-import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
-import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
@@ -64,33 +62,41 @@ public class MessageFragment extends BaseActivity {
     SwipeMenuRecyclerView mRvCollect;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
-    Unbinder unbinder;
 
 
     private BaseQuickAdapter adapter;
     private int pageNum = 1;
     private View emptyView;
+    private boolean changeReadState = false;
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_message);
-        unbinder = ButterKnife.bind(this);
-        initView();
+    protected int layoutId() {
+        return R.layout.fragment_message;
     }
 
-
-    private void initView() {
+    @Override
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         initRecycler();
+
+
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
         pageNum = 1;
         initData();
     }
+
 
     private void initRecycler() {
         /*侧滑删除*/
@@ -102,7 +108,6 @@ public class MessageFragment extends BaseActivity {
 
             @Override
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
-
                 MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
                 helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
                         .setText(R.id.tv_title, item.getTitle())
@@ -177,7 +182,6 @@ public class MessageFragment extends BaseActivity {
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
             if (AntiShake.getInstance().check()) return;
-            final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
             readed(position);
         }
     };
@@ -202,21 +206,22 @@ public class MessageFragment extends BaseActivity {
 
 
     public void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.message(pageNum, 10))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().message(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("message", String.class, CacheStrategy.cacheAndRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("message", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        MessageBean bean = MyAPP.getGson().fromJson(s, MessageBean.class);
+                        MessageBean bean = JSON.parseObject(s, MessageBean.class);
                         List<MessageBean.ListBean> list = bean.getList();
                         if (pageNum == 1) {
                             adapter.setNewData(list);
                         } else {
                             adapter.addData(list);
                         }
+
                         if (smartRefreshLayout.isLoading()) {
                             pageNum++;
                             smartRefreshLayout.finishLoadMore(true);
@@ -228,7 +233,7 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    public void _onError(String e) {
+                    public void _onError(String e, int code) {
                         if (smartRefreshLayout.isLoading())
                             smartRefreshLayout.finishLoadMore(false);
                         if (smartRefreshLayout.isRefreshing())
@@ -238,7 +243,7 @@ public class MessageFragment extends BaseActivity {
     }
 
     //是否含有未读
-    private boolean hasRead() {
+    private boolean hasUnRead() {
         if (adapter != null) {
             for (MessageBean.ListBean bean : (List<MessageBean.ListBean>) adapter.getData()) {
                 if (bean.getReadState() != 1) {
@@ -246,18 +251,16 @@ public class MessageFragment extends BaseActivity {
                 }
             }
         }
-
         return false;
     }
 
 
     private void readAllRequest() {
-        if (!hasRead()) {
+        if (!hasUnRead()) {
             RxToast.normal("没有未读消息");
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.readedAll())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().readedAll())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -269,11 +272,12 @@ public class MessageFragment extends BaseActivity {
                             bean.setReadState(1);
                         }
                         adapter.setNewData(listBeans);
+                        changeReadState = true;
                     }
 
                     @Override
-                    public void _onError(String e) {
-                        RxToast.normal(e);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -283,18 +287,22 @@ public class MessageFragment extends BaseActivity {
         final MessageBean.ListBean item = (MessageBean.ListBean) adapter.getItem(position);
         if (item == null) return;
         String gid = item.getGid();
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.readed(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().readed(gid))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        item.setReadState(1);
-                        adapter.setData(position, item);
-                        ReadedBean readedBean = MyAPP.getGson().fromJson(s, ReadedBean.class);
+                        if (item.getReadState() != 1) {
+                            item.setReadState(1);
+                            adapter.setData(position, item);
+                            changeReadState = true;
+                        }
+                        if (RxDataUtils.isNullString(s)) {
+                            return;
+                        }
+
+                        ReadedBean readedBean = JSON.parseObject(s, ReadedBean.class);
                         if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_ACTIVITY) {
                             RxBus.getInstance().post(readedBean.getOpenTarget());
                             onBackPressed();
@@ -314,7 +322,7 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    public void _onError(String e) {
+                    public void _onError(String e, int code) {
                         RxToast.normal(e);
                     }
                 });
@@ -322,10 +330,7 @@ public class MessageFragment extends BaseActivity {
 
     private void deleteItemById(final int position) {
         String gid = ((MessageBean.ListBean) adapter.getData().get(position)).getGid();
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.removeAppMessage(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeAppMessage(gid))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -337,8 +342,8 @@ public class MessageFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -346,9 +351,8 @@ public class MessageFragment extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!hasRead()) {
-            RxBus.getInstance().post(new RefreshMe());
-            RxBus.getInstance().post(new RefreshSlimming());
+        if (changeReadState && !hasUnRead()) {
+            RxBus.getInstance().post(new MessageChangeBus());
         }
         super.onBackPressed();
     }

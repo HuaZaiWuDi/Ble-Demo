@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,9 +15,6 @@ import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
-import com.zchu.rxcache.RxCache;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,14 +24,13 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 /**
  * Created by jk on 2018/8/9.
@@ -96,26 +93,16 @@ public class Settingfragment extends BaseActivity {
                 .addItemView(clearCacheItem, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-                        dialog.getTvTitle().setVisibility(View.GONE);
-                        dialog.getTvContent().setText("清除缓存？");
-                        dialog.setCancel("清除");
-                        dialog.setCancelListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                RxFileUtils.clearAllCache(mContext.getApplicationContext());
-                                clearCacheItem.setDetailText("0MB");
-                            }
-                        });
-                        dialog.setSure("取消");
-                        dialog.setSureListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
+                        new RxDialogSureCancel(mActivity)
+                                .setTitle("清除缓存？")
+                                .setSure("清除")
+                                .setSureListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        RxFileUtils.clearAllCache(mContext.getApplicationContext());
+                                        clearCacheItem.setDetailText("0MB");
+                                    }
+                                }).show();
                     }
                 })
                 .addItemView(accountItem, new View.OnClickListener() {
@@ -124,15 +111,14 @@ public class Settingfragment extends BaseActivity {
                         RxActivityUtils.skipActivity(mContext, AccountFragment.class);
                     }
                 })
-                .addItemView(clothing, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
-                    }
-                })
+//                .addItemView(clothing, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+////                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
+//                    }
+//                })
                 .setUseTitleViewForSectionSpace(false)
                 .addTo(mGroupListView);
-
     }
 
     private void initTopBar() {
@@ -147,31 +133,23 @@ public class Settingfragment extends BaseActivity {
 
     @OnClick(R.id.tv_logout)
     public void onViewClicked() {
-        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.getTvContent().setText("退出登录？");
-        dialog.setCancel("退出");
-        dialog.setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                logout();
-            }
-        });
-        dialog.setSure("取消");
-        dialog.setSureListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setTitle("退出登录？")
+                .setSure("退出")
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        logout();
+                    }
+                });
+        rxDialog.show();
     }
 
 
     private void logout() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.logout())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().logout())
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -186,19 +164,14 @@ public class Settingfragment extends BaseActivity {
 
                         BleTools.getInstance().disConnect();
                         QNBleTools.getInstance().disConnectDevice();
-                        try {
-                            RxCache.getDefault().clear2();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
-                        }
+
+                        RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
 
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.normal(error, code);
                     }
                 });
     }

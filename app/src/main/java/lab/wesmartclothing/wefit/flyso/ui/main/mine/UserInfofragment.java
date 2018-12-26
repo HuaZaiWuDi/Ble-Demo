@@ -3,10 +3,11 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -14,8 +15,9 @@ import com.lzy.imagepicker.view.CropImageView;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -42,21 +44,19 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.picker.AddressPickTask;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -70,8 +70,6 @@ public class UserInfofragment extends BaseActivity {
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.iv_userImg)
     QMUIRadiusImageView mIvUserImg;
-    @BindView(R.id.layout_userImg)
-    RelativeLayout mLayoutUserImg;
     Unbinder unbinder;
     @BindView(R.id.tv_userName)
     TextView mTvUserName;
@@ -89,10 +87,6 @@ public class UserInfofragment extends BaseActivity {
     TextView mTvUserHeight;
     @BindView(R.id.layout_userHeight)
     RxRelativeLayout mLayoutUserHeight;
-    @BindView(R.id.tv_userWeight)
-    TextView mTvUserWeight;
-    @BindView(R.id.layout_userWeight)
-    RxRelativeLayout mLayoutUserWeight;
     @BindView(R.id.tv_userCity)
     TextView mTvUserCity;
     @BindView(R.id.layout_userCity)
@@ -114,7 +108,6 @@ public class UserInfofragment extends BaseActivity {
         setContentView(R.layout.fragment_user_info);
         unbinder = ButterKnife.bind(this);
         initView();
-
     }
 
 
@@ -122,7 +115,7 @@ public class UserInfofragment extends BaseActivity {
         initTopBar();
         initImagePicker();
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        info = JSON.parseObject(string, UserInfo.class);
         info.setChange(false);
         notifyData(info);
     }
@@ -174,7 +167,6 @@ public class UserInfofragment extends BaseActivity {
         mTvUserSex.setText(info.getSex() == 1 ? "男" : "女");
         mTvBirth.setText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
         mTvUserHeight.setText(info.getHeight() + "\tcm");
-        mTvUserWeight.setText(info.getTargetWeight() + "\tkg");
         if (!RxDataUtils.isNullString(info.getProvince()) && !RxDataUtils.isNullString(info.getCity()))
             mTvUserCity.setText(info.getProvince() + "," + info.getCity());
         if (!RxDataUtils.isNullString(info.getSignature()))
@@ -293,10 +285,9 @@ public class UserInfofragment extends BaseActivity {
     }
 
     private void uploadImage() {
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(info.getImgUrl()));
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), new File(RxImageUtils.compressImage(info.getImgUrl())));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", info.getImgUrl(), requestFile);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.uploadUserImg(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().uploadUserImg(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -306,18 +297,16 @@ public class UserInfofragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
 
     /*保存按钮，提交用户数据*/
     private void requestSaveUserInfo() {
-        final String gson = MyAPP.getGson().toJson(info, UserInfo.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
+        final String gson = JSON.toJSONString(info);
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().saveUserInfo(NetManager.fetchRequest(gson)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -334,8 +323,8 @@ public class UserInfofragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -345,30 +334,29 @@ public class UserInfofragment extends BaseActivity {
     public void onBackPressed() {
         RxLogUtils.d("用户数据：" + info.toString());
         if (info.isChange()) {
-            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.getTvTitle().setVisibility(View.GONE);
-            dialog.setContent("您已经修改信息\n是否保存？");
-            dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-            dialog.setCancel("保存").setCancelListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    if (userImgIsChange) {
-                        uploadImage();
-                    } else {
-                        requestSaveUserInfo();
-                    }
-                }
-            })
-                    .setSure("退出")
+            RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                    .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                    .setContent("您已经修改信息\n是否保存？")
+                    .setSure("保存")
                     .setSureListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
+                            if (userImgIsChange) {
+                                uploadImage();
+                            } else {
+                                requestSaveUserInfo();
+                            }
+                        }
+                    })
+                    .setCancel("退出")
+                    .setCancelListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
                             RxActivityUtils.finishActivity();
                         }
-                    }).show();
+                    });
+            rxDialog.show();
         } else
             super.onBackPressed();
     }
@@ -379,7 +367,6 @@ public class UserInfofragment extends BaseActivity {
             R.id.layout_userSex,
             R.id.layout_userBirth,
             R.id.layout_userHeight,
-            R.id.layout_userWeight,
             R.id.layout_userCity,
             R.id.layout_userSign})
     public void onViewClicked(View view) {
@@ -399,13 +386,7 @@ public class UserInfofragment extends BaseActivity {
             case R.id.layout_userHeight:
                 showHeight();
                 break;
-            case R.id.layout_userWeight:
-                if (SPUtils.getFloat(SPKey.SP_realWeight) <= 0) {
-                    RxToast.normal("您还未录入初始体重\n请上称！！", 3000);
-                    return;
-                }
-                RxActivityUtils.skipActivity(mActivity, TargetDetailsFragment.class);
-                break;
+
             case R.id.layout_userCity:
                 showAddress();
                 break;

@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxBarUtils;
 import com.vondear.rxtools.utils.RxConstants;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.view.RxTextAutoZoom;
 

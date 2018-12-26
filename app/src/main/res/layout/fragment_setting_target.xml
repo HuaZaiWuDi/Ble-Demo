@@ -59,8 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/tv_targetWeight"
-                android:layout_marginBottom="@dimen/dimen_8"
                 android:layout_marginLeft="@dimen/dimen_8"
+                android:layout_marginBottom="@dimen/dimen_8"
                 android:layout_toRightOf="@+id/tv_targetWeight"
                 android:text="kg"
                 android:textColor="@color/GrayWrite"
@@ -105,17 +105,20 @@
     </LinearLayout>
 
 
-    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+    <com.vondear.rxtools.view.layout.RxTextView
         android:id="@+id/btn_nextStep"
         android:layout_width="195dp"
         android:layout_height="46dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
+        android:gravity="center"
         android:text="下一步"
         android:textColor="@color/white"
         android:textSize="18dp"
-        app:qmui_backgroundColor="@color/orange_FF7200"
-        app:qmui_borderColor="@color/orange_FF7200"/>
+        app:background_normal="@color/green_61D97F"
+        app:corner_radius="22dp"
+        app:ripple_color="@color/ripple_ECEAE6"/>
+
 
 </RelativeLayout>

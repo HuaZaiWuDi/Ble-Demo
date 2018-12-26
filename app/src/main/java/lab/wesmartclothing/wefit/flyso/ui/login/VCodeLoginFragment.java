@@ -26,12 +26,11 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created icon_hide_password jk on 2018/7/2.
@@ -139,8 +138,7 @@ public class VCodeLoginFragment extends BaseFragment {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.sendCode(phone, null))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().sendCode(phone, null))
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
@@ -155,11 +153,12 @@ public class VCodeLoginFragment extends BaseFragment {
                             mEditVcode.setText(s);
                         RxToast.success(getString(R.string.SMSSended));
                     }
-
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
+
                 });
     }
 }

@@ -130,6 +130,15 @@
     @butterknife.* <methods>;
 }
 
+##保持继承改类的所有方法名和类名，
+#-keepclasseswithmembernames class lab.wesmartclothing.wefit.netlib.net.**{
+#    *;
+#}
+#-keepclasseswithmembernames class lab.wesmartclothing.wefit.netlib.rx.** {
+#    *;
+#}
+
+
 # OkHttp3
 -dontwarn okhttp3.logging.**
 -keep class okhttp3.internal.**{*;}
@@ -186,8 +195,16 @@
 
 
 #数据库类，实体类还有自定义控件类
--keep class lab.wesmartclothing.wefit.flyso.entity { *; }
--keep class lab.wesmartclothing.wefit.flyso.view { *; }
+#一颗星表示只是保持该包下的类名，而子包下的类名还是会被混淆；
+#两颗星表示把本包和所含子包下的类名都保持；
+
+#//用以上方法保持类后，你会发现类名虽然未混淆，但里面的具体方法和变量命名还是变了，
+#//如果既想保持类名，又想保持里面的内容不被混淆，我们就需要以下方法了
+
+-keep class lab.wesmartclothing.wefit.flyso.entity.** { *; }
+-keep class lab.wesmartclothing.wefit.flyso.view.** { *; }
+-keep class lab.wesmartclothing.wefit.netlib.** { *; }
+
 
 # Retrofit
 -dontnote retrofit2.Platform

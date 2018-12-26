@@ -26,10 +26,9 @@ import io.reactivex.functions.Function;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.FileDownLoadObserver;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
@@ -105,8 +104,7 @@ public class AboutUpdateDialog extends RxDialog {
         fileName = filePath.substring(lastIndexOf + 1, filePath.length());
         RxLogUtils.i("文件名：" + fileName);
 
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doLoadDownSubscribe(dxyService.downLoadFile(filePath))
+        RxManager.getInstance().doLoadDownSubscribe(NetManager.getApiService().downLoadFile(filePath))
                 .map(new Function<ResponseBody, File>() {
                     @Override
                     public File apply(ResponseBody body) throws Exception {

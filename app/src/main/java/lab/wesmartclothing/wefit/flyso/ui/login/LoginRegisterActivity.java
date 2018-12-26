@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -22,6 +21,7 @@ import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.UnScrollableViewPager;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
@@ -35,18 +35,16 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.PasswordLoginBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 import me.shaohui.shareutil.LoginUtil;
 import me.shaohui.shareutil.login.LoginListener;
 import me.shaohui.shareutil.login.LoginPlatform;
@@ -78,7 +76,7 @@ public class LoginRegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_register);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(false)
                 .process();
@@ -115,14 +113,13 @@ public class LoginRegisterActivity extends BaseActivity {
 
         @Override
         public void loginFailure(Exception e) {
-            RxLogUtils.e("登录失败");
+            RxLogUtils.e("登录失败", e);
             RxToast.error("登录失败");
         }
 
         @Override
         public void loginCancel() {
             RxLogUtils.e("登录取消");
-            RxToast.normal("登录取消");
         }
     };
 
@@ -226,7 +223,6 @@ public class LoginRegisterActivity extends BaseActivity {
             @Override
             public void onTabSelect(int position) {
                 mViewPager.setCurrentItem(position);
-
             }
 
             @Override
@@ -246,8 +242,7 @@ public class LoginRegisterActivity extends BaseActivity {
             RxToast.warning(getString(R.string.VCodeError));
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.login(phone, code))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().login(phone, code))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -259,8 +254,9 @@ public class LoginRegisterActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
                 });
     }
@@ -275,8 +271,7 @@ public class LoginRegisterActivity extends BaseActivity {
             RxToast.warning(getString(R.string.passwordError));
             return;
         }
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.pwdLogin(phone, RxEncryptUtils.encryptMD5ToString(password)))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().pwdLogin(phone, RxEncryptUtils.encryptMD5ToString(password)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -294,6 +289,7 @@ public class LoginRegisterActivity extends BaseActivity {
                             RxToast.error(error);
                         }
                     }
+
                 });
     }
 
@@ -312,31 +308,25 @@ public class LoginRegisterActivity extends BaseActivity {
     }
 
     private void showDialog2settingPassword() {
-        RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity)
-                .setCancel("设置密码")
-                .setCancelListener(new View.OnClickListener() {
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setContent("该手机号还未设置密码")
+                .setSure("设置密码")
+                .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //进入设置密码流程，跳转验证手机号
                         RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class);
                     }
                 })
-                .setSure("验证码登录")
-                .setSureListener(new View.OnClickListener() {
+                .setCancel("验证码登录")
+                .setCancelListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mCommonTabLayout.setCurrentTab(1);
+                        mViewPager.setCurrentItem(1);
                     }
-                })
-                .setContent("该手机号还未设置密码");
-        dialog.getTvTitle().setVisibility(View.GONE);
-        TextView tvCancel = dialog.getTvCancel();
-        TextView tvSure = dialog.getTvSure();
-        tvCancel.setBackgroundColor(getResources().getColor(R.color.red));
-        tvCancel.setTextColor(getResources().getColor(R.color.white));
-        tvSure.setBackgroundColor(getResources().getColor(R.color.BrightGray));
-        tvSure.setTextColor(getResources().getColor(R.color.white));
-        dialog.show();
+                });
+        rxDialog.show();
     }
 
 
@@ -346,8 +336,7 @@ public class LoginRegisterActivity extends BaseActivity {
         String imageUrl = result.getUserInfo().getHeadImageUrl();
         String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ :
                 result.getPlatform() == LoginPlatform.WEIBO ? Key.LoginType_WEIBO : Key.LoginType_WEXIN;
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.outerLogin(openId, nickname, imageUrl, userType))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().outerLogin(openId, nickname, imageUrl, userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -369,17 +358,10 @@ public class LoginRegisterActivity extends BaseActivity {
 
                     @Override
                     protected void _onError(String error, int code) {
-                        RxToast.error(error);
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
                 });
-    }
-
-
-    //不退出app，而是隐藏当前的app
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
-        super.onBackPressed();
     }
 
 

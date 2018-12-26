@@ -9,52 +9,62 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.chart.LineBean;
-import com.vondear.rxtools.view.chart.SuitLines;
-import com.vondear.rxtools.view.chart.Unit;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.vondear.rxtools.view.chart.line.LineBean;
+import com.vondear.rxtools.view.chart.line.SuitLines;
+import com.vondear.rxtools.view.chart.line.Unit;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/7/18.
@@ -64,10 +74,18 @@ public class SmartClothingFragment extends BaseActivity {
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
+    @BindView(R.id.btn_strongTip)
+    QMUIRoundButton mBtnStrongTip;
     @BindView(R.id.layout_StrongTip)
     RelativeLayout mLayoutStrongTip;
+    @BindView(R.id.suitlines)
+    SuitLines mSuitlines;
+    @BindView(R.id.layout_lenged)
+    LinearLayout mLayoutLenged;
     @BindView(R.id.iv_sports)
     ImageView mIvSports;
+    @BindView(R.id.tv_sportDate)
+    TextView mTvSportDate;
     @BindView(R.id.layout_sports)
     RelativeLayout mLayoutSports;
     @BindView(R.id.iv_heatKacl)
@@ -82,28 +100,15 @@ public class SmartClothingFragment extends BaseActivity {
     TextView mTvSportsTimeTitle;
     @BindView(R.id.tv_Sports_Time)
     TextView mTvSportsTime;
-    @BindView(R.id.iv_tip)
-    ImageView mIvTip;
-    @BindView(R.id.line)
-    View mLine;
+    @BindView(R.id.recycler_Sporting)
+    RecyclerView mRecyclerSporting;
     Unbinder unbinder;
-    @BindView(R.id.btn_strongTip)
-    QMUIRoundButton mBtnStrongTip;
-    @BindView(R.id.suitlines)
-    SuitLines mSuitlines;
-    @BindView(R.id.layout_sportTip)
-    RelativeLayout mLayoutSportTip;
-    @BindView(R.id.tv_tip)
-    TextView mTvTip;
-    @BindView(R.id.tv_sportDate)
-    TextView mTvSportDate;
 
 
     private Button btn_Connect;
-    private long currentDate = 0;
-
-
-    private List<AthleticsInfo.PageInfoBean.ListBean> list;
+    private List<AthleticsInfo.ListBean> list;
+    private BaseQuickAdapter adapter;
+    private int pageNum = 1;
 
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
@@ -131,7 +136,7 @@ public class SmartClothingFragment extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             mLayoutStrongTip.setVisibility(View.GONE);
-                            RxActivityUtils.skipActivity(mActivity, SportingFragment.class);
+                            RxActivityUtils.skipActivity(mActivity, SportingActivity.class);
                         }
                     });
                 }
@@ -147,7 +152,6 @@ public class SmartClothingFragment extends BaseActivity {
                     mLayoutStrongTip.setVisibility(View.GONE);
                 }
             }
-
         }
     };
 
@@ -157,7 +161,7 @@ public class SmartClothingFragment extends BaseActivity {
         setContentView(R.layout.fragment_smart_clothing);
         unbinder = ButterKnife.bind(this);
 
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.red))
                 .setLightStatusBar(true)
                 .process();
@@ -182,6 +186,50 @@ public class SmartClothingFragment extends BaseActivity {
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
         checkStatus();
         initData();
+        initSportingList();
+    }
+
+    private void initSportingList() {
+        mRecyclerSporting.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerSporting.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        adapter = new BaseQuickAdapter<AthleticsInfo.ListBean.AthlListBean, BaseViewHolder>(R.layout.item_sporting_list) {
+            @Override
+            protected void convert(BaseViewHolder helper, AthleticsInfo.ListBean.AthlListBean item) {
+                String timeSection = RxFormat.setFormatDate(item.getStartTime(), RxFormat.Date_Time) + "-"
+                        + RxFormat.setFormatDate(item.getEndTime(), RxFormat.Date_Time);
+
+                SpannableStringBuilder timeBuilder = RxTextUtils.getBuilder("运动时间段\n")
+                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .append(timeSection)
+                        .create();
+
+                SpannableStringBuilder kcalBuilder = RxTextUtils.getBuilder("消耗热量\n")
+                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .append(item.getCalorie() + "")
+                        .append("\tkcal")
+                        .create();
+
+                //getPlanFlag():0是自由运动，1是课程运动
+                helper.setText(R.id.tv_sportingType, item.getPlanFlag() != 1 ? "自由运动" : "课程运动")
+                        .setText(R.id.tv_sportingTime, timeBuilder)
+                        .setTypeface(MyAPP.typeface, R.id.tv_sportingTime, R.id.tv_sportingKcal)
+                        .setText(R.id.tv_sportingKcal, kcalBuilder);
+            }
+        };
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Bundle bundle = new Bundle();
+                AthleticsInfo.ListBean.AthlListBean item = (AthleticsInfo.ListBean.AthlListBean) adapter.getItem(position % adapter.getData().size());
+                if (item == null) return;
+                bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
+                bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
+                bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
+                RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
+
+            }
+        });
+        mRecyclerSporting.setAdapter(adapter);
     }
 
     private void initMRxBus() {
@@ -206,22 +254,17 @@ public class SmartClothingFragment extends BaseActivity {
     private void initData() {
         btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ?
                 R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected));
-
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getAthleticsInfo(1, 100))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchAthleticsListDetail(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchAthleticsListDetail" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        AthleticsInfo bean = MyAPP.getGson().fromJson(s, AthleticsInfo.class);
+                        AthleticsInfo bean = JSON.parseObject(s, AthleticsInfo.class);
+                        updateUI(bean);
 
-                        mLayoutSportTip.setVisibility(!bean.isTargetSet() ? View.GONE : View.VISIBLE);
-                        //今日目标是否已经达成
-                        mTvTip.setText(bean.getNeedAthl() <= 0 ? getString(R.string.completeDaytarget) : getString(R.string.gotoSporting, RxFormatValue.fromat4S5R(Math.abs(bean.getNeedAthl() / 1000f), 2)));
-                        list = bean.getPageInfo().getList();
-                        initLineChart(list);
                     }
 
                     @Override
@@ -232,28 +275,34 @@ public class SmartClothingFragment extends BaseActivity {
                 });
     }
 
+    private void updateUI(AthleticsInfo bean) {
+        if (pageNum == 1) {
+            list = bean.getList();
+            initLineChart(list);
+            pageNum++;
+        } else {
+            if (RxDataUtils.isEmpty(bean.getList())) return;
+            Collections.reverse(bean.getList());//
+            list.addAll(0, bean.getList());
+
+            List<Unit> lines_Heat = new ArrayList<>();
+            List<Unit> lines_Time = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                AthleticsInfo.ListBean.DayAthlBean athlBean = list.get(i).getDayAthl();
+                Unit unit_heat = new Unit((float) athlBean.getCalorie(), RxFormat.setFormatDate(athlBean.getAthlDate(), "MM/dd"));
+                Unit unit_time = new Unit(athlBean.getDuration() < 60 ? 1 : athlBean.getDuration() / 60, "");
+
+                lines_Heat.add(unit_heat);
+                lines_Time.add(unit_time);
+            }
+            mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Time));
+            pageNum++;
+        }
+
+    }
+
 
     private void checkStatus() {
-        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
-            final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.getTvTitle().setVisibility(View.GONE);
-            dialog.setContent("您还未绑定燃脂衣");
-            dialog.setCancel("去绑定").setCancelListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
-                }
-            })
-                    .setSure("暂不绑定")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-        }
         if (!BleTools.getBleManager().isBlueEnable()) {
             mLayoutStrongTip.setVisibility(View.VISIBLE);
             String tipOpenBlueTooth = getString(R.string.tipOpenBlueTooth);
@@ -270,12 +319,14 @@ public class SmartClothingFragment extends BaseActivity {
         }
     }
 
-    private void initLineChart(final List<AthleticsInfo.PageInfoBean.ListBean> list) {
+    private void initLineChart(final List<AthleticsInfo.ListBean> list) {
+        if (list == null) return;
         List<Unit> lines_Heat = new ArrayList<>();
         List<Unit> lines_Time = new ArrayList<>();
+        Collections.reverse(list);//
         for (int i = 0; i < list.size(); i++) {
-            AthleticsInfo.PageInfoBean.ListBean bean = list.get(i);
-            Unit unit_heat = new Unit(bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
+            AthleticsInfo.ListBean.DayAthlBean bean = list.get(i).getDayAthl();
+            Unit unit_heat = new Unit((float) bean.getCalorie(), RxFormat.setFormatDate(bean.getAthlDate(), "MM/dd"));
             Unit unit_time = new Unit(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, "");
 
             lines_Heat.add(unit_heat);
@@ -285,14 +336,17 @@ public class SmartClothingFragment extends BaseActivity {
         LineBean heatLine = new LineBean();
         heatLine.setUnits(lines_Heat);
         heatLine.setShowPoint(true);
+        heatLine.setLineWidth(RxUtils.dp2px(2));
         heatLine.setColor(Color.parseColor("#F2A49C"));
 
         LineBean timeLine = new LineBean();
         timeLine.setShowPoint(true);
         timeLine.setUnits(lines_Time);
+        timeLine.setLineWidth(RxUtils.dp2px(2));
         timeLine.setColor(Color.parseColor("#F2A49C"));
         timeLine.setDashed(true);
 
+        mSuitlines.setSpaceMin(RxUtils.dp2px(4));
         new SuitLines.LineBuilder()
                 .add(heatLine)
                 .add(timeLine)
@@ -301,11 +355,30 @@ public class SmartClothingFragment extends BaseActivity {
         mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
             @Override
             public void selectItem(int valueX) {
-                AthleticsInfo.PageInfoBean.ListBean bean = list.get(valueX);
+                AthleticsInfo.ListBean.DayAthlBean bean = list.get(valueX).getDayAthl();
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
                 mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
-                currentDate = bean.getAthlDate();
+            }
+        });
+
+        mSuitlines.setLineChartStopItemListener(new SuitLines.LineChartStopItemListener() {
+            @Override
+            public void stopItem(int valueX) {
+                RxLogUtils.e("滑动停止：" + valueX);
+                adapter.setNewData(list.get(valueX).getAthlList());
+            }
+        });
+
+        mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
+            @Override
+            public void leftEdge() {
+                initData();
+            }
+
+            @Override
+            public void rightEdge() {
+
             }
         });
 
@@ -323,19 +396,6 @@ public class SmartClothingFragment extends BaseActivity {
                 getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
-    }
-
-
-    @OnClick({R.id.layout_sports})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.layout_sports:
-                if (list == null || list.size() == 0) return;
-                Bundle args = new Bundle();
-                args.putLong(Key.BUNDLE_SPORTING_DATE, currentDate);
-                RxActivityUtils.skipActivity(mActivity, SportsDetailsFragment.class, args);
-                break;
-        }
     }
 
 

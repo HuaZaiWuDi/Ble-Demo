@@ -1,59 +1,64 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
+import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alibaba.fastjson.JSON;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
-import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.Slimming2Fragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_APP;
@@ -70,38 +75,65 @@ public class MainActivity extends BaseALocationActivity {
     LinearLayout mBottomTab;
     @BindView(R.id.parent)
     RelativeLayout mParent;
-    private Intent bleIntent;
 
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
 
 
     @Override
+    protected int layoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
         //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
         if (savedInstanceState != null) {
             RxActivityUtils.skipActivityAndFinish(mActivity, SplashActivity.class);
             return;
         }
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         initView();
-        bleIntent = new Intent(mContext, BleService.class);
-        startService(bleIntent);
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+    }
+
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        RxLogUtils.d("bundle:" + bundle.toString());
+        initReceiverPush(bundle);
+    }
+
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
+        RxBus.getInstance().register2(GoToFind.class)
+                .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<GoToFind>() {
+                    @Override
+                    protected void _onNext(GoToFind s) {
+                        mViewpager.setCurrentItem(2, true);
+                    }
+                });
     }
 
     public void initView() {
-
-        initReceiverPush();
-        initRxBus();
         startLocation(null);
-        NetManager.getInstance().setUserIdToken(SPUtils.getString(SPKey.SP_UserId), SPUtils.getString(SPKey.SP_token));
-
-        RxLogUtils.d("手机MAC地址" + RxDeviceUtils.getMacAddress(mContext));
-        RxLogUtils.d("手机信息" + RxDeviceUtils.getAndroidId());
-        RxLogUtils.d("UserId" + SPUtils.getString(SPKey.SP_UserId));
+        initSystemConfig();
+        RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress(mContext));
+        RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
+        RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
 
         initMyViewPager();
         initBottomTab();
@@ -111,6 +143,45 @@ public class MainActivity extends BaseALocationActivity {
 
             }
         });
+
+
+    }
+
+    private void initSystemConfig() {
+        //判断是否有权限
+        new RxPermissions(mActivity)
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Permission>() {
+                    @Override
+                    protected void _onNext(Permission aBoolean) {
+                        RxLogUtils.e("是否开启了权限：" + aBoolean);
+                    }
+                });
+
+        //判断是否关闭了通知栏权限
+        RxLogUtils.e("通知栏权限：" + NotificationManagerCompat.from(mContext).areNotificationsEnabled());
+        if (!NotificationManagerCompat.from(mContext).areNotificationsEnabled()) {
+            new RxDialogSureCancel(mContext)
+                    .setTitle("提示")
+                    .setContent("您的通知权限未开启，可能影响APP的正常使用")
+                    .setSure("现在去开启")
+                    .setSureListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            /**
+                             * 跳到通知栏设置界面
+                             * @param context
+                             */
+                            Intent localIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            localIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                            localIntent.setData(Uri.parse("package:" + mContext.getPackageName()));
+                            mContext.startActivity(localIntent);
+                        }
+                    }).show();
+        }
+
     }
 
     @Override
@@ -119,38 +190,16 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("启动时长" + "主页可交互");
     }
 
-    private void openActivity(String openTarget) {
-        switch (openTarget) {
-            case MyJpushReceiver.ACTIVITY_SLIM:
-                mViewpager.setCurrentItem(0, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_FIND:
-                mViewpager.setCurrentItem(1, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_SHOP:
-                mViewpager.setCurrentItem(2, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_USER:
-                mViewpager.setCurrentItem(3, true);
-                break;
-            case MyJpushReceiver.ACTIVITY_MESSAGE:
-                //跳转消息通知
-                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
-                break;
-        }
-    }
-
 
     private void initBottomTab() {
         String[] tab_text = getResources().getStringArray(R.array.tab_text);
-        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_find_unselect,
-                R.mipmap.icon_shopping_unselect, R.mipmap.icon_mine_unselect};
-        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_find_select,
-                R.mipmap.icon_shopping_select, R.mipmap.icon_mine_select};
+        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_record,
+                R.mipmap.icon_find_unselect, R.mipmap.icon_mine_unselect};
+        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_record_unselect,
+                R.mipmap.icon_find_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
-            if (i != 2)
-                mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
+            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
@@ -165,8 +214,8 @@ public class MainActivity extends BaseALocationActivity {
 
             @Override
             public void onTabReselect(int position) {
-                //双击或三击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == 2 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
+                //双击我的按钮，出现切换网络界面，同时需要退出重新登录
+                if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
                             .addItem(ServiceAPI.BASE_URL_208)
@@ -185,7 +234,6 @@ public class MainActivity extends BaseALocationActivity {
                             })
                             .build()
                             .show();
-//                    showLocalNotify();
                 }
             }
         });
@@ -194,7 +242,9 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initMyViewPager() {
         mFragments.clear();
-        mFragments.add(Slimming2Fragment.getInstance());
+        mFragments.add(SlimmingFragment.newInstance());
+//        mFragments.add(Slimming2Fragment.getInstance());
+        mFragments.add(SlimmingRecordFragment.newInstance());
         mFragments.add(FindFragment.getInstance());
 //        mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());
@@ -235,17 +285,14 @@ public class MainActivity extends BaseALocationActivity {
      * "openTarget":""      //operation：2（ slim-瘦身首页，find-发现首页，shop-商城首页，user-我的首页，message-站内信,url）
      * }
      */
-    private void initReceiverPush() {
-        Bundle bundle = getIntent().getExtras();
-        RxLogUtils.d("点击通知：" + bundle);
-        if (bundle == null) return;
+    private void initReceiverPush(Bundle bundle) {
         String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
-        JsonParser parser = new JsonParser();
-        JsonObject object = (JsonObject) parser.parse(extra);
-        RxLogUtils.d("点击通知：" + object.toString());
-        String openTarget = object.get("openTarget").getAsString();
-        int type = object.get("operation").getAsInt();
-        String msgId = object.get("msgId").getAsString();
+        RxLogUtils.d("点击通知：" + extra);
+        NotifyDataBean notifyDataBean = JSON.parseObject(extra, NotifyDataBean.class);
+        if (notifyDataBean == null) return;
+        String openTarget = notifyDataBean.getOpenTarget();
+        int type = notifyDataBean.getOperation();
+        String msgId = notifyDataBean.getMsgId();
         switch (type) {
             case TYPE_OPEN_APP:
                 break;
@@ -255,28 +302,33 @@ public class MainActivity extends BaseALocationActivity {
             case TYPE_OPEN_URL:
                 //打开URL
                 bundle.putString(Key.BUNDLE_WEB_URL, openTarget);
-                RxActivityUtils.skipActivity(mActivity, WebActivity.class, bundle);
+                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.appName));
+                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
                 break;
         }
         pushMessageReaded(msgId);
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    private void initRxBus() {
-
-        RxBus.getInstance().register2(GoToFind.class)
-                .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<GoToFind>() {
-                    @Override
-                    protected void _onNext(GoToFind s) {
-                        mViewpager.setCurrentItem(1, true);
-                    }
-                });
+    private void openActivity(String openTarget) {
+        switch (openTarget) {
+            case MyJpushReceiver.ACTIVITY_SLIM:
+                mViewpager.setCurrentItem(0, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_FIND:
+                mViewpager.setCurrentItem(1, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_SHOP:
+                mViewpager.setCurrentItem(2, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_USER:
+                mViewpager.setCurrentItem(3, true);
+                break;
+            case MyJpushReceiver.ACTIVITY_MESSAGE:
+                //跳转消息通知
+                RxActivityUtils.skipActivity(mActivity, MessageFragment.class);
+                break;
+        }
     }
 
 
@@ -319,8 +371,7 @@ public class MainActivity extends BaseALocationActivity {
 
     //通知栏推送已读
     private void pushMessageReaded(String msgId) {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.pushMessageReaded(msgId))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().pushMessageReaded(msgId))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

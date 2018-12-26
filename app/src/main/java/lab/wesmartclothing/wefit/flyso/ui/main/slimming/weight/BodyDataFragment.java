@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,11 +11,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -41,22 +41,19 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel1Bean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.OpenAddWeight;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/7/27.
@@ -90,35 +87,47 @@ public class BodyDataFragment extends BaseActivity {
 
     private BodyDataUtil bodyDataUtil;
     private double[] bodyValue = new double[13];
-
+    private boolean goBack = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_body_data);
-        StatusBarUtils.from(this)
-                .setStatusBarColor(getResources().getColor(R.color.white))
-                .setLightStatusBar(true)
-                .process();
-        unbinder = ButterKnife.bind(this);
-        initView();
+    protected int layoutId() {
+        return R.layout.fragment_body_data;
     }
 
-    private void initView() {
+    @Override
+    protected int statusBarColor() {
+        return getResources().getColor(R.color.white);
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         bodys = getResources().getStringArray(R.array.bodyShape);
         Typeface typeface = MyAPP.typeface;
         mTvHealthScore.setTypeface(typeface);
 
-        gid = getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_GID);
 
         initTopBar();
         initRecyclerView();
-        initData();
-        initRxBus();
     }
 
 
-    public void initRxBus() {
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        gid = bundle.getString(Key.BUNDLE_DATA_GID);
+        goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+        initData();
+    }
+
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
         RxBus.getInstance().register2(OpenAddWeight.class)
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<OpenAddWeight>bindLife(lifecycleSubject))
@@ -131,13 +140,15 @@ public class BodyDataFragment extends BaseActivity {
                 });
     }
 
+
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
     private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
         mHealthyList.clear();
-
+        UserInfo userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         //体重
         Healthy healthy0 = new Healthy();
         mHealthyList.add(healthy0);
+
 
         //体脂率
         Healthy healthy = new Healthy();
@@ -147,6 +158,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy.setSectionLabels(new String[]{"11.0%", "21.0%", "26.0%"});
         healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
         mHealthyList.add(healthy);
+
         //BMI
         Healthy healthy2 = new Healthy();
         healthy2.setSections(new double[]{18.5, 25});
@@ -172,7 +184,6 @@ public class BodyDataFragment extends BaseActivity {
          充足=大于标准体重*80%
          *
          * */
-        UserInfo userInfo = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         int standardWeight = 0;
         if (userInfo.getSex() == 1) {
             standardWeight = (int) ((userInfo.getHeight() - 80) * 0.7);
@@ -189,8 +200,8 @@ public class BodyDataFragment extends BaseActivity {
         mHealthyList.add(healthy4);
 
         //基础代谢
-        float bmr = SPUtils.getFloat(SPKey.SP_BMR);
-        bmr = bmr == 0 ? 903 : bmr;
+        float bmr = weightInfo.getBasalHeat();
+        bmr = bmr <= 0 ? 903 : bmr;
         Healthy healthy5 = new Healthy();
         healthy5.setSections(new double[]{bmr});
         healthy5.setSectionLabels(new String[]{bmr + "kcal"});
@@ -265,17 +276,17 @@ public class BodyDataFragment extends BaseActivity {
     private void initData() {
         JsonObject object = new JsonObject();
         object.addProperty("gid", gid);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.fetchWeightDetail(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .fetchWeightDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightDetail" + gid, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
-                        WeightDetailsBean detailsBean = MyAPP.getGson().fromJson(s, WeightDetailsBean.class);
+                        WeightDetailsBean detailsBean = JSON.parseObject(s, WeightDetailsBean.class);
                         mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
                         mTvHealthScore.setText(detailsBean.getWeightInfo().getHealthScore() + "");
                         Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
@@ -289,8 +300,8 @@ public class BodyDataFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -386,24 +397,21 @@ public class BodyDataFragment extends BaseActivity {
     private void deleteWeight() {
         JsonObject object = new JsonObject();
         object.addProperty("gid", gid);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeWeightInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .removeWeightInfo(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                        RxToast.normal("删除成功");
-                        //刷新数据
                         //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
                         onBackPressed();
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -427,7 +435,10 @@ public class BodyDataFragment extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
-        RxActivityUtils.skipActivityAndFinish(mContext, WeightRecordFragment.class);
+        //跳转回主页
+        if (goBack) {
+            super.onBackPressed();
+        } else
+            RxActivityUtils.skipActivity(mContext, MainActivity.class);
     }
 }

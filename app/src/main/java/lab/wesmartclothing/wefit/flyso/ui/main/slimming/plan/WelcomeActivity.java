@@ -20,10 +20,15 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.SettingTargetFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -33,17 +38,15 @@ public class WelcomeActivity extends BaseActivity {
     TextView mTvWeight;
     @BindView(R.id.tv_goBind)
     RxTextView mTvGoBind;
-
-    private double currentWeight = 0;
+    @BindView(R.id.tv_WeightInfo)
+    TextView mTvWeightInfo;
+    @BindView(R.id.tv_tip)
+    TextView mTvTip;
 
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-            currentWeight = bundle.getDouble(Key.BUNDLE_LAST_WEIGHT);
-        }
     }
 
     @Override
@@ -57,30 +60,74 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void initView() {
+        mTvWeight.setTypeface(MyAPP.typeface);
         initTopBar();
+        initRxBus();
+        initBundle();
         checkState();
     }
 
+    private void initBundle() {
+    }
+
+
+    private void initRxBus() {
+        RxBus.getInstance().register2(WeightAddBean.class)
+                .compose(RxComposeUtils.<WeightAddBean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<WeightAddBean>() {
+                    @Override
+                    protected void _onNext(WeightAddBean weightBean) {
+                        if (weightBean != null) {
+                            mTvWeightInfo.setVisibility(View.VISIBLE);
+                            boolean isQualified = weightBean.getBmr() != 0;
+                            mTvGoBind.setText(isQualified ? getString(R.string.nextWay) : "重新称重");
+                            RxTextUtils.getBuilder(weightBean.getWeight() + "")
+                                    .setProportion(3f)
+                                    .setBold()
+                                    .setForegroundColor(ContextCompat.getColor(mActivity, R.color.green_61D97F))
+                                    .append("\t\tkg")
+                                    .setForegroundColor(ContextCompat.getColor(mActivity, R.color.green_61D97F))
+                                    .into(mTvWeight);
+
+                            RxTextUtils.getBuilder(weightBean.getBodyFat() + " ")
+                                    .append("体脂率(%)\t\t\t").setProportion(0.8f)
+                                    .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
+                                    .append(weightBean.getBmi() + " ")
+                                    .append("BMI\t\t\t").setProportion(0.8f)
+                                    .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
+                                    .append(weightBean.getBmr() + " ")
+                                    .append("基础代谢(kcal)").setProportion(0.8f)
+                                    .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
+                                    .into(mTvWeightInfo);
+
+                            mTvTip.setVisibility(isQualified ? View.GONE : View.VISIBLE);
+
+                            if (isQualified) {
+                                RecordInfoActivity.mSubmitInfoFrom.setWeightInfo(weightBean);
+                            }
+                        }
+                    }
+                });
+
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        checkState();
+                    }
+                });
+    }
+
     private void checkState() {
-        mTvWeight.setTypeface(MyAPP.typeface);
-        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ||
-                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mTvGoBind.setText(R.string.goBind);
             mTvWeight.setText("请绑定您的体脂称");
         } else {
-            if (currentWeight > 0) {
-                mTvGoBind.setText(R.string.nextWay);
-                RxTextUtils.getBuilder(currentWeight + "")
-                        .setProportion(3f)
-                        .setBold()
-                        .setForegroundColor(ContextCompat.getColor(mActivity, R.color.green_61D97F))
-                        .append("\t\tkg")
-                        .setForegroundColor(ContextCompat.getColor(mActivity, R.color.green_61D97F))
-                        .into(mTvWeight);
-            }
+            mTvWeight.setText("请赤脚站在体脂秤上，两脚自然分布两侧确保脚底干净，避免过于潮湿");
+            mTvGoBind.setText("去称重");
         }
     }
-
 
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
@@ -90,15 +137,18 @@ public class WelcomeActivity extends BaseActivity {
                         onBackPressed();
                     }
                 });
-
     }
 
     @OnClick(R.id.tv_goBind)
     public void onViewClicked() {
-        if (currentWeight <= 0) {
+        String text = mTvGoBind.getText().toString();
+        if (getString(R.string.goBind).equals(text)) {
             RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
-        } else {
+        } else if ("去称重".equals(text) || "重新称重".equals(text)) {
+            RxActivityUtils.skipActivity(mActivity, WeightAddFragment.class);
+        } else if (getString(R.string.nextWay).equals(text)) {
             RxActivityUtils.skipActivity(mActivity, SettingTargetFragment.class);
         }
     }
+
 }

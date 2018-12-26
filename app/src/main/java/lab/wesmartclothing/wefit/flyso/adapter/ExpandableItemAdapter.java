@@ -9,6 +9,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
                 int color = level0Bean.getStatusColor();
                 TextView bodyValue = helper.getView(R.id.tv_bodyValue);
                 bodyValue.setTypeface(MyAPP.typeface);
-                RxTextUtils.getBuilder(level0Bean.getBodyValue() + "")
+                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(level0Bean.getBodyValue(), 1))
                         .setForegroundColor(color)
                         .append(" " + level0Bean.getUnit())
                         .setForegroundColor(color)

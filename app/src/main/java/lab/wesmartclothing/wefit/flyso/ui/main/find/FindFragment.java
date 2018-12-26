@@ -1,10 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.find;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
@@ -30,13 +28,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebFragment;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
@@ -48,7 +48,6 @@ public class FindFragment extends BaseWebFragment {
 
     @BindView(R.id.parent)
     RelativeLayout mParent;
-    Unbinder unbinder;
 
     public static FindFragment getInstance() {
         return new FindFragment();
@@ -56,23 +55,49 @@ public class FindFragment extends BaseWebFragment {
 
     private BridgeWebView mBridgeWebView;
 
-    @Override
-    public void initData() {
-
-    }
-
-    public void initView() {
-
-    }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected int layoutId() {
+        return R.layout.fragment_find;
+    }
+
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         mBridgeWebView = new BridgeWebView(mActivity);
-//        initWebView(mParent);
         initWebView();
     }
 
+
+    @Override
+    protected void onVisible() {
+        super.onVisible();
+    }
+
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+
+    }
+
+    @Override
+    protected void initRxBus() {
+        super.initRxBus();
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        RxLogUtils.d("网络状态：" + netWorkType);
+                        if (netWorkType.isBoolean()) {
+                            mAgentWeb.getUrlLoader().reload();
+                        }
+                    }
+                });
+    }
 
     private void initWebView() {
         mBridgeWebView = new BridgeWebView(mActivity);
@@ -228,21 +253,5 @@ public class FindFragment extends BaseWebFragment {
     @Override
     protected String getUrl() {
         return ServiceAPI.FIND_Addr;
-    }
-
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = View.inflate(getContext(), R.layout.fragment_find, null);
-        unbinder = ButterKnife.bind(this, view);
-        initView();
-        return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 }

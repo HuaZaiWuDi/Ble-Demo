@@ -23,6 +23,7 @@
 
 
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topBar"
@@ -45,6 +46,7 @@
 
 
     <ImageView
+
         android:id="@+id/img_scan"
         android:layout_width="211dp"
         android:layout_height="211dp"
@@ -58,6 +60,7 @@
         android:id="@+id/mRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/btn_scan"
         android:layout_below="@+id/tv_details"
         android:layout_marginTop="41dp"
         android:visibility="gone"
@@ -92,7 +95,7 @@
         android:layout_marginTop="61dp"
         android:src="@mipmap/icon_update_fail"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="gone"/>
 
 
 </RelativeLayout>

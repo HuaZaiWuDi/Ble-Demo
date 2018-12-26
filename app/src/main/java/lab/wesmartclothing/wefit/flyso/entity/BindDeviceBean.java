@@ -5,52 +5,60 @@ import java.io.Serializable;
 /**
  * Created icon_hide_password Jack on 2018/5/22.
  */
-public class BindDeviceBean implements Serializable{
+public class BindDeviceBean implements Serializable {
 
     /**
      * 0:体重秤
      * 1：瘦身衣
      */
 
-    int deivceType;
-    String deivceName;
-    boolean isBind;
-    String mac;
+    String deivceType;
+    boolean isBind = false;
+    String deviceName;
+    String deviceMac;
+    int rssi;
 
-    public BindDeviceBean() {
-    }
 
-    public BindDeviceBean(int deivceType, String deivceName, boolean isBind, String mac) {
+    public BindDeviceBean(String deivceType, String deviceName, String deviceMac, int rssi) {
         this.deivceType = deivceType;
-        this.deivceName = deivceName;
-        this.isBind = isBind;
-        this.mac = mac;
-    }
-
-    public String getMac() {
-        return mac;
-    }
-
-    public void setMac(String mac) {
-        this.mac = mac;
+        this.deviceName = deviceName;
+        this.deviceMac = deviceMac;
+        this.rssi = rssi;
     }
 
 
-    public int getDeivceType() {
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public String getDeviceMac() {
+        return deviceMac;
+    }
+
+    public void setDeviceMac(String deviceMac) {
+        this.deviceMac = deviceMac;
+    }
+
+    public int getRssi() {
+        return rssi;
+    }
+
+    public void setRssi(int rssi) {
+        this.rssi = rssi;
+    }
+
+    public String getDeivceType() {
         return deivceType;
     }
 
-    public void setDeivceType(int deivceType) {
+    public void setDeivceType(String deivceType) {
         this.deivceType = deivceType;
     }
 
-    public String getDeivceName() {
-        return deivceName;
-    }
-
-    public void setDeivceName(String deivceName) {
-        this.deivceName = deivceName;
-    }
 
     public boolean isBind() {
         return isBind;

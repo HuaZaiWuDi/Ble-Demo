@@ -14,20 +14,19 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 public class ForgetPasswordActivity extends BaseActivity {
     private String pwFirst;
@@ -47,7 +46,7 @@ public class ForgetPasswordActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(false)
                 .process();
@@ -125,8 +124,7 @@ public class ForgetPasswordActivity extends BaseActivity {
             return;
         }
         String phone = getIntent().getStringExtra(SPKey.SP_phone);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.resetPassword(phone,
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().resetPassword(phone,
                 RxEncryptUtils.encryptMD5ToString(pwFirst), getIntent().getStringExtra("VCODE")))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -140,8 +138,10 @@ public class ForgetPasswordActivity extends BaseActivity {
 
                     @Override
                     protected void _onError(String error, int code) {
-                        RxToast.error(error);
+                        super._onError(error, code);
+                        RxToast.normal(error);
                     }
+
                 });
     }
 

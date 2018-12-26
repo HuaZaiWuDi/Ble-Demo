@@ -2,23 +2,23 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -47,22 +47,26 @@ public class SettingTargetFragment extends BaseActivity {
     @BindView(R.id.ruler_weight)
     DecimalScaleRulerView mWeightRulerView;
     @BindView(R.id.btn_nextStep)
-    QMUIRoundButton mBtnNextStep;
+    RxTextView mBtnNextStep;
     Unbinder unbinder;
 
 
-    private float maxWeight, minWeight, settingWeight, initWeight = 0, stillNeed;
+    private float maxWeight, minWeight, targetWeight, initWeight = SPUtils.getFloat(SPKey.SP_realWeight), stillNeed;
+
+    @Override
+    protected int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.white);
+    }
+
+    @Override
+    protected int layoutId() {
+        return R.layout.fragment_setting_target;
+    }
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_setting_target);
-        unbinder = ButterKnife.bind(this);
-        initView();
-    }
-
-    private void initView() {
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         bestWeight();
         Typeface typeface = MyAPP.typeface;
@@ -70,32 +74,37 @@ public class SettingTargetFragment extends BaseActivity {
         mTvTips.setTypeface(typeface);
     }
 
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+
+        targetWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
+        //最新的体重
+        initWeight = (float) bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+        bestWeight();
+    }
+
     /**
      * 男性：(身高cm－80)×70﹪=标准体重
      * 女性：(身高cm－70)×60﹪=标准体重
      */
     private void bestWeight() {
-        initWeight = SPUtils.getFloat(SPKey.SP_realWeight);
         float standardWeight = 0;
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            settingWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
-        }
-
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo userInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo userInfo = JSON.parseObject(string, UserInfo.class);
         if (userInfo.getSex() == 1) {
             standardWeight = (userInfo.getHeight() - 80) * 0.7f;
         } else {
             standardWeight = (userInfo.getHeight() - 70) * 0.6f;
         }
-        if (settingWeight == 0)
-            settingWeight = standardWeight;
-        initRuler(settingWeight);
+        if (targetWeight == 0)
+            targetWeight = standardWeight;
+        initRuler(targetWeight);
         minWeight = standardWeight * 0.9f;
         maxWeight = standardWeight * 1.1f;
 
-        stillNeed = initWeight - settingWeight;
+        stillNeed = initWeight - targetWeight;
         if (stillNeed < 0) {
             //TODO 当前体重小于目标体重着
             tipDialog.showInfo("您当前体重小于目标体重，\n请设置目标体重~", 2000);
@@ -123,10 +132,10 @@ public class SettingTargetFragment extends BaseActivity {
         mWeightRulerView.setValueChangeListener(new DecimalScaleRulerView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
-                settingWeight = value;
+                targetWeight = value;
                 mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
 
-                stillNeed = initWeight - settingWeight;
+                stillNeed = initWeight - targetWeight;
                 String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
                 SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                         .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
@@ -136,10 +145,10 @@ public class SettingTargetFragment extends BaseActivity {
 
                 tv_targetDays.setCompoundDrawables(null, null, null, null);
 
-                if (settingWeight > maxWeight) {
-                    RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～", 2000);
-                } else if (settingWeight < minWeight) {
-                    RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～", 2000);
+                if (targetWeight > maxWeight) {
+                    RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～");
+                } else if (targetWeight < minWeight) {
+                    RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～");
                 }
             }
         });
@@ -157,14 +166,14 @@ public class SettingTargetFragment extends BaseActivity {
     }
 
     private void nextStep() {
-        if (settingWeight >= initWeight) {
+        if (targetWeight >= initWeight) {
             tipDialog.showInfo("您设定的目标体重超过或等于当前体重，\n请重新设置~", 2000);
             return;
         }
-
         Bundle mBundle = new Bundle();
-        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, settingWeight);
-        mBundle.putDouble(Key.BUNDLE_STILL_NEED, stillNeed);
+        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(targetWeight, 2));
+        mBundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
+        mBundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
         RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
     }
 

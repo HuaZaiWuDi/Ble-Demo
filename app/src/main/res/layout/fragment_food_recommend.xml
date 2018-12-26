@@ -1,57 +1,561 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Gray"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
 
     <com.qmuiteam.qmui.widget.QMUITopBar
-        android:id="@+id/QMUIAppBarLayout"
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/topBarHeight"
         android:hapticFeedbackEnabled="true"
-        app:qmui_topbar_bg_color="@color/Gray"
-        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
-        app:qmui_topbar_need_separator="false"
-        app:qmui_topbar_title_color="@color/white"
         tools:visibility="visible"
         />
 
 
-    <RelativeLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/bg_F7F7F9">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_addFood"
+        android:layout_below="@+id/topBar"
+        android:scrollbars="none">
 
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/mRecyclerView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/tv_foodTotal"
-            android:layout_margin="8dp">
-
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent">
 
 
-        <TextView
-            android:id="@+id/tv_foodTotal"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="16dp"
-            android:gravity="right|center_vertical"
-            android:text="总计："
-            android:textColor="@color/Gray"
-            android:textSize="15sp"/>
+            <lab.wesmartclothing.wefit.flyso.view.DateChoose
+                android:id="@+id/chooseDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                />
 
 
-    </RelativeLayout>
+            <com.vondear.rxtools.view.roundprogressbar.RoundProgressBar
+                android:id="@+id/circleProgressBar"
+                android:layout_width="131dp"
+                android:layout_height="131dp"
+                android:layout_below="@+id/chooseDate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                app:pro_background_color="@color/BrightGray"
+                app:pro_max_value="100"
+                app:pro_progress_color="@color/orange_FF7200"
+                app:pro_stroke_round_cap="true"
+                app:pro_stroke_width="10dp"
+                app:pro_type="type_circle"
+                app:pro_value="0"/>
 
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/tv_totalKcal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chooseDate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="75dp"
+                android:gravity="center"
+                android:lineSpacingExtra="8dp"
+                android:text="1964 kcal"
+                android:textColor="@color/orange_FF7200"
+                android:textSize="23sp"/>
+
+
+            <!--今日三餐-->
+            <LinearLayout
+                android:id="@+id/layout_foodList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/circleProgressBar"
+                android:orientation="vertical"
+                tools:visibility="visible">
+
+                <!--早餐-->
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="4dp"
+                    tools:visibility="visible">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        >
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="15dp"
+                            android:background="@color/orange_FF7200"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_breakfastTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="早餐"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_breakfastkcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"
+                            tools:text="620kcal"/>
+
+
+                    </LinearLayout>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/mRecycler_Breakfast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="61dp"
+                        android:nestedScrollingEnabled="false">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="61dp"
+                        android:background="@color/line"/>
+
+
+                </android.support.v7.widget.CardView>
+
+                <!--午餐-->
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="4dp"
+                    tools:visibility="visible">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        >
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="15dp"
+                            android:background="@color/orange_FF7200"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_lunchTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="午餐"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_lunchKcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"
+                            tools:text="620kcal"/>
+
+
+                    </LinearLayout>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/mRecycler_Lunch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="61dp"
+                        android:nestedScrollingEnabled="false">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="61dp"
+                        android:background="@color/line"/>
+
+
+                </android.support.v7.widget.CardView>
+
+                <!--晚餐-->
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="4dp"
+                    tools:visibility="visible">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        >
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="15dp"
+                            android:background="@color/orange_FF7200"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_dinnerTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="晚餐"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_dinnerKcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"
+                            tools:text="620kcal"/>
+
+
+                    </LinearLayout>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/mRecycler_Dinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="61dp"
+                        android:nestedScrollingEnabled="false">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="61dp"
+                        android:background="@color/line"/>
+
+
+                </android.support.v7.widget.CardView>
+
+                <!--加餐-->
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="4dp"
+                    tools:visibility="visible">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        >
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="15dp"
+                            android:background="@color/orange_FF7200"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_MealTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="加餐"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_MealKcal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/Gray"
+                            android:textSize="18sp"
+                            tools:text="620kcal"/>
+
+
+                    </LinearLayout>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/mRecycler_Meal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="61dp"
+                        android:nestedScrollingEnabled="false">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="61dp"
+                        android:background="@color/line"/>
+
+
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/chooseDate"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+
+                <TextView
+                    android:id="@+id/tv_empty"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="61dp"
+                    android:gravity="center"
+                    android:text="@string/empty_recipes"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="12sp"/>
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="64dp"
+                    android:src="@mipmap/bg_food"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/layout_addFood"
+        android:background="@color/line"/>
+    <!--添加早中晚餐-->
+    <LinearLayout
+        android:id="@+id/layout_addFood"
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:visibility="visible"
+        >
+
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:id="@+id/layout_breakfast"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginLeft="24dp"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/ripple_ECEAE6"
+            >
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@mipmap/icon_breakfast"
+                android:gravity="right"
+                android:text="早餐"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_yellow_add_shork"/>
+
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:id="@+id/layout_lunch"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginLeft="32dp"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/ripple_ECEAE6"
+            >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@mipmap/icon_lunch"
+                    android:gravity="right"
+                    android:text="午餐"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_yellow_add_shork"/>
+
+            </LinearLayout>
+
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:id="@+id/layout_dinner"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginLeft="32dp"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/ripple_ECEAE6">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@mipmap/icon_dinner"
+                    android:gravity="right"
+                    android:text="晚餐"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_yellow_add_shork"/>
+
+            </LinearLayout>
+
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:id="@+id/layout_meal"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginLeft="32dp"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:translationZ="2dp"
+            app:background_normal="@color/white"
+            app:corner_radius="27dp"
+            app:ripple_color="@color/ripple_ECEAE6">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@mipmap/icon_meal"
+                    android:gravity="right"
+                    android:text="加餐"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_yellow_add_shork"/>
+
+            </LinearLayout>
+
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

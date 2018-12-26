@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#D9D8E1</color>
 
     <color name="colorWhite">#ffffff</color>
 
@@ -18,6 +18,7 @@
     <color name="Gray">#574D5F</color>
     <color name="GrayWrite">#978E9D</color>
     <color name="BrightGray">#D9D8E1</color>
+    <color name="Gray_ECEBF0">#ECEBF0</color>
     <color name="red">#E74C3C</color>
     <color name="green_61D97F">#61D97F</color>
     <color name="line">#F7F7F9</color>
@@ -28,8 +29,12 @@
     <color name="yellow_FFBC00">#FFBC00</color>
     <color name="black_312B36">#312B36</color>
     <color name="black_443C4A">#443C4A</color>
+    <color name="black_312C35">#312C35</color>
+    <color name="black_3F3943">#3F3943</color>
     <color name="bg_F7F7F9">#F7F7F9</color>
-
+    <color name="ripple_ECEAE6">#ECEAE6</color>
+    <color name="yellow_E4CA9F">#E4CA9F</color>
+    <color name="Gray_DCDAE6">#DCDAE6</color>
 
     <color name="colorFontWhite">#ffffff</color>
 

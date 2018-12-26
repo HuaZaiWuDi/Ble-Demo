@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.rxbus;
 
-import java.util.Arrays;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
+
 import java.util.List;
 
 /**
@@ -21,7 +22,16 @@ public class SportsDataTab {
     byte[] data;//原始数据
     int temp;//温度
     int voltage;//电压
-    String date;//时间
+    long date;//时间
+    double score;//分数
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
 
     public int getTemp() {
         return temp;
@@ -39,11 +49,11 @@ public class SportsDataTab {
         this.voltage = voltage;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -169,9 +179,7 @@ public class SportsDataTab {
     @Override
     public String toString() {
         return "SportsDataTab{" +
-                "athlRecord_2个数=" + athlRecord_2.size() +
-                ", steps=" + steps +
-                ", duration=" + duration +
+                " steps=" + steps +
                 ", kcal=" + kcal +
                 ", maxHeart=" + maxHeart +
                 ", minHeart=" + minHeart +
@@ -179,10 +187,9 @@ public class SportsDataTab {
                 ", realHeart=" + realHeart +
                 ", isPower=" + getPower() +
                 ", lightColor=" + byte2Color(lightColor) +
-                ", data=" + Arrays.toString(data) +
                 ", temp=" + temp + "°C" +
                 ", voltage=" + voltage +
-                ", date='" + date + '\'' +
+                ", date='" + RxFormat.setFormatDate(date, RxFormat.Date_Date) + '\'' +
                 '}';
     }
 }

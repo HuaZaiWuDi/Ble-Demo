@@ -3,12 +3,11 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -19,24 +18,25 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/8/9.
@@ -97,17 +97,14 @@ public class MeFragment extends BaseAcFragment {
 
 
     @Override
-    protected View onCreateView() {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_me, null);
-        unbinder = ButterKnife.bind(this, view);
-        initView();
-        return view;
+    protected int layoutId() {
+        return R.layout.fragment_me;
     }
 
 
-    private void initView() {
-        initRxBus();
-        initMineData();
+    @Override
+    protected void initViews() {
+        super.initViews();
         initTypeface();
         RxTextUtils.getBuilder("--")
                 .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
@@ -122,15 +119,38 @@ public class MeFragment extends BaseAcFragment {
         initMineData();
     }
 
+
     //后台上传心率数据成功，刷新界面
-    private void initRxBus() {
+    @Override
+    protected void initRxBus() {
         //后台上传心率数据成功，刷新界面
         RxBus.getInstance().register2(RefreshMe.class)
                 .compose(RxComposeUtils.<RefreshMe>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<RefreshMe>() {
                     @Override
                     protected void _onNext(RefreshMe hearRateUpload) {
-                        initMineData();
+                        initNetData();
+                    }
+                });
+
+        //只有在显示时才会网络请求
+        RxBus.getInstance().register2(NetWorkType.class)
+                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<NetWorkType>() {
+                    @Override
+                    protected void _onNext(NetWorkType netWorkType) {
+                        if (netWorkType.isBoolean())
+                            initNetData();
+                    }
+                });
+
+        //消息通知
+        RxBus.getInstance().register2(MessageChangeBus.class)
+                .compose(RxComposeUtils.<MessageChangeBus>bindLifeResume(lifecycleSubject))
+                .subscribe(new RxSubscriber<MessageChangeBus>() {
+                    @Override
+                    protected void _onNext(MessageChangeBus messageChangeBus) {
+                        mIvNotify.setBackgroundResource(R.mipmap.icon_email_white);
                     }
                 });
 
@@ -157,16 +177,15 @@ public class MeFragment extends BaseAcFragment {
 
 
     private void initMineData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.userCenter())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userCenter())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Gson gson = MyAPP.getGson();
-                        UserCenterBean user = gson.fromJson(s, UserCenterBean.class);
+                        UserCenterBean user = JSON.parseObject(s, UserCenterBean.class);
 
                         MyAPP.getImageLoader().displayImage(mActivity, user.getImgUrl(), R.mipmap.userimg, mIvUserImg);
 
@@ -184,8 +203,8 @@ public class MeFragment extends BaseAcFragment {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

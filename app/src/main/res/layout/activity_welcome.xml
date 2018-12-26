@@ -1,94 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    tools:context=".ui.main.slimming.plan.WelcomeActivity">
+    android:background="@color/white"
+    android:scrollbars="none"
+    tools:context=".ui.main.slimming.plan.WelcomeActivity"
+    >
 
-
-    <com.qmuiteam.qmui.widget.QMUITopBar
-        android:id="@+id/topBar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/topBarHeight"
-        android:hapticFeedbackEnabled="true"
-        app:qmui_topbar_bg_color="@color/white"
-        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
-        app:qmui_topbar_need_separator="false"
-        app:qmui_topbar_title_color="@color/Gray"
-        tools:visibility="visible"
-        />
-
-    <ImageView
-        android:layout_width="240dp"
-        android:layout_height="200dp"
-        android:background="@color/Gray"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WELCOME"
-        android:textColor="@color/orange_FF7200"
-        android:textSize="24sp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:text="timetofit 0.1"
-        android:textColor="@color/orange_FF7200"
-        android:textSize="10sp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="欢迎使用TIMETOFIT智能瘦身衣"
-        android:textColor="@color/Gray"
-        android:textSize="14sp"/>
-
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:gravity="center"
-        android:lineSpacingExtra="7dp"
-        android:text="请您据实填写，准确的信息有助于制定准确的瘦身计划，我们将为您精心推荐营养膳食与健康运动方式，动态调整运动的内容和强度以求达到最佳效果"
-        android:textColor="@color/Gray"
-        android:textSize="12sp"/>
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        >
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="您的体重？"
-        android:textColor="@color/Gray"
-        android:textSize="14sp"/>
+        <com.qmuiteam.qmui.widget.QMUITopBar
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/topBarHeight"
+            android:hapticFeedbackEnabled="true"
+            app:qmui_topbar_bg_color="@color/white"
+            app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+            app:qmui_topbar_need_separator="false"
+            app:qmui_topbar_title_color="@color/Gray"
+            tools:visibility="visible"
+            />
 
-    <TextView
-        android:id="@+id/tv_Weight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="请绑定您的体脂称"
-        android:textColor="@color/GrayWrite"
-        android:textSize="12sp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/bg_welcome_2"
+            />
 
 
-    <com.vondear.rxtools.view.layout.RxTextView
-        android:id="@+id/tv_goBind"
-        android:layout_width="187dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="@string/goBind"
-        android:textColor="@color/white"
-        android:textSize="17sp"
-        app:background_normal="@color/green_61D97F"
-        app:corner_radius="22dp"
-        app:ripple_color="@color/Gray"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="31dp"
+            android:layout_marginBottom="8dp"
+            android:text="欢迎使用智享瘦身衣"
+            android:textColor="@color/Gray"
+            android:textSize="14sp"/>
 
-</LinearLayout>
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:lineSpacingExtra="7dp"
+            android:text="请您据实填写，准确的信息有助于制定准确的瘦身计划，我们将为您精心推荐营养膳食与健康运动方式，动态调整运动的内容和强度以求达到最佳效果"
+            android:textColor="@color/GrayWrite"
+            android:textSize="12sp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="您的体重？"
+            android:textColor="@color/Gray"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_Weight"
+            android:layout_width="268dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="请绑定您的体脂称"
+            android:textColor="@color/GrayWrite"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/tv_WeightInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="请绑定您的体脂称"
+            android:textColor="@color/Gray"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_goBind"
+            android:layout_width="187dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/goBind"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            app:background_normal="@color/green_61D97F"
+            app:corner_radius="22dp"
+            app:ripple_color="@color/ripple_ECEAE6"/>
+
+
+        <TextView
+            android:id="@+id/tv_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="请赤脚站在体脂称上才能获取完整数据进入下一步哦！"
+            android:textColor="@color/Gray"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

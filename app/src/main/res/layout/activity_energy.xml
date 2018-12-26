@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.main.slimming.energy.EnergyActivity">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/yellow_FFBC00"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="216dp"
+        android:background="@color/yellow_FFBC00">
+
+
+        <com.vondear.rxtools.view.chart.line.SuitLines
+            android:id="@+id/suitlines"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/layout_lenged"/>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@mipmap/icon_triangle"
+            android:scaleType="centerCrop"/>
+
+
+        <LinearLayout
+            android:id="@+id/layout_lenged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_marginRight="@dimen/dimen_16"
+            android:layout_marginBottom="@dimen/dimen_10"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dimen_16"
+                android:text="一\t摄入"
+                android:textColor="@color/white"
+                android:textSize="8sp"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-\t-\t消耗"
+                android:textColor="@color/white"
+                android:textSize="8sp"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/layout_energy_title"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:paddingLeft="@dimen/dimen_16"
+                android:paddingRight="@dimen/dimen_16">
+
+                <ImageView
+                    android:id="@+id/iv_sports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/icon_energy"/>
+
+                <TextView
+                    android:id="@+id/tv_sportDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_toRightOf="@+id/iv_sports"
+                    android:text="2018年7月8日"
+                    android:textColor="@color/Gray"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="34dp"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="13sp"/>
+
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/layout_energy_title"
+                android:background="@color/line"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_energy_title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="综合消耗"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/tv_surplusHeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_energy_title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="38dp"
+                android:text="-- kcal"
+
+                android:textColor="@color/yellow_FFBC00"
+                android:textSize="35dp"/>
+
+
+            <com.vondear.rxtools.view.layout.RxRelativeLayout
+                android:id="@+id/layout_eatEnergy"
+                android:layout_width="152dp"
+                android:layout_height="65dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="155dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="5dp"
+                android:elevation="2dp"
+                android:padding="15dp"
+                android:translationZ="2dp"
+                app:background_normal="@color/white"
+                app:corner_radius="4dp"
+                app:ripple_color="@color/GrayWrite">
+
+
+                <ImageView
+                    android:id="@+id/img_eat"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@mipmap/icon_breakfast"/>
+
+                <TextView
+                    android:id="@+id/tv_eatKcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/img_eat"
+                    android:lineSpacingExtra="8dp"
+                    android:text="饮食摄入能量\n-- kcal"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"/>
+
+
+            </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+            <com.vondear.rxtools.view.layout.RxRelativeLayout
+                android:id="@+id/layout_sportingEnergy"
+                android:layout_width="152dp"
+                android:layout_height="65dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="155dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginBottom="5dp"
+                android:elevation="2dp"
+                android:padding="15dp"
+                android:translationZ="2dp"
+                app:background_normal="@color/white"
+                app:corner_radius="4dp"
+                app:ripple_color="@color/GrayWrite">
+
+
+                <ImageView
+                    android:id="@+id/img_sporting"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@mipmap/icon_run_man"/>
+
+                <TextView
+                    android:id="@+id/tv_sportingKcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/img_sporting"
+                    android:lineSpacingExtra="8dp"
+                    android:text="饮食摄入能量\n-- kcal"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"/>
+
+
+            </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_below="@+id/layout_sportingEnergy"
+                android:layout_marginTop="16dp"
+                android:background="@color/bg_F7F7F9"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_below="@+id/layout_sportingEnergy"
+                android:layout_marginTop="24dp"
+                android:drawableLeft="@mipmap/icon_tip"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:text="小贴士"
+                android:textColor="@color/Gray"
+                android:textSize="14sp"/>
+
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/layout_sportingEnergy"
+                android:layout_marginTop="77dp"
+                android:background="@color/line"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="69dp"
+                android:layout_below="@+id/line"
+                android:padding="16dp"
+                android:text="综合消耗是综合您的运动消耗、基础代谢及饮食摄入能量计算所得，综合消耗值越高瘦身效果越棒哦！"
+                android:textColor="@color/GrayWrite"
+                android:textSize="12sp"/>
+
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>

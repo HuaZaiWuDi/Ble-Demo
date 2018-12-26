@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import com.vondear.rxtools.BuildConfig;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,7 +17,7 @@ import java.util.Date;
  */
 public class RxLogUtils {
 
-    private static Boolean LOG_SWITCH = BuildConfig.DEBUG; // 日志文件总开关
+    private static Boolean LOG_SWITCH = true; // 日志文件总开关
     private static Boolean LOG_TO_FILE = false; // 日志写入文件开关
     private static String LOG_TAG = "TAG"; // 默认的tag
     private static char LOG_TYPE = 'v';// 输入日志类型，v代表输出所有信息,w则只输出警告...
@@ -29,6 +27,11 @@ public class RxLogUtils {
     private final static SimpleDateFormat FILE_SUFFIX = new SimpleDateFormat("yyyy-MM-dd");// 日志文件格式
     private static String LOG_FILE_PATH; // 日志文件保存路径
     private static String LOG_FILE_NAME;// 日志文件保存名称
+
+
+    public static void setLogSwitch(Boolean logSwitch) {
+        LOG_SWITCH = logSwitch;
+    }
 
     public static void init(Context context) { // 在Application中初始化
         LOG_FILE_PATH = Environment.getExternalStorageDirectory().getPath() + File.separator + context.getPackageName();

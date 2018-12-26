@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.main.slimming.plan.RecordInfoActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.qmuiteam.qmui.widget.QMUITopBar
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/topBarHeight"
+            android:hapticFeedbackEnabled="true"
+            app:qmui_topbar_bg_color="@color/white"
+            app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+            app:qmui_topbar_need_separator="false"
+            app:qmui_topbar_title_color="@color/Gray"
+            tools:visibility="visible"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:text="你的运动相关信息"
+            android:textColor="@color/Gray"
+            android:textSize="19sp"/>
+
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:layout_width="184dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:background_normal="@color/white"
+            app:border_color_normal="#F7F7F9"
+            app:border_width_normal="1dp"
+            app:corner_radius="4dp">
+
+
+            <TextView
+                android:id="@+id/tv_last"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:alpha="0.2"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="上一题"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:textColor="@color/Gray"
+                android:textSize="12sp"
+                tools:text="1/5"/>
+
+            <TextView
+                android:id="@+id/tv_next"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:alpha="0.2"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="下一题"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"/>
+
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+        <TextView
+            android:id="@+id/tv_infoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="23dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/Gray"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="攀爬楼梯是否吃力："/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:id="@+id/tv_nextWay"
+        android:layout_width="187dp"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="38dp"
+        android:gravity="center"
+        android:text="@string/nextWay"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:background_normal="@color/green_61D97F"
+        app:corner_radius="22dp"
+        app:ripple_color="@color/ripple_ECEAE6"/>
+
+
+</RelativeLayout>

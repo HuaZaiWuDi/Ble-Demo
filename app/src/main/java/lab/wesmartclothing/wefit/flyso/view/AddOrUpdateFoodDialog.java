@@ -1,13 +1,20 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
+import com.vondear.rxtools.view.editview.DecimalDigitsInputFilter;
 import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialog;
@@ -23,12 +30,11 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddedHeatInfo;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.LifeCycleEvent;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -96,11 +102,40 @@ public class AddOrUpdateFoodDialog {
 
         if (listBean.getFoodCount() != 0)
             mEtFoodG.setText(listBean.getFoodCount() + "");
-
+//        RxKeyboardUtils.showSoftInput(mEtFoodG);
+        RxKeyboardUtils.toggleSoftInput();
         mTvHeat.setText(listBean.getUnitCalorie() + "kcal/" + listBean.getUnitCount() + listBean.getUnit());
 
         if (dialog.isShowing()) dialog.dismiss();
         dialog.show();
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                RxKeyboardUtils.toggleSoftInput();
+            }
+        });
+
+        mEtFoodG.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(1)});
+        mEtFoodG.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (RxDataUtils.stringToDouble(String.valueOf(s)) > 999.0) {
+                    mEtFoodG.setText("999.0");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
 
 
@@ -108,34 +143,26 @@ public class AddOrUpdateFoodDialog {
         AddedHeatInfo heatInfo = new AddedHeatInfo();
         listBean2Added(listBean, heatInfo);
 
-        String s = MyAPP.getGson().toJson(heatInfo, AddedHeatInfo.class);
+        String s = JSON.toJSONString(heatInfo);
+
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getAddedHeatInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getAddedHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        FoodListBean addedHeatInfo = MyAPP.getGson().fromJson(s, FoodListBean.class);
+                        FoodListBean addedHeatInfo = JSON.parseObject(s, FoodListBean.class);
                         String foodImg = listBean.getFoodImg();
                         listBean = addedHeatInfo;
                         listBean.setFoodImg(foodImg);
                         showAddFoodDialog();
-//                        if ("".equals(addedHeatInfo.getGid())) {
-//                            showAddFoodDialog();
-//                            listBean.setFoodId(listBean.getGid());
-//                        } else {
-//                            listBean.setFoodCount(addedHeatInfo.getFoodCount());//已经添加过，把后台的数量赋值给当前展示
-//                            listBean.setGid(addedHeatInfo.getGid());
-//                            showAddFoodDialog();
-//                        }
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -181,7 +208,8 @@ public class AddOrUpdateFoodDialog {
 
     public int isExist(List<FoodListBean> addedLists, FoodListBean needFood) {
         for (int i = 0; i < addedLists.size(); i++) {
-            if (needFood.getFoodId().equals(addedLists.get(i).getFoodId())) {
+            RxLogUtils.d("食材：" + addedLists.get(i).toString());
+            if (needFood.getGid().equals(addedLists.get(i).getGid())) {
                 return i;
             }
         }
@@ -208,12 +236,12 @@ public class AddOrUpdateFoodDialog {
 
 
     public void deleteData(Context context, final FoodListBean listBean) {
+        RxLogUtils.d("删除食材：" + listBean);
         JsonObject object = new JsonObject();
         object.addProperty("gid", listBean.getGid());
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.removeHeatInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(context)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -227,8 +255,8 @@ public class AddOrUpdateFoodDialog {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
 
                 });

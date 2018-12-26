@@ -1,19 +1,20 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Typeface;
-import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -25,22 +26,18 @@ import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.WeightTools;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 
 public class WeightDataActivity extends BaseActivity {
@@ -52,25 +49,32 @@ public class WeightDataActivity extends BaseActivity {
     @BindView(R.id.mRecycler_Receive)
     RecyclerView mRecycler_Receive;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weight_data);
-        ButterKnife.bind(this);
-        initView();
-        weightHistoryData = getIntent().getExtras().getString(Key.BUNDLE_WEIGHT_HISTORY);
-    }
-
-
-    String weightHistoryData;
-
-
     private BaseQuickAdapter adapter_Receive;
 
-    public void initView() {
+
+    @Override
+    protected int layoutId() {
+        return R.layout.activity_weight_data;
+    }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         initRecyclerView();
         initData();
+    }
+
+
+    @Override
+    protected int statusBarColor() {
+        return ContextCompat.getColor(mContext, R.color.white);
+    }
+
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+
     }
 
     private void initTopBar() {
@@ -94,11 +98,11 @@ public class WeightDataActivity extends BaseActivity {
             @Override
             protected void convert(BaseViewHolder helper, QNScaleStoreData item) {
 
-                helper.setText(R.id.tv_weight, RxFormatValue.fromat4S5R(item.getWeight(), 2))
-                        .setTypeface(R.id.tv_weight, typeface);
-                helper.setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
-                helper.setVisible(R.id.btn_new, helper.getAdapterPosition() == 0);
-                helper.addOnClickListener(R.id.btn_receive);
+                helper.setText(R.id.tv_weight, RxFormatValue.fromat4S5R(item.getWeight(), 1))
+                        .setTypeface(R.id.tv_weight, typeface)
+                        .setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"))
+                        .setVisible(R.id.btn_new, helper.getAdapterPosition() == 0)
+                        .addOnClickListener(R.id.btn_receive);
             }
         };
 
@@ -115,17 +119,17 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void initData() {
-        List<QNScaleStoreData> listReceives = MyAPP.getGson().fromJson(weightHistoryData, new TypeToken<List<QNScaleStoreData>>() {
-        }.getType());
+        List<QNScaleStoreData> weightData = BleService.historyWeightData;
+        if (RxDataUtils.isEmpty(weightData)) return;
+        adapter_Receive.setNewData(weightData);
 
-        adapter_Receive.setNewData(listReceives);
-
-        tv_receive.setText(getString(R.string.receivedCount, "待", listReceives.size()));
+        tv_receive.setText(getString(R.string.receivedCount, "待", weightData.size()));
     }
 
 
     private void addWeightData(final int position) {
         final QNScaleStoreData qnScaleData = (QNScaleStoreData) adapter_Receive.getItem(position);
+        if (RxDataUtils.isEmpty(qnScaleData)) return;
         WeightAddBean bean = new WeightAddBean();
 
         bean.setMeasureTime(qnScaleData.getMeasureTime().getTime() + "");
@@ -135,11 +139,10 @@ public class WeightDataActivity extends BaseActivity {
                 WeightTools.ble2Backstage(item, bean);
             }
         bean.setWeight(qnScaleData.getWeight());
-        String s = MyAPP.getGson().toJson(bean, WeightAddBean.class);
+        String s = JSON.toJSONString(bean);
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addWeightInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .addWeightInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -155,14 +158,15 @@ public class WeightDataActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.normal(error, code);
                     }
                 });
     }
 
     @Override
     protected void onDestroy() {
+        BleService.historyWeightData = null;
         super.onDestroy();
     }
 
@@ -178,26 +182,19 @@ public class WeightDataActivity extends BaseActivity {
 
 
     private void showDialog() {
-        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.getTvContent().setText("你还有未领取的体重数据，\n离开后将全部被忽略\n？");
-        dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.green_61D97F));
-        dialog.setCancel(getString(R.string.btn_leave));
-        dialog.setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                RxActivityUtils.finishActivity();
-            }
-        });
-        dialog.setSure(getString(R.string.btn_continue));
-        dialog.setSureListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("你还有未领取的体重数据，离开后将全部被忽略？")
+                .setCancel(getString(R.string.btn_leave))
+                .setCancelListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RxActivityUtils.finishActivity();
+                    }
+                })
+                .setSure(getString(R.string.btn_continue))
+                .show();
     }
 
 }

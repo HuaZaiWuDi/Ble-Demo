@@ -24,6 +24,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Shader;
+import android.support.annotation.FloatRange;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -114,12 +115,13 @@ public class RxWaveView extends View {
     }
 
     /**
+     * 根据<代码>wave eshiftratio </代码>水平移动波浪
      * Shift the wave horizontally according to <code>waveShiftRatio</code>.
      *
      * @param waveShiftRatio Should be 0 ~ 1. Default to be 0.
      *                       Result of waveShiftRatio multiples width of WaveView is the length to shift.
      */
-    public void setWaveShiftRatio(float waveShiftRatio) {
+    public void setWaveShiftRatio(@FloatRange(from = 0, to = 1) float waveShiftRatio) {
         if (mWaveShiftRatio != waveShiftRatio) {
             mWaveShiftRatio = waveShiftRatio;
             invalidate();
@@ -137,7 +139,7 @@ public class RxWaveView extends View {
      * @param waterLevelRatio Should be 0 ~ 1. Default to be 0.5.
      *                        Ratio of water level to WaveView height.
      */
-    public void setWaterLevelRatio(float waterLevelRatio) {
+    public void setWaterLevelRatio(@FloatRange(from = 0, to = 1) float waterLevelRatio) {
         if (mWaterLevelRatio != waterLevelRatio) {
             mWaterLevelRatio = waterLevelRatio;
             invalidate();
@@ -155,7 +157,7 @@ public class RxWaveView extends View {
      * @param amplitudeRatio Default to be 0.05. Result of amplitudeRatio + waterLevelRatio should be less than 1.
      *                       Ratio of amplitude to height of WaveView.
      */
-    public void setAmplitudeRatio(float amplitudeRatio) {
+    public void setAmplitudeRatio(@FloatRange(from = 0, to = 1) float amplitudeRatio) {
         if (mAmplitudeRatio != amplitudeRatio) {
             mAmplitudeRatio = amplitudeRatio;
             invalidate();
@@ -173,7 +175,7 @@ public class RxWaveView extends View {
      * @param waveLengthRatio Default to be 1.
      *                        Ratio of wave length to width of WaveView.
      */
-    public void setWaveLengthRatio(float waveLengthRatio) {
+    public void setWaveLengthRatio(@FloatRange(from = 0, to = 1) float waveLengthRatio) {
         mWaveLengthRatio = waveLengthRatio;
     }
 

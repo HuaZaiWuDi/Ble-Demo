@@ -81,8 +81,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/tv_Ingestion"
-                        android:layout_marginBottom="3dp"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginBottom="3dp"
                         android:layout_toRightOf="@+id/tv_Ingestion"
                         android:text="kcal"
                         android:textColor="@color/GrayWrite"/>
@@ -178,8 +178,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/tv_consume"
-                        android:layout_marginBottom="3dp"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginBottom="3dp"
                         android:layout_toRightOf="@+id/tv_consume"
                         android:text="kcal"
                         android:textColor="@color/GrayWrite"/>
@@ -201,9 +201,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:layout_marginBottom="@dimen/dimen_8"
-                    android:paddingBottom="16dp"
                     android:paddingLeft="16dp"
                     android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
                     app:qmui_backgroundColor="@color/white"
                     app:qmui_borderColor="@color/white"
                     app:qmui_radius="4dp">
@@ -275,9 +275,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:layout_marginBottom="@dimen/dimen_8"
-                    android:paddingBottom="16dp"
                     android:paddingLeft="16dp"
                     android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
                     app:qmui_backgroundColor="@color/white"
                     app:qmui_borderColor="@color/white"
                     app:qmui_radius="4dp">
@@ -348,9 +348,9 @@
                     android:layout_height="68dp"
                     android:layout_marginBottom="@dimen/dimen_8"
                     android:background="@color/white"
-                    android:paddingBottom="16dp"
                     android:paddingLeft="16dp"
                     android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
                     app:qmui_backgroundColor="@color/white"
                     app:qmui_borderColor="@color/white"
                     app:qmui_radius="4dp">
@@ -420,9 +420,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:background="@color/white"
-                    android:paddingBottom="16dp"
                     android:paddingLeft="16dp"
                     android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
                     app:qmui_backgroundColor="@color/white"
                     app:qmui_borderColor="@color/white"
                     app:qmui_radius="4dp">

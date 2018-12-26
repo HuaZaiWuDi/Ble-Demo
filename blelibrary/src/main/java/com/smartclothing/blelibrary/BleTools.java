@@ -87,12 +87,16 @@ public class BleTools {
                 Log.e(TAG, "设备不支持BLE");
             return;
         }
-        if (bleManager.isBlueEnable())
-            bleManager.enableBluetooth();
+//        if (!bleManager.isBlueEnable())
+//            bleManager.enableBluetooth();
 //        bleManager.disableBluetooth();//关闭蓝牙
         bleManager.enableLog(false);//是否开启蓝牙日志
         bleManager.setMaxConnectCount(1);
-        bleManager.setOperateTimeout(500000);//设置超时时间
+        bleManager.setOperateTimeout(2000);//设置操作超时时间
+
+        bleManager.setReConnectCount(3, 3000);
+        bleManager.setConnectOverTime(15000);
+
     }
 
     public void setBleDevice(BleDevice bleDevice) {
@@ -336,6 +340,9 @@ public class BleTools {
     private ScanCallback scanCallback;
 
     public void startScan(BleScanConfig config, ScanCallback scanCallback) {
+
+        stopScanByM();
+
         this.scanCallback = scanCallback;
         final long timeOut = config.getScanTimeOut();
 
@@ -349,13 +356,12 @@ public class BleTools {
             return;
         }
 
-        stopScanByM();
         Log.d("bleManager", "开始扫描");
         BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
         ScanSettings scanSettings = new ScanSettings.Builder()
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//回调所以设备
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)//扫描模式功耗最高，速度最快仅在app处于前台时使用
-//                .setReportDelay(800)
+                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//回调所有设备
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)//扫描模式功耗最高，速度最快仅在app处于前台时使用
+                .setReportDelay(2000)
                 .setUseHardwareBatchingIfSupported(false)
                 .build();
         List<ScanFilter> filters = new ArrayList<>();
@@ -394,6 +400,7 @@ public class BleTools {
                 Log.d("bleManager", "结束扫描");
                 scanner.stopScan(scanCallback);
                 isScanning = false;
+                scanCallback = null;
             }
         }
     }

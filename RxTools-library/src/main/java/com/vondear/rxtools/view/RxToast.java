@@ -231,6 +231,12 @@ public class RxToast {
 
     @CheckResult
     public static Toast custom(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor, @ColorInt int tintColor, int duration, boolean withIcon, boolean shouldTint) {
+        //在某些手机(VIVO)上面，使用全局唯一单例的Toast视图多次点击显示一次之后不再显示。
+        // 这里修改为每次都使用新的，防止占用内存以及Toast压栈，这里关闭之前的Toast并置为null
+        if (currentToast != null) {
+            currentToast.cancel();
+            currentToast = null;
+        }
         if (currentToast == null) {
             currentToast = new Toast(context);
         }
@@ -245,7 +251,6 @@ public class RxToast {
             drawableFrame = getDrawable(context, R.drawable.toast_frame);
         }
         setBackground(toastLayout, drawableFrame);
-
 
         if (withIcon) {
             if (icon == null)
@@ -307,28 +312,28 @@ public class RxToast {
      * 封装了Toast的方法 :需要等待
      */
     public static void showToastShort(String str) {
-        Toast.makeText(getContext(), str, Toast.LENGTH_SHORT).show();
+        showToast(getContext(), str, Toast.LENGTH_SHORT);
     }
 
     /**
      * 封装了Toast的方法 :需要等待
      */
     public static void showToastShort(int resId) {
-        Toast.makeText(getContext(), getContext().getString(resId), Toast.LENGTH_SHORT).show();
+        showToast(getContext(), getContext().getString(resId), Toast.LENGTH_SHORT);
     }
 
     /**
      * 封装了Toast的方法 :需要等待
      */
     public static void showToastLong(String str) {
-        Toast.makeText(getContext(), str, Toast.LENGTH_LONG).show();
+        showToast(getContext(), str, Toast.LENGTH_LONG);
     }
 
     /**
      * 封装了Toast的方法 :需要等待
      */
     public static void showToastLong(int resId) {
-        Toast.makeText(getContext(), getContext().getString(resId), Toast.LENGTH_LONG).show();
+        showToast(getContext(), getContext().getString(resId), Toast.LENGTH_LONG);
     }
 
     /**
@@ -337,26 +342,7 @@ public class RxToast {
      * @param msg 显示内容
      */
     public static void showToast(String msg) {
-        if (mToast == null) {
-            mToast = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
-        } else {
-            mToast.setText(msg);
-        }
-        mToast.show();
-    }
-
-    /**
-     * Toast 替代方法 ：立即显示无需等待
-     *
-     * @param resId String资源ID
-     */
-    public static void showToast(int resId) {
-        if (mToast == null) {
-            mToast = Toast.makeText(getContext(), getContext().getString(resId), Toast.LENGTH_LONG);
-        } else {
-            mToast.setText(getContext().getString(resId));
-        }
-        mToast.show();
+        showToast(getContext(), msg, Toast.LENGTH_SHORT);
     }
 
     /**
@@ -384,6 +370,7 @@ public class RxToast {
         } else {
             mToast.setText(msg);
         }
+        mToast.setGravity(gravity, 0, 0);
         mToast.show();
     }
 

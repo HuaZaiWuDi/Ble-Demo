@@ -1,11 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
 import java.util.Calendar;
 
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
@@ -32,7 +33,7 @@ public class HeartRateToKcal {
      */
     public static double getCalorie(int HR, double T) {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return 0;
@@ -41,7 +42,6 @@ public class HeartRateToKcal {
         int sex = info.getSex();
         float W = SPUtils.getFloat(SPKey.SP_realWeight, SPUtils.getInt(SPKey.SP_weight));
         long birthDayMillis = info.getBirthday();
-
 
         Calendar calendar = Calendar.getInstance();
         int newYear = calendar.get(Calendar.YEAR);
@@ -55,7 +55,7 @@ public class HeartRateToKcal {
         } else {
             kcal = ((-20.4022 + (0.4472 * HR) - (0.1263 * W) + (0.074 * A)) / 4.184) * 60 * T;
         }
-        return Math.abs(kcal);
+        return RxFormatValue.format4S5R(Math.abs(kcal), 1);
     }
 
 

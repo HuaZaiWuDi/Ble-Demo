@@ -1,7 +1,8 @@
 <resources>
-    <string name="appName">Timetofit</string>
+    <string name="appName">智享瘦</string>
     <string name="nav_slimming">瘦身</string>
     <string name="nav_find">发现</string>
+    <string name="nav_record">记录</string>
     <string name="nav_store">商城</string>
     <string name="nav_me">我的</string>
     <string name="heat">热量</string>
@@ -31,6 +32,7 @@
     <string name="disConnected">未连接</string>
     <string name="connected">已连接</string>
     <string name="unBind">未绑定</string>
+    <string name="calm">静息</string>
     <string name="warm">热身</string>
     <string name="grease">燃脂</string>
     <string name="aerobic">有氧</string>
@@ -98,12 +100,33 @@
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
     <string name="search_noData">没有搜索到关于 " %1$s " 的食物哦，请您重新输入食物的关键字 ^-^</string>
     <string name="must_input">最多可以输入%1$d字</string>
-    <string name="plan">感谢使用TimeToFit为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n1.身体质量指数（BMI）在 18.5-40 之间； \n2.年龄在 18-60 之间； \n3.产后女性已不在哺乳期，且距离上次生产一年以上； \n4.未患有心血管疾病且近期未有其他影响饮食或运动的病症。</string>
+    <string name="plan">感谢使用智享瘦为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n
+\t1.\t身体质量指数（BMI）在18.5-40之间；\n
+\t2.年龄在18-60之间；\n
+\t3.产后女性已不在哺乳期，且距离上次生产一年以上；\n
+\t4.未患有心血管、肺脏和代谢疾病：包括PAD（外周血管疾病）或脑血管疾病，COPD（慢性阻塞性肺疾病）、哮喘、间质性肺病或囊性纤维化，糖尿病、甲状腺异常和肾脏或肝脏疾病，且近期未有其他影响饮食或运动的病症。\n
+\t5.运动过程中未出现以下症状或体征：\n
+\t\t\t①由局部缺血引起的胸部、颈部、臂部或其他部位的疼痛；\n
+\t\t\t②休息或轻微用力时气短；\n
+\t\t\t③头晕眼花或晕厥；\n
+\t\t\t④端坐呼吸或夜间阵发性呼吸困难；\n
+\t\t\t⑤踝部水肿；\n
+\t\t\t⑥心悸或心动过速；\n
+\t\t\t⑦间歇性跛行；\n
+\t\t\t⑧已知的心脏杂音；\n
+\t\t\t⑨其他平常活动异常的疲劳或气短；\n
+平台服务人员会根据您所提供的信息,为您科学的定制食谱和运动课程，出现以下情况请采取果断措施并反馈给服务人员：\n
+\t1.\t\t运动过程中因个人身体差异出现异常情况，请立即停止运动并及时就医；\n
+\t2.\t\t食谱中存在个人饮食禁忌的食材请勿食用;</string>
+    <string name="phone_email">客服电话：43046554 \n客服邮箱：466113124@wesma</string>
+    <string name="empty_recipes">亲爱的%1$s，营养师正在努力定制中，请耐心等待…</string>
+    <string name="empty_record">亲爱的%1$s，此日期没有任何记录哦，点击按钮可以补录饮食…</string>
+    <string name="empty_plan">亲爱的%1$s，服务人员正在努力为您定制课程，请耐心等待…</string>
 
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>
+        <item>@string/nav_record</item>
         <item>@string/nav_find</item>
-        <item>@string/nav_store</item>
         <item>@string/nav_me</item>
     </string-array>
 
@@ -143,7 +166,7 @@
         <item>BMI</item>
         <item>内脏脂肪等级</item>
         <item>肌肉量</item>
-        <item>基础代谢率</item>
+        <item>基础代谢</item>
         <item>水分</item>
         <item>骨量</item>
         <item>皮下脂肪率</item>
@@ -159,5 +182,39 @@
         <item>一天多次</item>
         <item>始终出现</item>
     </string-array>
+
+
+    <string-array name="week">
+        <item>日</item>
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+    </string-array>
+
+    <string-array name="foodTab">
+        <item>全部</item>
+        <item>主食</item>
+        <item>蛋/肉制品</item>
+        <item>奶制品</item>
+        <item>蔬果/菌藻</item>
+        <item>坚果/豆制品</item>
+        <item>饮料</item>
+        <item>零食/点心/冷饮</item>
+
+    </string-array>
+
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="expectKcal">运动时间%1$d min,预计消耗热量%2$d kcal</string>
+    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你定制的是%2$s。  \n养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标哦，加油！</string>
+    <string name="dietPlanUser">%1$s营养师 为您搭配饮食</string>
+    <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
+    <string name="follow">跟着智享瘦</string>
+    <string name="appDays">我在 %1$s 第%2$d 天</string>
 
 </resources>

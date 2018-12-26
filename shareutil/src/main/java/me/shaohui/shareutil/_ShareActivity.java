@@ -36,6 +36,7 @@ public class _ShareActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_share_login);
         ShareLogger.i(INFO.ACTIVITY_CREATE);
         isNew = true;
         ShareLogger.i("onCreate:");
@@ -43,6 +44,8 @@ public class _ShareActivity extends Activity {
         WbSdk.install(this, new AuthInfo(this, ShareManager.CONFIG.getWeiboId(), ShareManager.CONFIG.getWeiboRedirectUrl(), ShareManager.CONFIG.getWeiboScope()));
         ShareLogger.i("配置信息:" + ShareManager.CONFIG.toString());
         mType = getIntent().getIntExtra(TYPE, 0);
+
+        ShareLogger.i("类型:" + mType);
         if (mType == ShareUtil.TYPE) {
             // 分享
             ShareUtil.action(this);
@@ -50,6 +53,7 @@ public class _ShareActivity extends Activity {
             // 登录
             LoginUtil.action(this);
         } else {
+
             // handle 微信回调
             LoginUtil.handleResult(-1, -1, getIntent());
             ShareUtil.handleResult(getIntent());
@@ -60,7 +64,7 @@ public class _ShareActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        ShareLogger.i("onStart:");
+        ShareLogger.i("onStart:" + isNew);
     }
 
     @Override
@@ -78,16 +82,17 @@ public class _ShareActivity extends Activity {
     protected void onStop() {
         super.onStop();
         ShareLogger.i("onStop:" + isNew);
-//        if (isNew) {
-//            isNew = false;
-//        } else
-//            finish();
+        if (isNew) {
+            isNew = false;
+        } else
+            finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ShareLogger.i("onDestroy:" + isNew);
+        ShareLogger.i("onDestroy:" + mType);
 //        ShareUtil.recycle();
 //        LoginUtil.recycle();
     }
@@ -117,4 +122,5 @@ public class _ShareActivity extends Activity {
         }
         finish();
     }
+
 }

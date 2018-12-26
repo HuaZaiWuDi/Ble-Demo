@@ -54,7 +54,7 @@ import java.util.Map;
  * Created by vondear on 2016/1/24.
  */
 
-public class RxDeviceUtils {
+public class  RxDeviceUtils {
 
 
     private static Context context = RxUtils.getContext();

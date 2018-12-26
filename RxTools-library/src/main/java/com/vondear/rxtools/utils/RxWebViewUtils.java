@@ -34,33 +34,40 @@ public class RxWebViewUtils {
         }
         webBase.setLayerType(View.LAYER_TYPE_HARDWARE, null);//硬件解码
 
-//        webSettings.setAllowContentAccess(true);
-//        webSettings.setAllowFileAccessFromFileURLs(true);
-//        webSettings.setAppCacheEnabled(true);
-   /*     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+//如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        webSettings.setJavaScriptEnabled(true);
+
+        // 设置是否开启DOM存储API权限，默认false，未开启，设置为true，WebView能够使用DOM storage API
+        webSettings.setDomStorageEnabled(true);
+        //垂直不显示
+        webBase.setVerticalScrollBarEnabled(false);
+        webBase.setHorizontalScrollBarEnabled(false);
+
+//支持插件
+//        webSettings.setPluginsEnabled(true);
+
+
+//设置自适应屏幕，两者合用
+        webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
+        webSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
+
+//缩放操作
+        webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提。
+        webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
+        webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
+
+
+//其他细节操作
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); //关闭webview中缓存
+        webSettings.setAllowFileAccess(true); //设置可以访问文件
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
+        webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
+        //设置为http和https混合加载模式
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }*/
-
-
-        // setMediaPlaybackRequiresUserGesture(boolean require) //是否需要用户手势来播放Media，默认true
-
-        webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本
-//        webSettings.setPluginState(WebSettings.PluginState.ON);
-        webSettings.setSupportZoom(true);// 设置可以支持缩放
-        webSettings.setBuiltInZoomControls(true);// 设置出现缩放工具 是否使用WebView内置的缩放组件，由浮动在窗口上的缩放控制和手势缩放控制组成，默认false
-
-        webSettings.setDisplayZoomControls(false);//隐藏缩放工具
-        webSettings.setUseWideViewPort(true);// 扩大比例的缩放
-
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//自适应屏幕
-        webSettings.setLoadWithOverviewMode(true);
-
-        webSettings.setDatabaseEnabled(true);//
-        webSettings.setSavePassword(true);//保存密码
-        webSettings.setDomStorageEnabled(true);//是否开启本地DOM存储  鉴于它的安全特性（任何人都能读取到它，尽管有相应的限制，将敏感数据存储在这里依然不是明智之举），Android 默认是关闭该功能的。
-        webBase.setSaveEnabled(true);
-        webBase.setKeepScreenOn(true);
-
+        }
 
         //设置此方法可在WebView中打开链接，反之用浏览器打开
         webBase.setWebViewClient(new WebViewClient() {

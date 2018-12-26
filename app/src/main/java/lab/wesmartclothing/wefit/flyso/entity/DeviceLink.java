@@ -1,12 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -50,27 +50,21 @@ public class DeviceLink {
 
     //数据统计接口
     public void deviceLink(DeviceLink deviceLink) {
-        if (deviceLink == null) return;
         deviceLink.setLinkStatus(1);
         if (MyAPP.aMapLocation != null) {
             deviceLink.setCity(MyAPP.aMapLocation.getCity());
             deviceLink.setCountry(MyAPP.aMapLocation.getCountry());
             deviceLink.setProvince(MyAPP.aMapLocation.getProvince());
         }
-        String s = MyAPP.getGson().toJson(deviceLink, DeviceLink.class);
+        String s = JSON.toJSONString(deviceLink);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.deviceLink(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().deviceLink(body))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("统计接口：" + s);
                     }
 
-                    @Override
-                    protected void _onError(String error) {
-                        RxLogUtils.e("统计接口：" + error);
-                    }
                 });
     }
 

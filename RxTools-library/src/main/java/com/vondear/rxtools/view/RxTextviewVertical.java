@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RxTextviewVertical extends TextSwitcher implements ViewSwitcher.ViewFactory {
 
@@ -95,7 +96,7 @@ public class RxTextviewVertical extends TextSwitcher implements ViewSwitcher.Vie
      *
      * @param titles
      */
-    public void setTextList(ArrayList<String> titles) {
+    public void setTextList(List<String> titles) {
         textList.clear();
         textList.addAll(titles);
         currentId = -1;

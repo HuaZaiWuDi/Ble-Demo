@@ -6,13 +6,13 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
@@ -36,7 +36,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -52,14 +52,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -74,12 +78,6 @@ import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
 
 /**
  * Created by jk on 2018/7/13.
@@ -176,7 +174,6 @@ public class Slimming2Fragment extends BaseAcFragment {
     ImageView mIvWeight;
     @BindView(R.id.layout_weight)
     LinearLayout mLayoutWeight;
-    Unbinder unbinder;
     @BindView(R.id.tv_target)
     TextView mTvTarget;
     @BindView(R.id.tv_date)
@@ -227,17 +224,16 @@ public class Slimming2Fragment extends BaseAcFragment {
     public String[] add_food;
     private int lastKcal = 0;
 
+
     @Override
-    protected View onCreateView() {
-        View rootView = LayoutInflater.from(mActivity).inflate(R.layout.fragment_layout_slimming2, null);
-        unbinder = ButterKnife.bind(this, rootView);
-        initView();
-        return rootView;
+    protected int layoutId() {
+        return R.layout.fragment_layout_slimming2;
     }
 
 
-    private void initView() {
-        initRxBus();
+    @Override
+    protected void initViews() {
+        super.initViews();
         add_food = getResources().getStringArray(R.array.add_food);
         Typeface typeface = MyAPP.typeface;
         mTvWeightStart.setTypeface(typeface);
@@ -258,28 +254,17 @@ public class Slimming2Fragment extends BaseAcFragment {
         setDefaultBarData(null);
         setLineChartData(null);
 
-        initData();
         setTGA(this.getClass().getSimpleName());
 
     }
 
-    private void initRxBus() {
-        RxBus.getInstance().register2(RefreshSlimming.class)
-                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<RefreshSlimming>() {
-                    @Override
-                    protected void _onNext(RefreshSlimming refreshSlimming) {
-                        initData();
-                    }
-                });
-    }
-
-
-    private void initData() {
+    @Override
+    protected void initNetData() {
+        super.initNetData();
         getFirstPageData();
 
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = MyAPP.getGson().fromJson(string, UserInfo.class);
+        UserInfo info = JSON.parseObject(string, UserInfo.class);
         RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
@@ -298,6 +283,19 @@ public class Slimming2Fragment extends BaseAcFragment {
             }
         });
     }
+
+    @Override
+    protected void initRxBus() {
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        initNetData();
+                    }
+                });
+    }
+
 
     private void initChart(BarLineChartBase lineChartBase) {
         lineChartBase.setEnabled(false);
@@ -563,15 +561,15 @@ public class Slimming2Fragment extends BaseAcFragment {
     ///////////////////////////////////////////////////////////////////////////
 
     private void getFirstPageData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.indexInfo(1, 7))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FirstPageBean bean = MyAPP.getGson().fromJson(s, FirstPageBean.class);
+                        FirstPageBean bean = JSON.parseObject(s, FirstPageBean.class);
                         notifyData(bean);
                     }
 
@@ -609,8 +607,6 @@ public class Slimming2Fragment extends BaseAcFragment {
             TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
         }
 
-        //当前体重
-        SPUtils.put(SPKey.SP_realWeight, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getWeight());
         mTvBody.setText(bean.getWeightInfo() == null ? "--" : bean.getBodyType());
         mTvWeight.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
         mTvCurrentkg.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getWeight() + "");
@@ -619,8 +615,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         mIvHealthyLevel.switchLevel(bean.getWeightInfo() == null ? "" : bean.getSickLevel());
         mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
 
-        //基础代谢
-        SPUtils.put(SPKey.SP_BMR, bean.getWeightInfo() == null ? 0 : (float) bean.getWeightInfo().getBasalHeat());
+
+
 
         int targetProgress = (int) (bean.getComplete() * 100);
         mProWeight.setProgress(targetProgress);

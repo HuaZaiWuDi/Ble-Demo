@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundRelativeLayout;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
@@ -41,13 +43,12 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -303,6 +304,7 @@ public class ProblemFragemnt extends BaseActivity {
             if (data != null && requestCode == IMAGE_PICKER) {
                 imageLists = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
                 ArrayList<Object> images = new ArrayList<>();
+
                 images.addAll(0, imageLists);
                 images.add(R.mipmap.icon_add_white);
                 if (images.size() == 5) {
@@ -337,10 +339,7 @@ public class ProblemFragemnt extends BaseActivity {
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8")
                 , object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.feedback(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().feedback(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -351,8 +350,8 @@ public class ProblemFragemnt extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -361,24 +360,27 @@ public class ProblemFragemnt extends BaseActivity {
     public void feedbackImg() {
         List<File> files = new ArrayList<>();
         for (int i = 0; i < imageLists.size(); i++) {
-            File file = new File(imageLists.get(i).path);
+            File file = new File(RxImageUtils.compressImage(imageLists.get(i).path));
             files.add(file);
+            Log.d("上传图片", "feedbackImg: " + file.getAbsolutePath());
+            Log.d("上传图片", " file.length();: " + file.length());
         }
 
         List<MultipartBody.Part> body = filesToMultipartBodyParts(files);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.feedbackImg(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().feedbackImg(body))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("上传多张图片成功" + s);
+                        Log.d("上传图片", "_onNext: " + s);
                         commitData(s);
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

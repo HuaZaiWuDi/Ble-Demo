@@ -18,8 +18,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 public class SportingActivity extends AppCompatActivity {
     LineChart mMLineChart;
@@ -38,7 +38,7 @@ public class SportingActivity extends AppCompatActivity {
             @Override
             public void accept(SportsDataTab sportsDataTab) throws Exception {
                 setHeartRateData(sportsDataTab.getCurHeart());
-                tv_HeartRate.append("当前心率:" + sportsDataTab.getCurHeart() + "--真实心率：" + sportsDataTab.getRealHeart() + "--卡路里：" + sportsDataTab.getKcal() + "\n");
+                tv_HeartRate.append("当前心率:" + sportsDataTab.getCurHeart() + "--真实心率：" + sportsDataTab.getRealHeart() + "--千卡：" + sportsDataTab.getKcal() + "\n");
             }
         });
         RxBus.getInstance().addSubscription(this, register);

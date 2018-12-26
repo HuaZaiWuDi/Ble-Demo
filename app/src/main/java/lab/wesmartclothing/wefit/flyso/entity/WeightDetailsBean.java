@@ -115,7 +115,15 @@ public class WeightDetailsBean {
         private double flesh;
         private double water;
         private double healthScore;
+        private int basalHeat;
 
+        public int getBasalHeat() {
+            return basalHeat;
+        }
+
+        public void setBasalHeat(int basalHeat) {
+            this.basalHeat = basalHeat;
+        }
 
         public String getGid() {
             return gid;

@@ -153,9 +153,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="84dp"
                 android:background="@color/Gray"
-                android:paddingBottom="@dimen/dimen_16"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingTop="20dp"
+                android:paddingBottom="@dimen/dimen_16"
                 android:visibility="invisible"
                 app:qmui_layout_collapseMode="pin">
 
@@ -174,8 +174,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="@dimen/dimen_10"
                     android:layout_marginLeft="@dimen/dimen_16"
+                    android:layout_marginBottom="@dimen/dimen_10"
                     android:layout_toRightOf="@+id/iv_userImg2"
                     android:maxLines="1"
                     android:text="@string/app_name"
@@ -187,8 +187,8 @@
                     android:id="@+id/layout_notify2"
                     android:layout_width="@dimen/dimen_50"
                     android:layout_height="@dimen/dimen_50"
-                    android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginBottom="@dimen/dimen_10"
                     android:gravity="bottom|center_horizontal">
 
@@ -253,8 +253,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dimen_0.5"
                     android:layout_below="@+id/iv_Healthy"
-                    android:layout_marginBottom="@dimen/dimen_16"
                     android:layout_marginTop="@dimen/dimen_17"
+                    android:layout_marginBottom="@dimen/dimen_16"
                     android:background="@color/line"/>
 
 
@@ -378,8 +378,8 @@
                     android:id="@+id/tv_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_below="@+id/line"
+                    android:layout_alignParentRight="true"
                     android:textColor="@color/GrayWrite"
                     android:textSize="10sp"/>
 
@@ -907,9 +907,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_marginBottom="@dimen/dimen_2"
-                        android:layout_marginRight="24dp"
                         android:layout_marginTop="24dp"
+                        android:layout_marginRight="24dp"
+                        android:layout_marginBottom="@dimen/dimen_2"
                         android:text=" kcal"
                         android:textColor="@color/red"
                         android:textSize="15sp"/>
@@ -939,10 +939,6 @@
                             android:textColor="@color/Gray"
                             android:textSize="13sp"/>
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/dimen_0.5"
-                            android:background="@color/line"/>
 
                         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                             android:id="@+id/btn_goBind_clothing"
@@ -970,8 +966,8 @@
                 android:id="@+id/layout_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dimen_8"
                 android:layout_marginTop="@dimen/dimen_8"
+                android:layout_marginBottom="@dimen/dimen_8"
                 android:background="@drawable/selector_ripple_bg_"
                 android:orientation="vertical"
                 tools:visibility="visible">
@@ -1043,8 +1039,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_marginRight="24dp"
                         android:layout_marginTop="24dp"
+                        android:layout_marginRight="24dp"
                         android:text=" kg"
                         android:textColor="@color/green_61D97F"
                         android:textSize="15sp"/>

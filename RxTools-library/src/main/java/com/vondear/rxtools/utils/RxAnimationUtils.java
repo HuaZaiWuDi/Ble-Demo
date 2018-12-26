@@ -34,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
-import com.vondear.rxtools.aboutCarmera.RxImageUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.interfaces.onUpdateListener;
 
 /**
@@ -215,6 +215,29 @@ public class RxAnimationUtils {
         valueAnimator.start();
     }
 
+
+    /**
+     * 属性修改控件的高度
+     *
+     * @param start
+     * @param end
+     * @param view
+     */
+    public static void animateMaginTop(int start, int end, final View view) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+        valueAnimator.setDuration(500);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (int) animation.getAnimatedValue();//根据时间因子的变化系数进行设置高度
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+                layoutParams.topMargin = value;
+                view.setLayoutParams(layoutParams);//设置高度
+            }
+        });
+        valueAnimator.start();
+    }
+
     /**
      * 属性修改控件的宽度
      *
@@ -365,9 +388,6 @@ public class RxAnimationUtils {
             throw new ClassCastException("TextView  setText('')的值必须为正整数");
         }
     }
-
-
-
 
 
     /**

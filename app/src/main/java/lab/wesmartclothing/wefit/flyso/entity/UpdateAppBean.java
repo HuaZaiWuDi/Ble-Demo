@@ -1,12 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -48,21 +47,15 @@ public class UpdateAppBean {
     //APP升级监听
     public void addDeviceVersion(UpdateAppBean updateApp) {
 
-        String s = MyAPP.getGson().toJson(updateApp, UpdateAppBean.class);
+        String s = JSON.toJSONString(updateApp);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addDeviceVersion(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addDeviceVersion(body))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("统计接口：" + s);
                     }
 
-                    @Override
-                    protected void _onError(String error) {
-                        RxLogUtils.e("统计接口：" + error);
-//                        RxToast.error(error);
-                    }
                 });
     }
 

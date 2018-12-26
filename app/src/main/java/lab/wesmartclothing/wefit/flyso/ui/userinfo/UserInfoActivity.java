@@ -1,15 +1,14 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -18,11 +17,12 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 
@@ -38,21 +38,16 @@ import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleService;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class UserInfoActivity extends BaseALocationActivity {
 
@@ -148,18 +143,16 @@ public class UserInfoActivity extends BaseALocationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
         ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
                 .setLightStatusBar(false)
                 .process();
         initView();
-        Intent bleIntent = new Intent(mContext, BleService.class);
-        startService(bleIntent);
     }
 
     public void initView() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
-        mUserInfo = MyAPP.getGson().fromJson(string, UserInfo.class);
+        mUserInfo = JSON.parseObject(string, UserInfo.class);
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
@@ -310,28 +303,6 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     }
 
-    public void showWeight() {
-        NumberPicker picker = new NumberPicker(this);
-        picker.setGravity(Gravity.BOTTOM);
-        picker.setHeight((int) (picker.getScreenHeightPixels() * 0.4));
-        picker.setCycleDisable(false);
-        picker.setDividerConfig(null);
-        picker.setOffset(2);//偏移量
-        picker.setRange(35, 90, 1);//数字范围
-        picker.setSelectedItem(mUserInfo.getTargetWeight());
-        picker.setTextSize(25);
-        picker.setLabel("kg");
-        picker.setOnNumberPickListener(new NumberPicker.OnNumberPickListener() {
-            @Override
-            public void onNumberPicked(int index, Number item) {
-                RxLogUtils.d("体重：" + item);
-                tv_bottom.setText(item + "kg");
-                SPUtils.put(SPKey.SP_weight, (int) item);
-                mUserInfo.setTargetWeight((int) item);
-            }
-        });
-        picker.show();
-    }
 
 
     private void saveUserInfo(boolean isSkip) {
@@ -341,12 +312,11 @@ public class UserInfoActivity extends BaseALocationActivity {
             mUserInfo.setCity("");
         }
 
-        String s = MyAPP.getGson().toJson(mUserInfo, UserInfo.class);
+        String s = JSON.toJSONString(mUserInfo);
         SPUtils.put(SPKey.SP_UserInfo, s);
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.saveUserInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .saveUserInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -360,8 +330,8 @@ public class UserInfoActivity extends BaseALocationActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }

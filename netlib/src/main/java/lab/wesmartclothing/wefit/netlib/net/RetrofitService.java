@@ -24,7 +24,7 @@ import retrofit2.http.Url;
  * 创建人：Jack
  * 创建时间：2017/5/24
  */
-public interface RetrofitService {
+public interface RetrofitService  {
     String BASE_URL = ServiceAPI.BASE_URL;
 
 
@@ -33,9 +33,15 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
 
 
+    //获取食物列表信息
     @FormUrlEncoded
     @POST("heat/getFoodInfo")
-    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+    Observable<String> getFoodInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize, @Field("typeId") String typeId);
+
+    //        获取食物分类信息
+    @POST("heat/getFoodType")
+    Observable<String> getFoodType();
+
 
     @FormUrlEncoded
     @POST("heat/searchFoodInfo")
@@ -60,8 +66,27 @@ public interface RetrofitService {
     @POST("slim/indexInfo")
     Observable<String> indexInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
-    @POST("heat/fetchFoodPlan")
-    Observable<String> fetchFoodPlan();
+    //查询饮食计划
+    @POST("heat/fetchDietPlan")
+    Observable<String> fetchDietPlan(@Body RequestBody body);
+
+    //查询定制计划日期
+    @POST("heat/fetchPlanDate")
+    Observable<String> fetchPlanDate(@Body RequestBody body);
+
+    //查询记录饮食日期
+    @POST("heat/fetchDietRecordDate")
+    Observable<String> fetchDietRecordDate(@Body RequestBody body);
+
+    //获取能量记录列表信息
+    @POST("slim/fetchHeatList")
+    Observable<String> fetchHeatList();
+
+
+    //获取操作首页信息接口
+    @POST("slim/planIndex")
+    Observable<String> planIndex();
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 体重
@@ -108,6 +133,11 @@ public interface RetrofitService {
     @POST("athl/fetchAthleticsInfo")
     Observable<String> getAthleticsInfo(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
 
+    //获取运动列表记录详情（包括多次运动）
+    @FormUrlEncoded
+    @POST("athl/fetchAthleticsListDetail")
+    Observable<String> fetchAthleticsListDetail(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
+
     //获取运动列表记录
     @FormUrlEncoded
     @POST("athl/fetchAthleticsList")
@@ -118,6 +148,14 @@ public interface RetrofitService {
 
     @POST("athl/athleticsDetail")
     Observable<String> athleticsDetail(@Body RequestBody body);
+
+    //获取单次运动记录信息
+    @POST("athl/singleAthlDetail")
+    Observable<String> singleAthlDetail(@Body RequestBody body);
+
+    //获取某一天定制课程运动记录信息
+    @POST("athl/courseAthlDetail")
+    Observable<String> courseAthlDetail(@Body RequestBody body);
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -285,7 +323,7 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
     //发现新连接
     @FormUrlEncoded
-    @POST("/find/detail.html")
+    @POST("find/detail.html")
     Observable<String> newsDetail(@Field("gid") String git);
 
 
@@ -294,4 +332,19 @@ public interface RetrofitService {
     ///////////////////////////////////////////////////////////////////////////
     @POST("upgrade/getUpgradeInfo")
     Observable<String> getUpgradeInfo(@Body RequestBody body);
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    //问题报告信息模块
+    // 问题和报告相关信息
+    ///////////////////////////////////////////////////////////////////////////
+    //查询问题列表
+    @POST("questionInform/questionList")
+    Observable<String> questionList();
+
+    //提交报告接口
+    @POST("questionInform/submitInform")
+    Observable<String> submitInform(@Body RequestBody body);
+
+
 }

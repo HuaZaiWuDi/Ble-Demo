@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.netlib.utils;
 
 import android.app.Dialog;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.zchu.rxcache.utils.LogUtils;
 
@@ -67,6 +68,23 @@ public class RxThreadUtils {
         };
     }
 
+
+    /**
+     * 统一线程处理
+     *
+     * @param <T> 指定的泛型类型
+     * @return ObservableTransformer
+     */
+    public static <T> ObservableTransformer<T, T> rxIoThreadHelper() {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> observable) {
+                return observable.subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.single());
+            }
+        };
+    }
+
     /**
      * 统一线程处理
      *
@@ -105,8 +123,10 @@ public class RxThreadUtils {
                 try {
                     emitter.onNext(t);
                     emitter.onComplete();
+                    Log.d("createData当前线程：", Thread.currentThread().getName());
                 } catch (Exception e) {
                     emitter.onError(e);
+                    Log.e("createData", "subscribe: ", e);
                 }
             }
         });
@@ -185,9 +205,10 @@ public class RxThreadUtils {
                 return upstream.flatMap(new Function<T, ObservableSource<T>>() {
                     @Override
                     public ObservableSource<T> apply(T t) throws Exception {
+                        Log.d("handleResult当前线程：", Thread.currentThread().getName());
                         if (t instanceof String) {
                             JSONObject object = null;
-
+//                            Log.d("返回数据：", (String) t);
                             try {
                                 object = new JSONObject((String) t);
                                 int code = object.getInt("code");

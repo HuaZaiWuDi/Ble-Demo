@@ -43,10 +43,12 @@ public class RxWaveHelper {
         animators.add(waveShiftAnim);
 
         // vertical animation.
-        // water level increases from 0 to center of RxWaveView
+        // Water level increases from 0 to center of RxWaveView
+
         ObjectAnimator waterLevelAnim = ObjectAnimator.ofFloat(
-                mWaveView, "waterLevelRatio", 0f, 0.5f);
-        waterLevelAnim.setDuration(10000);
+                mWaveView, "waterLevelRatio", 0f, mWaveView.getWaterLevelRatio());
+        int duration = (int) Math.abs(10000 * mWaveView.getWaterLevelRatio());
+        waterLevelAnim.setDuration(duration);
         waterLevelAnim.setInterpolator(new DecelerateInterpolator());
         animators.add(waterLevelAnim);
 

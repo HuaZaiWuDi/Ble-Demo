@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.vondear.rxtools.utils.RxIntentUtils;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -58,8 +59,10 @@ public class RxActivityUtils {
      * 结束当前Activity（堆栈中最后一个压入的）
      */
     public static void finishActivity() {
-        Activity activity = activityStack.lastElement();
-        finishActivity(activity);
+        if (!activityStack.empty()) {
+            Activity activity = activityStack.lastElement();
+            finishActivity(activity);
+        }
     }
 
 
@@ -82,10 +85,31 @@ public class RxActivityUtils {
      * 结束指定类名的Activity
      */
     public static void finishActivity(Class<?> cls) {
-        for (Activity activity : activityStack) {
+        //防止并发异常，使用迭代器遍历
+        Iterator<Activity> activitys = activityStack.iterator();
+        while (activitys.hasNext()) {
+            Activity activity = activitys.next();
             if (activity.getClass().equals(cls)) {
-                finishActivity();
+                finishActivity(activity);
+            }
+        }
+    }
 
+
+    /**
+     * 结束多个界面
+     *
+     * @param cls
+     */
+    public static void finishMultiAvtivity(Class<?>... cls) {
+        //防止并发异常，使用迭代器遍历
+        Iterator<Activity> activitys = activityStack.iterator();
+        while (activitys.hasNext()) {
+            Activity activity = activitys.next();
+            for (Class<?> finishAc : cls) {
+                if (activity.getClass().equals(finishAc)) {
+                    finishActivity(activity);
+                }
             }
         }
     }
@@ -121,18 +145,45 @@ public class RxActivityUtils {
     /**
      * 判断是否存在指定Activity
      *
-     * @param context     上下文
-     * @param packageName 包名
-     * @param className   activity全路径类名
+     * @param context   上下文
+     * @param className activity全路径类名
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isExistActivity(Context context, String packageName, String className) {
+    public static boolean isExistActivity(Context context, String className) {
         Intent intent = new Intent();
-        intent.setClassName(packageName, className);
+        intent.setClassName(context.getPackageName(), className);
         return !(context.getPackageManager().resolveActivity(intent, 0) == null ||
                 intent.resolveActivity(context.getPackageManager()) == null ||
                 context.getPackageManager().queryIntentActivities(intent, 0).size() == 0);
     }
+
+    /**
+     * 判断是否存在指定Activity
+     *
+     * @return {@code true}: 是<br>{@code false}: 否
+     */
+    public static boolean isExistActivity(Class<?> cls) {
+        for (Activity activity : activityStack) {
+            if (activity.getClass().equals(cls)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断界面是否在顶部
+     *
+     * @param cls
+     * @return
+     */
+    public static boolean isTopActivity(Class<?> cls) {
+        if (currentActivity().getClass().equals(cls)) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * 打开指定的Activity

@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/Gray"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        tools:visibility="visible"
+        />
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_addFood"
+        android:layout_below="@+id/topBar"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <lab.wesmartclothing.wefit.flyso.view.DateChoose
+                android:id="@+id/chooseDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                />
+
+
+            <LinearLayout
+                android:id="@+id/layout_foodList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:visibility="visible">
+
+                <!--今日热量总计-->
+                <RelativeLayout
+                    android:id="@+id/layout_totalKcal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chooseDate"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="@mipmap/icon_record_title">
+
+
+                    <TextView
+                        android:id="@+id/tv_totalKcal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="今日总计：   900 kcal"
+                        android:textColor="@color/black_312C35"
+                        android:textSize="12sp"/>
+
+                </RelativeLayout>
+
+
+                <!--今日三餐-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layout_totalKcal"
+                    android:orientation="vertical">
+
+                    <!--早餐-->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp"
+                        tools:visibility="visible">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="4dp"
+                                android:layout_height="15dp"
+                                android:background="@color/yellow_E4CA9F"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_breakfastTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:text="早餐"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_breakfastkcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"
+                                tools:text="620kcal"/>
+
+
+                        </LinearLayout>
+
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/mRecycler_Breakfast"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="61dp"
+                            android:nestedScrollingEnabled="false">
+
+                        </android.support.v7.widget.RecyclerView>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="61dp"
+                            android:background="@color/line"/>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <!--午餐-->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp"
+                        tools:visibility="visible">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="4dp"
+                                android:layout_height="15dp"
+                                android:background="@color/yellow_E4CA9F"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_lunchTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:text="午餐"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_lunchKcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"
+                                tools:text="620kcal"/>
+
+                        </LinearLayout>
+
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/mRecycler_Lunch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="61dp"
+                            android:nestedScrollingEnabled="false">
+
+                        </android.support.v7.widget.RecyclerView>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="61dp"
+                            android:background="@color/line"/>
+
+                    </android.support.v7.widget.CardView>
+
+                    <!--晚餐-->
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp"
+                        tools:visibility="visible">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="4dp"
+                                android:layout_height="15dp"
+                                android:background="@color/yellow_E4CA9F"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_dinnerTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:text="晚餐"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_dinnerKcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"
+                                tools:text="620kcal"/>
+
+
+                        </LinearLayout>
+
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/mRecycler_Dinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="61dp"
+                            android:nestedScrollingEnabled="false">
+
+                        </android.support.v7.widget.RecyclerView>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="61dp"
+                            android:background="@color/line"/>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <!--加餐-->
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/card_meal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="4dp"
+                        tools:visibility="visible">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            >
+
+                            <View
+                                android:layout_width="4dp"
+                                android:layout_height="15dp"
+                                android:background="@color/yellow_E4CA9F"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_MealTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:text="加餐"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"/>
+
+
+                            <TextView
+                                android:id="@+id/tv_MealKcal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:textColor="@color/Gray"
+                                android:textSize="18sp"
+                                tools:text="620kcal"/>
+
+
+                        </LinearLayout>
+
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/mRecycler_Meal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="61dp"
+                            android:nestedScrollingEnabled="false">
+
+                        </android.support.v7.widget.RecyclerView>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="61dp"
+                            android:background="@color/line"/>
+
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
+
+                <!--营养师提示语-->
+                <android.support.v7.widget.CardView
+                    android:id="@+id/card_dietitian_Tip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/layout_foodList"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="4dp"
+                    tools:visibility="visible">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/icon_dietitian_title"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_dietitianName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="NO.006 营养师 (tony)"
+                            android:textColor="@color/black_312C35"
+                            android:textSize="8dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_tip"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="24dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="left"
+                            android:text="@string/DietitianTip"
+                            android:textColor="@color/Gray"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+
+                <TextView
+                    android:id="@+id/tv_empty"
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="61dp"
+                    android:gravity="center"
+                    android:text="亲爱的（用户昵称），此日期没有任何记录哦，点击按钮可以补录饮食…"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="12sp"/>
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="64dp"
+                    android:src="@mipmap/bg_food"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</RelativeLayout>

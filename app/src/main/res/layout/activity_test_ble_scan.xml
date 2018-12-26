@@ -62,6 +62,7 @@
         android:layout_marginTop="@dimen/dimen_50"
         android:elevation="20dp"
         android:translationZ="20dp"
+        android:visibility="gone"
         app:background_normal="@color/green_61D97F"
         app:corner_radius="25dp"
         app:gradient_angle="BOTTOM_TOP"
@@ -81,16 +82,60 @@
 
     </RelativeLayout>
 
-    <com.vondear.rxtools.view.roundprogressbar.VerticalProgress
+    <com.vondear.rxtools.view.chart.bar.BarGroupChart
         android:id="@+id/mVerticalProgress"
-        android:layout_margin="30dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
 
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+    </com.github.mikephil.charting.charts.LineChart>
 
 
+    <TextView
+        android:id="@+id/tv_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/line_chart"
+        android:textColor="@color/white"
+        android:textSize="20sp"/>
 
+    <com.haibin.calendarview.CalendarLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Gray"
+        android:orientation="vertical"
+        app:calendar_content_view_id="@+id/recyclerView"
+        app:calendar_show_mode="only_week_view"
+        app:default_status="shrink">
+
+        <com.haibin.calendarview.CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            app:calendar_height="50dp"
+            app:current_month_lunar_text_color="#CFCFCF"
+            app:current_month_text_color="#333333"
+            app:min_year="2004"
+            app:month_view_show_mode="mode_only_current"
+            app:other_month_text_color="#e1e1e1"
+            app:scheme_text="假"
+            app:scheme_text_color="#333"
+            app:scheme_theme_color="#333"
+            app:selected_text_color="#fff"
+            app:selected_theme_color="#333"
+            app:week_background="#fff"
+            app:week_start_with="mon"
+            app:week_text_color="#111"
+            />
+
+
+    </com.haibin.calendarview.CalendarLayout>
 </RelativeLayout>

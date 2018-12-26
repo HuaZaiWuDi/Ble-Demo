@@ -2,12 +2,14 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -22,16 +24,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import me.shaohui.shareutil.LoginUtil;
 import me.shaohui.shareutil.login.LoginListener;
 import me.shaohui.shareutil.login.LoginPlatform;
@@ -87,7 +87,7 @@ public class AccountFragment extends BaseActivity {
         initTopBar();
         initMyDialog();
         otherData();
-        String phone = MyAPP.getGson().fromJson(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class).getPhone();
+        String phone = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class).getPhone();
         mTvPhone.setText(phone);
     }
 
@@ -98,16 +98,12 @@ public class AccountFragment extends BaseActivity {
     }
 
     private void initMyDialog() {
-        dialog = new RxDialogSureCancel(mActivity);
-        dialog.getTvContent().setText("解绑后将不能作为登录方式，确定解除微信账号绑定么？");
-        dialog.setCancel("解除绑定");
-        dialog.setSure("取消");
-        dialog.setSureListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        dialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("解绑后将不能作为登录方式，确定解除微信账号绑定么？")
+                .setSure("解除绑定");
+
     }
 
     private void initTopBar() {
@@ -124,7 +120,7 @@ public class AccountFragment extends BaseActivity {
         this.switchBindListener = switchBindListener;
         if (isBind) {
             //解绑
-            dialog.setCancelListener(new View.OnClickListener() {
+            dialog.setSureListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     unbindOther(type);
@@ -211,10 +207,7 @@ public class AccountFragment extends BaseActivity {
     };
 
     private void bindOther(final LoginResult result) {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.bindingOuterInfo(result.getUserInfo().getHeadImageUrl(),
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().bindingOuterInfo(result.getUserInfo().getHeadImageUrl(),
                 result.getUserInfo().getNickname(), result.getToken().getOpenid(), typeTransformation(result.getPlatform())))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -228,15 +221,14 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.normal(error,code);
                     }
                 });
     }
 
     private void unbindOther(final String otherType) {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.unbindingOuterInfo(otherType))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().unbindingOuterInfo(otherType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -251,16 +243,15 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
 
     //获取第三方登录信息
     private void otherData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.fetchBindingOuterInfo())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchBindingOuterInfo())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -274,7 +265,7 @@ public class AccountFragment extends BaseActivity {
                          }
                          * */
                         //类型擦除
-                        List<OtherLoginBean> beans = MyAPP.getGson().fromJson(s, new TypeToken<List<OtherLoginBean>>() {
+                        List<OtherLoginBean> beans = JSON.parseObject(s, new TypeToken<List<OtherLoginBean>>() {
                         }.getType());
 
                         for (int i = 0; i < beans.size(); i++) {
@@ -300,8 +291,8 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.normal(error,code);
                     }
                 });
     }

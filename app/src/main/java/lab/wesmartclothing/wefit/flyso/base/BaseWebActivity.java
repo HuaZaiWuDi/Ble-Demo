@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,11 +12,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 
+import com.just.agentweb.AbsAgentWebSettings;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
-import com.just.agentweb.AgentWebSettingsImpl;
 import com.just.agentweb.DefaultWebClient;
 import com.just.agentweb.IAgentWebSettings;
 import com.just.agentweb.IWebLayout;
@@ -43,8 +43,8 @@ public abstract class BaseWebActivity extends BaseActivity {
 
     public void initWebView(ViewGroup parent) {
         //3.创建mAgentWeb
-        mAgentWeb = AgentWeb.with(this)//
-                .setAgentWebParent(parent, -1, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//传入AgentWeb的父控件。
+        mAgentWeb = AgentWeb.with(mActivity)//
+                .setAgentWebParent(parent, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//传入AgentWeb的父控件。
                 .useDefaultIndicator(getIndicatorColor(), getIndicatorHeight())
                 .setWebView(getWebView())
                 .setWebLayout(getWebLayout())
@@ -65,13 +65,15 @@ public abstract class BaseWebActivity extends BaseActivity {
 
         AgentWebConfig.debug();
 
-        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
-        mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+
+//        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
+//        WebView webView = mAgentWeb.getWebCreator().getWebView();
+//        webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);//始终可以滑动
+
         WebSettings webSettings = mAgentWeb.getWebCreator().getWebView().getSettings();
 //        设置默认加载的可视范围是大视野范围
         webSettings.setLoadWithOverviewMode(true);
 //                自适应屏幕(导致活动页面显示出错了)
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webSettings.setUseWideViewPort(true);
     }
 
@@ -85,16 +87,20 @@ public abstract class BaseWebActivity extends BaseActivity {
 
     @Override
     public void onPause() {
-        if (mAgentWeb != null)
+        if (mAgentWeb != null) {
             mAgentWeb.getWebLifeCycle().onPause(); //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
+        }
         super.onPause();
     }
 
 
     @Override
     protected void onDestroy() {
-        if (mAgentWeb != null)
+        if (mAgentWeb != null) {
+            RxLogUtils.d("清除缓存");
+//            AgentWebConfig.clearDiskCache(mContext);
             mAgentWeb.getWebLifeCycle().onDestroy();
+        }
         super.onDestroy();
     }
 
@@ -128,7 +134,7 @@ public abstract class BaseWebActivity extends BaseActivity {
 
     protected @Nullable
     IAgentWebSettings getAgentWebSettings() {
-        return AgentWebSettingsImpl.getInstance();
+        return AbsAgentWebSettings.getInstance();
     }
 
     protected @Nullable
@@ -172,6 +178,7 @@ public abstract class BaseWebActivity extends BaseActivity {
     protected @NonNull
     MiddlewareWebClientBase getMiddleWareWebClient() {
         return this.mMiddleWareWebClient = new MiddlewareWebClientBase() {
+
         };
     }
 
@@ -191,6 +198,25 @@ public abstract class BaseWebActivity extends BaseActivity {
             }
 
             @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // 拦截 url 跳转,在里边添加点击链接跳转或者操作
+                //Android8.0以下的需要返回true 并且需要loadUrl；8.0之后效果相反
+                if (Build.VERSION.SDK_INT < 26) {
+                    view.loadUrl(url);
+                    return true;
+                }
+                return false;
+            }
+
+//            @Override
+//            public void onScaleChanged(WebView view, float oldScale, float newScale) {
+//                super.onScaleChanged(view, oldScale, newScale);
+//                mAgentWeb.getUrlLoader().reload();
+////                view.reload();
+//                RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
+//            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 RxLogUtils.d("网页地址：" + url);
@@ -201,6 +227,7 @@ public abstract class BaseWebActivity extends BaseActivity {
                 super.onPageCommitVisible(view, url);
                 tipDialog.dismiss();
             }
+
         };
     }
 }

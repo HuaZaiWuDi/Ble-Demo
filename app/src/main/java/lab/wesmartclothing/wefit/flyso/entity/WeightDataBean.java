@@ -301,6 +301,22 @@ public class WeightDataBean {
             this.navigatepageNums = navigatepageNums;
         }
 
+        public boolean isFirstPage() {
+            return isFirstPage;
+        }
+
+        public void setFirstPage(boolean firstPage) {
+            isFirstPage = firstPage;
+        }
+
+        public boolean isLastPage() {
+            return isLastPage;
+        }
+
+        public void setLastPage(boolean lastPage) {
+            isLastPage = lastPage;
+        }
+
         public static class ListBean {
             /**
              * gid : f57bc94702b146549127acdf4dd70067
@@ -570,6 +586,10 @@ public class WeightDataBean {
 
             public double getHealthScore() {
                 return healthScore;
+            }
+
+            public void setBmi(double bmi) {
+                this.bmi = bmi;
             }
 
             public void setHealthScore(double healthScore) {

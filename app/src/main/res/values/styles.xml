@@ -11,6 +11,7 @@
 
         <item name="android:windowAnimationStyle">@style/activityAnimation</item>
 
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
     <!-- 仿微信界面交互方式 样式 -->
@@ -37,6 +38,7 @@
         <item name="qmui_topbar_height">@dimen/topBarHeight</item>
         <item name="qmui_topbar_image_btn_height">@dimen/topBarHeight</item>
         <item name="qmui_topbar_left_back_drawable_id">@mipmap/icon_back</item>
+        <item name="qmui_topbar_need_separator">false</item>
     </style>
 
 

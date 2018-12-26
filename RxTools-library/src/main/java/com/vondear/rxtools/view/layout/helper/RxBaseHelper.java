@@ -69,6 +69,8 @@ public class RxBaseHelper<T extends View> {
     int mGradientSatrtColor = 0;
     int mGradientRadius = 0;
     int mGradientType = GRADIENT_TYPE_LINEAR;
+
+
     private GradientDrawable mGradient;
 
     protected int[][] states = new int[4][];
@@ -246,8 +248,10 @@ public class RxBaseHelper<T extends View> {
 
 
     private void setGradient() {
+
         if (mGradientCenterX != 0 && mGradientCenterY != 0) {
             mBackgroundNormal.setGradientCenter(mGradientCenterX, mGradientCenterY);
+
         }
         if (mGradientSatrtColor != 0 && mGradientEndColor != 0) {
             int[] colors;
@@ -308,7 +312,7 @@ public class RxBaseHelper<T extends View> {
         if (mRippleColor != 0) {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Drawable contentDrawable = (mStateBackground == null ? mBackgroundPressed : mStateBackground);
-                RippleDrawable rippleDrawable = new RippleDrawable(ColorStateList.valueOf(mRippleColor), contentDrawable, contentDrawable);
+                RippleDrawable rippleDrawable = new RippleDrawable(ColorStateList.valueOf(mRippleColor), contentDrawable, null);
                 mView.setBackground(rippleDrawable);
             } else {
                 setBackgroundColorPressed(mRippleColor);
@@ -320,7 +324,6 @@ public class RxBaseHelper<T extends View> {
     /*********************
      * BackgroundColor
      ********************/
-
     public RxBaseHelper setStateBackgroundColor(int normal, int pressed, int unable) {
         mBackgroundColorNormal = normal;
         mBackgroundColorPressed = pressed;

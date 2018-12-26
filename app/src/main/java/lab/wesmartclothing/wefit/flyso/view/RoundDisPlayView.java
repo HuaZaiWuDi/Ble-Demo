@@ -35,7 +35,7 @@ public class RoundDisPlayView extends View {
 
     boolean isShowPoint = false;//是否显示点
     private int indexPoint = 0;//高亮的点
-    private boolean showProgress = true;
+    private boolean showProgress = false;
 
     public RoundDisPlayView(Context context) {
         this(context, null);
@@ -116,7 +116,6 @@ public class RoundDisPlayView extends View {
         canvas.save();
         canvas.translate(mWidth / 2, mHeight / 2);
 
-
         drawRound3(canvas);
         //画中间的文字
 //        drawCentreText(canvas);
@@ -186,7 +185,6 @@ public class RoundDisPlayView extends View {
 
     public void startAnimation() {
         if (cgAnima1 == null) {
-
             cgAnima1 = ValueAnimator.ofInt(0, 360);
             cgAnima1.setInterpolator(new LinearInterpolator());
             cgAnima1.setDuration(2000);

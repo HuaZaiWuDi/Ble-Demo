@@ -69,7 +69,6 @@ public class ScanSettings implements Parcelable {
     public static final int SCAN_MODE_LOW_LATENCY = 2;
 
     /**
-     *
      * 触发与匹配筛选标准匹配的每一个蓝牙广告的回调。如果没有过滤器是活动的，所有的广告包被报告。
      * Trigger a callback for every Bluetooth advertisement found that matches the filter criteria.
      * If no filter is active, all advertisement packets are reported.
@@ -77,7 +76,6 @@ public class ScanSettings implements Parcelable {
     public static final int CALLBACK_TYPE_ALL_MATCHES = 1;
 
     /**
-     *
      * 结果回调只针对与过滤准则匹配的第一个广告包被触发。
      * A result callback is only triggered for the first advertisement packet received that matches
      * the filter criteria.
@@ -334,6 +332,8 @@ public class ScanSettings implements Parcelable {
         }
 
         /**
+         *
+         *
          * Set callback type for Bluetooth LE scan.
          *
          * @param callbackType The callback type flags for the scan.
@@ -360,6 +360,7 @@ public class ScanSettings implements Parcelable {
 
         /**
          * //为蓝牙LE扫描设置报告延迟时间戳。
+         *
          * Set report delay timestamp for Bluetooth LE scan.
          *
          * @param reportDelayMillis Delay of report in milliseconds. Set to 0 to be notified of
@@ -377,6 +378,7 @@ public class ScanSettings implements Parcelable {
 
         /**
          * 设置蓝牙LE扫描滤波器硬件匹配的匹配数
+         *
          * Set the number of matches for Bluetooth LE scan filters hardware match
          *
          * @param numOfMatches The num of matches can be one of
@@ -395,6 +397,7 @@ public class ScanSettings implements Parcelable {
         }
 
         /**
+         * 设置匹配模式的蓝牙LE扫描过滤器硬件匹配
          * Set match mode for Bluetooth LE scan filters hardware match
          *
          * @param matchMode The match mode can be one of
@@ -450,6 +453,8 @@ public class ScanSettings implements Parcelable {
         }
 
         /**
+         * 当回调类型设置为只回调同一个设备的第一次或最后一次，时，设置超时时间和任务时间
+         *
          * The match options are used when the callback type has been set to {@link ScanSettings#CALLBACK_TYPE_FIRST_MATCH} or {@link ScanSettings#CALLBACK_TYPE_MATCH_LOST}
          * and hardware does not support those types. In that case {@link BluetoothLeScannerCompat} starts a task that runs periodically and calls {@link ScanCallback#onScanResult(int, ScanResult)}
          * with type {@link #CALLBACK_TYPE_MATCH_LOST} if a device has not been seen for at least given time.
@@ -467,6 +472,8 @@ public class ScanSettings implements Parcelable {
         }
 
         /**
+         * 在5.0加入，扫描时需要唤醒CPU，设置扫描时间和休眠时间
+         *
          * Pre-Lollipop scanning requires a wakelock and the CPU cannot go to sleep. To conserve power we can optionally
          * scan for a certain duration (scan interval) and then rest for a time before starting scanning again. Won't
          * affect Lollipop or later devices

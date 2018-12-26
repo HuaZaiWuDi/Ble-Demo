@@ -1,5 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
+import com.vondear.rxtools.utils.RxConstUtils;
+
 import java.io.Serializable;
 
 /**
@@ -28,14 +31,49 @@ public class UserInfo implements Serializable {
     private String scalesMacAddr;
     private int sex = 2;//1男2女0未知（未录入）
     private String signature;
-    private double targetWeight;
     private String imgUrl;
     private String userName;
     private String city;
     private String country;
     private String province;
     private boolean isChange = false;
+    private long registerTime;
+    private int planState;
+    private int age;
+    private boolean hasInviteCode;
 
+
+    public boolean isHasInviteCode() {
+        return hasInviteCode;
+    }
+
+    public void setHasInviteCode(boolean hasInviteCode) {
+        this.hasInviteCode = hasInviteCode;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getPlanState() {
+        return planState;
+    }
+
+    public void setPlanState(int planState) {
+        this.planState = planState;
+    }
+
+    public long getRegisterTime() {
+        return RxTimeUtils.getIntervalTime(System.currentTimeMillis(), registerTime, RxConstUtils.TimeUnit.DAY) + 1;
+    }
+
+    public void setRegisterTime(long registerTime) {
+        this.registerTime = registerTime;
+    }
 
     public void setCity(String city) {
         this.city = city;
@@ -128,14 +166,6 @@ public class UserInfo implements Serializable {
         this.signature = signature;
     }
 
-    public double getTargetWeight() {
-        return targetWeight;
-    }
-
-    public void setTargetWeight(double targetWeight) {
-        isChange = true;
-        this.targetWeight = targetWeight;
-    }
 
     public String getImgUrl() {
         return imgUrl;
@@ -174,7 +204,6 @@ public class UserInfo implements Serializable {
                 ", scalesMacAddr='" + scalesMacAddr + '\'' +
                 ", sex=" + sex +
                 ", signature='" + signature + '\'' +
-                ", targetWeight=" + targetWeight +
                 ", userImg='" + imgUrl + '\'' +
                 ", userName='" + userName + '\'' +
                 ", city='" + city + '\'' +

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_item"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:drawableLeft="@drawable/shape_green_dot"
+    android:drawablePadding="15dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="23dp"
+    android:text="图层需要多次休息"
+    android:textColor="@color/Gray"
+    android:textSize="14sp">
+
+
+</TextView>

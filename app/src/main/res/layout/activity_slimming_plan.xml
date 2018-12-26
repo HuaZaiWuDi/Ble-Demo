@@ -33,16 +33,24 @@
         android:textColor="@color/Gray"
         android:textSize="18sp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_unAgree"
         android:layout_below="@+id/tv_Title"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:lineSpacingExtra="8dp"
-        android:text="@string/plan"
-        android:textColor="@color/GrayWrite"
-        android:textSize="13sp"/>
+        android:layout_marginBottom="40dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:text="@string/plan"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"/>
+
+    </android.support.v4.widget.NestedScrollView>
 
 
     <com.vondear.rxtools.view.layout.RxTextView
@@ -58,7 +66,7 @@
         android:textSize="14sp"
         app:background_normal="@color/GrayWrite"
         app:corner_radius="4dp"
-        app:ripple_color="@color/Gray"/>
+        app:ripple_color="@color/ripple_ECEAE6"/>
 
 
     <com.vondear.rxtools.view.layout.RxTextView
@@ -77,6 +85,6 @@
         app:corner_radius="4dp"
         app:gradient_endColor="#FB910B"
         app:gradient_startColor="#FAC239"
-        app:ripple_color="@color/Gray"/>
+        app:ripple_color="@color/ripple_ECEAE6"/>
 
 </RelativeLayout>

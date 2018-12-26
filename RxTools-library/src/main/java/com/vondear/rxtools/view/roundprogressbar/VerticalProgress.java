@@ -3,6 +3,7 @@ package com.vondear.rxtools.view.roundprogressbar;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxUtils;
 
 /**
@@ -29,7 +31,9 @@ public class VerticalProgress extends View {
     private float progressHeight = 0;//进度高度
     private ValueAnimator mAnimator;
     private boolean isAnimating;
-    private boolean isClip = true;//是否剪裁只显示顶部圆角
+    private boolean isClip = false;//是否剪裁只显示顶部圆角
+    private boolean isDrawBg = true;
+    private int progressColor = Color.parseColor("#FF7200");
 
     public VerticalProgress(Context context) {
         this(context, null);
@@ -41,10 +45,17 @@ public class VerticalProgress extends View {
 
     public VerticalProgress(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.VerticalProgress);
+        progressColor = array.getColor(R.styleable.VerticalProgress_pro_Color, Color.parseColor("#FF7200"));
+        isClip = array.getBoolean(R.styleable.VerticalProgress_isClip, false);
+        isDrawBg = array.getBoolean(R.styleable.VerticalProgress_isDrawBg, true);
+        array.recycle();
+
+
         bgProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bgProgressPaint.setDither(true);
         bgProgressPaint.setAntiAlias(true);
@@ -56,7 +67,7 @@ public class VerticalProgress extends View {
         progressPaint.setDither(true);
         progressPaint.setAntiAlias(true);
         progressPaint.setStyle(Paint.Style.FILL);
-        progressPaint.setColor(Color.parseColor("#FF7200"));
+
         progressPaint.setStrokeCap(Paint.Cap.ROUND);//设置为线条圆头
 
     }
@@ -65,11 +76,13 @@ public class VerticalProgress extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        progressPaint.setColor(progressColor);
         round = mWidth / 2;
         // 必须先设置显示区域再绘制,剪裁掉底部的圆角
         if (isClip)
             canvas.clipRect(0, 0, mWidth, mHeight - round);
-        drawBg(canvas);
+        if (isDrawBg)
+            drawBg(canvas);
         drawProgress(canvas);
 
     }
@@ -92,6 +105,14 @@ public class VerticalProgress extends View {
 
     }
 
+    public void setClip(boolean clip) {
+        isClip = clip;
+    }
+
+    public void setProgressColor(int progressColor) {
+        this.progressColor = progressColor;
+    }
+
     public void setProgress(int progress, boolean anim) {
         float oldValue = this.progressHeight;
 
@@ -105,6 +126,8 @@ public class VerticalProgress extends View {
             }
 
             startAnimation(oldValue, progress);
+        } else {
+            this.progressHeight = progress;
         }
         postInvalidate();
     }
@@ -161,12 +184,12 @@ public class VerticalProgress extends View {
         if (wMode == MeasureSpec.EXACTLY) {
             mWidth = wSize;
         } else {
-            mWidth = RxUtils.dp2px(10);
+            mWidth = RxUtils.dp2px(8);
         }
         if (hMode == MeasureSpec.EXACTLY) {
             mHeight = hSize;
         } else {
-            mHeight = RxUtils.dp2px(46);
+            mHeight = RxUtils.dp2px(44);
         }
         setMeasuredDimension(mWidth, mHeight);
     }

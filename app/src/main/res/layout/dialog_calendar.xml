@@ -10,22 +10,28 @@
         android:id="@+id/mCalendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:mcv_arrowColor="@color/orange_FF7200"
+        app:mcv_arrowColor="@color/GrayWrite"
         app:mcv_calendarMode="month"
-        app:mcv_selectionColor="@color/orange_FF7200"
-        app:mcv_titleAnimationOrientation="horizontal"/>
+        app:mcv_selectionColor="#312C35"
+        app:mcv_titleAnimationOrientation="horizontal"
+        app:mcv_weekDayLabels="@array/week"/>
 
 
-    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+    <com.vondear.rxtools.view.layout.RxTextView
         android:id="@+id/reToday"
-        android:layout_width="145dp"
-        android:layout_height="38dp"
+        android:layout_width="81dp"
+        android:layout_height="29dp"
         android:layout_below="@+id/mCalendarView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
         android:text="回到今天"
-        android:textColor="@color/orange_FF7200"
-        android:textSize="15sp"
-        app:qmui_borderColor="@color/orange_FF7200"/>
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:background_normal="@color/black_312B36"
+        app:corner_radius="15dp"
+        app:ripple_color="@color/ripple_ECEAE6"
+        />
 
 </RelativeLayout>

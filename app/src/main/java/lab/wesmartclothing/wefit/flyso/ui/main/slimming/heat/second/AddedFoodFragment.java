@@ -2,17 +2,19 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -30,14 +32,13 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 import okhttp3.RequestBody;
 
 /**
@@ -104,7 +105,7 @@ public class AddedFoodFragment extends BaseActivity {
             foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
             currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
             String heatData = bundle.getString(Key.ADD_FOOD_INFO);
-            FetchHeatInfoBean bean = MyAPP.getGson().fromJson(heatData, FetchHeatInfoBean.class);
+            FetchHeatInfoBean bean = JSON.parseObject(heatData, FetchHeatInfoBean.class);
             RxLogUtils.d("加载食材：" + bean);
             if (bean != null) {
                 List<FoodListBean> list = null;
@@ -171,32 +172,23 @@ public class AddedFoodFragment extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //显示删除
                 dialog.setFoodInfo(mContext, true, foodType, currentTime, (FoodListBean) adapter.getData().get(position));
             }
         });
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final BaseQuickAdapter adapter, View view, final int position) {
-                final RxDialogSureCancel deleteDialog = new RxDialogSureCancel(mActivity);
-                deleteDialog.setCanceledOnTouchOutside(false);
-                deleteDialog.getTvTitle().setVisibility(View.GONE);
-                deleteDialog.setContent("确定要删除此条记录么？");
-                deleteDialog.setCancel(getString(R.string.confirm)).setCancelListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        deleteDialog.dismiss();
-                        dialog.deleteData(mContext, ((FoodListBean) adapter.getItem(position)));
-                    }
-                })
-                        .setSure(getString(R.string.cancel))
+                RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                        .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                        .setContent("确定要删除此条记录么？")
                         .setSureListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                deleteDialog.dismiss();
+                                dialog.deleteData(mContext, ((FoodListBean) adapter.getItem(position)));
                             }
-                        }).show();
-
+                        });
+                rxDialog.show();
                 return true;
             }
         });
@@ -242,11 +234,11 @@ public class AddedFoodFragment extends BaseActivity {
         ArrayList<AddFoodItem.intakeList> lists = new ArrayList<>();
         lists.add(intakeList);
         foodItem.setIntakeLists(lists);
-        String s = MyAPP.getGson().toJson(foodItem);
+        String s = JSON.toJSONString(foodItem);
+
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addHeatInfo(body))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -256,8 +248,8 @@ public class AddedFoodFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.normal(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

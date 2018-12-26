@@ -89,8 +89,8 @@ public class RxFileUtils {
      *
      * @return
      */
-    public static File getCecheFolder(Context context) {
-        File folder = new File(context.getCacheDir(), "IMAGECACHE");
+    public static File getCecheFolder(Context context, String pathName) {
+        File folder = new File(context.getCacheDir(), pathName);
         if (!folder.exists()) {
             folder.mkdir();
         }

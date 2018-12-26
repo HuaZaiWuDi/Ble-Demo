@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/parent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/Gray"
-                android:fitsSystemWindows="true"
-                tools:context="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="lab.wesmartclothing.wefit.flyso.ui.main.MainActivity">
 
-    <!--<FrameLayout-->
-    <!--android:id="@+id/mFrameLayout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
 
-    <!--</FrameLayout>-->
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_tab"
+        android:fitsSystemWindows="true">
 
     </android.support.v4.view.ViewPager>
 

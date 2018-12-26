@@ -9,260 +9,256 @@ public class AthleticsInfo {
 
 
     /**
-     * needAthl : 0
-     * pageInfo : {"endRow":0,"firstPage":0,"hasNextPage":true,"hasPreviousPage":true,"isFirstPage":true,"isLastPage":true,"lastPage":0,"list":[{"athlDate":"2018-07-26T09:23:30.401Z","athlDesc":"string","athlRecord":"string","avgHeart":0,"calorie":0,"createTime":1511248354000,"createUser":1,"duration":0,"gid":1,"kilometers":0,"maxHeart":0,"minHeart":0,"status":101,"stepNumber":0,"updateTime":1511248354000,"updateUser":1,"userId":"string"}],"navigateFirstPage":0,"navigateLastPage":0,"navigatePages":0,"navigatepageNums":[0],"nextPage":0,"pageNum":0,"pageSize":0,"pages":0,"prePage":0,"size":0,"startRow":0,"total":0}
-     * targetSet : true
+     * endRow : 0
+     * firstPage : 0
+     * hasNextPage : true
+     * hasPreviousPage : true
+     * isFirstPage : true
+     * isLastPage : true
+     * lastPage : 0
+     * list : [{"athlList":[{"age":18,"athlDate":"2018-11-05T03:36:11.641Z","athlDesc":"string","athlRecord":"string","athlScore":0,"avgHeart":1,"birthday":"2018-11-05T03:36:11.641Z","calorie":1,"createTime":1511248354000,"createUser":1,"duration":1,"endTime":"2018-11-05T03:36:11.641Z","gid":1,"heartCount":1,"height":170,"kilometers":1,"maxHeart":1,"minHeart":1,"planFlag":0,"sex":1,"startTime":"2018-11-05T03:36:11.641Z","status":101,"stepNumber":1,"updateTime":1511248354000,"updateUser":1,"userId":"string"}],"dayAthl":{"age":18,"athlDate":"2018-11-05T03:36:11.641Z","athlDesc":"string","athlRecord":"string","avgHeart":1,"birthday":"2018-11-05T03:36:11.641Z","calorie":1,"createTime":1511248354000,"createUser":1,"duration":1,"gid":1,"heartCount":1,"height":170,"kilometers":1,"maxHeart":1,"minHeart":1,"planflag":0,"sex":1,"status":101,"stepNumber":1,"updateTime":1511248354000,"updateUser":1,"userId":"string"}}]
+     * navigateFirstPage : 0
+     * navigateLastPage : 0
+     * navigatePages : 0
+     * navigatepageNums : [0]
+     * nextPage : 0
+     * pageNum : 0
+     * pageSize : 0
+     * pages : 0
+     * prePage : 0
+     * size : 0
+     * startRow : 0
+     * total : 0
      */
 
-    private int needAthl;
-    private PageInfoBean pageInfo;
-    private boolean targetSet;
+    private int endRow;
+    private int firstPage;
+    private boolean hasNextPage;
+    private boolean hasPreviousPage;
+    private boolean isFirstPage;
+    private boolean isLastPage;
+    private int lastPage;
+    private int navigateFirstPage;
+    private int navigateLastPage;
+    private int navigatePages;
+    private int nextPage;
+    private int pageNum;
+    private int pageSize;
+    private int pages;
+    private int prePage;
+    private int size;
+    private int startRow;
+    private int total;
+    private List<ListBean> list;
+    private List<Integer> navigatepageNums;
 
-    public int getNeedAthl() {
-        return needAthl;
+    public int getEndRow() {
+        return endRow;
     }
 
-    public void setNeedAthl(int needAthl) {
-        this.needAthl = needAthl;
+    public void setEndRow(int endRow) {
+        this.endRow = endRow;
     }
 
-    public PageInfoBean getPageInfo() {
-        return pageInfo;
+    public int getFirstPage() {
+        return firstPage;
     }
 
-    public void setPageInfo(PageInfoBean pageInfo) {
-        this.pageInfo = pageInfo;
+    public void setFirstPage(int firstPage) {
+        this.firstPage = firstPage;
     }
 
-    public boolean isTargetSet() {
-        return targetSet;
+    public boolean isHasNextPage() {
+        return hasNextPage;
     }
 
-    public void setTargetSet(boolean targetSet) {
-        this.targetSet = targetSet;
+    public void setHasNextPage(boolean hasNextPage) {
+        this.hasNextPage = hasNextPage;
     }
 
-    public static class PageInfoBean {
+    public boolean isHasPreviousPage() {
+        return hasPreviousPage;
+    }
+
+    public void setHasPreviousPage(boolean hasPreviousPage) {
+        this.hasPreviousPage = hasPreviousPage;
+    }
+
+    public boolean isIsFirstPage() {
+        return isFirstPage;
+    }
+
+    public void setIsFirstPage(boolean isFirstPage) {
+        this.isFirstPage = isFirstPage;
+    }
+
+    public boolean isIsLastPage() {
+        return isLastPage;
+    }
+
+    public void setIsLastPage(boolean isLastPage) {
+        this.isLastPage = isLastPage;
+    }
+
+    public int getLastPage() {
+        return lastPage;
+    }
+
+    public void setLastPage(int lastPage) {
+        this.lastPage = lastPage;
+    }
+
+    public int getNavigateFirstPage() {
+        return navigateFirstPage;
+    }
+
+    public void setNavigateFirstPage(int navigateFirstPage) {
+        this.navigateFirstPage = navigateFirstPage;
+    }
+
+    public int getNavigateLastPage() {
+        return navigateLastPage;
+    }
+
+    public void setNavigateLastPage(int navigateLastPage) {
+        this.navigateLastPage = navigateLastPage;
+    }
+
+    public int getNavigatePages() {
+        return navigatePages;
+    }
+
+    public void setNavigatePages(int navigatePages) {
+        this.navigatePages = navigatePages;
+    }
+
+    public int getNextPage() {
+        return nextPage;
+    }
+
+    public void setNextPage(int nextPage) {
+        this.nextPage = nextPage;
+    }
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPages() {
+        return pages;
+    }
+
+    public void setPages(int pages) {
+        this.pages = pages;
+    }
+
+    public int getPrePage() {
+        return prePage;
+    }
+
+    public void setPrePage(int prePage) {
+        this.prePage = prePage;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getStartRow() {
+        return startRow;
+    }
+
+    public void setStartRow(int startRow) {
+        this.startRow = startRow;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public List<ListBean> getList() {
+        return list;
+    }
+
+    public void setList(List<ListBean> list) {
+        this.list = list;
+    }
+
+    public List<Integer> getNavigatepageNums() {
+        return navigatepageNums;
+    }
+
+    public void setNavigatepageNums(List<Integer> navigatepageNums) {
+        this.navigatepageNums = navigatepageNums;
+    }
+
+    public static class ListBean {
         /**
-         * endRow : 0
-         * firstPage : 0
-         * hasNextPage : true
-         * hasPreviousPage : true
-         * isFirstPage : true
-         * isLastPage : true
-         * lastPage : 0
-         * list : [{"athlDate":"2018-07-26T09:23:30.401Z","athlDesc":"string","athlRecord":"string","avgHeart":0,"calorie":0,"createTime":1511248354000,"createUser":1,"duration":0,"gid":1,"kilometers":0,"maxHeart":0,"minHeart":0,"status":101,"stepNumber":0,"updateTime":1511248354000,"updateUser":1,"userId":"string"}]
-         * navigateFirstPage : 0
-         * navigateLastPage : 0
-         * navigatePages : 0
-         * navigatepageNums : [0]
-         * nextPage : 0
-         * pageNum : 0
-         * pageSize : 0
-         * pages : 0
-         * prePage : 0
-         * size : 0
-         * startRow : 0
-         * total : 0
+         * athlList : [{"age":18,"athlDate":"2018-11-05T03:36:11.641Z","athlDesc":"string","athlRecord":"string","athlScore":0,"avgHeart":1,"birthday":"2018-11-05T03:36:11.641Z","calorie":1,"createTime":1511248354000,"createUser":1,"duration":1,"endTime":"2018-11-05T03:36:11.641Z","gid":1,"heartCount":1,"height":170,"kilometers":1,"maxHeart":1,"minHeart":1,"planFlag":0,"sex":1,"startTime":"2018-11-05T03:36:11.641Z","status":101,"stepNumber":1,"updateTime":1511248354000,"updateUser":1,"userId":"string"}]
+         * dayAthl : {"age":18,"athlDate":"2018-11-05T03:36:11.641Z","athlDesc":"string","athlRecord":"string","avgHeart":1,"birthday":"2018-11-05T03:36:11.641Z","calorie":1,"createTime":1511248354000,"createUser":1,"duration":1,"gid":1,"heartCount":1,"height":170,"kilometers":1,"maxHeart":1,"minHeart":1,"planflag":0,"sex":1,"status":101,"stepNumber":1,"updateTime":1511248354000,"updateUser":1,"userId":"string"}
          */
 
-        private int endRow;
-        private int firstPage;
-        private boolean hasNextPage;
-        private boolean hasPreviousPage;
-        private boolean isFirstPage;
-        private boolean isLastPage;
-        private int lastPage;
-        private int navigateFirstPage;
-        private int navigateLastPage;
-        private int navigatePages;
-        private int nextPage;
-        private int pageNum;
-        private int pageSize;
-        private int pages;
-        private int prePage;
-        private int size;
-        private int startRow;
-        private int total;
-        private List<ListBean> list;
-        private List<Integer> navigatepageNums;
+        private DayAthlBean dayAthl;
+        private List<AthlListBean> athlList;
 
-        public int getEndRow() {
-            return endRow;
+        public DayAthlBean getDayAthl() {
+            return dayAthl;
         }
 
-        public void setEndRow(int endRow) {
-            this.endRow = endRow;
+        public void setDayAthl(DayAthlBean dayAthl) {
+            this.dayAthl = dayAthl;
         }
 
-        public int getFirstPage() {
-            return firstPage;
+        public List<AthlListBean> getAthlList() {
+            return athlList;
         }
 
-        public void setFirstPage(int firstPage) {
-            this.firstPage = firstPage;
+        public void setAthlList(List<AthlListBean> athlList) {
+            this.athlList = athlList;
         }
 
-        public boolean isHasNextPage() {
-            return hasNextPage;
-        }
-
-        public void setHasNextPage(boolean hasNextPage) {
-            this.hasNextPage = hasNextPage;
-        }
-
-        public boolean isHasPreviousPage() {
-            return hasPreviousPage;
-        }
-
-        public void setHasPreviousPage(boolean hasPreviousPage) {
-            this.hasPreviousPage = hasPreviousPage;
-        }
-
-        public boolean isIsFirstPage() {
-            return isFirstPage;
-        }
-
-        public void setIsFirstPage(boolean isFirstPage) {
-            this.isFirstPage = isFirstPage;
-        }
-
-        public boolean isIsLastPage() {
-            return isLastPage;
-        }
-
-        public void setIsLastPage(boolean isLastPage) {
-            this.isLastPage = isLastPage;
-        }
-
-        public int getLastPage() {
-            return lastPage;
-        }
-
-        public void setLastPage(int lastPage) {
-            this.lastPage = lastPage;
-        }
-
-        public int getNavigateFirstPage() {
-            return navigateFirstPage;
-        }
-
-        public void setNavigateFirstPage(int navigateFirstPage) {
-            this.navigateFirstPage = navigateFirstPage;
-        }
-
-        public int getNavigateLastPage() {
-            return navigateLastPage;
-        }
-
-        public void setNavigateLastPage(int navigateLastPage) {
-            this.navigateLastPage = navigateLastPage;
-        }
-
-        public int getNavigatePages() {
-            return navigatePages;
-        }
-
-        public void setNavigatePages(int navigatePages) {
-            this.navigatePages = navigatePages;
-        }
-
-        public int getNextPage() {
-            return nextPage;
-        }
-
-        public void setNextPage(int nextPage) {
-            this.nextPage = nextPage;
-        }
-
-        public int getPageNum() {
-            return pageNum;
-        }
-
-        public void setPageNum(int pageNum) {
-            this.pageNum = pageNum;
-        }
-
-        public int getPageSize() {
-            return pageSize;
-        }
-
-        public void setPageSize(int pageSize) {
-            this.pageSize = pageSize;
-        }
-
-        public int getPages() {
-            return pages;
-        }
-
-        public void setPages(int pages) {
-            this.pages = pages;
-        }
-
-        public int getPrePage() {
-            return prePage;
-        }
-
-        public void setPrePage(int prePage) {
-            this.prePage = prePage;
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public void setSize(int size) {
-            this.size = size;
-        }
-
-        public int getStartRow() {
-            return startRow;
-        }
-
-        public void setStartRow(int startRow) {
-            this.startRow = startRow;
-        }
-
-        public int getTotal() {
-            return total;
-        }
-
-        public void setTotal(int total) {
-            this.total = total;
-        }
-
-        public List<ListBean> getList() {
-            return list;
-        }
-
-        public void setList(List<ListBean> list) {
-            this.list = list;
-        }
-
-        public List<Integer> getNavigatepageNums() {
-            return navigatepageNums;
-        }
-
-        public void setNavigatepageNums(List<Integer> navigatepageNums) {
-            this.navigatepageNums = navigatepageNums;
-        }
-
-        public static class ListBean {
+        public static class DayAthlBean {
             /**
-             * athlDate : 2018-07-26T09:23:30.401Z
+             * age : 18
+             * athlDate : 2018-11-05T03:36:11.641Z
              * athlDesc : string
              * athlRecord : string
-             * avgHeart : 0
-             * calorie : 0
+             * avgHeart : 1
+             * birthday : 2018-11-05T03:36:11.641Z
+             * calorie : 1
              * createTime : 1511248354000
              * createUser : 1
-             * duration : 0
+             * duration : 1
              * gid : 1
-             * kilometers : 0
-             * maxHeart : 0
-             * minHeart : 0
+             * heartCount : 1
+             * height : 170
+             * kilometers : 1
+             * maxHeart : 1
+             * minHeart : 1
+             * planflag : 0
+             * sex : 1
              * status : 101
-             * stepNumber : 0
+             * stepNumber : 1
              * updateTime : 1511248354000
              * updateUser : 1
              * userId : string
@@ -272,154 +268,303 @@ public class AthleticsInfo {
             private String athlDesc;
             private String athlRecord;
             private int avgHeart;
-            private int calorie;
-            private long createTime;
-            private int createUser;
+            private double calorie;
             private int duration;
-            private String gid;
+            private int heartCount;
+            private int height;
             private int kilometers;
             private int maxHeart;
             private int minHeart;
-            private int status;
+            private int planflag;
             private int stepNumber;
-            private long updateTime;
-            private int updateUser;
-            private String userId;
 
             public long getAthlDate() {
                 return athlDate;
-            }
-
-            public void setAthlDate(long athlDate) {
-                this.athlDate = athlDate;
             }
 
             public String getAthlDesc() {
                 return athlDesc;
             }
 
-            public void setAthlDesc(String athlDesc) {
-                this.athlDesc = athlDesc;
-            }
-
             public String getAthlRecord() {
                 return athlRecord;
-            }
-
-            public void setAthlRecord(String athlRecord) {
-                this.athlRecord = athlRecord;
             }
 
             public int getAvgHeart() {
                 return avgHeart;
             }
 
-            public void setAvgHeart(int avgHeart) {
-                this.avgHeart = avgHeart;
-            }
-
-            public int getCalorie() {
+            public double getCalorie() {
                 return calorie;
-            }
-
-            public void setCalorie(int calorie) {
-                this.calorie = calorie;
-            }
-
-            public long getCreateTime() {
-                return createTime;
-            }
-
-            public void setCreateTime(long createTime) {
-                this.createTime = createTime;
-            }
-
-            public int getCreateUser() {
-                return createUser;
-            }
-
-            public void setCreateUser(int createUser) {
-                this.createUser = createUser;
             }
 
             public int getDuration() {
                 return duration;
             }
 
-            public void setDuration(int duration) {
-                this.duration = duration;
+            public int getHeartCount() {
+                return heartCount;
             }
 
-            public String getGid() {
-                return gid;
-            }
-
-            public void setGid(String gid) {
-                this.gid = gid;
+            public int getHeight() {
+                return height;
             }
 
             public int getKilometers() {
                 return kilometers;
             }
 
-            public void setKilometers(int kilometers) {
-                this.kilometers = kilometers;
-            }
-
             public int getMaxHeart() {
                 return maxHeart;
-            }
-
-            public void setMaxHeart(int maxHeart) {
-                this.maxHeart = maxHeart;
             }
 
             public int getMinHeart() {
                 return minHeart;
             }
 
-            public void setMinHeart(int minHeart) {
-                this.minHeart = minHeart;
-            }
-
-            public int getStatus() {
-                return status;
-            }
-
-            public void setStatus(int status) {
-                this.status = status;
+            public int getPlanflag() {
+                return planflag;
             }
 
             public int getStepNumber() {
                 return stepNumber;
             }
 
+            public void setAthlDate(long athlDate) {
+                this.athlDate = athlDate;
+            }
+
+            public void setAthlDesc(String athlDesc) {
+                this.athlDesc = athlDesc;
+            }
+
+            public void setAthlRecord(String athlRecord) {
+                this.athlRecord = athlRecord;
+            }
+
+            public void setAvgHeart(int avgHeart) {
+                this.avgHeart = avgHeart;
+            }
+
+            public void setCalorie(double calorie) {
+                this.calorie = calorie;
+            }
+
+            public void setDuration(int duration) {
+                this.duration = duration;
+            }
+
+            public void setHeartCount(int heartCount) {
+                this.heartCount = heartCount;
+            }
+
+            public void setHeight(int height) {
+                this.height = height;
+            }
+
+            public void setKilometers(int kilometers) {
+                this.kilometers = kilometers;
+            }
+
+            public void setMaxHeart(int maxHeart) {
+                this.maxHeart = maxHeart;
+            }
+
+            public void setMinHeart(int minHeart) {
+                this.minHeart = minHeart;
+            }
+
+            public void setPlanflag(int planflag) {
+                this.planflag = planflag;
+            }
+
             public void setStepNumber(int stepNumber) {
                 this.stepNumber = stepNumber;
             }
+        }
 
-            public long getUpdateTime() {
-                return updateTime;
+        public static class AthlListBean {
+            /**
+             * age : 18
+             * athlDate : 2018-11-05T03:36:11.641Z
+             * athlDesc : string
+             * athlRecord : string
+             * athlScore : 0
+             * avgHeart : 1
+             * birthday : 2018-11-05T03:36:11.641Z
+             * calorie : 1
+             * createTime : 1511248354000
+             * createUser : 1
+             * duration : 1
+             * endTime : 2018-11-05T03:36:11.641Z
+             * gid : 1
+             * heartCount : 1
+             * height : 170
+             * kilometers : 1
+             * maxHeart : 1
+             * minHeart : 1
+             * planFlag : 0//0是自由运动，1是课程运动
+             * sex : 1
+             * startTime : 2018-11-05T03:36:11.641Z
+             * status : 101
+             * stepNumber : 1
+             * updateTime : 1511248354000
+             * updateUser : 1
+             * userId : string
+             */
+
+            private String gid;
+            private long athlDate;
+            private String athlDesc;
+            private String athlRecord;
+            private double athlScore;
+            private int avgHeart;
+            private int calorie;
+            private int duration;
+            private long endTime;
+            private int heartCount;
+            private int height;
+            private int kilometers;
+            private int maxHeart;
+            private int minHeart;
+            private int planFlag;
+            private long startTime;
+            private int stepNumber;
+
+            public String getGid() {
+                return gid;
             }
 
-            public void setUpdateTime(long updateTime) {
-                this.updateTime = updateTime;
+            public long getAthlDate() {
+                return athlDate;
             }
 
-            public int getUpdateUser() {
-                return updateUser;
+            public String getAthlDesc() {
+                return athlDesc;
             }
 
-            public void setUpdateUser(int updateUser) {
-                this.updateUser = updateUser;
+            public String getAthlRecord() {
+                return athlRecord;
             }
 
-            public String getUserId() {
-                return userId;
+            public double getAthlScore() {
+                return athlScore;
             }
 
-            public void setUserId(String userId) {
-                this.userId = userId;
+            public int getAvgHeart() {
+                return avgHeart;
+            }
+
+            public int getCalorie() {
+                return calorie;
+            }
+
+            public int getDuration() {
+                return duration;
+            }
+
+            public long getEndTime() {
+                return endTime;
+            }
+
+            public int getHeartCount() {
+                return heartCount;
+            }
+
+            public int getHeight() {
+                return height;
+            }
+
+            public int getKilometers() {
+                return kilometers;
+            }
+
+            public int getMaxHeart() {
+                return maxHeart;
+            }
+
+            public int getMinHeart() {
+                return minHeart;
+            }
+
+            public int getPlanFlag() {
+                return planFlag;
+            }
+
+            public long getStartTime() {
+                return startTime;
+            }
+
+            public int getStepNumber() {
+                return stepNumber;
+            }
+
+            public void setGid(String gid) {
+                this.gid = gid;
+            }
+
+            public void setAthlDate(long athlDate) {
+                this.athlDate = athlDate;
+            }
+
+            public void setAthlDesc(String athlDesc) {
+                this.athlDesc = athlDesc;
+            }
+
+            public void setAthlRecord(String athlRecord) {
+                this.athlRecord = athlRecord;
+            }
+
+            public void setAthlScore(double athlScore) {
+                this.athlScore = athlScore;
+            }
+
+            public void setAvgHeart(int avgHeart) {
+                this.avgHeart = avgHeart;
+            }
+
+            public void setCalorie(int calorie) {
+                this.calorie = calorie;
+            }
+
+            public void setDuration(int duration) {
+                this.duration = duration;
+            }
+
+            public void setEndTime(long endTime) {
+                this.endTime = endTime;
+            }
+
+            public void setHeartCount(int heartCount) {
+                this.heartCount = heartCount;
+            }
+
+            public void setHeight(int height) {
+                this.height = height;
+            }
+
+            public void setKilometers(int kilometers) {
+                this.kilometers = kilometers;
+            }
+
+            public void setMaxHeart(int maxHeart) {
+                this.maxHeart = maxHeart;
+            }
+
+            public void setMinHeart(int minHeart) {
+                this.minHeart = minHeart;
+            }
+
+            public void setPlanFlag(int planFlag) {
+                this.planFlag = planFlag;
+            }
+
+            public void setStartTime(long startTime) {
+                this.startTime = startTime;
+            }
+
+            public void setStepNumber(int stepNumber) {
+                this.stepNumber = stepNumber;
             }
         }
     }

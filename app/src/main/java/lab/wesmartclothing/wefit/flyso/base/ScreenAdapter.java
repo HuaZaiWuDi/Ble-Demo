@@ -15,17 +15,14 @@ public class ScreenAdapter {
     private static float myDensity;
     private static float myScaledDensity;
 
-    private static Application application;
+    private static int BaseSize = 360;
 
-    public static void init(@NonNull final Application application) {
-        ScreenAdapter.application = application;
+
+    public static void setBaseSize(int baseSize) {
+        BaseSize = baseSize;
     }
 
-
-    public static void setCustomDensity(@NonNull Activity activity) {
-        if (application == null) {
-            throw new NullPointerException("application not init");
-        }
+    public static void setCustomDensity(@NonNull final Application application, @NonNull Activity activity) {
         final DisplayMetrics metrics = application.getResources().getDisplayMetrics();
 
         if (myDensity == 0) {
@@ -46,7 +43,7 @@ public class ScreenAdapter {
             });
         }
         //这里表示的是，设计图纸宽度为360dp。
-        final float targetDensity = metrics.widthPixels / 360;
+        final float targetDensity = metrics.widthPixels / BaseSize;
         final float targetScaleDensity = targetDensity * (myScaledDensity / myDensity);
         final int targetDensityDpi = (int) (160 * targetDensity);
 

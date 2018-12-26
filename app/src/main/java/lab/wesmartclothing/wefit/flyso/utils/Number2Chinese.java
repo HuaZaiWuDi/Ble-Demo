@@ -8,15 +8,23 @@ public class Number2Chinese {
 
 
     public static void main(String[] a) {
-        System.out.println(number2Chinese(342.07));
+        System.out.println(number2Chinese(0.007 + ""));
+
+
+        System.out.print("APP版本号：" + "10.10.1".compareTo("2.1.5"));
+
     }
 
-    public static String number2Chinese(double num) {
+
+
+
+
+
+    public static String number2Chinese(String numStr) {
         //12345
         String mark[] = new String[]{"", "十", "百", "千", "万", "十", "百", "千", "亿", "十", "百", "千", "万"};
         String numCn[] = new String[]{"零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "点"};
 
-        String numStr = String.valueOf(num);
         String numberStr = "";//整数
         String pointStr = "";//小数
 
@@ -60,6 +68,10 @@ public class Number2Chinese {
             }
         }
 
+        if (numberStr.equals("0")) {
+            container.append(numCn[0]);
+        }
+
         //计算小数点
         if (!"".equals(pointStr)) {
             char[] pointArrRev = String.valueOf(pointStr).toCharArray();
@@ -71,7 +83,7 @@ public class Number2Chinese {
         }
         //如果是整数，去掉末尾的点零
         if (container.toString().trim().endsWith("点零")) {
-            return container.delete(container.length() - 2, container.length() ).toString().trim();
+            return container.delete(container.length() - 2, container.length()).toString().trim();
         }
 
         return container.toString().trim();

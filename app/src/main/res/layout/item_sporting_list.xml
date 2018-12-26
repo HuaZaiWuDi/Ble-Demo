@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="54dp"
+    android:background="@drawable/selector_ripple_bg_"
+    android:paddingLeft="16dp"
+    android:paddingRight="20dp"
+    tools:layout_marginTop="100dp">
+
+
+    <TextView
+        android:id="@+id/tv_sportingType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="课程运动"
+        android:textColor="@color/Gray"
+        android:textSize="14sp"/>
+
+
+    <TextView
+        android:id="@+id/tv_sportingTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp"
+        android:layout_toRightOf="@+id/tv_sportingType"
+        android:lineSpacingExtra="8dp"
+        android:text="运动时间段\n18:26:39-19:11:06"
+        android:textColor="@color/Gray"
+        android:textSize="10sp"/>
+
+
+    <TextView
+        android:id="@+id/tv_sportingKcal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp"
+        android:layout_toRightOf="@+id/tv_sportingTime"
+        android:lineSpacingExtra="8dp"
+        android:text="消耗热量\n120 kcal"
+        android:textColor="@color/Gray"
+        android:textSize="10sp"/>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/icon_goto"/>
+
+
+</RelativeLayout>

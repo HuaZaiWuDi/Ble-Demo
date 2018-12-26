@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,424 +10,1060 @@
     android:orientation="vertical">
 
 
-    <com.qmuiteam.qmui.widget.QMUITopBar
-        android:id="@+id/QMUIAppBarLayout"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/topBarHeight"
-        android:hapticFeedbackEnabled="true"
-        app:qmui_topbar_bg_color="@color/Gray"
-        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
-        app:qmui_topbar_need_separator="false"
-        app:qmui_topbar_title_color="@color/white"
-        />
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/topBarHeight"
-        android:orientation="vertical"
-        android:paddingTop="32dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="消耗热量"
-            android:textColor="@color/GrayWrite"
-            android:textSize="13sp"/>
-
-
-        <TextView
-            android:id="@+id/tv_kcal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/sw_music"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
-            android:maxLength="7"
-            android:text="00"
-            android:textColor="@color/white"
-            android:textSize="72sp"
-            android:textStyle="bold"
-            tools:text="68.7"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_kcal"
-            android:layout_marginBottom="20dp"
-            android:layout_toRightOf="@+id/tv_kcal"
-            android:text="kcal"
-            android:textColor="@color/GrayWrite"
-            android:textSize="18sp"/>
-
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/layout_sports"
+            android:id="@+id/layout_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_kcal"
-            android:layout_marginTop="32dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.qmuiteam.qmui.widget.QMUITopBar
+                android:id="@+id/QMUIAppBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/topBarHeight"
+                android:hapticFeedbackEnabled="true"
+                app:qmui_topbar_bg_color="@color/Gray"
+                app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+                app:qmui_topbar_need_separator="false"
+                app:qmui_topbar_title_color="@color/white"
+                />
+
+
+            <RelativeLayout
+                android:id="@+id/layout_shareTitle"
+                android:layout_width="match_parent"
+                android:layout_height="84dp"
+                android:paddingLeft="24dp"
+                android:paddingTop="24dp"
+                android:paddingRight="24dp"
+                android:visibility="gone">
+
+
+                <com.vondear.rxtools.view.layout.RxImageView
+                    android:id="@+id/img_userImg"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    app:icon_src_normal="@color/orange_FF7200"
+                    app:is_circle="true"/>
+
+
+                <TextView
+                    android:id="@+id/tv_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@+id/img_userImg"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"/>
+
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="11/1"
+                    android:textColor="@color/white"
+                    android:textSize="23sp"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#605768"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <TextView
+                    android:id="@+id/tv_detailTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="消耗热量"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="13sp"/>
+
+
+                <TextView
+                    android:id="@+id/tv_kcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/sw_music"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="25dp"
+                    android:text="00"
+                    android:textColor="@color/white"
+                    android:textSize="69sp"
+                    android:textStyle="bold"
+                    tools:text="68.7"/>
+
+
+            </RelativeLayout>
 
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/layout_sports"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/icon_av_heartrate"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="平均心率"
-                    android:textColor="@color/GrayWrite"
-                    android:textSize="11sp"/>
+                android:layout_below="@+id/tv_kcal"
+                android:layout_marginTop="32dp"
+                android:orientation="horizontal">
 
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_av_heartrate"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="平均心率"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
 
                     <TextView
                         android:id="@+id/tv_avHeartRate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:maxLength="3"
                         android:text="--"
                         android:textColor="@color/white"
                         android:textSize="24sp"
                         tools:text="110"/>
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_maxHeart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_max_heartrate"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="\tbpm"
+                        android:text="最大心率"
                         android:textColor="@color/GrayWrite"
-                        android:textSize="18sp"/>
+                        android:textSize="11sp"/>
 
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/icon_max_heartrate"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="最大心率"
-                    android:textColor="@color/GrayWrite"
-                    android:textSize="11sp"/>
-
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tv_maxHeartRate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:maxLength="3"
                         android:text="--"
                         android:textColor="@color/white"
                         android:textSize="24sp"
                         tools:text="110"/>
 
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_sportingKcal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@mipmap/icon_sporting_kcal"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="\tbpm"
+                        android:text="消耗热量"
                         android:textColor="@color/GrayWrite"
-                        android:textSize="18sp"/>
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_sportskcal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="12'02''"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_time"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="运动时长"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_sportsTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="12'02''"/>
+
 
                 </LinearLayout>
 
 
             </LinearLayout>
 
+
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/icon_time"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="有效运动时间"
-                    android:textColor="@color/GrayWrite"
-                    android:textSize="11sp"/>
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginLeft="37dp"
+                android:layout_marginRight="37dp"
+                android:orientation="horizontal"
+                tools:visibility="visible">
 
 
-                <TextView
-                    android:id="@+id/tv_sportsTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="00'00''"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    tools:text="12'02''"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="gone">
 
+
+                    <com.vondear.rxtools.view.chart.bar.BarVerticalChart
+                        android:id="@+id/bar_calm"
+                        android:layout_width="46dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        app:barWidth="46dp"
+                        app:cornerRadius="2dp"
+                        app:progressColor="@color/Gray_DCDAE6"/>
+
+                    <TextView
+                        android:id="@+id/tv_calm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:text="0%"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <com.vondear.rxtools.view.chart.bar.BarVerticalChart
+                        android:id="@+id/bar_warm"
+                        android:layout_width="46dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        app:barWidth="46dp"
+                        app:cornerRadius="2dp"
+                        app:progressColor="@color/brown_ABA08E"/>
+
+                    <TextView
+                        android:id="@+id/tv_warm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:text="0%"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <com.vondear.rxtools.view.chart.bar.BarVerticalChart
+                        android:id="@+id/bar_grease"
+                        android:layout_width="46dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        app:barWidth="46dp"
+                        app:cornerRadius="2dp"
+                        app:progressColor="@color/yellow_FFBC00"/>
+
+                    <TextView
+                        android:id="@+id/tv_grease"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:text="0%"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <com.vondear.rxtools.view.chart.bar.BarVerticalChart
+                        android:id="@+id/bar_aerobic"
+                        android:layout_width="46dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        app:barWidth="46dp"
+                        app:cornerRadius="2dp"
+                        app:progressColor="@color/green_61D97F"/>
+
+                    <TextView
+                        android:id="@+id/tv_aerobic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:text="0%"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <com.vondear.rxtools.view.chart.bar.BarVerticalChart
+                        android:id="@+id/bar_anaerobic"
+                        android:layout_width="46dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        app:barWidth="46dp"
+                        app:cornerRadius="2dp"
+                        app:progressColor="@color/orange_FF7200"/>
+
+                    <TextView
+                        android:id="@+id/tv_anaerobic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:text="0%"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <com.vondear.rxtools.view.chart.bar.BarVerticalChart
+                        android:id="@+id/bar_limit"
+                        android:layout_width="46dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        app:barWidth="46dp"
+                        app:cornerRadius="2dp"
+                        app:progressColor="@color/red"/>
+
+                    <TextView
+                        android:id="@+id/tv_limit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        tools:text="0%"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
 
 
+            <RelativeLayout
+                android:id="@+id/layout_legend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_sports"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="8dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tv_heartCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    tools:text="5/5"/>
+
+
+                <TextView
+                    android:id="@+id/tv_expectKcal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toRightOf="@+id/tv_heartCount"
+                    android:text="@string/expectKcal"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="8sp"/>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="2dp"
+                        android:background="@color/black_3F3943"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:text="计划"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="8sp"/>
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="2dp"
+                        android:background="@color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="实时"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="8sp"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <com.vondear.rxtools.view.layout.RxRelativeLayout
+                android:id="@+id/layout_sporting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_legend"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="31dp"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:layout_width="24dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="bpm"
+                            android:textColor="@color/white"
+                            android:textSize="6sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_currentTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:text="00:00"
+                            android:textColor="@color/white"
+                            android:textSize="8dp"/>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="138dp"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical">
+
+                        <!--危险-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <com.vondear.rxtools.view.layout.RxTextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:gravity="center"
+                                android:text="危险"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"
+                                />
+
+                            <com.vondear.rxtools.view.layout.RxView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/red"
+                                app:corner_radius_top_left="4dp"
+                                app:corner_radius_top_right="4dp"/>
+
+
+                        </LinearLayout>
+                        <!--无氧-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:gravity="center"
+                                android:text="无氧"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/orange_FF7200"/>
+
+                        </LinearLayout>
+                        <!--有氧-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:gravity="center"
+                                android:text="有氧"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/green_61D97F"/>
+
+                        </LinearLayout>
+                        <!--燃脂-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:alpha="1"
+                                android:gravity="center"
+                                android:text="燃脂"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/yellow_FFBC00"/>
+
+
+                        </LinearLayout>
+                        <!--热身-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <TextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="热身"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"/>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/brown_ABA08E"/>
+
+
+                        </LinearLayout>
+                        <!--静息-->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            >
+
+                            <com.vondear.rxtools.view.layout.RxTextView
+                                android:layout_width="24dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="静息"
+                                android:textColor="@color/GrayWrite"
+                                android:textSize="8sp"
+                                />
+
+                            <com.vondear.rxtools.view.layout.RxView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:alpha="0.5"
+                                android:background="@color/Gray_DCDAE6"
+                                app:corner_radius_bottom_left="4dp"
+                                app:corner_radius_bottom_right="4dp"/>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_endTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="8dp"
+                        android:text="time"
+                        android:textColor="@color/white"
+                        android:textSize="6sp"/>
+
+
+                </LinearLayout>
+
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/chart_HeartRate"
+                    android:layout_width="325dp"
+                    android:layout_height="138dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    >
+
+                </com.github.mikephil.charting.charts.LineChart>
+
+
+            </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_sportingTimeDetail"
+                android:layout_width="match_parent"
+                android:layout_height="142dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/dimen_16"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
+                tools:visibility="visible">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/limit"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_limit"
+                        android:layout_width="221dp"
+                        android:layout_height="8dp"
+                        android:layout_marginLeft="24dp"
+                        app:rcBackgroundColor="#312B36"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/red">
+
+                    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+                    <TextView
+                        android:id="@+id/tv_limit_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/anaerobic"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_anaerobic"
+                        android:layout_width="221dp"
+                        android:layout_height="8dp"
+                        android:layout_marginLeft="24dp"
+                        app:rcBackgroundColor="#312B36"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/orange_FF7200">
+
+                    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+                    <TextView
+                        android:id="@+id/tv_anaerobic_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/aerobic"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_aerobic"
+                        android:layout_width="221dp"
+                        android:layout_height="8dp"
+                        android:layout_marginLeft="24dp"
+                        app:rcBackgroundColor="#312B36"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/green_61D97F">
+
+                    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+                    <TextView
+                        android:id="@+id/tv_aerobic_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/grease"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_grease"
+                        android:layout_width="221dp"
+                        android:layout_height="8dp"
+                        android:layout_marginLeft="24dp"
+                        app:rcBackgroundColor="#312B36"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/yellow_FFBC00">
+
+                    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+                    <TextView
+                        android:id="@+id/tv_grease_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/warm"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_warm"
+                        android:layout_width="221dp"
+                        android:layout_height="8dp"
+                        android:layout_marginLeft="24dp"
+                        app:rcBackgroundColor="#312B36"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/brown_ABA08E">
+
+                    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+                    <TextView
+                        android:id="@+id/tv_warm_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/calm"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                    <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+                        android:id="@+id/pro_calm"
+                        android:layout_width="221dp"
+                        android:layout_height="8dp"
+                        android:layout_marginLeft="24dp"
+                        app:rcBackgroundColor="#312B36"
+                        app:rcMax="100"
+                        app:rcProgress="0"
+                        app:rcProgressColor="@color/gray_ECEBF0">
+
+                    </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+                    <TextView
+                        android:id="@+id/tv_calm_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="00'00''"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#605768"/>
+
+
+            <RelativeLayout
+                android:id="@+id/layout_QRcode"
+                android:layout_width="match_parent"
+                android:layout_height="238dp"
+                android:padding="32dp"
+                android:visibility="gone">
+
+
+                <ImageView
+                    android:id="@+id/img_QRcode"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_centerHorizontal="true"
+                    android:scaleType="fitXY"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_QRcode"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="长按识别图中二维码下载"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="11sp"/>
+
+
+                <com.vondear.rxtools.view.layout.RxImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_below="@+id/img_QRcode"
+                    android:layout_marginLeft="72dp"
+                    android:layout_marginTop="58dp"
+                    app:corner_radius="2dp"
+                    app:icon_src_normal="@mipmap/icon_logo_w"
+                    />
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="31dp"
+                    android:layout_below="@+id/img_QRcode"
+                    android:layout_marginLeft="126dp"
+                    android:layout_marginTop="54dp"
+                    android:background="#605768"/>
+
+
+                <TextView
+                    android:id="@+id/tv_appVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_QRcode"
+                    android:layout_marginLeft="158dp"
+                    android:layout_marginTop="54dp"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+
+            </RelativeLayout>
+
+
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_below="@+id/layout_sports"
-            android:layout_marginTop="@dimen/dimen_32"
-            android:background="@color/GrayWrite"/>
+    </android.support.v4.widget.NestedScrollView>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/layout_sports"
-            android:layout_marginTop="38dp"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/dimen_30"
-            android:paddingLeft="@dimen/dimen_16"
-            android:paddingRight="32dp">
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/limit"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-
-                <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                    android:id="@+id/pro_limit"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginLeft="58dp"
-                    android:layout_marginRight="21dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toLeftOf="@+id/tv_limit_time"
-                    app:rcBackgroundColor="#312B36"
-                    app:rcMax="100"
-                    app:rcProgress="0"
-                    app:rcProgressColor="@color/red">
-
-                </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
-
-                <TextView
-                    android:id="@+id/tv_limit_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="00'00''"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/anaerobic"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-
-                <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                    android:id="@+id/pro_anaerobic"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginLeft="58dp"
-                    android:layout_marginRight="21dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toLeftOf="@+id/tv_anaerobic_time"
-                    app:rcBackgroundColor="#312B36"
-                    app:rcMax="100"
-                    app:rcProgress="0"
-                    app:rcProgressColor="@color/orange_FF7200">
-
-                </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
-
-                <TextView
-                    android:id="@+id/tv_anaerobic_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="00'00''"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/aerobic"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-
-                <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                    android:id="@+id/pro_aerobic"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginLeft="58dp"
-                    android:layout_marginRight="21dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toLeftOf="@+id/tv_aerobic_time"
-                    app:rcBackgroundColor="#312B36"
-                    app:rcMax="100"
-                    app:rcProgress="0"
-                    app:rcProgressColor="@color/green_61D97F">
-
-                </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
-
-                <TextView
-                    android:id="@+id/tv_aerobic_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="00'00''"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/grease"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-
-                <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                    android:id="@+id/pro_grease"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginLeft="58dp"
-                    android:layout_marginRight="21dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toLeftOf="@+id/tv_grease_time"
-                    app:rcBackgroundColor="#312B36"
-                    app:rcMax="100"
-                    app:rcProgress="0"
-                    app:rcProgressColor="@color/yellow_FFBC00">
-
-                </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
-
-                <TextView
-                    android:id="@+id/tv_grease_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="00'00''"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/warm"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-
-                <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                    android:id="@+id/pro_warm"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginLeft="58dp"
-                    android:layout_marginRight="21dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toLeftOf="@+id/tv_warm_time"
-                    app:rcBackgroundColor="#312B36"
-                    app:rcMax="100"
-                    app:rcProgress="0"
-                    app:rcProgressColor="@color/brown_ABA08E">
-
-                </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
-
-                <TextView
-                    android:id="@+id/tv_warm_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="00'00''"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-
-</FrameLayout>
+</LinearLayout>

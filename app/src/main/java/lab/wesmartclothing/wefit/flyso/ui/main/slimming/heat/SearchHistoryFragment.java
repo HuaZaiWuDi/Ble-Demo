@@ -1,43 +1,45 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
 import android.Manifest;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextDrawable;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxEditText;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -46,23 +48,18 @@ import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
-import lab.wesmartclothing.wefit.flyso.entity.sql.SearchWordTab;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 
 public class SearchHistoryFragment extends BaseActivity {
@@ -70,7 +67,7 @@ public class SearchHistoryFragment extends BaseActivity {
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.mSearchView)
-    SearchView mSearchView;
+    RxEditText mSearchView;
     @BindView(R.id.tagFlowLayout_lately)
     DynamicTagFlowLayout mTagFlowLayoutLately;
     @BindView(R.id.tv_delete)
@@ -96,20 +93,36 @@ public class SearchHistoryFragment extends BaseActivity {
 
     private List<String> hotLists = new ArrayList<>();
     private BaseQuickAdapter searchListAdapter, adapterAddFoods;
-    private boolean isStorage = false;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     private boolean SlimmingPage = false;
     private int foodType = 0;
     private long currentTime = 0;
-    private Bundle bundle;
+    private List<String> searchKeyLists = new ArrayList<>();
+
+    @Override
+    protected int layoutId() {
+        return R.layout.activity_search_history;
+    }
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_history);
-        ButterKnife.bind(this);
-        initView();
+    protected void initViews() {
+        super.initViews();
+
+        dialog.setLifecycleSubject(lifecycleSubject);
+        new RxPermissions(mActivity)
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Permission>() {
+                    @Override
+                    protected void _onNext(Permission permission) {
+                    }
+                });
+
+        init();
+        initTopBar();
+        initRecyclerView();
+        initAddFoodRecyclerView();
     }
 
     @Override
@@ -131,33 +144,13 @@ public class SearchHistoryFragment extends BaseActivity {
         }
     }
 
-    public void initView() {
-        dialog.setLifecycleSubject(lifecycleSubject);
-        new RxPermissions(mActivity)
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Permission>() {
-                    @Override
-                    protected void _onNext(Permission permission) {
-                        isStorage = permission.granted;
-                    }
-                });
 
-
-        initBundle();
-        init();
-        initTopBar();
-        initRecyclerView();
-        initAddFoodRecyclerView();
-    }
-
-    private void initBundle() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
-            currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
-            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);//是否是从首页跳转
-        }
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
+        currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
+        SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME, true);//是否是从首页跳转
     }
 
 
@@ -226,16 +219,33 @@ public class SearchHistoryFragment extends BaseActivity {
         mTagFlowLayoutHot.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
             @Override
             public void onClick(View v) {
-                mSearchView.setQuery(((TextView) v).getText().toString(), true);
+                String string = ((TextView) v).getText().toString();
+                mSearchView.setText(string);
+                mSearchView.setSelection(string.length());
             }
         });
 
         mTagFlowLayoutLately.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
             @Override
             public void onClick(View v) {
-                mSearchView.setQuery(((TextView) v).getText().toString(), true);
+                String string = ((TextView) v).getText().toString();
+                mSearchView.setText(string);
+                mSearchView.setSelection(string.length());
             }
         });
+
+        RxCache.getDefault().<List<String>>load(Key.CACHE_SEARCH_KEY, new TypeToken<List<String>>() {
+        }.getType())
+                .map(new CacheResult.MapFunc<List<String>>())
+                .subscribe(new RxSubscriber<List<String>>() {
+                    @Override
+                    protected void _onNext(List<String> strings) {
+                        if (!RxDataUtils.isEmpty(strings)) {
+                            searchKeyLists = strings;
+                            notifySearchKey();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -277,47 +287,32 @@ public class SearchHistoryFragment extends BaseActivity {
 
 
     private void initLateLyData() {
-        /*------------------ SearchView有三种默认展开搜索框的设置方式，区别如下： ------------------*/
-//        //设置搜索框直接展开显示。左侧有放大镜(在搜索框中) 右侧有叉叉 可以关闭搜索框
-//        mSearchView.setIconified(false);
-//        //设置搜索框直接展开显示。左侧有放大镜(在搜索框外) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-//        mSearchView.setIconifiedByDefault(false);
-//        //设置搜索框直接展开显示。左侧有无放大镜(在搜索框中) 右侧无叉叉 有输入内容后有叉叉 不能关闭搜索框
-//        mSearchView.onActionViewExpanded();
-        //修改搜索框底部的横线
-        mSearchView.findViewById(R.id.search_plate).setBackgroundColor(getResources().getColor(R.color.GrayWrite));
-        //修改搜索框的字体颜色及大小
-        EditText textView = mSearchView
-                .findViewById(
-                        android.support.v7.appcompat.R.id.search_src_text
-                );
-        textView.setTextColor(Color.WHITE);//字体颜色
-        textView.setTextSize(15);//字体、提示字体大小
-        textView.setHintTextColor(Color.WHITE);//提示字体颜色**
-
-        mSearchView.setOnClickListener(new View.OnClickListener() {
+        mSearchView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                mSearchView.setIconifiedByDefault(false);
-            }
-        });
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //用户点击搜索才会响应
-                addSearchKey(query);
-                return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String newText = s.toString();
                 RxLogUtils.e("newText：" + newText);
                 //文字改变就会响应
                 if (!RxDataUtils.isNullString(newText) && newText.length() <= 20)
                     initSearchData(newText);
                 else mlayoutSearchData.setVisibility(View.GONE);
-                return true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        RxTextDrawable.addTextDrawableListener(mSearchView, RxTextDrawable.O_RIGHT, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.setText("");
             }
         });
 
@@ -325,69 +320,69 @@ public class SearchHistoryFragment extends BaseActivity {
     }
 
     private void addSearchKey(String query) {
-        if (isStorage) {
-            if (SearchWordTab.getKey(query) == null) {
-                SearchWordTab keyTab = new SearchWordTab(System.currentTimeMillis(), query);
-                keyTab.save();
-            } else {
-                SearchWordTab.update(System.currentTimeMillis(), query);
-            }
-        }
+
+        boolean remove = searchKeyLists.remove(query);
+        RxLogUtils.d("是否存在：" + remove);
+
+        searchKeyLists.add(0, query);
+
+        RxLogUtils.d("最近搜索:" + Arrays.asList(searchKeyLists.toArray()));
+        RxCache.getDefault().save(Key.CACHE_SEARCH_KEY, searchKeyLists)
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        RxLogUtils.d("最近搜索保存成功");
+                    }
+                });
 
         notifySearchKey();
     }
 
-    private void notifySearchKey() {
-        if (isStorage) {
-            List<SearchWordTab> all = SearchWordTab.soft(SearchWordTab.getAll());
-            List<String> list = new ArrayList<>();
 
-            for (int i = 0; i < all.size(); i++) {
-                list.add(all.get(i).searchKey);
-            }
-            mTagFlowLayoutLately.setTags(list);
-            mlayoutSearchKey.setVisibility(list.size() == 0 ? View.GONE : View.VISIBLE);
-        }
+    private void notifySearchKey() {
+        mTagFlowLayoutLately.setTags(searchKeyLists);
+        mlayoutSearchKey.setVisibility(searchKeyLists.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
 
     private void initSearchData(final String key) {
+
         mlayoutSearchData.setVisibility(View.VISIBLE);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.searchFoodInfo(key))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().searchFoodInfo(key))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        SearchListItem item = MyAPP.getGson().fromJson(s, SearchListItem.class);
+                        SearchListItem item = JSON.parseObject(s, SearchListItem.class);
                         List<FoodListBean> beans = item.getList();
                         searchListAdapter.setNewData(beans);
                         if (beans.size() == 0) {
                             searchListAdapter.setEmptyView(R.layout.layout_search_no_data);
                             TextView noData = searchListAdapter.getEmptyView().findViewById(R.id.tv_noData);
                             noData.setText(getString(R.string.search_noData, key));
+                        } else {
+                            addSearchKey(key);
                         }
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
 
     private void initHotData() {
-        JSONObject jsonObject = new JSONObject();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getKeyWord(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .getKeyWord())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        HotKeyItem item = MyAPP.getGson().fromJson(s, HotKeyItem.class);
+                        HotKeyItem item = JSON.parseObject(s, HotKeyItem.class);
                         hotLists.clear();
                         List<HotKeyItem.ListBean> list = item.getList();
                         for (HotKeyItem.ListBean bean : list) {
@@ -397,8 +392,8 @@ public class SearchHistoryFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -410,7 +405,6 @@ public class SearchHistoryFragment extends BaseActivity {
         foodItem.setEatType(foodType);
 
         List<AddFoodItem.intakeList> mIntakeLists = new ArrayList<>();
-
         for (int i = 0; i < FoodDetailsFragment.addedLists.size(); i++) {
             FoodListBean foodListBean = FoodDetailsFragment.addedLists.get(i);
             AddFoodItem.intakeList intakeList = new AddFoodItem.intakeList();
@@ -429,30 +423,29 @@ public class SearchHistoryFragment extends BaseActivity {
         }
         foodItem.setIntakeLists(mIntakeLists);
 
-        String s = MyAPP.getGson().toJson(foodItem);
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+        String s = JSON.toJSONString(foodItem);
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .addHeatInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                        RxToast.success("添加成功");
                         FoodDetailsFragment.addedLists.clear();
-                        if (SlimmingPage) {
-                            //刷新数据
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-                        } else {
-                            //刷新数据
-                            RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
-                        }
+                        //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
+
+                        if (SlimmingPage) {
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
+                        } else {
+                            RxActivityUtils.finishActivity();
+                            RxActivityUtils.finishActivity();
+                        }
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -460,7 +453,8 @@ public class SearchHistoryFragment extends BaseActivity {
 
     @OnClick(R.id.tv_delete)
     public void onViewClicked() {
-        SearchWordTab.deleteAll();
+        RxCache.getDefault().remove(Key.CACHE_SEARCH_KEY);
+        searchKeyLists.clear();
         notifySearchKey();
     }
 

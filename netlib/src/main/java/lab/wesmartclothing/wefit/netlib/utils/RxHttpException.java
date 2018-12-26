@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONException;
 
@@ -64,7 +65,7 @@ public class RxHttpException {
             Log.e("网络异常：", t.toString());
             HttpException httpException = (HttpException) t;
             msg = convertStatusCode(httpException);
-        } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException) {
+        } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException || t instanceof JsonSyntaxException) {
             msg = "数据解析错误";
         } else if (t instanceof ConnectException) {
             msg = "连接服务器失败";

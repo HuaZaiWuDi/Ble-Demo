@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.toolui.Main2Activity">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/white"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/icon_back"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/Gray"
+        tools:visibility="visible"
+        />
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scrollbars="vertical"
+        android:text="@string/plan"
+        app:text_gradient_endColor="@color/yellow_FFBC00"
+        app:text_gradient_open="true"
+        app:text_gradient_orientation="vertical"
+        app:text_gradient_startColor="@color/red"/>
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="100dp"
+        android:gravity="center"
+        android:text="我的世界"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        app:gradient_angle="BOTTOM_TOP"
+        app:gradient_endColor="@color/orange_FF7200"
+        app:gradient_startColor="@color/green"
+        app:text_gradient_centerColor="@color/colorWhite"
+        app:text_gradient_endColor="@color/yellow_FFBC00"
+        app:text_gradient_open="true"
+        app:text_gradient_orientation="vertical"
+        app:text_gradient_startColor="@color/red"/>
+
+
+
+</LinearLayout>

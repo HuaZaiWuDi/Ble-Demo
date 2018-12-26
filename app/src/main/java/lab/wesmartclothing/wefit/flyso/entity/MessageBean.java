@@ -52,6 +52,22 @@ public class MessageBean {
     private List<ListBean> list;
     private List<Integer> navigatepageNums;
 
+    public boolean isFirstPage() {
+        return isFirstPage;
+    }
+
+    public void setFirstPage(boolean firstPage) {
+        isFirstPage = firstPage;
+    }
+
+    public boolean isLastPage() {
+        return isLastPage;
+    }
+
+    public void setLastPage(boolean lastPage) {
+        isLastPage = lastPage;
+    }
+
     public int getEndRow() {
         return endRow;
     }

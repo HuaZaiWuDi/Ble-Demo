@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.smartclothing.blelibrary.BleKey;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created icon_hide_password jk on 2018/5/19.
@@ -120,7 +120,7 @@ public class HeartRateView extends LinearLayout {
     private int heartRate(int heart) {
         int type = 1;
 
-        byte[] heartRates = BleKey.heartRates;
+        byte[] heartRates = Key.HRART_SECTION;
         int heart_1 = heartRates[1] & 0xff;
         int heart_2 = heartRates[2] & 0xff;
         int heart_3 = heartRates[3] & 0xff;

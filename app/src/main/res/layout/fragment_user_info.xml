@@ -33,12 +33,13 @@
         android:orientation="vertical"
         >
 
-        <RelativeLayout
+        <com.vondear.rxtools.view.layout.RxRelativeLayout
             android:id="@+id/layout_userImg"
             android:layout_width="match_parent"
             android:layout_height="96dp"
-            android:background="@drawable/selector_ripple_bg_"
-            android:padding="16dp">
+            android:padding="16dp"
+            app:background_normal="@color/white"
+            app:ripple_color="@color/ripple_ECEAE6">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -58,7 +59,7 @@
                 app:qmui_is_circle="true"
                 />
 
-        </RelativeLayout>
+        </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
 
         <View
@@ -74,7 +75,7 @@
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -113,7 +114,7 @@
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -147,7 +148,7 @@
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -185,7 +186,7 @@
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -222,8 +223,9 @@
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
+            android:visibility="gone"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -257,7 +259,7 @@
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -295,7 +297,7 @@
             android:paddingLeft="@dimen/dimen_16"
             android:paddingRight="@dimen/dimen_16"
             app:background_normal="@color/white"
-            app:ripple_color="@color/GrayWrite">
+            app:ripple_color="@color/ripple_ECEAE6">
 
 
             <TextView
@@ -309,13 +311,13 @@
 
 
             <TextView
-                android:gravity="right"
                 android:id="@+id/tv_userSign"
                 android:layout_width="185dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:ellipsize="end"
+                android:gravity="right"
                 android:maxLines="1"
                 android:textColor="@color/GrayWrite"
                 android:textSize="13sp"/>

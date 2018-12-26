@@ -2,6 +2,7 @@ package com.vondear.rxtools.view.dialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.vondear.rxtools.R;
 import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.view.layout.RxTextView;
 
 
 /**
@@ -22,7 +24,7 @@ public class RxDialogSure extends RxDialog {
 
     private TextView mTvTitle;
     private TextView mTvContent;
-    private TextView mTvSure;
+    private RxTextView mTvSure;
     private ImageView iv_close;
 
 
@@ -49,13 +51,26 @@ public class RxDialogSure extends RxDialog {
         return this;
     }
 
+    public RxDialogSure setSureBgColor(@ColorInt int colorSure) {
+        mTvSure.getHelper().setBorderColorNormal(colorSure);
+        return this;
+    }
+
     public RxDialogSure setSure(String content) {
         mTvSure.setText(content);
         return this;
     }
 
-    public RxDialogSure setSureListener(View.OnClickListener sureListener) {
-        mTvSure.setOnClickListener(sureListener);
+    public RxDialogSure setSureListener(final View.OnClickListener sureListener) {
+        mTvSure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sureListener != null) {
+                    sureListener.onClick(v);
+                    dismiss();
+                }
+            }
+        });
         return this;
     }
 
@@ -70,9 +85,10 @@ public class RxDialogSure extends RxDialog {
         return this;
     }
 
+
     private void initView() {
         View dialog_view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_sure, null);
-        mTvSure = (TextView) dialog_view.findViewById(R.id.tv_sure);
+        mTvSure = dialog_view.findViewById(R.id.tv_sure);
         mTvTitle = (TextView) dialog_view.findViewById(R.id.tv_title);
         mTvTitle.setTextIsSelectable(true);
         mTvContent = (TextView) dialog_view.findViewById(R.id.tv_content);
@@ -80,6 +96,12 @@ public class RxDialogSure extends RxDialog {
         mTvContent.setTextIsSelectable(true);
         iv_close = dialog_view.findViewById(R.id.iv_close);
         iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        mTvSure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();

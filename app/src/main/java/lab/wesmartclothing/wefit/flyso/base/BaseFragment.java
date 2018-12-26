@@ -9,8 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.vondear.rxtools.utils.RxLogUtils;
 
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 /**
  * Created icon_hide_password vondear

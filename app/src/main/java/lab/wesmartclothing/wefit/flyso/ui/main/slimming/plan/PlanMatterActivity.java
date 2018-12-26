@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.layout.RxTextView;
 
@@ -30,7 +31,10 @@ public class PlanMatterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slimming_plan);
-        StatusBarUtils.from(mActivity).setLightStatusBar(true).setStatusBarColor(ContextCompat.getColor(mContext, R.color.white)).process();
+        StatusBarUtils.from(mActivity)
+                .setLightStatusBar(true)
+                .setStatusBarColor(ContextCompat.getColor(mContext, R.color.white))
+                .process();
         ButterKnife.bind(this);
 
         initTopBar();
@@ -52,9 +56,10 @@ public class PlanMatterActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.tv_unAgree:
                 onBackPressed();
+                RecordInfoActivity.mSubmitInfoFrom = null;
                 break;
             case R.id.tv_Agree:
-//                RxActivityUtils.skipActivity(mActivity,);
+                RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
                 break;
         }
     }

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -62,6 +63,7 @@ public class ShareUtil {
 
         // 防止之后调用 NullPointException
         if (mShareListener == null) {
+            ShareLogger.i("ShareUtil:" + mShareListener);
             activity.finish();
             return;
         }
@@ -84,6 +86,7 @@ public class ShareUtil {
                         mShareImageObject, activity, mShareListener);
                 break;
         }
+
     }
 
     public static void shareText(Context context, @SharePlatform.Platform int platform, String text,
@@ -140,6 +143,7 @@ public class ShareUtil {
         mTitle = title;
         mShareListener = buildProxyListener(listener);
 
+        Log.d("分享", "shareMedia: " + mShareListener);
         context.startActivity(_ShareActivity.newInstance(context, TYPE));
     }
 
@@ -156,8 +160,8 @@ public class ShareUtil {
                 ShareLogger.e(INFO.HANDLE_DATA_NULL);
             }
         } else {
-            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码："+data.toString());
-            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码："+mShareInstance);
+            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码：" + data.toString());
+            ShareLogger.e(INFO.UNKNOWN_ERROR + "异常码：" + mShareInstance);
         }
     }
 
@@ -290,4 +294,6 @@ public class ShareUtil {
             mShareListener.shareRequest();
         }
     }
+
+
 }

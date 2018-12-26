@@ -16,6 +16,8 @@ public class OtherLoginBean {
     private String userName;
     private String userType;
 
+
+
     public String getOuterId() {
         return outerId;
     }

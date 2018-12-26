@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import android.content.Context;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -9,14 +10,14 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
 
 
 /**
@@ -36,7 +37,6 @@ public class LoginSuccessUtils {
         String token = object.get("token").getAsString();
         SPUtils.put(SPKey.SP_UserId, userId);
         SPUtils.put(SPKey.SP_token, token);
-        NetManager.getInstance().setUserIdToken(userId, token);
 
         initUserInfo();
     }
@@ -44,30 +44,32 @@ public class LoginSuccessUtils {
 
     //获取用户信息
     private void initUserInfo() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.userInfo())
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
+                        UserInfo userInfo = JSON.parseObject(s, UserInfo.class);
+
+                        int sex = userInfo.getSex();
+                        SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
+                        SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
+
+                        HeartSectionUtil.initMaxHeart(userInfo);
+
                         JPushUtils.setAliasOrTags("");
 
-                        JsonParser parser = new JsonParser();
-                        JsonObject object = (JsonObject) parser.parse(s);
-                        int sex = object.get("sex").getAsInt();
-
-                        String clothesMacAddr = object.get("clothesMacAddr").getAsString();
-                        String scalesMacAddr = object.get("scalesMacAddr").getAsString();
-                        SPUtils.put(SPKey.SP_scaleMAC, scalesMacAddr);
-                        SPUtils.put(SPKey.SP_clothingMAC, clothesMacAddr);
-
+//                        if (!userInfo.isHasInviteCode()) {
+//                            RxActivityUtils.skipActivityAndFinish(mContext, InvitationCodeActivity.class);
+//                        } else
                         if (sex == 0) {
                             RxActivityUtils.skipActivityAndFinish(mContext, UserInfoActivity.class);
                         } else {
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         }
+
                     }
 
                     @Override

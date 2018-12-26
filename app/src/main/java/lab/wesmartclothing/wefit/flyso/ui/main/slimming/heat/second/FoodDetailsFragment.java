@@ -1,17 +1,19 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -19,7 +21,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -31,9 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.adapter.OverlapLayoutManager;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -41,17 +42,16 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AddFoodItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodInfoItem;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
+import lab.wesmartclothing.wefit.flyso.entity.FoodTypeBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.SearchHistoryFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import okhttp3.RequestBody;
 
 
 /**
@@ -64,7 +64,6 @@ public class FoodDetailsFragment extends BaseActivity {
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.mRecyclerView)
     RecyclerView mMRecyclerView;
-    Unbinder unbinder;
     @BindView(R.id.recyclerAddFoods)
     RecyclerView mRecyclerAddFoods;
     @BindView(R.id.btn_mark)
@@ -75,55 +74,31 @@ public class FoodDetailsFragment extends BaseActivity {
     RelativeLayout mLayoutAddFoods;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
-
+    @BindView(R.id.tabLayout)
+    TabLayout mTabLayout;
 
     private int foodType = 0;
-    private long currentTime = 0;
+    private long currentTime = System.currentTimeMillis();
     private int pageNum = 0;//页码
-    private boolean SlimmingPage = false;
+    private boolean SlimmingPage = false;//是否是从首页跳转
     private Bundle bundle;
     private BaseQuickAdapter adapter;
     private BaseQuickAdapter adapterAddFoods;
     private AddOrUpdateFoodDialog dialog = new AddOrUpdateFoodDialog();
     public static List<FoodListBean> addedLists = new ArrayList<>();//已经添加的食物列表
-
+    private String typeId = "";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_food_detail);
-        ButterKnife.bind(this);
-        initView();
-
+    protected int layoutId() {
+        return R.layout.fragment_food_detail;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (addedLists.size() > 0) {
-            mLayoutAddFoods.setVisibility(View.VISIBLE);
-            List<Object> addedFoods = new ArrayList<>();
-            for (int i = 0; i < addedLists.size(); i++) {
-                addedFoods.add(addedLists.get(i).getFoodImg());
-            }
-            mBtnMark.setVisibility(addedFoods.size() > 10 ? View.VISIBLE : View.GONE);
-            if (addedFoods.size() > 10) {
-                mBtnMark.setText(addedLists.size() + "");
-                addedFoods = addedFoods.subList(addedFoods.size() - 10, addedFoods.size());
-//                addedFoods.set(0, R.mipmap.icon_ellipsis);
-            }
-
-            adapterAddFoods.setNewData(addedFoods);
-        }
-    }
-
-    private void initView() {
-        initBundle();
+    protected void initViews() {
+        super.initViews();
         initTopBar();
         initRecyclerView();
         initAddFoodRecyclerView();
-        pageNum = 1;
-        initData();
 
         dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
@@ -154,6 +129,74 @@ public class FoodDetailsFragment extends BaseActivity {
         });
     }
 
+    private void initTabLayout() {
+        //默认加载全部
+        TabLayout.Tab tab = mTabLayout.newTab();
+        tab.setText("全部");
+        tab.setTag("");
+        mTabLayout.addTab(tab);
+
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getFoodType())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodType", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        List<FoodTypeBean> list = JSON.parseObject(s, new TypeToken<List<FoodTypeBean>>() {
+                        }.getType());
+                        for (int i = 0; i < list.size(); i++) {
+                            FoodTypeBean bean = list.get(i);
+                            TabLayout.Tab tab = mTabLayout.newTab();
+                            tab.setText(bean.getTypeName());
+                            tab.setTag(bean.getGid());
+                            mTabLayout.addTab(tab);
+                        }
+                    }
+                });
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                RxLogUtils.d("Tab:" + tab.getText());
+                typeId = (String) tab.getTag();
+                pageNum = 1;
+                initData();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (addedLists.size() > 0) {
+            mLayoutAddFoods.setVisibility(View.VISIBLE);
+            List<Object> addedFoods = new ArrayList<>();
+            for (int i = 0; i < addedLists.size(); i++) {
+                addedFoods.add(addedLists.get(i).getFoodImg());
+            }
+            mBtnMark.setVisibility(addedFoods.size() > 10 ? View.VISIBLE : View.GONE);
+            if (addedFoods.size() > 10) {
+                mBtnMark.setText(addedLists.size() + "");
+                addedFoods = addedFoods.subList(addedFoods.size() - 10, addedFoods.size());
+//                addedFoods.set(0, R.mipmap.icon_ellipsis);
+            }
+
+            adapterAddFoods.setNewData(addedFoods);
+        }
+    }
+
 
     private void initAddFoodRecyclerView() {
         mRecyclerAddFoods.setLayoutManager(new OverlapLayoutManager(mContext));
@@ -176,14 +219,18 @@ public class FoodDetailsFragment extends BaseActivity {
 //        });
     }
 
-    private void initBundle() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
-            currentTime = bundle.getLong(Key.ADD_FOOD_DATE);
-            SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME);
-        }
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        this.bundle = bundle;
+        foodType = bundle.getInt(Key.ADD_FOOD_TYPE);
+        currentTime = bundle.getLong(Key.ADD_FOOD_DATE, System.currentTimeMillis());
+        SlimmingPage = bundle.getBoolean(Key.ADD_FOOD_NAME, true);
+        final String[] add_food = getResources().getStringArray(R.array.add_food);
+        mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)]);
     }
+
 
     private void initRecyclerView() {
         adapter = new BaseQuickAdapter<FoodListBean, BaseViewHolder>(R.layout.item_add_food) {
@@ -226,22 +273,19 @@ public class FoodDetailsFragment extends BaseActivity {
             }
         });
 
-
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
     }
 
 
     private void initTopBar() {
-        final String[] add_food = getResources().getStringArray(R.array.add_food);
-
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle(add_food[HeatDetailFragment.FOOD_TYPE(foodType)]);
+
         mQMUIAppBarLayout.addRightImageButton(R.mipmap.icon_search, R.id.id_search)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -252,40 +296,41 @@ public class FoodDetailsFragment extends BaseActivity {
     }
 
 
+    @Override
+    protected void initNetData() {
+        super.initNetData();
+        initTabLayout();
+        initData();
+    }
+
     private void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getFoodInfo(pageNum, 20))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getFoodInfo(pageNum, 15, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + pageNum, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + typeId + pageNum, String.class, CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("历史数据：" + s);
-                        FoodInfoItem item = MyAPP.getGson().fromJson(s, FoodInfoItem.class);
+
+                        FoodInfoItem item = JSON.parseObject(s, FoodInfoItem.class);
+                        smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
+                        smartRefreshLayout.finishLoadMore(true);
+                        smartRefreshLayout.finishRefresh(true);
+
                         List<FoodListBean> beans = item.getList();
-                        if (pageNum == 1) {
+                        if (item.getPageNum() == 1) {
                             adapter.setNewData(beans);
                         } else {
                             adapter.addData(beans);
                         }
-                        if (smartRefreshLayout.isLoading()) {
-                            pageNum++;
-                            smartRefreshLayout.finishLoadMore(true);
-                        }
-                        if (smartRefreshLayout.isRefreshing())
-                            smartRefreshLayout.finishRefresh(true);
-                        smartRefreshLayout.setEnableLoadMore(item.isHasNextPage());
                     }
 
                     @Override
                     protected void _onError(String error, int errorCode) {
                         RxToast.normal(error);
-                        if (smartRefreshLayout.isLoading()) {
-                            smartRefreshLayout.finishLoadMore(false);
-                        }
-                        if (smartRefreshLayout.isRefreshing())
-                            smartRefreshLayout.finishRefresh(false);
+                        smartRefreshLayout.finishLoadMore(false);
+                        smartRefreshLayout.finishRefresh(false);
                     }
                 });
     }
@@ -316,11 +361,8 @@ public class FoodDetailsFragment extends BaseActivity {
         }
         foodItem.setIntakeLists(mIntakeLists);
 
-        String s = MyAPP.getGson().toJson(foodItem);
-        Log.e("添加成功", SlimmingPage + "");
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addHeatInfo(body))
+        String s = JSON.toJSONString(foodItem);
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().addHeatInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -328,18 +370,13 @@ public class FoodDetailsFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxToast.success("添加成功");
                         addedLists.clear();
-                        if (SlimmingPage) {
-                            //刷新数据
-                            RxActivityUtils.finishActivity();
-                        } else {
-                            RxActivityUtils.skipActivity(mContext, HeatDetailFragment.class);
-                        }
+                        onBackPressed();
                         RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
@@ -363,26 +400,19 @@ public class FoodDetailsFragment extends BaseActivity {
             RxActivityUtils.finishActivity();
             return;
         }
-        final RxDialogSureCancel dialog = new RxDialogSureCancel(mActivity);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getTvTitle().setVisibility(View.GONE);
-        dialog.setContent("已添加的食物还未确认，您确定要返回么？");
-        dialog.getTvCancel().setBackgroundColor(getResources().getColor(R.color.orange_FF7200));
-        dialog.setCancel("确认").setCancelListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                addedLists.clear();
-                RxActivityUtils.finishActivity();
-            }
-        })
-                .setSure("取消")
+        RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .setContent("已添加的食物还未确认，您确定要返回么？")
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        addedLists.clear();
+                        RxActivityUtils.finishActivity();
                     }
-                }).show();
+                });
+        rxDialog.setCanceledOnTouchOutside(false);
+        rxDialog.show();
     }
 
 

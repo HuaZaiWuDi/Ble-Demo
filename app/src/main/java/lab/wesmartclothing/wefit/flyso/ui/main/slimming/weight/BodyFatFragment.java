@@ -14,6 +14,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +22,6 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.StatusBarUtils;
 
 /**
  * Created by jk on 2018/7/27.
@@ -42,9 +42,9 @@ public class BodyFatFragment extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_body_fat);
         unbinder = ButterKnife.bind(this);
-        StatusBarUtils.from(this)
+        StatusBarUtils.from(mActivity)
                 .setStatusBarColor(getResources().getColor(R.color.white))
-                .setLightStatusBar(true)
+                .setLightStatusBar(false)
                 .process();
         initView();
     }

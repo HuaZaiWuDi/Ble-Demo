@@ -1,5 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -8,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
@@ -28,19 +33,15 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * Created by jk on 2018/8/11.
@@ -64,6 +65,19 @@ public class AboutFragment extends BaseActivity {
     LinearLayout mLayoutUpdateFail;
 
 
+    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
+                //监听瘦身衣连接情况
+                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
+                if (state) {
+                    readBLEVersion();
+                }
+            }
+        }
+    };
+
     private String updateURL = "";
     private AboutUpdateDialog dialog;
     private String currentVersion = "";
@@ -80,11 +94,15 @@ public class AboutFragment extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        BleAPI.readDeviceInfo(null);
+        unregisterReceiver(registerReceiver);
         super.onDestroy();
     }
 
     private void initView() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
+        registerReceiver(registerReceiver, filter);
+
         readBLEVersion();
         initTopBar();
         RxTextUtils.getBuilder("智裳科技 ")
@@ -129,39 +147,53 @@ public class AboutFragment extends BaseActivity {
     }
 
     private void checkFirmwareVersion(final JsonObject object) {
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), object.toString());
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.getUpgradeInfo(body))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .getUpgradeInfo(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("获取固件版本：" + s);
-
-                        FirmwareVersionUpdate firmwareVersionUpdate = MyAPP.getGson().fromJson(s, FirmwareVersionUpdate.class);
+                        FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
                             updateURL = firmwareVersionUpdate.getFileUrl();
                             newVersion = firmwareVersionUpdate.getFirmwareVersion();
 
-                            Drawable drawable = getResources().getDrawable(R.mipmap.icon_recommend);
-                            //一定要加这行！！！！！！！！！！！
-                            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                            mTvClothingVersion.setCompoundDrawables(null, null, drawable, null);
-                            QMUIRoundButtonDrawable buttonDrawable = (QMUIRoundButtonDrawable) mBtnUpdate.getBackground();
-                            buttonDrawable.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                            buttonDrawable.setStroke(1, getResources().getColor(R.color.red));
-                            mBtnUpdate.setEnabled(true);
+                            checkState(true);
                         } else {
                             RxToast.normal("当前固件版本 v" + currentVersion + " 已经是最新版本，");
+                            checkState(false);
                         }
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
+                        checkState(false);
                     }
+
                 });
+    }
+
+    private void checkState(boolean isComplete) {
+        if (isComplete) {
+            Drawable drawable = getResources().getDrawable(R.mipmap.icon_recommend);
+            //一定要加这行！！！！！！！！！！！
+            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+            mTvClothingVersion.setCompoundDrawables(null, null, drawable, null);
+            QMUIRoundButtonDrawable buttonDrawable = (QMUIRoundButtonDrawable) mBtnUpdate.getBackground();
+            buttonDrawable.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.red)));
+            buttonDrawable.setStroke(1, getResources().getColor(R.color.red));
+            mBtnUpdate.setEnabled(true);
+        } else {
+            mTvClothingVersion.setCompoundDrawables(null, null, null, null);
+            QMUIRoundButtonDrawable buttonDrawable = (QMUIRoundButtonDrawable) mBtnUpdate.getBackground();
+            buttonDrawable.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.BrightGray)));
+            buttonDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
+            mBtnUpdate.setEnabled(false);
+        }
     }
 
 
@@ -173,12 +205,7 @@ public class AboutFragment extends BaseActivity {
                 dialog.setBLEUpdateListener(new AboutUpdateDialog.BLEUpdateListener() {
                     @Override
                     public void success() {
-                        mTvClothingVersion.setText("固件版本号 v" + newVersion);
-                        mTvClothingVersion.setCompoundDrawables(null, null, null, null);
-                        QMUIRoundButtonDrawable buttonDrawable = (QMUIRoundButtonDrawable) mBtnUpdate.getBackground();
-                        buttonDrawable.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.GrayWrite)));
-                        buttonDrawable.setStroke(1, getResources().getColor(R.color.GrayWrite));
-                        mBtnUpdate.setEnabled(false);
+                        readBLEVersion();
                     }
 
                     @Override
@@ -188,7 +215,6 @@ public class AboutFragment extends BaseActivity {
                 });
                 //set进度值
                 dialog.show();
-                //后续再做进度判断，如果到达100，
                 break;
             case R.id.tv_tip:
                 //服务协议

@@ -1,39 +1,41 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.clj.fastble.data.BleDevice;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
-import com.vondear.rxtools.aboutCarmera.RxImageTools;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
-import com.yolanda.health.qnblesdk.out.QNBleDevice;
+import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,23 +48,21 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.utils.BLEUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
-import lab.wesmartclothing.wefit.netlib.utils.RxSubscriber;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class AddDeviceActivity extends BaseActivity {
 
@@ -74,13 +74,14 @@ public class AddDeviceActivity extends BaseActivity {
 
     BindDeviceItem mBindDeviceItem = new BindDeviceItem();
 
-    QNBleTools mQNBleTools = QNBleTools.getInstance();
 
     boolean forceBind = true;//是否强制绑定
     @BindView(R.id.topBar)
     QMUITopBar mTopBar;
     @BindView(R.id.tv_details)
     TextView mTvDetails;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
     @BindView(R.id.img_scan)
     ImageView mImgScan;
     @BindView(R.id.mRecyclerView)
@@ -106,7 +107,11 @@ public class AddDeviceActivity extends BaseActivity {
                 mBtnScan.setEnabled(true);
 
                 mImgScan.clearAnimation();
+
+                switchStatus(STATUS_SCAN_DEVICE);
                 RxToast.warning(getString(R.string.checkBle));
+            } else if (state == BluetoothAdapter.STATE_ON) {
+                startScan();
             }
         }
     };
@@ -116,7 +121,12 @@ public class AddDeviceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         ButterKnife.bind(this);
-        StatusBarUtils.from(mActivity).setStatusBarColor(ContextCompat.getColor(mContext, R.color.white)).process();
+        StatusBarUtils.from(mActivity)
+                .setStatusBarColor(ContextCompat.getColor(mContext, R.color.white))
+                .setLightStatusBar(true)
+                .process();
+
+        initPermissions();
 
         if (getIntent().getExtras() != null) {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
@@ -125,12 +135,13 @@ public class AddDeviceActivity extends BaseActivity {
         registerReceiver(systemBleReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         initView();
         initRxBus();
+
     }
 
     private void startScan() {
         if (!BleTools.getBleManager().isBlueEnable()) {
-            RxToast.warning(getString(R.string.open_BLE));
             BleTools.getBleManager().enableBluetooth();
+            return;
         }
 
         if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
@@ -138,15 +149,18 @@ public class AddDeviceActivity extends BaseActivity {
 //            RxToast.warning(getString(R.string.open_GPS));
             RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
             rxDialogGPSCheck.show();
+            return;
         }
 
         mDeviceLists.clear();
         scanDevice.clear();
+        adapter.setNewData(null);
         mImgScan.startAnimation(RxAnimationUtils.RotateAnim(15));
         mBtnScan.setEnabled(false);
         scanTimeout.stopTimer();
         scanTimeout.startTimer();
 
+        startService(new Intent(mContext, BleService.class));
         RxLogUtils.d("开启动画");
     }
 
@@ -154,30 +168,18 @@ public class AddDeviceActivity extends BaseActivity {
         @Override
         public void enterTimer() {
             switchStatus(STATUS_NO_DEVICE);
-
         }
     }, 15000);
 
 
     private void initRxBus() {
-        //瘦身衣
-        RxBus.getInstance().register2(BleDevice.class)
-                .compose(RxComposeUtils.<BleDevice>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<BleDevice>() {
+        RxBus.getInstance().register2(BindDeviceBean.class)
+                .compose(RxComposeUtils.<BindDeviceBean>bindLife(lifecycleSubject))
+//                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(new RxSubscriber<BindDeviceBean>() {
                     @Override
-                    protected void _onNext(BleDevice device) {
-                        BindDeviceBean bean = new BindDeviceBean(1, device.getMac(), false, device.getMac());
-                        isBind(bean);
-                    }
-                });
-        //体脂称
-        RxBus.getInstance().register2(QNBleDevice.class)
-                .compose(RxComposeUtils.<QNBleDevice>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<QNBleDevice>() {
-                    @Override
-                    protected void _onNext(QNBleDevice device) {
-                        BindDeviceBean bean = new BindDeviceBean(0, device.getMac(), false, device.getMac());
-                        isBind(bean);
+                    protected void _onNext(BindDeviceBean device) {
+                        isBind(device);
                     }
                 });
     }
@@ -197,15 +199,17 @@ public class AddDeviceActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        if (!forceBind)
-            mTopBar.addRightTextButton("跳过", R.id.tv_skip)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //跳转主页
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
-                        }
-                    });
+        if (!forceBind) {
+            Button skip = mTopBar.addRightTextButton("跳过", R.id.tv_skip);
+            skip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //跳转主页
+                    RxActivityUtils.skipActivity(mContext, MainActivity.class);
+                }
+            });
+            skip.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
+        }
     }
 
 
@@ -226,8 +230,7 @@ public class AddDeviceActivity extends BaseActivity {
         adapter = new BaseQuickAdapter<BindDeviceBean, BaseViewHolder>(R.layout.item_bind_device) {
             @Override
             protected void convert(BaseViewHolder helper, BindDeviceBean item) {
-                Drawable drawableColor = RxImageTools.changeDrawableColor(mContext, item.getDeivceType() == 0 ? R.mipmap.icon_scale : R.mipmap.icon_ranzhiyi3x, R.color.green_61D97F);
-                helper.setImageDrawable(R.id.img_weight, drawableColor);
+                helper.setImageResource(R.id.img_weight, BleKey.TYPE_SCALE.equals(item.getDeivceType()) ? R.mipmap.icon_scale_view : R.mipmap.icon_clothing_view);
                 if (item.isBind()) {
                     helper.getView(R.id.tv_Bind).setVisibility(View.GONE);
                     helper.setVisible(R.id.tv_bindings, true);
@@ -235,7 +238,15 @@ public class AddDeviceActivity extends BaseActivity {
                     helper.getView(R.id.tv_bindings).setVisibility(View.GONE);
                     helper.setVisible(R.id.tv_Bind, true);
                 }
-                helper.setText(R.id.tv_weight_data, item.getDeivceName());
+
+                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceName() + "\t" +
+                        item.getDeviceMac().substring(12, item.getDeviceMac().length()) + "\n")
+                        .append("距离：" + BLEUtil.rssi2Distance(item.getRssi(), 2) + "米")
+                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                        .setProportion(0.73f)
+                        .create();
+
+                helper.setText(R.id.tv_weight_data, stringBuilder);
                 helper.addOnClickListener(R.id.tv_Bind);
             }
         };
@@ -246,11 +257,11 @@ public class AddDeviceActivity extends BaseActivity {
                     RxLogUtils.d("点击了绑定");
 
                     final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
-                    if (item.getDeivceType() == 0 && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
+                    if (BleKey.TYPE_SCALE.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
                         RxToast.normal("已绑定体脂称");
                         return;
                     }
-                    if (item.getDeivceType() == 1 && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+                    if (BleKey.TYPE_CLOTHING.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
                         RxToast.normal("已绑定瘦身衣");
                         return;
                     }
@@ -280,86 +291,113 @@ public class AddDeviceActivity extends BaseActivity {
                     deviceList.setCountry(MyAPP.aMapLocation.getCountry());
                     deviceList.setProvince(MyAPP.aMapLocation.getProvince());
                 }
-                deviceList.setMacAddr(bean.getMac());
-                deviceList.setDeviceNo(bean.getDeivceType() == 0 ? BleKey.TYPE_SCALE : BleKey.TYPE_CLOTHING);
+                deviceList.setMacAddr(bean.getDeviceMac());
+                deviceList.setDeviceNo(bean.getDeivceType());
                 mDeviceLists.add(deviceList);
-                if (bean.getDeivceType() == 0) {
-                    SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
+                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
                 } else {
-                    SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
+                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
                 }
             }
         }
         mBindDeviceItem.setDeviceList(mDeviceLists);
-        String s = new Gson().toJson(mBindDeviceItem, BindDeviceItem.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), s);
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.addBindDevice(body))
+        String s = JSON.toJSONString(mBindDeviceItem);
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .addBindDevice(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加绑定设备：" + s);
+
+                        RxBus.getInstance().post(new RefreshSlimming());
+                        RxBus.getInstance().post(new RefreshMe());
                         //跳转主页
                         if (!forceBind) {
-                            RxActivityUtils.skipActivityAndFinish(mContext, MainActivity.class);
+                            RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         } else {
                             onBackPressed();
                         }
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
 
                     @Override
                     public void onComplete() {
                         super.onComplete();
-                        RxBus.getInstance().post(new RefreshSlimming());
-                        RxBus.getInstance().post(new RefreshMe());
                     }
                 });
     }
 
     private void isBind(final BindDeviceBean bean) {
-        if (bean.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) ||
-                bean.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+        if (bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) ||
+                bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
             return;
         }
-        if (scanDevice.containsKey(bean.getMac())) {
+
+        if (scanDevice.containsKey(bean.getDeviceMac())) {
             return;
         }
-        scanDevice.put(bean.getMac(), bean);
 
-        switchStatus(STATUS_FIND_DEVICE);
-        scanTimeout.stopTimer();
+        if (mBtnScan.isEnabled()) return;
 
-        RetrofitService dxyService = NetManager.getInstance().createString(RetrofitService.class);
-        RxManager.getInstance().doNetSubscribe(dxyService.isBindDevice(bean.getMac()))
+        scanDevice.put(bean.getDeviceMac(), bean);
+
+        if (scanDevice.size() == 1) {
+            switchStatus(STATUS_FIND_DEVICE);
+            scanTimeout.stopTimer();
+        }
+
+
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         if ("true".equals(s)) {
-                            if (bean.getDeivceType() == 0) {
-                                SPUtils.put(SPKey.SP_scaleMAC, bean.getMac());
+                            if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                                SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
                             } else {
-                                SPUtils.put(SPKey.SP_clothingMAC, bean.getMac());
+                                SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
                             }
                         }
                         bean.setBind("true".equals(s));
-                        adapter.addData(bean);
+//                        adapter.addData(bean);
+                        sortList(bean);
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        //网络获取异常不可用
-                        RxToast.normal(error);
+                    protected void _onError(String error, int code) {
+//                        adapter.addData(bean);
+                        sortList(bean);
                     }
+
                 });
+    }
+
+    /**
+     * 排序，信号（rssi）值越小，越靠前
+     *
+     * @param bean
+     */
+    private void sortList(BindDeviceBean bean) {
+        int index = 0;
+        List<BindDeviceBean> list = adapter.getData();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getRssi() <= bean.getRssi()) {
+                index = i;
+                break;
+            } else {
+                index = i + 1;
+            }
+        }
+        adapter.addData(index, bean);
     }
 
 
@@ -372,6 +410,8 @@ public class AddDeviceActivity extends BaseActivity {
         this.stepState = stepState;
         switch (stepState) {
             case STATUS_SCAN_DEVICE:
+                mTvTitle.setText("扫描搜索设备");
+                mTvDetails.setText("请添加您最近购买的智能设备");
                 mBtnScan.setEnabled(true);
                 mBtnScan.setVisibility(View.VISIBLE);
                 mBtnScan.setText(R.string.scan);
@@ -380,6 +420,8 @@ public class AddDeviceActivity extends BaseActivity {
                 mMRecyclerView.setVisibility(View.GONE);
                 break;
             case STATUS_FIND_DEVICE:
+                mTvTitle.setText("附近的设备");
+                mTvDetails.setText("请绑定并开始使用您的智能设备");
                 mImgScan.clearAnimation();
                 mBtnScan.setVisibility(View.GONE);
                 mImgScan.setVisibility(View.GONE);
@@ -387,6 +429,8 @@ public class AddDeviceActivity extends BaseActivity {
                 mImgNoDevice.setVisibility(View.GONE);
                 break;
             case STATUS_BIND_DEVICE:
+                mTvTitle.setText("附近的设备");
+                mTvDetails.setText("请绑定并开始使用您的智能设备");
                 mImgScan.clearAnimation();
                 mBtnScan.setEnabled(true);
                 mBtnScan.setVisibility(View.VISIBLE);
@@ -396,7 +440,8 @@ public class AddDeviceActivity extends BaseActivity {
                 mImgNoDevice.setVisibility(View.GONE);
                 break;
             case STATUS_NO_DEVICE:
-                RxToast.warning(getString(R.string.checkBle));
+                mTvTitle.setText("扫描设备失败");
+                mTvDetails.setText("没有搜索到设备，请确保设备电量充足");
                 mImgScan.clearAnimation();
                 mBtnScan.setEnabled(true);
                 mBtnScan.setVisibility(View.VISIBLE);
@@ -423,4 +468,29 @@ public class AddDeviceActivity extends BaseActivity {
                 }
         }
     }
+
+
+    private void initPermissions() {
+        new RxPermissions(mActivity)
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<Boolean>() {
+                    @Override
+                    protected void _onNext(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            new RxDialogSureCancel(mContext)
+                                    .setTitle("提示")
+                                    .setContent("不定位权限，手机将无法连接蓝牙")
+                                    .setSure("去开启")
+                                    .setSureListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            initPermissions();
+                                        }
+                                    }).show();
+                        }
+                    }
+                });
+    }
+
 }

@@ -2,24 +2,46 @@ package lab.wesmartclothing.wefit.flyso.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.reflect.TypeToken;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-import com.vondear.rxtools.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.view.layout.RxTextView;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.DietPlanBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 
 /**
@@ -27,17 +49,32 @@ import lab.wesmartclothing.wefit.flyso.R;
  */
 
 public class DateChoose extends RelativeLayout {
+
+    public static final int TYPE_RECIPES = 0;
+    public static final int TYPE_FOOD_RECORD = 1;
+
+    //自定义注解
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({DateChoose.TYPE_RECIPES, DateChoose.TYPE_FOOD_RECORD})
+    @interface theme {
+
+    }
+
+
     ImageView mTvLast;
     ImageView mTvNext;
     QMUIRoundButton mTvDate;
     AlertDialog.Builder Builder;
-
+    RxTextView reToday;
+    private MaterialCalendarView mCalendarView;
     private int month;
-    private Calendar calendar;
+    private Calendar calendar = Calendar.getInstance();
     private int year;
     private int day;
     private boolean isToday = true;
     private Context mContext;
+    List<CalendarDay> calendarDays = new ArrayList<>();
+    private int Theme;
 
     public DateChoose(Context context) {
         this(context, null);
@@ -65,7 +102,7 @@ public class DateChoose extends RelativeLayout {
                 isToday = false;
                 nextIsEnable(isToday);
                 calendar.add(Calendar.DATE, -1);
-                notidyDate();
+                notifyDate();
             }
         });
 
@@ -73,7 +110,7 @@ public class DateChoose extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DATE, +1);
-                notidyDate();
+                notifyDate();
                 isToday = isToday();
 
                 nextIsEnable(isToday);
@@ -81,16 +118,16 @@ public class DateChoose extends RelativeLayout {
             }
         });
 
-        calendar = Calendar.getInstance();
-
-        notidyDate();
+        notifyDate();
         nextIsEnable(isToday);
+
     }
 
 
     private void nextIsEnable(boolean isToday) {
         mTvNext.setEnabled(!isToday);
         mTvNext.setAlpha(isToday ? 0.5f : 1f);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -102,30 +139,57 @@ public class DateChoose extends RelativeLayout {
         Builder.setView(view);
 
         final AlertDialog show = Builder.show();
+        reToday = view.findViewById(R.id.reToday);
+        if (isToday) {
+            reToday.setEnabled(false);
+            reToday.setTextColor(ContextCompat.getColor(mContext, R.color.GrayWrite));
+            reToday.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, R.color.white))
+                    .setBorderColorNormal(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .setBorderWidthNormal(RxUtils.dp2px(1));
+        } else {
+            reToday.setEnabled(true);
+            reToday.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            reToday.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, Theme == TYPE_FOOD_RECORD ? R.color.orange_FF7200 : R.color.black_312B36));
+        }
 
-        final MaterialCalendarView mCalendarView = view.findViewById(R.id.mCalendarView);
-        mCalendarView.state().edit().setMaximumDate(System.currentTimeMillis()).commit();
+        mCalendarView = view.findViewById(R.id.mCalendarView);
+//        mCalendarView.state().edit().setMaximumDate(System.currentTimeMillis()).commit();
         mCalendarView.setCurrentDate(calendar);
         mCalendarView.setDateSelected(calendar, true);
+        mCalendarView.setSelectionColor(Color.parseColor(Theme == TYPE_FOOD_RECORD ? "#FF7200" : "#312C35"));
+//        mCalendarView.selectRange(CalendarDay.from(1990, 01, 01), CalendarDay.today());
+        mCalendarView.state().edit().setMaximumDate(CalendarDay.today()).commit();
+
+        mCalendarView.addDecorator(new EventDecorator(Color.parseColor(Theme == TYPE_FOOD_RECORD ? "#FF7200" : "#E4CA9F"), calendarDays));
+        mCalendarView.invalidateDecorators();
+
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                calendar.set(date.getYear(), date.getMonth(), date.getDay());
+                calendar = date.getCalendar();
                 isToday = isToday();
                 nextIsEnable(isToday);
-                notidyDate();
+                notifyDate();
                 show.dismiss();
             }
         });
 
-        view.findViewById(R.id.reToday).setOnClickListener(new OnClickListener() {
+        fetchPlanDate(calendar.getTimeInMillis());
+        mCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+            @Override
+            public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {
+                fetchPlanDate(calendarDay.getCalendar().getTimeInMillis());
+            }
+        });
+
+        reToday.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 isToday = true;
                 nextIsEnable(isToday);
                 mCalendarView.setCurrentDate(System.currentTimeMillis());
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                notidyDate();
+                notifyDate();
                 show.dismiss();
             }
         });
@@ -139,7 +203,7 @@ public class DateChoose extends RelativeLayout {
     }
 
 
-    private void notidyDate() {
+    private void notifyDate() {
         String date = RxFormat.setFormatDate(calendar.getTimeInMillis(), RxFormat.Date_Month_Day);
         mTvDate.setText(date);
 
@@ -157,6 +221,28 @@ public class DateChoose extends RelativeLayout {
     }
 
 
+    public void setTheme(@theme int theme) {
+        this.Theme = theme;
+    }
+
+    public void setRecipesDates(@NonNull List<Long> calendars) {
+        for (Long time : calendars) {
+            calendarDays.add(CalendarDay.from(time));
+        }
+    }
+
+
+    public void setCalendarMillis(long millis) {
+        calendar.setTimeInMillis(millis);
+        notifyDate();
+        nextIsEnable(isToday);
+    }
+
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
     private OnDateChangeListener onDateChangeListener;
 
     public interface OnDateChangeListener {
@@ -166,4 +252,27 @@ public class DateChoose extends RelativeLayout {
     public void setOnDateChangeListener(OnDateChangeListener onDateChangeListener) {
         this.onDateChangeListener = onDateChangeListener;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 接口 查询定制计划的日期
+    ///////////////////////////////////////////////////////////////////////////
+    private void fetchPlanDate(long time) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(new DietPlanBean(time)));
+        RxManager.getInstance().doNetSubscribe(Theme == TYPE_FOOD_RECORD ? NetManager.getApiService().fetchPlanDate(body) : NetManager.getApiService().fetchDietRecordDate(body))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchPlanDate" + time, String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        if (mContext == null) return;
+                        List<Long> dates = JSON.parseObject(s, new TypeToken<List<Long>>() {
+                        }.getType());
+                        setRecipesDates(dates);
+                        mCalendarView.addDecorator(new EventDecorator(Color.parseColor(Theme == TYPE_FOOD_RECORD ? "#FF7200" : "#E4CA9F"), calendarDays));
+                        mCalendarView.invalidateDecorators();
+                    }
+                });
+    }
+
 }

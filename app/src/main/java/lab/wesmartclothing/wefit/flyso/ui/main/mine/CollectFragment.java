@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -33,20 +34,20 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
+import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.netlib.net.RetrofitService;
-import lab.wesmartclothing.wefit.netlib.net.ServiceAPI;
-import lab.wesmartclothing.wefit.netlib.rx.NetManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxManager;
-import lab.wesmartclothing.wefit.netlib.rx.RxNetSubscriber;
-import lab.wesmartclothing.wefit.netlib.utils.RxBus;
 
 import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
@@ -79,13 +80,13 @@ public class CollectFragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initRecycler();
+        pageNum = 1;
+        initData();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        pageNum = 1;
-        initData();
     }
 
     private void initRecycler() {
@@ -190,10 +191,11 @@ public class CollectFragment extends BaseActivity {
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
             if (AntiShake.getInstance().check()) return;
-            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position);
+            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position % adapter.getData().size());
             Bundle bundle = new Bundle();
             //打开URL
             bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
+            bundle.putSerializable(Key.BUNDLE_DATA, bean);
             RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
         }
     };
@@ -201,10 +203,7 @@ public class CollectFragment extends BaseActivity {
 
     private void deleteItemById(final int position) {
         String gid = ((CollectBean.ListBean) adapter.getData().get(position)).getGid();
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.removeCollection(gid))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeCollection(gid))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -214,38 +213,36 @@ public class CollectFragment extends BaseActivity {
                         //如果成功，刷新列表，不加载数据
                         adapter.remove(position);
                         if (adapter.getData().size() == 0) {
-                            adapter.setEmptyView(emptyView);
+                            smartRefreshLayout.autoRefresh();
                         }
                         RxBus.getInstance().post(new RefreshMe());
                     }
 
                     @Override
-                    protected void _onError(String error) {
-                        RxToast.error(error);
+                    protected void _onError(String error,int code) {
+                        RxToast.error(error,code);
                     }
                 });
     }
 
     public void initData() {
-        RetrofitService dxyService = NetManager.getInstance().createString(
-                RetrofitService.class
-        );
-        RxManager.getInstance().doNetSubscribe(dxyService.collectionList(pageNum, 10))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().collectionList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("collectionList" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        CollectBean collectBean = MyAPP.getGson().fromJson(s, CollectBean.class);
+                        CollectBean collectBean = JSON.parseObject(s, CollectBean.class);
                         List<CollectBean.ListBean> list = collectBean.getList();
-                        RxLogUtils.d("收藏信息：" + list.size());
-                        RxLogUtils.d("页码：" + pageNum);
                         if (pageNum == 1) {
                             adapter.setNewData(list);
                         } else {
                             adapter.addData(list);
                         }
+
+
                         if (smartRefreshLayout.isLoading()) {
                             pageNum++;
                             smartRefreshLayout.finishLoadMore(true);
@@ -253,19 +250,25 @@ public class CollectFragment extends BaseActivity {
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(true);
                         smartRefreshLayout.setEnableLoadMore(collectBean.isHasNextPage());
-                        if (adapter.getData().size() == 0) {
+
+                        if (collectBean.getTotal() == 0) {
                             adapter.setEmptyView(emptyView);
+                        } else {
+                            if (adapter.getData().size() == 0) {
+                                smartRefreshLayout.autoRefresh();
+                            }
                         }
                     }
 
                     @Override
-                    public void _onError(String e) {
-                        RxToast.error(e);
+                    protected void _onError(String error,int code) {
+                        RxToast.normal(error,code);
                         if (smartRefreshLayout.isLoading())
                             smartRefreshLayout.finishLoadMore(false);
                         if (smartRefreshLayout.isRefreshing())
                             smartRefreshLayout.finishRefresh(false);
                     }
+
                 });
     }
 

@@ -24,8 +24,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //RxJava2
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.9'
+    compile 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.2.3'
     //RxBinding
     compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
 
@@ -42,7 +42,7 @@ dependencies {
     //Http日志库
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
     //缓存框架
-    compile('com.zchu:rxcache:2.3.1') {
+    compile('com.zchu:rxcache:2.3.3') {
         exclude group: 'com.android.support'
     }
 }
