@@ -19,6 +19,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+import com.vondear.rxtools.BuildConfig;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 
 import java.security.MessageDigest;
@@ -42,6 +45,13 @@ public class RxUtils {
 //        RxCrashUtils.getInstance(context).init();
         SPUtils.getInstance(context);
         DrawUtil.resetDensity(context);
+        RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
+        Logger.addLogAdapter(new AndroidLogAdapter() {
+            @Override
+            public boolean isLoggable(int priority, String tag) {
+                return BuildConfig.DEBUG;
+            }
+        });
     }
 
     /**

@@ -50,14 +50,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         initStatusBar();
 
-        RxActivityUtils.addActivity(this);
+        RxActivityUtils.addActivity(mActivity);
 
-        ScreenAdapter.setCustomDensity(this);
+        ScreenAdapter.setCustomDensity(mActivity.getApplication(), mActivity);
         initDialog();
 
         if (layoutId() != 0) {
             setContentView(layoutId());
-            ButterKnife.bind(this);
+            ButterKnife.bind(mActivity);
             initViews();
             if (getIntent().getExtras() != null)
                 initBundle(getIntent().getExtras());

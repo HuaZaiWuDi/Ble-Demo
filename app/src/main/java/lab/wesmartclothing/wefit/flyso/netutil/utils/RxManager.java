@@ -1,8 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.netutil.utils;
 
 
-import android.app.Application;
-
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.IObservableStrategy;
@@ -23,7 +21,6 @@ public class RxManager {
     private static RxManager rxManager = null;
     String TAG = "[RxManager]";
 
-    Application application;
 
     private RxManager() {
 
@@ -37,13 +34,6 @@ public class RxManager {
     }
 
 
-    public void setAPPlication(Application application) {
-        this.application = application;
-    }
-
-    public Application getApplication() {
-        return application;
-    }
 
 
     public <T> Observable<T> dofunSubscribe(Observable<T> observable) {

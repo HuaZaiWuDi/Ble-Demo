@@ -33,9 +33,9 @@
         app:text_gradient_startColor="@color/red"/>
 
     <com.vondear.rxtools.view.layout.RxTextView
-        android:layout_marginLeft="100dp"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginLeft="100dp"
         android:gravity="center"
         android:text="我的世界"
         android:textColor="@color/red"
@@ -48,5 +48,7 @@
         app:text_gradient_open="true"
         app:text_gradient_orientation="vertical"
         app:text_gradient_startColor="@color/red"/>
+
+
 
 </LinearLayout>

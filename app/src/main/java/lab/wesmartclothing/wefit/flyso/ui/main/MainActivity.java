@@ -15,11 +15,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.alibaba.fastjson.JSON;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -40,6 +39,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
@@ -287,12 +287,12 @@ public class MainActivity extends BaseALocationActivity {
      */
     private void initReceiverPush(Bundle bundle) {
         String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
-        JsonParser parser = new JsonParser();
-        JsonObject object = (JsonObject) parser.parse(extra);
-        RxLogUtils.d("点击通知：" + object.toString());
-        String openTarget = object.get("openTarget").getAsString();
-        int type = object.get("operation").getAsInt();
-        String msgId = object.get("msgId").getAsString();
+        RxLogUtils.d("点击通知：" + extra);
+        NotifyDataBean notifyDataBean = JSON.parseObject(extra, NotifyDataBean.class);
+        if (notifyDataBean == null) return;
+        String openTarget = notifyDataBean.getOpenTarget();
+        int type = notifyDataBean.getOperation();
+        String msgId = notifyDataBean.getMsgId();
         switch (type) {
             case TYPE_OPEN_APP:
                 break;

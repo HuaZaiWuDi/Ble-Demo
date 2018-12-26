@@ -8,7 +8,6 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
-import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -35,7 +34,6 @@ import java.util.Arrays;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
@@ -74,6 +72,7 @@ public class MyAPP extends Application {
 //        });
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -98,9 +97,6 @@ public class MyAPP extends Application {
                         ServiceAPI.switchURL(baseUrl);
                     }
                 }
-
-                RxManager.getInstance().setAPPlication(MyAPP.this);
-                ScreenAdapter.init(MyAPP.this);
                 MultiDex.install(MyAPP.this);
                 initShareLogin();
                 initLeakCanary();
@@ -114,16 +110,11 @@ public class MyAPP extends Application {
 
                 Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
                 Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
-                RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
+
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
                 BleTools.initBLE(MyAPP.this);
-                Logger.addLogAdapter(new AndroidLogAdapter() {
-                    @Override
-                    public boolean isLoggable(int priority, String tag) {
-                        return BuildConfig.DEBUG;
-                    }
-                });
+
                 try {
                     RxCache.initializeDefault(new RxCache.Builder()
                             .appVersion(2)
@@ -136,7 +127,6 @@ public class MyAPP extends Application {
                 } catch (Exception e) {
                     RxLogUtils.e(e);
                 }
-
 
                 ActivityLifecycle();
 

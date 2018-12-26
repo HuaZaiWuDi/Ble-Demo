@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout
+<com.vondear.rxtools.view.layout.RxLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,9 +7,8 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    app:qmui_backgroundColor="@color/white"
-    app:qmui_borderColor="@color/white"
-    app:qmui_radius="4dp"
+    app:background_normal="@color/white"
+    app:corner_radius="4dp"
     >
 
     <ImageView
@@ -89,4 +88,4 @@
 
 
     </LinearLayout>
-</com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout>
+</com.vondear.rxtools.view.layout.RxLinearLayout>
