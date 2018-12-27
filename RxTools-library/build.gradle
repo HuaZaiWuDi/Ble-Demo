@@ -106,25 +106,3 @@ dependencies {
     }
 
 }
-
-apply plugin: 'maven'
-
-ext {
-    PUBLISH_GROUP_ID = 'com.jackUtil'
-    PUBLISH_ARTIFACT_ID = 'RxTools'
-    PUBLISH_VERSION = android.defaultConfig.versionName
-}
-
-
-uploadArchives {
-    repositories.mavenDeployer {
-        def deployPath = file(getProperty('aar.deployPath'))
-        repository(url: "file://${deployPath.absolutePath}")
-        pom.project {
-            groupId project.PUBLISH_GROUP_ID
-            artifactId project.PUBLISH_ARTIFACT_ID
-            version project.PUBLISH_VERSION
-        }
-    }
-}
-

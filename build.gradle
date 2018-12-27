@@ -31,6 +31,7 @@ allprojects {
         maven { url "https://dl.bintray.com/thelasterstar/maven/" }
         maven { url 'https://dl.bintray.com/zchu/maven/' }
         maven { url 'https://dl.bintray.com/umsdk/release' }
+        maven { url "https://raw.githubusercontent.com/HuaZaiWuDi/AARDemo/master" }
     }
 
     //Git每次提交的版本号

@@ -152,7 +152,7 @@ dependencies {
 //    implementation "org.androidannotations:androidannotations-api:$AAVersion"
 
     //工具库
-    compile project(':RxTools-library')
+//    compile project(':RxTools-library')
 //    compile project(':netlib')
 
     //快速开发顶部、底部导航栏
@@ -215,6 +215,6 @@ dependencies {
     implementation files('libs/qnsdk-0.3.4.jar')
 //    compile project(path: ':netlib')
 
-
+    implementation 'com.jackUtil:RxTools:1.0.2'
 
 }
