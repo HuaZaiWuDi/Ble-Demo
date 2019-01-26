@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.StatusBarUtils;
 
 import java.util.ArrayList;
 
@@ -23,8 +23,8 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -32,8 +32,8 @@ public class GuideActivity extends BaseActivity {
 
     @BindView(R.id.viewpager)
     ViewPager mViewpager;
-    @BindView(R.id.btn_goto)
-    QMUIRoundButton mBtnGoto;
+    @BindView(R.id.parent)
+    RelativeLayout mParent;
 
     private ArrayList<Integer> mImageItems = new ArrayList<>();
 
@@ -41,22 +41,22 @@ public class GuideActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
+        StatusBarUtils.from(this).setHindStatusBar(true).process();
         ButterKnife.bind(this);
         initView();
     }
 
     public void initView() {
         mImageItems.clear();
-        for (int i = 0; i < 3; i++) {
-            mImageItems.add(R.drawable.guide_1);
-            mImageItems.add(R.drawable.guide_2);
-            mImageItems.add(R.drawable.guide_3);
-        }
+        mImageItems.add(R.drawable.guide_1);
+        mImageItems.add(R.drawable.guide_2);
+        mImageItems.add(R.drawable.guide_3);
+        mImageItems.add(R.drawable.guide_4);
         mViewpager.setOffscreenPageLimit(2);
         mViewpager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
-                return 3;
+                return mImageItems.size();
             }
 
             @Override
@@ -79,30 +79,18 @@ public class GuideActivity extends BaseActivity {
                 photoView.setLayoutParams(params);
                 MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), 0, photoView);
                 container.addView(photoView);
+                if (position == mImageItems.size() - 1) {
+                    photoView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            initPermissions();
+                        }
+                    });
+                }
+
                 return photoView;
             }
         });
-        mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                mBtnGoto.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-    }
-
-    @OnClick(R.id.btn_goto)
-    public void onViewClicked() {
-        initPermissions();
     }
 
     private void initPermissions() {
@@ -119,4 +107,8 @@ public class GuideActivity extends BaseActivity {
                 });
     }
 
+    @OnClick(R.id.parent)
+    public void onViewClicked() {
+
+    }
 }

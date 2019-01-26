@@ -30,7 +30,7 @@ public class ServiceAPI {
 
     public static String BASE_URL = BASE_RELEASE;
 
-    public static String BASE_SERVICE = BASE_URL;
+    public static String BASE_SERVICE = BASE_URL.replace("mix", "system");
 
 
     public static void switchURL(String baseUrl) {

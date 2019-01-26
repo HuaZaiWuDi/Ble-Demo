@@ -22,6 +22,7 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.umeng.socialize.UMShareAPI;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -89,8 +90,8 @@ public class MainActivity extends BaseALocationActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
         //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
-        if (savedInstanceState != null) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, SplashActivity.class);
+        if (savedInstanceState != null && mContext != null) {
+            RxActivityUtils.skipActivityAndFinish(mContext, SplashActivity.class);
             return;
         }
         super.onCreate(savedInstanceState);
@@ -379,4 +380,11 @@ public class MainActivity extends BaseALocationActivity {
                     }
                 });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
 }

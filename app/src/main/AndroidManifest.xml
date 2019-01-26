@@ -29,7 +29,7 @@
         android:roundIcon="@mipmap/icon_app_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="label,icon,roundIcon">
+        tools:replace="label,icon,roundIcon,theme">
 
         <!-- 屏幕适配 -->
         <meta-data
@@ -88,7 +88,6 @@
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/>
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/>
                 <action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>
-                <action android:name="cn.jpush.android.intent.CONNECTION"/>
 
                 <!-- 接收网络变化 连接/断开 since 1.6.3 -->
                 <action android:name="cn.jpush.android.intent.CONNECTION"/>
@@ -112,6 +111,65 @@
         <service
             android:name=".ble.dfu.DfuService"
             android:exported="true"/>
+
+        <!--友盟社会SDK-->
+        <!--友盟-->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5a38b2e8b27b0a02a7000026">
+        </meta-data>
+
+        <!--友盟社会分享登录-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="tencent1106924585"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <activity
+            android:name="com.umeng.socialize.media.WBShareCallBackActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            >
+        </activity>
+        <activity
+            android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            >
+        </activity>
+        <activity
+            android:name="com.sina.weibo.sdk.share.WbShareTransActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+
+        <!--分割线==============================================================================-->
 
         <activity
             android:name=".ui.main.MainActivity"
@@ -351,7 +409,9 @@
             android:launchMode="singleTop"
             >
         </activity>
-        <activity android:name=".ui.main.mine.InvitationCodeActivity">
+        <activity
+            android:name=".ui.main.mine.InvitationCodeActivity"
+            android:launchMode="singleTop">
         </activity>
 
         <!--开启一个空IntentService，左右启动web进程-->

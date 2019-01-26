@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -9,7 +11,12 @@ import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxProcessUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -19,9 +26,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.share.ShareListener;
-import me.shaohui.shareutil.share.SharePlatform;
 
 public class CollectWebActivity extends BaseWebActivity {
 
@@ -78,59 +82,57 @@ public class CollectWebActivity extends BaseWebActivity {
 
 
     private void showSimpleBottomSheetGrid(final String imgUrl, final String title, final String desc, final String url) {
-        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
-        builder.addItem(R.mipmap.wechat, "分享到微信", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.fr, "分享到朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.weib, "分享到微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "分享到QQ", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.zone, "分享到QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView) {
-                        dialog.dismiss();
-                        int tag = (int) itemView.getTag();
-                        switch (tag) {
-                            case 1:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WX, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 2:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WX_TIMELINE, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 3:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WEIBO, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 4:
-                                RxLogUtils.e("分享：" + shareListener);
-                                ShareUtil.shareMedia(mActivity, SharePlatform.QQ, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 5:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.QZONE, title, desc, url, imgUrl, shareListener);
-                                break;
+        UMImage image = new UMImage(mContext, imgUrl);//网络图片
+        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
+//        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
+        image.compressFormat = Bitmap.CompressFormat.PNG;//图片格式
 
-                        }
-                    }
-                }).build().show();
+        UMWeb web = new UMWeb(url);
+        web.setTitle(title);//标题
+        web.setThumb(image);  //缩略图
+        web.setDescription(desc);//描述
+        new ShareAction(mActivity)
+                .withMedia(web)
+                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
+                .setCallback(mUMShareListener).open();
     }
 
 
-    ShareListener shareListener = new ShareListener() {
+    private UMShareListener mUMShareListener = new UMShareListener() {
         @Override
-        public void shareSuccess() {
+        public void onStart(SHARE_MEDIA share_media) {
+            RxLogUtils.d("开始分享");
+            tipDialog.show("正在分享...", 3000);
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享成功");
+            RxToast.normal("分享成功");
+            tipDialog.dismiss();
         }
 
         @Override
-        public void shareFailure(Exception e) {
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
             RxLogUtils.d("分享失败");
+            RxToast.normal("分享失败");
+            tipDialog.dismiss();
         }
-
 
         @Override
-        public void shareCancel() {
+        public void onCancel(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享关闭");
+            RxToast.normal("分享关闭");
+            tipDialog.dismiss();
         }
-
     };
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
 
 
     @Nullable

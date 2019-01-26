@@ -22,10 +22,13 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.vondear.rxtools.utils.bitmap.RxImageUtils;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -33,6 +36,8 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarVerticalChart;
 import com.vondear.rxtools.view.layout.RxImageView;
@@ -71,9 +76,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFrag
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
-import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.share.ShareListener;
-import me.shaohui.shareutil.share.SharePlatform;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.ui.main.record
@@ -917,12 +919,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        ShareUtil.recycle();
-    }
-
     @OnClick({
             R.id.img_email,
             R.id.layout_weight_title,
@@ -930,6 +926,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             R.id.layout_sports_title,
             R.id.layout_energy_title})
     public void onViewClicked(View view) {
+        if (AntiShake.getInstance().check(view.getId())) return;
         switch (view.getId()) {
             case R.id.img_email:
                 //分享
@@ -955,7 +952,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mLayoutShareTitle.setVisibility(isStart ? View.VISIBLE : View.GONE);
 
         if (isStart) {
-            tipDialog.show("正在分享...", 3000);
+
             RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
@@ -983,8 +980,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 public void run() {
                     //控件转图片
                     Bitmap bitmap = RxImageUtils.view2Bitmap(mPrant, ContextCompat.getColor(mContext, R.color.white));
-                    //微信分享图片最大尺寸32KB
-                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
                     showSimpleBottomSheetGrid(bitmap);
                     share(false);
                 }
@@ -993,61 +988,55 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     }
 
     private void showSimpleBottomSheetGrid(final Bitmap imgUrl) {
-        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
-        builder.addItem(R.mipmap.wechat, "微信好友", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.fr, "朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.weib, "新浪微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "QQ好友", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-//                .addItem(R.mipmap.zone, "QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView) {
-                        dialog.dismiss();
-                        int tag = (int) itemView.getTag();
-                        switch (tag) {
-                            case 1:
-                                ShareUtil.shareImage(mActivity, SharePlatform.WX, imgUrl, shareListener);
-                                break;
-                            case 2:
-                                ShareUtil.shareImage(mActivity, SharePlatform.WX_TIMELINE, imgUrl, shareListener);
-                                break;
-                            case 3:
-                                ShareUtil.shareImage(mActivity, SharePlatform.WEIBO, imgUrl, shareListener);
-                                break;
-                            case 4:
-                                ShareUtil.shareImage(mActivity, SharePlatform.QQ, imgUrl, shareListener);
-                                break;
-                            case 5:
-                                ShareUtil.shareImage(mActivity, SharePlatform.QZONE, imgUrl, shareListener);
-                                break;
+        UMImage image = new UMImage(mContext, imgUrl);//网络图片
 
-                        }
-                    }
-                }).build().show();
+//        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
+        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
+        image.compressFormat = Bitmap.CompressFormat.PNG;//图片格式
+
+        UMImage thumb = new UMImage(mContext, imgUrl);
+        image.setThumb(thumb);
+        new ShareAction(mActivity)
+                .withMedia(image)
+                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
+                .setCallback(mUMShareListener).open();
     }
 
 
-    ShareListener shareListener = new ShareListener() {
+    UMShareListener mUMShareListener = new UMShareListener() {
         @Override
-        public void shareSuccess() {
+        public void onStart(SHARE_MEDIA share_media) {
+            tipDialog.show("正在分享...", 3000);
+            RxLogUtils.d("开始分享");
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享成功");
             RxToast.normal("分享成功");
             tipDialog.dismiss();
         }
 
         @Override
-        public void shareFailure(Exception e) {
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
             RxLogUtils.d("分享失败");
             RxToast.normal("分享失败");
             tipDialog.dismiss();
         }
 
         @Override
-        public void shareCancel() {
+        public void onCancel(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享关闭");
             RxToast.normal("分享关闭");
             tipDialog.dismiss();
         }
     };
+
+
+    @Override
+    public void onDestroy() {
+        UMShareAPI.get(mContext).release();
+        super.onDestroy();
+    }
 
 }

@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.find;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -19,10 +18,16 @@ import com.github.lzyzsd.jsbridge.CallBackFunction;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebConfig;
 import com.just.agentweb.MiddlewareWebClientBase;
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,9 +42,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.AndroidInterface;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.share.ShareListener;
-import me.shaohui.shareutil.share.SharePlatform;
 
 /**
  * Created icon_hide_password jk on 2018/5/7.
@@ -150,61 +152,61 @@ public class FindFragment extends BaseWebFragment {
                 }
             }
         });
-
     }
 
     private void showSimpleBottomSheetGrid(final String imgUrl, final String title, final String desc, final String url) {
-        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(getActivity());
-        builder.addItem(R.mipmap.wechat, "分享到微信", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.fr, "分享到朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.weib, "分享到微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "分享到QQ", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.zone, "分享到QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView) {
-                        dialog.dismiss();
-                        int tag = (int) itemView.getTag();
-                        switch (tag) {
-                            case 1:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WX, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 2:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WX_TIMELINE, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 3:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WEIBO, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 4:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.QQ, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 5:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.QZONE, title, desc, url, imgUrl, shareListener);
-                                break;
 
-                        }
-                    }
-                }).build().show();
+        UMImage image = new UMImage(mContext, imgUrl);//网络图片
+
+//        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
+        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
+        image.compressFormat = Bitmap.CompressFormat.PNG;//图片格式
+
+        UMWeb web = new UMWeb(url);
+        web.setTitle(title);//标题
+        web.setThumb(image);  //缩略图
+        web.setDescription(desc);//描述
+        new ShareAction(mActivity)
+                .withMedia(web)
+                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
+                .setCallback(mUMShareListener).open();
     }
 
-    ShareListener shareListener = new ShareListener() {
+
+    UMShareListener mUMShareListener = new UMShareListener() {
         @Override
-        public void shareSuccess() {
+        public void onStart(SHARE_MEDIA share_media) {
+            RxLogUtils.d("开始分享");
+            tipDialog.show("正在分享...", 3000);
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享成功");
+            RxToast.normal("分享成功");
+            tipDialog.dismiss();
         }
 
         @Override
-        public void shareFailure(Exception e) {
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
             RxLogUtils.d("分享失败");
+            RxToast.normal("分享失败");
+            tipDialog.dismiss();
         }
-
 
         @Override
-        public void shareCancel() {
+        public void onCancel(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享关闭");
+            RxToast.normal("分享关闭");
+            tipDialog.dismiss();
         }
-
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UMShareAPI.get(mContext).release();
+    }
 
 
     @Nullable

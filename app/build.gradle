@@ -18,6 +18,12 @@ android {
             storePassword '123456'
         }
     }
+    //Debug时不进行拆分包和png图片压缩
+    splits.abi.enable = false
+    splits.density.enable = false
+    aaptOptions.cruncherEnabled = false
+
+
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion
     defaultConfig {
@@ -26,17 +32,13 @@ android {
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
         versionName parent.ext.versionName
+
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         // 取消掉系统对.9图片的检查
         aaptOptions.cruncherEnabled = false
         aaptOptions.useNewCruncher = false
-
-        //QQ分享
-        manifestPlaceholders = [
-                //  替换成你的qq_id
-                qq_id: "1106924585"
-        ]
 
         //强制指定包名，貌似是的
         // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
@@ -57,10 +59,12 @@ android {
 //        TimeToFit：
 //        AppKey : 905f32b2246c47b2c017a118
 //        Master Secret : fb6ad806e3a46e1ddf71a9b2
+        //替换符只能有一个
         manifestPlaceholders = [
                 JPUSH_PKGNAME: applicationId,
                 JPUSH_APPKEY : "905f32b2246c47b2c017a118", //JPush上注册的包名对应的appkey.
                 JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+                qqappid      : '1106924585',//QQ分享
         ]
 
         //强制指定一个版本
@@ -89,24 +93,13 @@ android {
 
         //修改apk名字
         applicationVariants.all { variant ->
-            if (variant.buildType.name == "release") {
-                variant.outputs.all { output ->
-                    def outputFile = output.outputFile
-                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                        // apk_渠道名-版本号-版本名称-编译时间.apk
-                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-release.apk"
+            variant.outputs.all { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    // apk_渠道名-版本号-版本名称-编译时间.apk
+                    def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-${variant.buildType.name}.apk"
 
-                        outputFileName = fileName
-                    }
-                }
-            } else if (variant.buildType.name == "debug") {
-                variant.outputs.all { output ->
-                    def outputFile = output.outputFile
-                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                        // apk_渠道名-版本号-版本名称-编译时间.apk
-                        def fileName = "Timetofit-v${defaultConfig.versionName}-${releaseTime()}-debug.apk"
-                        outputFileName = fileName
-                    }
+                    outputFileName = fileName
                 }
             }
         }
@@ -135,7 +128,8 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
-    
+
+
 }
 
 dependencies {
@@ -151,15 +145,8 @@ dependencies {
 //    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
 //    implementation "org.androidannotations:androidannotations-api:$AAVersion"
 
-    //工具库
-//    compile project(':RxTools-library')
-//    compile project(':netlib')
-
     //快速开发顶部、底部导航栏
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
-
-//    //弘扬的自定义布局
-//    implementation 'com.zhy:autolayout:1.4.5'
 
     //数据库
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
@@ -194,9 +181,9 @@ dependencies {
 
     //高德定位SDK
     compile 'com.amap.api:location:latest.integration'
-    compile project(path: ':shareutil')
+//    compile project(path: ':shareutil')
 //    implementation 'com.qmuiteam:arch:0.1.3'
-    implementation 'com.jakewharton:butterknife:8.8.1'
+    debugImplementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     //极光推送
@@ -216,5 +203,18 @@ dependencies {
 //    compile project(path: ':netlib')
 
     implementation 'com.jackUtil:RxTools:1.0.2'
+
+    //友盟社会分享
+    implementation 'com.umeng.umsdk:share-core:6.9.4'
+    implementation 'com.umeng.umsdk:share-qq:6.9.4'
+//    implementation 'com.umeng.umsdk:share-wechat:6.9.4'
+    implementation 'com.umeng.umsdk:share-sina:6.9.4'
+    implementation 'com.umeng.umsdk:common:1.5.4'
+    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
+    //官方文档中没有这个依赖，要是不添加会导致初始化的时候的UMConfigure这个类不能识别
+    implementation files('libs/umeng-share-wechat-simplify-6.9.4.jar')
+//    implementation files('libs/umeng-share-QQ-simplify-6.9.4.jar')
+//    implementation files('libs/umeng-share-sina-simplify-6.9.4.jar')
+
 
 }

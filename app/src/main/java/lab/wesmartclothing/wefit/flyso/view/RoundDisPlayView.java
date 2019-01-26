@@ -15,11 +15,12 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 /**
- * 项目名称：Ali_Sophix
- * 类描述：
- * 创建人：Jack
- * 创建时间：2017/12/25
- */
+*@date on 2018/12/28
+*@author Jack
+*@version 
+*@describe TODO
+*@org 智裳科技
+*/
 public class RoundDisPlayView extends View {
 
     private int mWidth;
