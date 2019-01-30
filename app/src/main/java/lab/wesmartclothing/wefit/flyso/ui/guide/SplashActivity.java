@@ -88,6 +88,15 @@ public class SplashActivity extends BaseActivity {
         initData();
         initUserInfo();
 
+//        BleAPI.syncSetting(Key.heartRates, 60, 50, false, new BleChartChangeCallBack() {
+//            @Override
+//            public void callBack(byte[] data) {
+//                RxLogUtils.d("配置参数");
+////                syncHistoryData();
+//            }
+//        });
+
+
 //        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
     }
 

@@ -77,12 +77,12 @@ public class CountDownView extends LinearLayout {
     public void setCountDownDays(final long time) {
 
         defaultState();
-        long day = RxTimeUtils.getIntervalByNow(time, RxConstUtils.TimeUnit.DAY);
-        mTickerDays.setText(day + "", true);
-
         if (System.currentTimeMillis() >= time) {
             return;
         }
+
+        long day = RxTimeUtils.getIntervalByNow(time, RxConstUtils.TimeUnit.DAY);
+        mTickerDays.setText(day + "", true);
 
         if (countDownTimer != null) countDownTimer.cancel();
         countDownTimer = new CountDownTimer(time, 1000) {
@@ -115,7 +115,6 @@ public class CountDownView extends LinearLayout {
                 cancel();
                 defaultState();
                 RxLogUtils.d("结束");
-
 
                 if (mCountDownFinishCallBack != null) {
                     mCountDownFinishCallBack.finish();

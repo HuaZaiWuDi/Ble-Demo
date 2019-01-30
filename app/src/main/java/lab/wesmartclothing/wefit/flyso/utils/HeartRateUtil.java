@@ -52,13 +52,13 @@ public class HeartRateUtil {
     public void addRealTimeData(byte[] bytes) {
         int heartRate = realHeartRate = bytes[8] & 0xff;
 
-        if (lastHeartRate != 0) {
-            if (lastHeartRate - heartRate > heartDeviation) {
-                heartRate = lastHeartRate - heartUpSupplement;
-            } else if (lastHeartRate - heartRate < -heartDeviation) {
-                heartRate = lastHeartRate + heartDownSupplement;
-            }
-        }
+//        if (lastHeartRate != 0) {
+//            if (lastHeartRate - heartRate > heartDeviation) {
+//                heartRate = lastHeartRate - heartUpSupplement;
+//            } else if (lastHeartRate - heartRate < -heartDeviation) {
+//                heartRate = lastHeartRate + heartDownSupplement;
+//            }
+//        }
 
         lastHeartRate = heartRate;
 

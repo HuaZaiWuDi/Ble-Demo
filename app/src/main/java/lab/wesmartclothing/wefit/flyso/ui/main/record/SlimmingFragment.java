@@ -719,13 +719,20 @@ public class SlimmingFragment extends BaseAcFragment {
                 || bean.getWeightChangeVO() == null
                 || bean.getWeightChangeVO().getWeight() == null)
             return;
-        mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
         mMCountDownView.setCountDownFinishCallBack(new CountDownView.CountDownFinishCallBack() {
             @Override
             public void finish() {
+                RxLogUtils.d("目标结束");
                 targetComplete(true, bean.getComplete() == 1);
             }
         });
+        if (System.currentTimeMillis() < bean.getTargetInfo().getTargetDate()) {
+            targetComplete(bean.getComplete() == 1, bean.getComplete() == 1);
+        } else {
+            targetComplete(true, bean.getComplete() == 1);
+        }
+
+        mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
 
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1))
                 .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
@@ -750,10 +757,8 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
 
-        targetComplete(bean.getComplete() == 1, bean.getComplete() == 1);
 
     }
-
 
     private void targetComplete(boolean finish, boolean complete) {
         mLayoutTargetTitle.setAlpha(finish ? 0.3f : 1f);

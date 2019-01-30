@@ -60,7 +60,7 @@ public class BleAPI {
         //心率阈值
         bytes[3] = 0x01;
 
-        System.arraycopy(heartSection, 0, bytes, 4, BleKey.heartRates2.length);
+        System.arraycopy(heartSection, 0, bytes, 4, heartSection.length);
         int index = 3 + heartSection.length;
 
         if (heat >= 0) {
@@ -73,7 +73,7 @@ public class BleAPI {
             index++;
             bytes[index] = 0x03;
             index++;
-            bytes[index] = (byte) LED;
+            bytes[index] = 0x01;
         }
         index++;
         bytes[index] = 0x04;

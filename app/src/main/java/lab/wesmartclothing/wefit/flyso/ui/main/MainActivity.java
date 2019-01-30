@@ -20,6 +20,8 @@ import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.smartclothing.blelibrary.BleAPI;
+import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.socialize.UMShareAPI;
@@ -28,6 +30,7 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.ArrayList;
@@ -235,11 +238,20 @@ public class MainActivity extends BaseALocationActivity {
                             })
                             .build()
                             .show();
+                } else if (position == 0 && BuildConfig.DEBUG) {
+                    BleAPI.syncSetting(Key.heartRates, 60, 50, !isHeatState, new BleChartChangeCallBack() {
+                        @Override
+                        public void callBack(byte[] data) {
+                            RxLogUtils.d("配置参数");
+                            RxToast.success("加热状态：" + isHeatState);
+                        }
+                    });
                 }
             }
         });
     }
 
+    private boolean isHeatState = true;
 
     private void initMyViewPager() {
         mFragments.clear();
