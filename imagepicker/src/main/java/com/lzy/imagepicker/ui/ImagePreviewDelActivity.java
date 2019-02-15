@@ -67,7 +67,9 @@ public class ImagePreviewDelActivity extends ImagePreviewBaseActivity implements
         }
     }
 
-    /** 是否删除此张图片 */
+    /**
+     * 是否删除此张图片
+     */
     private void showDeleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("提示");
@@ -100,7 +102,9 @@ public class ImagePreviewDelActivity extends ImagePreviewBaseActivity implements
         super.onBackPressed();
     }
 
-    /** 单击时，隐藏头和尾 */
+    /**
+     * 单击时，隐藏头和尾
+     */
     @Override
     public void onImageSingleTap() {
         if (topBar.getVisibility() == View.VISIBLE) {

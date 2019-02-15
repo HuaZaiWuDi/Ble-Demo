@@ -63,6 +63,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
@@ -72,6 +73,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActiv
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
+import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
 public class BleService extends Service {
@@ -311,7 +313,7 @@ public class BleService extends Service {
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
-                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi());
+                RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi() + ":" + bleDevice.getModeId());
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 
@@ -323,6 +325,7 @@ public class BleService extends Service {
                     connectDevices.put(bleDevice.getMac(), bleDevice);
 
                     mQNBleTools.stopScan();
+
                 }
             }
 
@@ -391,7 +394,7 @@ public class BleService extends Service {
 
             @Override
             public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
-                RxLogUtils.e("服务发现完成:");
+
                 mQNBleTools.setConnectState(QNBleTools.QN_CONNECED);
                 B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, true);
 
@@ -520,6 +523,8 @@ public class BleService extends Service {
                 syncHistoryData();
             }
         });
+//        QNBleDevice
+
     }
 
     private void syncHistoryData() {
@@ -544,6 +549,7 @@ public class BleService extends Service {
             BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
                 @Override
                 public void callBack(byte[] data) {
+                    getVoltage();
                     RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
                     //021309 010203000400050607090a0b0c10111213
                     String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
@@ -565,6 +571,23 @@ public class BleService extends Service {
                 }
             });
         }
+    }
+
+
+    private void getVoltage() {
+        BleAPI.getVoltage(new BleChartChangeCallBack() {
+            @Override
+            public void callBack(byte[] data) {
+                RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
+                int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
+                RxLogUtils.d("电压：" + voltage);
+                VoltageToPower toPower = new VoltageToPower();
+                int capacity = toPower.getBatteryCapacity(voltage / 1000f);
+                double time = toPower.canUsedTime(voltage / 1000f, false);
+                RxLogUtils.d("capacity:" + capacity + "time：" + time);
+                RxBus.getInstance().post(new DeviceVoltageBus(voltage,capacity,time));
+            }
+        });
     }
 
 

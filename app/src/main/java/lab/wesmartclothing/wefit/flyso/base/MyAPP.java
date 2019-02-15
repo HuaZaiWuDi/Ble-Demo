@@ -87,7 +87,7 @@ public class MyAPP extends Application {
             @Override
             public void run() {
                 RxUtils.init(MyAPP.this);
-
+                RxLogUtils.setLogSwitch(true);
                 //开发版直接使用发布版API
                 if (!BuildConfig.DEBUG) {
                     ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);

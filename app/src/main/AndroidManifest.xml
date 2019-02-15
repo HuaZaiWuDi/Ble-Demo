@@ -26,6 +26,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/icon_app_round"
         android:label="@string/appName"
+        android:networkSecurityConfig="@xml/http_config"
         android:roundIcon="@mipmap/icon_app_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"

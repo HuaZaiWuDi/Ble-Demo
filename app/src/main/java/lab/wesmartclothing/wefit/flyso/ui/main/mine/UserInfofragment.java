@@ -297,8 +297,8 @@ public class UserInfofragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -323,8 +323,8 @@ public class UserInfofragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

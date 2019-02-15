@@ -129,7 +129,7 @@ public class MeFragment extends BaseAcFragment {
                 .subscribe(new RxSubscriber<RefreshMe>() {
                     @Override
                     protected void _onNext(RefreshMe hearRateUpload) {
-                        initNetData();
+                        initMineData();
                     }
                 });
 
@@ -140,7 +140,7 @@ public class MeFragment extends BaseAcFragment {
                     @Override
                     protected void _onNext(NetWorkType netWorkType) {
                         if (netWorkType.isBoolean())
-                            initNetData();
+                            initMineData();
                     }
                 });
 
@@ -153,7 +153,6 @@ public class MeFragment extends BaseAcFragment {
                         mIvNotify.setBackgroundResource(R.mipmap.icon_email_white);
                     }
                 });
-
     }
 
     private void initTypeface() {

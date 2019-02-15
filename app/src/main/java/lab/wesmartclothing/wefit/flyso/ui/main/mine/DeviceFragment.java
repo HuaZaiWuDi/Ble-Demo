@@ -33,6 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
@@ -41,6 +42,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -101,9 +103,9 @@ public class DeviceFragment extends BaseActivity {
                 //监听瘦身衣连接情况
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
                 mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
-                if (state) {
-                    getVoltage();
-                }
+//                if (state) {
+//                    getVoltage();
+//                }
             }
         }
     };
@@ -136,6 +138,21 @@ public class DeviceFragment extends BaseActivity {
         initData();
         notifyData();
         getVoltage();
+        initRxBus();
+    }
+
+
+    protected void initRxBus() {
+        RxBus.getInstance().register2(DeviceVoltageBus.class)
+                .compose(RxComposeUtils.<DeviceVoltageBus>bindLife(lifecycleSubject))
+                .subscribe(new Consumer<DeviceVoltageBus>() {
+                    @Override
+                    public void accept(DeviceVoltageBus deviceVoltageBus) throws Exception {
+                        mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
+                        mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
+                    }
+                });
+
     }
 
     @Override
@@ -190,8 +207,8 @@ public class DeviceFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -215,7 +232,6 @@ public class DeviceFragment extends BaseActivity {
             mTvClothingId.setText(SPUtils.getString(SPKey.SP_clothingMAC));
             mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
         }
-
     }
 
     private void getVoltage() {

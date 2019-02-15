@@ -166,10 +166,9 @@ public class HeartRateUtil {
                 //RxCache 库的一个Bug
                 RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
                         Key.CACHE_ATHL_RECORD_FREE);
-            } finally {
+            } catch (NullPointerException e) {
                 RxLogUtils.e("RxCache LruDiskCache is null");
             }
-
         }
     }
 

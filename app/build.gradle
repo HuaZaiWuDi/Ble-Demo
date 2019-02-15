@@ -135,7 +135,7 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
-    
+
 }
 
 dependencies {
@@ -184,7 +184,7 @@ dependencies {
     }
 
 //    //腾讯急速加载网页
-//    compile 'com.tencent.sonic:sdk:3.0.0'
+    implementation 'com.tencent.sonic:sdk:3.1.0'
 
     //jsbridge
     compile 'com.github.lzyzsd:jsbridge:1.0.4'
@@ -215,6 +215,10 @@ dependencies {
     implementation files('libs/qnsdk-0.3.4.jar')
 //    compile project(path: ':netlib')
 
-    implementation 'com.jackUtil:RxTools:1.0.2'
+    implementation('com.jackUtil:RxTools:1.0.2') {
+        exclude group: 'com.zchu'
+    }
+
+    implementation 'com.zchu:rxcache:2.3.5'
 
 }

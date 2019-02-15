@@ -200,6 +200,7 @@ public class SplashActivity extends BaseActivity {
 
     /**
      * 获取app配置信息
+     * android 9.0不能访问未加密的Http网页，所以网页都需要部署秤Https
      */
     private void getSystemConfig() {
         RxManager.getInstance().doNetSubscribe(NetManager.getSystemService()
@@ -209,7 +210,6 @@ public class SplashActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         List<SystemConfigBean> configBeans = JSON.parseObject(s, new TypeToken<List<SystemConfigBean>>() {
                         }.getType());
-
                         for (SystemConfigBean bean : configBeans) {
                             RxLogUtils.d("系统配置：" + bean);
                             switch (bean.getConfName()) {
