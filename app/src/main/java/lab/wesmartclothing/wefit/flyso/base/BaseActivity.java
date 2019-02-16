@@ -43,10 +43,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         //输入框被遮挡问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        super.onCreate(savedInstanceState);
-
         mContext = this;
         mActivity = this;
+
+        super.onCreate(savedInstanceState);
+
 
         initStatusBar();
 

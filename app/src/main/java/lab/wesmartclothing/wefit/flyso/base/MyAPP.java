@@ -50,6 +50,7 @@ public class MyAPP extends Application {
     public static Typeface typeface;
     public static AMapLocation aMapLocation = null;//定位信息
     public static GlideImageLoader sImageLoader;
+    public static MyAPP sMyAPP;
 
     //指定全局的上啦刷新，下拉加载的样式
     static {
@@ -80,7 +81,7 @@ public class MyAPP extends Application {
         Log.d("Myapp", BuildConfig.DEBUG + "");
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
-
+        sMyAPP = this;
 
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {

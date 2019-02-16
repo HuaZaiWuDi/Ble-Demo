@@ -66,10 +66,10 @@ public class VoltageToPower {
 //    }
 
 
-//    电池电压区间7.2-8.4
+//    电池电压区间5-8.4
     public int getBatteryCapacity(double Voltage) {
         System.out.print(Voltage);
-        int batteryCapacity = (int) ((Voltage - 7.2) / (8.4 - 7.2) * 100f);
+        int batteryCapacity = (int) ((Voltage - 5) / (8.4 - 5) * 100f);
         if (batteryCapacity > 100) batteryCapacity = 100;
         if (batteryCapacity < 0) batteryCapacity = 0;
         return batteryCapacity;

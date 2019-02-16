@@ -89,11 +89,11 @@ public class MainActivity extends BaseALocationActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
         //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
+        super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            RxActivityUtils.skipActivityAndFinish(mActivity, SplashActivity.class);
+            RxActivityUtils.skipActivityAndFinish(mContext, SplashActivity.class);
             return;
         }
-        super.onCreate(savedInstanceState);
     }
 
     @Override

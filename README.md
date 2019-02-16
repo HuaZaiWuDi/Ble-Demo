@@ -3,3 +3,7 @@
 Debug签名：b0ad08c1a970d0a4e8e7ca6636e38c23
 Release签名：2a34a83c3bc235b96568a56ef62a65c0
 应用包名：lab.wesmartclothing.wefit.flyso
+
+//友盟第三方
+应用名：TimeToFit-Android
+AppKey：5c662b4cf1f5567e310009e5
