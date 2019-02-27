@@ -523,8 +523,6 @@ public class BleService extends Service {
                 syncHistoryData();
             }
         });
-//        QNBleDevice
-
     }
 
     private void syncHistoryData() {
@@ -585,7 +583,7 @@ public class BleService extends Service {
                 int capacity = toPower.getBatteryCapacity(voltage / 1000f);
                 double time = toPower.canUsedTime(voltage / 1000f, false);
                 RxLogUtils.d("capacity:" + capacity + "time：" + time);
-                RxBus.getInstance().post(new DeviceVoltageBus(voltage,capacity,time));
+                RxBus.getInstance().post(new DeviceVoltageBus(voltage, capacity, time));
             }
         });
     }

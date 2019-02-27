@@ -122,7 +122,7 @@ public class SportingActivity extends BaseActivity {
     private HeartLineChartUtils lineChartUtils;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
     private List<HeartRateItemBean> heartLists = new ArrayList<>();
-    private double currentKcal = 0;
+    private double currentKcal = 0, maxKcal = 0;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -279,8 +279,10 @@ public class SportingActivity extends BaseActivity {
                             xAxis.resetAxisMaximum();
                         }
 
+                        int currentHeart = sportsDataTab.getCurHeart();
+
                         HeartRateItemBean heartRateTab = new HeartRateItemBean();
-                        heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
+                        heartRateTab.setHeartRate(currentHeart);
                         heartRateTab.setHeartTime(sportsDataTab.getDate());
                         heartRateTab.setStepTime(2);
                         heartRateTab.setIsfree(true);
@@ -289,11 +291,14 @@ public class SportingActivity extends BaseActivity {
                         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 
                         freeTextSpeak(sportsDataTab.getCurHeart());
-                        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
+                        mTvAvHeartRate.setText(currentHeart + "");
+                        mTvMaxHeartRate.setText(Math.max(maxKcal, currentHeart) + "");
 
-                        currentKcal += HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600);
-                        currentKcal = RxFormatValue.format4S5R(currentKcal, 1);
+                        //心率处于静息心率区间时不计算卡路里，
+                        if (currentHeart >= Key.HRART_SECTION[1]) {
+                            currentKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(currentHeart, 2f / 3600), 1);
+                        }
+
                         RxLogUtils.d("当前kacl：" + currentKcal);
 
                         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(currentKcal, 1))
@@ -313,7 +318,6 @@ public class SportingActivity extends BaseActivity {
                                     }
                                 });
 
-
                         LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
                         int count = realTimeSet.getEntryCount();
 
@@ -327,7 +331,6 @@ public class SportingActivity extends BaseActivity {
                         ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
                         layoutParams.width = width;
                         mTvCurrentTime.setLayoutParams(layoutParams);
-
 
                     }
                 });

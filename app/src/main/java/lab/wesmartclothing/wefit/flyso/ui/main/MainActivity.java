@@ -90,7 +90,7 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.e("加载：MainActivity：" + savedInstanceState);
         //防止应用处于后台，被杀死，再次唤醒时，重走启动流程
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && mContext != null) {
             RxActivityUtils.skipActivityAndFinish(mContext, SplashActivity.class);
             return;
         }

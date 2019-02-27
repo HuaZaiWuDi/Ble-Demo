@@ -18,6 +18,7 @@ public class BLEUtil {
         for (int i = 30; i <= 110; i++) {
             System.out.println("rssi:" + i + "---" + rssi2Distance(i, 2));
         }
+
     }
 
     /**

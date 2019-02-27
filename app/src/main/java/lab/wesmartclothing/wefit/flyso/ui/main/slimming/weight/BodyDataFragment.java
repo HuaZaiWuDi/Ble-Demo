@@ -149,10 +149,15 @@ public class BodyDataFragment extends BaseActivity {
         Healthy healthy0 = new Healthy();
         mHealthyList.add(healthy0);
 
-
+        /**
+         * 体脂率
+         * 男性 15-18-23
+         * 女性 20 -25- 30
+         *
+         * */
         //体脂率
         Healthy healthy = new Healthy();
-        healthy.setSections(new double[]{11, 21, 26});
+        healthy.setSections(userInfo.getSex() == 1 ? new double[]{15, 18, 23} : new double[]{20, 25, 30});
         healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
         healthy.setSectionLabels(new String[]{"11.0%", "21.0%", "26.0%"});

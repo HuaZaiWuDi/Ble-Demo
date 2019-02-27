@@ -193,6 +193,13 @@
     long consumerIndex;
 }
 
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+
 
 #数据库类，实体类还有自定义控件类
 #一颗星表示只是保持该包下的类名，而子包下的类名还是会被混淆；

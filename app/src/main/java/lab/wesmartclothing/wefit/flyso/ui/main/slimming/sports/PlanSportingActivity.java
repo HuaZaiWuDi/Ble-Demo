@@ -184,7 +184,7 @@ public class PlanSportingActivity extends BaseActivity {
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
 
         speakAdd("设备已连接、让我们开始运动瘦身课程训练吧！");
-
+        maxHeart = 0;
     }
 
 
@@ -270,13 +270,16 @@ public class PlanSportingActivity extends BaseActivity {
 
                         currentHeart = sportsDataTab.getCurHeart();
 
-                        mTvAvHeartRate.setText(sportsDataTab.getCurHeart() + "");
+                        mTvAvHeartRate.setText(currentHeart + "");
 
-                        maxHeart = Math.max(sportsDataTab.getCurHeart(), maxHeart);
+                        maxHeart = Math.max(currentHeart, maxHeart);
                         mTvMaxHeartRate.setText(maxHeart + "");
 
 
-                        sportingKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(sportsDataTab.getCurHeart(), 2f / 3600), 1);
+                        //心率处于静息心率区间时不计算卡路里，
+                        if (currentHeart >= Key.HRART_SECTION[1]) {
+                            sportingKcal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(currentHeart, 2f / 3600), 1);
+                        }
 
                         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingKcal, 1))
                                 .append("\tkcal").setProportion(0.5f)
@@ -285,7 +288,7 @@ public class PlanSportingActivity extends BaseActivity {
 
 
                         HeartRateItemBean heartRateTab = new HeartRateItemBean();
-                        heartRateTab.setHeartRate(sportsDataTab.getCurHeart());
+                        heartRateTab.setHeartRate(currentHeart);
                         heartRateTab.setHeartTime(sportsDataTab.getDate());
                         heartRateTab.setStepTime(2);
                         heartRateTab.setIsfree(true);
@@ -353,27 +356,29 @@ public class PlanSportingActivity extends BaseActivity {
      * @param bean
      */
     private void completeHeartRange(AthlPlanListBean bean, AthlPlanListBean nextBean) {
-        switch (bean.getHeartRange()) {
-            case 80:
+        switch (bean.getRange()) {
+            //静息
+            case 0:
                 break;
-            case 100:
-//                speakAdd("恭喜您完成热身训练，请提高运动量进行燃脂训练");
+            //热身
+            case 1:
                 speakAdd(" 恭喜您完成热身训练，下一节燃脂运动，请调节心率至燃脂运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
-            case 120:
-//                speakAdd("恭喜您完成燃脂训练，请提高运动量进行有氧训练");
+            //燃脂
+            case 2:
                 speakAdd(" 恭喜您完成燃脂训练，下一节有氧运动，请调节心率至有氧运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
-            case 140:
-//                speakAdd("恭喜您完成有氧训练，让我们放松一下吧，请降低运动量至燃脂训练");
+            //有氧
+            case 3:
                 speakAdd(" 恭喜您完成有氧训练，下一节无氧运动，请调节心率至无氧运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
-            case 160:
+            //无氧
+            case 4:
                 speakAdd("您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢\n" +
                         "率。建议运动时长不超过 15 分钟。");
-//                speakAdd(" 恭喜您完成无氧训练，下一节无氧运动，请调节心率至无氧运动区间，保持匀速" + nextBean.getDuration() + "分钟。");
                 break;
-            case 180:
+            //极限
+            case 5:
                 break;
         }
     }
