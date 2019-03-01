@@ -22,7 +22,6 @@ import com.google.gson.reflect.TypeToken;
 import com.smartclothing.blelibrary.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -30,6 +29,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarGroupChart;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
@@ -57,6 +57,7 @@ import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -860,7 +861,8 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.img_seeRecord:
                 if (bean.getPlanState() == 3) {
-                    RxActivityUtils.skipActivity(mContext, PlanWebActivity.class);
+                    bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true");
+                    RxActivityUtils.skipActivity(mContext, PlanWebActivity.class, bundle);
                 } else if (bean.getPlanState() != 0) {
                     bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
                     RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);

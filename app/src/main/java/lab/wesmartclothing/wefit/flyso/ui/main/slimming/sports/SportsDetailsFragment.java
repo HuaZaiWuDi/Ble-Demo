@@ -1,11 +1,13 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
@@ -19,7 +21,11 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -57,9 +63,6 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.share.ShareListener;
-import me.shaohui.shareutil.share.SharePlatform;
 
 /**
  * Created by jk on 2018/7/19.
@@ -218,7 +221,7 @@ public class SportsDetailsFragment extends BaseActivity {
         mLayoutQRcode.setVisibility(startShare ? View.VISIBLE : View.GONE);
 
         if (startShare) {
-            tipDialog.show("正在分享...", 3000);
+
             RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
@@ -334,8 +337,8 @@ public class SportsDetailsFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -484,62 +487,55 @@ public class SportsDetailsFragment extends BaseActivity {
 
 
     private void showSimpleBottomSheetGrid(final Bitmap imgUrl) {
-        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
-        builder.addItem(R.mipmap.wechat, "微信好友", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.fr, "朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.weib, "新浪微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "QQ好友", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-//                .addItem(R.mipmap.zone, "QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView) {
-                        dialog.dismiss();
-                        int tag = (int) itemView.getTag();
-                        switch (tag) {
-                            case 1:
-                                ShareUtil.shareImage(mActivity, SharePlatform.WX, imgUrl, shareListener);
-                                break;
-                            case 2:
-                                ShareUtil.shareImage(mActivity, SharePlatform.WX_TIMELINE, imgUrl, shareListener);
-                                break;
-                            case 3:
-                                ShareUtil.shareImage(mActivity, SharePlatform.WEIBO, imgUrl, shareListener);
-                                break;
-                            case 4:
-                                ShareUtil.shareImage(mActivity, SharePlatform.QQ, imgUrl, shareListener);
-                                break;
-//                            case 5:
-//                                ShareUtil.shareImage(mActivity, SharePlatform.QZONE, imgUrl, shareListener);
-//                                break;
 
-                        }
-                    }
-                }).build().show();
+        UMImage image = new UMImage(this, imgUrl);//网络图片
+
+//        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
+        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
+
+        UMImage thumb = new UMImage(this, imgUrl);
+        image.setThumb(thumb);
+        new ShareAction(mActivity)
+                .withMedia(image)
+                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
+                .setCallback(mUMShareListener).open();
+
     }
 
-
-    ShareListener shareListener = new ShareListener() {
+    UMShareListener mUMShareListener = new UMShareListener() {
         @Override
-        public void shareSuccess() {
+        public void onStart(SHARE_MEDIA share_media) {
+            RxLogUtils.d("开始分享");
+            tipDialog.show("正在分享...", 3000);
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享成功");
             RxToast.normal("分享成功");
             tipDialog.dismiss();
         }
 
         @Override
-        public void shareFailure(Exception e) {
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
             RxLogUtils.d("分享失败");
             RxToast.normal("分享失败");
             tipDialog.dismiss();
         }
 
         @Override
-        public void shareCancel() {
+        public void onCancel(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享关闭");
             RxToast.normal("分享关闭");
             tipDialog.dismiss();
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
 
 
     @Override

@@ -1,8 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -11,13 +11,18 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.vondear.rxtools.utils.bitmap.RxCameraUtils;
-import com.vondear.rxtools.utils.bitmap.RxImageUtils;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
+import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxProcessUtils;
-import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.bitmap.RxCameraUtils;
+import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import java.io.File;
@@ -32,13 +37,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.share.ShareListener;
-import me.shaohui.shareutil.share.SharePlatform;
 
 public class PlanWebActivity extends BaseWebActivity {
 
@@ -74,8 +75,7 @@ public class PlanWebActivity extends BaseWebActivity {
     @Nullable
     @Override
     protected String getUrl() {
-        return ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
-//        return TEST_URL;
+        return getIntent().getStringExtra(Key.BUNDLE_WEB_URL);
     }
 
 
@@ -101,12 +101,6 @@ public class PlanWebActivity extends BaseWebActivity {
                 return false;
             }
 
-            @Override
-            public void onScaleChanged(WebView view, float oldScale, float newScale) {
-                super.onScaleChanged(view, oldScale, newScale);
-                mAgentWeb.getUrlLoader().reload();
-                RxLogUtils.d("onScaleChanged：" + oldScale + "n:" + newScale);
-            }
 
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -117,8 +111,17 @@ public class PlanWebActivity extends BaseWebActivity {
             @Override
             public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
-                tipDialog.dismiss();
-                mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.VISIBLE);
+
+                RxLogUtils.e("网页高度：" + view.getContentHeight());
+                RxLogUtils.e("网页高度：" + view.getHeight());
+                RxLogUtils.e("网页高度：" + view.getMeasuredHeight());
+                if (view.getContentHeight() < 1000 ) {
+                    mAgentWeb.getUrlLoader().reload();
+                } else {
+                    mAgentWeb.getWebCreator().getWebParentLayout().setVisibility(View.VISIBLE);
+                    tipDialog.dismiss();
+                }
+
             }
 
         };
@@ -126,10 +129,12 @@ public class PlanWebActivity extends BaseWebActivity {
 
     @Override
     protected void onDestroy() {
+//        mAgentWeb.getWebCreator().getWebView().clearHistory();
+//        AgentWebConfig.clearDiskCache(mContext);
         super.onDestroy();
+        UMShareAPI.get(this).release();
 
     }
-
 
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
@@ -153,7 +158,11 @@ public class PlanWebActivity extends BaseWebActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        share();
+                        if (AntiShake.getInstance().check(v.getId())) return;
+                        showSimpleBottomSheetGrid(
+                                "想知道怎样的瘦身方式才是健康的？一键获得健康报告，您想知道的全都有。",
+                                "营养食谱随心吃，科学训练自由动，不瘦？怎么可能……",
+                                mAgentWeb.getWebCreator().getWebView().getUrl().replace("sign=true", "sign=false"));
                     }
                 });
     }
@@ -210,74 +219,55 @@ public class PlanWebActivity extends BaseWebActivity {
                 });
     }
 
-    //分享链接
-    private void share() {
-        tipDialog.show("正在分享...", 3000);
-        showSimpleBottomSheetGrid(BitmapFactory.decodeResource(getResources(), R.drawable.img_plan_share),
-                "想知道怎样的瘦身方式才是健康的？一键获得健康报告，您想知道的全都有。",
-                "营养食谱随心吃，科学训练自由动，不瘦？怎么可能……", ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=false");
-        RxLogUtils.e("当前地址：" + ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=false");
+
+    private void showSimpleBottomSheetGrid(final String title, final String desc, final String url) {
+        UMImage image = new UMImage(mContext, R.drawable.img_plan_share);//网络图片
+
+        UMWeb web = new UMWeb(url);
+        web.setTitle(title);//标题
+        web.setThumb(image);  //缩略图
+        web.setDescription(desc);//描述
+        new ShareAction(mActivity)
+                .withMedia(web)
+                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
+                .setCallback(mUMShareListener).open();
     }
 
 
-    private void showSimpleBottomSheetGrid(final Bitmap imgUrl, final String title, final String desc, final String url) {
-        QMUIBottomSheet.BottomGridSheetBuilder builder = new QMUIBottomSheet.BottomGridSheetBuilder(mContext);
-        builder.addItem(R.mipmap.wechat, "分享到微信", 1, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.fr, "分享到朋友圈", 2, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.weib, "分享到微博", 3, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.qq, "分享到QQ", 4, QMUIBottomSheet.BottomGridSheetBuilder.FIRST_LINE)
-                .addItem(R.mipmap.zone, "分享到QQ空间", 5, QMUIBottomSheet.BottomGridSheetBuilder.SECOND_LINE)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomGridSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView) {
-                        dialog.dismiss();
-                        int tag = (int) itemView.getTag();
-
-                        switch (tag) {
-                            case 1:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WX, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 2:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WX_TIMELINE, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 3:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.WEIBO, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 4:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.QQ, title, desc, url, imgUrl, shareListener);
-                                break;
-                            case 5:
-                                ShareUtil.shareMedia(mActivity, SharePlatform.QZONE, title, desc, url, imgUrl, shareListener);
-                                break;
-
-                        }
-                    }
-                }).build().show();
-    }
-
-
-    ShareListener shareListener = new ShareListener() {
+    UMShareListener mUMShareListener = new UMShareListener() {
         @Override
-        public void shareSuccess() {
+        public void onStart(SHARE_MEDIA share_media) {
+            RxLogUtils.d("开始分享");
+            tipDialog.show("正在分享...", 3000);
+        }
+
+        @Override
+        public void onResult(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享成功");
             RxToast.normal("分享成功");
             tipDialog.dismiss();
         }
 
         @Override
-        public void shareFailure(Exception e) {
+        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
             RxLogUtils.d("分享失败");
             RxToast.normal("分享失败");
             tipDialog.dismiss();
         }
 
         @Override
-        public void shareCancel() {
+        public void onCancel(SHARE_MEDIA share_media) {
             RxLogUtils.d("分享关闭");
             RxToast.normal("分享关闭");
             tipDialog.dismiss();
         }
     };
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @android.support.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
 
 }

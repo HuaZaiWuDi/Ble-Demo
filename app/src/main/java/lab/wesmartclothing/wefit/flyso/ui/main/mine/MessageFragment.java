@@ -133,7 +133,6 @@ public class MessageFragment extends BaseActivity {
 
         smartRefreshLayout.setEnableLoadMore(true);
         smartRefreshLayout.setEnableRefresh(true);
-
     }
 
     /**

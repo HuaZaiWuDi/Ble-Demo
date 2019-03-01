@@ -66,6 +66,7 @@ public abstract class BaseWebActivity extends BaseActivity {
         AgentWebConfig.debug();
 
 
+
 //        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
 //        WebView webView = mAgentWeb.getWebCreator().getWebView();
 //        webView.setOverScrollMode(WebView.OVER_SCROLL_NEVER);//始终可以滑动
@@ -97,7 +98,6 @@ public abstract class BaseWebActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         if (mAgentWeb != null) {
-            RxLogUtils.d("清除缓存");
 //            AgentWebConfig.clearDiskCache(mContext);
             mAgentWeb.getWebLifeCycle().onDestroy();
         }

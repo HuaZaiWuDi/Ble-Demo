@@ -45,4 +45,5 @@ public interface SPKey {
     String SP_DIET_PLAN_USER = "SP_DIET_PLAN_USER";
 
     String SP_ATHL_PLAN_USER = "SP_ATHL_PLAN_USER";
+
 }

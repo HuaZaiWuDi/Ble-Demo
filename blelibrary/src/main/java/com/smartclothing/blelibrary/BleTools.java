@@ -73,9 +73,10 @@ public class BleTools {
     private BleChartChangeCallBack bleChartChange;
     private SynDataCallBack mSynDataCallBack;
     private byte[] bytes;
-    private final int reWriteCount = 2;    //重连次数
+    private final int resetCount = 2;    //重连次数
     private int currentCount = 0;          //当前次数
-    private final int timeOut = 3000;          //超时
+    private static final int timeOut = 3000;          //超时
+    private static final int connectTimeout = 15 * 1000;
 
 
     public static void initBLE(Application application) {
@@ -92,10 +93,10 @@ public class BleTools {
 //        bleManager.disableBluetooth();//关闭蓝牙
         bleManager.enableLog(false);//是否开启蓝牙日志
         bleManager.setMaxConnectCount(1);
-        bleManager.setOperateTimeout(2000);//设置操作超时时间
+        bleManager.setOperateTimeout(timeOut);//设置操作超时时间
 
-        bleManager.setReConnectCount(3, 3000);
-        bleManager.setConnectOverTime(15000);
+        bleManager.setReConnectCount(3, timeOut);
+        bleManager.setConnectOverTime(connectTimeout);
 
     }
 
@@ -138,7 +139,7 @@ public class BleTools {
         this.bytes = bytes;
         this.bleChartChange = bleChartChange;
 
-        if (currentCount > reWriteCount) {
+        if (currentCount > resetCount) {
             Log.e(TAG, "写失败--次数：" + currentCount);
             currentCount = 0;
         } else {

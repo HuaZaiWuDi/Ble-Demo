@@ -73,7 +73,7 @@ public class BleAPI {
             index++;
             bytes[index] = 0x03;
             index++;
-            bytes[index] = (byte) LED;
+            bytes[index] = 0x01;
         }
         index++;
         bytes[index] = 0x04;

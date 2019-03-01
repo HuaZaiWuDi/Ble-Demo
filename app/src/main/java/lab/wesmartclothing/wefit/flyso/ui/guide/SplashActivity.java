@@ -8,13 +8,13 @@ import android.content.IntentFilter;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -39,8 +39,7 @@ import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
 
 public class SplashActivity extends BaseActivity {
-    private String userInfoStr;
-    private boolean isSaveUserInfo, hasInviteCode = true;
+
 
     BroadcastReceiver APPReplacedReceiver = new BroadcastReceiver() {
         @Override
@@ -79,6 +78,7 @@ public class SplashActivity extends BaseActivity {
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
 
         RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
+        RxLogUtils.e("用户token：" + SPUtils.getString(SPKey.SP_token));
 
     }
 
@@ -88,7 +88,13 @@ public class SplashActivity extends BaseActivity {
         initData();
         initUserInfo();
 
-        RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
+//        BleAPI.syncSetting(Key.heartRates, 60, 50, false, new BleChartChangeCallBack() {
+//            @Override
+//            public void callBack(byte[] data) {
+//                RxLogUtils.d("配置参数");
+////                syncHistoryData();
+//            }
+//        });
 
 
 //        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
@@ -122,6 +128,8 @@ public class SplashActivity extends BaseActivity {
 
     private void gotoMain(String userInfoStr) {
         UserInfo userInfo = JSON.parseObject(userInfoStr, UserInfo.class);
+        boolean isSaveUserInfo = false, hasInviteCode = true;
+
         if (userInfo != null) {
             int sex = userInfo.getSex();
             SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());

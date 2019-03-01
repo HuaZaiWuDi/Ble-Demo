@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.login;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
@@ -13,6 +15,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -28,6 +33,8 @@ import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +42,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.entity.LoginResult;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
@@ -45,10 +53,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import me.shaohui.shareutil.LoginUtil;
-import me.shaohui.shareutil.login.LoginListener;
-import me.shaohui.shareutil.login.LoginPlatform;
-import me.shaohui.shareutil.login.LoginResult;
 
 public class LoginRegisterActivity extends BaseActivity {
 
@@ -84,42 +88,73 @@ public class LoginRegisterActivity extends BaseActivity {
     }
 
 
-    @OnClick(R.id.img_wexin)
-    void img_wexin() {
-        tipDialog.show("正在登陆", 3000);
-        LoginUtil.login(mActivity, LoginPlatform.WX, listener, true);
+    @OnClick({R.id.img_wexin,
+            R.id.img_qq,
+            R.id.img_weibo
+    })
+    public void onViewClicked(View view) {
+
+        SHARE_MEDIA media = SHARE_MEDIA.QQ;
+        switch (view.getId()) {
+            case R.id.img_wexin:
+                media = SHARE_MEDIA.WEIXIN;
+                break;
+            case R.id.img_qq:
+                media = SHARE_MEDIA.QQ;
+                break;
+            case R.id.img_weibo:
+                media = SHARE_MEDIA.SINA;
+                break;
+        }
+
+        UMShareAPI umShareAPI = UMShareAPI.get(this);
+        umShareAPI.getPlatformInfo(this, media, mUMAuthListener);
     }
 
-    @OnClick(R.id.img_qq)
-    void img_qq() {
-        tipDialog.show("正在登陆", 3000);
-        LoginUtil.login(mActivity, LoginPlatform.QQ, listener, true);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
-    @OnClick(R.id.img_weibo)
-    void img_weibo() {
-        tipDialog.show("正在登陆", 3000);
-        LoginUtil.login(mActivity, LoginPlatform.WEIBO, listener, true);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UMShareAPI.get(this).release();
     }
 
 
-    final LoginListener listener = new LoginListener() {
+    private UMAuthListener mUMAuthListener = new UMAuthListener() {
         @Override
-        public void loginSuccess(LoginResult result) {
-            //登录成功， 如果你选择了获取用户信息，可以通过
-            RxLogUtils.e("登录成功:" + result.toString());
-            loginOther(result);
+        public void onStart(SHARE_MEDIA share_media) {
+            RxLogUtils.d("开始登录");
+            tipDialog.show("正在登陆", 3000);
         }
 
         @Override
-        public void loginFailure(Exception e) {
-            RxLogUtils.e("登录失败", e);
+        public void onComplete(SHARE_MEDIA share_media, int i, Map<String, String> map) {
+            RxLogUtils.d("login:onComplete: ");
+            tipDialog.dismiss();
+            Set<String> strings = map.keySet();
+            for (String s : strings) {
+                RxLogUtils.d("s: " + s + "--value" + map.get(s));
+            }
+
+            loginOther(new LoginResult(map, share_media));
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA share_media, int i, Throwable throwable) {
+            RxLogUtils.e("登录失败", throwable);
             RxToast.error("登录失败");
+            tipDialog.dismiss();
         }
 
         @Override
-        public void loginCancel() {
+        public void onCancel(SHARE_MEDIA share_media, int i) {
             RxLogUtils.e("登录取消");
+            RxToast.error("登录取消");
+            tipDialog.dismiss();
         }
     };
 
@@ -329,14 +364,10 @@ public class LoginRegisterActivity extends BaseActivity {
         rxDialog.show();
     }
 
-
     private void loginOther(final LoginResult result) {
-        String openId = result.getToken().getOpenid();
-        String nickname = result.getUserInfo().getNickname();
-        String imageUrl = result.getUserInfo().getHeadImageUrl();
-        String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ :
-                result.getPlatform() == LoginPlatform.WEIBO ? Key.LoginType_WEIBO : Key.LoginType_WEXIN;
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().outerLogin(openId, nickname, imageUrl, userType))
+        if (result == null) return;
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .outerLogin(result.openId, result.nickname, result.imageUrl, result.userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -365,8 +396,4 @@ public class LoginRegisterActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

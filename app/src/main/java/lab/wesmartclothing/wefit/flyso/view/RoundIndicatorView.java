@@ -18,11 +18,10 @@ import lab.wesmartclothing.wefit.flyso.R;
 
 
 /**
- * 公司名称：DXY鼎芯
- * 项目名称：DXYBle_GM
- * 类描述：
- * 创建人：Jack
- * 创建时间：2017/6/7
+ * @author Jack
+ * @date on 2018/12/28
+ * @describe TODO
+ * @org 智裳科技
  */
 
 public class RoundIndicatorView extends View {

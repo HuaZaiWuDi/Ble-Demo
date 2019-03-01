@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -12,18 +13,24 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.entity.LoginResult;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -32,11 +39,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import me.shaohui.shareutil.LoginUtil;
-import me.shaohui.shareutil.login.LoginListener;
-import me.shaohui.shareutil.login.LoginPlatform;
-import me.shaohui.shareutil.login.LoginResult;
-import me.shaohui.shareutil.share.SharePlatform;
 
 /**
  * Created by jk on 2018/8/9.
@@ -91,12 +93,6 @@ public class AccountFragment extends BaseActivity {
         mTvPhone.setText(phone);
     }
 
-    @Override
-    public void onDestroy() {
-        listener = null;
-        super.onDestroy();
-    }
-
     private void initMyDialog() {
         dialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
@@ -129,18 +125,36 @@ public class AccountFragment extends BaseActivity {
             dialog.show();
         } else {
             //绑定
+            tipDialog.show("正在登陆", 3000);
+            SHARE_MEDIA media = SHARE_MEDIA.QQ;
             switch (type) {
                 case Key.LoginType_WEXIN:
-                    LoginUtil.login(mActivity, LoginPlatform.WX, listener, true);
+                    media = SHARE_MEDIA.WEIXIN;
                     break;
                 case Key.LoginType_QQ:
-                    LoginUtil.login(mActivity, LoginPlatform.QQ, listener, true);
+                    media = SHARE_MEDIA.QQ;
                     break;
                 case Key.LoginType_WEIBO:
-                    LoginUtil.login(mActivity, LoginPlatform.WEIBO, listener, true);
+                    media = SHARE_MEDIA.SINA;
                     break;
             }
+
+            UMShareAPI umShareAPI = UMShareAPI.get(this);
+            umShareAPI.getPlatformInfo(this, media, mUMAuthListener);
         }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UMShareAPI.get(this).release();
     }
 
 
@@ -184,31 +198,44 @@ public class AccountFragment extends BaseActivity {
         void complete(String result);
     }
 
-
-    LoginListener listener = new LoginListener() {
+    private UMAuthListener mUMAuthListener = new UMAuthListener() {
         @Override
-        public void loginSuccess(LoginResult result) {
-            //登录成功， 如果你选择了获取用户信息，可以通过
-            RxLogUtils.e("登录成功:" + result.toString());
-            bindOther(result);
+        public void onStart(SHARE_MEDIA share_media) {
+            RxLogUtils.d("开始登录");
+            tipDialog.show("正在登陆", 3000);
         }
 
         @Override
-        public void loginFailure(Exception e) {
-            RxLogUtils.e("登录失败:" + e.getMessage());
+        public void onComplete(SHARE_MEDIA share_media, int i, Map<String, String> map) {
+            RxLogUtils.d("login:onComplete: ");
+            tipDialog.dismiss();
+            Set<String> strings = map.keySet();
+            for (String s : strings) {
+                RxLogUtils.d("s: " + s + "--value" + map.get(s));
+            }
+
+            bindOther(new LoginResult(map, share_media));
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA share_media, int i, Throwable throwable) {
+            RxLogUtils.e("登录失败", throwable);
             RxToast.error("登录失败");
+            tipDialog.dismiss();
         }
 
         @Override
-        public void loginCancel() {
+        public void onCancel(SHARE_MEDIA share_media, int i) {
             RxLogUtils.e("登录取消");
-            RxToast.normal("登录取消");
+            RxToast.error("登录取消");
+            tipDialog.dismiss();
         }
     };
 
     private void bindOther(final LoginResult result) {
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().bindingOuterInfo(result.getUserInfo().getHeadImageUrl(),
-                result.getUserInfo().getNickname(), result.getToken().getOpenid(), typeTransformation(result.getPlatform())))
+        if (result == null) return;
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().bindingOuterInfo(result.imageUrl,
+                result.nickname, result.openId, result.userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -216,13 +243,13 @@ public class AccountFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
                         if (switchBindListener != null) {
-                            switchBindListener.complete(result.getUserInfo().getNickname());
+                            switchBindListener.complete(result.nickname);
                         }
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.normal(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.normal(error, code);
                     }
                 });
     }
@@ -243,8 +270,8 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -291,27 +318,10 @@ public class AccountFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.normal(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.normal(error, code);
                     }
                 });
-    }
-
-
-    private String typeTransformation(int type) {
-        String otherType = "";
-        switch (type) {
-            case SharePlatform.WX:
-                otherType = Key.LoginType_WEXIN;
-                break;
-            case SharePlatform.QQ:
-                otherType = Key.LoginType_QQ;
-                break;
-            case SharePlatform.WEIBO:
-                otherType = Key.LoginType_WEIBO;
-                break;
-        }
-        return otherType;
     }
 
 }

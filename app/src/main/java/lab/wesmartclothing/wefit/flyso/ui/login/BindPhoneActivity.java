@@ -28,6 +28,7 @@ import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.entity.LoginResult;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
@@ -38,8 +39,6 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import me.shaohui.shareutil.login.LoginPlatform;
-import me.shaohui.shareutil.login.LoginResult;
 
 public class BindPhoneActivity extends BaseActivity {
     private String phone;
@@ -193,12 +192,9 @@ public class BindPhoneActivity extends BaseActivity {
             return;
         }
         LoginResult result = (LoginResult) getIntent().getSerializableExtra(Key.BUNDLE_OTHER_LOGIN_INFO);
+        if (result == null) return;
         RxLogUtils.e("登录信息：" + result.toString());
-        String openId = result.getToken().getOpenid();
-        String nickname = result.getUserInfo().getNickname();
-        String imageUrl = result.getUserInfo().getHeadImageUrl();
-        String userType = result.getPlatform() == LoginPlatform.QQ ? Key.LoginType_QQ : result.getPlatform() == LoginPlatform.WEIBO ? Key.LoginType_WEIBO : Key.LoginType_WEXIN;
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().phoneBind(phone, vCode, openId, nickname, imageUrl, userType))
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().phoneBind(phone, vCode, result.openId, result.nickname, result.imageUrl, result.userType))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {

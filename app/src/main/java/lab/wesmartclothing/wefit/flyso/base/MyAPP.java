@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
+import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
@@ -17,6 +18,8 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
+import com.umeng.commonsdk.UMConfigure;
+import com.umeng.socialize.PlatformConfig;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
@@ -38,8 +41,6 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
-import me.shaohui.shareutil.ShareConfig;
-import me.shaohui.shareutil.ShareManager;
 
 /**
  * Created icon_hide_password jk on 2018/5/8.
@@ -77,8 +78,6 @@ public class MyAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Logger.d("Myapp" + BuildConfig.DEBUG);
-        Log.d("Myapp", BuildConfig.DEBUG + "");
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
         sMyAPP = this;
@@ -99,7 +98,7 @@ public class MyAPP extends Application {
                     }
                 }
                 MultiDex.install(MyAPP.this);
-                initShareLogin();
+                initUM();
                 initLeakCanary();
                 /**
                  * 过滤开发设备
@@ -150,17 +149,14 @@ public class MyAPP extends Application {
     }
 
 
-    private void initShareLogin() {
-        // init
-        ShareConfig config = ShareConfig.instance()
-                .qqId(Key.QQ_ID)
-                .wxId(Key.WX_ID)
-                .weiboId(Key.WEIBO_ID)
-                // 下面两个，如果不需要登录功能，可不填写
-                .weiboRedirectUrl(Key.WB_URL)
-                .wxSecret(Key.WX_SECRET);
-        ShareManager.init(config);
+    private void initUM() {
+        UMConfigure.setLogEnabled(true);
+        UMConfigure.init(MyAPP.this, "5a38b2e8b27b0a02a7000026", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
+        PlatformConfig.setWeixin("wxaaeb0352e04684de", "0d23407fe42a2665dabe3ea2a958daf9");
+        PlatformConfig.setQQZone("1106924585", "RGcOhc7q8qZMrhxz");
+        PlatformConfig.setSinaWeibo("3322261844", "60eabde1de49af086f53aa5fb230f7ed", "https://sns.whalecloud.com/sina2/callback");
     }
+
 
     public static RxCache getRxCache() {
         return RxCache.getDefault();
