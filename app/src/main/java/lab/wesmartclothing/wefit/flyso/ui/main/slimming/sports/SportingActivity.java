@@ -122,7 +122,8 @@ public class SportingActivity extends BaseActivity {
     private HeartLineChartUtils lineChartUtils;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
     private List<HeartRateItemBean> heartLists = new ArrayList<>();
-    private double currentKcal = 0, maxKcal = 0;
+    private double currentKcal = 0;
+    private int maxHeartRate = 0;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -292,7 +293,10 @@ public class SportingActivity extends BaseActivity {
 
                         freeTextSpeak(sportsDataTab.getCurHeart());
                         mTvAvHeartRate.setText(currentHeart + "");
-                        mTvMaxHeartRate.setText(Math.max(maxKcal, currentHeart) + "");
+
+
+                        maxHeartRate = Math.max(maxHeartRate, currentHeart);
+                        mTvMaxHeartRate.setText(maxHeartRate + "");
 
                         //心率处于静息心率区间时不计算卡路里，
                         if (currentHeart >= Key.HRART_SECTION[1]) {

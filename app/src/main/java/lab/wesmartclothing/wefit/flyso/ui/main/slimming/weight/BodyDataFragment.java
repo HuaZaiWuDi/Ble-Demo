@@ -160,7 +160,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy.setSections(userInfo.getSex() == 1 ? new double[]{15, 18, 23} : new double[]{20, 25, 30});
         healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
-        healthy.setSectionLabels(new String[]{"11.0%", "21.0%", "26.0%"});
+        healthy.setSectionLabels(userInfo.getSex() == 1 ? new String[]{"15.0%", "18.0%", "23.0%"} : new String[]{"20.0%", "25.0%", "30.0%"});
         healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
         mHealthyList.add(healthy);
 

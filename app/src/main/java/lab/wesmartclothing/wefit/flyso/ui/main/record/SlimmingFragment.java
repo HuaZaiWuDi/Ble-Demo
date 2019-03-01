@@ -718,13 +718,19 @@ public class SlimmingFragment extends BaseAcFragment {
                 || bean.getWeightChangeVO() == null
                 || bean.getWeightChangeVO().getWeight() == null)
             return;
-        mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
         mMCountDownView.setCountDownFinishCallBack(new CountDownView.CountDownFinishCallBack() {
             @Override
             public void finish() {
                 targetComplete(true, bean.getComplete() == 1);
             }
         });
+        if (System.currentTimeMillis() >= bean.getTargetInfo().getTargetDate() || bean.getComplete() == 1) {
+            targetComplete(true, bean.getComplete() == 1);
+        } else {
+            targetComplete(false, bean.getComplete() == 1);
+            mMCountDownView.setCountDownDays(bean.getTargetInfo().getTargetDate());
+        }
+
 
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1))
                 .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
@@ -744,21 +750,20 @@ public class SlimmingFragment extends BaseAcFragment {
         if (bean.getComplete() < 0) {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
             mProTarget.setProgress(5);
-        } else  {
+        } else {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
 
-        targetComplete(bean.getComplete() == 1, bean.getComplete() == 1);
 
     }
 
 
     private void targetComplete(boolean finish, boolean complete) {
+        mLayoutTargetComplete.setVisibility(finish ? View.VISIBLE : View.GONE);
         mLayoutTargetTitle.setAlpha(finish ? 0.3f : 1f);
         mLayoutTargetContent.setAlpha(finish ? 0.3f : 1f);
         mResetTarget.setEnabled(!finish);
-        mLayoutTargetComplete.setVisibility(finish ? View.VISIBLE : View.GONE);
         mTvTargetComplete.setText(complete ? "恭喜您已达成瘦身目标！" : "很遗憾，您的瘦身目标未达成！");
         mTvResetTarget.setText(complete ? "开启新目标" : "重置目标");
     }

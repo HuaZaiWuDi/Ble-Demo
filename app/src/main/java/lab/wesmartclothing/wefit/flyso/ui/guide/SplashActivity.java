@@ -90,7 +90,6 @@ public class SplashActivity extends BaseActivity {
 
         RxLogUtils.d("APP版本号：" + RxDeviceUtils.getAppVersionNo());
 
-        RxLogUtils.d("APP版本号：" + "1.10.1".compareTo("2.1.5"));
 
 //        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
     }

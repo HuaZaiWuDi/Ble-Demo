@@ -122,7 +122,7 @@ public class MyAPP extends Application {
                             .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
                             .diskConverter(new SerializableDiskConverter())
                             .diskMax((20 * 1024 * 1024))
-                            .memoryMax((20 * 1024 * 1024))
+                            .memoryMax(0)
                             .setDebug(false)
                             .build());
                 } catch (Exception e) {
