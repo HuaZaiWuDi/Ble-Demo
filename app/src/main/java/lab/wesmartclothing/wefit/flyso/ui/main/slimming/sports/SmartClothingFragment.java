@@ -239,6 +239,7 @@ public class SmartClothingFragment extends BaseActivity {
                 .subscribe(new RxSubscriber<RefreshSlimming>() {
                     @Override
                     protected void _onNext(RefreshSlimming hearRateUpload) {
+                        pageNum = 1;
                         initData();
                     }
                 });

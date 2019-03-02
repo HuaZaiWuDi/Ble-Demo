@@ -31,7 +31,6 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -40,6 +39,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.WelcomeActivity;
@@ -96,6 +96,8 @@ public class WeightAddFragment extends BaseActivity {
         if (!QNBleTools.getInstance().isConnect()) {
             startService(new Intent(mContext, BleService.class));
         }
+        if (!BleTools.getBleManager().isBlueEnable())
+            BleTools.getBleManager().enableBluetooth();
     }
 
     @Override
@@ -107,8 +109,6 @@ public class WeightAddFragment extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
-        if (!BleTools.getBleManager().isBlueEnable())
-            BleTools.getBleManager().enableBluetooth();
     }
 
     @Override

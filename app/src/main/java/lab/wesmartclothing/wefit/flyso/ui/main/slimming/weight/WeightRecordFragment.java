@@ -227,6 +227,8 @@ public class WeightRecordFragment extends BaseActivity {
                 .subscribe(new RxSubscriber<RefreshSlimming>() {
                     @Override
                     protected void _onNext(RefreshSlimming refreshSlimming) {
+                        RxLogUtils.d("刷新数据");
+                        pageNum = 1;
                         initData();
                     }
                 });
