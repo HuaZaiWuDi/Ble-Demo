@@ -126,10 +126,12 @@ public class PlanSportingActivity extends BaseActivity {
     private HeartRateBean mHeartRateBean = new HeartRateBean();
     private List<HeartRateItemBean> heartLists = new ArrayList<>();
     private int maxHeart = 0;
+    private RxDialogSureCancel rxDialogSureCancel;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (mContext == null) return;
             //监听瘦身衣连接情况
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
@@ -141,19 +143,12 @@ public class PlanSportingActivity extends BaseActivity {
                 }
 
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                if (mContext == null) return;
+
+                //用户当前运动时间<3min，提示用户此次记录将不被保存
                 if (currentTime < 180) {
-                    //       用户当前运动时间<3min，提示用户此次记录将不被保存
-                    new RxDialogSureCancel(mContext)
-                            .setTitle("运动提示")
-                            .setContent("您当前运动时间过短，此次运动记录将不会被保存")
-                            .setSure("确定")
-                            .setSureListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    RxActivityUtils.finishActivity();
-                                }
-                            }).show();
+                    if (rxDialogSureCancel != null && !rxDialogSureCancel.isShowing()) {
+                        rxDialogSureCancel.show();
+                    }
                 } else {
                     if (!heartLists.isEmpty()) {
                         sportingFinish(currentTime == planList.get(planList.size() - 1).getTime() * 60);
@@ -177,14 +172,35 @@ public class PlanSportingActivity extends BaseActivity {
         initTopBar();
         initSwitch();
         initTypeface();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        filter.addAction(Key.ACTION_CLOTHING_STOP);
-        registerReceiver(registerReceiver, filter);
+        initMyDialog();
+        initBroadcast();
+
+
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
 
         speakAdd("设备已连接、让我们开始运动瘦身课程训练吧！");
         maxHeart = 0;
+    }
+
+    private void initBroadcast() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
+        filter.addAction(Key.ACTION_CLOTHING_STOP);
+        registerReceiver(registerReceiver, filter);
+    }
+
+    private void initMyDialog() {
+        //       用户当前运动时间<3min，提示用户此次记录将不被保存
+        rxDialogSureCancel = new RxDialogSureCancel(mContext)
+                .setTitle("运动提示")
+                .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                .setSure("确定")
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RxActivityUtils.finishActivity();
+                    }
+                });
     }
 
 
@@ -613,16 +629,9 @@ public class PlanSportingActivity extends BaseActivity {
             RxActivityUtils.finishActivity();
         } else if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
-            new RxDialogSureCancel(mContext)
-                    .setTitle("运动提示")
-                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
-                    .setSure("确定")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            RxActivityUtils.finishActivity();
-                        }
-                    }).show();
+            if (rxDialogSureCancel != null && !rxDialogSureCancel.isShowing()) {
+                rxDialogSureCancel.show();
+            }
         } else {
             new RxDialogSureCancel(mContext)
                     .setTitle("运动提示")

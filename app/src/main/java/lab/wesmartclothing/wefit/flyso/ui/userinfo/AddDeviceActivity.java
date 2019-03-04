@@ -104,12 +104,9 @@ public class AddDeviceActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
             if (state == BluetoothAdapter.STATE_OFF) {
-                mBtnScan.setEnabled(true);
 
-                mImgScan.clearAnimation();
-
-                switchStatus(STATUS_SCAN_DEVICE);
-                RxToast.warning(getString(R.string.checkBle));
+                switchStatus(STATUS_NO_DEVICE);
+                mTvDetails.setText("监测到未开启蓝牙，请打开蓝牙重新扫描");
             } else if (state == BluetoothAdapter.STATE_ON) {
                 startScan();
             }
@@ -155,9 +152,10 @@ public class AddDeviceActivity extends BaseActivity {
         mDeviceLists.clear();
         scanDevice.clear();
         adapter.setNewData(null);
-        mImgScan.startAnimation(RxAnimationUtils.RotateAnim(15));
-        mBtnScan.setEnabled(false);
-        scanTimeout.stopTimer();
+        mImgScan.startAnimation(RxAnimationUtils.RotateAnim(10));
+
+        isScan(false);
+
         scanTimeout.startTimer();
 
         startService(new Intent(mContext, BleService.class));
@@ -169,7 +167,7 @@ public class AddDeviceActivity extends BaseActivity {
         public void enterTimer() {
             switchStatus(STATUS_NO_DEVICE);
         }
-    }, 15000);
+    }, 10000);
 
 
     private void initRxBus() {
@@ -188,6 +186,7 @@ public class AddDeviceActivity extends BaseActivity {
     public void initView() {
         initTopBar();
         initRecycler();
+        startScan();
         switchStatus(STATUS_SCAN_DEVICE);
     }
 
@@ -412,9 +411,9 @@ public class AddDeviceActivity extends BaseActivity {
             case STATUS_SCAN_DEVICE:
                 mTvTitle.setText("扫描搜索设备");
                 mTvDetails.setText("请添加您最近购买的智能设备");
-                mBtnScan.setEnabled(true);
-                mBtnScan.setVisibility(View.VISIBLE);
-                mBtnScan.setText(R.string.scan);
+
+                isScan(false);
+
                 mImgScan.setVisibility(View.VISIBLE);
                 mImgNoDevice.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.GONE);
@@ -432,9 +431,10 @@ public class AddDeviceActivity extends BaseActivity {
                 mTvTitle.setText("附近的设备");
                 mTvDetails.setText("请绑定并开始使用您的智能设备");
                 mImgScan.clearAnimation();
-                mBtnScan.setEnabled(true);
-                mBtnScan.setVisibility(View.VISIBLE);
+
+                isScan(true);
                 mBtnScan.setText("开始使用");
+
                 mImgScan.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.VISIBLE);
                 mImgNoDevice.setVisibility(View.GONE);
@@ -443,14 +443,21 @@ public class AddDeviceActivity extends BaseActivity {
                 mTvTitle.setText("扫描设备失败");
                 mTvDetails.setText("没有搜索到设备，请确保设备电量充足");
                 mImgScan.clearAnimation();
-                mBtnScan.setEnabled(true);
-                mBtnScan.setVisibility(View.VISIBLE);
-                mBtnScan.setText("重新扫描");
+
+                isScan(true);
+                mBtnScan.setText(R.string.reScan);
+                scanTimeout.stopTimer();
+
                 mImgScan.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.GONE);
                 mImgNoDevice.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    private void isScan(boolean isCanScan) {
+        mBtnScan.setEnabled(isCanScan);
+        mBtnScan.setVisibility(isCanScan ? View.VISIBLE : View.GONE);
     }
 
 

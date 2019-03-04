@@ -194,6 +194,7 @@ public class BleService extends Service {
         mQNBleTools.scanBle();
     }
 
+
     private void scanClothing() {
         BleScanConfig config = new BleScanConfig.Builder()
                 .setServiceUuids(BleKey.UUID_Servie)
@@ -213,6 +214,8 @@ public class BleService extends Service {
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                     connectClothing(bleDevice);
                     connectDevices.put(bleDevice.getMac(), bleDevice);
+                    //扫描到设备停止扫描
+                    BleTools.getInstance().stopScanByM();
                 }
 
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), result.getRssi());
@@ -246,7 +249,7 @@ public class BleService extends Service {
                         connectClothing(bleDevice);
                         connectDevices.put(bleDevice.getMac(), bleDevice);
 
-                        //连接成功停止扫描
+                        //扫描到设备停止扫描
                         BleTools.getInstance().stopScanByM();
                     }
                 }

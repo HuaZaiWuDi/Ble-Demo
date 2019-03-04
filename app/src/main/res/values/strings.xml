@@ -61,6 +61,7 @@
     <string name="startUse">开始使用</string>
     <string name="startUseSubtitle">马上开始运动</string>
     <string name="scan">扫 描</string>
+    <string name="reScan">重新扫描</string>
     <string name="nearDevice">附近的设备</string>
     <string name="bind">绑定</string>
     <string name="bindings">已绑定</string>

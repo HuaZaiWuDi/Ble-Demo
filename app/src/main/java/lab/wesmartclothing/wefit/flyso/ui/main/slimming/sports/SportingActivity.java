@@ -124,10 +124,12 @@ public class SportingActivity extends BaseActivity {
     private List<HeartRateItemBean> heartLists = new ArrayList<>();
     private double currentKcal = 0;
     private int maxHeartRate = 0;
+    private RxDialogSureCancel rxDialogSureCancel;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (mContext == null) return;
             //监听瘦身衣连接情况
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
@@ -139,19 +141,11 @@ public class SportingActivity extends BaseActivity {
                     timer.stopTimer();
                 }
             } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                if (mContext == null) return;
+                //用户当前运动时间<3min，提示用户此次记录将不被保存
                 if (currentTime < 180) {
-                    //       用户当前运动时间<3min，提示用户此次记录将不被保存
-                    new RxDialogSureCancel(mContext)
-                            .setTitle("运动提示")
-                            .setContent("您当前运动时间过短，此次运动记录将不会被保存")
-                            .setSure("确定")
-                            .setSureListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    RxActivityUtils.finishActivity();
-                                }
-                            }).show();
+                    if (rxDialogSureCancel != null && !rxDialogSureCancel.isShowing()) {
+                        rxDialogSureCancel.show();
+                    }
                 } else {
                     //瘦身衣运动结束
                     if (!heartLists.isEmpty())
@@ -175,18 +169,10 @@ public class SportingActivity extends BaseActivity {
         initTopBar();
         initSwitch();
         initTypeface();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        filter.addAction(Key.ACTION_CLOTHING_STOP);
-        registerReceiver(registerReceiver, filter);
+        initMyDialog();
+        initBroadcast();
+        initChart();
 
-        lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
-//        mChartHeartRate.setViewPortOffsets(0, 0, RxUtils.dp2px(86), 0);
-
-
-        XAxis xAxis = mChartHeartRate.getXAxis();
-        xAxis.setAxisMaximum(30);
-        mChartHeartRate.invalidate();
 
         mLayoutLegend.setVisibility(View.GONE);
 
@@ -196,6 +182,36 @@ public class SportingActivity extends BaseActivity {
 
         speakAdd("运动模式已启动，让我们开始自由运动瘦身训练吧");
 
+    }
+
+    private void initChart() {
+        lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
+//        mChartHeartRate.setViewPortOffsets(0, 0, RxUtils.dp2px(86), 0);
+
+        XAxis xAxis = mChartHeartRate.getXAxis();
+        xAxis.setAxisMaximum(30);
+        mChartHeartRate.invalidate();
+    }
+
+    private void initBroadcast() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
+        filter.addAction(Key.ACTION_CLOTHING_STOP);
+        registerReceiver(registerReceiver, filter);
+    }
+
+    private void initMyDialog() {
+        //       用户当前运动时间<3min，提示用户此次记录将不被保存
+        rxDialogSureCancel = new RxDialogSureCancel(mContext)
+                .setTitle("运动提示")
+                .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                .setSure("确定")
+                .setSureListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RxActivityUtils.finishActivity();
+                    }
+                });
     }
 
 
@@ -272,7 +288,6 @@ public class SportingActivity extends BaseActivity {
                         RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
 
                         timer.startTimer();
-
                         lineChartUtils.setRealTimeData(sportsDataTab.getCurHeart());
 
                         if (mChartHeartRate.getData().getEntryCount() > 30) {
@@ -540,16 +555,9 @@ public class SportingActivity extends BaseActivity {
             RxActivityUtils.finishActivity();
         } else if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
-            new RxDialogSureCancel(mContext)
-                    .setTitle("运动提示")
-                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
-                    .setSure("确定")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            RxActivityUtils.finishActivity();
-                        }
-                    }).show();
+            if (rxDialogSureCancel != null && !rxDialogSureCancel.isShowing()) {
+                rxDialogSureCancel.show();
+            }
         } else {
             //用户运动到达合理时间，想要退出，提示用户是否结束当前运动
             new RxDialogSureCancel(mContext)

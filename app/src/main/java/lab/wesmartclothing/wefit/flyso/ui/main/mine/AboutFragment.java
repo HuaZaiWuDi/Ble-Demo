@@ -105,7 +105,7 @@ public class AboutFragment extends BaseActivity {
 
         readBLEVersion();
         initTopBar();
-        RxTextUtils.getBuilder("智裳科技 ")
+        RxTextUtils.getBuilder("香港智享瘦国际集团 ")
                 .append("服务条款和隐私条款")
                 .setForegroundColor(getResources().getColor(R.color.red))
                 .setUnderline()
