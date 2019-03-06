@@ -13,7 +13,7 @@ public class ServiceAPI {
 
     //一期
 //    public static final String BASE_URL = "https://dev.wesmartclothing.com/mix/";//外网
-    public static final String BASE_URL_192 = "http://10.10.11.192:15390";//德人服务器
+    public static final String BASE_URL_192 = "http://10.10.11.233:15390";//德人服务器
 
     //二期
     public static final String BASE_URL_208 = "http://10.10.11.208:15390";//牛耕测试环境
@@ -28,7 +28,7 @@ public class ServiceAPI {
     public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/mix/";//测试版本
 
 
-    public static String BASE_URL = BASE_RELEASE;
+    public static String BASE_URL = BASE_URL_192;
 
     public static String BASE_SERVICE = BASE_URL.replace("mix", "system");
 

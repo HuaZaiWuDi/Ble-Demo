@@ -1,8 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
 
 /**
@@ -10,24 +7,22 @@ import lab.wesmartclothing.wefit.flyso.entity.Healthy;
  */
 public class BodyDataUtil {
 
-    private List<Healthy> mHealthyList = new ArrayList<>();
 
-    public BodyDataUtil(List<Healthy> mHealthyList) {
-        this.mHealthyList = mHealthyList;
+    public BodyDataUtil() {
     }
 
 
     /**
-     * @param index
+     * @param healthy
      * @param realValue
      * @return
      */
-    public int transformation(int index, double realValue) {
+    public int transformation(Healthy healthy, double realValue) {
         int temp = 0;
-        if (index == 5) {
-            temp = (int) (realValue / (mHealthyList.get(index % mHealthyList.size()).getSections()[0] * 2) * 100);
+        if (healthy.getSections().length == 1) {
+            temp = (int) (realValue / (healthy.getSections()[0] * 2) * 100);
         } else {
-            temp = bmi(realValue, mHealthyList.get(index % mHealthyList.size()).getSections());
+            temp = bmi(realValue, healthy.getSections());
         }
 
         return temp;
@@ -72,14 +67,14 @@ public class BodyDataUtil {
 
     /**
      * @param realValue
-     * @param index
+     * @param healthy
      * @return
      */
-    public Object[] checkStatus(double realValue, int index) {
+    public Object[] checkStatus(double realValue, Healthy healthy) {
 
-        double[] section = mHealthyList.get(index % mHealthyList.size()).getSections();
-        String[] labels = mHealthyList.get(index % mHealthyList.size()).getLabels();
-        int[] colors = mHealthyList.get(index % mHealthyList.size()).getColors();
+        double[] section = healthy.getSections();
+        String[] labels = healthy.getLabels();
+        int[] colors = healthy.getColors();
 
         Object[] temps = new Object[2];
         String temp = "";

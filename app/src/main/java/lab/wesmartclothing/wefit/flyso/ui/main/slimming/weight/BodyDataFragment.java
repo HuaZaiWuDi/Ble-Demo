@@ -16,10 +16,10 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -37,6 +37,7 @@ import lab.wesmartclothing.wefit.flyso.adapter.ExpandableItemAdapter;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDetailsBean;
 import lab.wesmartclothing.wefit.flyso.entity.multiEntity.BodyLevel0Bean;
@@ -115,14 +116,21 @@ public class BodyDataFragment extends BaseActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
-        gid = bundle.getString(Key.BUNDLE_DATA_GID);
+        HealthyInfoBean weightInfoBean = (HealthyInfoBean) bundle.getSerializable(Key.BUNDLE_DATA);
+        gid = bundle.getString(Key.BUNDLE_DATA_GID, "");
         goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
+
+        if (weightInfoBean != null) {
+            notifyData(weightInfoBean);
+        } else {
+            initData();
+        }
     }
 
     @Override
     protected void initNetData() {
         super.initNetData();
-        initData();
+
     }
 
     @Override
@@ -142,7 +150,7 @@ public class BodyDataFragment extends BaseActivity {
 
 
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
-    private void initWeightData(WeightDetailsBean.WeightInfoBean weightInfo) {
+    private void initWeightData(HealthyInfoBean weightInfo) {
         mHealthyList.clear();
         UserInfo userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
         //体重
@@ -274,7 +282,7 @@ public class BodyDataFragment extends BaseActivity {
         //去脂体重
         mHealthyList.add(healthy12);
 
-        bodyDataUtil = new BodyDataUtil(mHealthyList);
+        bodyDataUtil = new BodyDataUtil();
 
     }
 
@@ -292,16 +300,10 @@ public class BodyDataFragment extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("心率数据：" + s);
                         WeightDetailsBean detailsBean = JSON.parseObject(s, WeightDetailsBean.class);
-                        mTvDate.setText(RxFormat.setFormatDate(detailsBean.getWeightInfo().getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
-                        mTvHealthScore.setText(detailsBean.getWeightInfo().getHealthScore() + "");
-                        Drawable drawable = getResources().getDrawable(bodyImgs[(detailsBean.getBodyLevel() - 1) % 9]);
-                        //一定要加这行！！！！！！！！！！！
-                        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                        mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
-                        mTvBodyFat.setText(bodys[(detailsBean.getBodyLevel() - 1) % 9]);
-                        WeightDetailsBean.WeightInfoBean weightInfo = detailsBean.getWeightInfo();
+                        HealthyInfoBean weightInfo = detailsBean.getWeightInfo();
                         notifyData(weightInfo);
-                        bodyIndex = detailsBean.getBodyLevel();
+
+
                     }
 
                     @Override
@@ -319,7 +321,18 @@ public class BodyDataFragment extends BaseActivity {
     }
 
 
-    private void notifyData(WeightDetailsBean.WeightInfoBean weightInfo) {
+    private void notifyData(HealthyInfoBean weightInfo) {
+
+        mTvDate.setText(RxFormat.setFormatDate(weightInfo.getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
+        mTvHealthScore.setText(weightInfo.getHealthScore() + "");
+        Drawable drawable = getResources().getDrawable(bodyImgs[(weightInfo.getBodyLevel() - 1) % 9]);
+        //一定要加这行！！！！！！！！！！！
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
+        mTvBodyFat.setText(bodys[(weightInfo.getBodyLevel() - 1) % 9]);
+
+        bodyIndex = weightInfo.getBodyLevel();
+
         initWeightData(weightInfo);
         String[] titles = getResources().getStringArray(R.array.weightDatas);
         String[] units = {"kg", "%", "", "级", "kg", "kcal", "%", "kg", "%", "%", "%", "岁", "kg"};
@@ -344,12 +357,7 @@ public class BodyDataFragment extends BaseActivity {
 
             View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_delete_data, null);
             LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
-            layoutDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteWeight();
-                }
-            });
+            layoutDelete.setOnClickListener(v -> deleteWeight());
             adapter.addFooterView(footerView);
         }
 
@@ -366,15 +374,15 @@ public class BodyDataFragment extends BaseActivity {
                 level0Bean.setCanExpanded(false);
             } else {
 
-                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(i, level0Bean.getBodyValue()));
-                Healthy healthy = mHealthyList.get(i % mHealthyList.size());
+                Healthy healthy = mHealthyList.get(Math.max(0, Math.min(i, mHealthyList.size() - 1)));
+                BodyLevel1Bean bodyLevel1Bean = new BodyLevel1Bean(bodyDataUtil.transformation(healthy, level0Bean.getBodyValue()));
                 bodyLevel1Bean.setSectionLabels(healthy.getSectionLabels());
                 bodyLevel1Bean.setLabels(healthy.getLabels());
                 bodyLevel1Bean.setColors(healthy.getColors());
                 level0Bean.addSubItem(bodyLevel1Bean);
 
-                level0Bean.setStatus((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[0]);
-                level0Bean.setStatusColor((int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), i)[1]);
+                level0Bean.setStatus((String) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), healthy)[0]);
+                level0Bean.setStatusColor((int) bodyDataUtil.checkStatus(level0Bean.getBodyValue(), healthy)[1]);
             }
 
             multiItermLists.add(level0Bean);
@@ -422,12 +430,7 @@ public class BodyDataFragment extends BaseActivity {
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("身体数据");
     }
 

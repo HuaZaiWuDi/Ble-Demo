@@ -975,7 +975,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/gray_ECEBF0">
+                        app:rcProgressColor="@color/Gray_ECEBF0">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 

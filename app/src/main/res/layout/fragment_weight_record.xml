@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/QMUIAppBarLayout"
-        android:background="@color/bg_F7F7F9"
+        android:background="@color/white"
         android:orientation="vertical">
 
 
@@ -159,7 +159,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="34dp"
-                        android:text="查看详情"
+                        android:text="健康评估"
                         android:textColor="@color/GrayWrite"
                         android:textSize="13sp"/>
 
@@ -209,10 +209,12 @@
                 </RelativeLayout>
 
 
+                <!--体重数据-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:background="@color/white"
+                    android:orientation="horizontal"
                     android:paddingLeft="@dimen/dimen_16"
                     >
 
@@ -367,186 +369,38 @@
                     </RelativeLayout>
                 </LinearLayout>
 
-
-                <RelativeLayout
-                    android:id="@+id/layout_sportTip"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/white"
-                    android:padding="16dp"
-                    >
+                    android:layout_height="1dp"
+                    android:background="@color/lineColor"/>
 
 
-                    <ImageView
-                        android:id="@+id/iv_tip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@mipmap/icon_location_point"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_historyWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                </android.support.v7.widget.RecyclerView>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dimen_8"
-                        android:layout_toRightOf="@+id/iv_tip"
-                        android:text="体重目标"
-                        android:textColor="@color/Gray"
-                        android:textSize="15sp"
-                        android:textStyle="bold"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lineColor"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="34dp"
-                        android:text="设置"
-                        android:textColor="@color/GrayWrite"
-                        android:textSize="13sp"
-                        android:visibility="gone"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:background="@mipmap/icon_goto"
-                        android:visibility="gone"/>
-
-
-                    <View
-                        android:id="@+id/line"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/dimen_0.5"
-                        android:layout_below="@+id/iv_tip"
-                        android:layout_marginTop="18dp"
-                        android:background="@color/line"/>
-
-
-                    <LinearLayout
-                        android:id="@+id/layout_Tips"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/line"
-                        android:layout_marginTop="@dimen/dimen_16"
-                        android:orientation="vertical"
-                        android:visibility="visible"
-                        tools:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tv_tip"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="先来一个小目标！"
-                            android:textColor="@color/Gray"
-                            android:textStyle="bold"/>
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dimen_8"
-                            android:text="研究表明，设定了目标的人减肥成功率可以提升80%。，快穿上瘦身衣去运动吧。"
-                            android:textColor="@color/GrayWrite"/>
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/layout_weight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/line"
-                        android:layout_marginTop="@dimen/dimen_16"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-
-                        <TextView
-                            android:id="@+id/tv_target"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="需减 0.0 kg，剩余 0 天"
-                            android:textColor="@color/Gray"
-                            android:textSize="15dp"/>
-
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp"
-                            android:gravity="center_vertical"
-                            >
-
-                            <TextView
-                                android:id="@+id/tv_startWeight"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="--kg"
-                                android:textColor="@color/Gray"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                tools:text="56kg"/>
-
-
-                            <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
-                                android:id="@+id/pro_limit"
-                                android:layout_width="match_parent"
-                                android:layout_height="8dp"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginRight="16dp"
-                                android:layout_toLeftOf="@+id/tv_endWeight"
-                                android:layout_toRightOf="@+id/tv_startWeight"
-                                app:rcBackgroundColor="@color/GrayWrite"
-                                app:rcMax="100"
-                                app:rcProgressColor="@color/green_61D97F"/>
-
-
-                            <TextView
-                                android:id="@+id/tv_endWeight"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:text="--kg"
-                                android:textColor="@color/Gray"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                tools:text="56kg"/>
-
-                        </RelativeLayout>
-
-                        <TextView
-                            android:id="@+id/tv_details"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="目标就在眼前，加油！"
-                            android:textColor="@color/GrayWrite"
-                            android:textSize="13sp"/>
-
-
-                    </LinearLayout>
-
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_dataContrast"
+                    android:layout_width="match_parent"
+                    android:layout_height="61dp"
+                    android:gravity="center"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="了解详细数据变化趋势？请进行数据比对"/>
 
             </LinearLayout>
-
 
         </android.support.v4.widget.NestedScrollView>
 
     </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/tv_settingTarget"
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/orange_FF7200"
-        android:gravity="center"
-        android:text="设置目标"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:visibility="gone"/>
 
 
 </RelativeLayout>

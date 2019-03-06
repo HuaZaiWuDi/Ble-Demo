@@ -4,7 +4,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
-import android.view.View;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -156,12 +155,7 @@ public class SettingTargetFragment extends BaseActivity {
 
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("目标设置");
     }
 

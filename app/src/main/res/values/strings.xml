@@ -217,5 +217,7 @@
     <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
     <string name="follow">跟着智享瘦</string>
     <string name="appDays">我在 %1$s 第%2$d 天</string>
+    <string name="tv_firstTip">感谢您使用智享瘦-AI智能瘦身衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
+    <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重 指标、体能状态和患病风险，获得专家的饮食和运动建 议。</string>
 
 </resources>

@@ -113,7 +113,6 @@ public interface ApiService {
     @POST("weight/fetchWeightDetail")
     Observable<String> fetchWeightDetail(@Body RequestBody body);
 
-
     @POST("weight/addWeightInfo")
     Observable<String> addWeightInfo(@Body RequestBody body);
 
@@ -124,6 +123,21 @@ public interface ApiService {
     //设置目标体重
     @POST("weight/fetchTargetWeight")
     Observable<String> fetchTargetWeight();
+
+    //获取体重列表记录
+    @POST("weight/fetchWeightList")
+    Observable<String> fetchWeightList(@Body RequestBody body);
+
+
+    //获取某一天的体重列表记录
+    @FormUrlEncoded
+    @POST("weight/fetchOneDateWeightList")
+    Observable<String> fetchOneDateWeightList(@Field("gid") String gid);
+
+    //体重数据对比
+    @POST("weight/weightCompare")
+    Observable<String> weightCompare(@Body RequestBody body);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 运动

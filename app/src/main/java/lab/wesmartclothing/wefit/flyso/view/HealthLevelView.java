@@ -63,6 +63,7 @@ public class HealthLevelView extends RelativeLayout {
         }
     }
 
+
     private void setGone() {
         mIvHealthyLevelF.setVisibility(GONE);
         mIvHealthyLevelC.setVisibility(GONE);

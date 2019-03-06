@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.main.slimming.weight.HealthyAssessActivity">
+
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/QMUIAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/green_61D97F"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        tools:visibility="visible"
+        />
+
+    <android.support.v4.widget.NestedScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            >
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.vondear.rxtools.view.roundprogressbar.RoundProgressBar
+                    android:id="@+id/circleProgressBar"
+                    android:layout_width="131dp"
+                    android:layout_height="131dp"
+                    android:layout_below="@+id/chooseDate"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="19dp"
+                    android:layout_marginBottom="19dp"
+                    app:pro_background_color="@color/BrightGray"
+                    app:pro_max_value="100"
+                    app:pro_progress_color="@color/orange_FF7200"
+                    app:pro_stroke_round_cap="true"
+                    app:pro_stroke_width="13dp"
+                    app:pro_type="type_circle"
+                    app:pro_value="0"/>
+
+
+                <TextView
+                    android:id="@+id/tv_healthScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:lineSpacingExtra="8dp"
+                    android:text="健康指数\n72"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"/>
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:text="健康评级"
+                android:textColor="@color/Gray"
+                android:textSize="12sp"/>
+
+
+            <lab.wesmartclothing.wefit.flyso.view.HealthLevelView
+                android:id="@+id/Healthy_level"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="F级：0-65分；C级：61-75分；B级：75-85分；A级：86-95分；S级：98-100分"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"/>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="37dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="5dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginLeft="19dp"
+                        android:gravity="center_vertical"
+                        android:text="我的身体健康？"
+                        android:textColor="@color/Gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:background="@color/Gray_ECEBF0"/>
+
+
+                    <!--体脂率-->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+
+                        <ImageView
+                            android:id="@+id/iv_icon_bodyFit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_bodyfat"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_title_bodyFit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="8dp"
+                            android:layout_toRightOf="@+id/iv_icon_bodyFit"
+                            android:text="体脂率"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="15sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_bodyValue_bodyFit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="17dp"
+                            android:layout_toLeftOf="@+id/btn_status_bodyFit"
+                            android:gravity="right"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="18sp"
+                            tools:text="223332222"/>
+
+
+                        <com.vondear.rxtools.view.layout.RxTextView
+                            android:id="@+id/btn_status_bodyFit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="15dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:minWidth="36dp"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="11sp"
+                            app:border_color_normal="@color/orange_FF7200"
+                            app:border_width_normal="1dp"
+                            app:corner_radius="2dp"
+                            tools:text="偏高"/>
+
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/line"/>
+
+
+                    <lab.wesmartclothing.wefit.flyso.view.HealthyProgressView
+                        android:id="@+id/pro_bodyFit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="21dp"
+                        android:layout_marginRight="21dp"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/tv_bodyFat_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="67dp"
+                        android:drawableLeft="@mipmap/icon_error_tip"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="19dp"
+                        android:text="体脂率病理性降低会引起功能性失调。"
+                        android:textSize="10sp"/>
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:background="@color/Gray_ECEBF0"/>
+
+
+                    <!--内脏脂肪等级-->
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+
+                        <ImageView
+                            android:id="@+id/iv_icon_visceralFat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_viscera"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_title_visceralFat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="8dp"
+                            android:layout_toRightOf="@+id/iv_icon_visceralFat"
+                            android:text="内脏脂肪等级"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="15sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_bodyValue_visceralFat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="17dp"
+                            android:layout_toLeftOf="@+id/btn_status_visceralFat"
+                            android:gravity="right"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="18sp"
+                            tools:text="223332222"/>
+
+
+                        <com.vondear.rxtools.view.layout.RxTextView
+                            android:id="@+id/btn_status_visceralFat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="15dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:minWidth="36dp"
+                            android:textColor="@color/orange_FF7200"
+                            android:textSize="11sp"
+                            app:border_color_normal="@color/orange_FF7200"
+                            app:border_width_normal="1dp"
+                            app:corner_radius="2dp"
+                            tools:text="偏高"/>
+
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/line"/>
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/line"/>
+
+                    <lab.wesmartclothing.wefit.flyso.view.HealthyProgressView
+                        android:id="@+id/pro_visceralFat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="21dp"
+                        android:layout_marginRight="21dp"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/tv_visceralFat_tip"
+                        android:layout_width="match_parent"
+                        android:layout_height="67dp"
+                        android:drawableLeft="@mipmap/icon_error_tip"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="19dp"
+                        android:text="体脂率病理性降低会引起功能性失调。"
+                        android:textSize="10sp"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="19dp"
+                        android:text="我显年轻？"
+                        android:textColor="@color/Gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:background="@color/Gray_ECEBF0"/>
+
+                    <!--身体年龄-->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+
+                        <ImageView
+                            android:id="@+id/iv_icon_bodyAge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:background="@mipmap/icon_body_age"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_title_bodyAge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="8dp"
+                            android:layout_toRightOf="@+id/iv_icon_bodyAge"
+                            android:text="身体年龄"
+                            android:textColor="@color/GrayWrite"
+                            android:textSize="15sp"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_bodyValue_bodyAge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="17dp"
+                            android:textColor="@color/green_61D97F"
+                            android:textSize="12sp"
+                            tools:text="25岁"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/line"/>
+
+                    </RelativeLayout>
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/line"/>
+
+
+                    <lab.wesmartclothing.wefit.flyso.view.BodyAgeProgressView
+                        android:id="@+id/pro_bodyAge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="21dp"
+                        android:layout_marginRight="21dp"/>
+
+
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+
+            <com.vondear.rxtools.view.layout.RxTextView
+                android:layout_width="329dp"
+                android:layout_height="29dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:text="上述内容仅供参考，保持健康的生活方式享“瘦”幸福生活"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"
+                app:background_normal="@color/Gray_ECEBF0"
+                app:corner_radius="15dp"/>
+
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>
+
+

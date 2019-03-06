@@ -2,8 +2,8 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
-import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 
 /**
  * Created icon_hide_password jk on 2018/5/17.
@@ -113,8 +113,8 @@ public class WeightTools {
         }
     }
 
-    public static WeightDataBean.WeightListBean.ListBean ble2Backstage2(QNScaleItemData item) {
-        WeightDataBean.WeightListBean.ListBean bean = new WeightDataBean.WeightListBean.ListBean();
+    public static HealthyInfoBean ble2Backstage2(QNScaleItemData item) {
+        HealthyInfoBean bean = new HealthyInfoBean();
         if (item == null) return null;
         double value = item.getValue();
         switch (item.getType()) {

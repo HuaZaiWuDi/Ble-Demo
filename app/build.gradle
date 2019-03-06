@@ -120,6 +120,10 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 
 
 }
@@ -198,7 +202,7 @@ dependencies {
         exclude group: 'com.zchu'
     }
 
-    implementation 'com.zchu:rxcache:2.3.5'
+    implementation 'com.zchu:rxcache:2.3.3'
 
     //友盟社会分享
     implementation 'com.umeng.umsdk:share-core:6.9.4'

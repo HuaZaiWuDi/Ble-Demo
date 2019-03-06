@@ -32,6 +32,7 @@ import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
@@ -88,16 +89,7 @@ public class SplashActivity extends BaseActivity {
         initData();
         initUserInfo();
 
-//        BleAPI.syncSetting(Key.heartRates, 60, 50, false, new BleChartChangeCallBack() {
-//            @Override
-//            public void callBack(byte[] data) {
-//                RxLogUtils.d("配置参数");
-////                syncHistoryData();
-//            }
-//        });
-
-
-//        RxActivityUtils.skipActivityAndFinish(mContext, Main2Activity.class);
+//        RxActivityUtils.skipActivity(mContext, WeightContrastActivity.class);
     }
 
 
@@ -146,11 +138,11 @@ public class SplashActivity extends BaseActivity {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
             return;
         }
-//        //默认不进入，只有请求到数据才进入
-//        if (!hasInviteCode) {
-//            RxActivityUtils.skipActivityAndFinish(mActivity, InvitationCodeActivity.class);
-//            return;
-//        }
+        //默认不进入，只有请求到数据才进入
+        if (!hasInviteCode) {
+            RxActivityUtils.skipActivityAndFinish(mActivity, InvitationCodeActivity.class);
+            return;
+        }
         //默认不进入，只有请求到数据才进入
         if (isSaveUserInfo) {
             RxActivityUtils.skipActivityAndFinish(mActivity, UserInfoActivity.class);

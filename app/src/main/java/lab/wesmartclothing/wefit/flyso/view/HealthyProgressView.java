@@ -64,7 +64,7 @@ public class HealthyProgressView extends View {
 
     public void setMaxMin(float max, float min) {
         if (min >= max) {
-            Log.e("HealthyProgressView", "min 必须大于max");
+            Log.e("HealthyProgressView", "min 必须小于max");
         } else {
             this.max = max;
             this.min = min;
@@ -189,7 +189,7 @@ public class HealthyProgressView extends View {
         if (wMode == MeasureSpec.EXACTLY) {
             mWidth = wSize;
         } else {
-            mWidth = dp2px(500);
+            mWidth = dp2px(360);
         }
         if (hMode == MeasureSpec.EXACTLY) {
             mHeight = hSize;

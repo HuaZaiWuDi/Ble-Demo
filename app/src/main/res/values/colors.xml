@@ -18,12 +18,15 @@
     <color name="Gray">#574D5F</color>
     <color name="GrayWrite">#978E9D</color>
     <color name="BrightGray">#D9D8E1</color>
-    <color name="Gray_ECEBF0">#ECEBF0</color>
+    <color name="Gray_ECEBF0">#FFECEBF0</color>
+    <color name="Gray_DCDAE6">#FFDCDAE6</color>
+    <color name="gray_ECEBF0">#FFECEBF0</color>
     <color name="red">#E74C3C</color>
     <color name="green_61D97F">#61D97F</color>
+    <color name="green_ACF2BE">#FFACF2BE</color>
+    <color name="green_62D981">#FF62D981</color>
     <color name="line">#F7F7F9</color>
     <color name="orange_FF7200">#FF7200</color>
-    <color name="gray_ECEBF0">#ECEBF0</color>
     <color name="gray_FBFBFC">#FBFBFC</color>
     <color name="brown_ABA08E">#ABA08E</color>
     <color name="yellow_FFBC00">#FFBC00</color>
@@ -34,7 +37,7 @@
     <color name="bg_F7F7F9">#F7F7F9</color>
     <color name="ripple_ECEAE6">#ECEAE6</color>
     <color name="yellow_E4CA9F">#E4CA9F</color>
-    <color name="Gray_DCDAE6">#DCDAE6</color>
+    <color name="yellow_D6B58A">#FFD6B58A</color>
 
     <color name="colorFontWhite">#ffffff</color>
 

@@ -8,16 +8,11 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_LOGS"
-        tools:ignore="ProtectedPermissions"/>
-    <!-- 用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- 用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- 用于获取运营商信息，用于支持提供运营商信息相关的接口 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+        tools:ignore="ProtectedPermissions"/> <!-- 用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- 用于获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/> <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
@@ -31,16 +26,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label,icon,roundIcon,theme">
-
-        <!-- 屏幕适配 -->
+        <activity android:name=".ui.main.slimming.weight.HealthyAssessActivity">
+        </activity>
+        <activity android:name=".ui.main.slimming.weight.WeightContrastActivity">
+        </activity> <!-- 屏幕适配 -->
         <meta-data
             android:name="design_width"
             android:value="1080"/>
         <meta-data
             android:name="design_height"
-            android:value="1920"/>
-
-        <!-- android7.0适配 -->
+            android:value="1920"/> <!-- android7.0适配 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -51,9 +46,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path"/>
-        </provider>
-
-        <!-- 轻牛SDK -->
+        </provider> <!-- 轻牛SDK -->
         <service
             android:name="com.qingniu.qnble.scanner.BleScanService"
             android:enabled="true"
@@ -63,22 +56,16 @@
             android:name="com.qingniu.scale.ble.ScaleBleService"
             android:enabled="true"
             android:exported="true">
-        </service>
-
-        <!-- BUGly升级 -->
+        </service> <!-- BUGly升级 -->
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent"/>
-
-        <!-- 高德地图KEY -->
+            android:theme="@android:style/Theme.Translucent"/> <!-- 高德地图KEY -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="20cc8510855f543b2bf4c59d647852e2"/>
 
-        <service android:name="com.amap.api.location.APSService"/>
-
-        <!-- 极光通知广播 -->
+        <service android:name="com.amap.api.location.APSService"/> <!-- 极光通知广播 -->
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -104,29 +91,22 @@
 
                 <category android:name="lab.wesmartclothing.wefit.flyso"/>
             </intent-filter>
-        </receiver>
-
-        <!-- DUF服务 -->
+        </receiver> <!-- DUF服务 -->
         <activity android:name=".ble.dfu.NotificationActivity"/>
 
         <service
             android:name=".ble.dfu.DfuService"
-            android:exported="true"/>
-
-        <!--友盟社会SDK-->
-        <!--友盟-->
+            android:exported="true"/> <!-- 友盟社会SDK -->
+        <!-- 友盟 -->
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5a38b2e8b27b0a02a7000026">
-        </meta-data>
-
-        <!--友盟社会分享登录-->
+        </meta-data> <!-- 友盟社会分享登录 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -144,20 +124,17 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:configChanges="orientation|keyboardHidden"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-
         <activity
             android:name="com.umeng.socialize.media.WBShareCallBackActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            >
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
         <activity
             android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            >
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name="com.sina.weibo.sdk.share.WbShareTransActivity"
@@ -165,13 +142,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-        </activity>
-
-
-        <!--分割线==============================================================================-->
-
+        </activity> <!-- 分割线============================================================================== -->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -407,15 +381,12 @@
         </activity>
         <activity
             android:name=".ui.main.slimming.plan.PlanWebActivity"
-            android:launchMode="singleTop"
-            >
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".ui.main.mine.InvitationCodeActivity"
             android:launchMode="singleTop">
-        </activity>
-
-        <!--开启一个空IntentService，左右启动web进程-->
+        </activity> <!-- 开启一个空IntentService，左右启动web进程 -->
         <service
             android:name=".service.WebProcessService"
             android:exported="false"

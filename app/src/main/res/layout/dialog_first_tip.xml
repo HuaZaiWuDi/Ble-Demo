@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.vondear.rxtools.view.layout.RxLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="278dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="19dp"
+    app:background_normal="@color/white"
+    app:corner_radius="5dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="首次使用提示"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginBottom="19dp"
+        android:background="@color/lineColor"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="8dp"
+        android:text="@string/tv_firstTip"
+        android:textColor="#FF312C35"
+        android:textSize="12sp"/>
+
+
+    <com.vondear.rxtools.view.layout.RxRelativeLayout
+        android:layout_width="238dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="19dp"
+        app:background_normal="@color/Gray"
+        app:corner_radius="21dp">
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="填写个性化数据信息"
+            android:textColor="@color/yellow_D6B58A"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/ic_tip"
+            android:gravity="center_horizontal"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+    </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+    <com.vondear.rxtools.view.layout.RxRelativeLayout
+        android:layout_width="238dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="19dp"
+        app:background_normal="@color/Gray"
+        app:corner_radius="21dp">
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="填写个性化数据信息"
+            android:textColor="@color/yellow_D6B58A"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/ic_tip"
+            android:gravity="center_horizontal"
+            android:text="2"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+
+    </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:lineSpacingExtra="8dp"
+        android:text="@string/tv_firstTip2"
+        android:textSize="10sp"/>
+
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:id="@+id/tv_start"
+        android:layout_width="86dp"
+        android:layout_height="29dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="19dp"
+        android:gravity="center"
+        android:text="立即开始"
+        android:textColor="@color/white"
+        app:background_normal="@color/green_62D981"
+        app:corner_radius="14dp"/>
+
+</com.vondear.rxtools.view.layout.RxLinearLayout>

@@ -32,6 +32,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.bar.BarGroupChart;
+import com.vondear.rxtools.view.dialog.RxDialog;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxImageView;
@@ -781,6 +782,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgSeeRecord.setVisibility(View.GONE);
             mLayoutSlimmingTarget.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.GONE);
+            firstUsedTip();
         } else if (planState == 3) {
             mImgPlanMark.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.VISIBLE);
@@ -824,6 +826,21 @@ public class SlimmingFragment extends BaseAcFragment {
         } else {
             mLayoutScaleDefault.setVisibility(View.GONE);
         }
+    }
+
+    private void firstUsedTip() {
+        final RxDialog dialog = new RxDialog(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_first_tip, null);
+        dialog.setContentView(view);
+        dialog.show();
+        view.findViewById(R.id.tv_start)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
+                    }
+                });
     }
 
 

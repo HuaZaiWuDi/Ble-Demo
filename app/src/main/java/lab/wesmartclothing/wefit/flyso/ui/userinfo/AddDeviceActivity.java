@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,12 +29,12 @@ import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +60,6 @@ import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
-import lab.wesmartclothing.wefit.flyso.utils.BLEUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class AddDeviceActivity extends BaseActivity {
@@ -238,14 +236,12 @@ public class AddDeviceActivity extends BaseActivity {
                     helper.setVisible(R.id.tv_Bind, true);
                 }
 
-                SpannableStringBuilder stringBuilder = RxTextUtils.getBuilder(item.getDeviceName() + "\t" +
-                        item.getDeviceMac().substring(12, item.getDeviceMac().length()) + "\n")
-                        .append("距离：" + BLEUtil.rssi2Distance(item.getRssi(), 2) + "米")
-                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                        .setProportion(0.73f)
-                        .create();
+                RxRoundProgressBar progressRssi = helper.getView(R.id.pro_rssi);
+                progressRssi.setProgress(100 - (int) ((Math.abs(item.getRssi()) - 35) / 127f * 100));
 
-                helper.setText(R.id.tv_weight_data, stringBuilder);
+                String titleStr = item.getDeviceName() + "\t" + item.getDeviceMac().substring(12);
+
+                helper.setText(R.id.tv_weight_data, titleStr);
                 helper.addOnClickListener(R.id.tv_Bind);
             }
         };

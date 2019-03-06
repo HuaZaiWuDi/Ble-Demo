@@ -8,6 +8,10 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.Button;
@@ -17,26 +21,29 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.line.LineBean;
 import com.vondear.rxtools.view.chart.line.SuitLines;
 import com.vondear.rxtools.view.chart.line.Unit;
-import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,12 +53,12 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
@@ -104,34 +111,14 @@ public class WeightRecordFragment extends BaseActivity {
     TextView mTvMuscleTitle;
     @BindView(R.id.tv_muscle)
     TextView mTvMuscle;
-    @BindView(R.id.iv_tip)
-    ImageView mIvTip;
-    @BindView(R.id.line)
-    View mLine;
-    @BindView(R.id.tv_tip)
-    TextView mTvTip;
-    @BindView(R.id.layout_sportTip)
-    RelativeLayout mLayoutSportTip;
-    Unbinder unbinder;
-    @BindView(R.id.tv_settingTarget)
-    TextView mTvSettingTarget;
-    @BindView(R.id.tv_target)
-    TextView tvTarget;
-    @BindView(R.id.tv_startWeight)
-    TextView tvStartWeight;
-    @BindView(R.id.tv_endWeight)
-    TextView tvEndWeight;
-    @BindView(R.id.pro_limit)
-    RxRoundProgressBar proLimit;
-    @BindView(R.id.layout_Tips)
-    LinearLayout mLayoutTips;
-    @BindView(R.id.layout_weight)
-    LinearLayout mLayoutWeight;
-    @BindView(R.id.tv_details)
-    TextView mTvDetails;
+    @BindView(R.id.layout_lenged)
+    LinearLayout mLayoutLenged;
+    @BindView(R.id.recycler_historyWeight)
+    RecyclerView mRecyclerHistoryWeight;
+    @BindView(R.id.tv_dataContrast)
+    TextView mTvDataContrast;
 
-
-    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //体脂称连接状态
@@ -151,18 +138,15 @@ public class WeightRecordFragment extends BaseActivity {
         }
     };
 
-
     private QNBleTools mQNBleTools = QNBleTools.getInstance();
     private Button btn_Connect;
-    private String currentGid;
-    private boolean isSettingTargetWeight = false;
+    private HealthyInfoBean currentWeightInfo;
     //传递数据给我目标详情界面
-    private double stillNeed = 0;
-    private int hasDays = 0;
     private double lastWeight = 0;//最后一条体重数据
-    private List<WeightDataBean.WeightListBean.ListBean> list;
+    private List<HealthyInfoBean> list;
     private Bundle bundle = new Bundle();
     private int pageNum = 1;
+    private BaseQuickAdapter dayWeightAdapter;
 
     @Override
     protected int layoutId() {
@@ -189,16 +173,43 @@ public class WeightRecordFragment extends BaseActivity {
         mTvBodyFat.setTypeface(typeface);
         mTvMuscle.setTypeface(typeface);
         mTvBmi.setTypeface(typeface);
-        tvTarget.setTypeface(typeface);
-        tvStartWeight.setTypeface(typeface);
-        tvEndWeight.setTypeface(typeface);
 
         initTopBar();
         checkStatus();
+        initRecyclerHistoryWeight();
 
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
 
         showHistoryWeightData(BleService.historyWeightData);
+
+        RxTextUtils.getBuilder("了解详细数据变化趋势？请进行")
+                .append("数据对比")
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .into(mTvDataContrast);
+    }
+
+    private void initRecyclerHistoryWeight() {
+        mRecyclerHistoryWeight.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
+        dayWeightAdapter = new BaseQuickAdapter<HealthyInfoBean, BaseViewHolder>(R.layout.item_today_weight) {
+
+            @Override
+            protected void convert(BaseViewHolder helper, HealthyInfoBean item) {
+                TextView view = helper.getView(R.id.tv_weight);
+                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.getWeight(), 1))
+                        .append(" kg").setProportion(0.5f)
+                        .into(view);
+                helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getMeasureTime(), "HH:mm"));
+            }
+        };
+        mRecyclerHistoryWeight.setAdapter(dayWeightAdapter);
+        dayWeightAdapter.setOnItemClickListener((adapter, view, position) -> {
+            HealthyInfoBean weightInfoBean = (HealthyInfoBean) adapter.getItem(position);
+            bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
+            bundle.putSerializable(Key.BUNDLE_DATA, weightInfoBean);
+            RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
+        });
+
+        new LinearSnapHelper().attachToRecyclerView(mRecyclerHistoryWeight);
     }
 
 
@@ -242,12 +253,9 @@ public class WeightRecordFragment extends BaseActivity {
                     .setForegroundColor(getResources().getColor(R.color.green_61D97F))
                     .setLength(9, checkSporting.length());
             mBtnStrongTip.setText(builder);
-            mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mLayoutStrongTip.setVisibility(View.GONE);
-                    RxActivityUtils.skipActivity(mActivity, WeightDataActivity.class);
-                }
+            mBtnStrongTip.setOnClickListener(v -> {
+                mLayoutStrongTip.setVisibility(View.GONE);
+                RxActivityUtils.skipActivity(mActivity, WeightDataActivity.class);
             });
         }
     }
@@ -276,40 +284,36 @@ public class WeightRecordFragment extends BaseActivity {
                 });
     }
 
+    private void fetchOneDayWeightList(String currentGid) {
+        //当日多次体重详情
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchOneDateWeightList(currentGid))
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().transformObservable("fetchOneDateWeightList" + currentGid, String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        Type type = new TypeToken<List<HealthyInfoBean>>() {
+                        }.getType();
+
+                        List<HealthyInfoBean> beanList = JSON.parseObject(s, type);
+                        dayWeightAdapter.setNewData(beanList);
+                    }
+
+                    @Override
+                    protected void _onError(String error, int code) {
+                        super._onError(error, code);
+                        RxToast.normal(error);
+                    }
+                });
+    }
+
+
     private void updateUI(WeightDataBean bean) {
-        isSettingTargetWeight = bean.isTargetSet();
-        hasDays = bean.getHasDays();
-        stillNeed = bean.getStillNeed();
         lastWeight = bean.getWeight();
 
         SPUtils.put(SPKey.SP_realWeight, (float) lastWeight);
-        RxLogUtils.d("是否有目标体重：" + bean.isTargetSet());
-        //是否录入体重
-        mLayoutTips.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
-//        mTvSettingTarget.setVisibility(bean.isTargetSet() ? View.GONE : View.VISIBLE);
-        mLayoutWeight.setVisibility(bean.isTargetSet() ? View.VISIBLE : View.GONE);
-
-        if (stillNeed <= 0) {
-            mTvDetails.setText("您的目标已完成，请前往设置新目标");
-            stillNeed = 0;
-        } else if (hasDays <= 0) {
-            mTvDetails.setText("坚持锻炼并设置新目标");
-        } else if (stillNeed > 0 && hasDays > 0) {
-            mTvDetails.setText("目标就在眼前，加油！");
-        }
-
-        RxTextUtils.getBuilder("需减 ")
-                .append(RxFormatValue.fromat4S5R(stillNeed, 1) + "")
-                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
-                .setProportion(1.4f)
-                .append(" kg,剩余 ")
-                .append(bean.getHasDays() + "")
-                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
-                .setProportion(1.4f)
-                .append(" 天").into(tvTarget);
-        tvStartWeight.setText((float) bean.getInitialWeight() + "kg");
-        tvEndWeight.setText((float) bean.getTargetWeight() + "kg");
-        proLimit.setProgress((float) (bean.getComplete() * 100));
 
         if (bean.getWeightList() == null) {
             return;
@@ -332,7 +336,7 @@ public class WeightRecordFragment extends BaseActivity {
             List<Unit> lines_weight = new ArrayList<>();
             List<Unit> lines_bodyFat = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
-                WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
+                HealthyInfoBean itemBean = list.get(i);
                 Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
                 Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
                 lines_weight.add(unit_weight);
@@ -349,7 +353,7 @@ public class WeightRecordFragment extends BaseActivity {
         List<Unit> lines_weight = new ArrayList<>();
         List<Unit> lines_bodyFat = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            WeightDataBean.WeightListBean.ListBean itemBean = list.get(i);
+            HealthyInfoBean itemBean = list.get(i);
             Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
             Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
             lines_weight.add(unit_weight);
@@ -374,16 +378,15 @@ public class WeightRecordFragment extends BaseActivity {
                 .add(bodyFatLine)
                 .build(mSuitlines);
 
-        mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
-            @Override
-            public void selectItem(int valueX) {
-                mTvCurWeight.setText((float) list.get(valueX).getWeight() + "");
-                mTvBodyFat.setText((float) list.get(valueX).getBodyFat() + "");
-                mTvMuscle.setText((float) (list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100) + "");
-                mTvBmi.setText((float) list.get(valueX).getBmi() + "");
-                mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
-                currentGid = list.get(valueX).getGid();
-            }
+        mSuitlines.setLineChartSelectItemListener(valueX -> {
+            mTvCurWeight.setText((float) list.get(valueX).getWeight() + "");
+            mTvBodyFat.setText((float) list.get(valueX).getBodyFat() + "");
+            mTvMuscle.setText((float) (list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100) + "");
+            mTvBmi.setText((float) list.get(valueX).getBmi() + "");
+            mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
+            currentWeightInfo = list.get(valueX);
+
+            fetchOneDayWeightList(list.get(valueX).getGid());
         });
 
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
@@ -408,23 +411,19 @@ public class WeightRecordFragment extends BaseActivity {
                     .setForegroundColor(getResources().getColor(R.color.green_61D97F))
                     .setLength(12, tipOpenBlueTooth.length());
             mBtnStrongTip.setText(builder);
-            mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BleTools.getBleManager().enableBluetooth();
-                }
-            });
+            mBtnStrongTip.setOnClickListener(v -> BleTools.getBleManager().enableBluetooth());
         }
     }
 
 
-    @OnClick({R.id.layout_sports})
+    @OnClick({R.id.layout_sports, R.id.tv_dataContrast})
     public void onViewClicked(View view) {
         if (view.getId() == R.id.layout_sports) {
-            if (list == null || list.size() == 0) return;
-            bundle.putString(Key.BUNDLE_DATA_GID, currentGid);
-            bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
-            RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
+            if (currentWeightInfo == null || RxDataUtils.isEmpty(list)) return;
+            bundle.putSerializable(Key.BUNDLE_DATA, currentWeightInfo);
+            RxActivityUtils.skipActivity(mContext, HealthyAssessActivity.class, bundle);
+        } else if (view.getId() == R.id.tv_dataContrast) {
+            RxActivityUtils.skipActivity(mContext, WeightContrastActivity.class);
         }
     }
 
@@ -436,12 +435,7 @@ public class WeightRecordFragment extends BaseActivity {
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("体重记录");
         btn_Connect = mQMUIAppBarLayout.addRightTextButton(
                 getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
@@ -450,4 +444,8 @@ public class WeightRecordFragment extends BaseActivity {
         btn_Connect.setTextSize(13);
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 }
