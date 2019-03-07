@@ -21,7 +21,6 @@ import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.vondear.rxtools.aboutByte.ByteUtil;
 import com.vondear.rxtools.aboutByte.HexUtil;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -218,10 +217,7 @@ public class AboutFragment extends BaseActivity {
                 break;
             case R.id.tv_tip:
                 //服务协议
-                Bundle bundle = new Bundle();
-                bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
-                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                WebTitleActivity.startWebActivity(mActivity, getString(R.string.ServiceAgreement), ServiceAPI.Term_Service);
                 break;
             case R.id.btn_reUpdate:
                 mLayoutUpdateFail.setVisibility(View.GONE);

@@ -48,7 +48,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
@@ -302,9 +301,7 @@ public class MainActivity extends BaseALocationActivity {
                 break;
             case TYPE_OPEN_URL:
                 //打开URL
-                bundle.putString(Key.BUNDLE_WEB_URL, openTarget);
-                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.appName));
-                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                WebTitleActivity.startWebActivity(mActivity,getString(R.string.appName),openTarget);
                 break;
         }
         pushMessageReaded(msgId);

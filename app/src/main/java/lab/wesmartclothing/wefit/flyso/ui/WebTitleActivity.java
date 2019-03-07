@@ -1,8 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -18,6 +18,15 @@ public class WebTitleActivity extends BaseWebActivity {
     RelativeLayout mParent;
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
+
+    private String url;
+
+    public static void startWebActivity(Context context, String title, String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Key.BUNDLE_TITLE, title);
+        bundle.putString(Key.BUNDLE_WEB_URL, url);
+        RxActivityUtils.skipActivity(context, WebTitleActivity.class, bundle);
+    }
 
 
     @Override
@@ -36,22 +45,18 @@ public class WebTitleActivity extends BaseWebActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
-        mQMUIAppBarLayout.setTitle(getIntent().getStringExtra(Key.BUNDLE_TITLE));
+        mQMUIAppBarLayout.setTitle(bundle.getString(Key.BUNDLE_TITLE));
+        url = bundle.getString(Key.BUNDLE_WEB_URL);
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RxActivityUtils.finishActivity();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> RxActivityUtils.finishActivity());
     }
 
 
     @Nullable
     @Override
     protected String getUrl() {
-        return getIntent().getStringExtra(Key.BUNDLE_WEB_URL);
+        return url;
     }
 }

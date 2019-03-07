@@ -197,11 +197,47 @@
                 app:icon_src_unable="@mipmap/ic_bar"/>
 
 
-            <com.github.mikephil.charting.charts.CombinedChart
-                android:id="@+id/chart_combined"
+            <HorizontalScrollView
+                android:id="@+id/HScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="110dp"/>
+                android:layout_marginLeft="23dp"
+                android:layout_marginTop="120dp"
+                android:scrollbars="none">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <lab.wesmartclothing.wefit.flyso.view.LineView
+                        android:id="@+id/lineView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        />
+
+                    <lab.wesmartclothing.wefit.flyso.view.BarView
+                        android:id="@+id/barView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        />
+
+
+
+
+                </FrameLayout>
+
+
+            </HorizontalScrollView>
+
+
+            <TextView
+                android:id="@+id/tv_noData"
+                android:layout_marginTop="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="无详细对比数据"
+                android:textColor="@color/GrayWrite"/>
 
             <TextView
                 android:id="@+id/tv_unit"
@@ -209,8 +245,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="110dp"
+                android:gravity="right"
                 android:textColor="@color/GrayWrite"
-                android:textSize="10sp"/>
+                android:textSize="10sp"
+                tools:text="%"/>
+
+
+            <TextView
+                android:id="@+id/tv_yLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="135dp"
+                android:gravity="right"
+                android:lineSpacingExtra="12dp"
+                android:textColor="@color/GrayWrite"
+                android:textSize="10sp"
+                tools:text="30\n30\n30\n30\n30\n30"/>
 
 
         </android.support.v7.widget.CardView>

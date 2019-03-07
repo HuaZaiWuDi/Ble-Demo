@@ -15,10 +15,10 @@ android {
             storePassword '123456'
         }
     }
-    //Debug时不进行拆分包和png图片压缩
-    splits.abi.enable = false
-    splits.density.enable = false
-    aaptOptions.cruncherEnabled = false
+//    //Debug时不进行拆分包和png图片压缩
+//    splits.abi.enable = false
+//    splits.density.enable = false
+//    aaptOptions.cruncherEnabled = false
 
 
     compileSdkVersion parent.ext.compileSdkVersion

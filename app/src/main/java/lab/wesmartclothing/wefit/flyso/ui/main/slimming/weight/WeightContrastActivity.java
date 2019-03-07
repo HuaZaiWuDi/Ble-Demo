@@ -2,24 +2,15 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.CombinedData;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -39,6 +30,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +46,8 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.view.BarView;
+import lab.wesmartclothing.wefit.flyso.view.LineView;
 import lab.wesmartclothing.wefit.flyso.view.picker.CustomDatePicker;
 
 public class WeightContrastActivity extends BaseActivity {
@@ -84,19 +78,28 @@ public class WeightContrastActivity extends BaseActivity {
     RxImageView mImgLine;
     @BindView(R.id.img_bar)
     RxImageView mImgBar;
-    @BindView(R.id.chart_combined)
-    CombinedChart mCombinedChart;
     @BindView(R.id.tv_unit)
     TextView mTvUnit;
     @BindView(R.id.tv_weightDiffDec)
     TextView mTvWeightDiffDec;
+    @BindView(R.id.lineView)
+    LineView mLineView;
+    @BindView(R.id.barView)
+    BarView mBarView;
+    @BindView(R.id.HScrollView)
+    HorizontalScrollView mHScrollView;
+    @BindView(R.id.tv_yLabel)
+    TextView mTvYLabel;
+    @BindView(R.id.tv_noData)
+    TextView mTvNoData;
 
 
     private Long startDate, endDate;
     private boolean isLine = true;
-    ArrayList<Entry> lineEntrys = new ArrayList<>();
-    ArrayList<BarEntry> barEntrys = new ArrayList<>();
+    ArrayList<Float> valueEntrys = new ArrayList<>();
+    ArrayList<String> dateEntrys = new ArrayList<>();
     private List<HealthyInfoBean> mInfoBeans;
+    private String unit = "%";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,78 +129,11 @@ public class WeightContrastActivity extends BaseActivity {
         mTvStartDate.setText(RxFormat.setFormatDate(startDate, RxFormat.Date));
         mTvEndDate.setText(RxFormat.setFormatDate(endDate, RxFormat.Date));
 
-        initChart();
         initTitle();
         initTabLayout();
         initTextUtils(0, 0);
 
         mImgLine.setEnabled(false);
-    }
-
-    private void initChart() {
-        //替换系统的渲染器，设置成圆角柱状图
-//        mCombinedChart.setRenderer(new BarRoundChartRenderer(
-//                mCombinedChart,
-//                mCombinedChart.getAnimator(),
-//                mCombinedChart.getViewPortHandler(),
-//                true,
-//                10f
-//        ));
-        mCombinedChart.setNoDataText("");
-        mCombinedChart.getDescription().setEnabled(false);
-        mCombinedChart.getLegend().setEnabled(false);
-        mCombinedChart.setHighlightFullBarEnabled(false);
-        mCombinedChart.setScaleEnabled(false);
-        mCombinedChart.setPinchZoom(false);//X，Y同时轴缩放
-
-
-        YAxis yLAxis = mCombinedChart.getAxisLeft();
-        yLAxis.setDrawAxisLine(false);
-        yLAxis.setGridColor(Color.parseColor("#FFF7F7F9"));
-        yLAxis.setDrawTopYLabelEntry(true);
-
-        YAxis yRAxis = mCombinedChart.getAxisRight();
-        yRAxis.setEnabled(false);
-        yRAxis.setMaxWidth(0);
-
-        XAxis xAxis = mCombinedChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setTextColor(ContextCompat.getColor(mContext, R.color.GrayWrite));
-        xAxis.setTextSize(10f);
-
-        mCombinedChart.invalidate();
-
-    }
-
-    private LineData setLine(ArrayList<Entry> valueLine) {
-        LineDataSet set = new LineDataSet(valueLine, "lineChart");
-        set.setColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
-        set.setLineWidth(3f);
-
-        set.setHighlightEnabled(false);
-        set.setDrawCircleHole(false);
-        set.setDrawCircles(false);
-//            set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set.setMode(LineDataSet.Mode.LINEAR);
-        set.setDrawValues(false);
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        return new LineData(set);
-    }
-
-    private BarData setData(ArrayList<BarEntry> valuesBar) {
-        BarDataSet set = new BarDataSet(valuesBar, "barChart");
-        set.setColor(ContextCompat.getColor(mContext, R.color.GrayWrite));
-        set.setDrawValues(false);
-        set.setHighlightEnabled(true);
-        set.setHighLightColor(ContextCompat.getColor(mContext, R.color.orange_FF7200));
-        set.setHighLightAlpha(255);
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        BarData data = new BarData(set);
-
-        data.setBarWidth(0.25f);
-        return data;
     }
 
 
@@ -342,69 +278,69 @@ public class WeightContrastActivity extends BaseActivity {
     }
 
     private void updateUI(List<HealthyInfoBean> weightInfoLists) {
-        lineEntrys.clear();
-        barEntrys.clear();
+        valueEntrys.clear();
+        dateEntrys.clear();
         RxLogUtils.d("数据个数：" + weightInfoLists.size());
         if (RxDataUtils.isEmpty(weightInfoLists)) {
             initTextUtils(0, 0);
+            mTvNoData.setVisibility(View.VISIBLE);
             return;
         } else {
+            mTvNoData.setVisibility(View.GONE);
             initTextUtils(weightInfoLists.get(0).getWeight(),
                     weightInfoLists.get(weightInfoLists.size() - 1).getWeight());
         }
 
         for (int i = 0; i < weightInfoLists.size(); i++) {
             HealthyInfoBean bean = weightInfoLists.get(i);
-            lineEntrys.add(new Entry(i, (float) getHealthyValue(bean)));
-            barEntrys.add(new BarEntry(i, (float) getHealthyValue(bean)));
+            //只添加有效数据
+            if ((float) getHealthyValue(bean) != 0) {
+                valueEntrys.add((float) getHealthyValue(bean));
+                dateEntrys.add(RxFormat.setFormatDate(bean.getWeightDate(), "MM/dd"));
+            }
         }
 
-        //删除
-        CombinedData data = mCombinedChart.getData();
-        if (data == null) {
-            data = new CombinedData();
-        }
-
-        IBarLineScatterCandleBubbleDataSet<? extends Entry> lineChart = data.getDataSetByLabel(!isLine ? "lineChart" : "barChart", true);
-        if (lineChart != null) {
-            data.removeDataSet(lineChart);
-            data.notifyDataChanged();
-            mCombinedChart.notifyDataSetChanged();
-        }
+        Float max = Collections.max(valueEntrys);
+        Float min = Collections.min(valueEntrys);
 
         if (isLine) {
-            data.setData(setLine(lineEntrys));
-        } else
-            data.setData(setData(barEntrys));
+            mLineView.setVisibility(View.VISIBLE);
+            mBarView.setVisibility(View.GONE);
+            mLineView.setBottomTextList(dateEntrys);
+            mLineView.setColorArray(new int[]{
+                    Color.parseColor("#FF62D981")
+            });
+            mLineView.setDrawDotLine(true);
+            mLineView.setShowPopup(LineView.SHOW_POPUPS_NONE);
+            mLineView.setFloatDataList(valueEntrys);
+        } else {
+            mBarView.setVisibility(View.VISIBLE);
+            mLineView.setVisibility(View.GONE);
+            mBarView.setBottomTextList(dateEntrys);
+            mBarView.setDataList(valueEntrys, max);
+        }
 
-        XAxis xAxis = mCombinedChart.getXAxis();
-        xAxis.setValueFormatter((value, axis) ->
-                RxFormat.setFormatDate(weightInfoLists.get(
-                        (int) Math.max(0, Math.min(value, weightInfoLists.size() - 1))).getWeightDate(),
-                        "MM/dd"));
-        xAxis.setSpaceMax(0.5f);
-        xAxis.setSpaceMin(0.2f);
+        new Handler()
+                .postDelayed(() -> {
+                    if (mHScrollView != null)
+                        mHScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                }, 300);
 
-        //添加
-        mCombinedChart.setData(data);
-        mCombinedChart.invalidate();
+        mTvUnit.setText(unit);
+        mTvYLabel.setText(
+                max + "\n" +
+                        RxFormatValue.fromat4S5R((max * 0.8f), 1) + "\n" +
+                        RxFormatValue.fromat4S5R((max * 0.6f), 1) + "\n" +
+                        RxFormatValue.fromat4S5R((max * 0.4f), 1) + "\n" +
+                        RxFormatValue.fromat4S5R((max * 0.2f), 1) + "\n" +
+                        "0");
 
-        //移动
-        mCombinedChart.setVisibleXRangeMaximum(6);
-        mCombinedChart.moveViewTo(mCombinedChart.getData().getEntryCount() - 6, 0, YAxis.AxisDependency.LEFT);
-        mCombinedChart.invalidate();
-
-        float yMax = mCombinedChart.getYMax();
-        float yMin = mCombinedChart.getYMin();
-        String unit = mTvUnit.getText().toString();
-
-        mTvMaxAndMin.setText("最高 " + yMax + unit + "\n最低 " + yMin + unit);
+        mTvMaxAndMin.setText("最高 " + max + unit + "\n最低 " + min + unit);
     }
-
 
     private double getHealthyValue(HealthyInfoBean weightInfoBean) {
         double value = 0;
-        mTvUnit.setText("%");
+        unit = "%";
         switch (mTabLayout.getSelectedTabPosition()) {
             //体脂率
             case 0:
@@ -412,22 +348,22 @@ public class WeightContrastActivity extends BaseActivity {
                 break;
             //BMI
             case 1:
-                mTvUnit.setText("");
+                unit = "";
                 value = weightInfoBean.getBmi();
                 break;
             //内脏脂肪等级
             case 2:
-                mTvUnit.setText("");
+                unit = "";
                 value = weightInfoBean.getVisfat();
                 break;
             //肌肉量
             case 3:
-                mTvUnit.setText("kg");
+                unit = "kg";
                 value = weightInfoBean.getSinew();
                 break;
             //基础代谢率
             case 4:
-                mTvUnit.setText("kcal");
+                unit = "kcal";
                 value = weightInfoBean.getBmr();
                 break;
             //水分
@@ -437,16 +373,16 @@ public class WeightContrastActivity extends BaseActivity {
             //骨量
             case 6:
                 value = weightInfoBean.getBone();
-                mTvUnit.setText("kg");
+                unit = "kg";
                 break;
             //身体年龄
             case 7:
-                mTvUnit.setText("岁");
+                unit = "岁";
                 value = weightInfoBean.getBodyAge();
                 break;
             //去脂体重
             case 8:
-                mTvUnit.setText("kg");
+                unit = "kg";
                 value = weightInfoBean.getBodyFfm();
                 break;
             //皮下脂肪率

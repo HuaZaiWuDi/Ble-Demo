@@ -41,7 +41,15 @@ public class UserInfo implements Serializable {
     private int planState;
     private int age;
     private boolean hasInviteCode;
+    private String invitationCode;
 
+    public String getInvitationCode() {
+        return invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode) {
+        this.invitationCode = invitationCode;
+    }
 
     public boolean isHasInviteCode() {
         return hasInviteCode;

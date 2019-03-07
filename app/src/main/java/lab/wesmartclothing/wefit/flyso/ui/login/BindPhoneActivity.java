@@ -60,10 +60,8 @@ public class BindPhoneActivity extends BaseActivity {
     @OnClick(R.id.tv_clause)
     void tv_clause() {
         //服务协议
-        Bundle bundle = new Bundle();
-        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
-        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+        WebTitleActivity.startWebActivity(mActivity,getString(R.string.ServiceAgreement),ServiceAPI.Term_Service);
+
     }
 
     @OnClick(R.id.btn_register)

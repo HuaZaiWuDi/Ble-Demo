@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +11,7 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.zchu.rxcache.data.CacheResult;
@@ -25,6 +25,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
@@ -34,7 +35,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -90,6 +91,8 @@ public class MeFragment extends BaseAcFragment {
     ImageView mIvAboutUs;
     @BindView(R.id.layout_aboutUs)
     RxRelativeLayout mLayoutAboutUs;
+    @BindView(R.id.tv_invitation)
+    TextView mTvInvitation;
 
     public static Fragment getInstance() {
         return new MeFragment();
@@ -111,6 +114,11 @@ public class MeFragment extends BaseAcFragment {
                 .append("--")
                 .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
+
+        UserInfo userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        if (userInfo != null) {
+            mTvInvitation.setText(userInfo.getInvitationCode());
+        }
     }
 
     @Override
@@ -120,7 +128,6 @@ public class MeFragment extends BaseAcFragment {
     }
 
 
-    //后台上传心率数据成功，刷新界面
     @Override
     protected void initRxBus() {
         //后台上传心率数据成功，刷新界面
@@ -220,7 +227,6 @@ public class MeFragment extends BaseAcFragment {
             R.id.iv_setting,
             R.id.iv_notify})
     public void onViewClicked(View view) {
-        Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.layout_myDevice:
                 RxActivityUtils.skipActivity(mContext, DeviceFragment.class);
@@ -229,15 +235,10 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, CollectFragment.class);
                 break;
             case R.id.layout_myOrder:
-
-                bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Order_Url);
-                bundle.putString(Key.BUNDLE_TITLE, "我的订单");
-                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url);
                 break;
             case R.id.layout_myShoppingAddress:
-                bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Shopping_Address);
-                bundle.putString(Key.BUNDLE_TITLE, "我的购物车");
-                RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address);
                 break;
             case R.id.layout_problem:
                 RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);
@@ -256,4 +257,5 @@ public class MeFragment extends BaseAcFragment {
                 break;
         }
     }
+
 }

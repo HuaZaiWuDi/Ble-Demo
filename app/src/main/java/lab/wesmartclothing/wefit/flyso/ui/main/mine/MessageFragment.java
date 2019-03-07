@@ -14,11 +14,11 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -307,10 +307,7 @@ public class MessageFragment extends BaseActivity {
                             onBackPressed();
                         } else if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_URL) {
                             //打开URL
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Key.BUNDLE_WEB_URL, readedBean.getOpenTarget());
-                            bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());
-                            RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+                            WebTitleActivity.startWebActivity(mActivity, readedBean.getAppTitle(), readedBean.getOpenTarget());
                         } else {
                             Bundle bundle = new Bundle();
                             bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());

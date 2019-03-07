@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
@@ -36,7 +35,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
@@ -67,10 +65,7 @@ public class RegisterActivity extends BaseActivity {
     @OnClick(R.id.tv_clause)
     void tv_clause() {
         //服务协议
-        Bundle bundle = new Bundle();
-        bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Term_Service);
-        bundle.putString(Key.BUNDLE_TITLE, getString(R.string.ServiceAgreement));
-        RxActivityUtils.skipActivity(mActivity, WebTitleActivity.class, bundle);
+        WebTitleActivity.startWebActivity(mActivity, getString(R.string.ServiceAgreement), ServiceAPI.Term_Service);
     }
 
     @Override

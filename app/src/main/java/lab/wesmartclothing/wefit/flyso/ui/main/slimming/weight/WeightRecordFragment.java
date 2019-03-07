@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.View;
@@ -199,6 +198,9 @@ public class WeightRecordFragment extends BaseActivity {
                         .append(" kg").setProportion(0.5f)
                         .into(view);
                 helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getMeasureTime(), "HH:mm"));
+
+                //通过分数判断体重是否合理
+
             }
         };
         mRecyclerHistoryWeight.setAdapter(dayWeightAdapter);
@@ -209,7 +211,6 @@ public class WeightRecordFragment extends BaseActivity {
             RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
         });
 
-        new LinearSnapHelper().attachToRecyclerView(mRecyclerHistoryWeight);
     }
 
 
