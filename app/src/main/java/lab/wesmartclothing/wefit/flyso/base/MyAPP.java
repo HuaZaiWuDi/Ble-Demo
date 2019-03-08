@@ -8,8 +8,6 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -106,10 +104,9 @@ public class MyAPP extends Application {
                  * */
                 String[] androidIds = {"171e7dfb5b3005f2", "54409e1a3d1be330"};
                 boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
-                RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
-
-                Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
-                Bugly.setIsDevelopmentDevice(MyAPP.this, isDevelopmentDevice);
+                if (!isDevelopmentDevice) {
+                    Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+                }
 
                 TextSpeakUtils.init(MyAPP.this);
                 MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
@@ -205,11 +202,8 @@ public class MyAPP extends Application {
     @Override
     protected void attachBaseContext(final Context base) {
         super.attachBaseContext(base);
-
         RxLogUtils.i("启动时长：开始启动");
         MultiDex.install(base);
-
-
     }
 
 

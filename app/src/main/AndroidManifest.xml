@@ -26,6 +26,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label,icon,roundIcon,theme">
+        <activity android:name=".ui.main.slimming.heat.ImageActivity">
+        </activity>
         <activity android:name=".ui.main.slimming.weight.HealthyAssessActivity">
         </activity>
         <activity android:name=".ui.main.slimming.weight.WeightContrastActivity">

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -192,7 +191,7 @@ public class RecipesActivity extends BaseActivity {
         mTopBar.addRightImageButton(R.mipmap.ic_shipu, R.id.iv_right)
                 .setOnClickListener(view -> {
                     //TODO 跳转
-                    WebTitleActivity.startWebActivity(mActivity, "", "");
+                    WebTitleActivity.startWebActivity(mActivity, "", "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552026552603&di=c18b0e0ec8e3fa4fb9fda1b6107af4d7&imgtype=0&src=http%3A%2F%2Fk.zol-img.com.cn%2Fwallpaper%2F7770%2F7769490_0540.jpg");
                 });
     }
 
@@ -201,7 +200,7 @@ public class RecipesActivity extends BaseActivity {
         return new BaseQuickAdapter<FoodListBean, BaseViewHolder>(R.layout.heat_item) {
             @Override
             protected void convert(BaseViewHolder helper, FoodListBean item) {
-                MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), (QMUIRadiusImageView) helper.getView(R.id.img_food));
+                MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), helper.getView(R.id.img_food));
 
                 helper.setText(R.id.tv_foodName, item.getFoodName());
                 RxTextUtils.getBuilder(item.getUnitCalorie() + "")

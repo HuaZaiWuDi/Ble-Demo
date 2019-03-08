@@ -19,7 +19,6 @@ public class WebTitleActivity extends BaseWebActivity {
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
 
-    private String url;
 
     public static void startWebActivity(Context context, String title, String url) {
         Bundle bundle = new Bundle();
@@ -46,7 +45,6 @@ public class WebTitleActivity extends BaseWebActivity {
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
         mQMUIAppBarLayout.setTitle(bundle.getString(Key.BUNDLE_TITLE));
-        url = bundle.getString(Key.BUNDLE_WEB_URL);
     }
 
     private void initTopBar() {
@@ -57,6 +55,6 @@ public class WebTitleActivity extends BaseWebActivity {
     @Nullable
     @Override
     protected String getUrl() {
-        return url;
+        return getIntent().getExtras().getString(Key.BUNDLE_WEB_URL);
     }
 }

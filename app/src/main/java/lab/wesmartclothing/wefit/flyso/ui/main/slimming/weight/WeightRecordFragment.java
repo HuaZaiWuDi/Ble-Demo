@@ -197,9 +197,10 @@ public class WeightRecordFragment extends BaseActivity {
                 RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.getWeight(), 1))
                         .append(" kg").setProportion(0.5f)
                         .into(view);
-                helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getMeasureTime(), "HH:mm"));
+                helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getMeasureTime(), "HH:mm"))
+                        .setGone(R.id.img_weightFlag, item.getHealthScore() != 0);
 
-                //通过分数判断体重是否合理
+                //TODO 通过分数判断体重是否合理
 
             }
         };
@@ -380,10 +381,10 @@ public class WeightRecordFragment extends BaseActivity {
                 .build(mSuitlines);
 
         mSuitlines.setLineChartSelectItemListener(valueX -> {
-            mTvCurWeight.setText((float) list.get(valueX).getWeight() + "");
-            mTvBodyFat.setText((float) list.get(valueX).getBodyFat() + "");
-            mTvMuscle.setText((float) (list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100) + "");
-            mTvBmi.setText((float) list.get(valueX).getBmi() + "");
+            mTvCurWeight.setText(RxFormatValue.fromat4S5R(list.get(valueX).getWeight(), 1));
+            mTvBodyFat.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBodyFat(), 1));
+            mTvMuscle.setText(RxFormatValue.fromat4S5R((list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100f), 1));
+            mTvBmi.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBmi(), 1));
             mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
             currentWeightInfo = list.get(valueX);
 
@@ -401,7 +402,6 @@ public class WeightRecordFragment extends BaseActivity {
 
             }
         });
-
     }
 
     private void checkStatus() {

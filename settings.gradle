@@ -1,1 +1,1 @@
-include ':app',   ':blelibrary', ":shareutil", ":imagepicker"
+include ':app',   ':blelibrary'

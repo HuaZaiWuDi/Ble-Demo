@@ -11,13 +11,23 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="5dp"
     app:cardElevation="2dp"
-    app:contentPadding="10dp">
+    >
 
+
+    <ImageView
+        android:id="@+id/img_weightFlag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:src="@mipmap/ic_weight_flag"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_weight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
         android:textColor="@color/green_61D97F"
         android:textSize="17sp"
         tools:text="49.2kg"/>
@@ -26,6 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:layout_margin="10dp"
         android:src="@mipmap/icon_weight_scale"/>
 
 
@@ -34,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_margin="10dp"
         android:layout_marginBottom="5dp"
         android:textColor="@color/GrayWrite"
         android:textSize="11sp"
@@ -43,6 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"
         android:layout_marginBottom="5dp"
         android:text="称重时间"
         android:textColor="@color/GrayWrite"

@@ -159,6 +159,7 @@
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:tabIndicatorColor="#FF312B36"
                 app:tabMode="scrollable">
 
             </android.support.design.widget.TabLayout>
@@ -222,8 +223,6 @@
                         />
 
 
-
-
                 </FrameLayout>
 
 
@@ -232,9 +231,9 @@
 
             <TextView
                 android:id="@+id/tv_noData"
-                android:layout_marginTop="100dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="100dp"
                 android:gravity="center"
                 android:text="无详细对比数据"
                 android:textColor="@color/GrayWrite"/>

@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'com.getkeepsafe.dexcount'
-def AAVersion = '4.4.0'
 
 
 
@@ -103,6 +102,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            crunchPngs false //关闭crunchPng优化, 以加快构建
+            ext.enableCrashlytics = false
+            ext.alwatsUpdateBuildId = false
             buildConfigField "boolean", "LeakCanary", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -177,7 +179,6 @@ dependencies {
 
     //高德定位SDK
     implementation 'com.amap.api:location:latest.integration'
-//    compile project(path: ':shareutil')
 //    implementation 'com.qmuiteam:arch:0.1.3'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -187,7 +188,6 @@ dependencies {
 
     // 此处以JPush 3.1.1 版本为例。
     implementation 'cn.jiguang.sdk:jcore:1.2.1'
-    implementation project(path: ':imagepicker')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
 
@@ -214,5 +214,8 @@ dependencies {
     //官方文档中没有这个依赖，要是不添加会导致初始化的时候的UMConfigure这个类不能识别
     implementation files('libs/umeng-share-wechat-simplify-6.9.4.jar')
 
+    implementation('com.jackUtil:ImagePicker:1.0.1') {
+        exclude group: 'com.android.support'
+    }  //指定版本
 
 }

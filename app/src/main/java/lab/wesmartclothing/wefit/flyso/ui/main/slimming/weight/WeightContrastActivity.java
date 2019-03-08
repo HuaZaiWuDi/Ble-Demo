@@ -156,13 +156,13 @@ public class WeightContrastActivity extends BaseActivity {
                 .into(mTvDiffWeight);
 
         RxTextUtils.getBuilder("起始体重\n")
-                .append(startWeight + "").setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .append(RxFormatValue.fromat4S5R(startWeight, 1)).setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(1.3f)
                 .append("\tkg").setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(0.5f)
                 .into(mTvStartWeight);
         RxTextUtils.getBuilder("最终体重\n")
-                .append(endWeight + "").setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                .append(RxFormatValue.fromat4S5R(endWeight, 1)).setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(1.3f)
                 .append("\tkg").setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(0.5f)
@@ -295,13 +295,13 @@ public class WeightContrastActivity extends BaseActivity {
             HealthyInfoBean bean = weightInfoLists.get(i);
             //只添加有效数据
             if ((float) getHealthyValue(bean) != 0) {
-                valueEntrys.add((float) getHealthyValue(bean));
+                valueEntrys.add((float) RxFormatValue.format4S5R(getHealthyValue(bean), 1));
                 dateEntrys.add(RxFormat.setFormatDate(bean.getWeightDate(), "MM/dd"));
             }
         }
 
-        Float max = Collections.max(valueEntrys);
-        Float min = Collections.min(valueEntrys);
+        float max = Collections.max(valueEntrys);
+        float min = Collections.min(valueEntrys);
 
         if (isLine) {
             mLineView.setVisibility(View.VISIBLE);
@@ -328,14 +328,15 @@ public class WeightContrastActivity extends BaseActivity {
 
         mTvUnit.setText(unit);
         mTvYLabel.setText(
-                max + "\n" +
-                        RxFormatValue.fromat4S5R((max * 0.8f), 1) + "\n" +
-                        RxFormatValue.fromat4S5R((max * 0.6f), 1) + "\n" +
-                        RxFormatValue.fromat4S5R((max * 0.4f), 1) + "\n" +
-                        RxFormatValue.fromat4S5R((max * 0.2f), 1) + "\n" +
+                (int) max + "\n" +
+                        (int) (max * 0.8f) + "\n" +
+                        (int) (max * 0.6f) + "\n" +
+                        (int) (max * 0.4f) + "\n" +
+                        (int) (max * 0.2f) + "\n" +
                         "0");
 
-        mTvMaxAndMin.setText("最高 " + max + unit + "\n最低 " + min + unit);
+        mTvMaxAndMin.setText("最高 " + RxFormatValue.fromat4S5R(max, 1) + unit +
+                "\n最低 " + RxFormatValue.fromat4S5R(min, 1) + unit);
     }
 
     private double getHealthyValue(HealthyInfoBean weightInfoBean) {
