@@ -343,8 +343,14 @@ public class LineView extends View {
 //        drawDots(canvas);
 
         for (int k = 0; k < drawDotLists.size(); k++) {
-            float maxValue = Collections.max(dataLists.get(k));
-            float minValue = Collections.min(dataLists.get(k));
+            float maxValue = 0, minValue = 0;
+            if (dataLists.get(k).size() > 1) {
+                maxValue = Collections.max(dataLists.get(k));
+                minValue = Collections.min(dataLists.get(k));
+            } else if (dataLists.get(k).size() == 1) {
+                maxValue = minValue = dataLists.get(k).get(0);
+            }
+
             for (Dot d : drawDotLists.get(k)) {
                 if (showPopupType == SHOW_POPUPS_All) {
                     drawPopup(canvas, d.data, d.setupPoint(tmpPoint),

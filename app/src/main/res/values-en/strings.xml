@@ -94,7 +94,7 @@
     <string name="tipOpenBlueTooth">Detected that you have not turned on your phone Bluetooth, turn on Bluetooth</string>
     <string name="checkSporting">Detected that you are exercising, click to view</string>
     <string name="checkHistoryWeight">You have new weight data, click to pick up</string>
-    <string name="completeDaytarget">Congratulations, today's sports goals have been completed, and we must continue to work harder!</string>
+    <string name="completeDaytarget">Congratulations, today is sports goals have been completed, and we must continue to work harder!</string>
     <string name="gotoSporting">Today, the amount of exercise of %1$s\tkcal is still enough to achieve the slimming effect. Just wear a slimming gown to exercise.</string>
     <string name="bestWeight">Your best weight: %1$s-%2$s kg</string>
     <string name="search_noData">No food found for " %1$s ", please re-enter the keyword for food ^-^</string>

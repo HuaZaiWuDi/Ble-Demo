@@ -89,14 +89,6 @@
                 android:layout_marginRight="18dp"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="F级：0-65分；C级：61-75分；B级：75-85分；A级：86-95分；S级：98-100分"
-                android:textColor="@color/GrayWrite"
-                android:textSize="10sp"/>
 
 
             <android.support.v7.widget.CardView

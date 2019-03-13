@@ -147,7 +147,10 @@
 
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-        </activity> <!-- 分割线============================================================================== -->
+        </activity>
+
+
+        <!-- 分割线============================================================================== -->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

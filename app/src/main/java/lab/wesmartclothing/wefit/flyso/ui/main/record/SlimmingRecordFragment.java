@@ -800,7 +800,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .append(RxFormatValue.fromat4S5R(weightInfo.getBodyFat(), 1))
                 .append("\t体脂率(%)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .append(RxFormatValue.fromat4S5R(weightInfo.getBmr(), 1))
+                .append(weightInfo.getBmr()+"")
                 .append("\t基础代谢(kcal)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvWeightInfo);

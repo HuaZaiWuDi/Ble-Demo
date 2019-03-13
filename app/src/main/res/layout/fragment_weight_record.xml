@@ -394,7 +394,7 @@
                     android:layout_height="61dp"
                     android:gravity="center"
                     android:textColor="@color/GrayWrite"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     tools:text="了解详细数据变化趋势？请进行数据比对"/>
 
             </LinearLayout>

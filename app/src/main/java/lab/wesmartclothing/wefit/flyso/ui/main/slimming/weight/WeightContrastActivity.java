@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -88,10 +89,20 @@ public class WeightContrastActivity extends BaseActivity {
     BarView mBarView;
     @BindView(R.id.HScrollView)
     HorizontalScrollView mHScrollView;
-    @BindView(R.id.tv_yLabel)
-    TextView mTvYLabel;
     @BindView(R.id.tv_noData)
     TextView mTvNoData;
+    @BindView(R.id.tv_yLabel_1)
+    TextView mTvYLabel1;
+    @BindView(R.id.tv_yLabel_2)
+    TextView mTvYLabel2;
+    @BindView(R.id.tv_yLabel_3)
+    TextView mTvYLabel3;
+    @BindView(R.id.tv_yLabel_4)
+    TextView mTvYLabel4;
+    @BindView(R.id.tv_yLabel_5)
+    TextView mTvYLabel5;
+    @BindView(R.id.tv_yLabel_6)
+    TextView mTvYLabel6;
 
 
     private Long startDate, endDate;
@@ -211,7 +222,7 @@ public class WeightContrastActivity extends BaseActivity {
     private void showDateDialog(final boolean isStart) {
         Calendar nowCalendar = Calendar.getInstance();
         CustomDatePicker datePicker = new CustomDatePicker(mActivity);
-        datePicker.setRangeStart(1940, 01, 01);
+        datePicker.setRangeStart(2018, 12, 01);
         datePicker.setRangeEnd(nowCalendar.get(Calendar.YEAR), nowCalendar.get(Calendar.MONTH) + 1, nowCalendar.get(Calendar.DAY_OF_MONTH));
         nowCalendar.setTimeInMillis(isStart ? startDate : endDate);
         datePicker.setTextColor(getResources().getColor(R.color.Gray));
@@ -300,9 +311,50 @@ public class WeightContrastActivity extends BaseActivity {
             }
         }
 
-        float max = Collections.max(valueEntrys);
-        float min = Collections.min(valueEntrys);
+        float max = 0, min = 0, startValue = 0, endValue = 0;
+        if (valueEntrys.size() > 1) {
+            startValue = valueEntrys.get(0);
+            endValue = valueEntrys.get(valueEntrys.size() - 1);
+            max = Collections.max(valueEntrys);
+            min = Collections.min(valueEntrys);
+        } else if (valueEntrys.size() == 1) {
+            startValue = endValue = max = min = valueEntrys.get(0);
+        }
 
+
+        if (mTabLayout.getSelectedTabPosition() == 2
+                || mTabLayout.getSelectedTabPosition() == 4
+                || mTabLayout.getSelectedTabPosition() == 7) {
+
+            mTvYLabel1.setText((int) max + "");
+            mTvYLabel2.setText((int) (max * 0.8f) + "");
+            mTvYLabel3.setText((int) (max * 0.6f) + "");
+            mTvYLabel4.setText((int) (max * 0.4f) + "");
+            mTvYLabel5.setText((int) (max * 0.2f) + "");
+            mTvYLabel6.setText("0");
+
+            mTvMaxAndMin.setText((int) Math.abs(startValue - endValue) + unit);
+        } else {
+            mTvYLabel1.setText(RxFormatValue.fromat4S5R(max, 1));
+            mTvYLabel2.setText(RxFormatValue.fromat4S5R((max * 0.8f), 1));
+            mTvYLabel3.setText(RxFormatValue.fromat4S5R((max * 0.6f), 1));
+            mTvYLabel4.setText(RxFormatValue.fromat4S5R((max * 0.4f), 1));
+            mTvYLabel5.setText(RxFormatValue.fromat4S5R((max * 0.2f), 1));
+            mTvYLabel6.setText("0");
+            mTvMaxAndMin.setText(RxFormatValue.fromat4S5R(Math.abs(startValue - endValue), 1) + unit);
+        }
+
+        Drawable drawable1 = null;
+        if (startValue - endValue > 0) {
+            drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.ic_contrast_up);
+        } else {
+            drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.ic_contrast_down);
+        }
+
+        mTvMaxAndMin.setCompoundDrawablesWithIntrinsicBounds(drawable1, null, null, null);
+
+
+        mTvUnit.setText(unit);
         if (isLine) {
             mLineView.setVisibility(View.VISIBLE);
             mBarView.setVisibility(View.GONE);
@@ -324,20 +376,10 @@ public class WeightContrastActivity extends BaseActivity {
                 .postDelayed(() -> {
                     if (mHScrollView != null)
                         mHScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                }, 300);
+                }, 100);
 
-        mTvUnit.setText(unit);
-        mTvYLabel.setText(
-                (int) max + "\n" +
-                        (int) (max * 0.8f) + "\n" +
-                        (int) (max * 0.6f) + "\n" +
-                        (int) (max * 0.4f) + "\n" +
-                        (int) (max * 0.2f) + "\n" +
-                        "0");
-
-        mTvMaxAndMin.setText("最高 " + RxFormatValue.fromat4S5R(max, 1) + unit +
-                "\n最低 " + RxFormatValue.fromat4S5R(min, 1) + unit);
     }
+
 
     private double getHealthyValue(HealthyInfoBean weightInfoBean) {
         double value = 0;

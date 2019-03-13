@@ -170,10 +170,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="73dp"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
                 android:lineSpacingExtra="8dp"
-                android:text="最高 \n最低 "
                 android:textColor="@color/GrayWrite"
-                android:textSize="10sp"/>
+                android:textSize="11sp"
+                tools:drawableLeft="@mipmap/ic_contrast_up"
+                tools:text="4.6%"/>
 
 
             <com.vondear.rxtools.view.layout.RxImageView
@@ -222,7 +225,6 @@
                         android:layout_height="match_parent"
                         />
 
-
                 </FrameLayout>
 
 
@@ -231,9 +233,11 @@
 
             <TextView
                 android:id="@+id/tv_noData"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:drawableLeft="@mipmap/ic_contrast_nodata"
                 android:gravity="center"
                 android:text="无详细对比数据"
                 android:textColor="@color/GrayWrite"/>
@@ -250,16 +254,74 @@
                 tools:text="%"/>
 
 
-            <TextView
-                android:id="@+id/tv_yLabel"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="135dp"
-                android:gravity="right"
-                android:lineSpacingExtra="12dp"
-                android:textColor="@color/GrayWrite"
-                android:textSize="10sp"
-                tools:text="30\n30\n30\n30\n30\n30"/>
+                android:layout_marginTop="120dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_yLabel_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="30"/>
+
+                <TextView
+                    android:id="@+id/tv_yLabel_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="30"/>
+
+                <TextView
+                    android:id="@+id/tv_yLabel_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="30"/>
+
+                <TextView
+                    android:id="@+id/tv_yLabel_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="30"/>
+
+                <TextView
+                    android:id="@+id/tv_yLabel_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="30"/>
+
+                <TextView
+                    android:id="@+id/tv_yLabel_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="10sp"
+                    tools:text="30"/>
+
+
+            </LinearLayout>
 
 
         </android.support.v7.widget.CardView>

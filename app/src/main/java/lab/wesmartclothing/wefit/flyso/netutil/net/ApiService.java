@@ -103,6 +103,11 @@ public interface ApiService {
     Observable<String> removeWeightInfo(@Body RequestBody body);
 
 
+    //移除单次体重信息
+    @POST("weight/removeDataWeight")
+    Observable<String> removeDataWeight(@Body RequestBody body);
+
+
     //获取体重页面信息
     @FormUrlEncoded
     @POST("weight/fetchWeightInfo")

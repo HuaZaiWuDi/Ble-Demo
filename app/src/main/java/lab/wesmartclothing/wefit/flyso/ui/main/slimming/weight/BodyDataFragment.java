@@ -107,7 +107,6 @@ public class BodyDataFragment extends BaseActivity {
         Typeface typeface = MyAPP.typeface;
         mTvHealthScore.setTypeface(typeface);
 
-
         initTopBar();
         initRecyclerView();
     }
@@ -122,6 +121,7 @@ public class BodyDataFragment extends BaseActivity {
 
         if (weightInfoBean != null) {
             notifyData(weightInfoBean);
+            gid = weightInfoBean.getGid();
         } else {
             initData();
         }
@@ -428,6 +428,29 @@ public class BodyDataFragment extends BaseActivity {
                     }
                 });
     }
+
+    private void deleteSingleWeight() {
+        JsonObject object = new JsonObject();
+        object.addProperty("gid", gid);
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .removeWeightInfo(NetManager.fetchRequest(object.toString())))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        //刷新数据
+                        RxBus.getInstance().post(new RefreshSlimming());
+                        onBackPressed();
+                    }
+
+                    @Override
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
+                    }
+                });
+    }
+
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());

@@ -323,32 +323,32 @@ public class SlimmingRecordBean {
          */
 
         private int basalHeat;
-        private int bmi;
+        private double bmi;
         private String bmiLevel;
         private int bmr;
         private int bodyAge;
-        private int bodyFat;
-        private int bodyFfm;
+        private double bodyFat;
+        private double bodyFfm;
         private int bodyLevel;
         private String bodyType;
-        private int bone;
+        private double bone;
         private long createTime;
         private String createUser;
-        private int flesh;
+        private double flesh;
         private String gid;
-        private int healthScore;
+        private double healthScore;
         private int initialFlag;
         private long measureTime;
-        private int muscle;
-        private int protein;
-        private int sinew;
+        private double muscle;
+        private double protein;
+        private double sinew;
         private int status;
-        private int subfat;
+        private double subfat;
         private long updateTime;
         private String updateUser;
         private String userId;
-        private int visfat;
-        private int water;
+        private double visfat;
+        private double water;
         private double weight;
         private long weightDate;
 
@@ -360,11 +360,11 @@ public class SlimmingRecordBean {
             this.basalHeat = basalHeat;
         }
 
-        public int getBmi() {
+        public double getBmi() {
             return bmi;
         }
 
-        public void setBmi(int bmi) {
+        public void setBmi(double bmi) {
             this.bmi = bmi;
         }
 
@@ -392,19 +392,19 @@ public class SlimmingRecordBean {
             this.bodyAge = bodyAge;
         }
 
-        public int getBodyFat() {
+        public double getBodyFat() {
             return bodyFat;
         }
 
-        public void setBodyFat(int bodyFat) {
+        public void setBodyFat(double bodyFat) {
             this.bodyFat = bodyFat;
         }
 
-        public int getBodyFfm() {
+        public double getBodyFfm() {
             return bodyFfm;
         }
 
-        public void setBodyFfm(int bodyFfm) {
+        public void setBodyFfm(double bodyFfm) {
             this.bodyFfm = bodyFfm;
         }
 
@@ -424,11 +424,11 @@ public class SlimmingRecordBean {
             this.bodyType = bodyType;
         }
 
-        public int getBone() {
+        public double getBone() {
             return bone;
         }
 
-        public void setBone(int bone) {
+        public void setBone(double bone) {
             this.bone = bone;
         }
 
@@ -448,11 +448,11 @@ public class SlimmingRecordBean {
             this.createUser = createUser;
         }
 
-        public int getFlesh() {
+        public double getFlesh() {
             return flesh;
         }
 
-        public void setFlesh(int flesh) {
+        public void setFlesh(double flesh) {
             this.flesh = flesh;
         }
 
@@ -464,11 +464,11 @@ public class SlimmingRecordBean {
             this.gid = gid;
         }
 
-        public int getHealthScore() {
+        public double getHealthScore() {
             return healthScore;
         }
 
-        public void setHealthScore(int healthScore) {
+        public void setHealthScore(double healthScore) {
             this.healthScore = healthScore;
         }
 
@@ -488,27 +488,27 @@ public class SlimmingRecordBean {
             this.measureTime = measureTime;
         }
 
-        public int getMuscle() {
+        public double getMuscle() {
             return muscle;
         }
 
-        public void setMuscle(int muscle) {
+        public void setMuscle(double muscle) {
             this.muscle = muscle;
         }
 
-        public int getProtein() {
+        public double getProtein() {
             return protein;
         }
 
-        public void setProtein(int protein) {
+        public void setProtein(double protein) {
             this.protein = protein;
         }
 
-        public int getSinew() {
+        public double getSinew() {
             return sinew;
         }
 
-        public void setSinew(int sinew) {
+        public void setSinew(double sinew) {
             this.sinew = sinew;
         }
 
@@ -520,11 +520,11 @@ public class SlimmingRecordBean {
             this.status = status;
         }
 
-        public int getSubfat() {
+        public double getSubfat() {
             return subfat;
         }
 
-        public void setSubfat(int subfat) {
+        public void setSubfat(double subfat) {
             this.subfat = subfat;
         }
 
@@ -552,19 +552,19 @@ public class SlimmingRecordBean {
             this.userId = userId;
         }
 
-        public int getVisfat() {
+        public double getVisfat() {
             return visfat;
         }
 
-        public void setVisfat(int visfat) {
+        public void setVisfat(double visfat) {
             this.visfat = visfat;
         }
 
-        public int getWater() {
+        public double getWater() {
             return water;
         }
 
-        public void setWater(int water) {
+        public void setWater(double water) {
             this.water = water;
         }
 
