@@ -282,9 +282,15 @@ public class PlanSportingActivity extends BaseActivity {
                         RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
 
                         timer.startTimer();
-                        lineChartUtils.setRealTimeData(sportsDataTab.getCurHeart());
-
                         currentHeart = sportsDataTab.getCurHeart();
+
+                        lineChartUtils.setRealTimeData(currentHeart);
+
+                        if (currentHeart > (Key.HRART_SECTION[6] & 0xFF)) {
+                            currentHeart = (Key.HRART_SECTION[6] & 0xFF);
+                        } else if (currentHeart < (Key.HRART_SECTION[0] & 0xFF)) {
+                            currentHeart = (Key.HRART_SECTION[0] & 0xFF);
+                        }
 
                         mTvAvHeartRate.setText(currentHeart + "");
 

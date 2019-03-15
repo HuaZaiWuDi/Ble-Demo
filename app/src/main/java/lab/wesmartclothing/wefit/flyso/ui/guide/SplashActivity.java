@@ -202,8 +202,8 @@ public class SplashActivity extends BaseActivity {
      * android 9.0不能访问未加密的Http网页，所以网页都需要部署秤Https
      */
     private void getSystemConfig() {
-        RxManager.getInstance().doNetSubscribe(NetManager.getSystemService()
-                .getSystemConfig())
+        RxManager.getInstance().doNetSubscribe(
+                NetManager.getSystemService().getSystemConfig())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -239,11 +239,15 @@ public class SplashActivity extends BaseActivity {
                                 case "mall.address"://购物车地址
                                     ServiceAPI.Store_Addr = bean.getConfValue();
                                     break;
+                                case "recommend.html"://推荐食材图片
+                                    ServiceAPI.RECIPES_URL = bean.getConfValue();
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                     }
                 });
-
     }
 
 

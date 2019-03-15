@@ -67,5 +67,8 @@ public class ServiceAPI {
     //收藏地址
     public static String Detail = "";
 
+    //食材推荐
+    public static String RECIPES_URL = "http://39.108.152.50:8088/diet/html/recommend.html";
+
 
 }

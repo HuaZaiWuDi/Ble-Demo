@@ -21,9 +21,20 @@ public class WebTitleActivity extends BaseWebActivity {
 
 
     public static void startWebActivity(Context context, String title, String url) {
+        startWebActivity(context, title, url, false);
+    }
+
+    /**
+     * @param context
+     * @param title
+     * @param url
+     * @param isCover 是否被title覆盖
+     */
+    public static void startWebActivity(Context context, String title, String url, boolean isCover) {
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_TITLE, title);
         bundle.putString(Key.BUNDLE_WEB_URL, url);
+        bundle.putBoolean(Key.BUNDLE_DATA, isCover);
         RxActivityUtils.skipActivity(context, WebTitleActivity.class, bundle);
     }
 
@@ -45,6 +56,13 @@ public class WebTitleActivity extends BaseWebActivity {
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
         mQMUIAppBarLayout.setTitle(bundle.getString(Key.BUNDLE_TITLE));
+        boolean isCover = bundle.getBoolean(Key.BUNDLE_DATA);
+        if (!isCover) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mParent.getLayoutParams();
+//            params.topMargin = RxUtils.dp2px(50);
+            params.addRule(RelativeLayout.BELOW, R.id.QMUIAppBarLayout);
+            mParent.setLayoutParams(params);
+        }
     }
 
     private void initTopBar() {

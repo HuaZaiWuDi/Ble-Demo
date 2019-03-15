@@ -235,10 +235,10 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, CollectFragment.class);
                 break;
             case R.id.layout_myOrder:
-                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url);
+                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url,true);
                 break;
             case R.id.layout_myShoppingAddress:
-                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address);
+                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address,true);
                 break;
             case R.id.layout_problem:
                 RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);

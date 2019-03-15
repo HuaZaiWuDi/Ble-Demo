@@ -89,9 +89,14 @@ android {
     }
     buildTypes {
         release {
+//            minifyEnabled false
+//            zipAlignEnabled true
+//            // 移除无用的resource文件
+//            shrinkResources true
             buildConfigField "boolean", "LeakCanary", "false"//9月5号演示版本置为true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
 //            crunchPngs false //关闭crunchPng优化, 以加快构建
@@ -100,6 +105,7 @@ android {
             buildConfigField "boolean", "LeakCanary", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     sourceSets {

@@ -288,14 +288,15 @@ public class SportingActivity extends BaseActivity {
                         RxLogUtils.i("瘦身衣心率数据：" + sportsDataTab.toString());
 
                         timer.startTimer();
-                        lineChartUtils.setRealTimeData(sportsDataTab.getCurHeart());
+                        int currentHeart = sportsDataTab.getCurHeart();
+
+                        lineChartUtils.setRealTimeData(currentHeart);
 
                         if (mChartHeartRate.getData().getEntryCount() > 30) {
                             XAxis xAxis = mChartHeartRate.getXAxis();
                             xAxis.resetAxisMaximum();
                         }
 
-                        int currentHeart = sportsDataTab.getCurHeart();
 
                         HeartRateItemBean heartRateTab = new HeartRateItemBean();
                         heartRateTab.setHeartRate(currentHeart);
@@ -304,9 +305,16 @@ public class SportingActivity extends BaseActivity {
                         heartRateTab.setIsfree(true);
                         heartLists.add(heartRateTab);
 
-                        mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
+                        mHeartRateBean.setStepNumber(currentHeart);
 
-                        freeTextSpeak(sportsDataTab.getCurHeart());
+                        freeTextSpeak(currentHeart);
+
+                        if (currentHeart > (Key.HRART_SECTION[6] & 0xFF)) {
+                            currentHeart = (Key.HRART_SECTION[6] & 0xFF);
+                        } else if (currentHeart < (Key.HRART_SECTION[0] & 0xFF)) {
+                            currentHeart = (Key.HRART_SECTION[0] & 0xFF);
+                        }
+
                         mTvAvHeartRate.setText(currentHeart + "");
 
 

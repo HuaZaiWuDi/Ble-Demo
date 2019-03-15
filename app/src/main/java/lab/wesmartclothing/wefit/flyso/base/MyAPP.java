@@ -81,56 +81,60 @@ public class MyAPP extends Application {
         sMyAPP = this;
 
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
-        new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(new Runnable() {
-            @Override
-            public void run() {
-                RxUtils.init(MyAPP.this);
-                RxLogUtils.setLogSwitch(true);
-                //开发版直接使用发布版API
-                if (!BuildConfig.DEBUG) {
-                    ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
-                } else {
-                    String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL, ServiceAPI.BASE_URL);
-                    if (!RxDataUtils.isNullString(baseUrl)) {
-                        ServiceAPI.switchURL(baseUrl);
-                    }
-                }
-                MultiDex.install(MyAPP.this);
-                initUM();
-                initLeakCanary();
-                /**
-                 * 过滤开发设备
-                 *
-                 * */
-                String[] androidIds = {"171e7dfb5b3005f2", "54409e1a3d1be330"};
-                boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
-                if (!isDevelopmentDevice) {
-                    Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
-                }
-
-                TextSpeakUtils.init(MyAPP.this);
-                MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
-                BleTools.initBLE(MyAPP.this);
-
-                try {
-                    RxCache.initializeDefault(new RxCache.Builder()
-                            .appVersion(2)
-                            .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
-                            .diskConverter(new SerializableDiskConverter())
-                            .diskMax((20 * 1024 * 1024))
-                            .memoryMax(0)
-                            .setDebug(false)
-                            .build());
-                } catch (Exception e) {
-                    RxLogUtils.e(e);
-                }
-
-                ActivityLifecycle();
-
-                RxLogUtils.i("启动时长：初始化结束");
-            }
+        new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
+            RxUtils.init(MyAPP.this);
+            RxLogUtils.setLogSwitch(true);
+            initUrl();
+            MultiDex.install(MyAPP.this);
+            initUM();
+            initLeakCanary();
+            initBugly();
+            TextSpeakUtils.init(MyAPP.this);
+            MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
+            BleTools.initBLE(MyAPP.this);
+            initRxCache();
+            ActivityLifecycle();
+            RxLogUtils.i("启动时长：初始化结束");
         });
+    }
 
+    private void initRxCache() {
+        try {
+            RxCache.initializeDefault(new RxCache.Builder()
+                    .appVersion(2)
+                    .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
+                    .diskConverter(new SerializableDiskConverter())
+                    .diskMax((20 * 1024 * 1024))
+                    .memoryMax(0)
+                    .setDebug(false)
+                    .build());
+        } catch (Exception e) {
+            RxLogUtils.e(e);
+        }
+    }
+
+    private void initBugly() {
+        /**
+         * 过滤开发设备
+         *
+         * */
+        String[] androidIds = {"171e7dfb5b3005f2", "54409e1a3d1be330"};
+        boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
+        if (!isDevelopmentDevice) {
+            Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+        }
+    }
+
+    private void initUrl() {
+        //开发版直接使用发布版API
+        if (BuildConfig.DEBUG) {
+            String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL, ServiceAPI.BASE_URL);
+            if (!RxDataUtils.isNullString(baseUrl)) {
+                ServiceAPI.switchURL(baseUrl);
+            }
+        } else {
+            ServiceAPI.switchURL(ServiceAPI.BASE_RELEASE);
+        }
     }
 
     private void ActivityLifecycle() {
