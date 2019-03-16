@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.webkit.JavascriptInterface;
 
 import com.tencent.sonic.sdk.SonicDiffDataCallback;
+import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.json.JSONObject;
 
@@ -40,6 +41,8 @@ public class SonicJavaScriptInterface {
             sessionClient.getDiffData(new SonicDiffDataCallback() {
                 @Override
                 public void callback(final String resultData) {
+
+                    RxLogUtils.d("resultData:" + resultData);
                     Runnable callbackRunnable = new Runnable() {
                         @Override
                         public void run() {

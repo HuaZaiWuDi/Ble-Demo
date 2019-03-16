@@ -8,10 +8,11 @@ import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 import com.just.agentweb.AgentWeb;
+import com.vondear.rxtools.utils.RxLogUtils;
 
 /**
  * Created icon_hide_password cenxiaozhong on 2017/5/14.
- *  source code  https://github.com/Justson/AgentWeb
+ * source code  https://github.com/Justson/AgentWeb
  */
 
 public class AndroidInterface {
@@ -25,10 +26,10 @@ public class AndroidInterface {
         this.context = context;
     }
 
-
-
     @JavascriptInterface
     public void callAndroid(final String msg) {
+
+        RxLogUtils.d("msg：" + msg);
 
 
         deliver.post(new Runnable() {

@@ -878,8 +878,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.img_seeRecord:
                 if (bean.getPlanState() == 3) {
-                    bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true");
-                    RxActivityUtils.skipActivity(mContext, PlanWebActivity.class, bundle);
+                    RxActivityUtils.skipActivity(mContext, PlanWebActivity.class);
                 } else if (bean.getPlanState() != 0) {
                     bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
                     RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);

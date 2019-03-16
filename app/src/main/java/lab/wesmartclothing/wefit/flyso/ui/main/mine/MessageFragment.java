@@ -307,7 +307,7 @@ public class MessageFragment extends BaseActivity {
                             onBackPressed();
                         } else if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_URL) {
                             //打开URL
-                            WebTitleActivity.startWebActivity(mActivity, readedBean.getAppTitle(), readedBean.getOpenTarget());
+                            WebTitleActivity.startWebActivity(mActivity, readedBean.getAppTitle(), readedBean.getOpenTarget(),true);
                         } else {
                             Bundle bundle = new Bundle();
                             bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());

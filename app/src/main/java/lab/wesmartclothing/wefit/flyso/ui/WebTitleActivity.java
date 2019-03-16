@@ -2,15 +2,16 @@ package lab.wesmartclothing.wefit.flyso.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.fragment.FragmentUtils;
 
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
+import lab.wesmartclothing.wefit.flyso.base.BaseWebTFragment;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 public class WebTitleActivity extends BaseWebActivity {
@@ -56,23 +57,19 @@ public class WebTitleActivity extends BaseWebActivity {
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
         mQMUIAppBarLayout.setTitle(bundle.getString(Key.BUNDLE_TITLE));
+
         boolean isCover = bundle.getBoolean(Key.BUNDLE_DATA);
         if (!isCover) {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mParent.getLayoutParams();
-//            params.topMargin = RxUtils.dp2px(50);
             params.addRule(RelativeLayout.BELOW, R.id.QMUIAppBarLayout);
             mParent.setLayoutParams(params);
         }
+        FragmentUtils.replace(getSupportFragmentManager(), BaseWebTFragment.getInstance(bundle.getString(Key.BUNDLE_WEB_URL)), R.id.parent);
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> RxActivityUtils.finishActivity());
-    }
-
-
-    @Nullable
-    @Override
-    protected String getUrl() {
-        return getIntent().getExtras().getString(Key.BUNDLE_WEB_URL);
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> {
+            RxActivityUtils.finishActivity();
+        });
     }
 }
