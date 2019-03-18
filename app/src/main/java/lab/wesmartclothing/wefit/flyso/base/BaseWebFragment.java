@@ -1,210 +1,229 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
-import android.annotation.SuppressLint;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.view.KeyEvent;
-import android.view.ViewGroup;
-import android.webkit.DownloadListener;
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
-import com.just.agentweb.AgentWeb;
-import com.just.agentweb.AgentWebConfig;
-import com.just.agentweb.AgentWebSettingsImpl;
-import com.just.agentweb.DefaultWebClient;
-import com.just.agentweb.IAgentWebSettings;
-import com.just.agentweb.IWebLayout;
-import com.just.agentweb.MiddlewareWebChromeBase;
-import com.just.agentweb.MiddlewareWebClientBase;
-import com.just.agentweb.PermissionInterceptor;
-import com.tbruyelle.rxpermissions2.Permission;
-import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tencent.sonic.sdk.SonicConfig;
+import com.tencent.sonic.sdk.SonicEngine;
+import com.tencent.sonic.sdk.SonicSession;
+import com.tencent.sonic.sdk.SonicSessionConfig;
+import com.tencent.sonic.sdk.SonicSessionConnection;
+import com.tencent.sonic.sdk.SonicSessionConnectionInterceptor;
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import io.reactivex.functions.Consumer;
+import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
-import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.soinc.OfflinePkgSessionConnection;
+import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicJavaScriptInterface;
+import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicRuntimeImpl;
+import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicSessionClientImpl;
 
 /**
- * Created icon_hide_password jk on 2018/5/24.
+ * @Package com.wesmartclothing.tbra.base
+ * @FileName BaseWebFragment
+ * @Date 2019/1/19 16:24
+ * @Author JACK
+ * @Describe TODO
+ * @Project tbra
  */
-public abstract class BaseWebFragment extends BaseAcFragment implements FragmentKeyDown {
+public class BaseWebFragment extends BaseAcFragment {
+
+    @BindView(R.id.layout_web)
+    FrameLayout mLayoutWeb;
+    @BindView(R.id.progress_web)
+    ProgressBar mProgressWeb;
 
 
-    public AgentWeb mAgentWeb;
-    private MiddlewareWebChromeBase mMiddleWareWebChrome;
-    private MiddlewareWebClientBase mMiddleWareWebClient;
+    private SonicSession sonicSession;
+    private String url;
+    private SonicSessionClientImpl sonicSessionClient = null;
 
 
-    public void initWebView(ViewGroup parent) {
-        //3.创建mAgentWeb
-        mAgentWeb = AgentWeb.with(this)//
-                .setAgentWebParent(parent, -1, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//传入AgentWeb的父控件。
-                .useDefaultIndicator(getIndicatorColor(), getIndicatorHeight())
-                .setWebView(getWebView())
-                .setWebLayout(getWebLayout())
-                .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
-                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
-                .useMiddlewareWebChrome(getMiddleWareWebChrome())
-                .useMiddlewareWebClient(getMiddleWareWebClient())
-                .setWebViewClient(getWebViewClient())//WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
-                .setAgentWebWebSettings(getAgentWebSettings())
-                .setWebChromeClient(getWebChromeClient()) //WebChromeClient
-                .setPermissionInterceptor(mPermissionInterceptor) //权限拦截 2.0.0 加入。
-                .setMainFrameErrorView(R.layout.layout_web_error, -1) //参数1是错误显示的布局，参数2点击刷新控件ID -1表示点击整个布局都刷新， AgentWeb 3.0.0 加入。
-                .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
-                .createAgentWeb()//创建AgentWeb。
-                .ready()//
-                .go(getUrl());
+    public static BaseWebFragment getInstance(String url) {
+        BaseWebFragment webFragment = new BaseWebFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Key.BUNDLE_WEB_URL, url);
+        webFragment.setArguments(bundle);
+        return webFragment;
+    }
 
-        AgentWebConfig.debug();
+    @Override
+    public int layoutId() {
+        return R.layout.fragment_web;
+    }
 
-
-        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
-//        mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
-        WebSettings webSettings = mAgentWeb.getWebCreator().getWebView().getSettings();
-//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-//        设置默认加载的可视范围是大视野范围
-        webSettings.setLoadWithOverviewMode(true);
-//                自适应屏幕(导致活动页面显示出错了)
-        webSettings.setUseWideViewPort(true);
-
-        //只有在显示时才会网络请求
-        RxBus.getInstance().register2(NetWorkType.class)
-                .compose(RxComposeUtils.<NetWorkType>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<NetWorkType>() {
-                    @Override
-                    protected void _onNext(NetWorkType netWorkType) {
-                        RxLogUtils.d("网络状态：" + netWorkType);
-                        if (netWorkType.isBoolean()) {
-                            mAgentWeb.getUrlLoader().reload();
-                        }
-                    }
-                });
+    @Override
+    public void initBundle(Bundle bundle) {
+        url = bundle.getString(Key.BUNDLE_WEB_URL);
+        url = "http://mc.vip.qq.com/demo/indexv3";
+        initWebView();
 
     }
 
+    private void initWebView() {
+        // step 1: 必要时初始化sonic引擎，或者在创建应用程序时进行初始化
+        if (!SonicEngine.isGetInstanceAllowed()) {
+            SonicEngine.createInstance(new SonicRuntimeImpl(mContext.getApplicationContext()), new SonicConfig.Builder().build());
+        }
+        //如果是脱机pkg模式，我们需要拦截会话连接
+        SonicSessionConfig.Builder sessionConfigBuilder = new SonicSessionConfig.Builder();
+        sessionConfigBuilder.setSupportLocalServer(true);
+//        sessionConfigBuilder.setCacheInterceptor(new SonicCacheInterceptor(null) {
+//            @Override
+//            public String getCacheData(SonicSession session) {
+//                return null; // offline pkg does not need cache
+//            }
+//        });
 
-    @Override
-    public void onResume() {
-        if (mAgentWeb != null)
-            mAgentWeb.getWebLifeCycle().onResume();//恢复
-        super.onResume();
+        sessionConfigBuilder.setConnectionInterceptor(new SonicSessionConnectionInterceptor() {
+            @Override
+            public SonicSessionConnection getConnection(SonicSession session, Intent intent) {
+                return new OfflinePkgSessionConnection(mContext, session, intent);
+            }
+        });
+
+        // step 2: Create SonicSession
+        sonicSession = SonicEngine.getInstance().createSession(url, new SonicSessionConfig.Builder().build());
+        if (null != sonicSession) {
+            sonicSession.bindClient(sonicSessionClient = new SonicSessionClientImpl());
+        } else {
+            // this only happen when a same sonic session is already running,
+            // u can comment following codes to feedback as a default mode.
+//            throw new UnknownError("create session fail!");
+            RxLogUtils.e("create session fail!");
+        }
+        // step 3: BindWebView for sessionClient and bindClient for SonicSession
+        // in the real world, the init flow may cost a long time as startup
+        // runtime、init configs....
+
+        WebView webView = new WebView(mContext);
+        mLayoutWeb.addView(webView);
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (sonicSession != null) {
+                    sonicSession.getSessionClient().pageFinish(url);
+                }
+                mProgressWeb.setVisibility(View.GONE);
+            }
+
+            @TargetApi(21)
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                return shouldInterceptRequest(view, request.getUrl().toString());
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                if (sonicSession != null) {
+                    //step 6: Call sessionClient.requestResource when host allow the application
+                    // to return the local data .
+                    return (WebResourceResponse) sonicSession.getSessionClient().requestResource(url);
+                }
+                return null;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                mProgressWeb.setVisibility(View.VISIBLE);
+            }
+        });
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                mProgressWeb.setProgress(newProgress);
+            }
+        });
+
+        WebSettings webSettings = webView.getSettings();
+
+        // step 4: bind javascript
+        // note:if api level lower than 17(android 4.2), addJavascriptInterface has security
+        // issue, please use x5 or see https://developer.android.com/reference/android/webkit/
+        // WebView.html#addJavascriptInterface(java.lang.Object, java.lang.String)
+        webSettings.setJavaScriptEnabled(true);
+        webView.removeJavascriptInterface("searchBoxJavaBridge_");
+
+        Intent intent = mActivity.getIntent();
+        intent.putExtra(SonicJavaScriptInterface.PARAM_CLICK_TIME, System.currentTimeMillis());
+        webView.addJavascriptInterface(new SonicJavaScriptInterface(sonicSessionClient, intent), "sonic");
+
+        // init webview settings
+        webSettings.setAllowContentAccess(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setSavePassword(false);
+        webSettings.setSaveFormData(false);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setDefaultTextEncodingName("utf-8");
+
+        // step 5: webview is ready now, just tell session client to bind
+        if (sonicSessionClient != null) {
+            sonicSessionClient.bindWebView(webView);
+            sonicSessionClient.clientReady();
+        } else { // default mode
+            webView.loadUrl(url);
+        }
     }
 
     @Override
     public void onPause() {
-        if (mAgentWeb != null)
-            mAgentWeb.getWebLifeCycle().onPause(); //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
+
         super.onPause();
     }
 
+    public void onRelease() {
+        if (null != sonicSession) {
+            sonicSession.destroy();
+            sonicSession = null;
+        }
+        if (sonicSessionClient != null) {
+            sonicSessionClient.destroy();
+            sonicSessionClient = null;
+        }
+        mLayoutWeb.removeAllViews();
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        onRelease();
+        super.onDestroyView();
+    }
 
     @Override
     public void onDestroy() {
-        if (mAgentWeb != null)
-            mAgentWeb.getWebLifeCycle().onDestroy();
         super.onDestroy();
     }
 
-    protected PermissionInterceptor mPermissionInterceptor = new PermissionInterceptor() {
+    @Override
+    public void initViews() {
 
-        /**
-         * PermissionInterceptor 能达到 url1 允许授权， url2 拒绝授权的效果。
-         * AgentWeb 是用自己的权限机制的 ，true 该Url对应页面请求定位权限拦截 ，false 默认允许。
-         * @param url
-         * @param permissions
-         * @param action
-         * @return
-         */
-        @SuppressLint("CheckResult")
-        @Override
-        public boolean intercept(String url, String[] permissions, String action) {
-            new RxPermissions(mActivity).requestEach(permissions)
-                    .subscribe(new Consumer<Permission>() {
-                        @Override
-                        public void accept(Permission permission) throws Exception {
-                            if (permission.granted) {
-                                //通过
-                            }
-                        }
-                    });
-            return true;
-        }
-    };
-
-
-    protected @Nullable
-    IAgentWebSettings getAgentWebSettings() {
-        return AgentWebSettingsImpl.getInstance();
-    }
-
-    protected @Nullable
-    DownloadListener getDownloadListener() {
-        return null;
-    }
-
-    protected @Nullable
-    WebChromeClient getWebChromeClient() {
-        return null;
-    }
-
-
-    protected @ColorInt
-    int getIndicatorColor() {
-        return -1;
-    }
-
-    protected int getIndicatorHeight() {
-        return -1;
-    }
-
-    protected @Nullable
-    WebViewClient getWebViewClient() {
-        return null;
-    }
-
-    protected @Nullable
-    WebView getWebView() {
-        return null;
-    }
-
-    protected @Nullable
-    IWebLayout getWebLayout() {
-        return null;
-    }
-
-
-    protected @NonNull
-    MiddlewareWebChromeBase getMiddleWareWebChrome() {
-        return this.mMiddleWareWebChrome = new MiddlewareWebChromeBase() {
-        };
-    }
-
-    protected @NonNull
-    MiddlewareWebClientBase getMiddleWareWebClient() {
-        return this.mMiddleWareWebClient = new MiddlewareWebClientBase() {
-        };
-    }
-
-    protected @Nullable
-    String getUrl() {
-        return "";
     }
 
     @Override
-    public boolean onFragmentKeyDown(int keyCode, KeyEvent event) {
-        if (mAgentWeb != null)
-            return mAgentWeb.handleKeyEvent(keyCode, event);
-        return false;
+    public void initNetData() {
+
     }
+
 
 }

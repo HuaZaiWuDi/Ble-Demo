@@ -10,6 +10,9 @@
     </declare-styleable>
 
 
-
+    <declare-styleable name="RxLoadingView">
+        <attr name="loading_view_size" format="dimension"/>
+        <attr name="view_color" format="color"/>
+    </declare-styleable>
 
 </resources>

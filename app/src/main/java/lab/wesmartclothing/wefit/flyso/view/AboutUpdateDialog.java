@@ -1,8 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -15,6 +16,7 @@ import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.dialog.RxDialog;
 import com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar;
 
@@ -22,7 +24,6 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.functions.Function;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
@@ -32,7 +33,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
-import okhttp3.ResponseBody;
 
 /**
  * @author zzp
@@ -46,6 +46,8 @@ public class AboutUpdateDialog extends RxDialog {
     TextView mTvUpdateTip;
     @BindView(R.id.fr_content)
     QMUIRelativeLayout mFrContent;
+    @BindView(R.id.loadView)
+    RxLoadingView mLoadView;
 
     private String filePath;
     private Context mContext;
@@ -90,12 +92,9 @@ public class AboutUpdateDialog extends RxDialog {
 //        //演示使用本地DFU文件
 //        startMyDFU(null);
 
-        setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                DfuServiceListenerHelper.unregisterProgressListener(mContext, listenerAdapter);
-                B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
-            }
+        setOnDismissListener(dialog -> {
+            DfuServiceListenerHelper.unregisterProgressListener(mContext, listenerAdapter);
+            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
         });
     }
 
@@ -105,12 +104,7 @@ public class AboutUpdateDialog extends RxDialog {
         RxLogUtils.i("文件名：" + fileName);
 
         RxManager.getInstance().doLoadDownSubscribe(NetManager.getApiService().downLoadFile(filePath))
-                .map(new Function<ResponseBody, File>() {
-                    @Override
-                    public File apply(ResponseBody body) throws Exception {
-                        return mFileDownLoadObserver.saveFile(body, Dir, fileName);
-                    }
-                })
+                .map(body -> mFileDownLoadObserver.saveFile(body, Dir, fileName))
                 .subscribe(mFileDownLoadObserver);
     }
 
@@ -154,6 +148,10 @@ public class AboutUpdateDialog extends RxDialog {
 //        starter.setZip(R.raw.nrf52832_xxaa_app_7);
         starter.setZip(o.getPath());
         starter.start(mContext, DfuService.class);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DfuServiceInitiator.createDfuNotificationChannel(mContext);
+        }
     }
 
     //拦截返回按钮
@@ -261,7 +259,10 @@ public class AboutUpdateDialog extends RxDialog {
             RxLogUtils.d("onProgressChanged:" + "percent:" + percent + "----" + speed + "----avgSpeed:" + avgSpeed + "-----currentPart:" + currentPart + "------prtsTotal:" + partsTotal);
             mMRxTextRoundProgressBar.setProgress(percent, false);
             mMRxTextRoundProgressBar.setProgressText("");
-            mTvProgress.setText((int) mMRxTextRoundProgressBar.getProgress() + "");
+            mLoadView.setVisibility(View.GONE);
+            RxTextUtils.getBuilder((int) mMRxTextRoundProgressBar.getProgress() + "")
+                    .append("\t%").setForegroundColor(Color.parseColor("#574D5F"))
+                    .setProportion(0.5f).into(mTvProgress);
         }
     };
 

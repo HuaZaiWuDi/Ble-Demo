@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
@@ -17,17 +18,18 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
+import com.vondear.rxtools.fragment.FragmentUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxProcessUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseWebActivity;
+import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.BaseWebTFragment;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
-public class CollectWebActivity extends BaseWebActivity {
+public class CollectWebActivity extends BaseActivity {
 
     @BindView(R.id.topBar)
     QMUITopBar mTopBar;
@@ -42,16 +44,24 @@ public class CollectWebActivity extends BaseWebActivity {
         return R.layout.activity_web_interactive;
     }
 
+
     @Override
     protected void initViews() {
         super.initViews();
-        initWebView(mParent);
-        RxLogUtils.e("当前进程：" + RxProcessUtils.getForegroundProcessName(mContext));
+
+        FragmentUtils.replace(getSupportFragmentManager(),
+                BaseWebTFragment.getInstance(getIntent().getStringExtra(Key.BUNDLE_WEB_URL)), R.id.parent);
+
+
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onBackPressed();
+                        if (getWebView() != null && getWebView().canGoBack()) {
+                            getWebView().goBack();
+                        } else {
+                            onBackPressed();
+                        }
                     }
                 });
 
@@ -63,12 +73,29 @@ public class CollectWebActivity extends BaseWebActivity {
             public void onClick(View v) {
                 if (bean != null) {
                     showSimpleBottomSheetGrid(bean.getCoverPicture(), bean.getArticleName(),
-                            bean.getSummary(), getUrl());
+                            bean.getSummary(), getIntent().getStringExtra(Key.BUNDLE_WEB_URL));
                 } else {
                     RxToast.normal("分享失败");
                 }
             }
         });
+    }
+
+
+    private WebView getWebView() {
+        WebView mWebView = null;
+        try {
+            View frameLayout = FragmentUtils.findFragment(getSupportFragmentManager(), BaseWebTFragment.class)
+                    .getView().findViewWithTag("webView");
+
+            if (frameLayout instanceof WebView) {
+                mWebView = (WebView) frameLayout;
+            }
+            return mWebView;
+        } catch (Exception e) {
+            RxLogUtils.e(e);
+        }
+        return mWebView;
     }
 
 
@@ -132,13 +159,6 @@ public class CollectWebActivity extends BaseWebActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-    }
-
-
-    @Nullable
-    @Override
-    protected String getUrl() {
-        return getIntent().getStringExtra(Key.BUNDLE_WEB_URL);
     }
 
 }

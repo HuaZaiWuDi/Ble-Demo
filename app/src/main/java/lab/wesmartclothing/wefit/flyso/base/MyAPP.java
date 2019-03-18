@@ -16,6 +16,8 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.smartclothing.blelibrary.BleTools;
 import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
+import com.tencent.sonic.sdk.SonicConfig;
+import com.tencent.sonic.sdk.SonicEngine;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -39,6 +41,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.GlideImageLoader;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
+import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicRuntimeImpl;
 
 /**
  * Created icon_hide_password jk on 2018/5/8.
@@ -79,6 +82,7 @@ public class MyAPP extends Application {
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         initQN();
         sMyAPP = this;
+        initSonic();
 
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
@@ -96,6 +100,13 @@ public class MyAPP extends Application {
             ActivityLifecycle();
             RxLogUtils.i("启动时长：初始化结束");
         });
+    }
+
+    private void initSonic() {
+        // step 1: 必要时初始化sonic引擎，或者在创建应用程序时进行初始化
+        if (!SonicEngine.isGetInstanceAllowed()) {
+            SonicEngine.createInstance(new SonicRuntimeImpl(this), new SonicConfig.Builder().build());
+        }
     }
 
     private void initRxCache() {

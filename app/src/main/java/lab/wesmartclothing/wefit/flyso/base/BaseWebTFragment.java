@@ -1,34 +1,33 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
-import com.tencent.sonic.sdk.SonicCacheInterceptor;
-import com.tencent.sonic.sdk.SonicConfig;
+import com.github.lzyzsd.jsbridge.BridgeWebView;
+import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.tencent.sonic.sdk.SonicEngine;
 import com.tencent.sonic.sdk.SonicSession;
 import com.tencent.sonic.sdk.SonicSessionConfig;
-import com.tencent.sonic.sdk.SonicSessionConnection;
-import com.tencent.sonic.sdk.SonicSessionConnectionInterceptor;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxNetUtils;
+import com.vondear.rxtools.view.state.PageLayout;
 
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.soinc.OfflinePkgSessionConnection;
 import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicJavaScriptInterface;
-import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicRuntimeImpl;
 import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicSessionClientImpl;
 
 /**
@@ -48,8 +47,10 @@ public class BaseWebTFragment extends BaseAcFragment {
 
 
     private SonicSession sonicSession;
-    private String url;
     private SonicSessionClientImpl sonicSessionClient = null;
+    public BridgeWebView webView;
+    public String url;
+    private PageLayout pageLayout;
 
 
     public static BaseWebTFragment getInstance(String url) {
@@ -60,6 +61,13 @@ public class BaseWebTFragment extends BaseAcFragment {
         return webFragment;
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+
+        super.onAttach(context);
+    }
+
     @Override
     public int layoutId() {
         return R.layout.fragment_web;
@@ -67,57 +75,53 @@ public class BaseWebTFragment extends BaseAcFragment {
 
     @Override
     public void initBundle(Bundle bundle) {
-        url = bundle.getString(Key.BUNDLE_WEB_URL);
-        initWebView();
     }
 
     private void initWebView() {
-        // step 1: 必要时初始化sonic引擎，或者在创建应用程序时进行初始化
-        if (!SonicEngine.isGetInstanceAllowed()) {
-            SonicEngine.createInstance(new SonicRuntimeImpl(mContext.getApplicationContext()), new SonicConfig.Builder().build());
+        if (url == null) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                url = bundle.getString(Key.BUNDLE_WEB_URL);
+            }
+            if (url == null) {
+                pageLayout.showError();
+                return;
+            }
         }
-        //如果是脱机pkg模式，我们需要拦截会话连接
+
         SonicSessionConfig.Builder sessionConfigBuilder = new SonicSessionConfig.Builder();
         sessionConfigBuilder.setSupportLocalServer(true);
-        sessionConfigBuilder.setCacheInterceptor(new SonicCacheInterceptor(null) {
-            @Override
-            public String getCacheData(SonicSession session) {
-                return null; // offline pkg does not need cache
-            }
-        });
-
-        sessionConfigBuilder.setConnectionInterceptor(new SonicSessionConnectionInterceptor() {
-            @Override
-            public SonicSessionConnection getConnection(SonicSession session, Intent intent) {
-                return new OfflinePkgSessionConnection(mContext, session, intent);
-            }
-        });
-
+        sessionConfigBuilder.setReloadInBadNetwork(true);
+//        sessionConfigBuilder.setSupportCacheControl(true);
+        RxLogUtils.d("网页地址：" + url);
+//        url = "http://mc.vip.qq.com/demo/indexv3";
         // step 2: Create SonicSession
-        sonicSession = SonicEngine.getInstance().createSession(url, new SonicSessionConfig.Builder().build());
+        sonicSession = SonicEngine.getInstance().createSession(url, sessionConfigBuilder.build());
         if (null != sonicSession) {
             sonicSession.bindClient(sonicSessionClient = new SonicSessionClientImpl());
         } else {
-            // this only happen when a same sonic session is already running,
-            // u can comment following codes to feedback as a default mode.
-//            throw new UnknownError("create session fail!");
+            //相同的Url的Sonic会话只能存在一个，也就是说URL作为一个Key，保证唯一性
             RxLogUtils.e("create session fail!");
         }
-        // step 3: BindWebView for sessionClient and bindClient for SonicSession
-        // in the real world, the init flow may cost a long time as startup
-        // runtime、init configs....
 
-        WebView webView = new WebView(mContext);
+        SonicEngine.getInstance().initSonicDB();
+
+        webView = new BridgeWebView(mContext);
+
         webView.setTag("webView");
         mLayoutWeb.addView(webView);
 
-        webView.setWebViewClient(new WebViewClient() {
-
+        webView.setWebViewClient(new BridgeWebViewClient(webView) {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (sonicSession != null) {
                     sonicSession.getSessionClient().pageFinish(url);
+                }
+                if (!RxNetUtils.isAvailable(MyAPP.sMyAPP)) {
+                    pageLayout.showError();
+                } else {
+                    pageLayout.hide();
                 }
                 mProgressWeb.setVisibility(View.GONE);
             }
@@ -142,7 +146,9 @@ public class BaseWebTFragment extends BaseAcFragment {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 mProgressWeb.setVisibility(View.VISIBLE);
+                RxLogUtils.d("【webView】:onPageStarted");
             }
+
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -153,6 +159,7 @@ public class BaseWebTFragment extends BaseAcFragment {
                 if (newProgress >= 90) {
                     mProgressWeb.setVisibility(View.GONE);
                 }
+                RxLogUtils.d("【webView】:onProgressChanged：" + newProgress);
             }
         });
 
@@ -180,18 +187,17 @@ public class BaseWebTFragment extends BaseAcFragment {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setDefaultTextEncodingName("utf-8");
 
-        // step 5: webview is ready now, just tell session client to bind
         if (sonicSessionClient != null) {
             sonicSessionClient.bindWebView(webView);
             sonicSessionClient.clientReady();
-        } else { // default mode
+        } else if (!TextUtils.isEmpty(url)) { // default mode
             webView.loadUrl(url);
         }
     }
 
+
     @Override
     public void onPause() {
-
         super.onPause();
     }
 
@@ -200,17 +206,13 @@ public class BaseWebTFragment extends BaseAcFragment {
             sonicSession.destroy();
             sonicSession = null;
         }
-        if (sonicSessionClient != null) {
-            sonicSessionClient.destroy();
-            sonicSessionClient = null;
-        }
-        mLayoutWeb.removeAllViews();
     }
 
 
     @Override
     public void onDestroyView() {
         onRelease();
+        mLayoutWeb.removeAllViews();
         super.onDestroyView();
     }
 
@@ -221,15 +223,22 @@ public class BaseWebTFragment extends BaseAcFragment {
 
     @Override
     public void initViews() {
+        pageLayout = new PageLayout.Builder(mContext)
+                .initPage(mLayoutWeb)
+                .setError(R.layout.layout_web_error, 0)
+                .setOnRetryListener(() -> {
+                    if (url != null) {
+                        webView.loadUrl(url);
+                    }
+                }).create();
+
+        if (!RxNetUtils.isAvailable(MyAPP.sMyAPP)) {
+            pageLayout.showError();
+        }
+        initWebView();
     }
 
-    @Override
-    public void initNetData() {
-
-    }
-
-    public void initRxBus2() {
-
-    }
-
+//    public BridgeWebView getWebView() {
+//        return webView;
+//    }
 }

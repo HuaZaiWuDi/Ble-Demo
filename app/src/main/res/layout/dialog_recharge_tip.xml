@@ -20,22 +20,19 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:text="--"
         android:textColor="@color/red"
         android:textSize="36sp"
         tools:text="56"/>
 
-    <TextView
+
+    <lab.wesmartclothing.wefit.flyso.view.RxLoadingView
+        android:id="@+id/loadView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tv_progress"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:layout_toRightOf="@+id/tv_progress"
-        android:text="\t%"
-        android:textColor="#574D5F"
-        android:textSize="18sp"
-        />
+        android:layout_marginTop="32dp"
+        app:view_color="@color/GrayWrite"/>
+
 
     <com.vondear.rxtools.view.roundprogressbar.RxTextRoundProgressBar
         android:id="@+id/mRxTextRoundProgressBar"
@@ -43,8 +40,8 @@
         android:layout_height="8dp"
         android:layout_below="@+id/tv_progress"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:rcBackgroundColor="#D9D8E1"
         app:rcMax="100"
         app:rcProgress="0"
@@ -58,8 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/mRxTextRoundProgressBar"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dimen_5"
         android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginBottom="@dimen/dimen_5"
         android:text="升级中，请勿断开连接"
         android:textColor="#978E9D"
         android:textSize="13sp"/>

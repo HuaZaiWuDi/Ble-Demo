@@ -8,6 +8,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import java.util.Calendar;
 
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
@@ -28,7 +29,8 @@ public class HeartRateToKcal {
 
 
     /**
-     * @param HR true 为男，false为女;
+     * @param HR 心率区间;
+     * @param T  =运动持续时间（小时）double
      * @return 千卡
      */
     public static double getCalorie(int HR, double T) {
@@ -55,7 +57,40 @@ public class HeartRateToKcal {
         } else {
             kcal = ((-20.4022 + (0.4472 * HR) - (0.1263 * W) + (0.074 * A)) / 4.184) * 60 * T;
         }
-        return RxFormatValue.format4S5R(Math.abs(kcal), 1);
+        kcal = RxFormatValue.format4S5R(Math.abs(kcal), 1);
+
+        return addCalorie(HR, kcal);
+    }
+
+
+    /**
+     * 不同心率区间调节消耗热量的kcal
+     *
+     * @param HR
+     * @param calorie
+     * @return
+     */
+    private static double addCalorie(int HR, double calorie) {
+        byte[] HRRates = Key.HRART_SECTION;
+        int HR_0 = HRRates[0] & 0xff;
+        int HR_1 = HRRates[1] & 0xff;
+        int HR_2 = HRRates[2] & 0xff;
+        int HR_3 = HRRates[3] & 0xff;
+        int HR_4 = HRRates[4] & 0xff;
+        int HR_5 = HRRates[5] & 0xff;
+        int HR_6 = HRRates[6] & 0xff;
+        if (HR < HR_2) {
+            calorie *= 1.08f;
+        } else if (HR >= HR_2 && HR < HR_3) {
+            calorie *= 1.22f;
+        } else if (HR >= HR_3 && HR < HR_4) {
+            calorie *= 1.38f;
+        } else if (HR >= HR_4 && HR < HR_5) {
+            calorie *= 1.55f;
+        } else if (HR >= HR_5) {
+            calorie *= 1.06f;
+        }
+        return calorie;
     }
 
 

@@ -11,14 +11,17 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.data.CacheResult;
+import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
@@ -173,10 +176,6 @@ public class SplashActivity extends BaseActivity {
      * 重传在无网络情况下未上传的数据
      */
     private void initData() {
-        if (!RxNetUtils.isAvailable(mContext.getApplicationContext())) {
-            //没有网络直接返回
-            return;
-        }
         getSystemConfig();
         uploadHistoryData();
         fetchSystemTime();
@@ -204,6 +203,9 @@ public class SplashActivity extends BaseActivity {
     private void getSystemConfig() {
         RxManager.getInstance().doNetSubscribe(
                 NetManager.getSystemService().getSystemConfig())
+                .compose(RxCache.getDefault().transformObservable("getSystemConfig", String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<>())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

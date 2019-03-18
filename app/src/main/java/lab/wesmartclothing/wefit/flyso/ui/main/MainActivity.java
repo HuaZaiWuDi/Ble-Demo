@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,7 +37,6 @@ import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
-import lab.wesmartclothing.wefit.flyso.base.FragmentKeyDown;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -56,7 +54,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.store.StoreFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 
@@ -181,7 +178,6 @@ public class MainActivity extends BaseALocationActivity {
                         }
                     }).show();
         }
-
     }
 
     @Override
@@ -301,7 +297,7 @@ public class MainActivity extends BaseALocationActivity {
                 break;
             case TYPE_OPEN_URL:
                 //打开URL
-                WebTitleActivity.startWebActivity(mActivity,getString(R.string.appName),openTarget);
+                WebTitleActivity.startWebActivity(mActivity, getString(R.string.appName), openTarget);
                 break;
         }
         pushMessageReaded(msgId);
@@ -329,33 +325,6 @@ public class MainActivity extends BaseALocationActivity {
         }
     }
 
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        FragmentKeyDown mStoreFragment = StoreFragment.getInstance();
-        FragmentKeyDown mFindFragment = FindFragment.getInstance();
-
-        if (mStoreFragment != null) {
-            RxLogUtils.e("mStoreFragment:" + mStoreFragment);
-            if (mStoreFragment.onFragmentKeyDown(keyCode, event)) {
-                return true;
-            }
-//            else {
-//                if (!RxUtils.isFastClick(2000)) {
-//                    RxLogUtils.d("mStoreFragment:再按一次");
-//                    RxToast.success("再按一次退出");
-//                    return true;
-//                }
-//            }
-        }
-        if (mFindFragment != null) {
-            RxLogUtils.d("mFindFragment:" + mFindFragment);
-            if (mFindFragment.onFragmentKeyDown(keyCode, event)) {
-                return true;
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 
     @Override
     public void onBackPressed() {

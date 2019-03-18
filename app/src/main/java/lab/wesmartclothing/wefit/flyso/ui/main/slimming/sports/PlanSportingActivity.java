@@ -308,7 +308,6 @@ public class PlanSportingActivity extends BaseActivity {
                                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                                 .into(mTvSportskcal);
 
-
                         HeartRateItemBean heartRateTab = new HeartRateItemBean();
                         heartRateTab.setHeartRate(currentHeart);
                         heartRateTab.setHeartTime(sportsDataTab.getDate());
