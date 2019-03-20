@@ -72,6 +72,10 @@
 -keep public class com.tencent.bugly.**{*;}
 -keep class android.support.**{*;}
 
+# tinker混淆规则
+-dontwarn com.tencent.tinker.**
+-keep class com.tencent.tinker.** { *; }
+ -keep class android.support.**{*;}
 
 #云康宝
 -keep public class com.kitnew.ble.QNCalc {*;}
@@ -305,3 +309,4 @@
 -keep class com.linkedin.** { *; }
 -keep class com.android.dingtalk.share.ddsharemodule.** { *; }
 -keepattributes Signature
+

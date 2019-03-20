@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
 
-
-
+// 依赖插件脚本
+//apply from: 'tinker-support.gradle'
 
 android {
     signingConfigs {
@@ -81,7 +81,8 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all {
                 // apk_渠道名-版本号-版本名称-编译时间.apk
-                def fileName = "Timetofit-v${defaultConfig.versionName}-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
+                def fileName = "Timetofit-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                        "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
 
                 outputFileName = fileName
             }
@@ -211,6 +212,7 @@ dependencies {
     implementation('com.jackUtil:ImagePicker:1.0.2') {
         exclude group: 'com.android.support'
     }  //指定版本
-
+    // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
+    implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
 
 }
