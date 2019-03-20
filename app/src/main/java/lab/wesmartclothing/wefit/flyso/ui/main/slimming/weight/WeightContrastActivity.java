@@ -222,7 +222,7 @@ public class WeightContrastActivity extends BaseActivity {
     private void showDateDialog(final boolean isStart) {
         Calendar nowCalendar = Calendar.getInstance();
         CustomDatePicker datePicker = new CustomDatePicker(mActivity);
-        datePicker.setRangeStart(2018, 12, 01);
+        datePicker.setRangeStart(1940, 01, 01);
         datePicker.setRangeEnd(nowCalendar.get(Calendar.YEAR), nowCalendar.get(Calendar.MONTH) + 1, nowCalendar.get(Calendar.DAY_OF_MONTH));
         nowCalendar.setTimeInMillis(isStart ? startDate : endDate);
         datePicker.setTextColor(getResources().getColor(R.color.Gray));
@@ -346,9 +346,9 @@ public class WeightContrastActivity extends BaseActivity {
 
         Drawable drawable1 = null;
         if (startValue - endValue > 0) {
-            drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.ic_contrast_up);
-        } else {
             drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.ic_contrast_down);
+        } else {
+            drawable1 = ContextCompat.getDrawable(mContext, R.mipmap.ic_contrast_up);
         }
 
         mTvMaxAndMin.setCompoundDrawablesWithIntrinsicBounds(drawable1, null, null, null);
