@@ -157,7 +157,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void goError(int code) {
-        if (code == -99) {//token验证失败
+        if (code == -99 || code == 6) {//token验证失败
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else {
             gotoMain(SPUtils.getString(SPKey.SP_UserInfo));

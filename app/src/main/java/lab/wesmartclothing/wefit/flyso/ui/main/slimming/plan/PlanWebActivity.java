@@ -96,34 +96,24 @@ public class PlanWebActivity extends BaseActivity {
 
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        WebView webView = getWebView();
-                        if (getWebView() != null && webView.canGoBack()) {
-                            webView.goBack();
-                        } else {
-                            onBackPressed();
-                        }
+                .setOnClickListener(v -> {
+                    WebView webView = getWebView();
+                    if (getWebView() != null && webView.canGoBack()) {
+                        webView.goBack();
+                    } else {
+                        onBackPressed();
                     }
                 });
+
         mTopBar.setTitle(getString(R.string.appName) + "健康报告");
 
         mTopBar.addRightImageButton(R.mipmap.icon_save, R.id.btn_save)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        save();
-                    }
-                });
+                .setOnClickListener(v -> save());
 
         mTopBar.addRightImageButton(R.mipmap.icon_share, R.id.img_share)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (AntiShake.getInstance().check(v.getId())) return;
-                        share();
-                    }
+                .setOnClickListener(v -> {
+                    if (AntiShake.getInstance().check(v.getId())) return;
+                    share();
                 });
     }
 

@@ -185,6 +185,12 @@ public class AboutUpdateDialog extends RxDialog {
         public void onDfuAborted(String deviceAddress) {
             super.onDfuAborted(deviceAddress);
             RxLogUtils.d("onDfuAborted：" + deviceAddress);
+
+            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            mTvUpdateTip.setText("升级中断,请重试");
+            setCanceledOnTouchOutside(true);
+            if (mBLEUpdateListener != null)
+                mBLEUpdateListener.fail();
         }
 
         @Override

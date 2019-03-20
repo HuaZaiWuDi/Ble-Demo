@@ -479,7 +479,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="6dp"
                     android:layout_toRightOf="@+id/iv_invitation"
-                    android:text="我的订单"
+                    android:text="邀请码"
                     android:textColor="@color/Gray"
                     android:textSize="15sp"
                     />

@@ -326,7 +326,6 @@ public class BleService extends Service {
                     connectDevices.put(bleDevice.getMac(), bleDevice);
 
                     mQNBleTools.stopScan();
-
                 }
             }
 

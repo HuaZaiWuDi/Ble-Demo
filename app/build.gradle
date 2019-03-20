@@ -208,7 +208,7 @@ dependencies {
     //官方文档中没有这个依赖，要是不添加会导致初始化的时候的UMConfigure这个类不能识别
     implementation 'com.umeng.umsdk:share-wx:6.9.4'
 
-    implementation('com.jackUtil:ImagePicker:1.0.1') {
+    implementation('com.jackUtil:ImagePicker:1.0.2') {
         exclude group: 'com.android.support'
     }  //指定版本
 

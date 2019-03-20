@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -104,7 +103,6 @@ public class BaseWebTFragment extends BaseAcFragment {
             RxLogUtils.e("create session fail!");
         }
 
-        SonicEngine.getInstance().initSonicDB();
 
         webView = new BridgeWebView(mContext);
 
@@ -186,13 +184,13 @@ public class BaseWebTFragment extends BaseAcFragment {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setDefaultTextEncodingName("utf-8");
-
-        if (sonicSessionClient != null) {
-            sonicSessionClient.bindWebView(webView);
-            sonicSessionClient.clientReady();
-        } else if (!TextUtils.isEmpty(url)) { // default mode
+//
+//        if (sonicSessionClient != null) {
+//            sonicSessionClient.bindWebView(webView);
+//            sonicSessionClient.clientReady();
+//        } else if (!TextUtils.isEmpty(url)) { // default mode
             webView.loadUrl(url);
-        }
+//        }
     }
 
 

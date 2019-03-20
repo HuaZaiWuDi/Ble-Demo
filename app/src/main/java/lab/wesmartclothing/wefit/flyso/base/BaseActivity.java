@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
 import butterknife.ButterKnife;
@@ -182,7 +183,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        RxActivityUtils.finishActivity();
+        if (!AntiShake.getInstance().check()) {
+            RxActivityUtils.finishActivity();
+        }
     }
 
 
