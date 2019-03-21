@@ -284,7 +284,12 @@ public class MainActivity extends BaseALocationActivity {
     private void initReceiverPush(Bundle bundle) {
         String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
         RxLogUtils.d("点击通知：" + extra);
-        NotifyDataBean notifyDataBean = JSON.parseObject(extra, NotifyDataBean.class);
+        NotifyDataBean notifyDataBean = null;
+        try {
+            notifyDataBean = JSON.parseObject(extra, NotifyDataBean.class);
+        } catch (Exception e) {
+            notifyDataBean = null;
+        }
         if (notifyDataBean == null) return;
         String openTarget = notifyDataBean.getOpenTarget();
         int type = notifyDataBean.getOperation();

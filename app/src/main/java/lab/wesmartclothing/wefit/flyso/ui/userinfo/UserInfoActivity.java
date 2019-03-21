@@ -153,7 +153,11 @@ public class UserInfoActivity extends BaseALocationActivity {
     public void initView() {
         String string = SPUtils.getString(SPKey.SP_UserInfo);
         mUserInfo = JSON.parseObject(string, UserInfo.class);
+        if (mUserInfo == null) {
+            mUserInfo = new UserInfo();
+        }
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
+
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
         switchView(viewState);
@@ -304,7 +308,6 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
 
-
     private void saveUserInfo(boolean isSkip) {
         if (isSkip) {
             mUserInfo.setCountry("");
@@ -330,8 +333,8 @@ public class UserInfoActivity extends BaseALocationActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

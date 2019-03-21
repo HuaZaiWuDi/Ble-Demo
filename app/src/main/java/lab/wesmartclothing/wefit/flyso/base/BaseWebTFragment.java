@@ -189,7 +189,7 @@ public class BaseWebTFragment extends BaseAcFragment {
 //            sonicSessionClient.bindWebView(webView);
 //            sonicSessionClient.clientReady();
 //        } else if (!TextUtils.isEmpty(url)) { // default mode
-            webView.loadUrl(url);
+        webView.loadUrl(url);
 //        }
     }
 

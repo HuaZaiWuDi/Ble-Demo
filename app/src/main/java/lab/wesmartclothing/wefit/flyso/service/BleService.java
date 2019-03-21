@@ -96,9 +96,12 @@ public class BleService extends Service {
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             switch (intent.getAction()) {
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
-                    int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+                    Bundle extras = intent.getExtras();
+                    if (extras == null) break;
+                    int state = extras.getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
                     if (state == BluetoothAdapter.STATE_OFF) {
                         stopScan();
                     } else if (state == BluetoothAdapter.STATE_ON) {
