@@ -19,6 +19,7 @@ import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.tencent.sonic.sdk.SonicEngine;
 import com.tencent.sonic.sdk.SonicSession;
 import com.tencent.sonic.sdk.SonicSessionConfig;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.view.state.PageLayout;
@@ -28,6 +29,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicJavaScriptInterface;
 import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicSessionClientImpl;
+import lab.wesmartclothing.wefit.flyso.view.RecyclerViewTouchListener;
 
 /**
  * @Package com.wesmartclothing.tbra.base
@@ -108,7 +110,7 @@ public class BaseWebTFragment extends BaseAcFragment {
 
         webView.setTag("webView");
         mLayoutWeb.addView(webView);
-
+        webView.setOnTouchListener(new RecyclerViewTouchListener());
         webView.setWebViewClient(new BridgeWebViewClient(webView) {
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -132,7 +134,7 @@ public class BaseWebTFragment extends BaseAcFragment {
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (sonicSession != null) {
+                if (sonicSession != null && !RxDataUtils.isNullString(url)) {
                     //step 6: Call sessionClient.requestResource when host allow the application
                     // to return the local data .
                     return (WebResourceResponse) sonicSession.getSessionClient().requestResource(url);
@@ -236,7 +238,7 @@ public class BaseWebTFragment extends BaseAcFragment {
         initWebView();
     }
 
-//    public BridgeWebView getWebView() {
-//        return webView;
-//    }
+    public BridgeWebView getWebView() {
+        return webView;
+    }
 }

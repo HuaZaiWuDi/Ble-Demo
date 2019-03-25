@@ -58,15 +58,14 @@ import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -354,11 +353,11 @@ public class SlimmingFragment extends BaseAcFragment {
                 });
 
 
-        RxBus.getInstance().register2(SportsDataTab.class)
-                .compose(RxComposeUtils.<SportsDataTab>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<SportsDataTab>() {
+        RxBus.getInstance().register2(HeartRateChangeBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<HeartRateChangeBus>() {
                     @Override
-                    protected void _onNext(SportsDataTab sportsDataTab) {
+                    protected void _onNext(HeartRateChangeBus sportsDataTab) {
                         if (BleService.clothingFinish && isVisibled()) {
                             BleService.clothingFinish = false;
 

@@ -240,8 +240,10 @@ public class BleTools {
             public void onCharacteristicChanged(byte[] data) {
 //                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
                 //notify数据
-                if (mBleCallBack != null && data[2] == 0x07)
+                if (mBleCallBack != null && data[2] == 0x07 && data.length >= 17) {
+                    B.broadUpdate(bleManager.getContext(), "ACTION_HEART_RATE_CHANGED");
                     mBleCallBack.onNotify(data);
+                }
 
                 if (data[2] == 0x08) {
                     Log.d(TAG, "蓝牙停止:" + HexUtil.encodeHexStr(data));

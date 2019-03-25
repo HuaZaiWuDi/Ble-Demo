@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_notReport"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/bg_no_data"/>
+
+    <com.vondear.rxtools.view.layout.RxTextView
+        android:id="@+id/tv_openReport"
+        android:layout_width="160dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="53dp"
+        android:gravity="center"
+        android:text="开启定制计划"
+        android:textColor="@color/Gray"
+        android:textSize="17sp"
+        app:background_normal="@color/yellow_E2C891"
+        app:corner_radius="4dp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:text="未有健康报告？去开启定制计划试试吧…"
+        android:textColor="@color/GrayWrite"
+        android:textSize="13sp"/>
+
+
+</LinearLayout>

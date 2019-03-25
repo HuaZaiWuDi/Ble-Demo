@@ -28,7 +28,6 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -36,6 +35,7 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.chart.line.LineBean;
 import com.vondear.rxtools.view.chart.line.SuitLines;
@@ -61,6 +61,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -123,25 +124,9 @@ public class SmartClothingFragment extends BaseActivity {
                     btn_Connect.setText(R.string.disConnected);
                     mLayoutStrongTip.setVisibility(View.GONE);
                 }
-                //心率改变
-            } else if (Key.ACTION_HEART_RATE_CHANGED.equals(intent.getAction())) {
-                if (mLayoutStrongTip != null && mLayoutStrongTip.getVisibility() == View.GONE) {
-                    mLayoutStrongTip.setVisibility(View.VISIBLE);
-                    String checkSporting = getString(R.string.checkSporting);
-                    SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
-                            .setForegroundColor(getResources().getColor(R.color.red))
-                            .setLength(9, checkSporting.length());
-                    mBtnStrongTip.setText(builder);
-                    mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mLayoutStrongTip.setVisibility(View.GONE);
-                            RxActivityUtils.skipActivity(mActivity, SportingActivity.class);
-                        }
-                    });
-                }
-                //瘦身衣运动结束
-            } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
+            }
+            //瘦身衣运动结束
+            else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
                 mLayoutStrongTip.setVisibility(View.GONE);
                 //监听系统蓝牙
             } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
@@ -168,7 +153,6 @@ public class SmartClothingFragment extends BaseActivity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        filter.addAction(Key.ACTION_HEART_RATE_CHANGED);
         filter.addAction(Key.ACTION_CLOTHING_STOP);
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(registerReceiver, filter);
@@ -216,18 +200,15 @@ public class SmartClothingFragment extends BaseActivity {
                         .setText(R.id.tv_sportingKcal, kcalBuilder);
             }
         };
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Bundle bundle = new Bundle();
-                AthleticsInfo.ListBean.AthlListBean item = (AthleticsInfo.ListBean.AthlListBean) adapter.getItem(position % adapter.getData().size());
-                if (item == null) return;
-                bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
-                bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
-                bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
-                RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            Bundle bundle = new Bundle();
+            AthleticsInfo.ListBean.AthlListBean item = (AthleticsInfo.ListBean.AthlListBean) adapter.getItem(position % adapter.getData().size());
+            if (item == null) return;
+            bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
+            bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
+            bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
+            RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
 
-            }
         });
         mRecyclerSporting.setAdapter(adapter);
     }
@@ -241,6 +222,26 @@ public class SmartClothingFragment extends BaseActivity {
                     protected void _onNext(RefreshSlimming hearRateUpload) {
                         pageNum = 1;
                         initData();
+                    }
+                });
+
+        RxBus.getInstance().register2(HeartRateChangeBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<HeartRateChangeBus>() {
+                    @Override
+                    protected void _onNext(HeartRateChangeBus sportsDataTab) {
+                        if (mLayoutStrongTip != null && mLayoutStrongTip.getVisibility() == View.GONE) {
+                            mLayoutStrongTip.setVisibility(View.VISIBLE);
+                            String checkSporting = getString(R.string.checkSporting);
+                            SpannableStringBuilder builder = RxTextUtils.getBuilder(checkSporting)
+                                    .setForegroundColor(getResources().getColor(R.color.red))
+                                    .setLength(9, checkSporting.length());
+                            mBtnStrongTip.setText(builder);
+                            mBtnStrongTip.setOnClickListener(v -> {
+                                mLayoutStrongTip.setVisibility(View.GONE);
+                                RxActivityUtils.skipActivity(mActivity, SportingActivity.class);
+                            });
+                        }
                     }
                 });
     }

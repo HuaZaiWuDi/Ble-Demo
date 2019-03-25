@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.main.mine.HealthReportActivity">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:hapticFeedbackEnabled="true"
+        app:qmui_topbar_bg_color="@color/Gray"
+        app:qmui_topbar_left_back_drawable_id="@mipmap/back_icon"
+        app:qmui_topbar_need_separator="false"
+        app:qmui_topbar_title_color="@color/white"
+        />
+
+    <include
+        layout="@layout/layout_not_report"
+        android:visibility="gone"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_health_report"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:layout_below="@+id/topBar">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <com.vondear.rxtools.view.layout.RxRelativeLayout
+        android:id="@+id/layout_indicator"
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recycler_health_report"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="23dp"
+        >
+
+        <com.vondear.rxtools.view.layout.RxLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_centerVertical="true"
+            app:background_normal="@color/Gray"
+            app:corner_radius="2dp">
+
+        </com.vondear.rxtools.view.layout.RxLinearLayout>
+
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_left"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
+            android:layout_centerHorizontal="true"
+            app:background_normal="@color/yellow_E5CBA0"
+            app:corner_radius="5dp"/>
+
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_center"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
+            android:layout_marginLeft="38dp"
+            app:background_normal="@color/gray_EDECF0"
+            app:corner_radius="5dp"/>
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_right"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="38dp"
+            app:background_normal="@color/gray_EDECF0"
+            app:corner_radius="5dp"/>
+
+    </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_tip"
+        android:layout_width="219dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_indicator"
+        android:layout_marginLeft="65dp"
+        android:background="@mipmap/bg_btn"
+        android:gravity="left|center_vertical"
+        android:lineSpacingExtra="4dp"
+        android:paddingLeft="13dp"
+        android:paddingTop="10dp"
+        android:text="报告编号：NO.M25W68SB_HMB\n创建日期：2018/06/23"
+        android:textColor="@color/black"
+        android:textSize="12sp"/>
+
+
+</RelativeLayout>

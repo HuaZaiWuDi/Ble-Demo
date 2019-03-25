@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.getkeepsafe.dexcount'
+//apply plugin: 'com.getkeepsafe.dexcount'
 
 // 依赖插件脚本
 //apply from: 'tinker-support.gradle'
@@ -38,19 +38,19 @@ android {
         aaptOptions.cruncherEnabled = false
         aaptOptions.useNewCruncher = false
 
-        //强制指定包名，貌似是的
-        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ['resourcePackageName': android.defaultConfig.applicationId]
-            }
-        }
+//        //强制指定包名，貌似是的
+//        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = ['resourcePackageName': android.defaultConfig.applicationId]
+//            }
+//        }
 
         //极光推送
         ndk {
             //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips64', 'mips'
-            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+            abiFilters 'armeabi'
+            // 还可以添加  'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips64', 'mips'
         }
 
         //极光推送：

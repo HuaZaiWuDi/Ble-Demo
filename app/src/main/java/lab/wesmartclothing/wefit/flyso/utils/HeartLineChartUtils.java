@@ -149,11 +149,6 @@ public class HeartLineChartUtils {
 
 
     public void setRealTimeData(float value) {
-        if (value > (Key.HRART_SECTION[6] & 0xFF)) {
-            value = (Key.HRART_SECTION[6] & 0xFF);
-        } else if (value < (Key.HRART_SECTION[0] & 0xFF)) {
-            value = (Key.HRART_SECTION[0] & 0xFF);
-        }
 
         LineDataSet realTimeSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
 

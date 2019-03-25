@@ -512,6 +512,45 @@
                 android:layout_height="1dp"
                 android:background="@color/line"/>
 
+            <!--健康报告-->
+            <com.vondear.rxtools.view.layout.RxRelativeLayout
+                android:id="@+id/layout_HealthReport"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:paddingLeft="@dimen/dimen_16"
+                android:paddingRight="@dimen/dimen_16"
+                app:background_normal="@color/white"
+                app:ripple_color="@color/ripple_ECEAE6">
+
+                <ImageView
+                    android:id="@+id/iv_HealthReport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/ic_health_report"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="6dp"
+                    android:layout_toRightOf="@+id/iv_HealthReport"
+                    android:text="健康报告"
+                    android:textColor="@color/Gray"
+                    android:textSize="15sp"
+                    />
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/icon_goto"/>
+
+
+            </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
 
             <!--问题反馈-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout

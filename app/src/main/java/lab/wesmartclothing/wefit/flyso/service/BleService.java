@@ -22,7 +22,6 @@ import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleScanConfig;
 import com.smartclothing.blelibrary.BleTools;
-import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
@@ -64,6 +63,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
@@ -72,7 +72,6 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
@@ -87,7 +86,6 @@ public class BleService extends Service {
     public static boolean clothingFinish = true;
     QNBleTools mQNBleTools = QNBleTools.getInstance();
 
-    private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
 
     private static boolean isFirstJoin = true;
 
@@ -610,7 +608,6 @@ public class BleService extends Service {
                 bytes[2] = data[5];
                 bytes[3] = data[6];
 
-                mHeartRateUtil.addHsitoryData(data);
 
                 BleAPI.syncData(bytes);
                 synData();
@@ -620,17 +617,11 @@ public class BleService extends Service {
 
 
     private void initHeartRate() {
-        BleTools.getInstance().setBleCallBack(new BleCallBack() {
-            @Override
-            public void onNotify(byte[] data) {
-                RxLogUtils.d("蓝牙Notify数据:" + HexUtil.encodeHexStr(data));
+        BleTools.getInstance().setBleCallBack(data -> {
 
-                B.broadUpdate(BleService.this, Key.ACTION_HEART_RATE_CHANGED, Key.EXTRA_HEART_RATE_CHANGED, data);
-                if (data.length < 17) return;
 
-                mHeartRateUtil.addRealTimeData(data);
 
-            }
+            RxBus.getInstance().post(new HeartRateChangeBus(data));
         });
     }
 

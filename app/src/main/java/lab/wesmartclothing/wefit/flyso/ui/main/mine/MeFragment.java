@@ -223,6 +223,7 @@ public class MeFragment extends BaseAcFragment {
             R.id.layout_myShoppingAddress,
             R.id.layout_problem,
             R.id.layout_aboutUs,
+            R.id.layout_HealthReport,
             R.id.iv_userImg,
             R.id.iv_setting,
             R.id.iv_notify})
@@ -235,10 +236,10 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, CollectFragment.class);
                 break;
             case R.id.layout_myOrder:
-                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url,true);
+                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url, true);
                 break;
             case R.id.layout_myShoppingAddress:
-                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address,true);
+                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address, true);
                 break;
             case R.id.layout_problem:
                 RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);
@@ -255,6 +256,11 @@ public class MeFragment extends BaseAcFragment {
             case R.id.iv_notify:
                 RxActivityUtils.skipActivity(mContext, MessageFragment.class);
                 break;
+            case R.id.layout_HealthReport:
+                RxActivityUtils.skipActivity(mContext, HealthReportActivity.class);
+                break;
+            default:
+
         }
     }
 

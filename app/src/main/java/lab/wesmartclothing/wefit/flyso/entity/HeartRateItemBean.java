@@ -18,7 +18,6 @@ public class HeartRateItemBean implements Serializable {
 
     public int stepTime = 0;//心率间隔
 
-    public boolean isfree = true;//是否是自由运动
 
     public int count = 0;//分次
 
@@ -51,13 +50,6 @@ public class HeartRateItemBean implements Serializable {
         this.stepTime = stepTime;
     }
 
-    public boolean isIsfree() {
-        return isfree;
-    }
-
-    public void setIsfree(boolean isfree) {
-        this.isfree = isfree;
-    }
 
     public int getCount() {
         return count;
@@ -73,7 +65,6 @@ public class HeartRateItemBean implements Serializable {
                 "heartRate=" + heartRate +
                 ", heartTime=" + heartTime +
                 ", stepTime=" + stepTime +
-                ", isfree=" + isfree +
                 '}';
     }
 }

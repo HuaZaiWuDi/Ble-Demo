@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.alibaba.fastjson.JSON;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.zchu.rxcache.RxCache;
@@ -32,7 +31,6 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
  * @Project Android_WeFit_2.0
  */
 public class HeartRateUtil {
-    private List<Integer> heartRateLists = new ArrayList<>();
     private int maxHeart = 0;//最大心率
     private int minHeart = 200;//最小心率
     private double kcalTotal = 0;//总卡路里
@@ -44,14 +42,25 @@ public class HeartRateUtil {
     private static int heartDownSupplement = (int) (Math.random() * 4 + 1);
     private long lastTime = 0;//历史记录上一条时间
     private int packageCounts = 0;//历史数据包序号
+    private List<HeartRateItemBean> heartLists;
+    private boolean pause = false;
 
 
     public HeartRateUtil() {
+        maxHeart = 0;//最大心率
+        minHeart = 200;//最小心率
+        kcalTotal = 0;//总卡路里
+        heartLists = new ArrayList<>();
+
     }
 
-    public void addRealTimeData(byte[] bytes) {
+
+    public SportsDataTab addRealTimeData(byte[] bytes) {
+        //是否暂停
+
         int heartRate = realHeartRate = bytes[8] & 0xff;
 
+        //降低误差值
 //        if (lastHeartRate != 0) {
 //            if (lastHeartRate - heartRate > heartDeviation) {
 //                heartRate = lastHeartRate - heartUpSupplement;
@@ -60,16 +69,19 @@ public class HeartRateUtil {
 //            }
 //        }
 
+        //限制心率范围
+        if (heartRate > (Key.HRART_SECTION[6] & 0xFF)) {
+            heartRate = (Key.HRART_SECTION[6] & 0xFF);
+        } else if (heartRate < (Key.HRART_SECTION[0] & 0xFF)) {
+            heartRate = (Key.HRART_SECTION[0] & 0xFF);
+        }
+
         lastHeartRate = heartRate;
 
-        long time = ByteUtil.bytesToLongD4(bytes, 3) * 1000;
-        RxLogUtils.d("硬件时间：" + RxFormat.setFormatDate(time, RxFormat.Date_Date));
-
-        maxHeart = heartRate > maxHeart ? heartRate : maxHeart;
-        minHeart = heartRate < minHeart ? heartRate : minHeart;
+        maxHeart = Math.max(heartRate, maxHeart);
+        minHeart = Math.min(heartRate, minHeart);
 
         SportsDataTab mSportsDataTab = new SportsDataTab();
-        mSportsDataTab.setAthlRecord_2(heartRateLists);
         mSportsDataTab.setCurHeart(heartRate);
         mSportsDataTab.setMaxHeart(maxHeart);
         mSportsDataTab.setMinHeart(minHeart);
@@ -81,14 +93,23 @@ public class HeartRateUtil {
         mSportsDataTab.setData(bytes);
         mSportsDataTab.setDate(System.currentTimeMillis());
         mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
-        //卡路里累加计算
-        kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
+        mSportsDataTab.setHeartLists(heartLists);
 
-        mSportsDataTab.setKcal(RxFormatValue.format4S5R(kcalTotal, 1));//统一使用卡为基本热量单位
+        //心率处于静息心率区间时不计算卡路里，
+        if (heartRate >= Key.HRART_SECTION[1]) {
+            kcalTotal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(heartRate, 2f / 3600), 1);
+        }
+        mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
 
-        RxLogUtils.d("数据：" + mSportsDataTab.toString());
-        RxBus.getInstance().post(mSportsDataTab);
 
+        HeartRateItemBean heartRateTab = new HeartRateItemBean();
+        heartRateTab.setHeartRate(heartRate);
+        heartRateTab.setHeartTime(mSportsDataTab.getDate());
+        heartRateTab.setStepTime(2);
+        heartLists.add(heartRateTab);
+
+        RxLogUtils.i("瘦身衣心率数据：" + mSportsDataTab.toString());
+        return mSportsDataTab;
     }
 
 
@@ -109,7 +130,6 @@ public class HeartRateUtil {
             RxLogUtils.d("包序号：" + packageCounts);
             lastTime = time;
             int heartRate = bytes[8] & 0xff;
-
         }
     }
 
@@ -170,6 +190,15 @@ public class HeartRateUtil {
                 RxLogUtils.e("RxCache LruDiskCache is null");
             }
         }
+    }
+
+
+    public boolean pause() {
+        return pause;
+    }
+
+    public void setPause(boolean play) {
+        pause = play;
     }
 
 }

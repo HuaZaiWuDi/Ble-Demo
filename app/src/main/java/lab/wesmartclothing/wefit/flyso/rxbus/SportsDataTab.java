@@ -4,12 +4,14 @@ import com.vondear.rxtools.utils.dateUtils.RxFormat;
 
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
+
 /**
  * Created icon_hide_password jk on 2018/6/14.
  */
 public class SportsDataTab {
 
-    List<Integer> athlRecord_2;//心率详情数据
+    List<HeartRateItemBean> heartLists;//心率详情数据
     int steps;//步数
     int duration;//耗时
     double kcal;//消耗卡路里（千卡）
@@ -93,13 +95,6 @@ public class SportsDataTab {
         this.realHeart = realHeart;
     }
 
-    public List<Integer> getAthlRecord_2() {
-        return athlRecord_2;
-    }
-
-    public void setAthlRecord_2(List<Integer> athlRecord_2) {
-        this.athlRecord_2 = athlRecord_2;
-    }
 
     public int getSteps() {
         return steps;
@@ -149,6 +144,14 @@ public class SportsDataTab {
         this.curHeart = curHeart;
     }
 
+
+    public List<HeartRateItemBean> getHeartLists() {
+        return heartLists;
+    }
+
+    public void setHeartLists(List<HeartRateItemBean> heartLists) {
+        this.heartLists = heartLists;
+    }
 
     private String byte2Color(int b) {
         String color = "";

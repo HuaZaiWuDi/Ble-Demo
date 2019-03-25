@@ -92,7 +92,7 @@ public class SplashActivity extends BaseActivity {
         initData();
         initUserInfo();
 
-//        RxActivityUtils.skipActivity(mContext, WeightContrastActivity.class);
+//        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
     }
 
 

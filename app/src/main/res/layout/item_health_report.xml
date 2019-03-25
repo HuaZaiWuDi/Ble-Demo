@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="455dp"
+    android:layout_marginLeft="22dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginRight="22dp"
+    android:layout_marginBottom="130dp"
+    android:background="@mipmap/bg_health_reprort"
+    android:paddingTop="8dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="21dp"
+        android:drawableLeft="@mipmap/ic_period"
+        android:drawablePadding="5dp"
+        android:text="报告有效周期"
+        android:textColor="@color/Gray"
+        android:textSize="15sp"/>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/ic_report_starting"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="38dp"
+        android:text="2018/06/23 ~2019/01/22"
+        android:textColor="@color/Gray"
+        android:textSize="13sp"
+        android:textStyle="bold"/>
+
+
+    <com.vondear.rxtools.view.layout.RxRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="31dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="67dp"
+        android:layout_marginRight="28dp"
+        app:background_normal="@color/white"
+        app:corner_radius="3dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_initWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/GrayWrite"
+            android:textSize="8sp"
+            tools:text="起始体重\n60.6kg"/>
+
+
+        <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
+            android:id="@+id/pro_target"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toLeftOf="@+id/tv_targetWeight"
+            android:layout_toRightOf="@+id/tv_initWeight"
+            app:rcBackgroundColor="@color/BrightGray"
+            app:rcMax="100"
+            app:rcProgressColor="@color/red">
+
+
+        </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+
+
+        <ImageView
+            android:layout_width="19dp"
+            android:layout_height="22dp"
+            android:layout_alignLeft="@+id/pro_target"
+            android:layout_alignBottom="@+id/pro_target"
+            android:src="@mipmap/icon_location_gray"/>
+
+
+        <TextView
+            android:id="@+id/tv_targetWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textColor="@color/GrayWrite"
+            android:textSize="8sp"
+            tools:text="目标体重\n60.6kg"/>
+
+    </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/layout_frame"
+        android:layout_width="212dp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="112dp"
+        tools:background="@color/Gray"/>
+
+
+</RelativeLayout>

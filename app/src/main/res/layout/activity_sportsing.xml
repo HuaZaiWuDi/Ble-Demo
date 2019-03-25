@@ -28,6 +28,7 @@
         android:scrollbars="none">
 
         <RelativeLayout
+            android:id="@+id/parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -349,7 +350,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="17dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="31dp"
+                android:layout_marginBottom="15dp"
                 >
 
 
@@ -573,46 +574,72 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/layout_tip"
-                android:layout_width="match_parent"
+
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/layout_sporting"
-                android:layout_marginBottom="24dp"
+                android:layout_margin="15dp"
+                android:src="@mipmap/icon_sporting_decorate"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_sporting"
+                android:layout_alignParentRight="true"
+                android:layout_margin="15dp"
+                android:src="@mipmap/icon_sporting_decorate"/>
+
+
+            <com.vondear.rxtools.view.roundprogressbar.RoundProgressBar
+                android:id="@+id/circleProgressBar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/layout_sporting"
+                android:layout_marginLeft="195dp"
+                android:visibility="gone"
+                app:pro_background_color="@color/GrayWrite"
+                app:pro_max_value="2000"
+                app:pro_progress_color="@color/yellow_FFBC00"
+                app:pro_stroke_round_cap="true"
+                app:pro_stroke_width="2dp"
+                app:pro_type="type_circle"
+                app:pro_value="0"/>
+
+            <com.vondear.rxtools.view.layout.RxTextView
+                android:id="@+id/tv_finish"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/layout_sporting"
+                android:layout_marginLeft="150dp"
+                android:drawableTop="@mipmap/ic_finish"
+                android:drawablePadding="-10dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:paddingLeft="2dp"
+                android:paddingTop="14dp"
+                android:text="结束"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                app:background_normal="@color/yellow_FFBC00"
+                app:corner_radius="30dp"
+                />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/icon_sporting_decorate"/>
-
-                <com.vondear.rxtools.view.layout.RxLinearLayout
-                    android:layout_width="278dp"
-                    android:layout_height="38dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:gravity="center"
-                    app:background_normal="#514758"
-                    app:corner_radius="14dp">
-
-
-                    <com.vondear.rxtools.view.RxTextviewVertical
-                        android:id="@+id/tv_verticalText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-
-                </com.vondear.rxtools.view.layout.RxLinearLayout>
-
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/icon_sporting_decorate"/>
-
-            </LinearLayout>
-
+            <com.vondear.rxtools.view.layout.RxTextView
+                android:id="@+id/tv_playOrPause"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/layout_sporting"
+                android:layout_marginLeft="150dp"
+                android:drawableTop="@mipmap/ic_play"
+                android:drawablePadding="-10dp"
+                android:gravity="center"
+                android:paddingLeft="2dp"
+                android:paddingTop="10dp"
+                android:text="暂停"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                app:background_normal="@color/green_61D97F"
+                app:corner_radius="30dp"/>
 
         </RelativeLayout>
 

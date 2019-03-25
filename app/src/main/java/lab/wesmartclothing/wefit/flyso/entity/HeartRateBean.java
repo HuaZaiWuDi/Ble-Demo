@@ -32,7 +32,6 @@ public class HeartRateBean implements Serializable {
     }
 
 
-
     public double getTotalCalorie() {
         return totalCalorie;
     }
