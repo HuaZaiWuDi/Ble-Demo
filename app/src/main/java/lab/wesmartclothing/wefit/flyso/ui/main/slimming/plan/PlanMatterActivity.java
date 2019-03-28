@@ -42,12 +42,7 @@ public class PlanMatterActivity extends BaseActivity {
 
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onBackPressed();
-                    }
-                });
+                .setOnClickListener(v -> onBackPressed());
 
     }
 

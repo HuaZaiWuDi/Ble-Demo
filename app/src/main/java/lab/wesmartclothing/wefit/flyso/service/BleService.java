@@ -32,8 +32,6 @@ import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
-import com.vondear.rxtools.model.timer.MyTimer;
-import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
@@ -118,7 +116,6 @@ public class BleService extends Service {
                 case Key.ACTION_CLOTHING_STOP:
                     clothingFinish = true;
                     BleAPI.clothingStop();
-                    shopSporting();
                     break;
                 case Intent.ACTION_DATE_CHANGED://日期的变化
                     RxBus.getInstance().post(new RefreshSlimming());
@@ -495,7 +492,6 @@ public class BleService extends Service {
                 RxLogUtils.d("断开连接");
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
                 connectDevices.remove(device.getMac());
-                sportingStopTimer.startTimer();
 
                 scanClothing();
             }
@@ -620,23 +616,9 @@ public class BleService extends Service {
         BleTools.getInstance().setBleCallBack(data -> {
 
 
-
             RxBus.getInstance().post(new HeartRateChangeBus(data));
         });
     }
-
-    //运动结束
-    private void shopSporting() {
-        sportingStopTimer.stopTimer();
-    }
-
-
-    MyTimer sportingStopTimer = new MyTimer(new MyTimerListener() {
-        @Override
-        public void enterTimer() {
-            B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_STOP);
-        }
-    }, 10000);
 
 
     /**

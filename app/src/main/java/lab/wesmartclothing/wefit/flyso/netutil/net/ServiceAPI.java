@@ -28,7 +28,7 @@ public class ServiceAPI {
     public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/mix/";//测试版本
 
 
-    public static String BASE_URL = BASE_RELEASE;
+    public static String BASE_URL = BASE_DEBUG;
 
     public static String BASE_SERVICE = BASE_URL.replace("mix", "system");
 

@@ -52,9 +52,15 @@ public class PlanBean {
     private AthlDataBean athlData;
     private TodayHeatVOBean todayHeatVO;
     private List<AthlPlanListBean> athlPlanList;
+    private String informGid;
 
+    public String getInformGid() {
+        return informGid;
+    }
 
-
+    public void setInformGid(String informGid) {
+        this.informGid = informGid;
+    }
 
     public void setAthlPlanBelongUser(String athlPlanBelongUser) {
         this.athlPlanBelongUser = athlPlanBelongUser;

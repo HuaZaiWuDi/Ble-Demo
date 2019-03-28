@@ -45,7 +45,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
+import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
@@ -115,12 +115,12 @@ public class MainActivity extends BaseALocationActivity {
     @Override
     protected void initRxBus2() {
         super.initRxBus2();
-        RxBus.getInstance().register2(GoToFind.class)
-                .compose(RxComposeUtils.<GoToFind>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<GoToFind>() {
+        RxBus.getInstance().register2(GoToMainPage.class)
+                .compose(RxComposeUtils.<GoToMainPage>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<GoToMainPage>() {
                     @Override
-                    protected void _onNext(GoToFind s) {
-                        mViewpager.setCurrentItem(2, true);
+                    protected void _onNext(GoToMainPage s) {
+                        mViewpager.setCurrentItem(s.page, true);
                     }
                 });
     }

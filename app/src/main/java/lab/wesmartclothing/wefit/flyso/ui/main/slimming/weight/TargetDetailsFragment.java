@@ -28,6 +28,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.RecordInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 
@@ -105,7 +106,9 @@ public class TargetDetailsFragment extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         //传递初始体重信息
-                        RxActivityUtils.skipActivityAndFinish(mContext, SettingTargetFragment.class, bundle);
+//                        RxActivityUtils.skipActivityAndFinish(mContext, SettingTargetFragment.class, bundle);
+                        //2019-3-26更改，确定修改，重新健康报告流程
+                        RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
                     }
                 });
         rxDialog.show();
@@ -135,8 +138,8 @@ public class TargetDetailsFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

@@ -51,7 +51,6 @@ public class HeartRateUtil {
         minHeart = 200;//最小心率
         kcalTotal = 0;//总卡路里
         heartLists = new ArrayList<>();
-
     }
 
 

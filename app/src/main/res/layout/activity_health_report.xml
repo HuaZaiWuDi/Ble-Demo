@@ -19,10 +19,6 @@
         app:qmui_topbar_title_color="@color/white"
         />
 
-    <include
-        layout="@layout/layout_not_report"
-        android:visibility="gone"
-        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_health_report"
@@ -54,7 +50,7 @@
 
 
         <com.vondear.rxtools.view.layout.RxTextView
-            android:id="@+id/tv_left"
+            android:id="@+id/tv_center"
             android:layout_width="11dp"
             android:layout_height="11dp"
             android:layout_centerHorizontal="true"
@@ -63,7 +59,7 @@
 
 
         <com.vondear.rxtools.view.layout.RxTextView
-            android:id="@+id/tv_center"
+            android:id="@+id/tv_left"
             android:layout_width="11dp"
             android:layout_height="11dp"
             android:layout_marginLeft="38dp"
@@ -77,6 +73,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
             android:layout_marginRight="38dp"
+            android:visibility="gone"
             app:background_normal="@color/gray_EDECF0"
             app:corner_radius="5dp"/>
 
@@ -87,15 +84,22 @@
         android:layout_width="219dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_indicator"
-        android:layout_marginLeft="65dp"
+        android:layout_marginLeft="64dp"
         android:background="@mipmap/bg_btn"
         android:gravity="left|center_vertical"
         android:lineSpacingExtra="4dp"
         android:paddingLeft="13dp"
         android:paddingTop="10dp"
-        android:text="报告编号：NO.M25W68SB_HMB\n创建日期：2018/06/23"
-        android:textColor="@color/black"
+        android:textColor="#000000"
         android:textSize="12sp"/>
 
+
+    <include
+        layout="@layout/layout_not_report"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topBar"
+        android:visibility="visible"
+        />
 
 </RelativeLayout>

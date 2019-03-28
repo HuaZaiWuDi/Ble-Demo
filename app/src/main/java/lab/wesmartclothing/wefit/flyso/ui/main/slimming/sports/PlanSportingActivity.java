@@ -134,7 +134,7 @@ public class PlanSportingActivity extends BaseActivity {
     private List<AthlPlanListBean> planList;
     private double sportingScore = 0, sportingKcal = 0, totalSum;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
-    private RxDialogSureCancel connectFailDialog, trySportingDialog;
+    private RxDialogSureCancel connectFailDialog;
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
@@ -190,8 +190,6 @@ public class PlanSportingActivity extends BaseActivity {
     private void dismissAllDialog() {
         if (connectFailDialog != null && connectFailDialog.isShowing())
             connectFailDialog.dismiss();
-        if (trySportingDialog != null && trySportingDialog.isShowing())
-            trySportingDialog.dismiss();
         if (sportingShortDialog != null && sportingShortDialog.isShowing())
             sportingShortDialog.dismiss();
     }
@@ -362,7 +360,7 @@ public class PlanSportingActivity extends BaseActivity {
 
                         lineChartUtils.setRealTimeData(currentHeart);
                         mTvAvHeartRate.setText(currentHeart + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart());
+                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
 
                         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingKcal, 1))
                                 .append("\tkcal").setProportion(0.5f)
@@ -671,15 +669,7 @@ public class PlanSportingActivity extends BaseActivity {
      * 10秒内，未正常连接，提示用户继续运动（运动保持暂停状态）,结束运动，运动结束
      */
     MyTimer connectTimeoutTimer = new MyTimer(() -> {
-        connectFailDialog = new RxDialogSureCancel(mContext)
-                .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setTitle("提示")
-                .setContent("设备连接失败")
-                .setCancel("继续运动")
-                .setSure("结束运动")
-                .setSureListener(v -> finishSporting());
-        connectFailDialog.show();
+        finishSporting();
     }, 10000);
 
 
@@ -787,26 +777,28 @@ public class PlanSportingActivity extends BaseActivity {
     }
 
     /**
-     * 尝试继续运动
+     * 尝试继续运动，继续运动：提示开启蓝牙，并重连10秒,结束运动：直接结束
      */
     private void trySporting() {
         if (BleTools.getInstance().isConnect()) {
             pause = !pause;
             startOrPauseSport();
         } else {
-            trySportingDialog = new RxDialogSureCancel(mContext)
+            connectFailDialog = new RxDialogSureCancel(mContext)
                     .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                     .setTitle("提示")
-                    .setContent("设备连接已断开，正在尝试重新连接")
-                    .setSure("开启")
-                    .setSureListener(v -> {
+                    .setContent("蓝牙设备已断开")
+                    .setCancel("继续运动")
+                    .setCancelListener(view -> {
                         if (!BleTools.getBleManager().isBlueEnable()) {
                             BleTools.getBleManager().enableBluetooth();
                         }
                         connectTimeoutTimer.startTimer();
-                    });
-            trySportingDialog.show();
+                    })
+                    .setSure("结束运动")
+                    .setSureListener(v -> finishSporting());
+            connectFailDialog.show();
         }
     }
 

@@ -149,7 +149,6 @@ public class HeartLineChartUtils {
 
 
     public void setRealTimeData(float value) {
-
         LineDataSet realTimeSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
 
         mLineChart.highlightValue(realTimeSet.getEntryCount(), mLineChart.getData().getIndexOfDataSet(realTimeSet));

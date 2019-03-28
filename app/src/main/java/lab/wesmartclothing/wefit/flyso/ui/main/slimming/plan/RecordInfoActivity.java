@@ -54,6 +54,8 @@ public class RecordInfoActivity extends BaseActivity {
     RecyclerView mRecyclerView;
     @BindView(R.id.tv_nextWay)
     RxTextView mTvNextWay;
+
+
     private RecyclerView gridView;
     private BaseQuickAdapter adapter, gridAdapter;
     private List<QuestionListBean> listBean;

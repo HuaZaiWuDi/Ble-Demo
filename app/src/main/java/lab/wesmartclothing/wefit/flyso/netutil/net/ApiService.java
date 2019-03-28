@@ -333,6 +333,11 @@ public interface ApiService {
     Observable<String> verifyInvitationCode(@Field("invitationCode") String invitationCode);
 
 
+
+    //获取报告信息列表
+    @POST("user/fetchUserInformList")
+    Observable<String> fetchUserInformList();
+
     ///////////////////////////////////////////////////////////////////////////
     // 数据统计
     ///////////////////////////////////////////////////////////////////////////

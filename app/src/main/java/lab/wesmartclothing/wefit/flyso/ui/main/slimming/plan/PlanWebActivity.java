@@ -1,8 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.webkit.WebView;
@@ -16,10 +18,10 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.fragment.FragmentUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.bitmap.RxCameraUtils;
 import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -33,9 +35,8 @@ import io.reactivex.ObservableOnSubscribe;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.BaseWebTFragment;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class PlanWebActivity extends BaseActivity {
@@ -46,6 +47,13 @@ public class PlanWebActivity extends BaseActivity {
     FrameLayout mPrant;
 
     private static String TEST_URL = "http://39.108.152.50:8088/wisenfit/build/html/healthReport.html?userId=e3e35aaff6b84cc29195f270ab7b95a1&sign=true";
+
+
+    public static void startActivity(Context mContext, String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Key.BUNDLE_WEB_URL, url);
+        RxActivityUtils.skipActivity(mContext, PlanWebActivity.class, bundle);
+    }
 
 
     @Override
@@ -64,12 +72,15 @@ public class PlanWebActivity extends BaseActivity {
     protected void initViews() {
         super.initViews();
         initTopBar();
-
-        TEST_URL = ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
-        FragmentUtils.replace(getSupportFragmentManager(), BaseWebTFragment.getInstance(TEST_URL), R.id.prant);
-
     }
 
+
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        TEST_URL = bundle.getString(Key.BUNDLE_WEB_URL);
+        FragmentUtils.replace(getSupportFragmentManager(), BaseWebTFragment.getInstance(TEST_URL), R.id.prant);
+    }
 
     private WebView getWebView() {
         WebView mWebView = null;

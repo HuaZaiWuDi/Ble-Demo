@@ -44,7 +44,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.GoToFind;
+import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -112,7 +112,7 @@ public class CollectFragment extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //去发现
-                RxBus.getInstance().post(new GoToFind());
+                RxBus.getInstance().post(new GoToMainPage(2));
                 onBackPressed();
             }
         });

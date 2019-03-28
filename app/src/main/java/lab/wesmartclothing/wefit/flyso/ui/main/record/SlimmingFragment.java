@@ -58,6 +58,7 @@ import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -79,9 +80,9 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.RecordInfoActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.SettingTargetFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
@@ -756,7 +757,6 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
 
-
     }
 
 
@@ -877,7 +877,8 @@ public class SlimmingFragment extends BaseAcFragment {
                 break;
             case R.id.img_seeRecord:
                 if (bean.getPlanState() == 3) {
-                    RxActivityUtils.skipActivity(mContext, PlanWebActivity.class);
+                    String url = ServiceAPI.SHARE_INFORM_URL + bean.getInformGid() + "&sign=true";
+                    PlanWebActivity.startActivity(mContext, url);
                 } else if (bean.getPlanState() != 0) {
                     bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
                     RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
@@ -1002,9 +1003,13 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
                 break;
             case R.id.tv_resetTarget:
-                bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, bean.getTargetInfo().getTargetWeight());
-                bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, bean.getWeightChangeVO().getWeight().getWeight());
-                RxActivityUtils.skipActivity(mContext, SettingTargetFragment.class, bundle);
+//                bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, bean.getTargetInfo().getTargetWeight());
+//                bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, bean.getWeightChangeVO().getWeight().getWeight());
+//                RxActivityUtils.skipActivity(mContext, SettingTargetFragment.class, bundle);
+
+                //2019-3-26更改，重置目标计划，重走健康报告流程
+                RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
+
                 break;
         }
     }

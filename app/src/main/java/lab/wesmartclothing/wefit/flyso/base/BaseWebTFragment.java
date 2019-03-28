@@ -78,7 +78,7 @@ public class BaseWebTFragment extends BaseAcFragment {
     public void initBundle(Bundle bundle) {
     }
 
-    private void initWebView() {
+    private void initWebView(String url) {
         if (url == null) {
             Bundle bundle = getArguments();
             if (bundle != null) {
@@ -206,12 +206,19 @@ public class BaseWebTFragment extends BaseAcFragment {
             sonicSession.destroy();
             sonicSession = null;
         }
+        if (webView != null) {
+            webView.clearCache(true);
+            webView.clearHistory();
+            webView.clearFormData();
+            webView.clearSslPreferences();
+        }
     }
 
 
     @Override
     public void onDestroyView() {
         onRelease();
+
         mLayoutWeb.removeAllViews();
         super.onDestroyView();
     }
@@ -235,7 +242,7 @@ public class BaseWebTFragment extends BaseAcFragment {
         if (!RxNetUtils.isAvailable(MyAPP.sMyAPP)) {
             pageLayout.showError();
         }
-        initWebView();
+        initWebView(url);
     }
 
     public BridgeWebView getWebView() {
