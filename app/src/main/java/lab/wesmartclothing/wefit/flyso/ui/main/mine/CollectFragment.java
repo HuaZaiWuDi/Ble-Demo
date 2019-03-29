@@ -16,6 +16,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -190,8 +191,8 @@ public class CollectFragment extends BaseActivity {
         @Override
         public void onItemClick(View itemView, int position) {
             RxLogUtils.d("收藏：" + position);
-            if (AntiShake.getInstance().check()) return;
-            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(position % adapter.getData().size());
+            if (AntiShake.getInstance().check() || RxDataUtils.isEmpty(adapter.getData())) return;
+            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(Math.max(0, Math.min(position, adapter.getData().size())));
             Bundle bundle = new Bundle();
             //打开URL
             bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");

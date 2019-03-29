@@ -788,7 +788,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgSeeRecord.setVisibility(View.VISIBLE);
             mLayoutSlimmingTarget.setVisibility(View.VISIBLE);
         } else {
-            mLayoutSlimmingTarget.setVisibility(View.VISIBLE);
+            mLayoutSlimmingTarget.setVisibility(View.GONE);
             mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
         }

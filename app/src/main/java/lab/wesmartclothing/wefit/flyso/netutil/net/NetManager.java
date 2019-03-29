@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.vondear.rxtools.utils.RxDeviceUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 
 import java.io.IOException;
@@ -103,6 +104,7 @@ public class NetManager {
     static Interceptor NetInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
+            RxLogUtils.d("用户UserID：" + SPUtils.getString(SPKey.SP_UserId));
             Request request = chain.request().newBuilder()
                     .header("userId", SPUtils.getString(SPKey.SP_UserId))
                     .header("version", RxDeviceUtils.getAppVersionName())

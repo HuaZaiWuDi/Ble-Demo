@@ -629,6 +629,7 @@ public class SportingActivity extends BaseActivity {
 
     /**
      * 运动结束
+     * force 是否强制退出
      */
     private void finishSporting() {
         pause = true;
@@ -646,25 +647,11 @@ public class SportingActivity extends BaseActivity {
                     .setSureListener(v -> RxActivityUtils.finishActivity());
             sportingShortDialog.show();
         } else {
-            if (BleTools.getInstance().isConnect()) {
-                //用户运动到达合理时间，想要退出，提示用户是否结束当前运动
-                new RxDialogSureCancel(mContext)
-                        .setContent("检测到您正在运动，是否结束当前运动？")
-                        .setSure("结束并保存")
-                        .setSureListener(v -> {
-                            timer.stopTimer();
-                            currentTime = 0;
-                            speakAdd("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
-                            //如果检测到运动已经结束，直接保存数据并进入详情页
-                            saveHeartRate();
-                        }).show();
-            } else {
-                timer.stopTimer();
-                currentTime = 0;
-                speakAdd("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
-                //如果检测到运动已经结束，直接保存数据并进入详情页
-                saveHeartRate();
-            }
+            timer.stopTimer();
+            currentTime = 0;
+            speakAdd("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
+            //如果检测到运动已经结束，直接保存数据并进入详情页
+            saveHeartRate();
         }
     }
 

@@ -715,17 +715,7 @@ public class PlanSportingActivity extends BaseActivity {
                     .setSureListener(v -> RxActivityUtils.finishActivity());
             sportingShortDialog.show();
         } else {
-            if (BleTools.getInstance().isConnect()) {
-                //用户运动到达合理时间，想要退出，提示用户是否结束当前运动
-                new RxDialogSureCancel(mContext)
-                        .setContent("检测到您正在运动，是否结束当前运动？")
-                        .setSure("结束并保存")
-                        .setSureListener(v -> {
-                            sportingFinish(false);
-                        }).show();
-            } else {
-                sportingFinish(false);
-            }
+            sportingFinish(false);
         }
     }
 
