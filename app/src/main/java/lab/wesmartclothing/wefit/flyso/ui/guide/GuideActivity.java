@@ -87,8 +87,8 @@ public class GuideActivity extends BaseActivity {
                         }
                     });
                 }
-
                 return photoView;
+
             }
         });
     }

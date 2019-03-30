@@ -87,6 +87,7 @@ public class MyAPP extends Application {
 
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
+            initRxCache();
             RxUtils.init(MyAPP.this);
             RxLogUtils.setLogSwitch(true);
             initUrl();
@@ -97,7 +98,7 @@ public class MyAPP extends Application {
             TextSpeakUtils.init(MyAPP.this);
             MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
             BleTools.initBLE(MyAPP.this);
-            initRxCache();
+
             ActivityLifecycle();
             RxLogUtils.i("启动时长：初始化结束");
         });
@@ -118,8 +119,9 @@ public class MyAPP extends Application {
                     .diskConverter(new SerializableDiskConverter())
                     .diskMax((20 * 1024 * 1024))
                     .memoryMax(0)
-                    .setDebug(false)
+                    .setDebug(BuildConfig.DEBUG)
                     .build());
+            RxLogUtils.d("RxCache 缓存框架初始化成功");
         } catch (Exception e) {
             RxLogUtils.e(e);
         }

@@ -1,31 +1,27 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.webkit.WebSettings;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
-import com.github.lzyzsd.jsbridge.BridgeWebView;
-import com.github.lzyzsd.jsbridge.BridgeWebViewClient;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.recyclerview.viewpager.OnViewPagerListener;
-import com.vondear.rxtools.recyclerview.viewpager.ViewPagerLayoutManager;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxWebViewUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
@@ -61,8 +57,6 @@ public class HealthReportActivity extends BaseActivity {
     RxTextView mTvOpenReport;
     @BindView(R.id.layout_notReport)
     LinearLayout mLayoutNotReport;
-    @BindView(R.id.recycler_health_report)
-    RecyclerView mRecyclerHealthReport;
     @BindView(R.id.tv_tip)
     TextView mTvTip;
     @BindView(R.id.tv_left)
@@ -73,8 +67,9 @@ public class HealthReportActivity extends BaseActivity {
     RxTextView mTvRight;
     @BindView(R.id.layout_indicator)
     RxRelativeLayout mLayoutIndicator;
+    @BindView(R.id.viewPager_health_report)
+    ViewPager mViewPagerHealthReport;
 
-    private BaseQuickAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,67 +87,93 @@ public class HealthReportActivity extends BaseActivity {
     protected void initViews() {
         super.initViews();
         initTopBar();
-        initViewPager();
-
     }
 
+
     // TEST_URL = ServiceAPI.SHARE_INFORM_URL + SPUtils.getString(SPKey.SP_UserId) + "&sign=true";
-    private void initViewPager() {
-
-        ViewPagerLayoutManager viewPagerLayoutManager = new ViewPagerLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
-        viewPagerLayoutManager.setOnViewPagerListener(new OnViewPagerListener() {
+    private void initViewPager(List<HealthReportBean> beans) {
+        mViewPagerHealthReport.setOffscreenPageLimit(4);
+        mViewPagerHealthReport.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onInitComplete() {
-                RxLogUtils.d("onInitComplete：b:");
+            public void onPageScrolled(int i, float v, int i1) {
+
             }
 
             @Override
-            public void onPageRelease(boolean isStart, int i) {
-                RxLogUtils.d("onPageRelease：b:" + isStart + "---i:" + i);
-                mTvRight.setVisibility(isStart ? View.GONE : View.VISIBLE);
-            }
+            public void onPageSelected(int i) {
+                mTvLeft.setVisibility(i == 0 ? View.GONE : View.VISIBLE);
+                mTvRight.setVisibility(i == beans.size() - 1 ? View.GONE : View.VISIBLE);
 
-            @Override
-            public void onPageSelected(int i, boolean isLast) {
-                RxLogUtils.d("onPageSelected：b:" + isLast + "---i:" + i);
-                mTvLeft.setVisibility(isLast ? View.GONE : View.VISIBLE);
-
-                HealthReportBean item = (HealthReportBean) adapter.getItem(i);
+                HealthReportBean item = beans.get(i);
                 if (item != null)
                     mTvTip.setText("报告编号：" + item.getUserInform().getInformNo() +
                             "\n创建日期：" + RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd"));
             }
-        });
-        mRecyclerHealthReport.setLayoutManager(viewPagerLayoutManager);
-        adapter = new BaseQuickAdapter<HealthReportBean, BaseViewHolder>(R.layout.item_health_report) {
-            @SuppressLint("ClickableViewAccessibility")
+
             @Override
-            protected void convert(BaseViewHolder helper, HealthReportBean item) {
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+        mViewPagerHealthReport.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return beans.size();
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                View view = (View) object;
+                WebView webView = view.findViewWithTag("webView");
+                if (webView != null) {
+                    webView.clearCache(true);
+                    webView.clearHistory();
+                    webView.clearFormData();
+                    webView.clearSslPreferences();
+                }
+                container.removeView(view);
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                View view = View.inflate(mContext, R.layout.item_health_report, null);
+
+                HealthReportBean bean = beans.get(position);
+
+                FrameLayout frameLayout = view.findViewById(R.id.layout_frame);
+                String url = ServiceAPI.SHARE_INFORM_URL + bean.getUserInform().getGid() + "&sign=true";
+                loadUrl(url, frameLayout);
 
                 RxTextUtils.getBuilder("起始体重\n")
-                        .append(RxFormatValue.fromat4S5R(item.getTargetInfo().getInitialWeight(), 1)).setProportion(1.5f)
+                        .append(RxFormatValue.fromat4S5R(bean.getTargetInfo().getInitialWeight(), 1)).setProportion(1.5f)
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                         .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                        .into(helper.getView(R.id.tv_initWeight));
+                        .into(view.findViewById(R.id.tv_initWeight));
 
                 RxTextUtils.getBuilder("目标体重\n")
-                        .append(RxFormatValue.fromat4S5R(item.getTargetInfo().getTargetWeight(), 1)).setProportion(1.5f)
+                        .append(RxFormatValue.fromat4S5R(bean.getTargetInfo().getTargetWeight(), 1)).setProportion(1.5f)
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                         .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
-                        .into(helper.getView(R.id.tv_targetWeight));
+                        .into(view.findViewById(R.id.tv_targetWeight));
 
-                RxRoundProgressBar mProTarget = helper.getView(R.id.pro_target);
 
-                if (item.getTargetWeight().getComplete() < 0) {
+                RxRoundProgressBar mProTarget = view.findViewById(R.id.pro_target);
+
+                if (bean.getTargetWeight().getComplete() < 0) {
                     mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
                     mProTarget.setProgress(5);
                 } else {
                     mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
-                    mProTarget.setProgress((float) (item.getTargetWeight().getComplete() * 100));
+                    mProTarget.setProgress((float) (bean.getTargetWeight().getComplete() * 100));
                 }
 
                 int drawableRes = R.mipmap.ic_report_starting;
-                switch (item.getTargetInfo().getCompleteStatus()) {
+                switch (bean.getTargetInfo().getCompleteStatus()) {
                     case 0:
                         drawableRes = R.mipmap.ic_report_starting;
                         break;
@@ -168,59 +189,40 @@ public class HealthReportActivity extends BaseActivity {
                     default:
                 }
 
-                helper.setImageResource(R.id.img_reportFlag, drawableRes);
+                ((ImageView) view.findViewById(R.id.img_reportFlag)).setImageResource(drawableRes);
 
-                String reportCycle = RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd") +
-                        "~" + RxFormat.setFormatDate(item.getTargetInfo().getTargetDate(), "yyyy/MM/dd");
-                helper.setText(R.id.tv_reportCycle, reportCycle);
+                String reportCycle = RxFormat.setFormatDate(bean.getTargetInfo().getCreateTime(), "yyyy/MM/dd") +
+                        "~" + RxFormat.setFormatDate(bean.getTargetInfo().getTargetDate(), "yyyy/MM/dd");
+                ((TextView) view.findViewById(R.id.tv_reportCycle)).setText(reportCycle);
 
-                FrameLayout frameLayout = helper.getView(R.id.layout_frame);
-                String url = ServiceAPI.SHARE_INFORM_URL + item.getUserInform().getGid() + "&sign=true";
-                loadUrl(url, frameLayout);
+                container.addView(view);
+                return view;
             }
-        };
-        mRecyclerHealthReport.setAdapter(adapter);
+        });
+        mViewPagerHealthReport.setCurrentItem(beans.size() - 1);
 
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
     private void loadUrl(String url, FrameLayout mLayoutWeb) {
-        BridgeWebView webView = new BridgeWebView(mContext);
-        webView.setTag("webView");
-        webView.setTransitionName("webView");
-        mLayoutWeb.addView(webView);
+        RxLogUtils.d("加载URL：" + url);
+//        mLayoutWeb.addView(webView);
         //WebView 不响应onClick事件，只有onTouch事件
-        webView.setOnTouchListener(new RecyclerViewTouchListener(view -> {
+
+        WebView mWebView = new WebView(mContext);
+        mWebView.setTag("webView");
+        mWebView.setTransitionName("webView");
+
+        RxWebViewUtils.initWebView(mContext, mWebView);
+
+        mLayoutWeb.addView(mWebView);
+        //WebView 不响应onClick事件，只有onTouch事件
+        mWebView.setOnTouchListener(new RecyclerViewTouchListener(view -> {
             PlanWebActivity.startActivity(mContext, url);
         }));
-        webView.setWebViewClient(new BridgeWebViewClient(webView) {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-            }
+        mWebView.loadUrl(url);
 
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                RxLogUtils.d("【webView】:onPageStarted");
-            }
-        });
-
-        WebSettings webSettings = webView.getSettings();
-
-        // init webview settings
-        webSettings.setAllowContentAccess(true);
-        webSettings.setDatabaseEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setAppCacheEnabled(true);
-        webSettings.setSavePassword(false);
-        webSettings.setSaveFormData(false);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setDefaultTextEncodingName("utf-8");
-//
-        webView.loadUrl(url);
     }
 
 
@@ -252,14 +254,16 @@ public class HealthReportActivity extends BaseActivity {
                             mLayoutNotReport.setVisibility(View.VISIBLE);
                         } else {
                             mLayoutNotReport.setVisibility(View.GONE);
-                            adapter.setNewData(beans);
+                            initViewPager(beans);
+
                             if (beans.size() == 1) {
                                 mTvLeft.setVisibility(View.GONE);
                             }
-                            HealthReportBean item = (HealthReportBean) adapter.getItem(0);
-                            if (item != null)
+                            HealthReportBean item = beans.get(0);
+                            if (item != null) {
                                 mTvTip.setText("报告编号：" + item.getUserInform().getInformNo() +
                                         "\n创建日期：" + RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd"));
+                            }
                         }
                     }
 

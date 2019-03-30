@@ -34,9 +34,9 @@ android {
         versionCode parent.ext.versionCode
         versionName parent.ext.versionName
         multiDexEnabled true
-        // 取消掉系统对.9图片的检查
-        aaptOptions.cruncherEnabled = false
-        aaptOptions.useNewCruncher = false
+//        // 取消掉系统对.9图片的检查
+//        aaptOptions.cruncherEnabled = false
+//        aaptOptions.useNewCruncher = false
 
 //        //强制指定包名，貌似是的
 //        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.

@@ -14,6 +14,8 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
     private float newX;
     private boolean moveTransverse = false;//是否横向滑动
 
+    private final int FAST_CLICK_TIME = 80;
+
     private View.OnClickListener mOnClickListener;
 
 
@@ -31,7 +33,7 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                 newX = ev.getX();
                 newY = ev.getY();
                 view.getParent().requestDisallowInterceptTouchEvent(true);
-                RxUtils.isFastClick(100);
+                RxUtils.isFastClick(FAST_CLICK_TIME);
                 moveTransverse = false;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -59,7 +61,7 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (RxUtils.isFastClick(100) && mOnClickListener != null && !moveTransverse) {
+                if (RxUtils.isFastClick(FAST_CLICK_TIME) && mOnClickListener != null && !moveTransverse) {
                     mOnClickListener.onClick(view);
                 }
                 view.getParent().requestDisallowInterceptTouchEvent(false);

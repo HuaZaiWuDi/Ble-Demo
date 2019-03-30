@@ -20,20 +20,24 @@
         />
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_health_report"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager_health_report"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:layout_below="@+id/topBar">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_indicator"
+        android:layout_below="@+id/topBar"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="22dp">
 
-    </android.support.v7.widget.RecyclerView>
+    </android.support.v4.view.ViewPager>
 
 
     <com.vondear.rxtools.view.layout.RxRelativeLayout
         android:id="@+id/layout_indicator"
         android:layout_width="315dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/recycler_health_report"
+        android:layout_above="@+id/tv_tip"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="23dp"
@@ -83,8 +87,9 @@
         android:id="@+id/tv_tip"
         android:layout_width="219dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_indicator"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="64dp"
+        android:layout_marginBottom="33dp"
         android:background="@mipmap/bg_btn"
         android:gravity="left|center_vertical"
         android:lineSpacingExtra="4dp"
@@ -99,7 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/topBar"
-        android:visibility="visible"
+        android:visibility="gone"
         />
 
 </RelativeLayout>

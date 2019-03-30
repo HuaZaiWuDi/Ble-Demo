@@ -5,11 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:layout_height="455dp"
-    android:layout_marginLeft="22dp"
-    android:layout_marginTop="12dp"
-    android:layout_marginRight="22dp"
-    android:layout_marginBottom="130dp"
+    android:layout_height="match_parent"
+
     android:background="@mipmap/bg_health_reprort"
     android:paddingTop="8dp">
 

@@ -22,7 +22,7 @@ import lab.wesmartclothing.wefit.flyso.R;
  */
 public class GlideImageLoader implements ImageLoader {
 
-    public static GlideImageLoader getInstance() {
+    public static final GlideImageLoader getInstance() {
         return new GlideImageLoader();
     }
 
