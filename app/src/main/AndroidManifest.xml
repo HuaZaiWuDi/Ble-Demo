@@ -248,10 +248,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.toolui.SportingActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="nosensor"/>
-        <activity
             android:name=".ui.main.mine.AccountFragment"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>

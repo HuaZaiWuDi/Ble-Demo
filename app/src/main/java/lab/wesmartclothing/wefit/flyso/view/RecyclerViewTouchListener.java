@@ -8,10 +8,8 @@ import com.vondear.rxtools.utils.RxUtils;
 public class RecyclerViewTouchListener implements View.OnTouchListener {
 
 
-    private float oldY;
-    private float oldX;
-    private float newY;
-    private float newX;
+    private float startY, oldY, newY;
+    private float startX, oldX, newX;
     private boolean moveTransverse = false;//是否横向滑动
 
     private final int FAST_CLICK_TIME = 80;
@@ -30,8 +28,8 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
     public boolean onTouch(View view, MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                newX = ev.getX();
-                newY = ev.getY();
+                startX = newX = ev.getX();
+                startY = newY = ev.getY();
                 view.getParent().requestDisallowInterceptTouchEvent(true);
                 RxUtils.isFastClick(FAST_CLICK_TIME);
                 moveTransverse = false;
@@ -61,7 +59,9 @@ public class RecyclerViewTouchListener implements View.OnTouchListener {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (RxUtils.isFastClick(FAST_CLICK_TIME) && mOnClickListener != null && !moveTransverse) {
+                //判断滑动距离小于值，则为点击
+                boolean notMove = Math.abs(startX - ev.getX()) < 50 && Math.abs(startY - ev.getY()) < 50;
+                if (RxUtils.isFastClick(FAST_CLICK_TIME) && mOnClickListener != null && !moveTransverse && notMove) {
                     mOnClickListener.onClick(view);
                 }
                 view.getParent().requestDisallowInterceptTouchEvent(false);

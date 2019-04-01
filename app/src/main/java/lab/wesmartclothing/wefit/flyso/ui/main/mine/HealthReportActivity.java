@@ -30,6 +30,7 @@ import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -253,6 +254,7 @@ public class HealthReportActivity extends BaseActivity {
                         if (RxDataUtils.isEmpty(beans)) {
                             mLayoutNotReport.setVisibility(View.VISIBLE);
                         } else {
+                            Collections.reverse(beans);
                             mLayoutNotReport.setVisibility(View.GONE);
                             initViewPager(beans);
 
