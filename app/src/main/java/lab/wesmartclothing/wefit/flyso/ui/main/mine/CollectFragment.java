@@ -103,9 +103,7 @@ public class CollectFragment extends BaseActivity {
                 MyAPP.getImageLoader().displayImage(mActivity, item.getCoverPicture(), (ImageView) helper.getView(R.id.iv_img));
 
                 helper.setText(R.id.tv_title, item.getArticleName())
-                        .setText(R.id.tv_content, item.getSummary())
-//                        .setText(R.id.tv_readCount, "Timetofit\t\t\t" + "w\t次阅读")
-                ;
+                        .setText(R.id.tv_content, item.getSummary());
             }
         };
         emptyView = View.inflate(mContext, R.layout.layout_no_data, null);

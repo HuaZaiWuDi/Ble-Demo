@@ -30,6 +30,7 @@ import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
@@ -52,8 +53,8 @@ public class AboutUpdateDialog extends RxDialog {
     private String filePath;
     private Context mContext;
     private boolean mustUpdate;
-    private final String Dir = "/Timetofit/";
-    private String fileName = "weSmartClothing" + ".zip";
+    private final String Dir = "/" + Key.APP_KEY + "/";
+    private String fileName = Key.COMPANY_KEY + ".zip";
 
     private BLEUpdateListener mBLEUpdateListener;
 

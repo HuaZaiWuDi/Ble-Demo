@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -92,9 +94,14 @@ public class SplashActivity extends BaseActivity {
         initData();
         initUserInfo();
 
+
 //        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
     }
 
+    public static File getAppAPKFile(Application application) {
+        String path = application.getPackageResourcePath();
+        return new File(path);
+    }
 
     private void initUserInfo() {
         RxLogUtils.i("启动时长：获取用户信息");

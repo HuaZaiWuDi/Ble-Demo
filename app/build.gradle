@@ -28,7 +28,7 @@ android {
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion
     defaultConfig {
-        applicationId "lab.wesmartclothing.wefit.flyso"
+        applicationId "com.lightness.wisenfit"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
@@ -54,13 +54,10 @@ android {
         }
 
         //极光推送：
-//        TimeToFit：
-//        AppKey : 905f32b2246c47b2c017a118
-//        Master Secret : fb6ad806e3a46e1ddf71a9b2
         //替换符只能有一个
         manifestPlaceholders = [
                 JPUSH_PKGNAME: applicationId,
-                JPUSH_APPKEY : "905f32b2246c47b2c017a118", //JPush上注册的包名对应的appkey.
+                JPUSH_APPKEY : "312a083f2aa786ea41bc8bfd", //JPush上注册的包名对应的appkey.
                 JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
                 qqappid      : '1106924585',//QQ分享
         ]

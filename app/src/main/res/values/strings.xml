@@ -1,5 +1,5 @@
 <resources>
-    <string name="appName">智享瘦</string>
+    <string name="appName">莱特妮丝智瘦</string>
     <string name="nav_slimming">瘦身</string>
     <string name="nav_find">发现</string>
     <string name="nav_record">记录</string>
@@ -101,7 +101,7 @@
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
     <string name="search_noData">没有搜索到关于 " %1$s " 的食物哦，请您重新输入食物的关键字 ^-^</string>
     <string name="must_input">最多可以输入%1$d字</string>
-    <string name="plan">感谢使用智享瘦为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n
+    <string name="plan">感谢使用莱特妮丝智瘦为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n
 \t1.\t身体质量指数（BMI）在18.5-40之间；\n
 \t2.年龄在18-60之间；\n
 \t3.产后女性已不在哺乳期，且距离上次生产一年以上；\n
@@ -215,9 +215,9 @@
     <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你定制的是%2$s。  \n养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标哦，加油！</string>
     <string name="dietPlanUser">%1$s营养师 为您搭配饮食</string>
     <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
-    <string name="follow">跟着智享瘦</string>
+    <string name="follow">跟着莱特妮丝智瘦</string>
     <string name="appDays">我在 %1$s 第%2$d 天</string>
-    <string name="tv_firstTip">感谢您使用智享瘦-AI智能瘦身衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
+    <string name="tv_firstTip">感谢您使用莱特妮丝智瘦-AI智能瘦身衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
     <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重 指标、体能状态和患病风险，获得专家的饮食和运动建 议。</string>
 
 </resources>

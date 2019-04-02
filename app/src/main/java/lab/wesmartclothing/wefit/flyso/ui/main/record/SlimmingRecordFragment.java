@@ -955,7 +955,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
             RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
-                    .logoBitmap(R.mipmap.icon_app_round, getResources())
+                    .logoBitmap(R.mipmap.icon_app_lightness, getResources())
                     .into(mImgQRcode);
 
             UserInfo info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);

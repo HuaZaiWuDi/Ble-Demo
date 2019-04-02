@@ -44,7 +44,7 @@
         android:layout_toRightOf="@+id/iv_img"
         android:textColor="@color/BrightGray"
         android:textSize="11sp"
-        tools:text="Timetofit\t\t\t3.6w 次阅读"/>
+        />
 
     <TextView
         android:id="@+id/tv_content"

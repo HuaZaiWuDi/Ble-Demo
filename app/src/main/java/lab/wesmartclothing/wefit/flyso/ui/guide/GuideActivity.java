@@ -48,10 +48,9 @@ public class GuideActivity extends BaseActivity {
 
     public void initView() {
         mImageItems.clear();
-        mImageItems.add(R.mipmap.guide_1);
-        mImageItems.add(R.mipmap.guide_2);
-        mImageItems.add(R.mipmap.guide_3);
-        mImageItems.add(R.mipmap.guide_4);
+        mImageItems.add(R.mipmap.guide_1_l);
+        mImageItems.add(R.mipmap.guide_2_l);
+        mImageItems.add(R.mipmap.guide_3_l);
         mViewpager.setOffscreenPageLimit(2);
         mViewpager.setAdapter(new PagerAdapter() {
             @Override

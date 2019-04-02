@@ -110,6 +110,7 @@ public class NetManager {
                     .header("version", RxDeviceUtils.getAppVersionName())
                     .header("phoneType", RxDeviceUtils.getBuildMANUFACTURER())
                     .header("system", "Android")
+                    .header("company", "lightness")
                     .header("macAddr", RxDeviceUtils.getAndroidId())
                     .header("token", SPUtils.getString(SPKey.SP_token)).build();
             return chain.proceed(request);

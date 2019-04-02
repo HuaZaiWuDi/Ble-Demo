@@ -21,10 +21,10 @@
     <application
         android:name=".base.MyAPP"
         android:allowBackup="true"
-        android:icon="@mipmap/icon_app_round"
+        android:icon="@mipmap/icon_app_lightness"
         android:label="@string/appName"
         android:networkSecurityConfig="@xml/http_config"
-        android:roundIcon="@mipmap/icon_app_round"
+        android:roundIcon="@mipmap/icon_app_lightness"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="label,icon,roundIcon,theme">
@@ -115,7 +115,7 @@
             android:value="5a38b2e8b27b0a02a7000026">
         </meta-data> <!-- 友盟社会分享登录 -->
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="com.lightness.wisenfit.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>

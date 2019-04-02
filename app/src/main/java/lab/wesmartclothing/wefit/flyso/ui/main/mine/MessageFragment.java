@@ -108,7 +108,7 @@ public class MessageFragment extends BaseActivity {
 
             @Override
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
-                MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
+                MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app_lightness, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
                 helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
                         .setText(R.id.tv_title, item.getTitle())
                         .setText(R.id.tv_date, RxFormat.setFormatDate(item.getPushTime(), RxFormat.Date_Date2))

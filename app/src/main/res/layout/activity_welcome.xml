@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="31dp"
             android:layout_marginBottom="8dp"
-            android:text="欢迎使用智享瘦身衣"
+            android:text="欢迎使用莱特妮丝智能瘦身衣"
             android:textColor="@color/Gray"
             android:textSize="14sp"/>
 

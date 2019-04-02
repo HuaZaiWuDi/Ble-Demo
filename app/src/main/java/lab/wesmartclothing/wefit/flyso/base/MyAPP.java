@@ -115,7 +115,7 @@ public class MyAPP extends Application {
         try {
             RxCache.initializeDefault(new RxCache.Builder()
                     .appVersion(2)
-                    .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
+                    .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, Key.APP_KEY + "-cache"))
                     .diskConverter(new SerializableDiskConverter())
                     .diskMax((20 * 1024 * 1024))
                     .memoryMax(0)
