@@ -119,7 +119,7 @@ public class MyAPP extends Application {
                     .diskConverter(new SerializableDiskConverter())
                     .diskMax((20 * 1024 * 1024))
                     .memoryMax(0)
-                    .setDebug(BuildConfig.DEBUG)
+                    .setDebug(false)
                     .build());
             RxLogUtils.d("RxCache 缓存框架初始化成功");
         } catch (Exception e) {
