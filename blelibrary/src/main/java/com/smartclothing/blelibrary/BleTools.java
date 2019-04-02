@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.ParcelUuid;
 import android.util.Log;
 
 import com.clj.fastble.BleManager;
@@ -17,20 +16,12 @@ import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.data.BleScanState;
 import com.clj.fastble.exception.BleException;
-import com.clj.fastble.utils.BleLog;
 import com.clj.fastble.utils.HexUtil;
 import com.smartclothing.blelibrary.listener.BleCallBack;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
-import com.smartclothing.blelibrary.scanner.BluetoothLeScannerCompat;
-import com.smartclothing.blelibrary.scanner.ScanCallback;
-import com.smartclothing.blelibrary.scanner.ScanFilter;
-import com.smartclothing.blelibrary.scanner.ScanSettings;
 import com.smartclothing.blelibrary.util.B;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -338,80 +329,6 @@ public class BleTools {
         return bleDevice;
     }
 
-
-    boolean isScanning = false;
-    private ScanCallback scanCallback;
-
-    public void startScan(BleScanConfig config, ScanCallback scanCallback) {
-
-        stopScanByM();
-
-        this.scanCallback = scanCallback;
-        final long timeOut = config.getScanTimeOut();
-
-        if (scanCallback == null) {
-            throw new IllegalArgumentException("BleScanCallback can not be Null!");
-        }
-
-        if (!getBleManager().isBlueEnable()) {
-            BleLog.e("Bluetooth not enable!");
-            scanCallback.onScanFailed(-1);
-            return;
-        }
-
-        Log.d("bleManager", "开始扫描");
-        BluetoothLeScannerCompat scannerCompat = BluetoothLeScannerCompat.getScanner();
-        ScanSettings scanSettings = new ScanSettings.Builder()
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)//回调所有设备
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)//扫描模式功耗最高，速度最快仅在app处于前台时使用
-                .setReportDelay(2000)
-                .setUseHardwareBatchingIfSupported(false)
-                .build();
-        List<ScanFilter> filters = new ArrayList<>();
-        for (String deviceName : config.getDeviceNames()) {
-            ScanFilter builder = new ScanFilter.Builder().setDeviceName(deviceName).build();
-            filters.add(builder);
-        }
-        for (String deviceAddress : config.getDeviceMac()) {
-            ScanFilter builder = new ScanFilter.Builder().setDeviceAddress(deviceAddress).build();
-            filters.add(builder);
-        }
-        for (String serviceUUID : config.getServiceUuids()) {
-            ScanFilter builder = new ScanFilter.Builder()
-                    .setServiceUuid(ParcelUuid.fromString(serviceUUID)).build();
-            filters.add(builder);
-        }
-
-        scannerCompat.startScan(filters, scanSettings, scanCallback);
-
-        isScanning = true;
-        if (timeOut <= 0) {
-            return;
-        }
-        TimeOut.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopScanByM();
-            }
-        }, timeOut);
-    }
-
-    public void stopScanByM() {
-        if (isScanning) {
-            final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
-            if (scanCallback != null && scanner != null) {
-                Log.d("bleManager", "结束扫描");
-                scanner.stopScan(scanCallback);
-                isScanning = false;
-                scanCallback = null;
-            }
-        }
-    }
-
-    public void setScanning(boolean scanning) {
-        isScanning = scanning;
-    }
-
     public void stopScan() {
         if (getBleManager().getScanSate() == BleScanState.STATE_SCANNING) {
             Log.d("bleManager", "结束扫描");
@@ -420,13 +337,13 @@ public class BleTools {
     }
 
     public boolean isConnect() {
-        if (getBleManager() == null || getBleManager() == null) return false;
+        if (getBleManager() == null || bleDevice == null) return false;
 
         return getBleManager().isConnected(bleDevice);
     }
 
     public boolean connectedState() {
-        if (getBleManager() == null || getBleManager() == null) return false;
+        if (getBleManager() == null || bleDevice == null) return false;
         return getBleManager().getConnectState(bleDevice) == 1 || getBleManager().getConnectState(bleDevice) == 2;
     }
 
