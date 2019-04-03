@@ -10,8 +10,9 @@ Release签名：2a34a83c3bc235b96568a56ef62a65c0
 
 //友盟第三方
 应用名：TimeToFit-Android
-AppKey：5c662b4cf1f5567e310009e5
+AppKey：5ca338162036572bc50017d8
 
 //极光
 AppKey 312a083f2aa786ea41bc8bfd
 Master Secret ? 159b414e200ec23833c19e91
+

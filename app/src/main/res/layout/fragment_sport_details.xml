@@ -1034,7 +1034,7 @@
                     android:layout_marginLeft="72dp"
                     android:layout_marginTop="58dp"
                     app:corner_radius="2dp"
-                    app:icon_src_normal="@mipmap/icon_app_lightness"
+                    app:icon_src_normal="@mipmap/icon_app_lightness_w"
                     />
 
 
