@@ -46,6 +46,7 @@ import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
@@ -198,6 +199,7 @@ public class BleService extends Service {
     private void scanClothing() {
 
         BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
+                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie)})
                 .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
                 .setScanTimeOut(0)
                 .build();
@@ -206,17 +208,18 @@ public class BleService extends Service {
         BleTools.getBleManager().scan(new BleScanCallback() {
             @Override
             public void onScanFinished(List<BleDevice> scanResultList) {
-
+                RxLogUtils.d("扫描结束：" + scanResultList.size());
             }
 
             @Override
             public void onScanStarted(boolean success) {
-
+                RxLogUtils.d("扫描开始：" + success);
             }
 
             @Override
             public void onScanning(BleDevice bleDevice) {
-                RxLogUtils.d("扫描扫描结果：" + bleDevice.toString());
+                RxLogUtils.d("扫描结果：" + bleDevice.toString());
+
                 if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
                         !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接

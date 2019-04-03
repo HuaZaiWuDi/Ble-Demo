@@ -171,7 +171,6 @@ public class AddDeviceActivity extends BaseActivity {
     private void initRxBus() {
         RxBus.getInstance().register2(BindDeviceBean.class)
                 .compose(RxComposeUtils.<BindDeviceBean>bindLife(lifecycleSubject))
-//                .throttleFirst(1, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<BindDeviceBean>() {
                     @Override
                     protected void _onNext(BindDeviceBean device) {
@@ -347,7 +346,6 @@ public class AddDeviceActivity extends BaseActivity {
             switchStatus(STATUS_FIND_DEVICE);
             scanTimeout.stopTimer();
         }
-
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

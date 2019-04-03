@@ -47,7 +47,9 @@
             android:value="1080"/>
         <meta-data
             android:name="design_height"
-            android:value="1920"/> <!-- android7.0适配 -->
+            android:value="1920"/>
+
+        <!-- android7.0适配 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -58,7 +60,9 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path"/>
-        </provider> <!-- 轻牛SDK -->
+        </provider>
+
+        <!-- 轻牛SDK -->
         <service
             android:name="com.qingniu.qnble.scanner.BleScanService"
             android:enabled="true"
@@ -68,16 +72,101 @@
             android:name="com.qingniu.scale.ble.ScaleBleService"
             android:enabled="true"
             android:exported="true">
-        </service> <!-- BUGly升级 -->
+        </service>
+
+        <!-- BUGly升级 -->
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent"/> <!-- 高德地图KEY -->
+            android:theme="@android:style/Theme.Translucent"/>
+
+        <!-- 高德地图KEY -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="20cc8510855f543b2bf4c59d647852e2"/>
 
-        <service android:name="com.amap.api.location.APSService"/> <!-- 极光通知广播 -->
+        <service android:name="com.amap.api.location.APSService"/>
+
+
+        <!-- 极光通知广播 -->
+        <!-- Required SDK 核心功能 -->
+        <!-- 可配置 android:process 参数将 PushService 放在其他进程中 -->
+        <service
+            android:name="cn.jpush.android.service.PushService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER"/>
+                <action android:name="cn.jpush.android.intent.REPORT"/>
+                <action android:name="cn.jpush.android.intent.PushService"/>
+                <action android:name="cn.jpush.android.intent.PUSH_TIME"/>
+            </intent-filter>
+        </service> <!-- since 3.0.9 Required SDK 核心功能 -->
+        <provider
+            android:name="cn.jpush.android.service.DataProvider"
+            android:authorities="${applicationId}.DataProvider"/> <!-- since 1.8.0 option 可选项。用于同一设备中不同应用的 JPush 服务相互拉起的功能。 -->
+        <!-- 若不启用该功能可删除该组件，或把 enabled 设置成 false ；拉起服务被关闭，App 不会通过拉起服务拉起其他的 App，也不会被其他 App 拉起。 -->
+        <service
+            android:name="cn.jpush.android.service.DaemonService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.DaemonService"/>
+
+                <category android:name="${applicationId}"/>
+            </intent-filter>
+        </service> <!-- since 3.1.0 Required SDK 核心功能 -->
+       <!-- Required SDK 核心功能 -->
+        <receiver
+            android:name="cn.jpush.android.service.PushReceiver"
+            android:enabled="true">
+            <intent-filter android:priority="1000">
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY"/>
+
+                <category android:name="${applicationId}"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <!-- Optional -->
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver> <!-- Required SDK 核心功能 -->
+        <activity
+            android:name="cn.jpush.android.ui.PushActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="${applicationId}"/>
+            </intent-filter>
+        </activity> <!-- SDK 核心功能 -->
+        <activity
+            android:name="cn.jpush.android.ui.PopWinActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:theme="@style/MyDialogStyle">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="${applicationId}"/>
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="cn.jpush.android.service.DownloadService"
+            android:enabled="true"
+            android:exported="false">
+        </service> <!-- Required SDK 核心功能 -->
+        <receiver android:name="cn.jpush.android.service.AlarmReceiver"/>
+
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -94,16 +183,19 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/> <!-- 开机广播 -->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/> <!-- 网络状态改变广播 -->
 
-                <category android:name="lab.wesmartclothing.wefit.flyso"/>
+                <!--对应app包名-->
+                <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".utils.jpush.MyJPushMessageReceiver">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
 
-                <category android:name="lab.wesmartclothing.wefit.flyso"/>
+                <category android:name="${applicationId}"/>
             </intent-filter>
-        </receiver> <!-- DUF服务 -->
+        </receiver>
+
+        <!-- DUF服务 -->
         <activity android:name=".ble.dfu.NotificationActivity"/>
 
         <service
