@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -171,6 +172,8 @@ public class BaseWebTFragment extends BaseAcFragment {
         // WebView.html#addJavascriptInterface(java.lang.Object, java.lang.String)
         webSettings.setJavaScriptEnabled(true);
         webView.removeJavascriptInterface("searchBoxJavaBridge_");
+        webView.removeJavascriptInterface("accessibility");
+        webView.removeJavascriptInterface("accessibilityTraversal");
 
         Intent intent = mActivity.getIntent();
         intent.putExtra(SonicJavaScriptInterface.PARAM_CLICK_TIME, System.currentTimeMillis());
@@ -186,13 +189,19 @@ public class BaseWebTFragment extends BaseAcFragment {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setDefaultTextEncodingName("utf-8");
-//
-//        if (sonicSessionClient != null) {
-//            sonicSessionClient.bindWebView(webView);
-//            sonicSessionClient.clientReady();
-//        } else if (!TextUtils.isEmpty(url)) { // default mode
-        webView.loadUrl(url);
-//        }
+
+        //通过以下设置，防止越权访问，跨域等安全问题：
+        webSettings.setAllowFileAccess(false);
+        webSettings.setAllowFileAccessFromFileURLs(false);
+        webSettings.setAllowUniversalAccessFromFileURLs(false);
+
+
+        if (sonicSessionClient != null) {
+            sonicSessionClient.bindWebView(webView);
+            sonicSessionClient.clientReady();
+        } else if (!TextUtils.isEmpty(url)) { // default mode
+            webView.loadUrl(url);
+        }
     }
 
 
@@ -202,6 +211,7 @@ public class BaseWebTFragment extends BaseAcFragment {
     }
 
     public void onRelease() {
+        mLayoutWeb.removeAllViews();
         if (null != sonicSession) {
             sonicSession.destroy();
             sonicSession = null;
@@ -211,6 +221,7 @@ public class BaseWebTFragment extends BaseAcFragment {
             webView.clearHistory();
             webView.clearFormData();
             webView.clearSslPreferences();
+            webView = null;
         }
     }
 
@@ -218,8 +229,6 @@ public class BaseWebTFragment extends BaseAcFragment {
     @Override
     public void onDestroyView() {
         onRelease();
-
-        mLayoutWeb.removeAllViews();
         super.onDestroyView();
     }
 

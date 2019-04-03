@@ -28,8 +28,8 @@ import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -41,6 +41,7 @@ import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
+import lab.wesmartclothing.wefit.flyso.view.StaticLayoutView;
 
 public class SplashActivity extends BaseActivity {
 
@@ -91,6 +92,8 @@ public class SplashActivity extends BaseActivity {
         super.initNetData();
         initData();
         initUserInfo();
+        StaticLayoutView staticLayoutView=new StaticLayoutView(mContext);
+
 
 //        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
     }

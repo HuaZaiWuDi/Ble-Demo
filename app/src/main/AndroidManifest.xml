@@ -94,14 +94,14 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/> <!-- 开机广播 -->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/> <!-- 网络状态改变广播 -->
 
-                <category android:name="lab.wesmartclothing.wefit.flyso"/>
+                <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".utils.jpush.MyJPushMessageReceiver">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
 
-                <category android:name="lab.wesmartclothing.wefit.flyso"/>
+                <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver> <!-- DUF服务 -->
         <activity android:name=".ble.dfu.NotificationActivity"/>
