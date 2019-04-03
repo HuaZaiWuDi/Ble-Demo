@@ -29,7 +29,7 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;

@@ -36,7 +36,7 @@ import lab.wesmartclothing.wefit.flyso.entity.FetchHeatInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;

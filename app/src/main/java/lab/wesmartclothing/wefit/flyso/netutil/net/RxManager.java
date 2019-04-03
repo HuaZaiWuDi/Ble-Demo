@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.netutil.utils;
+package lab.wesmartclothing.wefit.flyso.netutil.net;
 
 
 import com.zchu.rxcache.RxCache;
@@ -8,7 +8,10 @@ import com.zchu.rxcache.stategy.IObservableStrategy;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.BehaviorSubject;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.HttpResult;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
@@ -32,8 +35,6 @@ public class RxManager {
         }
         return rxManager;
     }
-
-
 
 
     public <T> Observable<T> dofunSubscribe(Observable<T> observable) {
@@ -64,8 +65,24 @@ public class RxManager {
                 .compose(RxComposeUtils.<T>bindLife(lifecycleSubject))
                 .compose(RxCache.getDefault().<T>transformObservable(cacheKey, type, strategy))
                 .map(new CacheResult.MapFunc<T>())
+                .observeOn(AndroidSchedulers.mainThread())
                 ;
     }
+
+    public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
+                                            String cacheKey,
+                                            Class type,
+                                            IObservableStrategy strategy
+    ) {
+        return observable
+                .compose(RxComposeUtils.<T>handleResult2())
+                .compose(RxComposeUtils.<T>rxThreadHelper())
+                .compose(RxCache.getDefault().<T>transformObservable(cacheKey, type, strategy))
+                .map(new CacheResult.MapFunc<T>())
+                .observeOn(AndroidSchedulers.mainThread())
+                ;
+    }
+
 
     public <T> Observable<T> doNetSubscribe(Observable<HttpResult<T>> observable,
                                             BehaviorSubject<LifeCycleEvent> lifecycleSubject
