@@ -637,9 +637,9 @@ public class Slimming2Fragment extends BaseAcFragment {
             background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             mBtnGoBindClothing.setText(R.string.goBind);
-            mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
+            mTvClothingTip.setText("请绑定您的智能瘦身衣");
         } else {
-            mTvClothingTip.setText("请穿上燃脂衣开始运动吧");
+            mTvClothingTip.setText("请穿上瘦身衣开始运动吧");
             mBtnGoBindClothing.setText(R.string.goSporting);
             QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
             background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));

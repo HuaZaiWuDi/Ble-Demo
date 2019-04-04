@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.service;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,17 +14,17 @@ import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
+import com.clj.fastble.scan.BleScanRuleConfig;
 import com.google.gson.JsonObject;
 import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
-import com.smartclothing.blelibrary.BleScanConfig;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
-import com.smartclothing.blelibrary.scanner.ScanCallback;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -48,8 +47,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
@@ -57,8 +58,8 @@ import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
@@ -194,115 +195,48 @@ public class BleService extends Service {
 
 
     private void scanClothing() {
-        BleScanConfig config = new BleScanConfig.Builder()
-                .setServiceUuids(BleKey.UUID_Servie)
-//                .setDeviceName(true, BleKey.ScaleName, BleKey.Smart_Clothing)
+        BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
+                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie)})
+                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
                 .setScanTimeOut(0)
                 .build();
-        BleTools.getInstance().startScan(config, new ScanCallback() {
+        BleTools.getBleManager().initScanRule(bleConfig);
+
+        BleTools.getBleManager().scan(new BleScanCallback() {
             @Override
-            public void onScanResult(int callbackType, com.smartclothing.blelibrary.scanner.ScanResult result) {
-                super.onScanResult(callbackType, result);
-                RxLogUtils.d("扫描扫描结果：" + result.toString());
-                BluetoothDevice device = result.getDevice();
-                BleDevice bleDevice = new BleDevice(device);//转换对象
-                RxLogUtils.d("扫描到瘦身衣：" + device.getAddress());
-                if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                        !BleTools.getInstance().connectedState() &&
+            public void onScanFinished(List<BleDevice> scanResultList) {
+                RxLogUtils.d("扫描结束：" + scanResultList.size());
+            }
+
+            @Override
+            public void onScanStarted(boolean success) {
+                RxLogUtils.d("扫描开始：" + success);
+            }
+
+            @Override
+            public void onScanning(BleDevice bleDevice) {
+                RxLogUtils.d("扫描结果：" + bleDevice.toString());
+
+                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
+                        !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                     connectClothing(bleDevice);
                     connectDevices.put(bleDevice.getMac(), bleDevice);
                     //扫描到设备停止扫描
-                    BleTools.getInstance().stopScanByM();
+                    BleTools.getInstance().stopScan();
                 }
 
-                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), result.getRssi());
+                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
+                        getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
-            }
 
-            @Override
-            public void onScanFailed(int errorCode) {
-                super.onScanFailed(errorCode);
-                RxLogUtils.d("扫描失败：" + errorCode);
-                if (errorCode == ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED || errorCode == ScanCallback.SCAN_FAILED_INTERNAL_ERROR) {
-                    initBle();
-                }
-            }
-
-            @Override
-            public void onBatchScanResults(List<com.smartclothing.blelibrary.scanner.ScanResult> results) {
-                super.onBatchScanResults(results);
-                for (int i = 0; i < results.size(); i++) {
-                    BluetoothDevice device = results.get(i).getDevice();
-                    RxLogUtils.d("扫描扫描结果：" + device.getAddress() + "：" + results.get(i).getRssi());
-                    BleDevice bleDevice = new BleDevice(device);//转换对象
-
-                    BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING, bleDevice.getName(), bleDevice.getMac(), results.get(i).getRssi());
-                    RxBus.getInstance().post(bindDeviceBean);
-
-                    //连接设备
-                    if (device.getAddress().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                            !BleTools.getInstance().connectedState() &&
-                            !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-                        connectClothing(bleDevice);
-                        connectDevices.put(bleDevice.getMac(), bleDevice);
-
-                        //扫描到设备停止扫描
-                        BleTools.getInstance().stopScanByM();
-                    }
-                }
             }
         });
-
-
-//        BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
-//                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
-//                .setScanTimeOut(0)
-//                .build();
-//        BleTools.getBleManager().initScanRule(bleConfig);
-//
-//        BleTools.getBleManager().scanAndConnect(new BleScanAndConnectCallback() {
-//            @Override
-//            public void onScanFinished(BleDevice scanResult) {
-//
-//            }
-//
-//            @Override
-//            public void onStartConnect() {
-//
-//            }
-//
-//            @Override
-//            public void onConnectFail(BleDevice bleDevice, BleException exception) {
-//
-//            }
-//
-//            @Override
-//            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-//
-//            }
-//
-//            @Override
-//            public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
-//
-//            }
-//
-//            @Override
-//            public void onScanStarted(boolean success) {
-//
-//            }
-//
-//            @Override
-//            public void onScanning(BleDevice bleDevice) {
-//
-//            }
-//        });
-
     }
 
 
     private void stopScan() {
-        BleTools.getInstance().stopScanByM();
+        BleTools.getInstance().stopScan();
         mQNBleTools.stopScan();
     }
 

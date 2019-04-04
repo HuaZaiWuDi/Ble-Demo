@@ -876,7 +876,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
-                        android:text="请绑定您的燃脂瘦身衣"
+                        android:text="请绑定您的智能瘦身衣"
                         android:textColor="@color/Gray"
                         android:textSize="13sp"/>
 

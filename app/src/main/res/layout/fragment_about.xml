@@ -159,7 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="请确保燃脂衣电量充足并尽量靠近手机"
+            android:text="请确保瘦身衣电量充足并尽量靠近手机"
             android:textColor="@color/GrayWrite"
             android:textSize="13sp"/>
 

@@ -16,6 +16,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -126,18 +127,7 @@ public class AccountFragment extends BaseActivity {
         } else {
             //绑定
             tipDialog.show("正在登陆", 3000);
-            SHARE_MEDIA media = SHARE_MEDIA.QQ;
-            switch (type) {
-                case Key.LoginType_WEXIN:
-                    media = SHARE_MEDIA.WEIXIN;
-                    break;
-                case Key.LoginType_QQ:
-                    media = SHARE_MEDIA.QQ;
-                    break;
-                case Key.LoginType_WEIBO:
-                    media = SHARE_MEDIA.SINA;
-                    break;
-            }
+            SHARE_MEDIA media = convertType(type);
 
             UMShareAPI umShareAPI = UMShareAPI.get(this);
             umShareAPI.getPlatformInfo(this, media, mUMAuthListener);
@@ -162,33 +152,24 @@ public class AccountFragment extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.layout_wechat:
-                switchBind(wechatIsBind, Key.LoginType_WEXIN, new SwitchBindListener() {
-                    @Override
-                    public void complete(String result) {
-                        wechatIsBind = !wechatIsBind;
-                        mIvWechatState.setImageResource(wechatIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-                        mTvWechatName.setText(result);
-                    }
+                switchBind(wechatIsBind, Key.LoginType_WEXIN, result -> {
+                    wechatIsBind = !wechatIsBind;
+                    mIvWechatState.setImageResource(wechatIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+                    mTvWechatName.setText(result);
                 });
                 break;
             case R.id.layout_QQ:
-                switchBind(QQIsBind, Key.LoginType_QQ, new SwitchBindListener() {
-                    @Override
-                    public void complete(String result) {
-                        QQIsBind = !QQIsBind;
-                        mIvQQState.setImageResource(QQIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-                        mTvQQName.setText(result);
-                    }
+                switchBind(QQIsBind, Key.LoginType_QQ, result -> {
+                    QQIsBind = !QQIsBind;
+                    mIvQQState.setImageResource(QQIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+                    mTvQQName.setText(result);
                 });
                 break;
             case R.id.layout_weibo:
-                switchBind(weiboIsBind, Key.LoginType_WEIBO, new SwitchBindListener() {
-                    @Override
-                    public void complete(String result) {
-                        weiboIsBind = !weiboIsBind;
-                        mIvWeiboState.setImageResource(weiboIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
-                        mTvWeiboName.setText(result);
-                    }
+                switchBind(weiboIsBind, Key.LoginType_WEIBO, result -> {
+                    weiboIsBind = !weiboIsBind;
+                    mIvWeiboState.setImageResource(weiboIsBind ? R.mipmap.icon_bind : R.mipmap.icon_unbind);
+                    mTvWeiboName.setText(result);
                 });
                 break;
         }
@@ -209,6 +190,7 @@ public class AccountFragment extends BaseActivity {
         public void onComplete(SHARE_MEDIA share_media, int i, Map<String, String> map) {
             RxLogUtils.d("login:onComplete: ");
             tipDialog.dismiss();
+            if (RxDataUtils.isEmpty(map)) return;
             Set<String> strings = map.keySet();
             for (String s : strings) {
                 RxLogUtils.d("s: " + s + "--value" + map.get(s));
@@ -264,6 +246,10 @@ public class AccountFragment extends BaseActivity {
                         dialog.dismiss();
                         RxToast.normal("解绑成功", 3000);
                         RxLogUtils.d("结束" + s);
+                        SHARE_MEDIA media = convertType(otherType);
+
+                        UMShareAPI.get(mContext).deleteOauth(mActivity, media, mUMAuthListener);
+
                         if (switchBindListener != null) {
                             switchBindListener.complete("");
                         }
@@ -323,5 +309,23 @@ public class AccountFragment extends BaseActivity {
                     }
                 });
     }
+
+
+    private SHARE_MEDIA convertType(String type) {
+        SHARE_MEDIA media = SHARE_MEDIA.QQ;
+        switch (type) {
+            case Key.LoginType_WEXIN:
+                media = SHARE_MEDIA.WEIXIN;
+                break;
+            case Key.LoginType_QQ:
+                media = SHARE_MEDIA.QQ;
+                break;
+            case Key.LoginType_WEIBO:
+                media = SHARE_MEDIA.SINA;
+                break;
+        }
+        return media;
+    }
+
 
 }
