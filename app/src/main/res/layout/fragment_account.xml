@@ -171,7 +171,8 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@drawable/selector_ripple_bg_"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:visibility="gone">
 
 
             <ImageView

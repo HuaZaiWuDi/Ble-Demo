@@ -45,11 +45,11 @@
 
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-        android:layout_below="@+id/mViewPager"
-        android:layout_centerHorizontal="true"
         android:id="@+id/btn_login"
         android:layout_width="260dp"
         android:layout_height="46dp"
+        android:layout_below="@+id/mViewPager"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:enabled="false"
         android:text="登录"
@@ -81,8 +81,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/dimen_35"
             android:layout_marginTop="@dimen/dimen_35"
+            android:layout_marginBottom="@dimen/dimen_35"
             android:text="其他登录方式"
             android:textColor="@color/GrayWrite"/>
 
@@ -112,7 +112,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_40"
                 android:layout_toRightOf="@+id/img_qq"
-                android:background="@mipmap/icon_login_weibo"/>
+                android:background="@mipmap/icon_login_weibo"
+                android:visibility="gone"/>
 
 
         </RelativeLayout>

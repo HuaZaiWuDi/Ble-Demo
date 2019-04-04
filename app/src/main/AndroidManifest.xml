@@ -83,7 +83,7 @@
         <!-- 高德地图KEY -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="20cc8510855f543b2bf4c59d647852e2"/>
+            android:value="d08d76ae6bd68061111b1bfd697accf1"/>
 
         <service android:name="com.amap.api.location.APSService"/>
 
@@ -116,7 +116,7 @@
                 <category android:name="${applicationId}"/>
             </intent-filter>
         </service> <!-- since 3.1.0 Required SDK 核心功能 -->
-       <!-- Required SDK 核心功能 -->
+        <!-- Required SDK 核心功能 -->
         <receiver
             android:name="cn.jpush.android.service.PushReceiver"
             android:enabled="true">
