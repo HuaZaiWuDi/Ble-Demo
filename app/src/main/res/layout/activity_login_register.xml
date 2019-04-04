@@ -95,6 +95,7 @@
                 android:id="@+id/img_wexin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_marginRight="@dimen/dimen_40"
                 android:layout_toLeftOf="@+id/img_qq"
                 android:background="@mipmap/icon_login_wechat"/>
@@ -104,7 +105,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:background="@mipmap/icon_login_qq"/>
+                android:background="@mipmap/icon_login_qq"
+                android:visibility="visible"/>
 
             <ImageView
                 android:id="@+id/img_weibo"

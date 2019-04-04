@@ -50,6 +50,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
@@ -230,7 +231,7 @@ public class BleService extends Service {
                 }
 
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
-                        bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
+                        getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 
             }
@@ -253,7 +254,7 @@ public class BleService extends Service {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
                 RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi() + ":" + bleDevice.getModeId());
-                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
+                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, getString(R.string.scale), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 
                 if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&

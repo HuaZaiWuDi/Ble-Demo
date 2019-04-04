@@ -616,8 +616,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
 
 
-
-
         int targetProgress = (int) (bean.getComplete() * 100);
         mProWeight.setProgress(targetProgress);
         mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
@@ -637,9 +635,9 @@ public class Slimming2Fragment extends BaseAcFragment {
             background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             mBtnGoBindClothing.setText(R.string.goBind);
-            mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
+            mTvClothingTip.setText("请绑定您的瘦身衣");
         } else {
-            mTvClothingTip.setText("请穿上燃脂衣开始运动吧");
+            mTvClothingTip.setText("请穿上瘦身衣开始运动吧");
             mBtnGoBindClothing.setText(R.string.goSporting);
             QMUIRoundButtonDrawable background = (QMUIRoundButtonDrawable) mBtnGoBindClothing.getBackground();
             background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.red)));

@@ -799,7 +799,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mCardFreeSporting.setVisibility(View.GONE);
             mCardCurriculumSporting.setVisibility(View.GONE);
             mBtnGoBindClothing.setText(R.string.goBind);
-            mTvClothingTip.setText("请绑定您的燃脂瘦身衣");
+            mTvClothingTip.setText("请绑定您的智能瘦身衣");
         } else if (planState != 3) {
             mLayoutClothingDefault.setVisibility(View.VISIBLE);
             mCardFreeSporting.setVisibility(View.GONE);

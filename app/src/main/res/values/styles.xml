@@ -25,7 +25,7 @@
 
     <style name="StartTheme" parent="AppTheme">
         <item name="android:windowFullscreen">false</item>
-        <item name="android:windowBackground">@mipmap/img_start_up</item>
+        <item name="android:windowBackground">@mipmap/img_startup_l</item>
 
     </style>
 
