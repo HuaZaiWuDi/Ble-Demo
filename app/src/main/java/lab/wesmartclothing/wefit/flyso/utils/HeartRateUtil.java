@@ -1,8 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
+import com.vondear.rxtools.aboutByte.ByteUtil;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.zchu.rxcache.RxCache;

@@ -150,7 +150,7 @@ dependencies {
 
     //MPAndroidChart图表控件
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    implementation project(path: ':blelibrary')
+//    implementation project(path: ':blelibrary')
 
     //https://github.com/gzu-liyujiang/AndroidPicker
     implementation('cn.qqtheme.framework:WheelPicker:1.5.6') {
@@ -211,5 +211,9 @@ dependencies {
     }  //指定版本
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
     implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
+
+    //蓝牙库
+    compile 'com.clj.fastble:FastBleLib:2.3.2'
+    compile 'no.nordicsemi.android:dfu:1.8.1'
 
 }

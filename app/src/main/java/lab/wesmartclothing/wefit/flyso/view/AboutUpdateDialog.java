@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
-import com.smartclothing.blelibrary.BleKey;
-import com.smartclothing.blelibrary.BleTools;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -26,6 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
