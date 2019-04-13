@@ -376,7 +376,7 @@ public class SportingActivity extends BaseActivity {
                         }
 
                         timer.startTimer();
-                        SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
+                        SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData[1]);
 
                         int currentHeart = sportsDataTab.getCurHeart();
                         currentKcal = sportsDataTab.getKcal();

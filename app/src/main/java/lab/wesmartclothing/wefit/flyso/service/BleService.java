@@ -13,7 +13,10 @@ import android.os.IBinder;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
+import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.callback.BleNotifyCallback;
+import com.clj.fastble.callback.BleReadCallback;
 import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
@@ -23,11 +26,11 @@ import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
-import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
 import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
@@ -47,10 +50,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
-import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
@@ -196,8 +197,9 @@ public class BleService extends Service {
 
     private void scanClothing() {
         BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
-                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie)})
-                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
+//                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie)})
+//                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
+                .setDeviceMac("C2:70:3D:F3:7D:48")
                 .setScanTimeOut(0)
                 .build();
         BleTools.getBleManager().initScanRule(bleConfig);
@@ -217,18 +219,21 @@ public class BleService extends Service {
             public void onScanning(BleDevice bleDevice) {
                 RxLogUtils.d("扫描结果：" + bleDevice.toString());
 
-                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-                        !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
-                        !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-                    connectClothing(bleDevice);
-                    connectDevices.put(bleDevice.getMac(), bleDevice);
-                    //扫描到设备停止扫描
-                    BleTools.getInstance().stopScan();
-                }
+                connectClothing(bleDevice);
+                BleTools.getInstance().stopScan();
 
-                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
-                        getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
-                RxBus.getInstance().post(bindDeviceBean);
+//                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
+//                        !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
+//                        !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
+//                    connectClothing(bleDevice);
+//                    connectDevices.put(bleDevice.getMac(), bleDevice);
+//                    //扫描到设备停止扫描
+//                    BleTools.getInstance().stopScan();
+//                }
+//
+//                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
+//                        getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
+//                RxBus.getInstance().post(bindDeviceBean);
 
             }
         });
@@ -411,14 +416,17 @@ public class BleService extends Service {
 
                 B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
                 if (dfuStarting) return;
-
+//
                 BleTools.getInstance().setBleDevice(bleDevice);
-                BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
-                    @Override
-                    public void success(boolean isSuccess) {
-                        syncBleSetting();
-                    }
-                });
+//                BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
+//                    @Override
+//                    public void success(boolean isSuccess) {
+//                        syncBleSetting();
+//                    }
+//                });
+
+                doConnect(bleDevice);
+
             }
 
             @Override
@@ -430,6 +438,84 @@ public class BleService extends Service {
                 scanClothing();
             }
         });
+    }
+
+    /**
+     * 连接数据初始化操作
+     *
+     * @param bleDevice
+     */
+    private void doConnect(BleDevice bleDevice) {
+        //开启心率通知
+        BleManager.getInstance().notify(bleDevice,
+                BleKey.UUID_SERVICE_HEART_RATE,
+                BleKey.UUID_CHART_HEART_RATE_NOTIFY, new BleNotifyCallback() {
+                    @Override
+                    public void onNotifySuccess() {
+                        RxLogUtils.d("开启心率通知成功");
+                        openBattery(bleDevice);
+                    }
+
+                    @Override
+                    public void onNotifyFailure(BleException exception) {
+                        RxLogUtils.e("开启心率通知失败：", exception);
+                    }
+
+                    @Override
+                    public void onCharacteristicChanged(byte[] data) {
+                        RxLogUtils.d("心率通知数据：" + HexUtil.encodeHexStr(data));
+                        //双字节：第一个字节表示：是否穿戴设备；第二个字节表示：心率值
+                        //是否是真实心率
+                        boolean isReal = BitUtils.checkBitValue(data[0], 1);
+
+                        if (isReal) {
+                            RxBus.getInstance().post(new HeartRateChangeBus(data));
+                        }
+                    }
+                });
+    }
+
+    private void openBattery(BleDevice bleDevice) {
+        //开启电池电量通知
+        BleManager.getInstance().notify(bleDevice,
+                BleKey.UUID_SERVICE_BATTERY,
+                BleKey.UUID_CHART_BATTERY_NOTIFY, new BleNotifyCallback() {
+                    @Override
+                    public void onNotifySuccess() {
+                        RxLogUtils.d("开启电池电量通知成功");
+                        readVersion(bleDevice);
+                    }
+
+                    @Override
+                    public void onNotifyFailure(BleException exception) {
+                        RxLogUtils.e("开启电池电量通知失败：", exception);
+                    }
+
+                    @Override
+                    public void onCharacteristicChanged(byte[] data) {
+                        RxLogUtils.d("电池电量通知数据：" + HexUtil.encodeHexStr(data));
+                        //电量单字节，表示电量
+                        RxBus.getInstance().post(new DeviceVoltageBus(0, (int) data[0], 0));
+                    }
+                });
+    }
+
+    private void readVersion(BleDevice bleDevice) {
+        //读蓝牙固件版本
+        BleManager.getInstance().read(bleDevice,
+                BleKey.UUID_SERVICE_DEVICE_INFO,
+                BleKey.UUID_CHART_firmwareRevision_READ, new BleReadCallback() {
+                    @Override
+                    public void onReadSuccess(byte[] data) {
+                        RxLogUtils.d("读蓝牙固件版本成功:" + HexUtil.encodeHexStr(data));
+                        RxLogUtils.d("读蓝牙固件版本号:" + new String(data));
+                    }
+
+                    @Override
+                    public void onReadFailure(BleException exception) {
+                        RxLogUtils.e("读蓝牙固件版本失败：", exception);
+                    }
+                });
     }
 
 

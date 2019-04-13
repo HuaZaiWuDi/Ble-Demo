@@ -53,7 +53,6 @@ public class HeartRateUtil {
         heartLists = new ArrayList<>();
     }
 
-
     public SportsDataTab addRealTimeData(byte[] bytes) {
         //是否暂停
 
@@ -111,6 +110,45 @@ public class HeartRateUtil {
         return mSportsDataTab;
     }
 
+    public SportsDataTab addRealTimeData(byte b) {
+        int heartRate = realHeartRate = b & 0xff;
+
+        //限制心率范围
+        if (heartRate > (Key.HRART_SECTION[6] & 0xFF)) {
+            heartRate = (Key.HRART_SECTION[6] & 0xFF);
+        } else if (heartRate < (Key.HRART_SECTION[0] & 0xFF)) {
+            heartRate = (Key.HRART_SECTION[0] & 0xFF);
+        }
+
+        lastHeartRate = heartRate;
+
+        maxHeart = Math.max(heartRate, maxHeart);
+        minHeart = Math.min(heartRate, minHeart);
+
+        SportsDataTab mSportsDataTab = new SportsDataTab();
+        mSportsDataTab.setCurHeart(heartRate);
+        mSportsDataTab.setMaxHeart(maxHeart);
+        mSportsDataTab.setMinHeart(minHeart);
+        mSportsDataTab.setRealHeart(realHeartRate);
+        mSportsDataTab.setDate(System.currentTimeMillis());
+        mSportsDataTab.setHeartLists(heartLists);
+
+        //心率处于静息心率区间时不计算卡路里，
+        if (heartRate >= Key.HRART_SECTION[1]) {
+            kcalTotal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(heartRate, 2f / 3600), 1);
+        }
+        mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
+
+
+        HeartRateItemBean heartRateTab = new HeartRateItemBean();
+        heartRateTab.setHeartRate(heartRate);
+        heartRateTab.setHeartTime(mSportsDataTab.getDate());
+        heartRateTab.setStepTime(2);
+        heartLists.add(heartRateTab);
+
+        RxLogUtils.i("瘦身衣心率数据：" + mSportsDataTab.toString());
+        return mSportsDataTab;
+    }
 
     /**
      * 未使用
