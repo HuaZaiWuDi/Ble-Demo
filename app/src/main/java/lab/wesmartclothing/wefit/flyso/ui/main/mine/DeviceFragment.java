@@ -20,11 +20,11 @@ import com.smartclothing.blelibrary.BleKey;
 import com.smartclothing.blelibrary.BleTools;
 import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.smartclothing.blelibrary.util.ByteUtil;
-import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.aboutByte.HexUtil;
 import com.vondear.rxtools.view.RxToast;
 
 import java.util.List;
@@ -33,14 +33,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
@@ -145,12 +144,9 @@ public class DeviceFragment extends BaseActivity {
     protected void initRxBus() {
         RxBus.getInstance().register2(DeviceVoltageBus.class)
                 .compose(RxComposeUtils.<DeviceVoltageBus>bindLife(lifecycleSubject))
-                .subscribe(new Consumer<DeviceVoltageBus>() {
-                    @Override
-                    public void accept(DeviceVoltageBus deviceVoltageBus) throws Exception {
-                        mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
-                        mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
-                    }
+                .subscribe(deviceVoltageBus -> {
+                    mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
+                    mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
                 });
 
     }

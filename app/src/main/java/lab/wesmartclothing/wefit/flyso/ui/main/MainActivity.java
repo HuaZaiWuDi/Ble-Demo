@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
@@ -130,7 +131,7 @@ public class MainActivity extends BaseALocationActivity {
     public void initView() {
         startLocation(null);
         initSystemConfig();
-        RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress(mContext));
+        RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress());
         RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
 
@@ -148,7 +149,7 @@ public class MainActivity extends BaseALocationActivity {
 
     private void initSystemConfig() {
         //判断是否有权限
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))

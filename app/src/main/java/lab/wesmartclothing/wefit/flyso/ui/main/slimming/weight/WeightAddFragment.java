@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -257,7 +258,7 @@ public class WeightAddFragment extends BaseActivity {
 
 
     private void initPermissions() {
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<Boolean>() {

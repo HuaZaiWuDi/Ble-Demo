@@ -185,7 +185,8 @@ public class FindFragment extends BaseAcFragment {
 
     @Override
     public void onDestroy() {
-        mAgentWeb.destroy();
+        if (mAgentWeb != null)
+            mAgentWeb.destroy();
         UMShareAPI.get(mContext).release();
         super.onDestroy();
     }

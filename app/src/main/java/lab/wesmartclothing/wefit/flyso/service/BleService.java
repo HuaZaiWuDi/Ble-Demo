@@ -30,14 +30,14 @@ import com.smartclothing.blelibrary.listener.SynDataCallBack;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.vondear.rxtools.aboutByte.BitUtils;
-import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.aboutByte.BitUtils;
+import com.vondear.rxtools.utils.aboutByte.HexUtil;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
@@ -197,9 +198,9 @@ public class BleService extends Service {
 
     private void scanClothing() {
         BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
-//                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie)})
+                .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_SERVICE_HEART_RATE), UUID.fromString(BleKey.UUID_SERVICE_BATTERY)})
 //                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
-                .setDeviceMac("C2:70:3D:F3:7D:48")
+//                .setDeviceMac("C2:70:3D:F3:7D:48")
                 .setScanTimeOut(0)
                 .build();
         BleTools.getBleManager().initScanRule(bleConfig);

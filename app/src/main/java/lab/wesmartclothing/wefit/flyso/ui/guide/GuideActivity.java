@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 
@@ -23,10 +21,8 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
-import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class GuideActivity extends BaseActivity {
 
@@ -83,7 +79,8 @@ public class GuideActivity extends BaseActivity {
                     photoView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            initPermissions();
+                            startService(new Intent(mContext, BleService.class));
+                            RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
                         }
                     });
                 }
@@ -93,19 +90,6 @@ public class GuideActivity extends BaseActivity {
         });
     }
 
-    private void initPermissions() {
-        new RxPermissions(mActivity)
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        startService(new Intent(mContext, BleService.class));
-                        RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
-                    }
-                });
-    }
 
     @OnClick(R.id.parent)
     public void onViewClicked() {

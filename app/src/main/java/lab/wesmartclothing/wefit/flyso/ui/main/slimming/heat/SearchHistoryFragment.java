@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -110,7 +111,7 @@ public class SearchHistoryFragment extends BaseActivity {
         super.initViews();
 
         dialog.setLifecycleSubject(lifecycleSubject);
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<Permission>() {
