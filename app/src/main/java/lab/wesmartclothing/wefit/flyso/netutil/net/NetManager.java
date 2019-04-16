@@ -112,7 +112,7 @@ public class NetManager {
                     .header("system", "Android")
                     .header("company", "lightness")
                     .header("Request-Type", "app")
-                    .header("user_agent", "lightness/" +
+                    .header("user_agent", "WiseNFit/" +
                             RxDeviceUtils.getAppVersionName() + //软件版本号
                             "(android: " + //系统名称
                             android.os.Build.VERSION.RELEASE + ";" +//软件版本号
