@@ -111,6 +111,14 @@ public class NetManager {
                     .header("phoneType", RxDeviceUtils.getBuildMANUFACTURER())
                     .header("system", "Android")
                     .header("company", "lightness")
+                    .header("Request-Type", "app")
+                    .header("user_agent", "lightness/" +
+                            RxDeviceUtils.getAppVersionName() + //软件版本号
+                            "(android: " + //系统名称
+                            android.os.Build.VERSION.RELEASE + ";" +//软件版本号
+                            RxDeviceUtils.getBuildMANUFACTURER() + ":" +//手机设备厂商
+                            RxDeviceUtils.getBuildBrandModel() + ";" +//设备型号
+                            ")")
                     .header("macAddr", RxDeviceUtils.getAndroidId())
                     .header("token", SPUtils.getString(SPKey.SP_token)).build();
             return chain.proceed(request);
