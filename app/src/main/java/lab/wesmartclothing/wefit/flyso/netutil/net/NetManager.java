@@ -110,8 +110,26 @@ public class NetManager {
                     .header("version", RxDeviceUtils.getAppVersionName())
                     .header("phoneType", RxDeviceUtils.getBuildMANUFACTURER())
                     .header("system", "Android")
+                    .header("company", "wesmart")
+                    .header("Request-Type", "app")
+                    .header("user_agent", "WiseNFit/" +
+                            RxDeviceUtils.getAppVersionName() + //软件版本号
+                            "(android: " + //系统名称
+                            android.os.Build.VERSION.RELEASE + ";" +//软件版本号
+//                            RxDeviceUtils.getNetworkOperatorName() + "; " +//网络运营商
+                            RxDeviceUtils.getBuildMANUFACTURER() + ":" +//手机设备厂商
+                            RxDeviceUtils.getBuildBrandModel() + ";" +//设备型号
+                            ")")
                     .header("macAddr", RxDeviceUtils.getAndroidId())
                     .header("token", SPUtils.getString(SPKey.SP_token)).build();
+            RxLogUtils.d("data:" + "WiseNFit/" +
+                    RxDeviceUtils.getAppVersionName() + //软件版本号
+                    "(android; " + //系统名称
+                    android.os.Build.VERSION.RELEASE + ";" +//软件版本号
+//                            RxDeviceUtils.getNetworkOperatorName() + "; " +//网络运营商
+                    RxDeviceUtils.getBuildMANUFACTURER() + ";" +//手机设备厂商
+                    RxDeviceUtils.getBuildBrandModel() + ";" +//设备型号
+                    ")");
             return chain.proceed(request);
         }
     };

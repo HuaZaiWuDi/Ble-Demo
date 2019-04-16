@@ -41,7 +41,6 @@ import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
-import lab.wesmartclothing.wefit.flyso.view.StaticLayoutView;
 
 public class SplashActivity extends BaseActivity {
 
@@ -92,7 +91,6 @@ public class SplashActivity extends BaseActivity {
         super.initNetData();
         initData();
         initUserInfo();
-        StaticLayoutView staticLayoutView=new StaticLayoutView(mContext);
 
 
 //        RxActivityUtils.skipActivity(mContext, SportingActivity.class);

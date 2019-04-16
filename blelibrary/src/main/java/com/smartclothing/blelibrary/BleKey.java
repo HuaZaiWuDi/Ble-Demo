@@ -83,7 +83,6 @@ public interface BleKey {
 
     String UUID_CHART_READ_NOTIFY = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E".toLowerCase();
 
-
     //心率服务UUID
     String UUID_SERVICE_HEART_RATE = "0000180d-0000-1000-8000-00805f9b34fb".toLowerCase();
 

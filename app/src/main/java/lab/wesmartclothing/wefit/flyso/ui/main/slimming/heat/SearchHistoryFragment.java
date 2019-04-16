@@ -217,22 +217,30 @@ public class SearchHistoryFragment extends BaseActivity {
         initLateLyData();
         initHotData();
 
-        mTagFlowLayoutHot.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
-            @Override
-            public void onClick(View v) {
-                String string = ((TextView) v).getText().toString();
-                mSearchView.setText(string);
-                mSearchView.setSelection(string.length());
-            }
+
+        mTagFlowLayoutHot.setOnTagItemClickListener(v -> {
+            String string = ((TextView) v).getText().toString();
+            mSearchView.setText(string);
+            mSearchView.setSelection(string.length());
+        });
+        mTagFlowLayoutHot.setAdapter(() -> {
+            TextView textView = new TextView(mContext);
+            textView.setBackgroundResource(R.mipmap.search_words_bg);
+            textView.setTextColor(getResources().getColor(R.color.textColor));
+            return textView;
         });
 
-        mTagFlowLayoutLately.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
-            @Override
-            public void onClick(View v) {
-                String string = ((TextView) v).getText().toString();
-                mSearchView.setText(string);
-                mSearchView.setSelection(string.length());
-            }
+        mTagFlowLayoutLately.setAdapter(() -> {
+            TextView textView = new TextView(mContext);
+            textView.setBackgroundResource(R.mipmap.search_words_bg);
+            textView.setTextColor(getResources().getColor(R.color.textColor));
+            return textView;
+        });
+
+        mTagFlowLayoutLately.setOnTagItemClickListener(v -> {
+            String string = ((TextView) v).getText().toString();
+            mSearchView.setText(string);
+            mSearchView.setSelection(string.length());
         });
 
         RxCache.getDefault().<List<String>>load(Key.CACHE_SEARCH_KEY, new TypeToken<List<String>>() {
