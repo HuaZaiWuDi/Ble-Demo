@@ -119,6 +119,7 @@ public class BleService extends Service {
                     BleAPI.clothingStop();
                     break;
                 case Intent.ACTION_DATE_CHANGED://日期的变化
+                    RxLogUtils.d("日期变化");
                     RxBus.getInstance().post(new RefreshSlimming());
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
