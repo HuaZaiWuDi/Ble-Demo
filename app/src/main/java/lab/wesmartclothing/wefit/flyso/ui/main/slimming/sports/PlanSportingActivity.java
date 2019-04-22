@@ -24,7 +24,9 @@ import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.smartclothing.blelibrary.BleAPI;
 import com.smartclothing.blelibrary.BleTools;
+import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -59,8 +61,8 @@ import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
@@ -126,6 +128,8 @@ public class PlanSportingActivity extends BaseActivity {
     RxTextView mTvPlayOrPause;
     @BindView(R.id.parent)
     RelativeLayout mParent;
+    @BindView(R.id.sw_heat)
+    SwitchView mSwHeat;
 
 
     private Button btn_Connect;
@@ -138,7 +142,7 @@ public class PlanSportingActivity extends BaseActivity {
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
-
+    private int heartRateFlag = 0;
 
     BroadcastReceiver registerReceiver = new BroadcastReceiver() {
         @Override
@@ -147,8 +151,8 @@ public class PlanSportingActivity extends BaseActivity {
             //监听瘦身衣连接情况
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
-                btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
-                speakAdd(state ? "设备已连接" : "设备连接已断开");
+                btn_Connect.setText(state ? R.string.connected : R.string.connecting);
+                speakAdd(state ? "继续运动" : "运动已暂停");
                 if (state) {
                     timer.startTimer();
                     connectTimeoutTimer.stopTimer();
@@ -158,9 +162,10 @@ public class PlanSportingActivity extends BaseActivity {
                 }
                 pause = !state;
                 startOrPauseSport();
-            } else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                finishSporting();
             }
+//            else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
+//                finishSporting();
+//            }
         }
     };
 
@@ -352,17 +357,19 @@ public class PlanSportingActivity extends BaseActivity {
                     protected void _onNext(HeartRateChangeBus heartRateData) {
 
                         if (pause) return;
+
+                        heartRateFlag = 0;
                         timer.startTimer();
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
 
                         currentHeart = sportsDataTab.getCurHeart();
-                        sportingKcal = sportsDataTab.getKcal();
+                        sportingKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
 
                         lineChartUtils.setRealTimeData(currentHeart);
                         mTvAvHeartRate.setText(currentHeart + "");
                         mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
 
-                        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingKcal, 1))
+                        RxTextUtils.getBuilder(sportingKcal + "")
                                 .append("\tkcal").setProportion(0.5f)
                                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                                 .into(mTvSportskcal);
@@ -383,7 +390,7 @@ public class PlanSportingActivity extends BaseActivity {
         mHeartRateBean.setAthlDesc(mTvHeartCount.getText().toString());
         mHeartRateBean.setPlanFlag(1);
         mHeartRateBean.setAthlScore(sportingScore);
-        mHeartRateBean.setTotalCalorie(sportsDataTab.getKcal());
+        mHeartRateBean.setTotalCalorie((int) sportsDataTab.getKcal());
         mHeartRateBean.setHeartList(sportsDataTab.getHeartLists());
         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 
@@ -565,14 +572,42 @@ public class PlanSportingActivity extends BaseActivity {
         });
         mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, true));
 
+        mSwHeat.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
+            @Override
+            public void toggleToOn(SwitchView switchView) {
+                toggleHeat(true);
+            }
+
+            @Override
+            public void toggleToOff(SwitchView switchView) {
+                toggleHeat(false);
+            }
+        });
+    }
+
+    /**
+     * 切换是否加热
+     */
+    private void toggleHeat(boolean isHeat) {
+        BleAPI.syncSetting(Key.heartRates, 60, 50, isHeat, new BleChartChangeCallBack() {
+            @Override
+            public void callBack(byte[] data) {
+                mSwHeat.setOpened(isHeat);
+            }
+        });
     }
 
     private void initTopBar() {
         mQMUIAppBarLayout.setTitle("自由运动中");
         btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(
-                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.connecting), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
+        btn_Connect.setOnClickListener(view -> {
+            if (!BleTools.getInstance().isConnect()) {
+                RxToast.normal("蓝牙正在连接", 2000);
+            }
+        });
     }
 
 
@@ -599,7 +634,6 @@ public class PlanSportingActivity extends BaseActivity {
             if (type != 2) {
                 mTvSportsStatus.setText("有氧");
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
-
             }
         } else if (heart >= heart_4 && heart < heart_5) {
             if (type != 3) {
@@ -632,6 +666,12 @@ public class PlanSportingActivity extends BaseActivity {
         @Override
         public void enterTimer() {
             currentTime++;
+
+            heartRateFlag++;
+            //3秒钟没有心率则，显示‘--’，有心率则重置为标记为0
+            if (heartRateFlag == 4) {
+                mTvAvHeartRate.setText("--");
+            }
 
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
             if (currentTime % 120 == 0) {
@@ -703,10 +743,11 @@ public class PlanSportingActivity extends BaseActivity {
         pause = true;
         startOrPauseSport();
 
-        //未开启运动直接结束
-        if (currentTime == 0) {
-            RxActivityUtils.finishActivity();
-        } else if (currentTime < 180) {
+//        //未开启运动直接结束 2019-04-22 应用不会主动退出界面
+//        if (currentTime == 0) {
+//            RxActivityUtils.finishActivity();
+//        } else
+        if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
             sportingShortDialog = new RxDialogSure(mContext)
                     .setTitle("运动提示")
@@ -784,7 +825,7 @@ public class PlanSportingActivity extends BaseActivity {
                         if (!BleTools.getBleManager().isBlueEnable()) {
                             BleTools.getBleManager().enableBluetooth();
                         }
-                        connectTimeoutTimer.startTimer();
+//                        connectTimeoutTimer.startTimer();
                     })
                     .setSure("结束运动")
                     .setSureListener(v -> finishSporting());

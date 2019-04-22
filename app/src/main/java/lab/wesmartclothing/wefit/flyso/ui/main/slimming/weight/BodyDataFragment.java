@@ -214,7 +214,7 @@ public class BodyDataFragment extends BaseActivity {
 
         //基础代谢
         float bmr = weightInfo.getBasalHeat();
-        bmr = bmr <= 0 ? 903 : bmr;
+        bmr = bmr <= 0 ? 1500 : bmr;
         Healthy healthy5 = new Healthy();
         healthy5.setSections(new double[]{bmr});
         healthy5.setSectionLabels(new String[]{bmr + "kcal"});

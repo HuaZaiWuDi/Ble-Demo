@@ -42,6 +42,15 @@ public class UserInfo implements Serializable {
     private int age;
     private boolean hasInviteCode;
     private String invitationCode;
+    private int baselHeat;
+
+    public int getBaselHeat() {
+        return baselHeat;
+    }
+
+    public void setBaselHeat(int baselHeat) {
+        this.baselHeat = baselHeat;
+    }
 
     public String getInvitationCode() {
         return invitationCode;

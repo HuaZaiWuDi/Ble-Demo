@@ -3,8 +3,8 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.alibaba.fastjson.JSON;
 import com.smartclothing.blelibrary.util.ByteUtil;
 import com.vondear.rxtools.aboutByte.BitUtils;
-import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
@@ -13,14 +13,16 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.utils
@@ -44,6 +46,7 @@ public class HeartRateUtil {
     private int packageCounts = 0;//历史数据包序号
     private List<HeartRateItemBean> heartLists;
     private boolean pause = false;
+    private UserInfo userInfo;
 
 
     public HeartRateUtil() {
@@ -51,6 +54,7 @@ public class HeartRateUtil {
         minHeart = 200;//最小心率
         kcalTotal = 0;//总卡路里
         heartLists = new ArrayList<>();
+        userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
     }
 
 
@@ -68,17 +72,30 @@ public class HeartRateUtil {
 //            }
 //        }
 
-        //限制心率范围
-        if (heartRate > (Key.HRART_SECTION[6] & 0xFF)) {
-            heartRate = (Key.HRART_SECTION[6] & 0xFF);
-        } else if (heartRate < (Key.HRART_SECTION[0] & 0xFF)) {
-            heartRate = (Key.HRART_SECTION[0] & 0xFF);
-        }
+//        //限制心率范围 2019-04-22 去掉最大最小心率范围
+//        if (heartRate > (Key.HRART_SECTION[6] & 0xFF)) {
+//            heartRate = (Key.HRART_SECTION[6] & 0xFF);
+//        } else if (heartRate < (Key.HRART_SECTION[0] & 0xFF)) {
+//            heartRate = (Key.HRART_SECTION[0] & 0xFF);
+//        }
+
 
         lastHeartRate = heartRate;
 
         maxHeart = Math.max(heartRate, maxHeart);
         minHeart = Math.min(heartRate, minHeart);
+
+        //心率处于静息心率区间时不计算卡路里，
+        if (heartRate >= Key.HRART_SECTION[1]) {
+            kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
+        } else {
+            //静息卡路里的计算：
+            //静息(Kcal/s)：基础代谢值/(24*60*60)*time
+            if (userInfo != null) {
+                kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60);
+            }
+        }
+
 
         SportsDataTab mSportsDataTab = new SportsDataTab();
         mSportsDataTab.setCurHeart(heartRate);
@@ -93,11 +110,6 @@ public class HeartRateUtil {
         mSportsDataTab.setDate(System.currentTimeMillis());
         mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mSportsDataTab.setHeartLists(heartLists);
-
-        //心率处于静息心率区间时不计算卡路里，
-        if (heartRate >= Key.HRART_SECTION[1]) {
-            kcalTotal += RxFormatValue.format4S5R(HeartRateToKcal.getCalorie(heartRate, 2f / 3600), 1);
-        }
         mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
 
 
