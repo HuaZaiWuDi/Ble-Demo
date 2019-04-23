@@ -61,7 +61,7 @@ public class NetManager {
             });
             loggingInterceptor.setLevel(level);
             //OkHttp进行添加拦截器loggingInterceptor
-            builder.addInterceptor(loggingInterceptor);
+            builder.addNetworkInterceptor(loggingInterceptor);
         }
 
         builder.addInterceptor(NetInterceptor);
@@ -112,7 +112,7 @@ public class NetManager {
                     .header("system", "Android")
                     .header("company", "lightness")
                     .header("Request-Type", "app")
-                    .header("user_agent", "WiseNFit/" +
+                    .header("User-Agent", "WiseNFit/" +
                             RxDeviceUtils.getAppVersionName() + //软件版本号
                             "(android: " + //系统名称
                             android.os.Build.VERSION.RELEASE + ";" +//软件版本号
