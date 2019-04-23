@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
@@ -201,6 +202,7 @@ public class BleService extends Service {
                 .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_SERVICE_HEART_RATE), UUID.fromString(BleKey.UUID_SERVICE_BATTERY)})
 //                .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
 //                .setDeviceMac("C2:70:3D:F3:7D:48")
+                .setDeviceName(true,"WeSmartCloth")
                 .setScanTimeOut(0)
                 .build();
         BleTools.getBleManager().initScanRule(bleConfig);
@@ -220,21 +222,18 @@ public class BleService extends Service {
             public void onScanning(BleDevice bleDevice) {
                 RxLogUtils.d("扫描结果：" + bleDevice.toString());
 
-                connectClothing(bleDevice);
-                BleTools.getInstance().stopScan();
+                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
+                        !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
+                        !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
+                    connectClothing(bleDevice);
+                    connectDevices.put(bleDevice.getMac(), bleDevice);
+                    //扫描到设备停止扫描
+                    BleTools.getInstance().stopScan();
+                }
 
-//                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
-//                        !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
-//                        !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
-//                    connectClothing(bleDevice);
-//                    connectDevices.put(bleDevice.getMac(), bleDevice);
-//                    //扫描到设备停止扫描
-//                    BleTools.getInstance().stopScan();
-//                }
-//
-//                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
-//                        getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
-//                RxBus.getInstance().post(bindDeviceBean);
+                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
+                        getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
+                RxBus.getInstance().post(bindDeviceBean);
 
             }
         });

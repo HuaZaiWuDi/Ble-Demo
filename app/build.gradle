@@ -28,7 +28,7 @@ android {
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion
     defaultConfig {
-        applicationId "lab.wesmartclothing.wefit.flyso"
+        applicationId "lab.wesmartclothing.wefit.flyso_newBle"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
