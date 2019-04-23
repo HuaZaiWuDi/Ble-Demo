@@ -97,6 +97,7 @@ public class HeartRateUtil {
         }
 
 
+
         SportsDataTab mSportsDataTab = new SportsDataTab();
         mSportsDataTab.setCurHeart(heartRate);
         mSportsDataTab.setMaxHeart(maxHeart);
