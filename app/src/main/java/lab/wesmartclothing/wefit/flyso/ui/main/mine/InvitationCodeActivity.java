@@ -35,7 +35,7 @@ import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 public class InvitationCodeActivity extends BaseActivity {
 
-    public static final String REGEX_CODE = "^[A-Za-z0-9]{5}$";
+    public static final String REGEX_CODE = "^[A-Za-z0-9]{4,10}$";
 
     @BindView(R.id.tv_invitation)
     TextView mTvInvitation;
@@ -91,15 +91,12 @@ public class InvitationCodeActivity extends BaseActivity {
 
             }
         });
-        RxKeyboardUtils.registerSoftInputChangedListener(mActivity, new RxKeyboardUtils.OnSoftInputChangedListener() {
-            @Override
-            public void onSoftInputChanged(int height) {
-                RxLogUtils.e("软键盘高度：" + height);
-                if (height < 300) {
-                    RxAnimationUtils.animateMaginTop(RxUtils.dp2px(16), RxUtils.dp2px(100), mLinearLayoutEdit);
-                } else {
-                    RxAnimationUtils.animateMaginTop(RxUtils.dp2px(100), RxUtils.dp2px(16), mLinearLayoutEdit);
-                }
+        RxKeyboardUtils.registerSoftInputChangedListener(mActivity, height -> {
+            RxLogUtils.e("软键盘高度：" + height);
+            if (height < 300) {
+                RxAnimationUtils.animateMaginTop(RxUtils.dp2px(16), RxUtils.dp2px(100), mLinearLayoutEdit);
+            } else {
+                RxAnimationUtils.animateMaginTop(RxUtils.dp2px(100), RxUtils.dp2px(16), mLinearLayoutEdit);
             }
         });
 
