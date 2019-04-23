@@ -31,6 +31,7 @@
     <string name="goWeight">去称重</string>
     <string name="disConnected">未连接</string>
     <string name="connected">已连接</string>
+    <string name="connecting">正在连接</string>
     <string name="unBind">未绑定</string>
     <string name="calm">静息</string>
     <string name="warm">热身</string>
