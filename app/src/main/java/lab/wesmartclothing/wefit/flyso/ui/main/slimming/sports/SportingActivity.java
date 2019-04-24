@@ -31,7 +31,6 @@ import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxRandom;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -149,7 +148,6 @@ public class SportingActivity extends BaseActivity {
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.connecting);
-                speakAdd(state ? "继续运动" : "运动已暂停");
                 if (state) {
                     timer.startTimer();
                     connectTimeoutTimer.stopTimer();
@@ -300,7 +298,7 @@ public class SportingActivity extends BaseActivity {
 //        mChartHeartRate.setViewPortOffsets(0, 0, RxUtils.dp2px(86), 0);
 
         XAxis xAxis = mChartHeartRate.getXAxis();
-        xAxis.setAxisMaximum(30);
+        xAxis.setAxisMaximum(70);
         mChartHeartRate.invalidate();
     }
 
@@ -312,34 +310,6 @@ public class SportingActivity extends BaseActivity {
     }
 
 
-    float text = 100;
-    boolean b = false;
-    MyTimer test = new MyTimer(500, 1000, new MyTimerListener() {
-        @Override
-        public void enterTimer() {
-            if (mChartHeartRate.getData().getEntryCount() > 30) {
-                XAxis xAxis = mChartHeartRate.getXAxis();
-                xAxis.resetAxisMaximum();
-            }
-
-            lineChartUtils.setRealTimeData(RxRandom.getRandom(80, 180));
-
-            LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
-            int count = realTimeSet.getEntryCount();
-
-            int width = RxUtils.dp2px(325) / 30 * count;
-            if (width < RxUtils.dp2px(24)) {
-                width = RxUtils.dp2px(30);
-            } else if (width > RxUtils.dp2px(325)) {
-                width = RxUtils.dp2px(320);
-            }
-
-            ViewGroup.LayoutParams layoutParams = mTvCurrentTime.getLayoutParams();
-            layoutParams.width = width;
-            mTvCurrentTime.setLayoutParams(layoutParams);
-
-        }
-    });
 
 
     @Override
@@ -378,7 +348,7 @@ public class SportingActivity extends BaseActivity {
                         heartRateFlag = 0;
 
                         //撤销最大显示范围，让一屏显示所有数据
-                        if (mChartHeartRate.getData().getEntryCount() > 30) {
+                        if (mChartHeartRate.getData().getEntryCount() > 70) {
                             XAxis xAxis = mChartHeartRate.getXAxis();
                             xAxis.resetAxisMaximum();
                         }
@@ -434,7 +404,7 @@ public class SportingActivity extends BaseActivity {
         LineDataSet realTimeSet = (LineDataSet) mChartHeartRate.getData().getDataSetByLabel("RealTime", true);
         int count = realTimeSet.getEntryCount();
 
-        int width = RxUtils.dp2px(325) / 30 * count;
+        int width = RxUtils.dp2px(325) / 70 * count;
         if (width < RxUtils.dp2px(24)) {
             width = RxUtils.dp2px(30);
         } else if (width > RxUtils.dp2px(325)) {
@@ -586,7 +556,7 @@ public class SportingActivity extends BaseActivity {
             currentTime++;
             heartRateFlag++;
             //3秒钟没有心率则，显示‘--’，有心率则重置为标记为0
-            if (heartRateFlag == 4) {
+            if (heartRateFlag == 10) {
                 mTvAvHeartRate.setText("--");
             }
 
@@ -676,7 +646,6 @@ public class SportingActivity extends BaseActivity {
      */
     private void finishSporting() {
         pause = true;
-        startOrPauseSport();
 
 //        //未开启运动直接结束
 //        if (currentTime == 0) {

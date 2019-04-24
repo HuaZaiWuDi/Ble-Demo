@@ -2,8 +2,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.vondear.rxtools.utils.RxLogUtils;
 
-import java.util.Arrays;
-
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
@@ -25,23 +23,28 @@ public class HeartSectionUtil {
     public static void initMaxHeart(UserInfo info ) {
         if (info != null) {
             //最大心率计算公式改为“最大心率=208-0.7*年龄”,请知悉！
-            int maxHeart = (int) (208 - info.getAge() * 0.7);
-            Key.HRART_SECTION[0] = (byte) (maxHeart * 0.4);
-            Key.HRART_SECTION[1] = (byte) (maxHeart * 0.5);
-            Key.HRART_SECTION[2] = (byte) (maxHeart * 0.6);
-            Key.HRART_SECTION[3] = (byte) (maxHeart * 0.7);
-            Key.HRART_SECTION[4] = (byte) (maxHeart * 0.8);
-            Key.HRART_SECTION[5] = (byte) (maxHeart * 0.9);
+            int maxHeart = 190;
+//            int maxHeart = (int) (208 - info.getAge() * 0.7);
+            maxHeart = info.getSex() == 1 ? (220 - info.getAge()) : (226 - info.getAge());
+            Key.HRART_SECTION[0] = (byte) (maxHeart * 0.46);
+            Key.HRART_SECTION[1] = (byte) (maxHeart * 0.55);
+            Key.HRART_SECTION[2] = (byte) (maxHeart * 0.64);
+            Key.HRART_SECTION[3] = (byte) (maxHeart * 0.73);
+            Key.HRART_SECTION[4] = (byte) (maxHeart * 0.82);
+            Key.HRART_SECTION[5] = (byte) (maxHeart * 0.91);
             Key.HRART_SECTION[6] = (byte) (maxHeart);
-            RxLogUtils.d("心率区间：" + Arrays.toString(Key.HRART_SECTION));
 
+            for (byte b : Key.HRART_SECTION) {
+                RxLogUtils.d("心率区间：" + (b & 0xff));
+            }
 
-            Key.heartRates[0] = (byte) (maxHeart * 0.5);
-            Key.heartRates[1] = (byte) (maxHeart * 0.6);
-            Key.heartRates[2] = (byte) (maxHeart * 0.7);
-            Key.heartRates[3] = (byte) (maxHeart * 0.8);
-            Key.heartRates[4] = (byte) (maxHeart * 0.9);
+            Key.heartRates[0] = Key.HRART_SECTION[1];
+            Key.heartRates[1] = Key.HRART_SECTION[2];
+            Key.heartRates[2] = Key.HRART_SECTION[3];
+            Key.heartRates[3] = Key.HRART_SECTION[4];
+            Key.heartRates[4] = Key.HRART_SECTION[5];
         }
+
     }
 
 }

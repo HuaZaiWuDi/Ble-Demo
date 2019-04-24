@@ -152,8 +152,6 @@ public class PlanSportingActivity extends BaseActivity {
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.connecting);
-                speakAdd(state ? "继续运动" : "运动已暂停");
-
                 if (state) {
                     timer.startTimer();
                     connectTimeoutTimer.stopTimer();
@@ -671,7 +669,7 @@ public class PlanSportingActivity extends BaseActivity {
 
             heartRateFlag++;
             //3秒钟没有心率则，显示‘--’，有心率则重置为标记为0
-            if (heartRateFlag == 4) {
+            if (heartRateFlag == 10) {
                 mTvAvHeartRate.setText("--");
             }
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
@@ -742,7 +740,6 @@ public class PlanSportingActivity extends BaseActivity {
      */
     private void finishSporting() {
         pause = true;
-        startOrPauseSport();
 
 //        //未开启运动直接结束
 //        if (currentTime == 0) {
