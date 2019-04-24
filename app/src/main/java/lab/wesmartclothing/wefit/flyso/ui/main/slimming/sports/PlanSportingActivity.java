@@ -152,7 +152,6 @@ public class PlanSportingActivity extends BaseActivity {
             if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.connecting);
-                speakAdd(state ? "继续运动" : "运动已暂停");
                 if (state) {
                     timer.startTimer();
                     connectTimeoutTimer.stopTimer();
@@ -654,12 +653,7 @@ public class PlanSportingActivity extends BaseActivity {
     }
 
     //当用户极限运动超过 3 分钟
-    MyTimer limitTimer = new MyTimer(3 * 60 * 1000, 3 * 60 * 1000, new MyTimerListener() {
-        @Override
-        public void enterTimer() {
-            speakAdd("您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！");
-        }
-    });
+    MyTimer limitTimer = new MyTimer(3 * 60 * 1000, 3 * 60 * 1000, () -> speakAdd("您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！"));
 
 
     MyTimer timer = new MyTimer(new MyTimerListener() {
@@ -668,8 +662,8 @@ public class PlanSportingActivity extends BaseActivity {
             currentTime++;
 
             heartRateFlag++;
-            //3秒钟没有心率则，显示‘--’，有心率则重置为标记为0
-            if (heartRateFlag == 4) {
+            //10秒钟没有心率则，显示‘--’，有心率则重置为标记为0
+            if (heartRateFlag == 10) {
                 mTvAvHeartRate.setText("--");
             }
 
@@ -741,7 +735,6 @@ public class PlanSportingActivity extends BaseActivity {
      */
     private void finishSporting() {
         pause = true;
-        startOrPauseSport();
 
 //        //未开启运动直接结束 2019-04-22 应用不会主动退出界面
 //        if (currentTime == 0) {

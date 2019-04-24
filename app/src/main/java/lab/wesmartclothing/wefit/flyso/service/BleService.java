@@ -549,8 +549,6 @@ public class BleService extends Service {
 
     private void initHeartRate() {
         BleTools.getInstance().setBleCallBack(data -> {
-
-
             RxBus.getInstance().post(new HeartRateChangeBus(data));
         });
     }

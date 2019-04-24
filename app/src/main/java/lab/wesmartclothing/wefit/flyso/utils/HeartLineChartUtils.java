@@ -100,8 +100,8 @@ public class HeartLineChartUtils {
         set.setDrawCircles(false);
         set.setLineWidth(1f);
 
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set.setCubicIntensity(0.2f);
+//        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+//        set.setCubicIntensity(0.2f);
 
         //渐变
         set.setDrawFilled(true);
@@ -129,8 +129,8 @@ public class HeartLineChartUtils {
         set.setDrawCircles(false);
         set.setLineWidth(1f);
 
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set.setCubicIntensity(0.2f);
+//        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+//        set.setCubicIntensity(0.2f);
 
 //        //渐变
 //        set.setDrawFilled(true);

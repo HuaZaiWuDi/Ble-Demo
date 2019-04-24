@@ -720,12 +720,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 || bean.getWeightChangeVO() == null
                 || bean.getWeightChangeVO().getWeight() == null)
             return;
-        mMCountDownView.setCountDownFinishCallBack(new CountDownView.CountDownFinishCallBack() {
-            @Override
-            public void finish() {
-                targetComplete(true, bean.getComplete() == 1);
-            }
-        });
+        mMCountDownView.setCountDownFinishCallBack(() -> targetComplete(true, bean.getComplete() == 1));
         if (System.currentTimeMillis() >= bean.getTargetInfo().getTargetDate() || bean.getComplete() == 1) {
             targetComplete(true, bean.getComplete() == 1);
         } else {
@@ -935,7 +930,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     if (!BleTools.getBleManager().isBlueEnable()) {
                         showOpenBlueTooth();
                     } else if (!BleTools.getInstance().isConnect()) {
-                        tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                        tipDialog.show("您还未连接瘦身衣", 2000);
                         mActivity.startService(new Intent(mContext, BleService.class));
                     } else {
                         RxActivityUtils.skipActivity(mContext, SportingActivity.class);
@@ -947,7 +942,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (!BleTools.getBleManager().isBlueEnable()) {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                    tipDialog.show("您还未连接瘦身衣", 2000);
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     //进入实时运动界面，没有定制课程
@@ -959,7 +954,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (!BleTools.getBleManager().isBlueEnable()) {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                    tipDialog.show("您还未连接瘦身衣", 2000);
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
@@ -976,7 +971,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (!BleTools.getBleManager().isBlueEnable()) {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.showInfo("您还未连接瘦身衣", 1500);
+                    tipDialog.show("您还未连接瘦身衣", 2000);
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {

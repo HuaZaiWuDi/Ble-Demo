@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.smartclothing.blelibrary.util.ByteUtil;
-import com.vondear.rxtools.aboutByte.BitUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
@@ -61,7 +60,9 @@ public class HeartRateUtil {
     public SportsDataTab addRealTimeData(byte[] bytes) {
         //是否暂停
 
+
         int heartRate = realHeartRate = bytes[8] & 0xff;
+
 
         //降低误差值
 //        if (lastHeartRate != 0) {
@@ -97,19 +98,18 @@ public class HeartRateUtil {
         }
 
 
-
         SportsDataTab mSportsDataTab = new SportsDataTab();
         mSportsDataTab.setCurHeart(heartRate);
         mSportsDataTab.setMaxHeart(maxHeart);
         mSportsDataTab.setMinHeart(minHeart);
         mSportsDataTab.setRealHeart(realHeartRate);
-        mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{bytes[15], bytes[16]}));
-        mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
-        mSportsDataTab.setTemp((bytes[10] & 0xff));
-        mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
+//        mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{bytes[15], bytes[16]}));
+//        mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
+//        mSportsDataTab.setTemp((bytes[10] & 0xff));
+//        mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
         mSportsDataTab.setData(bytes);
         mSportsDataTab.setDate(System.currentTimeMillis());
-        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
+//        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mSportsDataTab.setHeartLists(heartLists);
         mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
 

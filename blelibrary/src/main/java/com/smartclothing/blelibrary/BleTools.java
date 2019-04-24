@@ -238,22 +238,21 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-//                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                Log.d(TAG, "蓝牙命令反馈:" + HexUtil.encodeHexStr(data));
                 //notify数据
-                if (mBleCallBack != null && data[2] == 0x07 && data.length >= 17) {
-                    B.broadUpdate(bleManager.getContext(), "ACTION_HEART_RATE_CHANGED");
+                if (mBleCallBack != null && data[2] == 0x07) {
                     mBleCallBack.onNotify(data);
                 }
 
                 if (data[2] == 0x08) {
-                    Log.d(TAG, "蓝牙停止:" + HexUtil.encodeHexStr(data));
+                    Log.d(TAG, "蓝牙停止:");
                     B.broadUpdate(bleManager.getContext(), "ACTION_CLOTHING_STOP");
                 }
 
                 //命令数据
                 if (bleChartChange != null) {
                     if (data[2] == bytes[2]) {
-                        Log.d(TAG, "蓝牙命令反馈:" + HexUtil.encodeHexStr(data));
+                        Log.d(TAG, "蓝牙命令反馈:");
                         currentCount = 0;
                         bleChartChange.callBack(data);
                         TimeOut.removeCallbacks(reWrite);
