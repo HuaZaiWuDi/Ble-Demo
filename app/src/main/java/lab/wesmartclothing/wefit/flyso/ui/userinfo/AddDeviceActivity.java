@@ -308,6 +308,7 @@ public class AddDeviceActivity extends BaseActivity {
 
                         RxBus.getInstance().post(new RefreshSlimming());
                         RxBus.getInstance().post(new RefreshMe());
+                        mActivity.startService(new Intent(mContext, BleService.class));
                         //跳转主页
                         if (!forceBind) {
                             RxActivityUtils.skipActivity(mContext, MainActivity.class);

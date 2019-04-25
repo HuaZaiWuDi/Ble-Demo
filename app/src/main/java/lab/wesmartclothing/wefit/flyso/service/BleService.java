@@ -76,24 +76,16 @@ import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
 public class BleService extends Service {
     static boolean isFirst = true;//固件升级检查弹窗提示
-
-
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
-
     private Map<String, Object> connectDevices = new ConcurrentHashMap<>();
-
     public static boolean clothingFinish = true;
-    QNBleTools mQNBleTools = QNBleTools.getInstance();
-
-
+    private QNBleTools mQNBleTools = QNBleTools.getInstance();
     private static boolean isFirstJoin = true;
-
     public static List<QNScaleStoreData> historyWeightData;
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             switch (intent.getAction()) {
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
                     Bundle extras = intent.getExtras();

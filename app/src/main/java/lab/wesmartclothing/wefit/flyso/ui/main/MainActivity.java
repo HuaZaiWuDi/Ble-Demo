@@ -49,7 +49,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
@@ -195,7 +194,8 @@ public class MainActivity extends BaseALocationActivity {
                 R.mipmap.icon_find_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
-            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
+            if (i != 2)
+                mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
@@ -241,7 +241,7 @@ public class MainActivity extends BaseALocationActivity {
         mFragments.add(SlimmingFragment.newInstance());
 //        mFragments.add(Slimming2Fragment.getInstance());
         mFragments.add(SlimmingRecordFragment.newInstance());
-        mFragments.add(FindFragment.getInstance());
+//        mFragments.add(FindFragment.getInstance());
 //        mFragments.add(StoreFragment.getInstance());
         mFragments.add(MeFragment.getInstance());
 

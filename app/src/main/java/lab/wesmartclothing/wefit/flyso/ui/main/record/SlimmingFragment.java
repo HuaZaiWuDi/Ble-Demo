@@ -254,6 +254,8 @@ public class SlimmingFragment extends BaseAcFragment {
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
     private int lastKcal = 0;
+    private RxDialog firstUsedDialog;
+    boolean isFold = false;//是否折叠
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -280,12 +282,12 @@ public class SlimmingFragment extends BaseAcFragment {
     }
 
 
-    boolean isFold = false;//是否折叠
 
     @Override
     protected void initViews() {
         super.initViews();
         initPermissions();
+        initFirstUsedDialog();
 
         mTvCurrentWeight.setTypeface(MyAPP.typeface);
         mTvInitWeight.setTypeface(MyAPP.typeface);
@@ -320,6 +322,21 @@ public class SlimmingFragment extends BaseAcFragment {
                 }
             }
         });
+    }
+
+    private void initFirstUsedDialog() {
+        firstUsedDialog = new RxDialog(mContext);
+        View view = View.inflate(mContext, R.layout.dialog_first_tip, null);
+        firstUsedDialog.setContentView(view);
+        view.findViewById(R.id.tv_start)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        firstUsedDialog.dismiss();
+                        RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
+                    }
+                });
+
     }
 
     @Override
@@ -781,7 +798,8 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgSeeRecord.setVisibility(View.GONE);
             mLayoutSlimmingTarget.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.GONE);
-            firstUsedTip();
+            if (firstUsedDialog != null && !firstUsedDialog.isShowing())
+                firstUsedDialog.show();
         } else if (planState == 3) {
             mImgPlanMark.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.VISIBLE);
@@ -812,7 +830,6 @@ public class SlimmingFragment extends BaseAcFragment {
             mCardFreeSporting.setVisibility(View.VISIBLE);
             mCardCurriculumSporting.setVisibility(View.VISIBLE);
         }
-
         //体脂称状态
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
@@ -825,21 +842,6 @@ public class SlimmingFragment extends BaseAcFragment {
         } else {
             mLayoutScaleDefault.setVisibility(View.GONE);
         }
-    }
-
-    private void firstUsedTip() {
-        final RxDialog dialog = new RxDialog(mContext);
-        View view = View.inflate(mContext, R.layout.dialog_first_tip, null);
-        dialog.setContentView(view);
-        dialog.show();
-        view.findViewById(R.id.tv_start)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
-                    }
-                });
     }
 
 
