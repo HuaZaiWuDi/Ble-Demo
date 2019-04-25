@@ -232,7 +232,11 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-//                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+
+                if (mBleCallBack != null && data[2] == 0x07) {
+                    mBleCallBack.onNotify(data);
+                }
 
                 if (data[2] == 0x08) {
                     Log.d(TAG, "蓝牙停止:" + HexUtil.encodeHexStr(data));
