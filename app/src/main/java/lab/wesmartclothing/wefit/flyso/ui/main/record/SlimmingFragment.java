@@ -930,7 +930,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     if (!BleTools.getBleManager().isBlueEnable()) {
                         showOpenBlueTooth();
                     } else if (!BleTools.getInstance().isConnect()) {
-                        tipDialog.show("您还未连接瘦身衣", 2000);
+                        tipDialog.show("瘦身衣正在连接中", 3000);
                         mActivity.startService(new Intent(mContext, BleService.class));
                     } else {
                         RxActivityUtils.skipActivity(mContext, SportingActivity.class);
@@ -942,7 +942,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (!BleTools.getBleManager().isBlueEnable()) {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.show("您还未连接瘦身衣", 2000);
+                    tipDialog.show("瘦身衣正在连接中", 3000);
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     //进入实时运动界面，没有定制课程
@@ -954,7 +954,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (!BleTools.getBleManager().isBlueEnable()) {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.show("您还未连接瘦身衣", 2000);
+                    tipDialog.show("瘦身衣正在连接中", 3000);
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
@@ -971,7 +971,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (!BleTools.getBleManager().isBlueEnable()) {
                     showOpenBlueTooth();
                 } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.show("您还未连接瘦身衣", 2000);
+                    tipDialog.show("瘦身衣正在连接中", 3000);
                     mActivity.startService(new Intent(mContext, BleService.class));
                 } else {
                     if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {

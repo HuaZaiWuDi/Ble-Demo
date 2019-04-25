@@ -40,6 +40,10 @@
             android:name="org.apache.http.legacy"
             android:required="false"/>
 
+        <!--android O Error inflating class android.webkit.WebView-->
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true"/>
 
         <!-- 屏幕适配 -->
         <meta-data
