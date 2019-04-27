@@ -663,6 +663,14 @@ public class SportingActivity extends BaseActivity {
                     .setSure("确定")
                     .setSureListener(v -> RxActivityUtils.finishActivity());
             sportingShortDialog.show();
+        } else if (mChartHeartRate.getData().getEntryCount() <= 0) {
+            //       用户当前运动没有心率，提示用户此次记录将不被保存
+            sportingShortDialog = new RxDialogSure(mContext)
+                    .setTitle("运动提示")
+                    .setContent("您的运动数据异常，此次运动记录将不会被保存")
+                    .setSure("确定")
+                    .setSureListener(v -> RxActivityUtils.finishActivity());
+            sportingShortDialog.show();
         } else {
             speakAdd("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
             //如果检测到运动已经结束，直接保存数据并进入详情页
