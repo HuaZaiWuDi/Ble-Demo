@@ -145,7 +145,6 @@ public class SportingActivity extends BaseActivity {
     private RxDialogSureCancel connectFailDialog;
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;//运动是否暂停
-    private boolean sportFinish = false;//运动是否结束
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     private int heartRateFlag = 0;
 
@@ -165,9 +164,6 @@ public class SportingActivity extends BaseActivity {
                 pause = !state;
                 startOrPauseSport();
             }
-//            else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-//                finishSporting();
-//            }
         }
     };
 
@@ -226,13 +222,11 @@ public class SportingActivity extends BaseActivity {
             drawable = ContextCompat.getDrawable(mContext, R.mipmap.ic_play);
         }
         mTvPlayOrPause.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-
-        if (!sportFinish)
-            if (pause) {
-                timer.stopTimer();
-            } else {
-                timer.startTimer();
-            }
+        if (pause) {
+            timer.stopTimer();
+        } else {
+            timer.startTimer();
+        }
 
         startAnim(pause);
     }
@@ -332,11 +326,13 @@ public class SportingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (stopTime > 0) {
-            RxLogUtils.d("运动返回前台");
-            currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+        if (!pause) {
+            if (stopTime > 0) {
+                RxLogUtils.d("运动返回前台");
+                currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+            }
+            timer.startTimer();
         }
-        timer.startTimer();
     }
 
     /**
@@ -345,21 +341,21 @@ public class SportingActivity extends BaseActivity {
      */
     @Override
     protected void onStop() {
-        if (!sportFinish) {
-            RxLogUtils.d("运动退回后台");
-            Intent intent = new Intent(this, BleService.class);
-            intent.putExtra("APP_BACKGROUND", true);
+        super.onStop();
+        RxLogUtils.d("运动退回后台");
+        Intent intent = new Intent(this, BleService.class);
+        intent.putExtra("APP_BACKGROUND", true);
 
-            // Android 8.0使用startForegroundService在前台启动新服务
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
+        // Android 8.0使用startForegroundService在前台启动新服务
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+        if (!pause) {
             stopTime = System.currentTimeMillis();
             timer.stopTimer();
         }
-        super.onStop();
     }
 
     @Override
@@ -581,7 +577,6 @@ public class SportingActivity extends BaseActivity {
         public void enterTimer() {
             currentTime++;
 
-
             heartRateFlag++;
             //3秒钟没有心率则，显示‘--’，有心率则重置为标记为0
             if (heartRateFlag == 10) {
@@ -670,7 +665,7 @@ public class SportingActivity extends BaseActivity {
      * force 是否强制退出
      */
     private void finishSporting() {
-        sportFinish = true;
+
 
 //        //未开启运动直接结束
 //        if (currentTime == 0) {
@@ -682,7 +677,9 @@ public class SportingActivity extends BaseActivity {
                     .setTitle("运动提示")
                     .setContent("您当前运动时间过短，此次运动记录将不会被保存")
                     .setSure("确定")
-                    .setSureListener(v -> RxActivityUtils.finishActivity());
+                    .setSureListener(v -> {
+                        RxActivityUtils.finishActivity();
+                    });
             sportingShortDialog.show();
         } else {
             timer.stopTimer();
@@ -712,7 +709,6 @@ public class SportingActivity extends BaseActivity {
                         if (!BleTools.getBleManager().isBlueEnable()) {
                             BleTools.getBleManager().enableBluetooth();
                         }
-//                        connectTimeoutTimer.startTimer();
                     })
                     .setSure("结束运动")
                     .setSureListener(v -> finishSporting());

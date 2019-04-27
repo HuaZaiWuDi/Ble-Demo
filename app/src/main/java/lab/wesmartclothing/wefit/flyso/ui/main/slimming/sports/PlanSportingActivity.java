@@ -151,7 +151,6 @@ public class PlanSportingActivity extends BaseActivity {
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;
 
-    private boolean sportFinish = false;
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     private int heartRateFlag = 0;
 
@@ -165,7 +164,7 @@ public class PlanSportingActivity extends BaseActivity {
                 btn_Connect.setText(state ? R.string.connected : R.string.connecting);
                 if (state) {
                     dismissAllDialog();
-                }else
+                } else
                     trySporting();
                 pause = !state;
                 startOrPauseSport();
@@ -224,12 +223,11 @@ public class PlanSportingActivity extends BaseActivity {
         }
         mTvPlayOrPause.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 
-        if (!sportFinish)
-            if (pause) {
-                timer.stopTimer();
-            } else {
-                timer.startTimer();
-            }
+        if (pause) {
+            timer.stopTimer();
+        } else {
+            timer.startTimer();
+        }
 
         startAnim(pause);
     }
@@ -318,11 +316,13 @@ public class PlanSportingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (stopTime > 0) {
-            RxLogUtils.d("运动返回前台");
-            currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+        if (!pause) {
+            if (stopTime > 0) {
+                RxLogUtils.d("运动返回前台");
+                currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+            }
+            timer.startTimer();
         }
-        timer.startTimer();
     }
 
     /**
@@ -331,21 +331,21 @@ public class PlanSportingActivity extends BaseActivity {
      */
     @Override
     protected void onStop() {
-        if (!sportFinish) {
-            RxLogUtils.d("运动退回后台");
-            Intent intent = new Intent(this, BleService.class);
-            intent.putExtra("APP_BACKGROUND", true);
+        super.onStop();
+        RxLogUtils.d("运动退回后台");
+        Intent intent = new Intent(this, BleService.class);
+        intent.putExtra("APP_BACKGROUND", true);
 
-            // Android 8.0使用startForegroundService在前台启动新服务
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
+        // Android 8.0使用startForegroundService在前台启动新服务
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+        if (!pause) {
             stopTime = System.currentTimeMillis();
             timer.stopTimer();
         }
-        super.onStop();
     }
 
 
@@ -464,7 +464,7 @@ public class PlanSportingActivity extends BaseActivity {
         } else {
             speakAdd("本次训练计划还未完成哦，加油加油，今天的坚持是为了更美的明天。");
         }
-
+        timer.stopTimer();
         currentTime = 0;
         saveHeartRate();
     }
@@ -764,19 +764,15 @@ public class PlanSportingActivity extends BaseActivity {
      * 运动结束
      */
     private void finishSporting() {
-        sportFinish = true;
-
-//        //未开启运动直接结束 2019-04-22 应用不会主动退出界面
-//        if (currentTime == 0) {
-//            RxActivityUtils.finishActivity();
-//        } else
         if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
             sportingShortDialog = new RxDialogSure(mContext)
                     .setTitle("运动提示")
                     .setContent("您当前运动时间过短，此次运动记录将不会被保存")
                     .setSure("确定")
-                    .setSureListener(v -> RxActivityUtils.finishActivity());
+                    .setSureListener(v -> {
+                        RxActivityUtils.finishActivity();
+                    });
             sportingShortDialog.show();
         } else {
             sportingFinish(false);
