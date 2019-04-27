@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.MotionEvent;
@@ -28,6 +29,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -35,6 +37,7 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
@@ -48,6 +51,7 @@ import com.zchu.rxcache.RxCache;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.qqtheme.framework.util.ScreenUtils;
 import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -64,6 +68,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
@@ -130,6 +135,7 @@ public class SportingActivity extends BaseActivity {
 
     private Button btn_Connect;
     private int currentTime = 0;
+    private long stopTime = 0;
     private int type = -1;//运动上一次状态
     private HeartLineChartUtils lineChartUtils;
     private HeartRateBean mHeartRateBean = new HeartRateBean();
@@ -137,6 +143,7 @@ public class SportingActivity extends BaseActivity {
     private RxDialogSureCancel connectFailDialog;
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;
+    private boolean sportFinish = false;
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     private int heartRateFlag = 0;
 
@@ -149,11 +156,8 @@ public class SportingActivity extends BaseActivity {
                 boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
                 btn_Connect.setText(state ? R.string.connected : R.string.connecting);
                 if (state) {
-                    timer.startTimer();
-                    connectTimeoutTimer.stopTimer();
                     dismissAllDialog();
                 } else {
-                    timer.stopTimer();
                     trySporting();
                 }
                 pause = !state;
@@ -222,11 +226,12 @@ public class SportingActivity extends BaseActivity {
         }
         mTvPlayOrPause.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 
-        if (pause) {
-            timer.stopTimer();
-        } else {
-            timer.startTimer();
-        }
+        if (!sportFinish)
+            if (pause) {
+                timer.stopTimer();
+            } else {
+                timer.startTimer();
+            }
 
         startAnim(pause);
     }
@@ -310,8 +315,6 @@ public class SportingActivity extends BaseActivity {
     }
 
 
-
-
     @Override
     protected void initNetData() {
         super.initNetData();
@@ -327,11 +330,30 @@ public class SportingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (stopTime > 0) {
+            RxLogUtils.d("运动返回前台");
+            currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+        }
+        timer.startTimer();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+
+    protected void onStop() {
+        if (!sportFinish) {
+            RxLogUtils.d("运动退回后台");
+            Intent intent = new Intent(this, BleService.class);
+            intent.putExtra("APP_BACKGROUND", true);
+
+            // Android 8.0使用startForegroundService在前台启动新服务
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent);
+            } else {
+                startService(intent);
+            }
+            stopTime = System.currentTimeMillis();
+            timer.stopTimer();
+        }
+        super.onStop();
     }
 
 
@@ -353,7 +375,6 @@ public class SportingActivity extends BaseActivity {
                             xAxis.resetAxisMaximum();
                         }
 
-                        timer.startTimer();
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
 
                         int currentHeart = sportsDataTab.getCurHeart();
@@ -570,13 +591,6 @@ public class SportingActivity extends BaseActivity {
         }
     });
 
-    /**
-     * 10秒内，未正常连接，直接运动结束
-     */
-    MyTimer connectTimeoutTimer = new MyTimer(() -> {
-        finishSporting();
-    }, 10000);
-
 
     @Override
     public void onDestroy() {
@@ -584,7 +598,6 @@ public class SportingActivity extends BaseActivity {
         timer.stopTimer();
         TextSpeakUtils.stop();
         dismissAllDialog();
-        connectTimeoutTimer.stopTimer();
         super.onDestroy();
     }
 
@@ -645,12 +658,8 @@ public class SportingActivity extends BaseActivity {
      * force 是否强制退出
      */
     private void finishSporting() {
-        pause = true;
+        sportFinish = true;
 
-//        //未开启运动直接结束
-//        if (currentTime == 0) {
-//            RxActivityUtils.finishActivity();
-//        } else
         if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
             sportingShortDialog = new RxDialogSure(mContext)
@@ -660,8 +669,6 @@ public class SportingActivity extends BaseActivity {
                     .setSureListener(v -> RxActivityUtils.finishActivity());
             sportingShortDialog.show();
         } else {
-            timer.stopTimer();
-            currentTime = 0;
             speakAdd("运动已结束,您一共消耗：" + Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
             //如果检测到运动已经结束，直接保存数据并进入详情页
             saveHeartRate();
@@ -687,7 +694,6 @@ public class SportingActivity extends BaseActivity {
                         if (!BleTools.getBleManager().isBlueEnable()) {
                             BleTools.getBleManager().enableBluetooth();
                         }
-//                        connectTimeoutTimer.startTimer();
                     })
                     .setSure("结束运动")
                     .setSureListener(v -> finishSporting());
@@ -698,6 +704,7 @@ public class SportingActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ScreenUtils.keepBright(this);
         super.onCreate(savedInstanceState);
     }
 
