@@ -147,7 +147,6 @@ public class PlanSportingActivity extends BaseActivity {
     private RxDialogSureCancel connectFailDialog;
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;//运动是否暂停
-    private boolean sportFinish = false;//运动是否结束
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     private int heartRateFlag = 0;
 
@@ -216,12 +215,11 @@ public class PlanSportingActivity extends BaseActivity {
             drawable = ContextCompat.getDrawable(mContext, R.mipmap.ic_play);
         }
         mTvPlayOrPause.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-        if (!sportFinish)
-            if (pause) {
-                timer.stopTimer();
-            } else {
-                timer.startTimer();
-            }
+        if (pause) {
+            timer.stopTimer();
+        } else {
+            timer.startTimer();
+        }
 
         startAnim(pause);
     }
@@ -310,11 +308,13 @@ public class PlanSportingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (stopTime > 0) {
-            RxLogUtils.d("运动返回前台");
-            currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+        if (!pause) {
+            if (stopTime > 0) {
+                RxLogUtils.d("运动返回前台");
+                currentTime += RxTimeUtils.getIntervalTime(System.currentTimeMillis(), stopTime, RxConstUtils.TimeUnit.SEC);
+            }
+            timer.startTimer();
         }
-        timer.startTimer();
     }
 
 
@@ -325,17 +325,17 @@ public class PlanSportingActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (!sportFinish) {
-            RxLogUtils.d("运动退回后台");
-            Intent intent = new Intent(this, BleService.class);
-            intent.putExtra("APP_BACKGROUND", true);
+        RxLogUtils.d("运动退回后台");
+        Intent intent = new Intent(this, BleService.class);
+        intent.putExtra("APP_BACKGROUND", true);
 
-            // Android 8.0使用startForegroundService在前台启动新服务
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
+        // Android 8.0使用startForegroundService在前台启动新服务
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+        if (!pause) {
             stopTime = System.currentTimeMillis();
             timer.stopTimer();
         }
@@ -758,12 +758,6 @@ public class PlanSportingActivity extends BaseActivity {
      * 运动结束
      */
     private void finishSporting() {
-        sportFinish = true;
-
-//        //未开启运动直接结束
-//        if (currentTime == 0) {
-//            RxActivityUtils.finishActivity();
-//        } else
         if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
             sportingShortDialog = new RxDialogSure(mContext)
