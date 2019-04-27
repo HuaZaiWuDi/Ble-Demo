@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.service;
 
-import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -11,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -206,15 +204,19 @@ public class BleService extends Service {
     /**
      * 通过通知启动服务
      */
-    @TargetApi(Build.VERSION_CODES.O)
     public void setForegroundService() {
+        //向系统注册通知渠道，注册后不能改变重要性以及其他通知行为
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //设定的通知渠道名称
-        String channelName = getString(R.string.app_name);
+        String channelName = getString(R.string.appName);
         //设置通知的重要程度
-        int importance = NotificationManager.IMPORTANCE_LOW;
         //构建通知渠道
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, channelName, importance);
-        channel.setDescription("描述");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription("描述");
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(channel);
+        }
         //在创建的通知渠道上发送通知
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setSmallIcon(R.mipmap.icon_app_round) //设置通知图标
@@ -222,9 +224,6 @@ public class BleService extends Service {
                 .setContentText("智享瘦正在后台运行")//设置通知内容
                 .setAutoCancel(true) //用户触摸时，自动关闭
                 .setOngoing(true);//设置处于运行状态
-        //向系统注册通知渠道，注册后不能改变重要性以及其他通知行为
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel(channel);
         //将服务置于启动状态 NOTIFICATION_ID指的是创建的通知的ID
         startForeground(NOTIFICATION_ID, builder.build());
 

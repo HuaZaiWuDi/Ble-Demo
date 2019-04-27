@@ -165,7 +165,8 @@ public class PlanSportingActivity extends BaseActivity {
                 btn_Connect.setText(state ? R.string.connected : R.string.connecting);
                 if (state) {
                     dismissAllDialog();
-                }
+                }else
+                    trySporting();
                 pause = !state;
                 startOrPauseSport();
             }
