@@ -76,6 +76,9 @@
                 app:primaryColor="@color/green_61D97F"
                 />
 
+
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,7 +88,8 @@
                 android:layout_toLeftOf="@+id/sw_music"
                 android:text="共振燃脂\t\t"
                 android:textColor="@color/GrayWrite"
-                android:textSize="13sp"/>
+                android:textSize="13sp"
+                android:visibility="gone"/>
 
 
             <com.vondear.rxtools.view.SwitchView
@@ -96,6 +100,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="@dimen/dimen_16"
+                android:visibility="gone"
                 app:hasShadow="true"
                 app:isOpened="true"
                 app:offColor="@color/GrayWrite"

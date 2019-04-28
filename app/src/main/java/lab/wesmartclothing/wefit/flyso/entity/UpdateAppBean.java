@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;

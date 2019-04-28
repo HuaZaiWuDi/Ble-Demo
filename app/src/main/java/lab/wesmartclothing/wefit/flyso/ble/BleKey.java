@@ -53,8 +53,6 @@ public interface BleKey {
     String UUID_QN_SCALE = "0000ffe0-0000-1000-8000-00805f9b34fb".toLowerCase();
 
 
-
-
     String ACTION_DFU_STARTING = "ACTION_DFU_STARTING";//广播通知开始DFU
     String EXTRA_DFU_STARTING = "EXTRA_DFU_STARTING";//固件升级是否完成
 

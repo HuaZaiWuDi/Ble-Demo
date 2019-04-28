@@ -17,14 +17,13 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.data.BleScanState;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.utils.HexUtil;
+import com.vondear.rxtools.boradcast.B;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.SynDataCallBack;
-import lab.wesmartclothing.wefit.flyso.ble.util.B;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 
 /**
@@ -44,7 +43,7 @@ public class BleTools {
     private static final String TAG = "【BleTools】";
 
     //燃脂衣主UUID
-    private BleTools() {
+    public BleTools() {
 
     }
 
@@ -232,15 +231,16 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
-
-                if (mBleCallBack != null && data[2] == 0x07) {
+//                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                //notify数据
+                if (mBleCallBack != null && data[2] == 0x07 && data.length >= 17) {
+                    B.broadUpdate(bleManager.getContext(), "ACTION_HEART_RATE_CHANGED");
                     mBleCallBack.onNotify(data);
                 }
 
                 if (data[2] == 0x08) {
                     Log.d(TAG, "蓝牙停止:" + HexUtil.encodeHexStr(data));
-                    B.broadUpdate(bleManager.getContext(), Key.ACTION_CLOTHING_STOP);
+                    B.broadUpdate(bleManager.getContext(), "ACTION_CLOTHING_STOP");
                 }
 
                 //命令数据

@@ -56,13 +56,12 @@ import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
-import lab.wesmartclothing.wefit.flyso.ble.listener.SynDataCallBack;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
@@ -570,30 +569,6 @@ public class BleService extends Service {
     }
 
 
-    private void synData() {
-        BleAPI.queryData();
-        BleTools.getInstance().setSynDataCallBack(new SynDataCallBack() {
-            @Override
-            public void data(byte[] data) {
-                //400e0642bd135b 0128022303000004e012
-                RxLogUtils.d("接收的蓝牙数据包：" + HexUtil.encodeHexStr(data));
-
-                //验证没有数据则同步结束
-                if (data.length <= 3) {
-                    return;
-                }
-                byte[] bytes = new byte[4];
-                bytes[0] = data[3];
-                bytes[1] = data[4];
-                bytes[2] = data[5];
-                bytes[3] = data[6];
-
-
-                BleAPI.syncData(bytes);
-                synData();
-            }
-        });
-    }
 
 
     private void initHeartRate() {

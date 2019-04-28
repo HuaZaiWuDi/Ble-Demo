@@ -20,7 +20,7 @@ public class HeartSectionUtil {
      * 最大心率
      * //最大心率计算公式改为“最大心率=208-0.7*年龄”,请知悉！
      */
-    public static void initMaxHeart(UserInfo info ) {
+    public static void initMaxHeart(UserInfo info) {
         if (info != null) {
             //最大心率计算公式改为“最大心率=208-0.7*年龄”,请知悉！
             int maxHeart = 190;
@@ -45,6 +45,11 @@ public class HeartSectionUtil {
             Key.heartRates[4] = Key.HRART_SECTION[5];
         }
 
+    }
+
+
+    public static void main(String[] args) {
+        initMaxHeart(null);
     }
 
 }

@@ -50,8 +50,8 @@ import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
@@ -135,7 +135,7 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void startScan() {
         if (!BleTools.getBleManager().isBlueEnable()) {
-            BleTools.getBleManager().enableBluetooth();
+           BleTools.getBleManager().enableBluetooth();
             return;
         }
 
