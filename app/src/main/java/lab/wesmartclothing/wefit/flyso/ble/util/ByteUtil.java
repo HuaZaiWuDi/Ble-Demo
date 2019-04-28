@@ -1,4 +1,4 @@
-package com.smartclothing.blelibrary.util;
+package lab.wesmartclothing.wefit.flyso.ble.util;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package com.smartclothing.blelibrary;
+package lab.wesmartclothing.wefit.flyso.ble;
 
 /**
  * Created by jk on 2018/5/19.

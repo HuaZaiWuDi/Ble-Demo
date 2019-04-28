@@ -1,10 +1,10 @@
-package com.smartclothing.blelibrary;
+package lab.wesmartclothing.wefit.flyso.ble;
 
 import android.util.Log;
 
 import com.clj.fastble.utils.HexUtil;
-import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
-import com.smartclothing.blelibrary.util.ByteUtil;
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 
 /**
  * Created by jk on 2018/5/19.

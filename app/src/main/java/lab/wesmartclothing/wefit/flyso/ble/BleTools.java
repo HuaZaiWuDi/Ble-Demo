@@ -1,4 +1,4 @@
-package com.smartclothing.blelibrary;
+package lab.wesmartclothing.wefit.flyso.ble;
 
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
@@ -17,11 +17,13 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.data.BleScanState;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.utils.HexUtil;
-import com.smartclothing.blelibrary.listener.BleCallBack;
-import com.smartclothing.blelibrary.listener.BleChartChangeCallBack;
-import com.smartclothing.blelibrary.listener.BleOpenNotifyCallBack;
-import com.smartclothing.blelibrary.listener.SynDataCallBack;
-import com.smartclothing.blelibrary.util.B;
+import com.smartclothing.blelibrary.BuildConfig;
+
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.listener.SynDataCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.util.B;
 
 
 /**

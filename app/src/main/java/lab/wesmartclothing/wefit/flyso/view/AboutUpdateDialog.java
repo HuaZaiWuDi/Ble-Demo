@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
-import com.smartclothing.blelibrary.BleKey;
-import com.smartclothing.blelibrary.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;

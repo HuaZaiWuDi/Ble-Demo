@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
-import com.smartclothing.blelibrary.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.SPUtils;

@@ -23,7 +23,5 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    //蓝牙库
-    api 'com.clj.fastble:FastBleLib:2.3.2'
-    api 'no.nordicsemi.android:dfu:1.8.1'
+
 }

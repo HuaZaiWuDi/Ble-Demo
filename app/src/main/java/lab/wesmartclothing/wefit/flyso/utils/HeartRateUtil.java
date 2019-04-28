@@ -1,7 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.smartclothing.blelibrary.util.ByteUtil;
+import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;

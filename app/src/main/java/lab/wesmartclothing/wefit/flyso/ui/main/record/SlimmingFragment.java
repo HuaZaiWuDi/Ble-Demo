@@ -19,7 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.smartclothing.blelibrary.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;

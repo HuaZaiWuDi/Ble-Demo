@@ -1,4 +1,4 @@
-package com.smartclothing.blelibrary;
+package lab.wesmartclothing.wefit.flyso.ble;
 
 import com.clj.fastble.BleManager;
 

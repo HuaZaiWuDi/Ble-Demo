@@ -1,4 +1,4 @@
-package com.smartclothing.blelibrary.listener;
+package lab.wesmartclothing.wefit.flyso.ble.listener;
 
 /**
  * 项目名称：BLEPlatformSDKDemo
