@@ -154,14 +154,6 @@ public class QNBleTools {
         });
     }
 
-    public QNBleDevice bleDevice2QNDevice(com.smartclothing.blelibrary.scanner.ScanResult result) {
-        return MyAPP.QNapi.buildDevice(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes(), new QNResultCallback() {
-            @Override
-            public void onResult(int i, String s) {
-                RxLogUtils.d("轻牛SDK ：构建BleDevice" + i + "----" + s);
-            }
-        });
-    }
 
     public QNBleDevice bleDevice2QNDevice(BleDevice result) {
         return MyAPP.QNapi.buildDevice(result.getDevice(), result.getRssi(), result.getScanRecord(), new QNResultCallback() {

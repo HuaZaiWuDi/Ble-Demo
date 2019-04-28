@@ -81,10 +81,8 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all {
                 // apk_渠道名-版本号-版本名称-编译时间.apk
-                def fileName = "Timetofit-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                outputFileName = "Timetofit-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
                         "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
-
-                outputFileName = fileName
             }
         }
     }
@@ -175,8 +173,8 @@ dependencies {
     //高德定位SDK
     implementation 'com.amap.api:location:4.5.0'
 
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.jakewharton:butterknife:9.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0'
 
     //极光推送
     implementation 'cn.jiguang.sdk:jpush:3.1.3'

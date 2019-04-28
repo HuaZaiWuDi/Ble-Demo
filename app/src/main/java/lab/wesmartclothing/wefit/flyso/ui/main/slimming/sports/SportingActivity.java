@@ -681,6 +681,14 @@ public class SportingActivity extends BaseActivity {
                         RxActivityUtils.finishActivity();
                     });
             sportingShortDialog.show();
+        } else if (mChartHeartRate.getData().getEntryCount() <= 0) {
+            //       用户当前运动没有心率，提示用户此次记录将不被保存
+            sportingShortDialog = new RxDialogSure(mContext)
+                    .setTitle("运动提示")
+                    .setContent("您的运动数据异常，此次运动记录将不会被保存")
+                    .setSure("确定")
+                    .setSureListener(v -> RxActivityUtils.finishActivity());
+            sportingShortDialog.show();
         } else {
             timer.stopTimer();
             currentTime = 0;
