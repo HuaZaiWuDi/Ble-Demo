@@ -56,6 +56,7 @@ import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
@@ -80,7 +81,7 @@ import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 /**
  * Created by jk on 2018/7/19.
  */
-public class SportingActivity extends BaseActivity {
+public class SportingActivity extends BaseActivity implements SportInterface {
 
 
     @BindView(R.id.QMUIAppBarLayout)

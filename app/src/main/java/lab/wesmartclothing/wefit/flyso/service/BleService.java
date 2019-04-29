@@ -50,6 +50,7 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
@@ -108,10 +109,14 @@ public class BleService extends Service {
                     break;
                 case RxSystemBroadcastUtil.SCREEN_ON:
                     RxLogUtils.d("亮屏");
+
                     initBle();
                     break;
                 case RxSystemBroadcastUtil.SCREEN_OFF:
                     RxLogUtils.d("息屏");
+                    if (RxActivityUtils.currentActivity() instanceof SportInterface) {
+                        RxActivityUtils.skipActivityTop(RxActivityUtils.currentActivity(), RxActivityUtils.currentActivity().getClass());
+                    }
                     stopScan();
                     break;
                 case Key.ACTION_CLOTHING_STOP:
@@ -211,12 +216,14 @@ public class BleService extends Service {
             if (notificationManager != null)
                 notificationManager.createNotificationChannel(channel);
         }
+        Intent intent = new Intent(RxActivityUtils.currentActivity(), RxActivityUtils.currentActivity().getClass());
         //在创建的通知渠道上发送通知
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setSmallIcon(R.mipmap.icon_app_round) //设置通知图标
                 .setContentTitle("提示")//设置通知标题
                 .setContentText("智享瘦正在后台运行")//设置通知内容
-                .setAutoCancel(true) //用户触摸时，自动关闭
+                .setAutoCancel(false) //用户触摸时，自动关闭
+//                .setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
                 .setOngoing(true);//设置处于运行状态
 
         //将服务置于启动状态 NOTIFICATION_ID指的是创建的通知的ID
@@ -567,8 +574,6 @@ public class BleService extends Service {
             }
         });
     }
-
-
 
 
     private void initHeartRate() {
