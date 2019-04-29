@@ -22,13 +22,6 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.scan.BleScanRuleConfig;
 import com.google.gson.JsonObject;
-import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
-import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
-import lab.wesmartclothing.wefit.flyso.ble.listener.SynDataCallBack;
-import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.aboutByte.HexUtil;
@@ -56,7 +49,15 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.SportInterface;
+import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
+import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.listener.SynDataCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
@@ -118,6 +119,9 @@ public class BleService extends Service {
                     break;
                 case RxSystemBroadcastUtil.SCREEN_OFF:
                     RxLogUtils.d("息屏");
+                    if (RxActivityUtils.currentActivity() instanceof SportInterface) {
+                        RxActivityUtils.skipActivityTop(RxActivityUtils.currentActivity(), RxActivityUtils.currentActivity().getClass());
+                    }
                     stopScan();
                     break;
                 case Key.ACTION_CLOTHING_STOP:

@@ -26,9 +26,6 @@ import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
@@ -62,6 +59,10 @@ import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.SportInterface;
+import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
@@ -87,7 +88,7 @@ import static no.nordicsemi.android.dfu.DfuBaseService.NOTIFICATION_ID;
 /**
  * Created by jk on 2018/7/19.
  */
-public class PlanSportingActivity extends BaseActivity {
+public class PlanSportingActivity extends BaseActivity implements SportInterface {
 
 
     @BindView(R.id.QMUIAppBarLayout)
