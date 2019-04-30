@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -114,7 +115,7 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void initRecycler() {
-        info =  MyAPP.gUserInfo;
+        info = MyAPP.gUserInfo;
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
 
         mTvDietitianName.setText("营养师 " + SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""));
@@ -204,10 +205,10 @@ public class RecipesActivity extends BaseActivity {
                 MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), helper.getView(R.id.img_food));
 
                 helper.setText(R.id.tv_foodName, item.getFoodName());
-                RxTextUtils.getBuilder(item.getUnitCalorie() + "")
+                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.getUnitCalorie() * item.getFoodCount(), 1))
                         .append("kcal/")
                         .setProportion(0.6f)
-                        .append(RxFormat.setFormatNum(item.getUnitCount(), "0.0") + item.getUnit())
+                        .append(RxFormat.setFormatNum(item.getUnitCount() * item.getFoodCount(), "0.0") + item.getUnit())
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.GrayWrite))
                         .into((TextView) helper.getView(R.id.tv_kcal));
