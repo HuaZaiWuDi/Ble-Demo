@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SystemConfigBean;
 import lab.wesmartclothing.wefit.flyso.entity.UpdateAppBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -122,7 +123,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void gotoMain(String userInfoStr) {
-        UserInfo userInfo = JSON.parseObject(userInfoStr, UserInfo.class);
+        UserInfo userInfo = MyAPP.gUserInfo = JSON.parseObject(userInfoStr, UserInfo.class);
         boolean isSaveUserInfo = false, hasInviteCode = true;
 
         if (userInfo != null) {

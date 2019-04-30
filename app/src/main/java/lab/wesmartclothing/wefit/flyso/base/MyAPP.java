@@ -13,7 +13,6 @@ import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
@@ -37,6 +36,8 @@ import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -54,6 +55,9 @@ public class MyAPP extends Application {
     public static AMapLocation aMapLocation = null;//定位信息
     public static GlideImageLoader sImageLoader;
     public static MyAPP sMyAPP;
+
+    public static UserInfo gUserInfo;
+
 
     //指定全局的上啦刷新，下拉加载的样式
     static {

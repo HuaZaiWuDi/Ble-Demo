@@ -7,21 +7,19 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 
 import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
 import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
 import lab.wesmartclothing.wefit.flyso.view.BodyAgeProgressView;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
@@ -116,7 +114,7 @@ public class HealthyAssessActivity extends BaseActivity {
         mProBodyAge.setProgress(bean.getBodyAge());
         mTvBodyValueBodyAge.setText(bean.getBodyAge() + "岁");
 
-        UserInfo userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        UserInfo userInfo = MyAPP.gUserInfo;
 
         /**
          * 体脂率

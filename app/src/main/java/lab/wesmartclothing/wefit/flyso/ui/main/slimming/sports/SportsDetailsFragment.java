@@ -263,8 +263,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 .setProportion(0.5f)
                 .into(mTvAppVersion);
 
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = JSON.parseObject(string, UserInfo.class);
+        UserInfo info = MyAPP.gUserInfo;
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
         RxTextUtils.getBuilder(info.getUserName() + "\n")
                 .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)

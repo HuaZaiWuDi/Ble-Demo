@@ -11,7 +11,6 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.zchu.rxcache.data.CacheResult;
@@ -27,15 +26,14 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -115,10 +113,8 @@ public class MeFragment extends BaseAcFragment {
                 .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
 
-        UserInfo userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
-        if (userInfo != null) {
-            mTvInvitation.setText(userInfo.getInvitationCode());
-        }
+        UserInfo userInfo = MyAPP.gUserInfo;
+        mTvInvitation.setText(userInfo.getInvitationCode());
     }
 
     @Override

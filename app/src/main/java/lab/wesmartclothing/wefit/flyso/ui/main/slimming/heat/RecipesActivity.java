@@ -114,8 +114,7 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void initRecycler() {
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        info = JSON.parseObject(string, UserInfo.class);
+        info = MyAPP.gUserInfo;
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
 
         mTvDietitianName.setText("营养师 " + SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""));

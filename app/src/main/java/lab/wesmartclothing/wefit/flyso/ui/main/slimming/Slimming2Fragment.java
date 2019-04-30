@@ -263,8 +263,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         super.initNetData();
         getFirstPageData();
 
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = JSON.parseObject(string, UserInfo.class);
+        UserInfo info = MyAPP.gUserInfo;
         RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());

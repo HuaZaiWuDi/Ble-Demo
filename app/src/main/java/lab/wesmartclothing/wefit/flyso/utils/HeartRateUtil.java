@@ -1,15 +1,15 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
 import com.alibaba.fastjson.JSON;
-import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -21,7 +21,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.utils
@@ -53,7 +52,7 @@ public class HeartRateUtil {
         minHeart = 200;//最小心率
         kcalTotal = 0;//总卡路里
         heartLists = new ArrayList<>();
-        userInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        userInfo = MyAPP.gUserInfo;
     }
 
 

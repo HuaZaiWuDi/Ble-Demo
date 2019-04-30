@@ -114,8 +114,7 @@ public class UserInfofragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initImagePicker();
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        info = JSON.parseObject(string, UserInfo.class);
+        info = MyAPP.gUserInfo;
         info.setChange(false);
         notifyData(info);
     }

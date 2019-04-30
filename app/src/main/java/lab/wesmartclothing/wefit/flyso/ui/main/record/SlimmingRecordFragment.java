@@ -958,7 +958,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
 
-            UserInfo info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+            UserInfo info = MyAPP.gUserInfo;
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
 

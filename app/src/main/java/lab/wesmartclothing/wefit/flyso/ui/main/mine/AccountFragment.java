@@ -18,7 +18,6 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -31,6 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.LoginResult;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -38,7 +38,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
@@ -90,7 +89,7 @@ public class AccountFragment extends BaseActivity {
         initTopBar();
         initMyDialog();
         otherData();
-        String phone = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class).getPhone();
+        String phone =  MyAPP.gUserInfo.getPhone();
         mTvPhone.setText(phone);
     }
 

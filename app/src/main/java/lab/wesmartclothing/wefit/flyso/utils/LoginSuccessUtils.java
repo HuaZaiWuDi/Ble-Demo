@@ -10,6 +10,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -52,7 +53,7 @@ public class LoginSuccessUtils {
                         RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
-                        UserInfo userInfo = JSON.parseObject(s, UserInfo.class);
+                        UserInfo userInfo = MyAPP.gUserInfo= JSON.parseObject(s, UserInfo.class);
 
                         int sex = userInfo.getSex();
                         SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
