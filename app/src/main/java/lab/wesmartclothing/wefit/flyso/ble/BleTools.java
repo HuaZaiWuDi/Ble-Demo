@@ -17,7 +17,6 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.data.BleScanState;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.utils.HexUtil;
-import com.smartclothing.blelibrary.BuildConfig;
 
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
@@ -77,8 +76,6 @@ public class BleTools {
         bleManager.init(application);
 
         if (!bleManager.isSupportBle()) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, "设备不支持BLE");
             return;
         }
 //        if (!bleManager.isBlueEnable())
