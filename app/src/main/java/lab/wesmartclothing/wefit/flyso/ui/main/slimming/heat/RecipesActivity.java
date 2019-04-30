@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -32,8 +31,8 @@ import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodRecommendBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
@@ -205,10 +204,10 @@ public class RecipesActivity extends BaseActivity {
                 MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), helper.getView(R.id.img_food));
 
                 helper.setText(R.id.tv_foodName, item.getFoodName());
-                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.getUnitCalorie() * item.getFoodCount(), 1))
+                RxTextUtils.getBuilder(item.getCalorie() + "")
                         .append("kcal/")
                         .setProportion(0.6f)
-                        .append(RxFormat.setFormatNum(item.getUnitCount() * item.getFoodCount(), "0.0") + item.getUnit())
+                        .append(RxFormat.setFormatNum(item.getFoodCount(), "0.0") + item.getUnit())
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.GrayWrite))
                         .into((TextView) helper.getView(R.id.tv_kcal));
@@ -221,7 +220,7 @@ public class RecipesActivity extends BaseActivity {
     private void getSectionTotal(List<FoodListBean> list, TextView tv) {
         int total = 0;
         for (FoodListBean bean : list) {
-            total += bean.getUnitCalorie();
+            total += bean.getCalorie();
         }
         totalKcal += total;
         RxTextUtils.getBuilder(total + "")

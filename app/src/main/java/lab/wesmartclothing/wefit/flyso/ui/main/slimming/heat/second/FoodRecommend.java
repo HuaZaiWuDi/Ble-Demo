@@ -15,7 +15,6 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -340,10 +339,10 @@ public class FoodRecommend extends BaseActivity {
                 MyAPP.getImageLoader().displayImage(mActivity, item.getFoodImg(), (QMUIRadiusImageView) helper.getView(R.id.img_food));
 
                 helper.setText(R.id.tv_foodName, item.getFoodName());
-                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.getUnitCalorie() * item.getFoodCount(), 1))
+                RxTextUtils.getBuilder(item.getCalorie() + "")
                         .append("kcal/")
                         .setProportion(0.6f)
-                        .append(RxFormat.setFormatNum(item.getUnitCount() * item.getFoodCount(), "0.0") + item.getUnit())
+                        .append(RxFormat.setFormatNum(item.getFoodCount(), "0.0") + item.getUnit())
                         .setProportion(0.6f)
                         .setForegroundColor(getResources().getColor(R.color.GrayWrite))
                         .into((TextView) helper.getView(R.id.tv_kcal));
