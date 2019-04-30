@@ -124,7 +124,8 @@ public class BaseWebTFragment extends BaseAcFragment {
                 } else {
                     pageLayout.hide();
                 }
-                mProgressWeb.setVisibility(View.GONE);
+                if (mProgressWeb != null)
+                    mProgressWeb.setVisibility(View.GONE);
             }
 
             @TargetApi(21)
@@ -146,7 +147,8 @@ public class BaseWebTFragment extends BaseAcFragment {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                mProgressWeb.setVisibility(View.VISIBLE);
+                if (mProgressWeb != null)
+                    mProgressWeb.setVisibility(View.VISIBLE);
                 RxLogUtils.d("【webView】:onPageStarted");
             }
 
@@ -156,9 +158,11 @@ public class BaseWebTFragment extends BaseAcFragment {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                mProgressWeb.setProgress(newProgress);
-                if (newProgress >= 90) {
-                    mProgressWeb.setVisibility(View.GONE);
+                if (mProgressWeb != null) {
+                    mProgressWeb.setProgress(newProgress);
+                    if (newProgress >= 90) {
+                        mProgressWeb.setVisibility(View.GONE);
+                    }
                 }
                 RxLogUtils.d("【webView】:onProgressChanged：" + newProgress);
             }

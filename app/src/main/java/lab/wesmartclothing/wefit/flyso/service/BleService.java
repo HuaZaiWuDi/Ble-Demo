@@ -189,7 +189,7 @@ public class BleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra("APP_BACKGROUND", false)) {
+        if (intent != null && intent.getBooleanExtra("APP_BACKGROUND", false)) {
             stopScan();
             System.gc();
             setForegroundService();

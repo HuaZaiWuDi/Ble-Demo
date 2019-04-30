@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.LoginResult;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -90,7 +91,7 @@ public class AccountFragment extends BaseActivity {
         initTopBar();
         initMyDialog();
         otherData();
-        String phone = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class).getPhone();
+        String phone = MyAPP.gUserInfo.getPhone();
         mTvPhone.setText(phone);
     }
 

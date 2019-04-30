@@ -151,8 +151,7 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
     public void initView() {
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        mUserInfo = JSON.parseObject(string, UserInfo.class);
+        mUserInfo = MyAPP.gUserInfo;
         if (mUserInfo == null) {
             mUserInfo = new UserInfo();
         }
