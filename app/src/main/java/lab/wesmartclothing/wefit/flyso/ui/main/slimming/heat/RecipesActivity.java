@@ -158,6 +158,7 @@ public class RecipesActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         FoodRecommendBean recommendBean = JSON.parseObject(s, FoodRecommendBean.class);
                         if (recommendBean.isHasFoodPlan()) {
+                            totalKcal = 0;
                             breakfastAdapter.setNewData(recommendBean.getFoodPlan().getBreakfastList());
                             lunchAdapter.setNewData(recommendBean.getFoodPlan().getLunchList());
                             dinnerAdapter.setNewData(recommendBean.getFoodPlan().getDinnerList());

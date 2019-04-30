@@ -77,8 +77,6 @@ public class BleTools {
         bleManager.init(application);
 
         if (!bleManager.isSupportBle()) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, "设备不支持BLE");
             return;
         }
 //        if (!bleManager.isBlueEnable())
@@ -233,8 +231,7 @@ public class BleTools {
             public void onCharacteristicChanged(byte[] data) {
 //                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
                 //notify数据
-                if (mBleCallBack != null && data[2] == 0x07 && data.length >= 17) {
-                    B.broadUpdate(bleManager.getContext(), "ACTION_HEART_RATE_CHANGED");
+                if (mBleCallBack != null && data[2] == 0x07) {
                     mBleCallBack.onNotify(data);
                 }
 
