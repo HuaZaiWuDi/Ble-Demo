@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
@@ -1046,7 +1047,7 @@ public class SlimmingFragment extends BaseAcFragment {
 
 
     private void initPermissions() {
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<Boolean>() {

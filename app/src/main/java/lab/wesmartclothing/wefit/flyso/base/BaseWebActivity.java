@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
@@ -117,7 +118,7 @@ public abstract class BaseWebActivity extends BaseActivity {
         @SuppressLint("CheckResult")
         @Override
         public boolean intercept(String url, String[] permissions, String action) {
-            new RxPermissions(mActivity).requestEach(permissions)
+            new RxPermissions((FragmentActivity) mActivity).requestEach(permissions)
                     .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
                     .subscribe(new Consumer<Permission>() {
                         @Override

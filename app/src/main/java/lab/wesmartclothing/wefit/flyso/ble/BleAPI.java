@@ -250,7 +250,6 @@ public class BleAPI {
      8，心率服务（HRS），电池服务（BAS），设备信息服务（DIS）采用标准的蓝牙协议。参考https://www.bluetooth.com/zh-cn/specifications/gatt
 
      9，除了2秒周期的notify上传数据帧，其他命令都采用带ack的确认格式，通过包序列号和蓝牙mac地址，来进行成功或失败的确认机制，和重传机制。
-
      *
      *
      * */

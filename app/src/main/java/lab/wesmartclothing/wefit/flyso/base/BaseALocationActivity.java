@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.base;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -1167,7 +1168,7 @@ public abstract class BaseALocationActivity extends BaseActivity {
     public void startLocation(MyLocationListener mALocationListener) {
         this.mALocationListener = mALocationListener;
 
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<Boolean>() {

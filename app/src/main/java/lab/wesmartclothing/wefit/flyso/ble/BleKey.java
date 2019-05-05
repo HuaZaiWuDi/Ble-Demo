@@ -41,12 +41,81 @@ public interface BleKey {
     ///////////////////////////////////////////////////////////////////////////
     String FIRMWARE_VERSION = "FIRMWARE_VERSION";
 
+    /**
+     * 心率服务UUID：0000180d-0000-1000-8000-00805f9b34fb
+     * 心率特征值UUID：00002a37-0000-1000-8000-00805f9b34fb
+     * <p>
+     * 电池电量服务UUID：0000180f-0000-1000-8000-00805f9b34fb
+     * 电池电量特征值UUID：00002a19-0000-1000-8000-00805f9b34fb
+     * <p>
+     * 设备交互服务UUID：0000180a-0000-1000-8000-00805f9b34fb
+     * D/TAG: 服务type0
+     * D/TAG: 特征值UUID：00002a29-0000-1000-8000-00805f9b34fb
+     * D/TAG: 特征值Permissions0
+     * D/TAG: 特征值Properties2
+     * D/TAG: 特征值WriteType2
+     * D/TAG: 特征值UUID：00002a24-0000-1000-8000-00805f9b34fb
+     * D/TAG: 特征值Permissions0
+     * D/TAG: 特征值Properties2
+     * D/TAG: 特征值WriteType2
+     * D/TAG: 特征值UUID：00002a25-0000-1000-8000-00805f9b34fb
+     * D/TAG: 特征值Permissions0
+     * D/TAG: 特征值Properties2
+     * D/TAG: 特征值WriteType2
+     * D/TAG: 特征值UUID：00002a27-0000-1000-8000-00805f9b34fb
+     * D/TAG: 特征值Permissions0
+     * D/TAG: 特征值Properties2
+     * D/TAG: 特征值WriteType2
+     * D/TAG: 特征值UUID：00002a26-0000-1000-8000-00805f9b34fb
+     * D/TAG: 特征值Permissions0
+     * D/TAG: 特征值Properties2
+     * D/TAG: 特征值WriteType2
+     * D/TAG: 特征值UUID：00002a28-0000-1000-8000-00805f9b34fb
+     * D/TAG: 特征值Permissions0
+     * D/TAG: 特征值Properties2
+     * D/TAG: 特征值WriteType2
+     */
+
 
     String UUID_Servie = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E".toLowerCase();
 
     String UUID_CHART_WRITE = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E".toLowerCase();
 
     String UUID_CHART_READ_NOTIFY = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E".toLowerCase();
+
+    //心率服务UUID
+    String UUID_SERVICE_HEART_RATE = "0000180d-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+    //心率特征值
+    String UUID_CHART_HEART_RATE_NOTIFY = "00002a37-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+    //电池服务UUID
+    String UUID_SERVICE_BATTERY = "0000180f-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+    //电池特征值
+    String UUID_CHART_BATTERY_NOTIFY = "00002a19-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+
+    //设备信息UUID
+    String UUID_SERVICE_DEVICE_INFO = "0000180a-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+    //制造商名字
+    String UUID_CHART_manufacturerName_READ = "00002a29-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+
+    String UUID_CHART_modelNumber_READ = "00002a24-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+
+    String UUID_CHART_serialNumber_READ = "00002a25-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+
+    String UUID_CHART_hardwareRevision_READ = "00002a27-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+    //固件版本
+    String UUID_CHART_firmwareRevision_READ = "00002a26-0000-1000-8000-00805f9b34fb".toLowerCase();
+
+    //软件版本
+    String UUID_CHART_softwareRevision_READ = "00002a28-0000-1000-8000-00805f9b34fb".toLowerCase();
 
 
     //体质秤主UUID

@@ -21,7 +21,7 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.RxWebViewUtils;
+import com.vondear.rxtools.utils.RxWebViewTool;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
@@ -215,7 +215,7 @@ public class HealthReportActivity extends BaseActivity {
         mWebView.setTag("webView");
         mWebView.setTransitionName("webView");
 
-        RxWebViewUtils.initWebView(mContext, mWebView);
+        RxWebViewTool.initWebView(mContext, mWebView);
 
         mLayoutWeb.addView(mWebView);
         //WebView 不响应onClick事件，只有onTouch事件
