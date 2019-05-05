@@ -6,7 +6,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -90,8 +89,7 @@ public class SettingTargetFragment extends BaseActivity {
      */
     private void bestWeight() {
         float standardWeight = 0;
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo userInfo = JSON.parseObject(string, UserInfo.class);
+        UserInfo userInfo = MyAPP.gUserInfo;
         if (userInfo.getSex() == 1) {
             standardWeight = (userInfo.getHeight() - 80) * 0.7f;
         } else {

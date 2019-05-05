@@ -34,7 +34,7 @@ public class HeartRateToKcal {
      * @return 千卡
      */
     public static double getCalorie(int HR, double T) {
-        UserInfo info =  MyAPP.gUserInfo;
+        UserInfo info = MyAPP.gUserInfo;
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return 0;

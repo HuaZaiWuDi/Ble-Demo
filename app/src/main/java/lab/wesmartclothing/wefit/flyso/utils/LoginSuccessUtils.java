@@ -53,7 +53,7 @@ public class LoginSuccessUtils {
                         RxLogUtils.d("获取用户信息：" + s);
                         SPUtils.put(SPKey.SP_UserInfo, s);
 
-                        UserInfo userInfo = MyAPP.gUserInfo = JSON.parseObject(s, UserInfo.class);
+                        UserInfo userInfo = MyAPP.gUserInfo= JSON.parseObject(s, UserInfo.class);
 
                         int sex = userInfo.getSex();
                         SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
@@ -70,6 +70,7 @@ public class LoginSuccessUtils {
                         } else {
                             RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         }
+
                     }
 
                     @Override

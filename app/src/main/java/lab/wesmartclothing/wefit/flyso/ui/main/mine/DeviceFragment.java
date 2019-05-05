@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,9 +16,8 @@ import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
-import com.vondear.rxtools.aboutByte.ByteUtil;
-import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -29,27 +29,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.functions.Consumer;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
-import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
-import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 
 /**
  * Created by jk on 2018/8/10.
@@ -92,25 +89,6 @@ public class DeviceFragment extends BaseActivity {
     private List<DeviceListbean.ListBean> beanList;
 
 
-    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Key.ACTION_SCALE_CONNECT.equals(intent.getAction())) {
-                //体脂称连接状态
-                boolean state = intent.getExtras().getBoolean(Key.EXTRA_SCALE_CONNECT);
-                mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
-            } else if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
-                //监听瘦身衣连接情况
-                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
-                mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
-//                if (state) {
-//                    getVoltage();
-//                }
-            }
-        }
-    };
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,11 +96,6 @@ public class DeviceFragment extends BaseActivity {
         unbinder = ButterKnife.bind(this);
         initView();
 
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_SCALE_CONNECT);
-        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        registerReceiver(registerReceiver, filter);
 
     }
 
@@ -137,37 +110,39 @@ public class DeviceFragment extends BaseActivity {
         super.onStart();
         initData();
         notifyData();
-        getVoltage();
         initRxBus();
     }
 
 
+    @SuppressLint("CheckResult")
     protected void initRxBus() {
-        RxBus.getInstance().register2(DeviceVoltageBus.class)
+        RxBus.getInstance().registerSticky(DeviceVoltageBus.class)
                 .compose(RxComposeUtils.<DeviceVoltageBus>bindLife(lifecycleSubject))
-                .subscribe(new Consumer<DeviceVoltageBus>() {
-                    @Override
-                    public void accept(DeviceVoltageBus deviceVoltageBus) throws Exception {
-                        mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
-                        mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
-                    }
+                .subscribe(deviceVoltageBus -> {
+                    mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
+                    mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
                 });
 
+        RxBus.getInstance().registerSticky(ScaleConnectBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(scaleConnectBus -> {
+                    mTvConnectStateScale.setText(scaleConnectBus.isConnect() ? R.string.connected : R.string.disConnected);
+                });
+
+        RxBus.getInstance().registerSticky(ClothingConnectBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(cloting -> {
+                    mTvConnectStateClothing.setText(cloting.isConnect() ? R.string.connected : R.string.disConnected);
+                });
     }
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(registerReceiver);
         super.onDestroy();
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("我的设备");
     }
 
@@ -225,30 +200,12 @@ public class DeviceFragment extends BaseActivity {
         if (scaleIsBind) {
             mLayoutScale.setVisibility(View.VISIBLE);
             mTvScaleId.setText(SPUtils.getString(SPKey.SP_scaleMAC));
-            mTvConnectStateScale.setText(mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected);
+
         }
         if (clothingIsBind) {
             mLayoutClothing.setVisibility(View.VISIBLE);
             mTvClothingId.setText(SPUtils.getString(SPKey.SP_clothingMAC));
-            mTvConnectStateClothing.setText(BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected);
         }
-    }
-
-    private void getVoltage() {
-        BleAPI.getVoltage(new BleChartChangeCallBack() {
-            @Override
-            public void callBack(byte[] data) {
-                RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
-                int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
-                RxLogUtils.d("电压：" + voltage);
-                VoltageToPower toPower = new VoltageToPower();
-                int capacity = toPower.getBatteryCapacity(voltage / 1000f);
-                double time = toPower.canUsedTime(voltage / 1000f, false);
-                RxLogUtils.d("capacity:" + capacity + "time：" + time);
-                mTvClothingUseTime.setText(capacity + "");
-                mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(time / 24, 1));
-            }
-        });
     }
 
 

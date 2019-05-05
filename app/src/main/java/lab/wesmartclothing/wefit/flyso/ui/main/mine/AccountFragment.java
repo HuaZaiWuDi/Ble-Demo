@@ -18,7 +18,6 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 
@@ -39,7 +38,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
@@ -91,7 +89,7 @@ public class AccountFragment extends BaseActivity {
         initTopBar();
         initMyDialog();
         otherData();
-        String phone = MyAPP.gUserInfo.getPhone();
+        String phone =  MyAPP.gUserInfo.getPhone();
         mTvPhone.setText(phone);
     }
 
@@ -250,6 +248,7 @@ public class AccountFragment extends BaseActivity {
                         SHARE_MEDIA media = convertType(otherType);
 
                         UMShareAPI.get(mContext).deleteOauth(mActivity, media, mUMAuthListener);
+
                         if (switchBindListener != null) {
                             switchBindListener.complete("");
                         }
@@ -326,5 +325,6 @@ public class AccountFragment extends BaseActivity {
         }
         return media;
     }
+
 
 }

@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.recyclerview.banner.BannerLayoutManager;
+import com.vondear.rxtools.view.recyclerview.banner.BannerLayoutManager;
 import com.vondear.rxtools.view.scaleimage.ImageSource;
 import com.vondear.rxtools.view.scaleimage.RxScaleImageView;
 

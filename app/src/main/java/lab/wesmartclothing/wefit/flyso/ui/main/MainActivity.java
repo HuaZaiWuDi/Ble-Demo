@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
@@ -23,6 +24,7 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.socialize.UMShareAPI;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -42,10 +44,10 @@ import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
@@ -129,7 +131,7 @@ public class MainActivity extends BaseALocationActivity {
     public void initView() {
         startLocation(null);
         initSystemConfig();
-        RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress(mContext));
+        RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress());
         RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
 
@@ -141,13 +143,13 @@ public class MainActivity extends BaseALocationActivity {
 
             }
         });
-
+        startService(new Intent(mContext, BleService.class));
 
     }
 
     private void initSystemConfig() {
         //判断是否有权限
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
@@ -165,18 +167,15 @@ public class MainActivity extends BaseALocationActivity {
                     .setTitle("提示")
                     .setContent("您的通知权限未开启，可能影响APP的正常使用")
                     .setSure("现在去开启")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            /**
-                             * 跳到通知栏设置界面
-                             * @param context
-                             */
-                            Intent localIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            localIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                            localIntent.setData(Uri.parse("package:" + mContext.getPackageName()));
-                            mContext.startActivity(localIntent);
-                        }
+                    .setSureListener(view -> {
+                        /**
+                         * 跳到通知栏设置界面
+                         * @param context
+                         */
+                        Intent localIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        localIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        localIntent.setData(Uri.parse("package:" + mContext.getPackageName()));
+                        mContext.startActivity(localIntent);
                     }).show();
         }
     }
@@ -222,13 +221,10 @@ public class MainActivity extends BaseALocationActivity {
                             .addItem(ServiceAPI.BASE_RELEASE)
                             .addItem(ServiceAPI.BASE_DEBUG)
                             .setTitle("修改网络需要重启应用，提示网络错误，需要重新登录")
-                            .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                                @Override
-                                public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                                    dialog.dismiss();
-                                    SPUtils.put(SPKey.SP_BSER_URL, tag);
-                                    ServiceAPI.switchURL(tag);
-                                }
+                            .setOnSheetItemClickListener((dialog, itemView, position1, tag) -> {
+                                dialog.dismiss();
+                                SPUtils.put(SPKey.SP_BSER_URL, tag);
+                                ServiceAPI.switchURL(tag);
                             })
                             .build()
                             .show();

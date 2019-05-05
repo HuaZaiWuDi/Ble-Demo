@@ -21,13 +21,11 @@ import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.scan.BleScanRuleConfig;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.vondear.rxtools.aboutByte.ByteUtil;
-import com.vondear.rxtools.aboutByte.HexUtil;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.boradcast.B;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
@@ -41,10 +39,10 @@ import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -57,17 +55,21 @@ import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -80,36 +82,42 @@ import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 import static no.nordicsemi.android.dfu.DfuBaseService.NOTIFICATION_ID;
 
 public class BleService extends Service {
+    static boolean isFirst = true;//固件升级检查弹窗提示
 
     //Channel ID 必须保证唯一
     public static final String CHANNEL_ID = "lab.wesmartclothing.wefit.flyso.channel";
-    static boolean isFirst = true;//固件升级检查弹窗提示
     private boolean dfuStarting = false; //DFU升级时候需要断连重连，防止升级时做其他操作，导致升级失败
-    private Map<String, Object> connectDevices = new ConcurrentHashMap<>();
-    public static boolean clothingFinish = true;
-    private QNBleTools mQNBleTools = QNBleTools.getInstance();
-    private static boolean isFirstJoin = true;
-    public static List<QNScaleStoreData> historyWeightData;
 
+    private Map<String, Object> connectDevices = new HashMap<>();
+
+    public static boolean clothingFinish = true;
+    QNBleTools mQNBleTools = QNBleTools.getInstance();
+
+
+    private static boolean isFirstJoin = true;
+
+    public static List<QNScaleStoreData> historyWeightData;
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             switch (intent.getAction()) {
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
                     Bundle extras = intent.getExtras();
                     if (extras == null) break;
                     int state = extras.getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
                     if (state == BluetoothAdapter.STATE_OFF) {
+                        RxBus.getInstance().postSticky(new BleStateChangedBus(false));
                         stopScan();
                     } else if (state == BluetoothAdapter.STATE_ON) {
                         initBle();
+                        RxBus.getInstance().postSticky(new BleStateChangedBus(true));
                     } else if (state == BluetoothAdapter.STATE_TURNING_ON) {//正在开启蓝牙
                     }
                     break;
                 case RxSystemBroadcastUtil.SCREEN_ON:
                     RxLogUtils.d("亮屏");
-
                     initBle();
                     break;
                 case RxSystemBroadcastUtil.SCREEN_OFF:
@@ -124,6 +132,7 @@ public class BleService extends Service {
                     BleAPI.clothingStop();
                     break;
                 case Intent.ACTION_DATE_CHANGED://日期的变化
+                    RxLogUtils.d("日期变化");
                     RxBus.getInstance().post(new RefreshSlimming());
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
@@ -183,7 +192,6 @@ public class BleService extends Service {
         }
         stopForeground(true);
         RxLogUtils.d("【BleService】：onDestroy");
-
         super.onDestroy();
     }
 
@@ -198,7 +206,6 @@ public class BleService extends Service {
                 initBle();
         }
         return START_STICKY;
-
     }
 
     /**
@@ -208,7 +215,8 @@ public class BleService extends Service {
         //向系统注册通知渠道，注册后不能改变重要性以及其他通知行为
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //设定的通知渠道名称
-        String channelName = getString(R.string.app_name);
+        String channelName = getString(R.string.appName);
+        //设置通知的重要程度
         //构建通知渠道
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW);
@@ -216,34 +224,29 @@ public class BleService extends Service {
             if (notificationManager != null)
                 notificationManager.createNotificationChannel(channel);
         }
-        Intent intent = new Intent(RxActivityUtils.currentActivity(), RxActivityUtils.currentActivity().getClass());
         //在创建的通知渠道上发送通知
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setSmallIcon(R.mipmap.icon_app_round) //设置通知图标
                 .setContentTitle("提示")//设置通知标题
                 .setContentText("智享瘦正在后台运行")//设置通知内容
-                .setAutoCancel(false) //用户触摸时，自动关闭
-//                .setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
+                .setAutoCancel(true) //用户触摸时，自动关闭
                 .setOngoing(true);//设置处于运行状态
-
         //将服务置于启动状态 NOTIFICATION_ID指的是创建的通知的ID
         startForeground(NOTIFICATION_ID, builder.build());
+
     }
 
 
     private void initBle() {
         stopScan();
+
         if (!BleTools.getInstance().isConnect())
             scanClothing();
         mQNBleTools.scanBle();
     }
 
 
-    /**
-     * 扫描瘦身衣设备
-     */
     private void scanClothing() {
-
         BleScanRuleConfig bleConfig = new BleScanRuleConfig.Builder()
                 .setServiceUuids(new UUID[]{UUID.fromString(BleKey.UUID_Servie)})
                 .setDeviceMac(SPUtils.getString(SPKey.SP_clothingMAC))
@@ -290,16 +293,13 @@ public class BleService extends Service {
     }
 
 
-    /**
-     * 连接体脂称
-     */
     private void connectScaleCallBack() {
         //扫描体脂称
         MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
                 RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi() + ":" + bleDevice.getModeId());
-                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, getString(R.string.scale), bleDevice.getMac(), bleDevice.getRssi());
+                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
 
                 if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
@@ -380,8 +380,7 @@ public class BleService extends Service {
             public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
 
                 mQNBleTools.setConnectState(QNBleTools.QN_CONNECED);
-                B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, true);
-
+                RxBus.getInstance().postSticky(new ScaleConnectBus(true));
 
                 DeviceLink deviceLink = new DeviceLink();
                 deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_scaleMAC));
@@ -399,7 +398,7 @@ public class BleService extends Service {
             @Override
             public void onDisconnected(QNBleDevice qnBleDevice) {
                 mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
-                B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
+                RxBus.getInstance().postSticky(new ScaleConnectBus(false));
                 RxLogUtils.e("断开连接:");
                 connectDevices.remove(qnBleDevice.getMac());
 
@@ -411,8 +410,7 @@ public class BleService extends Service {
                 mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
                 RxLogUtils.d("连接异常：" + i);
                 mQNBleTools.disConnectDevice();
-//                RxToast.info(getString(R.string.connectError));
-                B.broadUpdate(BleService.this, Key.ACTION_SCALE_CONNECT, Key.EXTRA_SCALE_CONNECT, false);
+                RxBus.getInstance().postSticky(new ScaleConnectBus(false));
                 connectDevices.remove(qnBleDevice.getMac());
 
                 mQNBleTools.scanBle();
@@ -438,11 +436,7 @@ public class BleService extends Service {
     }
 
 
-    /**
-     * 连接瘦身衣
-     *
-     * @param device
-     */
+    //连接瘦身衣
     private void connectClothing(BleDevice device) {
         BleTools.getBleManager().connect(device, new BleGattCallback() {
             @Override
@@ -455,7 +449,7 @@ public class BleService extends Service {
                 RxLogUtils.d("连接失败：" + exception.toString());
 //                RxToast.info(getString(R.string.connectError));
                 BleTools.getBleManager().disconnect(bleDevice);
-                B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
+                RxBus.getInstance().postSticky(new ClothingConnectBus(false));
                 connectDevices.remove(bleDevice.getMac());
 
                 scanClothing();
@@ -465,7 +459,7 @@ public class BleService extends Service {
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 RxLogUtils.d("瘦身衣连接成功");
 
-                B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, true);
+                RxBus.getInstance().postSticky(new ClothingConnectBus(true));
                 if (dfuStarting) return;
 
                 BleTools.getInstance().setBleDevice(bleDevice);
@@ -480,7 +474,7 @@ public class BleService extends Service {
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice device, BluetoothGatt gatt, int status) {
                 RxLogUtils.d("断开连接");
-                B.broadUpdate(BleService.this, Key.ACTION_CLOTHING_CONNECT, Key.EXTRA_CLOTHING_CONNECT, false);
+                RxBus.getInstance().postSticky(new ClothingConnectBus(false));
                 connectDevices.remove(device.getMac());
 
                 scanClothing();
@@ -531,47 +525,41 @@ public class BleService extends Service {
     private void checkVersion() {
         if (isFirst) {
             isFirst = false;
-            BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
-                @Override
-                public void callBack(byte[] data) {
-                    getVoltage();
-                    RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
-                    //021309 010203000400050607090a0b0c10111213
-                    String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
-                    JsonObject object = new JsonObject();
-                    object.addProperty("category", data[3]);//设备类型
-                    object.addProperty("modelNo", data[4]);//待定
-                    object.addProperty("manufacture", ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
-                    object.addProperty("hwVersion", ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
-                    object.addProperty("firmwareVersion", firmwareVersion);//当前固件版本
-                    checkFirmwareVersion(object);
+            BleAPI.readDeviceInfo(data -> {
+                getVoltage();
+                //021309 010203000400050607090a0b0c10111213
+                String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
+                DeviceVersionBean versionBean = new DeviceVersionBean();
+                versionBean.setCategory(data[3] & 0xFF);
+                versionBean.setModelNo(data[4] & 0xFF);
+                versionBean.setManufacture(ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
+                versionBean.setHwVersion(ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
+                versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
 
-                    //设备统计
-                    DeviceLink deviceLink = new DeviceLink();
-                    deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
-                    deviceLink.setFirmwareVersion(firmwareVersion);
-                    deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
-                    deviceLink.deviceLink(deviceLink);
+                checkFirmwareVersion(versionBean);
 
-                }
+                //设备统计
+                DeviceLink deviceLink = new DeviceLink();
+                deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
+                deviceLink.setFirmwareVersion(firmwareVersion);
+                deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
+                deviceLink.deviceLink(deviceLink);
+
+                RxBus.getInstance().postSticky(versionBean);
             });
         }
     }
 
 
     private void getVoltage() {
-        BleAPI.getVoltage(new BleChartChangeCallBack() {
-            @Override
-            public void callBack(byte[] data) {
-                RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
-                int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
-                RxLogUtils.d("电压：" + voltage);
-                VoltageToPower toPower = new VoltageToPower();
-                int capacity = toPower.getBatteryCapacity(voltage / 1000f);
-                double time = toPower.canUsedTime(voltage / 1000f, false);
-                RxLogUtils.d("capacity:" + capacity + "time：" + time);
-                RxBus.getInstance().post(new DeviceVoltageBus(voltage, capacity, time));
-            }
+        BleAPI.getVoltage(data -> {
+            int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
+            RxLogUtils.d("电压：" + voltage);
+            VoltageToPower toPower = new VoltageToPower();
+            int capacity = toPower.getBatteryCapacity(voltage / 1000f);
+            double time = toPower.canUsedTime(voltage / 1000f, false);
+            RxLogUtils.d("capacity:" + capacity + "time：" + time);
+            RxBus.getInstance().postSticky(new DeviceVoltageBus(voltage, capacity, time));
         });
     }
 
@@ -588,9 +576,9 @@ public class BleService extends Service {
      *
      * @param object
      */
-    private void checkFirmwareVersion(JsonObject object) {
+    private void checkFirmwareVersion(DeviceVersionBean object) {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .getUpgradeInfo(NetManager.fetchRequest(object.toString())))
+                .getUpgradeInfo(NetManager.fetchRequest(new Gson().toJson(object))))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

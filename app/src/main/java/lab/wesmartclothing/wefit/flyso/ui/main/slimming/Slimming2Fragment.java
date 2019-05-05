@@ -36,6 +36,7 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -61,7 +62,6 @@ import lab.wesmartclothing.wefit.flyso.entity.FirstPageBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
@@ -263,8 +263,7 @@ public class Slimming2Fragment extends BaseAcFragment {
         super.initNetData();
         getFirstPageData();
 
-        String string = SPUtils.getString(SPKey.SP_UserInfo);
-        UserInfo info = JSON.parseObject(string, UserInfo.class);
+        UserInfo info = MyAPP.gUserInfo;
         RxLogUtils.d("用户数据:" + info);
         if (info != null) {
             mTvUserName.setText(info.getUserName());
@@ -616,6 +615,8 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
 
 
+
+
         int targetProgress = (int) (bean.getComplete() * 100);
         mProWeight.setProgress(targetProgress);
         mTvTarget.setText(bean.getHasDays() == 0 ? "请到体重记录页设定小目标哟！ ^-^" : targetProgress != 100 ? "离目标完成还剩 " + bean.getHasDays() + " 天" : "体重目标已完成");
@@ -635,7 +636,7 @@ public class Slimming2Fragment extends BaseAcFragment {
             background.setStrokeData(1, ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             background.setBgData(ColorStateList.valueOf(getResources().getColor(R.color.green_61D97F)));
             mBtnGoBindClothing.setText(R.string.goBind);
-            mTvClothingTip.setText("请绑定您的瘦身衣");
+            mTvClothingTip.setText("请绑定您的智能瘦身衣");
         } else {
             mTvClothingTip.setText("请穿上瘦身衣开始运动吧");
             mBtnGoBindClothing.setText(R.string.goSporting);

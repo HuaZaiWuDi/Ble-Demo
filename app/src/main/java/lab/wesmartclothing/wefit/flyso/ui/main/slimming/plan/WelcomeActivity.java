@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
@@ -21,7 +22,6 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;

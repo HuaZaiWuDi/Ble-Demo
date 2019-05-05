@@ -1,10 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -61,10 +59,11 @@ import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -117,25 +116,6 @@ public class WeightRecordFragment extends BaseActivity {
     @BindView(R.id.tv_dataContrast)
     TextView mTvDataContrast;
 
-    private BroadcastReceiver registerReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //体脂称连接状态
-            if (Key.ACTION_SCALE_CONNECT.equals(intent.getAction())) {
-                boolean state = intent.getExtras().getBoolean(Key.EXTRA_SCALE_CONNECT, false);
-                if (btn_Connect != null)
-                    btn_Connect.setText(state ? R.string.connected : R.string.disConnected);
-                //系统蓝牙监听
-            } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-                int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
-                if (state == BluetoothAdapter.STATE_OFF) {
-                    checkStatus();
-                } else if (state == BluetoothAdapter.STATE_ON) {
-                    mLayoutStrongTip.setVisibility(View.GONE);
-                }
-            }
-        }
-    };
 
     private QNBleTools mQNBleTools = QNBleTools.getInstance();
     private Button btn_Connect;
@@ -162,10 +142,6 @@ public class WeightRecordFragment extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_SCALE_CONNECT);
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(registerReceiver, filter);
 
         Typeface typeface = MyAPP.typeface;
         mTvCurWeight.setTypeface(typeface);
@@ -221,6 +197,7 @@ public class WeightRecordFragment extends BaseActivity {
         initData();
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initRxBus2() {
         super.initRxBus2();
@@ -245,6 +222,24 @@ public class WeightRecordFragment extends BaseActivity {
                         initData();
                     }
                 });
+
+        RxBus.getInstance().registerSticky(BleStateChangedBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(bleState -> {
+                    boolean state = bleState.isOn();
+                    if (!state) {
+                        checkStatus();
+                    } else {
+                        mLayoutStrongTip.setVisibility(View.GONE);
+                    }
+                });
+
+        RxBus.getInstance().registerSticky(ScaleConnectBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(scaleConnect -> {
+                    btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
+                            scaleConnect.isConnect() ? R.string.connected : R.string.disConnected));
+                });
     }
 
     private void showHistoryWeightData(final List<QNScaleStoreData> mList) {
@@ -264,8 +259,7 @@ public class WeightRecordFragment extends BaseActivity {
 
 
     private void initData() {
-        btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
-                mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected));
+
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchWeightInfo(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo" + pageNum, String.class, CacheStrategy.firstRemote()))
@@ -431,7 +425,6 @@ public class WeightRecordFragment extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(registerReceiver);
         super.onDestroy();
     }
 

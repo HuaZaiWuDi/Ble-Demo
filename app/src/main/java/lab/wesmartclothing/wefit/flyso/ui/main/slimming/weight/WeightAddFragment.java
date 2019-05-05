@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -35,7 +37,6 @@ import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
@@ -260,7 +261,7 @@ public class WeightAddFragment extends BaseActivity {
 
 
     private void initPermissions() {
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<Boolean>() {

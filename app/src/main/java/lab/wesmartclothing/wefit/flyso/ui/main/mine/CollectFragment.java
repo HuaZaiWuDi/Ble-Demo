@@ -3,9 +3,8 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -16,17 +15,10 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -41,16 +33,14 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.CollectBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
-import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
 /**
  * Created by jk on 2018/8/10.
@@ -60,7 +50,7 @@ public class CollectFragment extends BaseActivity {
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.rv_collect)
-    SwipeMenuRecyclerView mRvCollect;
+    RecyclerView mRvCollect;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
     Unbinder unbinder;
@@ -93,17 +83,15 @@ public class CollectFragment extends BaseActivity {
     private void initRecycler() {
         /*侧滑删除*/
         mRvCollect.setLayoutManager(new LinearLayoutManager(mContext));
-        mRvCollect.setSwipeItemClickListener(mItemClickListener);
-        mRvCollect.setSwipeMenuCreator(mSwipeMenuCreator);
-        mRvCollect.setSwipeMenuItemClickListener(mMenuItemClickListener);
         adapter = new BaseQuickAdapter<CollectBean.ListBean, BaseViewHolder>(R.layout.item_collect) {
 
             @Override
             protected void convert(BaseViewHolder helper, CollectBean.ListBean item) {
-                MyAPP.getImageLoader().displayImage(mActivity, item.getCoverPicture(), (ImageView) helper.getView(R.id.iv_img));
+                MyAPP.getImageLoader().displayImage(mActivity, item.getCoverPicture(), helper.getView(R.id.iv_img));
 
                 helper.setText(R.id.tv_title, item.getArticleName())
-                        .setText(R.id.tv_content, item.getSummary());
+                        .setText(R.id.tv_content, item.getSummary())
+                        .addOnClickListener(R.id.img_delete);
             }
         };
         emptyView = View.inflate(mContext, R.layout.layout_no_data, null);
@@ -114,6 +102,24 @@ public class CollectFragment extends BaseActivity {
                 RxBus.getInstance().post(new GoToMainPage(2));
                 onBackPressed();
             }
+        });
+
+        adapter.setOnItemChildClickListener((adapter1, view, position) -> {
+            if (AntiShake.getInstance().check()) return;
+            if (view.getId() == R.id.img_delete) {
+                deleteItemById(position);
+            }
+        });
+
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            RxLogUtils.d("收藏：" + position);
+            if (AntiShake.getInstance().check() || RxDataUtils.isEmpty(adapter.getData())) return;
+            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(Math.max(0, Math.min(position, adapter.getData().size())));
+            Bundle bundle = new Bundle();
+            //打开URL
+            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
+            bundle.putSerializable(Key.BUNDLE_DATA, bean);
+            RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
         });
 
         mRvCollect.setAdapter(adapter);
@@ -143,61 +149,6 @@ public class CollectFragment extends BaseActivity {
         });
         mQMUIAppBarLayout.setTitle("我的收藏");
     }
-
-    /**
-     * RecyclerView的Item中的Menu点击监听。
-     */
-    private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            menuBridge.closeMenu();
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                deleteItemById(adapterPosition);
-            }
-        }
-    };
-
-    /**
-     * 菜单创建器，在Item要创建菜单的时候调用。
-     */
-    private SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            if (viewType == EMPTY_VIEW) {
-                return;
-            }
-            int width = RxUtils.dp2px(52);
-            // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
-            // 2. 指定具体的高，比如80;
-            // 3. WRAP_CONTENT，自身高度，不推荐;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            SwipeMenuItem closeItem = new SwipeMenuItem(mActivity)
-                    .setBackgroundColorResource(R.color.Gray)
-                    .setImage(R.mipmap.icon_delete_write)
-                    .setWidth(width)
-                    .setHeight(height);
-            swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
-        }
-    };
-
-    /**
-     * RecyclerView的Item点击监听。
-     */
-    private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
-        @Override
-        public void onItemClick(View itemView, int position) {
-            RxLogUtils.d("收藏：" + position);
-            if (AntiShake.getInstance().check() || RxDataUtils.isEmpty(adapter.getData())) return;
-            CollectBean.ListBean bean = (CollectBean.ListBean) adapter.getData().get(Math.max(0, Math.min(position, adapter.getData().size() - 1)));
-            Bundle bundle = new Bundle();
-            //打开URL
-            bundle.putString(Key.BUNDLE_WEB_URL, ServiceAPI.Detail + bean.getArticleId() + "&isgo=1");
-            bundle.putSerializable(Key.BUNDLE_DATA, bean);
-            RxActivityUtils.skipActivity(mActivity, CollectWebActivity.class, bundle);
-        }
-    };
 
 
     private void deleteItemById(final int position) {

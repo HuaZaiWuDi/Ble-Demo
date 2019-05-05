@@ -44,7 +44,7 @@ public class InvitationCodeActivity extends BaseActivity {
     @BindView(R.id.layout_edit)
     LinearLayout mLinearLayoutEdit;
 
-    private UserInfo mUserInfo =  MyAPP.gUserInfo;
+    private UserInfo mUserInfo = MyAPP.gUserInfo;
 
 
     @Override
@@ -99,7 +99,7 @@ public class InvitationCodeActivity extends BaseActivity {
         });
 
         if (BuildConfig.DEBUG) {
-            mEditInvitation.setText("94P9H");
+            mEditInvitation.setText("a012");
         }
     }
 
@@ -134,6 +134,7 @@ public class InvitationCodeActivity extends BaseActivity {
                             }
                         } else {
                             RxToast.normal("邀请码无效，请正确输入有效邀请码");
+//                            RxToast.showToast("邀请码无效，请正确输入有效邀请码");
                         }
                     }
 

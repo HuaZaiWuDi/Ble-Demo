@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -22,11 +23,12 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextDrawable;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxEditText;
 import com.zchu.rxcache.RxCache;
@@ -49,7 +51,6 @@ import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HotKeyItem;
 import lab.wesmartclothing.wefit.flyso.entity.SearchListItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
@@ -110,7 +111,7 @@ public class SearchHistoryFragment extends BaseActivity {
         super.initViews();
 
         dialog.setLifecycleSubject(lifecycleSubject);
-        new RxPermissions(mActivity)
+        new RxPermissions((FragmentActivity) mActivity)
                 .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<Permission>() {
@@ -216,22 +217,30 @@ public class SearchHistoryFragment extends BaseActivity {
         initLateLyData();
         initHotData();
 
-        mTagFlowLayoutHot.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
-            @Override
-            public void onClick(View v) {
-                String string = ((TextView) v).getText().toString();
-                mSearchView.setText(string);
-                mSearchView.setSelection(string.length());
-            }
+
+        mTagFlowLayoutHot.setOnTagItemClickListener(v -> {
+            String string = ((TextView) v).getText().toString();
+            mSearchView.setText(string);
+            mSearchView.setSelection(string.length());
+        });
+        mTagFlowLayoutHot.setAdapter(() -> {
+            TextView textView = new TextView(mContext);
+            textView.setBackgroundResource(R.mipmap.search_words_bg);
+            textView.setTextColor(getResources().getColor(R.color.textColor));
+            return textView;
         });
 
-        mTagFlowLayoutLately.setOnTagItemClickListener(new DynamicTagFlowLayout.OnTagItemClickListener() {
-            @Override
-            public void onClick(View v) {
-                String string = ((TextView) v).getText().toString();
-                mSearchView.setText(string);
-                mSearchView.setSelection(string.length());
-            }
+        mTagFlowLayoutLately.setAdapter(() -> {
+            TextView textView = new TextView(mContext);
+            textView.setBackgroundResource(R.mipmap.search_words_bg);
+            textView.setTextColor(getResources().getColor(R.color.textColor));
+            return textView;
+        });
+
+        mTagFlowLayoutLately.setOnTagItemClickListener(v -> {
+            String string = ((TextView) v).getText().toString();
+            mSearchView.setText(string);
+            mSearchView.setSelection(string.length());
         });
 
         RxCache.getDefault().<List<String>>load(Key.CACHE_SEARCH_KEY, new TypeToken<List<String>>() {

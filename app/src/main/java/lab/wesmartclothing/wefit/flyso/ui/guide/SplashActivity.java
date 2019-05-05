@@ -34,7 +34,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -79,7 +78,7 @@ public class SplashActivity extends BaseActivity {
     protected void initViews() {
         super.initViews();
 
-        startService(new Intent(mContext, BleService.class));
+
 //        startService(new Intent(mContext, WebProcessService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
@@ -176,6 +175,9 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         unregisterReceiver(APPReplacedReceiver);
+        if (MyAPP.gUserInfo == null) {
+            MyAPP.gUserInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        }
         super.onDestroy();
     }
 

@@ -1,10 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.vondear.rxtools.utils.RxLogUtils;
+
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 public class AthlPlanListBean {
     /**
-     * range : 0：静息，1：热身，2：燃脂，3：有氧，4：无氧，5：危险
+     * range : 0：静息，1：热身，2：燃脂，3：有氧，4：无氧，5：极限
      * duration : 5
      */
 
@@ -39,7 +41,7 @@ public class AthlPlanListBean {
             case 4:
                 return "无氧";
             case 5:
-                return "危险";
+                return "极限";
         }
         return "静息";
     }
@@ -91,7 +93,8 @@ public class AthlPlanListBean {
         int heart_5 = heartRates[5] & 0xff;
         int heart_6 = heartRates[6] & 0xff;
 
-        int midValue = (heartRates[6] & 0xff - heartRates[5] & 0xff) / 2;
+        int midValue = (heart_6 - heart_5) / 2;
+        RxLogUtils.d("中间值：" + midValue);
 
         switch (range) {
             case 0://静息

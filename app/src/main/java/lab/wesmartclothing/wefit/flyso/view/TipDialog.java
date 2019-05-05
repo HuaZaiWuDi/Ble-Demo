@@ -22,6 +22,10 @@ public class TipDialog {
     }
 
 
+    public QMUITipDialog getTipDialog() {
+        return tipDialog;
+    }
+
     private MyTimer timeoutTimer = new MyTimer(new MyTimerListener() {
         @Override
         public void enterTimer() {

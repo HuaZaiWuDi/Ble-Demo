@@ -32,6 +32,7 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
@@ -54,10 +55,11 @@ import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -222,7 +224,7 @@ public class SportsDetailsFragment extends BaseActivity {
 
             RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
-                    .logoBitmap(R.mipmap.icon_app_lightness, getResources())
+                    .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
 
             //延迟500毫秒，需要等到控件显示
@@ -261,7 +263,7 @@ public class SportsDetailsFragment extends BaseActivity {
                 .setProportion(0.5f)
                 .into(mTvAppVersion);
 
-        UserInfo info =  MyAPP.gUserInfo;
+        UserInfo info = MyAPP.gUserInfo;
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
         RxTextUtils.getBuilder(info.getUserName() + "\n")
                 .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)

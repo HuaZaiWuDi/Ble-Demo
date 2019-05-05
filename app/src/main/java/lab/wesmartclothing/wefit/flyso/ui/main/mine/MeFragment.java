@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
@@ -28,7 +29,6 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
@@ -113,10 +113,8 @@ public class MeFragment extends BaseAcFragment {
                 .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
 
-        UserInfo userInfo =  MyAPP.gUserInfo;
-        if (userInfo != null) {
-            mTvInvitation.setText(userInfo.getInvitationCode());
-        }
+        UserInfo userInfo = MyAPP.gUserInfo;
+        mTvInvitation.setText(userInfo.getInvitationCode());
     }
 
     @Override

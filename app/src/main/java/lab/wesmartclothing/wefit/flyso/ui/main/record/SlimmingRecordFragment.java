@@ -30,6 +30,7 @@ import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.model.tool.RxQRCode;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -62,9 +63,8 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.SlimmingRecordBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
@@ -955,10 +955,10 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
             RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                     .codeSide(800)
-                    .logoBitmap(R.mipmap.icon_app_lightness, getResources())
+                    .logoBitmap(R.mipmap.icon_app_round, getResources())
                     .into(mImgQRcode);
 
-            UserInfo info =  MyAPP.gUserInfo;
+            UserInfo info = MyAPP.gUserInfo;
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
 

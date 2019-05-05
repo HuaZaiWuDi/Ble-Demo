@@ -11,14 +11,13 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import lab.wesmartclothing.wefit.flyso.R;
-
 /**
  * 流式标签(动态的，根据传入的数据动态添加标签)
  */
 public class DynamicTagFlowLayout extends ViewGroup {
 
     private List<String> mTags = new ArrayList<String>();
+    private Adapter mAdapter;
 
     public DynamicTagFlowLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -176,10 +175,12 @@ public class DynamicTagFlowLayout extends ViewGroup {
             removeAllViews();
             for (int i = 0; i < mTags.size(); i++) {
                 TextView tv = new TextView(getContext());
+                if (mAdapter != null) {
+                    tv = mAdapter.getView();
+                }
                 MarginLayoutParams lp = new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
                 lp.setMargins(30, 30, 30, 30);
                 tv.setLayoutParams(lp);
-                tv.setBackgroundResource(R.mipmap.search_words_bg);
                 tv.setEllipsize(TextUtils.TruncateAt.END);
                 tv.setMaxLines(1);
                 tv.setMaxWidth(250);
@@ -188,7 +189,6 @@ public class DynamicTagFlowLayout extends ViewGroup {
                  * http://stackoverflow.com/questions/18327498/setting-padding-for-textview-not-working
                  */
                 tv.setPadding(15, 15, 15, 15);
-                tv.setTextColor(getResources().getColor(R.color.textColor));
                 tv.setGravity(Gravity.CENTER);
                 tv.setText(mTags.get(i));
 
@@ -210,11 +210,26 @@ public class DynamicTagFlowLayout extends ViewGroup {
     private OnTagItemClickListener listener;
 
     public interface OnTagItemClickListener {
-        public void onClick(View v);
+        void onClick(View v);
     }
 
     public void setOnTagItemClickListener(OnTagItemClickListener l) {
         listener = l;
     }
+
+
+    /**
+     * 适配器模式设置Text的属性
+     */
+    public void setAdapter(Adapter adapter) {
+        mAdapter = adapter;
+    }
+
+    public interface Adapter {
+
+        TextView getView();
+
+    }
+
 
 } 

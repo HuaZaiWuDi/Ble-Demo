@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.webkit.WebView;
@@ -150,7 +151,7 @@ public class PlanWebActivity extends BaseActivity {
         })
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .compose(RxComposeUtils.<File>showDialog(tipDialog))
-                .doOnSubscribe(disposable -> new RxPermissions(mActivity)
+                .doOnSubscribe(disposable -> new RxPermissions((FragmentActivity) mActivity)
                         .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
                         .subscribe(new RxSubscriber<Boolean>() {

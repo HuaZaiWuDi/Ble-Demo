@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -39,7 +40,6 @@ import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
@@ -179,9 +179,8 @@ public class FoodRecommend extends BaseActivity {
 
 
     private void initRecycler() {
-        UserInfo info =  MyAPP.gUserInfo;
-        if (info != null)
-            mTvEmpty.setText(getString(R.string.empty_record, info.getUserName()));
+        UserInfo info = MyAPP.gUserInfo;
+        mTvEmpty.setText(getString(R.string.empty_record, info.getUserName()));
         mMRecyclerBreakfast.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerLunch.setLayoutManager(new LinearLayoutManager(mContext));
         mMRecyclerDinner.setLayoutManager(new LinearLayoutManager(mContext));

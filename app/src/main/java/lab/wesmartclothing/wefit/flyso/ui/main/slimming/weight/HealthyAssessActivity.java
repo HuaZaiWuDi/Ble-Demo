@@ -114,7 +114,7 @@ public class HealthyAssessActivity extends BaseActivity {
         mProBodyAge.setProgress(bean.getBodyAge());
         mTvBodyValueBodyAge.setText(bean.getBodyAge() + "岁");
 
-        UserInfo userInfo =  MyAPP.gUserInfo;
+        UserInfo userInfo = MyAPP.gUserInfo;
 
         /**
          * 体脂率

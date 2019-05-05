@@ -2,31 +2,23 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
-import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuBridge;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener;
-import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -40,7 +32,6 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.MessageBean;
 import lab.wesmartclothing.wefit.flyso.entity.ReadedBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
@@ -48,8 +39,6 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
-
-import static com.chad.library.adapter.base.BaseQuickAdapter.EMPTY_VIEW;
 
 /**
  * Created by jk on 2018/8/10.
@@ -59,7 +48,7 @@ public class MessageFragment extends BaseActivity {
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.rv_collect)
-    SwipeMenuRecyclerView mRvCollect;
+    RecyclerView mRvCollect;
     @BindView(R.id.smartRefreshLayout)
     SmartRefreshLayout smartRefreshLayout;
 
@@ -80,8 +69,6 @@ public class MessageFragment extends BaseActivity {
         super.initViews();
         initTopBar();
         initRecycler();
-
-
     }
 
     @Override
@@ -101,20 +88,31 @@ public class MessageFragment extends BaseActivity {
     private void initRecycler() {
         /*侧滑删除*/
         mRvCollect.setLayoutManager(new LinearLayoutManager(mContext));
-        mRvCollect.setSwipeItemClickListener(mItemClickListener);
-        mRvCollect.setSwipeMenuCreator(mSwipeMenuCreator);
-        mRvCollect.setSwipeMenuItemClickListener(mMenuItemClickListener);
         adapter = new BaseQuickAdapter<MessageBean.ListBean, BaseViewHolder>(R.layout.item_message) {
 
             @Override
             protected void convert(BaseViewHolder helper, MessageBean.ListBean item) {
-                MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app_lightness, (QMUIRadiusImageView) helper.getView(R.id.iv_img));
+                MyAPP.getImageLoader().displayImage(mActivity, R.mipmap.icon_app, helper.getView(R.id.iv_img));
                 helper.setVisible(R.id.iv_redDot, item.getReadState() == 0)
                         .setText(R.id.tv_title, item.getTitle())
                         .setText(R.id.tv_date, RxFormat.setFormatDate(item.getPushTime(), RxFormat.Date_Date2))
-                        .setText(R.id.tv_content, item.getContent());
+                        .setText(R.id.tv_content, item.getContent())
+                        .addOnClickListener(R.id.img_delete);
             }
         };
+
+        adapter.setOnItemChildClickListener((adapter1, view, position) -> {
+            if (AntiShake.getInstance().check()) return;
+            if (view.getId() == R.id.img_delete) {
+                deleteItemById(position);
+            }
+        });
+
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            if (AntiShake.getInstance().check()) return;
+            readed(position);
+        });
+
         emptyView = View.inflate(mContext, R.layout.layout_no_message, null);
         adapter.setEmptyView(emptyView);
         mRvCollect.setAdapter(adapter);
@@ -135,64 +133,9 @@ public class MessageFragment extends BaseActivity {
         smartRefreshLayout.setEnableRefresh(true);
     }
 
-    /**
-     * RecyclerView的Item中的Menu点击监听。
-     */
-    private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            menuBridge.closeMenu();
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
-                deleteItemById(adapterPosition);
-            }
-        }
-    };
-
-    /**
-     * 菜单创建器，在Item要创建菜单的时候调用。
-     */
-    private SwipeMenuCreator mSwipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            if (viewType == EMPTY_VIEW) {
-                return;
-            }
-            int width = RxUtils.dp2px(52);
-            // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
-            // 2. 指定具体的高，比如80;
-            // 3. WRAP_CONTENT，自身高度，不推荐;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            SwipeMenuItem closeItem = new SwipeMenuItem(mActivity)
-                    .setBackgroundColorResource(R.color.Gray)
-                    .setImage(R.mipmap.icon_delete_write)
-                    .setWidth(width)
-                    .setHeight(height);
-            swipeRightMenu.addMenuItem(closeItem); // 添加菜单到右侧。
-        }
-    };
-
-    /**
-     * RecyclerView的Item点击监听。
-     */
-    private SwipeItemClickListener mItemClickListener = new SwipeItemClickListener() {
-        @Override
-        public void onItemClick(View itemView, int position) {
-            RxLogUtils.d("收藏：" + position);
-            if (AntiShake.getInstance().check()) return;
-            readed(position);
-        }
-    };
-
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("消息通知");
         mQMUIAppBarLayout.addRightTextButton("标记已读", R.id.spread_inside)
                 .setOnClickListener(new View.OnClickListener() {
@@ -307,7 +250,7 @@ public class MessageFragment extends BaseActivity {
                             onBackPressed();
                         } else if (readedBean.getNotifyOperation() == MyJpushReceiver.TYPE_OPEN_URL) {
                             //打开URL
-                            WebTitleActivity.startWebActivity(mActivity, readedBean.getAppTitle(), readedBean.getOpenTarget(),true);
+                            WebTitleActivity.startWebActivity(mActivity, readedBean.getAppTitle(), readedBean.getOpenTarget(), true);
                         } else {
                             Bundle bundle = new Bundle();
                             bundle.putString(Key.BUNDLE_TITLE, readedBean.getAppTitle());

@@ -118,7 +118,8 @@ public class BaseWebFragment extends BaseAcFragment {
                 if (sonicSession != null) {
                     sonicSession.getSessionClient().pageFinish(url);
                 }
-                mProgressWeb.setVisibility(View.GONE);
+                if (mProgressWeb != null)
+                    mProgressWeb.setVisibility(View.GONE);
             }
 
             @TargetApi(21)
@@ -140,7 +141,8 @@ public class BaseWebFragment extends BaseAcFragment {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                mProgressWeb.setVisibility(View.VISIBLE);
+                if (mProgressWeb != null)
+                    mProgressWeb.setVisibility(View.VISIBLE);
             }
         });
 
@@ -148,7 +150,8 @@ public class BaseWebFragment extends BaseAcFragment {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                mProgressWeb.setProgress(newProgress);
+                if (mProgressWeb != null)
+                    mProgressWeb.setProgress(newProgress);
             }
         });
 

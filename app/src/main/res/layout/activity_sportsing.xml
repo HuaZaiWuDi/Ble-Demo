@@ -425,7 +425,7 @@
                         android:layout_centerInParent="true"
                         android:orientation="vertical">
 
-                        <!--危险-->
+                        <!--极限-->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
@@ -437,7 +437,7 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="危险"
+                                android:text="@string/limit"
                                 android:textColor="@color/GrayWrite"
                                 android:textSize="8sp"
                                 />
