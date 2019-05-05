@@ -77,7 +77,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
@@ -917,7 +916,6 @@ public class SlimmingFragment extends BaseAcFragment {
                     showOpenBlueTooth();
                 } else {
                     if (getString(R.string.goBind).equals(mBtnGoBindScale.getText().toString())) {
-
                         RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
                     } else {
                         RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
@@ -928,60 +926,17 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (getString(R.string.goBind).equals(mBtnGoBindClothing.getText().toString())) {
                     RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
                 } else {
-                    if (!BleTools.getBleManager().isBlueEnable()) {
-                        showOpenBlueTooth();
-                    } else if (!BleTools.getInstance().isConnect()) {
-                        tipDialog.show("瘦身衣正在连接中", 3000);
-                        mActivity.startService(new Intent(mContext, BleService.class));
-                    } else {
-                        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
-                    }
+                    spikSportAc(bundle, false);
                 }
                 break;
             case R.id.tv_freeSporting:
-                //进入实时运动界面，定制课程
-                if (!BleTools.getBleManager().isBlueEnable()) {
-                    showOpenBlueTooth();
-                } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.show("瘦身衣正在连接中", 3000);
-                    mActivity.startService(new Intent(mContext, BleService.class));
-                } else {
-                    //进入实时运动界面，没有定制课程
-                    RxActivityUtils.skipActivity(mContext, SportingActivity.class);
-                }
+                spikSportAc(bundle, false);
                 break;
             case R.id.tv_curriculumSporting:
-                //进入实时运动界面，定制课程
-                if (!BleTools.getBleManager().isBlueEnable()) {
-                    showOpenBlueTooth();
-                } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.show("瘦身衣正在连接中", 3000);
-                    mActivity.startService(new Intent(mContext, BleService.class));
-                } else {
-                    if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                        bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
-                        RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
-                    } else {
-                        bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
-                        RxActivityUtils.skipActivity(mContext, PlanActivity.class, bundle);
-                    }
-                }
+                spikSportAc(bundle, true);
                 break;
             case R.id.layout_gotoPlanSporting:
-                //进入实时运动界面，定制课程
-                if (!BleTools.getBleManager().isBlueEnable()) {
-                    showOpenBlueTooth();
-                } else if (!BleTools.getInstance().isConnect()) {
-                    tipDialog.show("瘦身衣正在连接中", 3000);
-                    mActivity.startService(new Intent(mContext, BleService.class));
-                } else {
-                    if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                        bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
-                        RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
-                    } else {
-                        showFreeSportDialog();
-                    }
-                }
+                spikSportAc(bundle, true);
                 break;
             case R.id.img_weight_tip:
                 new RxDialogSure(mContext)
@@ -1007,6 +962,46 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
 
                 break;
+        }
+    }
+
+    //跳转运动界面钱的判断
+    private void spikSportAc(Bundle bundle, boolean isPlan) {
+        //进入实时运动界面，定制课程
+        if (!BleTools.getBleManager().isBlueEnable()) {
+            showOpenBlueTooth();
+        } else if (!BleTools.getInstance().isConnect()) {
+            tipDialog.show("瘦身衣正在连接中", 3000);
+            mActivity.startService(new Intent(mContext, BleService.class));
+            if (tipDialog.getTipDialog() != null) {
+                tipDialog.getTipDialog().setOnDismissListener(dialogInterface -> {
+                    if (BleTools.getInstance().isConnect()) {
+                        if (isPlan) {
+                            if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
+                                bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
+                                RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                            } else {
+                                showFreeSportDialog();
+                            }
+                        } else {
+                            //进入实时运动界面，没有定制课程
+                            RxActivityUtils.skipActivity(mContext, SportingActivity.class);
+                        }
+                    }
+                });
+            }
+        } else {
+            if (isPlan) {
+                if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
+                    bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
+                    RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                } else {
+                    showFreeSportDialog();
+                }
+            } else {
+                //进入实时运动界面，没有定制课程
+                RxActivityUtils.skipActivity(mContext, SportingActivity.class);
+            }
         }
     }
 
@@ -1038,7 +1033,6 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        tipDialog.show("正在开启蓝牙", 3000);
                         BleTools.getBleManager().enableBluetooth();
                     }
                 });

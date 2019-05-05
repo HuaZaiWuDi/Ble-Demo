@@ -5,9 +5,11 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="false"/>
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_LOGS"
@@ -83,7 +85,8 @@
             android:name="com.amap.api.v2.apikey"
             android:value="20cc8510855f543b2bf4c59d647852e2"/>
 
-        <service android:name="com.amap.api.location.APSService"/> <!-- 极光通知广播 -->
+        <service android:name="com.amap.api.location.APSService"/>
+        <!-- 极光通知广播 -->
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -109,8 +112,21 @@
 
                 <category android:name="${applicationId}"/>
             </intent-filter>
-        </receiver> <!-- DUF服务 -->
+        </receiver>
+
+        <!-- Since JCore2.0.0 Required SDK核心功能-->
+        <!-- 这个Service要继承JCommonService -->
+        <service
+            android:name=".service.JPushService"
+            android:process=":pushcore">
+            <intent-filter>
+                <action android:name="cn.jiguang.user.service.action"/>
+            </intent-filter>
+        </service>
+
+        <!-- DUF服务 -->
         <activity android:name=".ble.dfu.NotificationActivity"/>
+
 
         <service
             android:name=".ble.dfu.DfuService"
