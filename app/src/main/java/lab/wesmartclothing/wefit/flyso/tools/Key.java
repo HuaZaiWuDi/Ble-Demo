@@ -137,7 +137,7 @@ public interface Key {
      * 3.燃脂
      * 4.有氧
      * 5.无氧
-     * 6.危险
+     * 6.极限
      * 7.最大心率
      */
     byte[] HRART_SECTION = new byte[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};

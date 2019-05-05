@@ -220,7 +220,7 @@ public class RecipesActivity extends BaseActivity {
     private void getSectionTotal(List<FoodListBean> list, TextView tv) {
         int total = 0;
         for (FoodListBean bean : list) {
-            total += bean.getUnitCalorie();
+            total += bean.getCalorie();
         }
         totalKcal += total;
         RxTextUtils.getBuilder(total + "")

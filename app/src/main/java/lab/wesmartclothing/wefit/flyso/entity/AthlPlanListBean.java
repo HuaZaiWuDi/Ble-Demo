@@ -4,7 +4,7 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 public class AthlPlanListBean {
     /**
-     * range : 0：静息，1：热身，2：燃脂，3：有氧，4：无氧，5：危险
+     * range : 0：静息，1：热身，2：燃脂，3：有氧，4：无氧，5：极限
      * duration : 5
      */
 
@@ -39,7 +39,7 @@ public class AthlPlanListBean {
             case 4:
                 return "无氧";
             case 5:
-                return "危险";
+                return "极限";
         }
         return "静息";
     }

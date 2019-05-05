@@ -517,7 +517,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         int heart_6 = heartRates[6] & 0xff;
         if (heart >= heart_1 && heart <= heart_2) {
             if (type != 0) {
-                mTvSportsStatus.setText("热身");
+                mTvSportsStatus.setText(R.string.warm);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
                 if (!TextSpeakUtils.isSpeak()) {
                     speakAdd(getString(R.string.speech_warm));
@@ -526,7 +526,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
             }
         } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 1) {
-                mTvSportsStatus.setText("燃脂");
+                mTvSportsStatus.setText(R.string.grease);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
                 if (!TextSpeakUtils.isSpeak()) {
                     speakAdd(getString(R.string.speech_grease));
@@ -535,7 +535,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
             }
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 2) {
-                mTvSportsStatus.setText("有氧");
+                mTvSportsStatus.setText(R.string.aerobic);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 2;
@@ -544,7 +544,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
             }
         } else if (heart >= heart_4 && heart < heart_5) {
             if (type != 3) {
-                mTvSportsStatus.setText("无氧");
+                mTvSportsStatus.setText(R.string.anaerobic);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 3;
@@ -553,7 +553,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
             }
         } else if (heart >= heart_5) {
             if (type != 4) {
-                mTvSportsStatus.setText("极限");
+                mTvSportsStatus.setText(R.string.limit);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 4;
@@ -562,7 +562,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
             }
         } else if (heart < heart_1) {
             if (type != 5) {
-                mTvSportsStatus.setText("静息");
+                mTvSportsStatus.setText(R.string.calm);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.Gray_DCDAE6));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 5;

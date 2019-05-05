@@ -449,7 +449,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
      * 恭喜您完成xx训练，下一节xx运动，请调节心率至xx运动区间，保持匀速xxx分钟。
      * 当完成后提示：
      * 好棒呀，恭喜您完成本次瘦身训练。运动完记得做一组拉伸运动哦！本次训练共计燃烧XXX千卡，再接再厉。
-     * 当用户处于危险心率超过3分钟
+     * 当用户处于极限心率超过3分钟
      * 您当前运动量已超过身体最大极限，请立刻降低运动强度，防止意外损伤！
      * 当处于训练过程中，运动节奏高于（低于）当前要求的水平
      * 请提高（降低）运动强度，保持匀速有节奏的运动才能高效瘦身哦。
@@ -654,34 +654,34 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         int heart_4 = heartRates[4] & 0xff;
         int heart_5 = heartRates[5] & 0xff;
         int heart_6 = heartRates[6] & 0xff;
-        if (heart >= heart_1 && heart <= heart_2) {
+        if (heart >= heart_1 && heart < heart_2) {
             if (type != 0) {
-                mTvSportsStatus.setText("热身");
+                mTvSportsStatus.setText(R.string.warm);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
             }
         } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 1) {
-                mTvSportsStatus.setText("燃脂");
+                mTvSportsStatus.setText(R.string.grease);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
             }
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 2) {
-                mTvSportsStatus.setText("有氧");
+                mTvSportsStatus.setText(R.string.aerobic);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
             }
         } else if (heart >= heart_4 && heart < heart_5) {
             if (type != 3) {
-                mTvSportsStatus.setText("无氧");
+                mTvSportsStatus.setText(R.string.anaerobic);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
             }
         } else if (heart >= heart_5) {
             if (type != 4) {
-                mTvSportsStatus.setText("极限");
+                mTvSportsStatus.setText(R.string.limit);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
             }
         } else if (heart < heart_1) {
             if (type != 5) {
-                mTvSportsStatus.setText("静息");
+                mTvSportsStatus.setText(R.string.calm);
                 mTvSportsStatus.setTextColor(getResources().getColor(R.color.Gray_DCDAE6));
             }
         }

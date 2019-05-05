@@ -553,18 +553,15 @@ public class BleService extends Service {
 
 
     private void getVoltage() {
-        BleAPI.getVoltage(new BleChartChangeCallBack() {
-            @Override
-            public void callBack(byte[] data) {
-                RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
-                int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
-                RxLogUtils.d("电压：" + voltage);
-                VoltageToPower toPower = new VoltageToPower();
-                int capacity = toPower.getBatteryCapacity(voltage / 1000f);
-                double time = toPower.canUsedTime(voltage / 1000f, false);
-                RxLogUtils.d("capacity:" + capacity + "time：" + time);
-                RxBus.getInstance().post(new DeviceVoltageBus(voltage, capacity, time));
-            }
+        BleAPI.getVoltage(data -> {
+            RxLogUtils.d("读电压" + HexUtil.encodeHexStr(data));
+            int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
+            RxLogUtils.d("电压：" + voltage);
+            VoltageToPower toPower = new VoltageToPower();
+            int capacity = toPower.getBatteryCapacity(voltage / 1000f);
+            double time = toPower.canUsedTime(voltage / 1000f, false);
+            RxLogUtils.d("capacity:" + capacity + "time：" + time);
+            RxBus.getInstance().post(new DeviceVoltageBus(voltage, capacity, time));
         });
     }
 
