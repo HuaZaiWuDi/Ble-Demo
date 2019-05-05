@@ -1,11 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -21,13 +19,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -48,13 +45,15 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
@@ -97,21 +96,6 @@ public class AddDeviceActivity extends BaseActivity {
     private Map<String, BindDeviceBean> scanDevice = new HashMap<>();//防止重复添加
 
 
-    //监听系统蓝牙开启
-    BroadcastReceiver systemBleReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
-            if (state == BluetoothAdapter.STATE_OFF) {
-
-                switchStatus(STATUS_NO_DEVICE);
-                mTvDetails.setText("监测到未开启蓝牙，请打开蓝牙重新扫描");
-            } else if (state == BluetoothAdapter.STATE_ON) {
-                startScan();
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +112,6 @@ public class AddDeviceActivity extends BaseActivity {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
         }
 
-        registerReceiver(systemBleReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         initView();
         initRxBus();
 
@@ -169,16 +152,29 @@ public class AddDeviceActivity extends BaseActivity {
     }, 10000);
 
 
+    @SuppressLint("CheckResult")
     private void initRxBus() {
         RxBus.getInstance().register2(BindDeviceBean.class)
                 .compose(RxComposeUtils.<BindDeviceBean>bindLife(lifecycleSubject))
-//                .throttleFirst(1, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<BindDeviceBean>() {
                     @Override
                     protected void _onNext(BindDeviceBean device) {
                         isBind(device);
                     }
                 });
+
+        RxBus.getInstance().registerSticky(BleStateChangedBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(bleState -> {
+                    boolean state = bleState.isOn();
+                    if (!state) {
+                        switchStatus(STATUS_NO_DEVICE);
+                        mTvDetails.setText("监测到未开启蓝牙，请打开蓝牙重新扫描");
+                    } else {
+                        startScan();
+                    }
+                });
+
     }
 
 
@@ -213,7 +209,6 @@ public class AddDeviceActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(systemBleReceiver);
         scanTimeout.stopTimer();
         super.onDestroy();
     }

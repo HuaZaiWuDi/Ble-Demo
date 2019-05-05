@@ -4,10 +4,8 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -29,6 +27,7 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -68,9 +67,9 @@ import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
@@ -155,27 +154,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     private int heartRateFlag = 0;
 
-    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mContext == null) return;
-            //监听瘦身衣连接情况
-            if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
-                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
-                btn_Connect.setText(state ? R.string.connected : R.string.connecting);
-                if (state) {
-                    dismissAllDialog();
-                } else
-                    trySporting();
-                pause = !state;
-                startOrPauseSport();
-            }
-//            else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-//                finishSporting();
-//            }
-        }
-    };
-
 
     @Override
     protected int layoutId() {
@@ -189,7 +167,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         initTopBar();
         initSwitch();
         initTypeface();
-        initBroadcast();
         finishAnim();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
 
@@ -295,12 +272,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     }
 
 
-    private void initBroadcast() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        filter.addAction(Key.ACTION_CLOTHING_STOP);
-        registerReceiver(registerReceiver, filter);
-    }
 
 
     @Override
@@ -384,6 +355,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     }
 
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initRxBus2() {
         super.initRxBus2();
@@ -413,6 +385,19 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                         sportingScore(currentHeart);
                         saveData(sportsDataTab);
                     }
+                });
+
+        RxBus.getInstance().registerSticky(ClothingConnectBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(clothingConnect -> {
+                    boolean state = clothingConnect.isConnect();
+                    btn_Connect.setText(state ? R.string.connected : R.string.connecting);
+                    if (state) {
+                        dismissAllDialog();
+                    } else
+                        trySporting();
+                    pause = !state;
+                    startOrPauseSport();
                 });
     }
 
@@ -736,7 +721,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(registerReceiver);
         timer.stopTimer();
         TextSpeakUtils.stop();
         dismissAllDialog();

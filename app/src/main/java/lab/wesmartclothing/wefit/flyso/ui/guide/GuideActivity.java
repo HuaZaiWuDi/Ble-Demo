@@ -79,7 +79,6 @@ public class GuideActivity extends BaseActivity {
                     photoView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            startService(new Intent(mContext, BleService.class));
                             RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
                         }
                     });

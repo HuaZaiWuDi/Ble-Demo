@@ -11,13 +11,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseFragment;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.PasswordLoginBus;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
 

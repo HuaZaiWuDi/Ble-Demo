@@ -1,9 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,19 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
-import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
-import com.vondear.rxtools.aboutByte.ByteUtil;
-import com.vondear.rxtools.aboutByte.HexUtil;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.aboutByte.ByteUtil;
-import com.vondear.rxtools.utils.aboutByte.HexUtil;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -34,12 +26,12 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
@@ -66,19 +58,6 @@ public class AboutFragment extends BaseActivity {
     LinearLayout mLayoutUpdateFail;
 
 
-    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
-                //监听瘦身衣连接情况
-                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT);
-                if (state) {
-                    readBLEVersion();
-                }
-            }
-        }
-    };
-
     private String updateURL = "";
     private AboutUpdateDialog dialog;
     private String currentVersion = "";
@@ -95,16 +74,10 @@ public class AboutFragment extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(registerReceiver);
         super.onDestroy();
     }
 
     private void initView() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        registerReceiver(registerReceiver, filter);
-
-        readBLEVersion();
         initTopBar();
         RxTextUtils.getBuilder("香港智享瘦国际集团 ")
                 .append("服务条款和隐私条款")
@@ -116,40 +89,26 @@ public class AboutFragment extends BaseActivity {
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("关于我们");
     }
 
-
-    private void readBLEVersion() {
-        BleAPI.readDeviceInfo(new BleChartChangeCallBack() {
-            @Override
-            public void callBack(byte[] data) {
-                RxLogUtils.d("读设备信息" + HexUtil.encodeHexStr(data));
-                //021309 010203000400050607090a0b0c10111213
-
-                JsonObject object = new JsonObject();
-                object.addProperty("category", data[3]);//设备类型
-                object.addProperty("modelNo", data[4]);//待定
-                object.addProperty("manufacture", ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
-                object.addProperty("hwVersion", ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
-
-                currentVersion = data[9] + "." + data[10] + "." + data[11];
-                object.addProperty("firmwareVersion", currentVersion);//当前固件版本
-                mTvClothingVersion.setText("固件版本号 v" + currentVersion);
-                checkFirmwareVersion(object);
-            }
-        });
+    @SuppressLint("CheckResult")
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
+        RxBus.getInstance().registerSticky(DeviceVersionBean.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(deviceVersion -> {
+                    currentVersion = deviceVersion.getFirmwareVersion();
+                    mTvClothingVersion.setText("固件版本号 v" + currentVersion);
+                    checkFirmwareVersion(deviceVersion);
+                });
     }
 
-    private void checkFirmwareVersion(final JsonObject object) {
+    private void checkFirmwareVersion(final DeviceVersionBean object) {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .getUpgradeInfo(NetManager.fetchRequest(object.toString())))
+                .getUpgradeInfo(NetManager.fetchRequest(new Gson().toJson(object))))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -206,7 +165,6 @@ public class AboutFragment extends BaseActivity {
                 dialog.setBLEUpdateListener(new AboutUpdateDialog.BLEUpdateListener() {
                     @Override
                     public void success() {
-                        readBLEVersion();
                     }
 
                     @Override

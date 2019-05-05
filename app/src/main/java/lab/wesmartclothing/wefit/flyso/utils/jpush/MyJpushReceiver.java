@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import org.json.JSONException;
@@ -19,7 +20,6 @@ import java.util.Iterator;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.service.PushService;
 import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 

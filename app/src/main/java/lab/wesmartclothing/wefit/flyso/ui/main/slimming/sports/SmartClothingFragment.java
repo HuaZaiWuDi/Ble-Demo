@@ -1,10 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,8 +23,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -55,12 +52,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxBus;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -112,34 +111,6 @@ public class SmartClothingFragment extends BaseActivity {
     private int pageNum = 1;
 
 
-    BroadcastReceiver registerReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //监听瘦身衣连接情况
-            if (Key.ACTION_CLOTHING_CONNECT.equals(intent.getAction())) {
-                boolean state = intent.getExtras().getBoolean(Key.EXTRA_CLOTHING_CONNECT, false);
-                if (state) {
-                    btn_Connect.setText(R.string.connected);
-                } else {
-                    btn_Connect.setText(R.string.disConnected);
-                    mLayoutStrongTip.setVisibility(View.GONE);
-                }
-            }
-            //瘦身衣运动结束
-            else if (Key.ACTION_CLOTHING_STOP.equals(intent.getAction())) {
-                mLayoutStrongTip.setVisibility(View.GONE);
-                //监听系统蓝牙
-            } else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-                int state = intent.getExtras().getInt(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
-                if (state == BluetoothAdapter.STATE_OFF) {
-                    checkStatus();
-                } else if (state == BluetoothAdapter.STATE_ON) {
-                    mLayoutStrongTip.setVisibility(View.GONE);
-                }
-            }
-        }
-    };
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,18 +122,12 @@ public class SmartClothingFragment extends BaseActivity {
                 .setLightStatusBar(true)
                 .process();
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Key.ACTION_CLOTHING_CONNECT);
-        filter.addAction(Key.ACTION_CLOTHING_STOP);
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(registerReceiver, filter);
 
         initView();
     }
 
 
     private void initView() {
-        initMRxBus();
         initTopBar();
         Typeface typeface = MyAPP.typeface;
         mTvHeatKcal.setTypeface(typeface);
@@ -213,7 +178,10 @@ public class SmartClothingFragment extends BaseActivity {
         mRecyclerSporting.setAdapter(adapter);
     }
 
-    private void initMRxBus() {
+    @SuppressLint("CheckResult")
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
         //后台上传心率数据成功，刷新界面
         RxBus.getInstance().register2(RefreshSlimming.class)
                 .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
@@ -244,12 +212,34 @@ public class SmartClothingFragment extends BaseActivity {
                         }
                     }
                 });
+
+        RxBus.getInstance().registerSticky(ClothingConnectBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(clothingConnect -> {
+                    boolean state = clothingConnect.isConnect();
+                    if (state) {
+                        btn_Connect.setText(R.string.connected);
+                    } else {
+                        btn_Connect.setText(R.string.disConnected);
+                        mLayoutStrongTip.setVisibility(View.GONE);
+                    }
+                });
+
+        RxBus.getInstance().registerSticky(BleStateChangedBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(bleState -> {
+                    boolean state = bleState.isOn();
+                    if (!state) {
+                        checkStatus();
+                    } else {
+                        mLayoutStrongTip.setVisibility(View.GONE);
+                    }
+                });
     }
 
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(registerReceiver);
         super.onDestroy();
     }
 
