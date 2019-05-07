@@ -32,7 +32,6 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
@@ -55,11 +54,10 @@ import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -344,7 +342,7 @@ public class SportsDetailsFragment extends BaseActivity {
 
     private void updateUI(SportingDetailBean heartRateBean) {
         if (isFreeSporting) {
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 0))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1))
                     .append("kcal").setProportion(0.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
@@ -360,7 +358,7 @@ public class SportsDetailsFragment extends BaseActivity {
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 0))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCalorie(), 1))
                     .append("\tkcal").setProportion(0.5f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvSportskcal);

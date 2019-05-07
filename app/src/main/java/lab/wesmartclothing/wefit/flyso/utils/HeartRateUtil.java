@@ -90,9 +90,9 @@ public class HeartRateUtil {
             kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
         } else {
             //静息卡路里的计算：
-            //静息(Kcal/s)：基础代谢值/(24*60*60)*time
+            //静息(Kcal/s)：基础代谢值/(24*60*60)*time*1.2
             if (userInfo != null) {
-                kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60);
+                kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60) * 1.2;
             }
         }
 

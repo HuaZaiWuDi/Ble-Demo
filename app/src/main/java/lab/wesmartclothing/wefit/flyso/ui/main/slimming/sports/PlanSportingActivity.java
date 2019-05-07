@@ -410,7 +410,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         mHeartRateBean.setAthlDesc(mTvHeartCount.getText().toString());
         mHeartRateBean.setPlanFlag(1);
         mHeartRateBean.setAthlScore(sportingScore);
-        mHeartRateBean.setTotalCalorie((int) sportsDataTab.getKcal());
+        mHeartRateBean.setTotalCalorie( sportsDataTab.getKcal());
         mHeartRateBean.setHeartList(sportsDataTab.getHeartLists());
         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 

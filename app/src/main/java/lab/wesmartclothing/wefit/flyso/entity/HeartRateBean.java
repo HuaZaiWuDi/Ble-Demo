@@ -24,7 +24,7 @@ public class HeartRateBean implements Serializable {
     private int planFlag;//定制课程：1
     private int stepNumber;
     private double complete;
-    private int totalCalorie;
+    private double totalCalorie;
     private List<HeartRateItemBean> heartList;
 
 
@@ -32,11 +32,11 @@ public class HeartRateBean implements Serializable {
     }
 
 
-    public int getTotalCalorie() {
+    public double getTotalCalorie() {
         return totalCalorie;
     }
 
-    public void setTotalCalorie(int totalCalorie) {
+    public void setTotalCalorie(double totalCalorie) {
         this.totalCalorie = totalCalorie;
     }
 

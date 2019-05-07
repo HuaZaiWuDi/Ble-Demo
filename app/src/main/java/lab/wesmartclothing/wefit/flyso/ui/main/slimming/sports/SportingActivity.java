@@ -392,7 +392,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
      */
     private void saveData(SportsDataTab sportsDataTab) {
         mHeartRateBean.setPlanFlag(0);
-        mHeartRateBean.setTotalCalorie((int) sportsDataTab.getKcal());
+        mHeartRateBean.setTotalCalorie(sportsDataTab.getKcal());
         mHeartRateBean.setHeartList(sportsDataTab.getHeartLists());
         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 
