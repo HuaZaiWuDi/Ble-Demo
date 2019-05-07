@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import com.vondear.rxtools.utils.RxFormatValue;
+
 import java.util.List;
 
 /**
@@ -611,7 +613,7 @@ public class SlimmingRecordBean {
         private long athlDate;
         private String athlDesc;
         private int avgHeart;
-        private int calorie;
+        private double calorie;
         private int complete;
         private long createTime;
         private String createUser;
@@ -658,11 +660,11 @@ public class SlimmingRecordBean {
             this.avgHeart = avgHeart;
         }
 
-        public int getCalorie() {
+        public double getCalorie() {
             return calorie;
         }
 
-        public void setCalorie(int calorie) {
+        public void setCalorie(double calorie) {
             this.calorie = calorie;
         }
 
@@ -793,16 +795,16 @@ public class SlimmingRecordBean {
          * weightCount : 1
          */
 
-        private int athlCalorie;
+        private double athlCalorie;
         private int athlCount;
         private int athlPlan;
-        private int basalCalorie;
+        private double basalCalorie;
         private long createTime;
         private String createUser;
         private int dietPlan;
         private int duration;
         private String gid;
-        private int heatCalorie;
+        private double heatCalorie;
         private int heatCount;
         private long recordDate;
         private int status;
@@ -812,11 +814,11 @@ public class SlimmingRecordBean {
         private double weight;
         private int weightCount;
 
-        public int getAthlCalorie() {
+        public double getAthlCalorie() {
             return athlCalorie;
         }
 
-        public void setAthlCalorie(int athlCalorie) {
+        public void setAthlCalorie(double athlCalorie) {
             this.athlCalorie = athlCalorie;
         }
 
@@ -836,11 +838,11 @@ public class SlimmingRecordBean {
             this.athlPlan = athlPlan;
         }
 
-        public int getBasalCalorie() {
+        public double getBasalCalorie() {
             return basalCalorie;
         }
 
-        public void setBasalCalorie(int basalCalorie) {
+        public void setBasalCalorie(double basalCalorie) {
             this.basalCalorie = basalCalorie;
         }
 
@@ -884,11 +886,11 @@ public class SlimmingRecordBean {
             this.gid = gid;
         }
 
-        public int getHeatCalorie() {
+        public double getHeatCalorie() {
             return heatCalorie;
         }
 
-        public void setHeatCalorie(int heatCalorie) {
+        public void setHeatCalorie(double heatCalorie) {
             this.heatCalorie = heatCalorie;
         }
 
@@ -963,11 +965,11 @@ public class SlimmingRecordBean {
          * heatDate : 1544025600000
          */
 
-        private int calorie;
+        private double calorie;
         private long heatDate;
 
-        public int getCalorie() {
-            return calorie;
+        public double getCalorie() {
+            return RxFormatValue.format4S5R(calorie, 1);
         }
 
         public void setCalorie(int calorie) {

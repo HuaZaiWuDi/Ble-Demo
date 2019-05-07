@@ -443,8 +443,8 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 if (i < size) {
                     SlimmingRecordBean.DietListBean bean = list.get(i);
                     dates.add(RxFormat.setFormatDate(bean.getHeatDate(), "MM/dd"));
-                    item.add(bean.getCalorie());
-                    dietMax = Math.max(dietMax, bean.getCalorie());
+                    item.add((int) bean.getCalorie());
+                    dietMax = (float) Math.max(dietMax, bean.getCalorie());
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -454,7 +454,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
             SlimmingRecordBean.DietListBean bean = list.get(0);
 
-            RxTextUtils.getBuilder(bean.getCalorie() + "")
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getCalorie(), 1))
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentDiet);
 
@@ -506,9 +506,9 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 if (i < size) {
                     SlimmingRecordBean.DataListBean bean = list.get(i);
                     dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
-                    int value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
-                    max = Math.max(max, Math.abs(value));
-                    item.add(Math.abs(value));
+                    double value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+                    max = (float) Math.max(max, Math.abs(value));
+                    item.add((int) Math.abs(value));
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -517,12 +517,12 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             }
 
             SlimmingRecordBean.DataListBean bean = list.get(0);
-            int value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+            double value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
 
             mEnergyProgress7.setColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
             mTvCurrentEnergy.setTextColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
             mTvEnergyChart7.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
-            RxTextUtils.getBuilder(Math.abs(value) + "")
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(Math.abs(value), 1))
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentEnergy);
         } else {
@@ -572,8 +572,8 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
                     dates.add(RxFormat.setFormatDate(list.get(i).getAthlDate(), "MM/dd"));
-                    max = Math.max(max, list.get(i).getCalorie());
-                    item.add(list.get(i).getCalorie());
+                    max = (float) Math.max(max, list.get(i).getCalorie());
+                    item.add((int) list.get(i).getCalorie());
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -581,7 +581,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 }
             }
 
-            RxTextUtils.getBuilder(list.get(0).getCalorie() + "")
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(list.get(0).getCalorie(), 1))
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentKcal);
         } else {
@@ -800,7 +800,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .append(RxFormatValue.fromat4S5R(weightInfo.getBodyFat(), 1))
                 .append("\t体脂率(%)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .append(weightInfo.getBmr()+"")
+                .append(weightInfo.getBmr() + "")
                 .append("\t基础代谢(kcal)\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvWeightInfo);
