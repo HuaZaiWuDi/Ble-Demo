@@ -792,7 +792,7 @@
 
                         <com.vondear.rxtools.view.layout.RxTextView
                             android:id="@+id/tv_weight_chart_7"
-                            android:layout_width="22dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="11dp"
                             android:layout_marginLeft="12dp"
                             android:gravity="center"
@@ -1015,8 +1015,8 @@
 
                         <com.vondear.rxtools.view.layout.RxTextView
                             android:id="@+id/tv_diet_chart_7"
-                            android:layout_width="22dp"
-                            android:layout_height="11dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_marginLeft="12dp"
                             android:gravity="center"
                             android:text="07/04"
@@ -1232,7 +1232,7 @@
 
                         <com.vondear.rxtools.view.layout.RxTextView
                             android:id="@+id/tv_sporting_chart_7"
-                            android:layout_width="22dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="11dp"
                             android:layout_marginLeft="12dp"
                             android:gravity="center"
@@ -1448,7 +1448,7 @@
 
                         <com.vondear.rxtools.view.layout.RxTextView
                             android:id="@+id/tv_energy_chart_7"
-                            android:layout_width="22dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="11dp"
                             android:layout_marginLeft="12dp"
                             android:gravity="center"
