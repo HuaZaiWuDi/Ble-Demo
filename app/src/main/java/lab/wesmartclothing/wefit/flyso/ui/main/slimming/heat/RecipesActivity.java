@@ -12,16 +12,23 @@ import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.layout.RxTextView;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
@@ -88,6 +95,8 @@ public class RecipesActivity extends BaseActivity {
     CardView mCardDietitianTip;
     @BindView(R.id.layout_empty)
     LinearLayout mLayoutEmpty;
+    @BindView(R.id.tv_changedDiet)
+    RxTextView mTvChangedDiet;
 
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
     private int totalKcal = 0;
@@ -105,10 +114,12 @@ public class RecipesActivity extends BaseActivity {
         initRecycler();
         mTvTotalKcal.setTypeface(MyAPP.typeface);
         mChooseDate.setTheme(DateChoose.TYPE_RECIPES);
-        mChooseDate.setOnDateChangeListener(new DateChoose.OnDateChangeListener() {
-            @Override
-            public void onDateChangeListener(int year, int month, int day, long millis) {
-                foodRecipes(millis);
+        mChooseDate.setOnDateChangeListener((year, month, day, millis) -> {
+            foodRecipes(millis);
+            if (RxTimeUtils.getIntervalByNow(millis, RxConstUtils.TimeUnit.DAY) <= 0) {
+                mTvChangedDiet.setVisibility(View.VISIBLE);
+            } else {
+                mTvChangedDiet.setVisibility(View.GONE);
             }
         });
     }
@@ -140,7 +151,6 @@ public class RecipesActivity extends BaseActivity {
     protected void initNetData() {
         super.initNetData();
         foodRecipes(System.currentTimeMillis());
-
     }
 
     private void foodRecipes(long foodTime) {
@@ -155,26 +165,7 @@ public class RecipesActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        FoodRecommendBean recommendBean = JSON.parseObject(s, FoodRecommendBean.class);
-                        if (recommendBean.isHasFoodPlan()) {
-                            totalKcal = 0;
-                            breakfastAdapter.setNewData(recommendBean.getFoodPlan().getBreakfastList());
-                            lunchAdapter.setNewData(recommendBean.getFoodPlan().getLunchList());
-                            dinnerAdapter.setNewData(recommendBean.getFoodPlan().getDinnerList());
-                            mealAdapter.setNewData(recommendBean.getFoodPlan().getSnackList());
-                            getSectionTotal(recommendBean.getFoodPlan().getBreakfastList(), mTvBreakfastkcal);
-                            getSectionTotal(recommendBean.getFoodPlan().getLunchList(), mTvLunchKcal);
-                            getSectionTotal(recommendBean.getFoodPlan().getDinnerList(), mTvDinnerKcal);
-                            getSectionTotal(recommendBean.getFoodPlan().getSnackList(), mTvMealKcal);
-
-                            RxTextUtils.getBuilder("今日总计：\t\t")
-                                    .append(totalKcal + "").setProportion(1.5f)
-                                    .append("kcal")
-                                    .into(mTvTotalKcal);
-                            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
-                        }
-                        mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
-                        mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);
+                        updateUI(s);
                     }
 
                     @Override
@@ -182,6 +173,29 @@ public class RecipesActivity extends BaseActivity {
                         RxToast.error(error, code);
                     }
                 });
+    }
+
+    private void updateUI(String json) {
+        FoodRecommendBean recommendBean = JSON.parseObject(json, FoodRecommendBean.class);
+        if (recommendBean.isHasFoodPlan()) {
+            totalKcal = 0;
+            breakfastAdapter.setNewData(recommendBean.getFoodPlan().getBreakfastList());
+            lunchAdapter.setNewData(recommendBean.getFoodPlan().getLunchList());
+            dinnerAdapter.setNewData(recommendBean.getFoodPlan().getDinnerList());
+            mealAdapter.setNewData(recommendBean.getFoodPlan().getSnackList());
+            getSectionTotal(recommendBean.getFoodPlan().getBreakfastList(), mTvBreakfastkcal);
+            getSectionTotal(recommendBean.getFoodPlan().getLunchList(), mTvLunchKcal);
+            getSectionTotal(recommendBean.getFoodPlan().getDinnerList(), mTvDinnerKcal);
+            getSectionTotal(recommendBean.getFoodPlan().getSnackList(), mTvMealKcal);
+
+            RxTextUtils.getBuilder("今日总计：\t\t")
+                    .append(totalKcal + "").setProportion(1.5f)
+                    .append("kcal")
+                    .into(mTvTotalKcal);
+            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
+        }
+        mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
+        mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);
     }
 
 
@@ -228,4 +242,32 @@ public class RecipesActivity extends BaseActivity {
                 .into(tv);
     }
 
+
+    @OnClick(R.id.tv_changedDiet)
+    public void onViewClicked() {
+        changedDiet();
+    }
+
+    private void changedDiet() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("pushDate", System.currentTimeMillis());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .changeDietPlan(NetManager.fetchRequest(jsonObject.toString())))
+                .compose(RxComposeUtils.<String>showDialog(tipDialog))
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
+                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
+                .map(new CacheResult.MapFunc<String>())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        updateUI(s);
+                    }
+                });
+    }
 }
