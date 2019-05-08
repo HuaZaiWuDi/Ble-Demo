@@ -170,10 +170,10 @@ public class MyAPP extends Application {
 
     private void initUM() {
         UMConfigure.setLogEnabled(true);
-        UMConfigure.init(MyAPP.this, "5a38b2e8b27b0a02a7000026", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
-        PlatformConfig.setWeixin("wxaaeb0352e04684de", "0d23407fe42a2665dabe3ea2a958daf9");
-        PlatformConfig.setQQZone("1106924585", "RGcOhc7q8qZMrhxz");
-        PlatformConfig.setSinaWeibo("3322261844", "60eabde1de49af086f53aa5fb230f7ed", "https://sns.whalecloud.com/sina2/callback");
+        UMConfigure.init(MyAPP.this, "5ca338162036572bc50017d8", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
+        PlatformConfig.setWeixin("wx270d9fa3441b877e", "2500e5de5ef522a51c816a58993b0333");
+        PlatformConfig.setQQZone("1108606528", "yVyd71DGzFu8iJut");
+        PlatformConfig.setSinaWeibo("613183269", "49b5d1a655eb0be6e0854ed32c9e3b7e", "https://sns.whalecloud.com/sina2/callback");
     }
 
 

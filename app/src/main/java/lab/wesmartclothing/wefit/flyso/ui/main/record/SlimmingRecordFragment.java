@@ -454,7 +454,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
             SlimmingRecordBean.DietListBean bean = list.get(0);
 
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getCalorie(), 1))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getCalorie(), 0))
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentDiet);
 
@@ -522,7 +522,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             mEnergyProgress7.setColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
             mTvCurrentEnergy.setTextColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
             mTvEnergyChart7.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(Math.abs(value), 1))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(Math.abs(value), 0))
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentEnergy);
         } else {
@@ -581,7 +581,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 }
             }
 
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(list.get(0).getCalorie(), 1))
+            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(list.get(0).getCalorie(), 0))
                     .append("\tkcal").setProportion(0.5f)
                     .into(mTvCurrentKcal);
         } else {
