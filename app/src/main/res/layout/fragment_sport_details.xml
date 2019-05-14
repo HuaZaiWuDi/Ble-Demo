@@ -237,7 +237,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="运动时长"
+                        android:text="有效运动时长"
                         android:textColor="@color/GrayWrite"
                         android:textSize="11sp"/>
 
@@ -309,7 +309,7 @@
                         android:layout_centerHorizontal="true"
                         app:barWidth="46dp"
                         app:cornerRadius="2dp"
-                        app:progressColor="@color/brown_ABA08E"/>
+                        app:progressColor="@color/warm"/>
 
                     <TextView
                         android:id="@+id/tv_warm"
@@ -337,7 +337,7 @@
                         android:layout_centerHorizontal="true"
                         app:barWidth="46dp"
                         app:cornerRadius="2dp"
-                        app:progressColor="@color/yellow_FFBC00"/>
+                        app:progressColor="@color/fatBurning"/>
 
                     <TextView
                         android:id="@+id/tv_grease"
@@ -365,7 +365,7 @@
                         android:layout_centerHorizontal="true"
                         app:barWidth="46dp"
                         app:cornerRadius="2dp"
-                        app:progressColor="@color/green_61D97F"/>
+                        app:progressColor="@color/aerobic"/>
 
                     <TextView
                         android:id="@+id/tv_aerobic"
@@ -393,7 +393,7 @@
                         android:layout_centerHorizontal="true"
                         app:barWidth="46dp"
                         app:cornerRadius="2dp"
-                        app:progressColor="@color/orange_FF7200"/>
+                        app:progressColor="@color/anaerobic"/>
 
                     <TextView
                         android:id="@+id/tv_anaerobic"
@@ -421,7 +421,7 @@
                         android:layout_centerHorizontal="true"
                         app:barWidth="46dp"
                         app:cornerRadius="2dp"
-                        app:progressColor="@color/red"/>
+                        app:progressColor="@color/limit"/>
 
                     <TextView
                         android:id="@+id/tv_limit"
@@ -578,14 +578,14 @@
                                 android:gravity="center"
                                 android:text="@string/limit"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"
+                                android:textSize="11sp"
                                 />
 
                             <com.vondear.rxtools.view.layout.RxView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/red"
+                                android:background="@color/limit"
                                 app:corner_radius_top_left="4dp"
                                 app:corner_radius_top_right="4dp"/>
 
@@ -605,13 +605,13 @@
                                 android:gravity="center"
                                 android:text="无氧"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="11sp"/>
 
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/orange_FF7200"/>
+                                android:background="@color/anaerobic"/>
 
                         </LinearLayout>
                         <!--有氧-->
@@ -628,14 +628,14 @@
                                 android:gravity="center"
                                 android:text="有氧"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="11sp"/>
 
 
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/green_61D97F"/>
+                                android:background="@color/aerobic"/>
 
                         </LinearLayout>
                         <!--燃脂-->
@@ -652,13 +652,13 @@
                                 android:gravity="center"
                                 android:text="燃脂"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="11sp"/>
 
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/yellow_FFBC00"/>
+                                android:background="@color/fatBurning"/>
 
 
                         </LinearLayout>
@@ -675,13 +675,13 @@
                                 android:gravity="center"
                                 android:text="热身"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="11sp"/>
 
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/brown_ABA08E"/>
+                                android:background="@color/warm"/>
 
 
                         </LinearLayout>
@@ -698,14 +698,14 @@
                                 android:gravity="center"
                                 android:text="静息"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"
+                                android:textSize="11sp"
                                 />
 
                             <com.vondear.rxtools.view.layout.RxView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/Gray_DCDAE6"
+                                android:background="@color/resting"
                                 app:corner_radius_bottom_left="4dp"
                                 app:corner_radius_bottom_right="4dp"/>
 
@@ -780,7 +780,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/red">
+                        app:rcProgressColor="@color/limit">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 
@@ -819,7 +819,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/orange_FF7200">
+                        app:rcProgressColor="@color/anaerobic">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 
@@ -858,7 +858,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/green_61D97F">
+                        app:rcProgressColor="@color/aerobic">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 
@@ -897,7 +897,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/yellow_FFBC00">
+                        app:rcProgressColor="@color/fatBurning">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 
@@ -936,7 +936,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/brown_ABA08E">
+                        app:rcProgressColor="@color/warm">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 
@@ -975,7 +975,7 @@
                         app:rcBackgroundColor="#312B36"
                         app:rcMax="100"
                         app:rcProgress="0"
-                        app:rcProgressColor="@color/Gray_ECEBF0">
+                        app:rcProgressColor="@color/resting">
 
                     </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
 

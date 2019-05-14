@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/sportsStatus"
                 android:text="开始热身"
-                android:textColor="@color/brown_ABA08E"
+                android:textColor="@color/warm"
                 android:textSize="15sp"/>
 
             <TextView
@@ -446,7 +446,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/red"
+                                android:background="@color/limit"
                                 app:corner_radius_top_left="4dp"
                                 app:corner_radius_top_right="4dp"/>
 
@@ -472,7 +472,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/orange_FF7200"/>
+                                android:background="@color/anaerobic"/>
 
                         </LinearLayout>
                         <!--有氧-->
@@ -496,7 +496,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/green_61D97F"/>
+                                android:background="@color/aerobic"/>
 
                         </LinearLayout>
                         <!--燃脂-->
@@ -519,7 +519,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/yellow_FFBC00"/>
+                                android:background="@color/fatBurning"/>
 
 
                         </LinearLayout>
@@ -542,7 +542,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/brown_ABA08E"/>
+                                android:background="@color/warm"/>
 
 
                         </LinearLayout>
@@ -566,7 +566,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:alpha="0.5"
-                                android:background="@color/Gray_DCDAE6"
+                                android:background="@color/resting"
                                 app:corner_radius_bottom_left="4dp"
                                 app:corner_radius_bottom_right="4dp"/>
 
@@ -627,6 +627,9 @@
                 android:layout_height="60dp"
                 android:layout_below="@+id/layout_sporting"
                 android:layout_marginLeft="195dp"
+                android:layout_marginBottom="30dp"
+                android:scaleX="1.4"
+                android:scaleY="1.4"
                 android:visibility="gone"
                 app:pro_background_color="@color/GrayWrite"
                 app:pro_max_value="2000"
@@ -634,7 +637,8 @@
                 app:pro_stroke_round_cap="true"
                 app:pro_stroke_width="2dp"
                 app:pro_type="type_circle"
-                app:pro_value="0"/>
+                app:pro_value="0"
+                tools:visibility="visible"/>
 
             <com.vondear.rxtools.view.layout.RxTextView
                 android:id="@+id/tv_finish"
@@ -642,14 +646,17 @@
                 android:layout_height="60dp"
                 android:layout_below="@+id/layout_sporting"
                 android:layout_marginLeft="150dp"
+                android:layout_marginBottom="30dp"
                 android:drawableTop="@mipmap/ic_finish"
                 android:drawablePadding="-10dp"
+                android:elevation="4dp"
                 android:gravity="center"
                 android:paddingLeft="2dp"
                 android:paddingTop="14dp"
                 android:text="结束"
                 android:textColor="@color/white"
                 android:textSize="13sp"
+                android:translationZ="4dp"
                 app:background_normal="@color/yellow_FFBC00"
                 app:corner_radius="30dp"
                 />
@@ -660,14 +667,17 @@
                 android:layout_height="60dp"
                 android:layout_below="@+id/layout_sporting"
                 android:layout_marginLeft="150dp"
+                android:layout_marginBottom="30dp"
                 android:drawableTop="@mipmap/ic_play"
                 android:drawablePadding="-10dp"
+                android:elevation="5dp"
                 android:gravity="center"
                 android:paddingLeft="2dp"
                 android:paddingTop="10dp"
                 android:text="暂停"
                 android:textColor="@color/white"
                 android:textSize="13sp"
+                android:translationZ="5dp"
                 app:background_normal="@color/green_61D97F"
                 app:corner_radius="30dp"/>
 

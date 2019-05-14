@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ble;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 
@@ -19,7 +18,6 @@ import com.clj.fastble.exception.BleException;
 import com.clj.fastble.utils.HexUtil;
 import com.vondear.rxtools.boradcast.B;
 
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
@@ -106,20 +104,6 @@ public class BleTools {
             write(bytes, bleChartChange);
         }
     };
-
-
-    final CountDownTimer mCountDownTimer = new CountDownTimer(timeOut, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            write(bytes, bleChartChange);
-        }
-
-        @Override
-        public void onFinish() {
-            bleChartChange = null;
-        }
-    };
-
 
     public void write(final byte[] bytes, final BleChartChangeCallBack bleChartChange) {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {

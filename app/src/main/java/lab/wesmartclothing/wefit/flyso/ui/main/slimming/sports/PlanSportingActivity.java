@@ -239,8 +239,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        mTvFinish.setScaleX(0.8f);
-                        mTvFinish.setScaleY(0.8f);
+                        mTvFinish.setScaleX(1.3f);
+                        mTvFinish.setScaleY(1.3f);
                         mCircleProgressBar.setProgress(2000);
                         mCircleProgressBar.setVisibility(View.VISIBLE);
                         toolTipsManager.clear();
@@ -253,8 +253,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                             RxToolTip.Builder builder = new RxToolTip.Builder(mContext, mTvFinish, mParent, "长按结束", RxToolTip.POSITION_ABOVE);
                             builder.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                             builder.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
-                            builder.setOffsetX(-RxUtils.dp2px(5));
                             builder.setGravity(RxToolTip.GRAVITY_CENTER);
+                            builder.setOffsetX(5);
                             toolTipsManager.show(builder.build(), 1000);
                         } else {
                             finishSporting();
@@ -270,8 +270,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             }
         });
     }
-
-
 
 
     @Override
@@ -410,7 +408,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         mHeartRateBean.setAthlDesc(mTvHeartCount.getText().toString());
         mHeartRateBean.setPlanFlag(1);
         mHeartRateBean.setAthlScore(sportingScore);
-        mHeartRateBean.setTotalCalorie( sportsDataTab.getKcal());
+        mHeartRateBean.setTotalCalorie(sportsDataTab.getKcal());
         mHeartRateBean.setHeartList(sportsDataTab.getHeartLists());
         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 
@@ -642,32 +640,32 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         if (heart >= heart_1 && heart < heart_2) {
             if (type != 0) {
                 mTvSportsStatus.setText(R.string.warm);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.warm));
             }
         } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 1) {
                 mTvSportsStatus.setText(R.string.grease);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.fatBurning));
             }
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 2) {
                 mTvSportsStatus.setText(R.string.aerobic);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.aerobic));
             }
         } else if (heart >= heart_4 && heart < heart_5) {
             if (type != 3) {
                 mTvSportsStatus.setText(R.string.anaerobic);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.anaerobic));
             }
         } else if (heart >= heart_5) {
             if (type != 4) {
                 mTvSportsStatus.setText(R.string.limit);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.limit));
             }
         } else if (heart < heart_1) {
             if (type != 5) {
                 mTvSportsStatus.setText(R.string.calm);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.Gray_DCDAE6));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.resting));
             }
         }
     }

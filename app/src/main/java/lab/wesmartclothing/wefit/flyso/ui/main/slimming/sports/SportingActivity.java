@@ -240,8 +240,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        mTvFinish.setScaleX(0.8f);
-                        mTvFinish.setScaleY(0.8f);
+                        mTvFinish.setScaleX(1.3f);
+                        mTvFinish.setScaleY(1.3f);
                         mCircleProgressBar.setProgress(2000);
                         mCircleProgressBar.setVisibility(View.VISIBLE);
                         toolTipsManager.clear();
@@ -254,8 +254,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                             RxToolTip.Builder builder = new RxToolTip.Builder(mContext, mTvFinish, mParent, "长按结束", RxToolTip.POSITION_ABOVE);
                             builder.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                             builder.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
-                            builder.setOffsetX(-RxUtils.dp2px(5));
                             builder.setGravity(RxToolTip.GRAVITY_CENTER);
+                            builder.setOffsetX(5);
                             toolTipsManager.show(builder.build(), 1000);
                         } else {
                             finishSporting();
@@ -505,7 +505,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         if (heart >= heart_1 && heart <= heart_2) {
             if (type != 0) {
                 mTvSportsStatus.setText(R.string.warm);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.brown_ABA08E));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.warm));
                 if (!TextSpeakUtils.isSpeak()) {
                     speakAdd(getString(R.string.speech_warm));
                     type = 0;
@@ -514,7 +514,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         } else if (heart >= heart_2 && heart < heart_3) {
             if (type != 1) {
                 mTvSportsStatus.setText(R.string.grease);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.yellow_FFBC00));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.fatBurning));
                 if (!TextSpeakUtils.isSpeak()) {
                     speakAdd(getString(R.string.speech_grease));
                     type = 1;
@@ -523,7 +523,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         } else if (heart >= heart_3 && heart < heart_4) {
             if (type != 2) {
                 mTvSportsStatus.setText(R.string.aerobic);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.green_61D97F));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.aerobic));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 2;
                     speakAdd(getString(R.string.speech_aerobic));
@@ -532,7 +532,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         } else if (heart >= heart_4 && heart < heart_5) {
             if (type != 3) {
                 mTvSportsStatus.setText(R.string.anaerobic);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.orange_FF7200));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.anaerobic));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 3;
                     speakAdd(getString(R.string.speech_anaerobic));
@@ -541,7 +541,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         } else if (heart >= heart_5) {
             if (type != 4) {
                 mTvSportsStatus.setText(R.string.limit);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.red));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.limit));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 4;
                     speakAdd(getString(R.string.speech_limit));
@@ -550,7 +550,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         } else if (heart < heart_1) {
             if (type != 5) {
                 mTvSportsStatus.setText(R.string.calm);
-                mTvSportsStatus.setTextColor(getResources().getColor(R.color.Gray_DCDAE6));
+                mTvSportsStatus.setTextColor(getResources().getColor(R.color.resting));
                 if (!TextSpeakUtils.isSpeak()) {
                     type = 5;
 //                    speakAdd(getString(R.string.speech_limit));

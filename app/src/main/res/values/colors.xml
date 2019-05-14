@@ -44,4 +44,12 @@
 
     <color name="colorFontWhite">#ffffff</color>
 
+
+    <color name="resting">#61D97F</color>
+    <color name="warm">#87CEEB</color>
+    <color name="fatBurning">#FFBC00</color>
+    <color name="aerobic">#DA70D6</color>
+    <color name="anaerobic">#FF7200</color>
+    <color name="limit">#E74C3C</color>
+
 </resources>

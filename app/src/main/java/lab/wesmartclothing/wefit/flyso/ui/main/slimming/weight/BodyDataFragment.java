@@ -355,7 +355,7 @@ public class BodyDataFragment extends BaseActivity {
 
             View footerView = LayoutInflater.from(mContext).inflate(R.layout.footer_delete_data, null);
             LinearLayout layoutDelete = footerView.findViewById(R.id.layoutDelete);
-            layoutDelete.setOnClickListener(v -> deleteWeight());
+            layoutDelete.setOnClickListener(v -> deleteSingleWeight());
             adapter.addFooterView(footerView);
         }
 
@@ -431,7 +431,7 @@ public class BodyDataFragment extends BaseActivity {
         JsonObject object = new JsonObject();
         object.addProperty("gid", gid);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .removeWeightInfo(NetManager.fetchRequest(object.toString())))
+                .removeDataWeight(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(mContext)))
                 .subscribe(new RxNetSubscriber<String>() {

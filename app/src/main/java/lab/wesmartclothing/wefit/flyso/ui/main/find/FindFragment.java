@@ -64,7 +64,6 @@ public class FindFragment extends BaseAcFragment {
     }
 
     private void initWebView() {
-        mBridgeWebView = new BridgeWebView(mActivity);
 
         mAgentWeb = AgentWeb.with(this)//
                 .setAgentWebParent(mParent, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//
