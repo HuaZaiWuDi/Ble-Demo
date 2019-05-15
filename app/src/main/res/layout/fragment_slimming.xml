@@ -303,7 +303,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -753,21 +754,29 @@
                             >
 
 
-                            <LinearLayout
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@mipmap/bg_sporting_chart">
+                                >
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginBottom="17dp"
+                                    android:scaleType="fitXY"
+                                    android:src="@mipmap/bg_sporting_chart"/>
+
 
                                 <com.github.mikephil.charting.charts.LineChart
                                     android:id="@+id/lineChart"
                                     android:layout_width="match_parent"
                                     android:layout_height="55dp"
-                                    android:layout_marginLeft="9dp"
+                                    android:layout_marginLeft="10dp"
                                     android:layout_marginTop="9dp"
                                     tools:background="#50574D5F">
 
                                 </com.github.mikephil.charting.charts.LineChart>
-                            </LinearLayout>
+                            </RelativeLayout>
 
 
                             <TextView

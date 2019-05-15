@@ -195,7 +195,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             mTvPlayOrPause.setText("继续");
             drawable = ContextCompat.getDrawable(mContext, R.mipmap.ic_pause);
         } else {
-            mQMUIAppBarLayout.setTitle("自由运动中");
+            mQMUIAppBarLayout.setTitle("课程运动中");
             mTvPlayOrPause.setText("暂停");
             drawable = ContextCompat.getDrawable(mContext, R.mipmap.ic_play);
         }
@@ -615,7 +615,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.setTitle("自由运动中");
+        mQMUIAppBarLayout.setTitle("课程运动中");
         btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(
                 !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.connecting), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);

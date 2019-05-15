@@ -18,6 +18,15 @@ public class FoodRecommendBean {
     private boolean hasFoodPlan;
     private List<Long> dateList;
     private String planName;
+    private String planAdvice;//饮食建议
+
+    public String getPlanAdvice() {
+        return planAdvice;
+    }
+
+    public void setPlanAdvice(String planAdvice) {
+        this.planAdvice = planAdvice;
+    }
 
     public String getPlanName() {
         return planName;
