@@ -265,7 +265,6 @@ public abstract class BaseAcFragment extends Fragment {
             final RefWatcher refWatcher = LeakCanary.installedRefWatcher();
             refWatcher.watch(this);
         }
-
     }
 
 

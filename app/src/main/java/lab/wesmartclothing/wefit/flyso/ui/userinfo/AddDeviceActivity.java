@@ -119,7 +119,7 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void startScan() {
         if (!BleTools.getBleManager().isBlueEnable()) {
-           BleTools.getBleManager().enableBluetooth();
+            BleTools.getBleManager().enableBluetooth();
             return;
         }
 
@@ -305,7 +305,7 @@ public class AddDeviceActivity extends BaseActivity {
 
                         RxBus.getInstance().post(new RefreshSlimming());
                         RxBus.getInstance().post(new RefreshMe());
-                        mActivity.startService(new Intent(mContext, BleService.class));
+                        startService(new Intent(mContext, BleService.class));
                         //跳转主页
                         if (!forceBind) {
                             RxActivityUtils.skipActivity(mContext, MainActivity.class);
@@ -344,6 +344,7 @@ public class AddDeviceActivity extends BaseActivity {
             switchStatus(STATUS_FIND_DEVICE);
             scanTimeout.stopTimer();
         }
+
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))

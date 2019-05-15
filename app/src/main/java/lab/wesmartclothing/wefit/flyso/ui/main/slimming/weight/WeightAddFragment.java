@@ -171,7 +171,6 @@ public class WeightAddFragment extends BaseActivity {
                     } else {
                         mTvTitle.setText("测量体重失败");
                     }
-
                 }
             }, 3000);
 
@@ -235,8 +234,6 @@ public class WeightAddFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
-//                        RxToast.normal("存储体重成功");
-//                        onBackPressed();
 
                         //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());

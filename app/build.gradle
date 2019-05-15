@@ -28,7 +28,7 @@ android {
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion
     defaultConfig {
-        applicationId "com.lightness.wisenfit"
+        applicationId "lab.wesmartclothing.wefit.flyso"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
@@ -54,10 +54,13 @@ android {
         }
 
         //极光推送：
+//        TimeToFit：
+//        AppKey : 905f32b2246c47b2c017a118
+//        Master Secret : fb6ad806e3a46e1ddf71a9b2
         //替换符只能有一个
         manifestPlaceholders = [
                 JPUSH_PKGNAME: applicationId,
-                JPUSH_APPKEY : "312a083f2aa786ea41bc8bfd", //JPush上注册的包名对应的appkey.
+                JPUSH_APPKEY : "905f32b2246c47b2c017a118", //JPush上注册的包名对应的appkey.
                 JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
                 qqappid      : '1106924585',//QQ分享
         ]
@@ -78,7 +81,7 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all {
                 // apk_渠道名-版本号-版本名称-编译时间.apk
-                outputFileName  = "TimetofitLightness-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                outputFileName = "Timetofit-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
                         "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
             }
         }
@@ -148,7 +151,6 @@ dependencies {
 
     //MPAndroidChart图表控件
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-//    implementation project(path: ':blelibrary')
 
     //https://github.com/gzu-liyujiang/AndroidPicker
     implementation('cn.qqtheme.framework:WheelPicker:1.5.6') {
@@ -208,9 +210,7 @@ dependencies {
     }  //指定版本
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
     implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
-
     //蓝牙库
-    implementation 'com.clj.fastble:FastBleLib:2.3.2'
-    implementation 'no.nordicsemi.android:dfu:1.8.1'
-
+    api 'com.clj.fastble:FastBleLib:2.3.2'
+    api 'no.nordicsemi.android:dfu:1.8.1'
 }

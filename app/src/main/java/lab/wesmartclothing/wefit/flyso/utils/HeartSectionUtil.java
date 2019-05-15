@@ -44,7 +44,6 @@ public class HeartSectionUtil {
             Key.heartRates[3] = Key.HRART_SECTION[4];
             Key.heartRates[4] = Key.HRART_SECTION[5];
         }
-
     }
 
 

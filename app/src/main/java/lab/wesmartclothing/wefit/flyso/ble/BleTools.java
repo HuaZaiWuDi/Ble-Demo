@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ble;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 
@@ -16,12 +17,12 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.data.BleScanState;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.utils.HexUtil;
-import com.vondear.rxtools.boradcast.B;
 
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.listener.SynDataCallBack;
+import lab.wesmartclothing.wefit.flyso.ble.util.B;
 
 
 /**
@@ -104,6 +105,20 @@ public class BleTools {
             write(bytes, bleChartChange);
         }
     };
+
+
+    final CountDownTimer mCountDownTimer = new CountDownTimer(timeOut, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            write(bytes, bleChartChange);
+        }
+
+        @Override
+        public void onFinish() {
+            bleChartChange = null;
+        }
+    };
+
 
     public void write(final byte[] bytes, final BleChartChangeCallBack bleChartChange) {
         if (bleDevice == null || !bleManager.isConnected(bleDevice)) {
@@ -213,21 +228,21 @@ public class BleTools {
 
             @Override
             public void onCharacteristicChanged(byte[] data) {
-//                Log.d(TAG, "蓝牙数据更新:" + HexUtil.encodeHexStr(data));
+                Log.d(TAG, "蓝牙命令反馈:" + HexUtil.encodeHexStr(data));
                 //notify数据
                 if (mBleCallBack != null && data[2] == 0x07) {
                     mBleCallBack.onNotify(data);
                 }
 
                 if (data[2] == 0x08) {
-                    Log.d(TAG, "蓝牙停止:" + HexUtil.encodeHexStr(data));
+                    Log.d(TAG, "蓝牙停止:");
                     B.broadUpdate(bleManager.getContext(), "ACTION_CLOTHING_STOP");
                 }
 
                 //命令数据
                 if (bleChartChange != null) {
                     if (data[2] == bytes[2]) {
-                        Log.d(TAG, "蓝牙命令反馈:" + HexUtil.encodeHexStr(data));
+                        Log.d(TAG, "蓝牙命令反馈:");
                         currentCount = 0;
                         bleChartChange.callBack(data);
                         TimeOut.removeCallbacks(reWrite);
@@ -312,6 +327,7 @@ public class BleTools {
         return bleDevice;
     }
 
+
     public void stopScan() {
         if (getBleManager().getScanSate() == BleScanState.STATE_SCANNING) {
             Log.d("bleManager", "结束扫描");
@@ -320,13 +336,13 @@ public class BleTools {
     }
 
     public boolean isConnect() {
-        if (getBleManager() == null || bleDevice == null) return false;
+        if (getBleManager() == null || getBleManager() == null) return false;
 
         return getBleManager().isConnected(bleDevice);
     }
 
     public boolean connectedState() {
-        if (getBleManager() == null || bleDevice == null) return false;
+        if (getBleManager() == null || getBleManager() == null) return false;
         return getBleManager().getConnectState(bleDevice) == 1 || getBleManager().getConnectState(bleDevice) == 2;
     }
 

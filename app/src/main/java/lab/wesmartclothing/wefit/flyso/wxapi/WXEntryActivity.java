@@ -1,4 +1,4 @@
-package com.lightness.wisenfit.wxapi;
+package lab.wesmartclothing.wefit.flyso.wxapi;
 
 import com.umeng.socialize.weixin.view.WXCallbackActivity;
 

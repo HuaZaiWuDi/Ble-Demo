@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
+import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -24,13 +26,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
@@ -53,8 +52,8 @@ public class AboutUpdateDialog extends RxDialog {
     private String filePath;
     private Context mContext;
     private boolean mustUpdate;
-    private final String Dir = "/" + Key.APP_KEY + "/";
-    private String fileName = Key.COMPANY_KEY + ".zip";
+    private final String Dir = "/Timetofit/";
+    private String fileName = "weSmartClothing" + ".zip";
 
     private BLEUpdateListener mBLEUpdateListener;
 

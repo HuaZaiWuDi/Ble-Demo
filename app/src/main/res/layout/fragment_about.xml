@@ -98,16 +98,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="莱特妮丝智瘦APP"
+                android:text="智享瘦APP"
                 android:textColor="@color/Gray"
                 android:textSize="18sp"/>
 
-            <ImageView
+            <com.qmuiteam.qmui.widget.QMUIRadiusImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginTop="20dp"
-                android:src="@mipmap/icon_app_lightness"
-                />
+                android:src="@mipmap/icon_app"
+                app:qmui_corner_radius="8dp"/>
 
 
         </LinearLayout>
@@ -124,7 +124,7 @@
         android:layout_marginBottom="16dp"
         android:textColor="@color/Gray"
         android:textSize="11sp"
-        />
+       />
 
 
     <LinearLayout

@@ -44,7 +44,6 @@ public class FindFragment extends BaseAcFragment {
     RelativeLayout mParent;
 
 
-    private BridgeWebView mBridgeWebView;
     private AgentWeb mAgentWeb;
 
     public static FindFragment getInstance() {
@@ -59,17 +58,17 @@ public class FindFragment extends BaseAcFragment {
     @Override
     protected void initViews() {
         super.initViews();
-        mBridgeWebView = new BridgeWebView(mActivity);
         initWebView();
     }
 
     private void initWebView() {
+        BridgeWebView bridgeWebView = new BridgeWebView(mActivity);
 
         mAgentWeb = AgentWeb.with(this)//
                 .setAgentWebParent(mParent, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//
                 .useDefaultIndicator(-1, 2)//
-                .setWebViewClient(new BridgeWebViewClient(mBridgeWebView))
-                .setWebView(mBridgeWebView)
+                .setWebViewClient(new BridgeWebViewClient(bridgeWebView))
+                .setWebView(bridgeWebView)
                 .setMainFrameErrorView(R.layout.layout_web_error, -1) //参数1是错误显示的布局，参数2点击刷新控件ID -1表示点击整个布局都刷新， AgentWeb 3.0.0 加入。
                 .useMiddlewareWebClient(getMiddleWareWebClient())
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
@@ -90,7 +89,7 @@ public class FindFragment extends BaseAcFragment {
         if (mAgentWeb != null)
             mAgentWeb.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(mAgentWeb, mActivity));
 
-        mBridgeWebView.registerHandler("shareEvent", new BridgeHandler() {
+        bridgeWebView.registerHandler("shareEvent", new BridgeHandler() {
             @Override
             public void handler(final String data, CallBackFunction function) {
                 RxLogUtils.i("传递参数：" + data);

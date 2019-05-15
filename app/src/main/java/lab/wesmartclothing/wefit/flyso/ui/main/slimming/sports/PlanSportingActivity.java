@@ -253,8 +253,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                             RxToolTip.Builder builder = new RxToolTip.Builder(mContext, mTvFinish, mParent, "长按结束", RxToolTip.POSITION_ABOVE);
                             builder.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                             builder.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
+                            builder.setOffsetX(RxUtils.dp2px(5));
                             builder.setGravity(RxToolTip.GRAVITY_CENTER);
-                            builder.setOffsetX(5);
                             toolTipsManager.show(builder.build(), 1000);
                         } else {
                             finishSporting();
@@ -270,6 +270,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             }
         });
     }
+
+
 
 
     @Override
@@ -408,7 +410,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         mHeartRateBean.setAthlDesc(mTvHeartCount.getText().toString());
         mHeartRateBean.setPlanFlag(1);
         mHeartRateBean.setAthlScore(sportingScore);
-        mHeartRateBean.setTotalCalorie(sportsDataTab.getKcal());
+        mHeartRateBean.setTotalCalorie( sportsDataTab.getKcal());
         mHeartRateBean.setHeartList(sportsDataTab.getHeartLists());
         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
 

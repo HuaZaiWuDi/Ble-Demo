@@ -268,7 +268,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_marginTop="12dp"
                     app:corner_radius="2dp"
-                    app:icon_src_normal="@mipmap/icon_app_lightness_w"
+                    app:icon_src_normal="@mipmap/icon_logo_w"
                     tools:background="@color/green"
                     />
 
@@ -1016,7 +1016,7 @@
                         <com.vondear.rxtools.view.layout.RxTextView
                             android:id="@+id/tv_diet_chart_7"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="11dp"
                             android:layout_marginLeft="12dp"
                             android:gravity="center"
                             android:text="07/04"
@@ -1448,7 +1448,7 @@
 
                         <com.vondear.rxtools.view.layout.RxTextView
                             android:id="@+id/tv_energy_chart_7"
-                            android:layout_width="wrap_content"
+                            android:layout_width="22dp"
                             android:layout_height="11dp"
                             android:layout_marginLeft="12dp"
                             android:gravity="center"

@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ble;
 import android.util.Log;
 
 import com.clj.fastble.utils.HexUtil;
-
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 
@@ -82,7 +81,8 @@ public class BleAPI {
         bytes[index] = (byte) (heatState ? 0x01 : 0x00);
 
         Log.d("【写配置】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
+
     }
 
 
@@ -100,7 +100,7 @@ public class BleAPI {
         bytes[6] = time2Byte()[3];
 
         Log.d("【读配置】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void syncDeviceTime(BleChartChangeCallBack bleChartChange) {
@@ -116,7 +116,7 @@ public class BleAPI {
         bytes[6] = time2Byte()[3];
 
         Log.d("【同步设备时间】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
 
@@ -130,7 +130,7 @@ public class BleAPI {
         bytes[2] = 0x04;
 
         Log.d("【同步本地数据包数】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void queryData() {
@@ -142,7 +142,7 @@ public class BleAPI {
         bytes[2] = 0x05;
 
         Log.d("【请求包】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().writeNo(bytes);
+        BleTools.getInstance().writeNo(bytes);
     }
 
 
@@ -182,7 +182,7 @@ public class BleAPI {
         bytes[2] = 0x08;
 
         Log.d("【结束活动反馈数据】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().writeNo(bytes);
+        BleTools.getInstance().writeNo(bytes);
     }
 
     //读设备信息
@@ -208,7 +208,7 @@ public class BleAPI {
         bytes[2] = 0x09;
 
         Log.d("【读设备信息】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void getVoltage(BleChartChangeCallBack bleChartChange) {
@@ -218,7 +218,7 @@ public class BleAPI {
         bytes[2] = 0x0a;
 
         Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
 

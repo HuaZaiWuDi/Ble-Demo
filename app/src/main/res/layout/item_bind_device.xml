@@ -25,6 +25,7 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/img_weight"
         android:lineSpacingExtra="2dp"
+        android:text="我是你的瘦身衣"
         android:textColor="@color/textColor"
         android:textSize="16sp"/>
 

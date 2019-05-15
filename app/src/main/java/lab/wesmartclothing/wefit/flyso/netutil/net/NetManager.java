@@ -110,7 +110,7 @@ public class NetManager {
                     .header("version", RxDeviceUtils.getAppVersionName())
                     .header("phoneType", RxDeviceUtils.getBuildMANUFACTURER())
                     .header("system", "Android")
-                    .header("company", "lightness")
+                    .header("company", "wesmart")
                     .header("Request-Type", "app")
                     .header("User-Agent", "WiseNFit/" +
                             RxDeviceUtils.getAppVersionName() + //软件版本号

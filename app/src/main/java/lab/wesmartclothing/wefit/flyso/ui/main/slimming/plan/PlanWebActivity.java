@@ -117,7 +117,7 @@ public class PlanWebActivity extends BaseActivity {
                     }
                 });
 
-        mTopBar.setTitle("健康报告");
+        mTopBar.setTitle(getString(R.string.appName) + "健康报告");
 
         mTopBar.addRightImageButton(R.mipmap.icon_save, R.id.btn_save)
                 .setOnClickListener(v -> save());
@@ -141,7 +141,7 @@ public class PlanWebActivity extends BaseActivity {
             //控件转图片
             Bitmap bitmap = RxImageUtils.WebView2Bitmap(webView);
             //微信分享图片最大尺寸32KB
-            File timetofit = RxImageUtils.saveBitmap(bitmap, "/" + Key.APP_KEY + "/", "plan_" + System.currentTimeMillis());
+            File timetofit = RxImageUtils.saveBitmap(bitmap, "/Timetofit/", "plan_" + System.currentTimeMillis());
             if (timetofit == null) {
                 emitter.onError(new Throwable(""));
             } else {

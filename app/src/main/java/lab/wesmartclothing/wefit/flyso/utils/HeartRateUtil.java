@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.aboutByte.BitUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
@@ -103,10 +102,10 @@ public class HeartRateUtil {
         mSportsDataTab.setMaxHeart(maxHeart);
         mSportsDataTab.setMinHeart(minHeart);
         mSportsDataTab.setRealHeart(realHeartRate);
-        mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{bytes[15], bytes[16]}));
-        mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
-        mSportsDataTab.setTemp((bytes[10] & 0xff));
-        mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
+//        mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{bytes[15], bytes[16]}));
+//        mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
+//        mSportsDataTab.setTemp((bytes[10] & 0xff));
+//        mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
         mSportsDataTab.setData(bytes);
         mSportsDataTab.setDate(System.currentTimeMillis());
 //        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));

@@ -322,7 +322,6 @@
                 android:layout_height="56dp"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
-                android:visibility="gone"
                 app:background_normal="@color/white"
                 app:ripple_color="@color/ripple_ECEAE6">
 

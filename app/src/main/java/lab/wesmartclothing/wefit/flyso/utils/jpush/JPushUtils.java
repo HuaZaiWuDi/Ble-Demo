@@ -52,7 +52,7 @@ public class JPushUtils {
      */
     private void setStyleBasic(Activity activity) {
         BasicPushNotificationBuilder builder = new BasicPushNotificationBuilder(activity);
-        builder.statusBarDrawable = R.mipmap.icon_app_lightness;
+        builder.statusBarDrawable = R.mipmap.icon_app_round;
         builder.notificationFlags = Notification.FLAG_AUTO_CANCEL;  //设置为点击后自动消失
         builder.notificationDefaults = Notification.DEFAULT_SOUND;  //设置为铃声（ Notification.DEFAULT_SOUND）或者震动（ Notification.DEFAULT_VIBRATE）
         JPushInterface.setPushNotificationBuilder(1, builder);
@@ -64,7 +64,7 @@ public class JPushUtils {
      */
     private void setStyleCustom(Activity activity, int layout) {
         CustomPushNotificationBuilder builder = new CustomPushNotificationBuilder(activity, layout, R.id.icon, R.id.title, R.id.text);
-        builder.layoutIconDrawable = R.mipmap.icon_app_lightness;
+        builder.layoutIconDrawable = R.mipmap.icon_app_round;
         builder.developerArg0 = "developerArg2";
         JPushInterface.setPushNotificationBuilder(2, builder);
     }

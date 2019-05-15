@@ -254,8 +254,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                             RxToolTip.Builder builder = new RxToolTip.Builder(mContext, mTvFinish, mParent, "长按结束", RxToolTip.POSITION_ABOVE);
                             builder.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                             builder.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
+                            builder.setOffsetX(RxUtils.dp2px(5));
                             builder.setGravity(RxToolTip.GRAVITY_CENTER);
-                            builder.setOffsetX(5);
                             toolTipsManager.show(builder.build(), 1000);
                         } else {
                             finishSporting();

@@ -89,10 +89,10 @@ public interface ApiService {
     Observable<String> planIndex();
 
 
-
     //更换饮食计划
     @POST("heat/changeDietPlan")
     Observable<String> changeDietPlan(@Body RequestBody body);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 体重
