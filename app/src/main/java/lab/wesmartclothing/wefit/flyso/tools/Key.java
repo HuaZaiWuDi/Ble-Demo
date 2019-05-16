@@ -112,7 +112,7 @@ public interface Key {
 
     String APP_KEY = "Timetofit";
 
-    String COMPANY_KEY="weSmartClothing";
+    String COMPANY_KEY = "weSmartClothing";
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY
@@ -145,6 +145,6 @@ public interface Key {
      * 6.极限
      * 7.最大心率
      */
-    byte[] HRART_SECTION = new byte[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};
+    int[] HRART_SECTION = new int[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};
 
 }

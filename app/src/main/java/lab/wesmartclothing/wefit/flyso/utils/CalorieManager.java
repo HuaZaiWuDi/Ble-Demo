@@ -12,9 +12,71 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
- * Created icon_hide_password jk on 2018/6/13.
+ * @Package lab.wesmartclothing.wefit.flyso.utils
+ * @FileName CalorieManager
+ * @Date 2019/5/16 11:42
+ * @Author JACK
+ * @Describe TODO
+ * @Project Android_WeFit_2.0
  */
-public class HeartRateToKcal {
+public class CalorieManager {
+
+
+    /**
+     * 运动距离转换成卡路里
+     * <p>
+     * 跑步热量（kcal）＝体重（kg）×距离（公里）×1.036
+     * <p>
+     * 例如：体重60公斤的人，长跑8公里，那么消耗的热量＝60×8×1.036＝497.28 kcal(千卡)
+     *
+     * @return
+     */
+    public static double run2Calorie(double weight, double kilometre) {
+        return weight * kilometre * 1.036;
+    }
+
+    /**
+     * 步幅（cm）=身高（cm）*0.45
+     *
+     * @param height
+     * @return
+     */
+    public static double getStride(double height) {
+        return height * 0.45;
+    }
+
+
+    /**
+     * 距离（cm）=步幅（cm）*步数
+     *
+     * @param height
+     * @return
+     */
+    public static double getKilometre(double height, int steps) {
+        return getStride(height) * steps * 0.00001;
+    }
+
+    /**
+     * 步频（/h）=步数（int）/时长(小时)
+     *
+     * @param steps
+     * @param time
+     * @return
+     */
+    public static double getStepRate(int steps, double time) {
+        return steps / time;
+    }
+
+    /**
+     * 配速（格式化时间/km）=时长(秒)/距离（km）
+     *
+     * @param kilometre
+     * @param time
+     * @return 11'11''
+     */
+    public static int getStepSpeed(double time, double kilometre) {
+        return (int) (time / kilometre);
+    }
 
 
     /**
@@ -25,10 +87,7 @@ public class HeartRateToKcal {
      * W =体重（以公斤计）
      * A =年龄（以年计）
      * T =运动持续时间（小时）double
-     **/
-
-
-    /**
+     *
      * @param HR 心率区间;
      * @param T  =运动持续时间（小时）double
      * @return 千卡
@@ -41,7 +100,7 @@ public class HeartRateToKcal {
         }
 
         int sex = info.getSex();
-        float W = SPUtils.getFloat(SPKey.SP_realWeight, SPUtils.getInt(SPKey.SP_weight));
+        float W = SPUtils.getFloat(SPKey.SP_realWeight);
         long birthDayMillis = info.getBirthday();
 
         Calendar calendar = Calendar.getInstance();
@@ -70,7 +129,7 @@ public class HeartRateToKcal {
      * @return
      */
     private static double addCalorie(int HR, double calorie) {
-        byte[] HRRates = Key.HRART_SECTION;
+        int[] HRRates = Key.HRART_SECTION;
         int HR_0 = HRRates[0] & 0xff;
         int HR_1 = HRRates[1] & 0xff;
         int HR_2 = HRRates[2] & 0xff;
@@ -91,14 +150,5 @@ public class HeartRateToKcal {
         }
         return calorie;
     }
-
-
-    /**
-     * 更换卡路里计算公式
-     */
-    public double getCalorie2() {
-        return 0;
-    }
-
 
 }

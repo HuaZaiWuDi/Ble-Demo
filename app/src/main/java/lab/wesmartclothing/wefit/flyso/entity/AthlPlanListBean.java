@@ -52,14 +52,14 @@ public class AthlPlanListBean {
      * @return
      */
     public int getHeartRange() {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0] ;
+        int heart_1 = heartRates[1] ;
+        int heart_2 = heartRates[2] ;
+        int heart_3 = heartRates[3] ;
+        int heart_4 = heartRates[4] ;
+        int heart_5 = heartRates[5] ;
+        int heart_6 = heartRates[6] ;
 
         switch (range) {
             case 0:
@@ -84,14 +84,14 @@ public class AthlPlanListBean {
      * @return
      */
     public int getMidRange() {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0] ;
+        int heart_1 = heartRates[1] ;
+        int heart_2 = heartRates[2] ;
+        int heart_3 = heartRates[3] ;
+        int heart_4 = heartRates[4] ;
+        int heart_5 = heartRates[5] ;
+        int heart_6 = heartRates[6] ;
 
         int midValue = (heart_6 - heart_5) / 2;
         RxLogUtils.d("中间值：" + midValue);
@@ -115,14 +115,14 @@ public class AthlPlanListBean {
 
 
     public int getRange2() {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0];
+        int heart_1 = heartRates[1] ;
+        int heart_2 = heartRates[2] ;
+        int heart_3 = heartRates[3] ;
+        int heart_4 = heartRates[4] ;
+        int heart_5 = heartRates[5] ;
+        int heart_6 = heartRates[6] ;
 
         switch (range) {
             case 0:

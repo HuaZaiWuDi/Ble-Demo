@@ -93,7 +93,7 @@
     <string name="speech_aerobic"> 您已进入有氧运动心率区间，该状态下的您可以充分的锻炼心肺功能，如果要达到瘦身效果，一定要坚持三十分钟以上哦！</string>
     <string name="speech_anaerobic">您已进入无氧运动心率区间，建议您适当的降低运动强度。</string>
     <string name="speech_limit"> 您的心率太快了，建议马上停止运动。</string>
-    <string name="speech_currentKcal">您当前运动消耗</string>
+    <string name="speech_currentKcal">您当前运动消耗%1$s千卡的能量</string>
     <string name="tipOpenBlueTooth">检测到您未开启手机蓝牙，开启蓝牙</string>
     <string name="checkSporting">检测到您正在运动，点击查看</string>
     <string name="checkHistoryWeight">您有新的体重数据，点击领取</string>
@@ -220,5 +220,7 @@
     <string name="appDays">我在 %1$s 第%2$d 天</string>
     <string name="tv_firstTip">感谢您使用莱特妮丝智瘦-AI智能瘦身衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
     <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重 指标、体能状态和患病风险，获得专家的饮食和运动建 议。</string>
+    <string name="sprotStart">运动模式已启动，让我们开始自由运动瘦身训练吧</string>
+
 
 </resources>

@@ -93,7 +93,6 @@
 	<string name="speech_aerobic">You have entered the aerobic exercise heart rate zone, in which you can fully exercise your heart and lung function. If you want to achieve slimming effect, you must stick to it for more than 30 minutes!</string>
 	<string name="speech_anaerobic">You have entered the anaerobic exercise heart rate zone and it is recommended that you reduce your exercise intensity appropriately.</string>
 	<string name="speech_limit">Your heart rate is too fast, so it is recommended to stop exercising immediately.</string>
-	<string name="speech_currentKcal">Your current exercise consumption</string>
 	<string name="tipOpenBlueTooth">Detected that you have not turned on your phone Bluetooth, turn on Bluetooth</string>
 	<string name="checkSporting">Detected that you are exercising, click to view</string>
 	<string name="checkHistoryWeight">You have new weight data, click to pick up</string>

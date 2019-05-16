@@ -13,6 +13,8 @@ public class SportsDataTab {
 
     List<HeartRateItemBean> heartLists;//心率详情数据
     int steps;//步数
+    double kilometre;//运动距离（km）
+    double stepSpeed;//配速(时间/km)
     int duration;//耗时
     double kcal;//消耗卡路里（千卡）
     int maxHeart;//最小心率
@@ -26,6 +28,23 @@ public class SportsDataTab {
     int voltage;//电压
     long date;//时间
     double score;//分数
+
+
+    public double getKilometre() {
+        return kilometre;
+    }
+
+    public void setKilometre(double kilometre) {
+        this.kilometre = kilometre;
+    }
+
+    public double getStepSpeed() {
+        return stepSpeed;
+    }
+
+    public void setStepSpeed(double stepSpeed) {
+        this.stepSpeed = stepSpeed;
+    }
 
     public double getScore() {
         return score;
@@ -183,6 +202,8 @@ public class SportsDataTab {
     public String toString() {
         return "SportsDataTab{" +
                 " steps=" + steps +
+                " kilometre=" + kilometre +
+                " stepSpeed=" + stepSpeed +
                 ", kcal=" + kcal +
                 ", maxHeart=" + maxHeart +
                 ", minHeart=" + minHeart +

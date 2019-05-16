@@ -76,6 +76,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.CalorieManager;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
@@ -366,13 +367,16 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                         if (pause) return;
                         heartRateFlag = 0;
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
+                        //配速
+                        int stepSpeed = CalorieManager.getStepSpeed(currentTime, sportsDataTab.getKilometre());
+                        sportsDataTab.setStepSpeed(stepSpeed);
 
-                        currentHeart = sportsDataTab.getCurHeart();
+                        currentHeart = stepSpeed;
                         sportingKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
 
                         lineChartUtils.setRealTimeData(currentHeart);
                         mTvAvHeartRate.setText(currentHeart + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
+                        mTvMaxHeartRate.setText(RxFormatValue.fromat4S5R(sportsDataTab.getKilometre(), 2));
 
                         RxTextUtils.getBuilder(sportingKcal + "")
                                 .append("\tkcal").setProportion(0.5f)
@@ -629,14 +633,14 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
 
 
     private void freeTextSpeak(int heart) {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0] ;
+        int heart_1 = heartRates[1] ;
+        int heart_2 = heartRates[2] ;
+        int heart_3 = heartRates[3] ;
+        int heart_4 = heartRates[4] ;
+        int heart_5 = heartRates[5] ;
+        int heart_6 = heartRates[6] ;
         if (heart >= heart_1 && heart < heart_2) {
             if (type != 0) {
                 mTvSportsStatus.setText(R.string.warm);
@@ -703,7 +707,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             if (realTimeSet.getEntryCount() >= defaultSet.getEntryCount()) return;
 
             if (currentTime >= 30 && currentTime % 30 == 15) {
-                int section = Math.abs((Key.HRART_SECTION[6] & 0xFF) - (Key.HRART_SECTION[5] & 0xFF));
+                int section = Math.abs((Key.HRART_SECTION[6] ) - (Key.HRART_SECTION[5] ));
 
                 RxLogUtils.d("心率区间：" + section);
                 //这里当运动比计划心率差值大于20提示用户块（慢）点

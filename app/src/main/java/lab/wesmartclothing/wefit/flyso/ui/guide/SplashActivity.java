@@ -141,8 +141,8 @@ public class SplashActivity extends BaseActivity {
 
             HeartSectionUtil.initMaxHeart(userInfo);
         }
-
         RxLogUtils.d("跳转");
+
         //通过验证是否保存userId来判断是否登录
         if (userInfo == null || RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);

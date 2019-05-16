@@ -225,7 +225,6 @@ public class WeightAddFragment extends BaseActivity {
         }
 
         String s = JSON.toJSONString(bean);
-        SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addWeightInfo(NetManager.fetchRequest(s)))
                 .throttleFirst(2, TimeUnit.SECONDS)

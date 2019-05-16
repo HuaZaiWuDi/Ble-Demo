@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.aboutByte.BitUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
@@ -22,6 +23,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.utils
@@ -37,6 +39,7 @@ public class HeartRateUtil {
     private double kcalTotal = 0;//总卡路里
     private int lastHeartRate = 0;//上一次的心率值
     private int realHeartRate = 0;//真实心率
+    private int initialSteps = -1;//步数
     private static final int heartDeviation = 6;//心率误差值
     //补差值
     private static int heartUpSupplement = (int) (Math.random() * 4 + 2);
@@ -49,9 +52,6 @@ public class HeartRateUtil {
 
 
     public HeartRateUtil() {
-        maxHeart = 0;//最大心率
-        minHeart = 200;//最小心率
-        kcalTotal = 0;//总卡路里
         heartLists = new ArrayList<>();
         userInfo = MyAPP.gUserInfo;
     }
@@ -88,7 +88,7 @@ public class HeartRateUtil {
 
         //心率处于静息心率区间时不计算卡路里，
         if (heartRate >= Key.HRART_SECTION[1]) {
-            kcalTotal += HeartRateToKcal.getCalorie(heartRate, 2f / 3600);
+            kcalTotal += CalorieManager.getCalorie(heartRate, 2f / 3600);
         } else {
             //静息卡路里的计算：
             //静息(Kcal/s)：基础代谢值/(24*60*60)*time*1.2
@@ -96,6 +96,18 @@ public class HeartRateUtil {
                 kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60) * 1.2;
             }
         }
+
+        int currentSteps = 0;
+
+        if (initialSteps < 0) {
+            initialSteps = ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]});
+        } else {
+            currentSteps = ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}) - initialSteps;
+        }
+
+        float Weight = SPUtils.getFloat(SPKey.SP_realWeight);
+        double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
+        double calorie = CalorieManager.run2Calorie(Weight, kilometre);
 
 
         SportsDataTab mSportsDataTab = new SportsDataTab();
@@ -105,13 +117,14 @@ public class HeartRateUtil {
         mSportsDataTab.setRealHeart(realHeartRate);
         mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{bytes[15], bytes[16]}));
         mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
+        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mSportsDataTab.setTemp((bytes[10] & 0xff));
-        mSportsDataTab.setSteps(ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}));
+        mSportsDataTab.setSteps(currentSteps);
         mSportsDataTab.setData(bytes);
         mSportsDataTab.setDate(System.currentTimeMillis());
-//        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mSportsDataTab.setHeartLists(heartLists);
-        mSportsDataTab.setKcal(kcalTotal);//统一使用卡为基本热量单位
+        mSportsDataTab.setKcal(calorie);//统一使用卡为基本热量单位
+        mSportsDataTab.setKilometre(kilometre);
 
 
         HeartRateItemBean heartRateTab = new HeartRateItemBean();

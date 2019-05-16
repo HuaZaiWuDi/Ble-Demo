@@ -72,6 +72,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.CalorieManager;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
@@ -181,7 +182,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                 .append("\tkcal").setProportion(0.3f)
                 .into(mTvKcal);
 
-        speakAdd("运动模式已启动，让我们开始自由运动瘦身训练吧");
+        speakAdd(getString(R.string.sprotStart));
 
     }
 
@@ -349,14 +350,17 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                             xAxis.resetAxisMaximum();
                         }
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
+                        //配速
+                        int stepSpeed = CalorieManager.getStepSpeed(currentTime, sportsDataTab.getKilometre());
+                        sportsDataTab.setStepSpeed(stepSpeed);
 
-                        int currentHeart = sportsDataTab.getCurHeart();
+                        int currentHeart = stepSpeed;
                         currentKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
 
-                        lineChartUtils.setRealTimeData(currentHeart);
+                        lineChartUtils.setRealTimeData((float) (12 * 60 - currentHeart));
 
-                        mTvAvHeartRate.setText(currentHeart + "");
-                        mTvMaxHeartRate.setText(sportsDataTab.getMaxHeart() + "");
+                        mTvAvHeartRate.setText(RxFormat.setSec2MS(currentHeart));
+                        mTvMaxHeartRate.setText(RxFormatValue.fromat4S5R(sportsDataTab.getKilometre(), 2));
                         RxTextUtils.getBuilder(currentKcal + "")
                                 .append("\tkcal").setProportion(0.3f)
                                 .into(mTvKcal);
@@ -364,7 +368,6 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                         freeTextSpeak(currentHeart);
                         guideLineMove();
                         saveData(sportsDataTab);
-
                     }
                 });
 
@@ -494,14 +497,14 @@ public class SportingActivity extends BaseActivity implements SportInterface {
 
 
     private void freeTextSpeak(int heart) {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0];
+        int heart_1 = heartRates[1];
+        int heart_2 = heartRates[2];
+        int heart_3 = heartRates[3];
+        int heart_4 = heartRates[4];
+        int heart_5 = heartRates[5];
+        int heart_6 = heartRates[6];
         if (heart >= heart_1 && heart <= heart_2) {
             if (type != 0) {
                 mTvSportsStatus.setText(R.string.warm);
@@ -573,8 +576,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
 
             mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
             if (currentTime % 120 == 0) {
-                speakAdd(getString(R.string.speech_currentKcal) +
-                        Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1)) + "千卡的能量");
+                speakAdd(getString(R.string.speech_currentKcal, Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1))));
             }
 
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
@@ -626,12 +628,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                         new RxDialogSure(mContext)
                                 .setTitle("提示")
                                 .setContent("因网络异常，运动数据上传失败，您可在运动记录中进行查看")
-                                .setSureListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        RxActivityUtils.finishActivity();
-                                    }
-                                }).show();
+                                .setSureListener(v -> RxActivityUtils.finishActivity()).show();
                     }
                 });
     }
@@ -652,12 +649,6 @@ public class SportingActivity extends BaseActivity implements SportInterface {
      * force 是否强制退出
      */
     private void finishSporting() {
-
-
-//        //未开启运动直接结束
-//        if (currentTime == 0) {
-//            RxActivityUtils.finishActivity();
-//        } else
         if (currentTime < 180) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
             sportingShortDialog = new RxDialogSure(mContext)

@@ -14,7 +14,6 @@ import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
@@ -31,7 +30,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.RecordInfoActivity;
@@ -84,11 +82,7 @@ public class TargetDateFargment extends BaseActivity {
         Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
         mTvTips.setTypeface(typeface);
-        if (SPUtils.getBoolean(SPKey.SP_SET_PLAN)) {
-            mBtnConfirm.setText("确认");
-        } else {
-            mBtnConfirm.setText("下一步");
-        }
+        mBtnConfirm.setText("确认");
     }
 
     private void initRuler() {

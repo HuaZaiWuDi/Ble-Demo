@@ -119,7 +119,7 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void startScan() {
         if (!BleTools.getBleManager().isBlueEnable()) {
-           BleTools.getBleManager().enableBluetooth();
+            BleTools.getBleManager().enableBluetooth();
             return;
         }
 
@@ -187,20 +187,12 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void initTopBar() {
         mTopBar.setTitle("添加设备");
-        mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mTopBar.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         if (!forceBind) {
             Button skip = mTopBar.addRightTextButton("跳过", R.id.tv_skip);
-            skip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //跳转主页
-                    RxActivityUtils.skipActivity(mContext, MainActivity.class);
-                }
+            skip.setOnClickListener(v -> {
+                //跳转主页
+                RxActivityUtils.skipActivity(mContext, MainActivity.class);
             });
             skip.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
         }

@@ -308,13 +308,9 @@ public class WeightRecordFragment extends BaseActivity {
 
     private void updateUI(WeightDataBean bean) {
         lastWeight = bean.getWeight();
-
-        SPUtils.put(SPKey.SP_realWeight, (float) lastWeight);
-
         if (bean.getWeightList() == null) {
             return;
         }
-
         Map<Float, String> map = new HashMap<>();
         map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
         mSuitlines.setlimitLabels(map);

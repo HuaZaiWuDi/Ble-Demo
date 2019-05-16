@@ -93,7 +93,6 @@
 	<string name="speech_aerobic">您已進入有氧運動心率區間，該狀態下的您可以充分的鍛煉心肺功能，如果要達到瘦身效果，一定要堅持三十分鐘以上哦！</string>
 	<string name="speech_anaerobic">您已進入無氧運動心率區間，建議您適當的降低運動強度。</string>
 	<string name="speech_limit">您的心率太快了，建議馬上停止運動。</string>
-	<string name="speech_currentKcal">您當前運動消耗</string>
 	<string name="tipOpenBlueTooth">檢測到您未開啟手機藍牙，開啟藍牙</string>
 	<string name="checkSporting">檢測到您正在運動，點擊查看</string>
 	<string name="checkHistoryWeight">您有新的體重數據，點擊領取</string>
