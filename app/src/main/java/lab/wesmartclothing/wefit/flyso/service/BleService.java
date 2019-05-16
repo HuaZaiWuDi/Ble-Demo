@@ -226,7 +226,7 @@ public class BleService extends Service {
         }
         //在创建的通知渠道上发送通知
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        builder.setSmallIcon(R.mipmap.icon_app_round) //设置通知图标
+        builder.setSmallIcon(R.mipmap.icon_app_lightness) //设置通知图标
                 .setContentTitle("提示")//设置通知标题
                 .setContentText("智享瘦正在后台运行")//设置通知内容
                 .setAutoCancel(true) //用户触摸时，自动关闭
