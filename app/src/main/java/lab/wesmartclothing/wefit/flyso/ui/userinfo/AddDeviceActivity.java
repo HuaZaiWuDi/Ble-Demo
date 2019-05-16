@@ -170,11 +170,8 @@ public class AddDeviceActivity extends BaseActivity {
                     if (!state) {
                         switchStatus(STATUS_NO_DEVICE);
                         mTvDetails.setText("监测到未开启蓝牙，请打开蓝牙重新扫描");
-                    } else {
-                        startScan();
                     }
                 });
-
     }
 
 
