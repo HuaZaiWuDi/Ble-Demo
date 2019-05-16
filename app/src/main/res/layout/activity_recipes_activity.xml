@@ -350,7 +350,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/layout_foodList"
                     android:layout_margin="16dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:cardCornerRadius="4dp"
                     app:cardElevation="4dp"
                     >
@@ -374,7 +374,8 @@
                             android:layout_gravity="center"
                             android:text="NO.006 营养师 (tony)"
                             android:textColor="@color/black_312C35"
-                            android:textSize="8dp"/>
+                            android:textSize="8dp"
+                            android:visibility="gone"/>
 
                         <TextView
                             android:id="@+id/tv_tip"

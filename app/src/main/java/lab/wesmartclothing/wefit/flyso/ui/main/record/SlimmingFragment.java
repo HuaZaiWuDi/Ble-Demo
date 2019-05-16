@@ -254,6 +254,7 @@ public class SlimmingFragment extends BaseAcFragment {
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
     private int lastKcal = 0;
+    private RxDialog firsrUsedDialog;
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -751,7 +752,6 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
-
     }
 
 
@@ -778,11 +778,17 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgRecipes.setVisibility(View.GONE);
             firstUsedTip();
         } else if (planState == 3) {
+            if (firsrUsedDialog != null && firsrUsedDialog.isShowing()) {
+                firsrUsedDialog.dismiss();
+            }
             mImgPlanMark.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.VISIBLE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
             mLayoutSlimmingTarget.setVisibility(View.VISIBLE);
         } else {
+            if (firsrUsedDialog != null && firsrUsedDialog.isShowing()) {
+                firsrUsedDialog.dismiss();
+            }
             mLayoutSlimmingTarget.setVisibility(View.GONE);
             mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
@@ -823,17 +829,15 @@ public class SlimmingFragment extends BaseAcFragment {
     }
 
     private void firstUsedTip() {
-        final RxDialog dialog = new RxDialog(mContext);
+        firsrUsedDialog = new RxDialog(mContext);
         View view = View.inflate(mContext, R.layout.dialog_first_tip, null);
-        dialog.setContentView(view);
-        dialog.show();
+        firsrUsedDialog.setContentView(view);
+        if (firsrUsedDialog.isShowing()) firsrUsedDialog.dismiss();
+        firsrUsedDialog.show();
         view.findViewById(R.id.tv_start)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
-                    }
+                .setOnClickListener(view1 -> {
+                    firsrUsedDialog.dismiss();
+                    RxActivityUtils.skipActivity(mContext, PlanMatterActivity.class);
                 });
     }
 

@@ -175,7 +175,6 @@ public class TargetDateFargment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RecordInfoActivity.mSubmitInfoFrom = null;
-                        RxLogUtils.d("心率数据：" + s);
                         //关闭之前的设置目标体重和目标周期的界面
                         RxBus.getInstance().post(new RefreshSlimming());
                         //直接跳转到指定的Fragment（同时清栈）
@@ -184,8 +183,8 @@ public class TargetDateFargment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -207,8 +206,8 @@ public class TargetDateFargment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
