@@ -192,7 +192,8 @@ public class RecipesActivity extends BaseActivity {
                     .append(totalKcal + "").setProportion(1.5f)
                     .append("kcal")
                     .into(mTvTotalKcal);
-            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
+//            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
+            mTvTip.setText(recommendBean.getPlanAdvice());
         }
         mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
         mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);
