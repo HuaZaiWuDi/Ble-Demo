@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.vondear.rxtools.utils.aboutByte.BitUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
@@ -35,21 +34,16 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
  */
 public class HeartRateUtil {
     private int maxHeart = 0;//最大心率
-    private int minHeart = 200;//最小心率
+    private int minHeart = 10000;//最小心率
+    private int maxPace = 0;//最大配速
+    private int minPace = 10000;//最小配速
+    private int avPace = 0;//平均配速
     private double kcalTotal = 0;//总卡路里
-    private int lastHeartRate = 0;//上一次的心率值
-    private int realHeartRate = 0;//真实心率
-    private int initialSteps = -1;//步数
-    private static final int heartDeviation = 6;//心率误差值
-    //补差值
-    private static int heartUpSupplement = (int) (Math.random() * 4 + 2);
-    private static int heartDownSupplement = (int) (Math.random() * 4 + 1);
     private long lastTime = 0;//历史记录上一条时间
     private int packageCounts = 0;//历史数据包序号
     private List<HeartRateItemBean> heartLists;
-    private boolean pause = false;
     private UserInfo userInfo;
-
+    private int initSteps = -1;
 
     public HeartRateUtil() {
         heartLists = new ArrayList<>();
@@ -57,21 +51,17 @@ public class HeartRateUtil {
     }
 
 
+    /**
+     * 01 心率 1byte  7,8
+     * 02 温度 1byte  9,10
+     * 03 计步 2byte  11,13
+     * 04 电压 2byte  14,16
+     * 05 配速 2byte  17,19
+     */
     public SportsDataTab addRealTimeData(byte[] bytes) {
         //是否暂停
 
-
-        int heartRate = realHeartRate = bytes[8] & 0xff;
-
-
-        //降低误差值
-//        if (lastHeartRate != 0) {
-//            if (lastHeartRate - heartRate > heartDeviation) {
-//                heartRate = lastHeartRate - heartUpSupplement;
-//            } else if (lastHeartRate - heartRate < -heartDeviation) {
-//                heartRate = lastHeartRate + heartDownSupplement;
-//            }
-//        }
+        int heartRate = bytes[8] & 0xff;
 
 //        //限制心率范围 2019-04-22 去掉最大最小心率范围
 //        if (heartRate > (Key.HRART_SECTION[6] & 0xFF)) {
@@ -79,9 +69,6 @@ public class HeartRateUtil {
 //        } else if (heartRate < (Key.HRART_SECTION[0] & 0xFF)) {
 //            heartRate = (Key.HRART_SECTION[0] & 0xFF);
 //        }
-
-
-        lastHeartRate = heartRate;
 
         maxHeart = Math.max(heartRate, maxHeart);
         minHeart = Math.min(heartRate, minHeart);
@@ -96,28 +83,37 @@ public class HeartRateUtil {
                 kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60) * 1.2;
             }
         }
-
         int currentSteps = 0;
+        int step = ByteUtil.bytesToIntLittle2(new byte[]{bytes[12], bytes[13]});
 
-        if (initialSteps < 0) {
-            initialSteps = ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]});
+        if (initSteps < 0) {
+            initSteps = step;
         } else {
-            currentSteps = ByteUtil.bytesToIntD2(new byte[]{bytes[12], bytes[13]}) - initialSteps;
+            currentSteps = Math.abs(step - initSteps);
         }
 
         float Weight = SPUtils.getFloat(SPKey.SP_realWeight);
         double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
         double calorie = CalorieManager.run2Calorie(Weight, kilometre);
 
+        int currentPace = ByteUtil.bytesToIntLittle2(new byte[]{bytes[18], bytes[19]});
+        int reversePace = reversePace(currentPace);//反转配速，用于显示在图表上
+
+        RxLogUtils.d("当前配速：" + currentPace);
+        RxLogUtils.d("反转配速：" + reversePace);
+        //最大最小配速
+        if (currentPace != 0) {
+            maxPace = Math.min(maxPace, currentPace);
+            minPace = Math.max(minPace, currentPace);
+        }
 
         SportsDataTab mSportsDataTab = new SportsDataTab();
         mSportsDataTab.setCurHeart(heartRate);
         mSportsDataTab.setMaxHeart(maxHeart);
         mSportsDataTab.setMinHeart(minHeart);
-        mSportsDataTab.setRealHeart(realHeartRate);
-        mSportsDataTab.setVoltage(ByteUtil.bytesToIntD2(new byte[]{bytes[15], bytes[16]}));
-        mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
-        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
+        mSportsDataTab.setVoltage(ByteUtil.bytesToIntLittle2(new byte[]{bytes[15], bytes[16]}));
+//        mSportsDataTab.setLightColor((BitUtils.setBitValue(bytes[17], 7, (byte) 0) & 0xff));
+//        mSportsDataTab.setPower((BitUtils.checkBitValue(bytes[17], 7)));
         mSportsDataTab.setTemp((bytes[10] & 0xff));
         mSportsDataTab.setSteps(currentSteps);
         mSportsDataTab.setData(bytes);
@@ -125,16 +121,41 @@ public class HeartRateUtil {
         mSportsDataTab.setHeartLists(heartLists);
         mSportsDataTab.setKcal(calorie);//统一使用卡为基本热量单位
         mSportsDataTab.setKilometre(kilometre);
+        mSportsDataTab.setStepSpeed(currentPace);
+        mSportsDataTab.setReversePace(reversePace);
+        mSportsDataTab.setMaxPace(maxPace);
+        mSportsDataTab.setMinPace(minPace);
 
+        //配速不为0才上传
+        if (currentPace != 0) {
+            HeartRateItemBean heartRateTab = new HeartRateItemBean();
+            heartRateTab.setHeartRate(heartRate);
+            heartRateTab.setHeartTime(mSportsDataTab.getDate());
+            heartRateTab.setStepTime(2);
+            heartRateTab.step = currentSteps;
+            heartRateTab.pace = currentPace;
+            heartLists.add(heartRateTab);
 
-        HeartRateItemBean heartRateTab = new HeartRateItemBean();
-        heartRateTab.setHeartRate(heartRate);
-        heartRateTab.setHeartTime(mSportsDataTab.getDate());
-        heartRateTab.setStepTime(2);
-        heartLists.add(heartRateTab);
+            double asDouble = heartLists.stream().mapToInt(HeartRateItemBean::getPace).average().getAsDouble();
+            mSportsDataTab.setAvPace(asDouble);
+        }
+
 
         RxLogUtils.i("瘦身衣心率数据：" + mSportsDataTab.toString());
         return mSportsDataTab;
+    }
+
+
+    public static int reversePace(int currentPace) {
+        int reversePace = 0;
+        if (currentPace > Key.HRART_SECTION[6]) {
+            reversePace = Key.HRART_SECTION[0];
+        } else if (currentPace < Key.HRART_SECTION[0]) {
+            reversePace = Key.HRART_SECTION[6];
+        } else {
+            reversePace = (Key.HRART_SECTION[6] + Key.HRART_SECTION[0]) - currentPace;
+        }
+        return reversePace;
     }
 
 
@@ -145,7 +166,7 @@ public class HeartRateUtil {
      * @param bytes
      */
     public void addHsitoryData(byte[] bytes) {
-        long time = ByteUtil.bytesToLongD4(bytes, 3);
+        long time = ByteUtil.bytesToLongLittle(bytes, 3);
 
         //根据时间去重
         if (lastTime == time) {
@@ -191,7 +212,7 @@ public class HeartRateUtil {
 
         String s = JSON.toJSONString(heartRateBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .addAthleticsInfo(NetManager.fetchRequest(s)))
+                .addRunningData(NetManager.fetchRequest(s)))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -209,21 +230,14 @@ public class HeartRateUtil {
         if (heartRateBean != null) {
             try {
                 //RxCache 库的一个Bug
-                RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
+                boolean remove = RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
                         Key.CACHE_ATHL_RECORD_FREE);
+                RxLogUtils.d("成功删除本地缓存：" + remove);
             } catch (Exception e) {
                 RxLogUtils.e("RxCache LruDiskCache is null");
             }
         }
     }
 
-
-    public boolean pause() {
-        return pause;
-    }
-
-    public void setPause(boolean play) {
-        pause = play;
-    }
 
 }

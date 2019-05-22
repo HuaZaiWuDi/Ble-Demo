@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.callback.BleMtuChangedCallback;
 import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
@@ -466,7 +467,18 @@ public class BleService extends Service {
                 BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
                     @Override
                     public void success(boolean isSuccess) {
-                        syncBleSetting();
+                        BleTools.getBleManager().setMtu(bleDevice, 200, new BleMtuChangedCallback() {
+                            @Override
+                            public void onSetMTUFailure(BleException exception) {
+                                RxLogUtils.e("更改Mtu值失败：", exception);
+                            }
+
+                            @Override
+                            public void onMtuChanged(int mtu) {
+                                syncBleSetting();
+                            }
+                        });
+
                     }
                 });
             }
@@ -497,12 +509,9 @@ public class BleService extends Service {
     }
 
     private void syncSetting() {
-        BleAPI.syncSetting(Key.heartRates, 60, 50, true, new BleChartChangeCallBack() {
-            @Override
-            public void callBack(byte[] data) {
-                RxLogUtils.d("配置参数");
-                syncHistoryData();
-            }
+        BleAPI.syncSetting(true, data -> {
+            RxLogUtils.d("配置参数");
+            syncHistoryData();
         });
     }
 
@@ -510,7 +519,7 @@ public class BleService extends Service {
         BleAPI.syncDataCount(new BleChartChangeCallBack() {
             @Override
             public void callBack(byte[] data) {
-                long packageCount = ByteUtil.bytesToLongD4(data, 3);
+                long packageCount = ByteUtil.bytesToLongLittle(data, 3);
                 RxLogUtils.d("包总数：" + packageCount);
                 if (packageCount > 0) {
                     RxLogUtils.d("开始同步包数据");
@@ -532,8 +541,8 @@ public class BleService extends Service {
                 DeviceVersionBean versionBean = new DeviceVersionBean();
                 versionBean.setCategory(data[3] & 0xFF);
                 versionBean.setModelNo(data[4] & 0xFF);
-                versionBean.setManufacture(ByteUtil.bytesToIntD2(new byte[]{data[5], data[6]}));
-                versionBean.setHwVersion(ByteUtil.bytesToIntD2(new byte[]{data[7], data[8]}));
+                versionBean.setManufacture(ByteUtil.bytesToIntLittle2(new byte[]{data[5], data[6]}));
+                versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
                 versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
 
                 checkFirmwareVersion(versionBean);
@@ -553,7 +562,7 @@ public class BleService extends Service {
 
     private void getVoltage() {
         BleAPI.getVoltage(data -> {
-            int voltage = ByteUtil.bytesToIntD2(new byte[]{data[3], data[4]});
+            int voltage = ByteUtil.bytesToIntLittle2(new byte[]{data[3], data[4]});
             RxLogUtils.d("电压：" + voltage);
             VoltageToPower toPower = new VoltageToPower();
             int capacity = toPower.getBatteryCapacity(voltage / 1000f);
@@ -566,6 +575,7 @@ public class BleService extends Service {
 
     private void initHeartRate() {
         BleTools.getInstance().setBleCallBack(data -> {
+            if (data.length < 20) return;
             RxBus.getInstance().post(new HeartRateChangeBus(data));
         });
     }

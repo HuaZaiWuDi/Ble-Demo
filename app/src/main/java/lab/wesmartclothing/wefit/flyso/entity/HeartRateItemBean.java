@@ -17,14 +17,29 @@ public class HeartRateItemBean implements Serializable {
     public long heartTime = 0;//心率时间
 
     public int stepTime = 0;//心率间隔
-
-
-    public int count = 0;//分次
+    public int step;
+    public int pace;
 
 
     public HeartRateItemBean() {
     }
 
+
+    public int getPace() {
+        return pace;
+    }
+
+    public void setPace(int pace) {
+        this.pace = pace;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
 
     public int getHeartRate() {
         return heartRate;
@@ -51,20 +66,14 @@ public class HeartRateItemBean implements Serializable {
     }
 
 
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
     @Override
     public String toString() {
-        return "HeartRateTab{" +
+        return "HeartRateItemBean{" +
                 "heartRate=" + heartRate +
                 ", heartTime=" + heartTime +
                 ", stepTime=" + stepTime +
+                ", step=" + step +
+                ", pace=" + pace +
                 '}';
     }
 }

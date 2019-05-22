@@ -1,7 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import android.content.Context;
+
 import com.vondear.rxtools.utils.RxLogUtils;
 
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
@@ -61,13 +64,13 @@ public class HeartSectionUtil {
 //        }
 
 
-        Key.HRART_SECTION[0] = (int) (2.5 * 60);
-        Key.HRART_SECTION[1] = (int) (3 * 60);
-        Key.HRART_SECTION[2] = (int) (3.5 * 60);
-        Key.HRART_SECTION[3] = (int) (4 * 60);
-        Key.HRART_SECTION[4] = (int) (4.5 * 60);
-        Key.HRART_SECTION[5] = (int) (5 * 60);
-        Key.HRART_SECTION[6] = (int) (5.5 * 60);
+        Key.HRART_SECTION[0] = (int) (6 * 60);
+        Key.HRART_SECTION[1] = (int) (7 * 60);
+        Key.HRART_SECTION[2] = (int) (8 * 60);
+        Key.HRART_SECTION[3] = (int) (9 * 60);
+        Key.HRART_SECTION[4] = (int) (10 * 60);
+        Key.HRART_SECTION[5] = (int) (11 * 60);
+        Key.HRART_SECTION[6] = (int) (12 * 60);
 
 
 //        Key.heartRates[0] = Key.HRART_SECTION[1];
@@ -80,6 +83,48 @@ public class HeartSectionUtil {
         for (int b : Key.HRART_SECTION) {
             RxLogUtils.d("心率区间：" + b);
         }
+    }
+
+
+    public static int currentSection(int heart) {
+        int type = 0;
+        if (heart < Key.HRART_SECTION[1]) {
+            type = 0;
+        } else if (heart < Key.HRART_SECTION[2]) {
+            type = 1;
+        } else if (heart < Key.HRART_SECTION[3]) {
+            type = 2;
+        } else if (heart < Key.HRART_SECTION[4]) {
+            type = 3;
+        } else if (heart < Key.HRART_SECTION[5]) {
+            type = 4;
+        } else {
+            type = 5;
+        }
+        return type;
+    }
+
+    /**
+     * 获取心率区间名称
+     *
+     * @return
+     */
+    public static String strRange(Context context, int range) {
+        switch (range) {
+            case 0:
+                return context.getString(R.string.calm);
+            case 1:
+                return context.getString(R.string.warm);
+            case 2:
+                return context.getString(R.string.grease);
+            case 3:
+                return context.getString(R.string.aerobic);
+            case 4:
+                return context.getString(R.string.anaerobic);
+            case 5:
+                return context.getString(R.string.limit);
+        }
+        return context.getString(R.string.calm);
     }
 
 

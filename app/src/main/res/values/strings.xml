@@ -33,12 +33,12 @@
     <string name="connected">已连接</string>
     <string name="connecting">正在连接</string>
     <string name="unBind">未绑定</string>
-    <string name="calm">静息</string>
-    <string name="warm">热身</string>
-    <string name="grease">燃脂</string>
-    <string name="aerobic">有氧</string>
-    <string name="anaerobic">无氧</string>
-    <string name="limit">极限</string>
+    <string name="calm">慢走</string>
+    <string name="warm">快走</string>
+    <string name="grease">慢跑</string>
+    <string name="aerobic">慢燃</string>
+    <string name="anaerobic">快燃</string>
+    <string name="limit">无氧</string>
     <string name="getVCode">获取验证码</string>
     <string name="inputVCode">请输入短信验证码</string>
     <string name="login_clause">注册即表示同意软件 服务条款和隐私条款</string>
@@ -74,7 +74,7 @@
     <string name="pengyouquan">朋友圈</string>
     <string name="shareTo">分享到</string>
     <string name="checkBle">请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试</string>
-    <string name="tip_nodata">还未上传数据哦！</string>
+    <string name="tip_nodata">还未上传数据 ！</string>
     <string name="tv_loading">正在加载</string>
     <string name="open_loaction">未给予定位权限，无法搜索到蓝牙设备</string>
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
@@ -88,19 +88,36 @@
     <string name="complete">完成</string>
     <string name="password_not_same">两次输入的密码不一致</string>
     <string name="settingPasswordSuccess">密码设置成功</string>
-    <string name="speech_warm">您已进入热身心率区间，合理的热身运动可以避免运动损伤，建议热身五到十分钟</string>
-    <string name="speech_grease">您已进入燃脂心率区间，该状态为高效燃脂，建议保持二十分钟以上以达到最佳效果，请注意心率控制在一百二十到一百四十之间。</string>
-    <string name="speech_aerobic"> 您已进入有氧运动心率区间，该状态下的您可以充分的锻炼心肺功能，如果要达到瘦身效果，一定要坚持三十分钟以上哦！</string>
-    <string name="speech_anaerobic">您已进入无氧运动心率区间，建议您适当的降低运动强度。</string>
-    <string name="speech_limit"> 您的心率太快了，建议马上停止运动。</string>
-    <string name="speech_currentKcal">您当前运动消耗%1$s千卡的能量</string>
+    <string name="speech_warm">您已进入热身区间，合理的热身运动可以避免运动损伤，建议热身五到十分钟</string>
+    <string name="speech_grease">您已进入燃脂区间，该状态为高效燃脂，建议保持二十分钟以上以达到最佳效果，请注意心率控制在一百二十到一百四十之间。</string>
+    <string name="speech_aerobic"> 您已进入有氧运动区间，该状态下的您可以充分的锻炼心肺功能，如果要达到瘦身效果，一定要坚持三十分钟以上 ！</string>
+    <string name="speech_anaerobic">您已进入无氧运动区间，建议您适当的降低运动强度。</string>
+    <string name="speech_limit"> 您的运动太快了，建议马上停止运动。</string>
+    <string name="speech_currentKcal">您当前处于%1$s阶段</string>
+    <string name="speech_sprotStart">运动模式已启动，让我们开始自由运动瘦身训练吧</string>
+    <string name="speech_keepLimitSpeak">您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！</string>
+    <string name="speech_planStart">主人您好，小莱今天帮您定制的运动课程总计%1$s分钟，预计燃烧%2$s卡路里，让我们开始运动吧</string>
+    <string name="speech_ourseOne">第一节%1$s运动 请调节运动至%2$s运动区间，保持匀速%3$d</string>
+    <string name="speech_warmComplete">恭喜您完成热身训练，下一节燃脂运动，请调节运动至燃脂运动区间，保持匀速%1$d分钟。</string>
+    <string name="speech_fatBuringComplete">恭喜您完成燃脂训练，下一节有氧运动，请调节运动至有氧运动区间，保持匀速%1$d分钟。</string>
+    <string name="speech_aerobicComplete">恭喜您完成有氧训练，下一节无氧运动，请调节运动至无氧运动区间，保持匀速%1$d分钟。</string>
+    <string name="speech_anaerobicComplete">您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢率。建议运动时长不超过 15 分钟。</string>
+    <string name="speech_planFinishFail">本次训练计划还未完成 ，你确定要结束吗？今天的坚持是为了更美的明天。小莱为您加油打气</string>
+    <string name="speech_planFinishSuccess">好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动 ！本次训练共计燃烧%1$s千卡，请继续保持。</string>
+    <string name="speech_freeSportFinish">运动已结束,您一共运动%1$s分钟，共消耗%2$s千卡的能量</string>
+    <string name="speech_sportPause">运动已暂停</string>
+    <string name="speech_sportPlay">运动已恢复</string>
+    <string name="speech_sportFast">请快一点，保持匀速有节奏的运动才能高效瘦身</string>
+    <string name="speech_sportSlow">请慢一点，保持匀速有节奏的运动才能高效瘦身</string>
+    <string name="speech_completeStage">恭喜您完成第%1$d阶段训练，请%2$s速度至%3$s区间</string>
+
     <string name="tipOpenBlueTooth">检测到您未开启手机蓝牙，开启蓝牙</string>
     <string name="checkSporting">检测到您正在运动，点击查看</string>
     <string name="checkHistoryWeight">您有新的体重数据，点击领取</string>
     <string name="completeDaytarget">恭喜，今天的运动目标已经完成，要再接再厉呀！</string>
     <string name="gotoSporting">今天还差%1$s\tkcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。</string>
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
-    <string name="search_noData">没有搜索到关于 " %1$s " 的食物哦，请您重新输入食物的关键字 ^-^</string>
+    <string name="search_noData">没有搜索到关于 " %1$s " 的食物 ，请您重新输入食物的关键字 ^-^</string>
     <string name="must_input">最多可以输入%1$d字</string>
     <string name="plan">感谢使用莱特妮丝智瘦为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n
 \t1.\t身体质量指数（BMI）在18.5-40之间；\n
@@ -122,7 +139,7 @@
 \t2.\t\t食谱中存在个人饮食禁忌的食材请勿食用;</string>
     <string name="phone_email">客服电话：43046554 \n客服邮箱：466113124@wesma</string>
     <string name="empty_recipes">亲爱的%1$s，营养师正在努力定制中，请耐心等待…</string>
-    <string name="empty_record">亲爱的%1$s，此日期没有任何记录哦，点击按钮可以补录饮食…</string>
+    <string name="empty_record">亲爱的%1$s，此日期没有任何记录 ，点击按钮可以补录饮食…</string>
     <string name="empty_plan">亲爱的%1$s，服务人员正在努力为您定制课程，请耐心等待…</string>
 
     <string-array name="tab_text">
@@ -213,14 +230,24 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="expectKcal">运动时间%1$d min,预计消耗热量%2$d kcal</string>
-    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你制定的计划是%2$s。  \n养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标哦，加油！</string>
+    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你制定的计划是%2$s。  \n养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标 ，加油！</string>
     <string name="dietPlanUser">%1$s营养师 为您搭配饮食</string>
     <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
     <string name="follow">跟着莱特妮丝智瘦</string>
     <string name="appDays">我在 %1$s 第%2$d 天</string>
     <string name="tv_firstTip">感谢您使用莱特妮丝智瘦-AI智能瘦身衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
     <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重 指标、体能状态和患病风险，获得专家的饮食和运动建 议。</string>
-    <string name="sprotStart">运动模式已启动，让我们开始自由运动瘦身训练吧</string>
+
+    <string name="planSporting">课程运动中</string>
+    <string name="play">继续</string>
+    <string name="pause">暂停</string>
+
+    <string name="sportTip">运动提示</string>
+    <string name="tip">提示</string>
+    <string name="freeSporting">自由运动中</string>
+    <string name="Speech_eachKm"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s分钟,继续加油吧]]></string>
+    <string name="Speech_each8Min"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s分钟,您当前运动得分%5$s,请继续加油吧]]></string>
+    <string name="speech_recipes">营养师%1$s今天给您推荐的食谱是%2$s</string>
 
 
 </resources>

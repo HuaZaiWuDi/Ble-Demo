@@ -32,7 +32,7 @@ public class CalorieManager {
      * @return
      */
     public static double run2Calorie(double weight, double kilometre) {
-        return weight * kilometre * 1.036;
+        return weight * kilometre * 1.036 * 2.5;
     }
 
     /**

@@ -138,6 +138,7 @@ public class MyAPP extends Application {
          * */
         String[] androidIds = {"171e7dfb5b3005f2", "54409e1a3d1be330"};
         boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
+        RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
         if (!isDevelopmentDevice) {
             Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
         }

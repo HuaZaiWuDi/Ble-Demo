@@ -14,6 +14,9 @@ import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.zchu.rxcache.RxCache;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,6 +103,11 @@ public class Settingfragment extends BaseActivity {
                                     @Override
                                     public void onClick(View v) {
                                         RxFileUtils.clearAllCache(mContext.getApplicationContext());
+                                        try {
+                                            RxCache.getDefault().clear2();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                         clearCacheItem.setDetailText("0MB");
                                     }
                                 }).show();
@@ -164,7 +172,11 @@ public class Settingfragment extends BaseActivity {
 
                         BleTools.getInstance().disConnect();
                         QNBleTools.getInstance().disConnectDevice();
-
+                        try {
+                            RxCache.getDefault().clear2();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
 
                     }

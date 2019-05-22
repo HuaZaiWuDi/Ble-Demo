@@ -14,13 +14,17 @@ public class SportsDataTab {
     List<HeartRateItemBean> heartLists;//心率详情数据
     int steps;//步数
     double kilometre;//运动距离（km）
-    double stepSpeed;//配速(时间/km)
+    int stepSpeed;//配速(时间/km)
+    int reversePace;//反转配速
+    int maxPace;//最大配速
+    int minPace;//最小配速
+    double avPace;//平均配速
+    int cadence;//步频
     int duration;//耗时
     double kcal;//消耗卡路里（千卡）
     int maxHeart;//最小心率
     int minHeart;//最大心率
     int curHeart;//修改后的心率
-    int realHeart;//真实心率
     boolean isPower;//是否充电
     int lightColor;//灯光颜色
     byte[] data;//原始数据
@@ -30,6 +34,46 @@ public class SportsDataTab {
     double score;//分数
 
 
+    public int getMaxPace() {
+        return maxPace;
+    }
+
+    public void setMaxPace(int maxPace) {
+        this.maxPace = maxPace;
+    }
+
+    public int getMinPace() {
+        return minPace;
+    }
+
+    public void setMinPace(int minPace) {
+        this.minPace = minPace;
+    }
+
+    public double getAvPace() {
+        return avPace;
+    }
+
+    public void setAvPace(double avPace) {
+        this.avPace = avPace;
+    }
+
+    public int getCadence() {
+        return cadence;
+    }
+
+    public void setCadence(int cadence) {
+        this.cadence = cadence;
+    }
+
+    public int getReversePace() {
+        return reversePace;
+    }
+
+    public void setReversePace(int reversePace) {
+        this.reversePace = reversePace;
+    }
+
     public double getKilometre() {
         return kilometre;
     }
@@ -38,11 +82,11 @@ public class SportsDataTab {
         this.kilometre = kilometre;
     }
 
-    public double getStepSpeed() {
+    public int getStepSpeed() {
         return stepSpeed;
     }
 
-    public void setStepSpeed(double stepSpeed) {
+    public void setStepSpeed(int stepSpeed) {
         this.stepSpeed = stepSpeed;
     }
 
@@ -104,14 +148,6 @@ public class SportsDataTab {
 
     public void setPower(boolean power) {
         isPower = power;
-    }
-
-    public int getRealHeart() {
-        return realHeart;
-    }
-
-    public void setRealHeart(int realHeart) {
-        this.realHeart = realHeart;
     }
 
 
@@ -197,23 +233,28 @@ public class SportsDataTab {
         return color;
     }
 
-
     @Override
     public String toString() {
         return "SportsDataTab{" +
-                " steps=" + steps +
-                " kilometre=" + kilometre +
-                " stepSpeed=" + stepSpeed +
+                ", steps=" + steps +
+                ", kilometre=" + kilometre +
+                ", stepSpeed=" + stepSpeed +
+                ", reversePace=" + reversePace +
+                ", maxPace=" + maxPace +
+                ", minPace=" + minPace +
+                ", avPace=" + avPace +
+                ", cadence=" + cadence +
+                ", duration=" + duration +
                 ", kcal=" + kcal +
                 ", maxHeart=" + maxHeart +
                 ", minHeart=" + minHeart +
                 ", curHeart=" + curHeart +
-                ", realHeart=" + realHeart +
                 ", isPower=" + getPower() +
-                ", lightColor=" + byte2Color(lightColor) +
-                ", temp=" + temp + "°C" +
+                ", lightColor=" + getLightColor() +
+                ", temp=" + temp +
                 ", voltage=" + voltage +
-                ", date='" + RxFormat.setFormatDate(date, RxFormat.Date_Date) + '\'' +
+                ", date=" + RxFormat.setFormatDate(date, RxFormat.Date_Date) +
+                ", score=" + score +
                 '}';
     }
 }

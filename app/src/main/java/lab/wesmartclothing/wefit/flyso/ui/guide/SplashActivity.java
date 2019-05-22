@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.IntentFilter;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -19,7 +17,6 @@ import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -77,30 +74,19 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-
-
-//        startService(new Intent(mContext, WebProcessService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-
-        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-        RxLogUtils.e("用户token：" + SPUtils.getString(SPKey.SP_token));
 
     }
 
     @Override
     protected void initNetData() {
         super.initNetData();
+        if (MyAPP.gUserInfo == null) {
+            MyAPP.gUserInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        }
         initData();
         initUserInfo();
-
-
-//        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
-    }
-
-    public static File getAppAPKFile(Application application) {
-        String path = application.getPackageResourcePath();
-        return new File(path);
     }
 
     private void initUserInfo() {
@@ -140,11 +126,11 @@ public class SplashActivity extends BaseActivity {
             hasInviteCode = userInfo.isHasInviteCode();
 
             HeartSectionUtil.initMaxHeart(userInfo);
+            RxLogUtils.d("跳转:" + userInfo.toString());
         }
-        RxLogUtils.d("跳转");
 
         //通过验证是否保存userId来判断是否登录
-        if (userInfo == null || RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
+        if (userInfo == null || userInfo.registerTime == 0) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
             return;
         }
@@ -164,7 +150,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void goError(int code) {
-        if (code == -99 || code == 6) {//token验证失败
+        if (code == -99 || code == 6 || code == 9001) {//token验证失败
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else {
             gotoMain(SPUtils.getString(SPKey.SP_UserInfo));
@@ -175,9 +161,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         unregisterReceiver(APPReplacedReceiver);
-        if (MyAPP.gUserInfo == null) {
-            MyAPP.gUserInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
-        }
         super.onDestroy();
     }
 

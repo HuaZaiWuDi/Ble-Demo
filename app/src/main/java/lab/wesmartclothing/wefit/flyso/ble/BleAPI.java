@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.clj.fastble.utils.HexUtil;
 
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * Created by jk on 2018/5/19.
@@ -17,7 +19,7 @@ public class BleAPI {
 
     private static byte[] time2Byte() {
         long time = System.currentTimeMillis() / 1000;
-        byte[] bytes = ByteUtil.longToBytesD4(time);
+        byte[] bytes = ByteUtil.longToBytesLittle(time);
         return bytes;
     }
 
@@ -42,47 +44,80 @@ public class BleAPI {
      * 01	命令应答
      * <p>
      * 配置设置参数
-     *
-     * @param heartSection   硬件心率区间
-     * @param heat           温度
-     * @param LED            灯光
-     * @param heatState      加热状态
-     * @param bleChartChange 回调
      */
 
-    public static void syncSetting(byte[] heartSection, int heat, int LED, boolean heatState, BleChartChangeCallBack bleChartChange) {
+    /**
+     * @param heatState      加热状态
+     *                       heartSection   硬件心率区间
+     *                       heat           温度
+     *                       LED            灯光
+     *                       height         用户身高（cm）
+     *                       time           采集时长（s）
+     * @param bleChartChange 回调
+     */
+    public static void syncSetting(boolean heatState, BleChartChangeCallBack bleChartChange) {
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 //        0x02 0x11 0x01
-        byte[] bytes = new byte[20];
+        int heat = 40;
+        int LED = 50;
+        byte[] heartSection = Key.heartRates;
+        int[] stepSpeedSection = Key.HRART_SECTION;
+        int height = MyAPP.gUserInfo.getHeight();
+        int time = 10;
+
+        byte[] bytes = new byte[50];
         bytes[0] = 0x40;
         bytes[1] = 0x11;
         bytes[2] = 0x01;
 
         //心率阈值
         bytes[3] = 0x01;
-
         System.arraycopy(heartSection, 0, bytes, 4, heartSection.length);
         int index = 3 + heartSection.length;
 
-        if (heat >= 0) {
-            index++;
-            bytes[index] = 0x02;
-            index++;
-            bytes[index] = (byte) heat;
-        }
-        if (LED >= 0) {
-            index++;
-            bytes[index] = 0x03;
-            index++;
-            bytes[index] = 0x01;
-        }
+        //加热温度
+        index++;
+        bytes[index] = 0x02;
+        index++;
+        bytes[index] = (byte) heat;
+
+        //灯光
+        index++;
+        bytes[index] = 0x03;
+        index++;
+        bytes[index] = 0x01;
+
+        //加热状态
         index++;
         bytes[index] = 0x04;
         index++;
         bytes[index] = (byte) (heatState ? 0x01 : 0x00);
+        index++;
+
+        //身高
+        bytes[index] = 0x05;
+        index++;
+        bytes[index] = (byte) height;
+
+        //采集时长
+        //身高
+        bytes[index] = 0x06;
+        index++;
+        bytes[index] = (byte) time;
+
+        //配速区间 去掉区间最小值，发送1-6位置值，小端
+        index++;
+        bytes[index] = 0x07;
+
+        for (int i = 1; i < stepSpeedSection.length; i++) {
+            index++;
+            bytes[index] = ByteUtil.intToBytesLittle2(stepSpeedSection[i])[0];
+            index++;
+            bytes[index] = ByteUtil.intToBytesLittle2(stepSpeedSection[i])[1];
+        }
 
         Log.d("【写配置】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
 
@@ -100,7 +135,7 @@ public class BleAPI {
         bytes[6] = time2Byte()[3];
 
         Log.d("【读配置】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void syncDeviceTime(BleChartChangeCallBack bleChartChange) {
@@ -116,7 +151,7 @@ public class BleAPI {
         bytes[6] = time2Byte()[3];
 
         Log.d("【同步设备时间】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
 
@@ -130,7 +165,7 @@ public class BleAPI {
         bytes[2] = 0x04;
 
         Log.d("【同步本地数据包数】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void queryData() {
@@ -142,7 +177,7 @@ public class BleAPI {
         bytes[2] = 0x05;
 
         Log.d("【请求包】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().writeNo(bytes);
+        BleTools.getInstance().writeNo(bytes);
     }
 
 
@@ -182,7 +217,7 @@ public class BleAPI {
         bytes[2] = 0x08;
 
         Log.d("【结束活动反馈数据】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().writeNo(bytes);
+        BleTools.getInstance().writeNo(bytes);
     }
 
     //读设备信息
@@ -208,7 +243,7 @@ public class BleAPI {
         bytes[2] = 0x09;
 
         Log.d("【读设备信息】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void getVoltage(BleChartChangeCallBack bleChartChange) {
@@ -218,7 +253,19 @@ public class BleAPI {
         bytes[2] = 0x0a;
 
         Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
-       BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, bleChartChange);
+    }
+
+    public static void clearStep() {
+        byte[] bytes = new byte[20];
+        bytes[0] = 0x40;
+        bytes[1] = 0x11;
+        bytes[2] = 0x0b;
+
+        Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
+        BleTools.getInstance().write(bytes, data -> {
+            
+        });
     }
 
 

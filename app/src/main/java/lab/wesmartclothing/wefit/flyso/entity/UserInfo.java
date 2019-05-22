@@ -37,7 +37,7 @@ public class UserInfo implements Serializable {
     private String country;
     private String province;
     private boolean isChange = false;
-    private long registerTime;
+    public long registerTime;
     private int planState;
     private int age;
     private boolean hasInviteCode;
@@ -221,11 +221,18 @@ public class UserInfo implements Serializable {
                 ", scalesMacAddr='" + scalesMacAddr + '\'' +
                 ", sex=" + sex +
                 ", signature='" + signature + '\'' +
-                ", userImg='" + imgUrl + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
                 ", userName='" + userName + '\'' +
                 ", city='" + city + '\'' +
                 ", country='" + country + '\'' +
                 ", province='" + province + '\'' +
+                ", isChange=" + isChange +
+                ", registerTime=" + registerTime +
+                ", planState=" + planState +
+                ", age=" + age +
+                ", hasInviteCode=" + hasInviteCode +
+                ", invitationCode='" + invitationCode + '\'' +
+                ", baselHeat=" + baselHeat +
                 '}';
     }
 }

@@ -89,8 +89,8 @@ public class AccountFragment extends BaseActivity {
         initTopBar();
         initMyDialog();
         otherData();
-        String phone =  MyAPP.gUserInfo.getPhone();
-        mTvPhone.setText(phone);
+        if (MyAPP.gUserInfo != null)
+            mTvPhone.setText(MyAPP.gUserInfo.getPhone());
     }
 
     private void initMyDialog() {

@@ -24,13 +24,58 @@ public class HeartRateBean implements Serializable {
     private int planFlag;//定制课程：1
     private int stepNumber;
     private double complete;
+    private double avgPace;
+    private double cadence;
+    private double kilometers;
+    private int maxPace;
+    private int minPace;
     private double totalCalorie;
+
     private List<HeartRateItemBean> heartList;
 
 
     public HeartRateBean() {
     }
 
+    public double getAvgPace() {
+        return avgPace;
+    }
+
+    public void setAvgPace(double avgPace) {
+        this.avgPace = avgPace;
+    }
+
+    public double getCadence() {
+        return cadence;
+    }
+
+    public void setCadence(double cadence) {
+        this.cadence = cadence;
+    }
+
+    public double getKilometers() {
+        return kilometers;
+    }
+
+    public void setKilometers(double kilometers) {
+        this.kilometers = kilometers;
+    }
+
+    public int getMaxPace() {
+        return maxPace;
+    }
+
+    public void setMaxPace(int maxPace) {
+        this.maxPace = maxPace;
+    }
+
+    public int getMinPace() {
+        return minPace;
+    }
+
+    public void setMinPace(int minPace) {
+        this.minPace = minPace;
+    }
 
     public double getTotalCalorie() {
         return totalCalorie;

@@ -44,6 +44,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
 
 public class RecipesActivity extends BaseActivity {
@@ -101,6 +102,7 @@ public class RecipesActivity extends BaseActivity {
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
     private int totalKcal = 0;
     private UserInfo info;
+    private boolean speechFlag = false;
 
     @Override
     protected int layoutId() {
@@ -122,6 +124,7 @@ public class RecipesActivity extends BaseActivity {
                 mTvChangedDiet.setVisibility(View.GONE);
             }
         });
+
     }
 
     private void initRecycler() {
@@ -194,6 +197,13 @@ public class RecipesActivity extends BaseActivity {
                     .into(mTvTotalKcal);
 //            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
             mTvTip.setText(recommendBean.getPlanAdvice());
+
+            if (!speechFlag) {
+                speechFlag = true;
+                TextSpeakUtils.speakAdd(getString(R.string.speech_recipes, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""),
+                        recommendBean.getPlanAdvice()
+                ));
+            }
         }
         mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
         mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);

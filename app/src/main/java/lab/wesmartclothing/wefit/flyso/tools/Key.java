@@ -15,18 +15,13 @@ public interface Key {
     String ADD_FOOD_DATE = "ADD_FOOD_DATE";
 
     String ADD_FOOD_INFO = "ADD_FOOD_INFO";
-    String ADDED_FOOD_INFO = "ADDED_FOOD_INFO";//已经添加的书屋列表
 
-    String BUNDLE_WEIGHT_HISTORY = "BUNDLE_WEIGHT_HISTORY";//跳转体重信息
-    String BUNDLE_SPORTS_INFO = "BUNDLE_SPORTS_INFO";//跳转运动信息
 
     String BUNDLE_FORCE_BIND = "BUNDLE_FORCE_BIND";//是否强制绑定
-    String BUNDLE_BIND_TYPE = "BUNDLE_BIND_TYPE";//绑定类型
 
 
     String BUNDLE_WEB_URL = "BUNDLE_WEB_URL";//跳转网页URL
 
-    String BUNDLE_RELOGIN = "BUNDLE_RELOGIN";//重新登录
 
     //标题
     String BUNDLE_TITLE = "BUNDLE_TITLE";
@@ -35,12 +30,10 @@ public interface Key {
 
     String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
-    String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";//跳转制定页面
 
     String BUNDLE_DATE_TIME = "BUNDLE_DATE_TIME";//日期
     String BUNDLE_DATA_GID = "BUNDLE_DATA_GID";//数据的GID
 
-    String BUNDLE_IS_CONNECT = "BUNDLE_IS_CONNECT";//传递蓝牙的链接状态
 
     //设置体重目标传递参数
     String BUNDLE_HAS_DAYS = "BUNDLE_HAS_DAYS";
@@ -48,14 +41,10 @@ public interface Key {
     String BUNDLE_STILL_NEED = "BUNDLE_STILL_NEED";
     String BUNDLE_TARGET_WEIGHT = "BUNDLE_TARGET_WEIGHT";
 
-    //最近一次上秤的真实体重
-    String BUNDLE_LAST_WEIGHT = "BUNDLE_LAST_WEIGHT";
 
     //传递体型类型
     String BUNDLE_BODY_INDEX = "BUNDLE_BODY_INDEX";
 
-    //是否结束前一个Fragment
-    String BUNDLE_FINISH_FRAGMENT = "BUNDLE_FINISH_FRAGMENT";
 
     //体重秤实时数据
     String BUNDLE_WEIGHT_UNSTEADY = "BUNDLE_WEIGHT_UNSTEADY";
@@ -72,47 +61,24 @@ public interface Key {
     // 广播
     ///////////////////////////////////////////////////////////////////////////
 
-
-    //瘦身衣连接状态
-    String ACTION_CLOTHING_CONNECT = "ACTION_CLOTHING_CONNECT";
-    String EXTRA_CLOTHING_CONNECT = "EXTRA_CLOTHING_CONNECT";
-
-    //心率更改
-    String ACTION_HEART_RATE_CHANGED = "ACTION_HEART_RATE_CHANGED";
-    String EXTRA_HEART_RATE_CHANGED = "EXTRA_HEART_RATE_CHANGED";
-
-
-    //体脂称连接状态
-    String ACTION_SCALE_CONNECT = "ACTION_SCALE_CONNECT";
-    String EXTRA_SCALE_CONNECT = "EXTRA_SCALE_CONNECT";
-    //蓝牙秤状态改变(开始测量)
-    String ACTION_STATE_START_MEASURE = "ACTION_STATE_START_MEASURE";
-
-
     String ACTION_CLOTHING_STOP = "ACTION_CLOTHING_STOP";
-    String EXTRA_CLOTHING_STOP = "EXTRA_CLOTHING_STOP";
 
 
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK
     ///////////////////////////////////////////////////////////////////////////
-    String QQ_ID = "1106924585";//QQkey：RGcOhc7q8qZMrhxz
-    String WX_ID = "wxaaeb0352e04684de";
-    String WX_SECRET = "0d23407fe42a2665dabe3ea2a958daf9";
-    String WEIBO_ID = "3322261844";
-    String WB_URL = "https://sns.whalecloud.com/sina2/callback";
 
     String LoginType_WEXIN = "WeChat";
     String LoginType_QQ = "QQ";
     String LoginType_WEIBO = "MicroBlog";
 
     //BUGLY
-    String BUGly_id = "11c87579c7";
+    String BUGly_id = "dd2f9fff3f";
 
 
-    String APP_KEY = "Timetofit";
+    String APP_KEY = "wisenfit";
 
-    String COMPANY_KEY = "weSmartClothing";
+    String COMPANY_KEY = "Lightness";
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY

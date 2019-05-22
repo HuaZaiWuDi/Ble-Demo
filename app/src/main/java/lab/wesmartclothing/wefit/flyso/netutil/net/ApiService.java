@@ -89,7 +89,6 @@ public interface ApiService {
     Observable<String> planIndex();
 
 
-
     //更换饮食计划
     @POST("heat/changeDietPlan")
     Observable<String> changeDietPlan(@Body RequestBody body);
@@ -182,6 +181,10 @@ public interface ApiService {
     @POST("athl/courseAthlDetail")
     Observable<String> courseAthlDetail(@Body RequestBody body);
 
+
+    //添加跑步数据信息
+    @POST("athl/addRunningData")
+    Observable<String> addRunningData(@Body RequestBody body);
 
     ///////////////////////////////////////////////////////////////////////////
     // 登录
@@ -336,7 +339,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("user/verifyInvitationCode")
     Observable<String> verifyInvitationCode(@Field("invitationCode") String invitationCode);
-
 
 
     //获取报告信息列表

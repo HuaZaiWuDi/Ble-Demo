@@ -56,8 +56,8 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
-import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -87,6 +87,8 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.TargetDetailsFrag
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
+import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.CountDownView;
@@ -487,11 +489,11 @@ public class SlimmingFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        List<SportingDetailBean.RealAthlListBean> realAthlList = JSON.parseObject(s, new TypeToken<List<SportingDetailBean.RealAthlListBean>>() {
+                        List<HeartRateItemBean> realAthlList = JSON.parseObject(s, new TypeToken<List<HeartRateItemBean>>() {
                         }.getType());
                         List<Integer> realLists = new ArrayList<>();
-                        for (SportingDetailBean.RealAthlListBean bean : realAthlList) {
-                            realLists.add(bean.getHeartRate());
+                        for (HeartRateItemBean bean : realAthlList) {
+                            realLists.add(HeartRateUtil.reversePace(bean.getPace()));
                         }
                         lineChartUtils.setRealTimeData(realLists);
                         mLineChart.animateX(1000);
@@ -687,10 +689,13 @@ public class SlimmingFragment extends BaseAcFragment {
                 .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .into(mTvIngestionHeat);
 
-
-        if (warning && !TextSpeakUtils.isSpeak() && lastKcal != heatInfoVO.getAbleIntake()) {
+        if (lastKcal != heatInfoVO.getAbleIntake()) {
             lastKcal = heatInfoVO.getAbleIntake();
-            TextSpeakUtils.speakFlush("主人你吃的太多啦，今天不要再吃了");
+            if (warning) {
+                TextSpeakUtils.speakAdd("主人你吃的太多啦，今天不要再吃了");
+            } else {
+                TextSpeakUtils.speakAdd("您今天还可以吃" + Number2Chinese.number2Chinese(lastKcal + "") + "大卡的食物");
+            }
         }
 
         mCircleProgressBar.setProgressColor(ContextCompat.getColor(mContext, warning ? R.color.red : R.color.orange_FF7200));
@@ -980,6 +985,7 @@ public class SlimmingFragment extends BaseAcFragment {
             if (tipDialog.getTipDialog() != null) {
                 tipDialog.getTipDialog().setOnDismissListener(dialogInterface -> {
                     if (BleTools.getInstance().isConnect()) {
+
                         if (isPlan) {
                             if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                                 bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));

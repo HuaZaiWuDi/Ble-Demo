@@ -14,12 +14,13 @@ public class ByteUtil {
 
 
     /**
+     * 小端模式
      * 将int数值转换为占四个字节的byte数组，本方法适用于(低位在前，高位在后)的顺序。 和bytesToInt（）配套使用 小端模式
      *
      * @param value 要转换的int值
      * @return byte数组
      */
-    public static byte[] intToBytesD4(int value) {
+    public static byte[] intToBytesLittle(int value) {
         byte[] src = new byte[4];
         src[0] = (byte) (value & 0xFF);
         src[1] = (byte) ((value >> 8) & 0xFF);
@@ -29,12 +30,13 @@ public class ByteUtil {
     }
 
     /**
+     * 小端模式
      * 将int数值转换为占四个字节的byte数组，本方法适用于(低位在前，高位在后)的顺序。 和bytesToInt（）配套使用 小端模式
      *
      * @param value 要转换的int值
      * @return byte数组
      */
-    public static byte[] longToBytesD4(long value) {
+    public static byte[] longToBytesLittle(long value) {
         byte[] src = new byte[4];
         src[0] = (byte) (value & 0xFF);
         src[1] = (byte) ((value >> 8) & 0xFF);
@@ -45,9 +47,10 @@ public class ByteUtil {
 
 
     /**
+     * 大端模式
      * 将int数值转换为占四个字节的byte数组，本方法适用于(高位在前，低位在后)的顺序。  和bytesToInt2（）配套使用 大端模式
      */
-    public static byte[] intToBytesG4(int value) {
+    public static byte[] intToBytesBig(int value) {
         byte[] src = new byte[4];
         src[0] = (byte) ((value >> 24) & 0xFF);
         src[1] = (byte) ((value >> 16) & 0xFF);
@@ -57,13 +60,14 @@ public class ByteUtil {
     }
 
     /**
+     * 小端模式
      * byte数组中取int数值，本方法适用于(低位在前，高位在后)的顺序，和和intToBytes（）配套使用
      *
      * @param src    byte数组
      * @param offset 从数组的第offset位开始
      * @return int数值
      */
-    public static int bytesToIntD4(byte[] src, int offset) {
+    public static int bytesToIntLittle(byte[] src, int offset) {
         int value;
         value = (int) ((src[offset] & 0xFF)
                 | ((src[offset + 1] & 0xFF) << 8)
@@ -73,13 +77,14 @@ public class ByteUtil {
     }
 
     /**
+     * 小端模式
      * byte数组中取int数值，本方法适用于(低位在前，高位在后)的顺序，和和intToBytes（）配套使用
      *
      * @param src    byte数组
      * @param offset 从数组的第offset位开始
      * @return int数值
      */
-    public static long bytesToLongD4(byte[] src, int offset) {
+    public static long bytesToLongLittle(byte[] src, int offset) {
         if (src.length < 4) return 0;
         long value;
         value = (int) ((src[offset] & 0xFF)
@@ -91,13 +96,14 @@ public class ByteUtil {
 
 
     /**
+     * 大端模式
      * byte数组中取int数值，本方法适用于(高位在前，低位在后)的顺序，和和intToBytes（）配套使用
      *
      * @param src    byte数组
      * @param offset 从数组的第offset位开始
      * @return int数值
      */
-    public static int bytesToIntG4(byte[] src, int offset) {
+    public static int bytesToIntBig(byte[] src, int offset) {
         int value;
         value = (int) (((src[offset] & 0xFF) << 24)
                 | ((src[offset + 1] & 0xFF) << 16)
@@ -108,6 +114,7 @@ public class ByteUtil {
 
 
     /**
+     * 小端模式
      * int到byte[]
      * <p>
      * byte数组中取int数值，本方法适用于(低位在前，高位在后)的顺序，bytes2ToInt（）配套使用
@@ -115,7 +122,7 @@ public class ByteUtil {
      * @param i
      * @return
      */
-    public static byte[] intToBytesD2(int i) {
+    public static byte[] intToBytesLittle2(int i) {
         byte[] result = new byte[2];
         result[0] = (byte) (i & 0xFF);
         result[1] = (byte) ((i >> 8) & 0xFF);
@@ -124,13 +131,14 @@ public class ByteUtil {
 
 
     /**
+     * 小端模式
      * bytes到int
      * <p>
      * byte数组中取int数值，本方法适用于(低位在前，高位在后)的顺序，bytes2ToInt（）配套使用
      *
      * @return
      */
-    public static int bytesToIntD2(byte[] bytes) {
+    public static int bytesToIntLittle2(byte[] bytes) {
         int value = 0;
         value = (int) ((bytes[0] & 0xFF)
                 | ((bytes[1] & 0xFF) << 8));
@@ -138,6 +146,7 @@ public class ByteUtil {
     }
 
     /**
+     * 大端模式
      * int到byte[]
      * <p>
      * byte数组中取int数值，本方法适用于(高位在前，低位在后)的顺序，bytes2ToInt（）配套使用
@@ -145,7 +154,7 @@ public class ByteUtil {
      * @param i
      * @return
      */
-    public static byte[] intToBytesG2(int i) {
+    public static byte[] intToBytesBig2(int i) {
         byte[] result = new byte[2];
         result[0] = (byte) ((i >> 8) & 0xFF);
         result[1] = (byte) (i & 0xFF);
@@ -154,13 +163,14 @@ public class ByteUtil {
 
 
     /**
+     * 大端模式
      * bytes到int
      * <p>
      * byte数组中取int数值，本方法适用于(高位在前，低位在后)的顺序，bytes2ToInt（）配套使用
      *
      * @return
      */
-    public static int bytesToIntG2(byte[] bytes) {
+    public static int bytesToIntBig2(byte[] bytes) {
         int value = 0;
         value = (int) ((bytes[1] & 0xFF)
                 | ((bytes[0] & 0xFF) << 8));

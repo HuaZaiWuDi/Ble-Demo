@@ -113,70 +113,77 @@
             </RelativeLayout>
 
 
-            <LinearLayout
-                android:id="@+id/layout_sports"
+            <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_kcal"
                 android:layout_marginTop="32dp"
-                android:orientation="horizontal">
+                app:alignContent="center"
+                app:alignItems="center"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                app:maxLine="2"
+                >
 
-
+                <!--平均配速-->
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@mipmap/icon_av_heartrate"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="平均心率"
-                        android:textColor="@color/GrayWrite"
-                        android:textSize="11sp"/>
-
-
-                    <TextView
-                        android:id="@+id/tv_avHeartRate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        tools:text="110"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_maxHeart"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    tools:visibility="gone">
+                    app:layout_flexBasisPercent="33%">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@mipmap/icon_max_heartrate"/>
+                        android:layout_margin="10dp"
+                        android:background="@mipmap/ic_average_pace"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="最大心率"
+                        android:text="平均配速"
                         android:textColor="@color/GrayWrite"
                         android:textSize="11sp"/>
 
 
                     <TextView
-                        android:id="@+id/tv_maxHeartRate"
+                        android:id="@+id/tv_avPace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="110"/>
+
+                </LinearLayout>
+
+                <!--最大配速-->
+                <LinearLayout
+                    android:id="@+id/layout_maxPace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_flexBasisPercent="33%"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@mipmap/ic_maximum_pace"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="最大配速"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_maxPace"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="--"
@@ -187,15 +194,16 @@
 
                 </LinearLayout>
 
+                <!--消耗热量-->
                 <LinearLayout
                     android:id="@+id/layout_sportingKcal"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:visibility="gone"
-                    tools:visibility="visible">
+                    app:layout_flexBasisPercent="33%"
+                    tools:visibility="gone">
 
                     <ImageView
                         android:layout_width="36dp"
@@ -214,25 +222,26 @@
                         android:id="@+id/tv_sportskcal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="00'00''"
+                        android:text="--kcal"
                         android:textColor="@color/white"
                         android:textSize="24sp"
-                        tools:text="12'02''"/>
+                        tools:text="--kcal"/>
 
                 </LinearLayout>
 
-
+                <!--运动时长-->
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    app:layout_flexBasisPercent="33%">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@mipmap/icon_time"/>
+                        android:layout_margin="10dp"
+                        android:background="@mipmap/ic_time"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -254,8 +263,76 @@
 
                 </LinearLayout>
 
+                <!--步频-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_flexBasisPercent="33%">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@mipmap/ic_step_frequency"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="步频"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_stepFrequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="--"/>
+
+
+                </LinearLayout>
+
+                <!--运动距离-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_flexBasisPercent="33%">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@mipmap/ic_distance"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="距离"
+                        android:textColor="@color/GrayWrite"
+                        android:textSize="11sp"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--km"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        tools:text="0km"
+                        />
+
+
+                </LinearLayout>
+
+            </com.google.android.flexbox.FlexboxLayout>
 
 
             <LinearLayout
@@ -443,7 +520,6 @@
                 android:id="@+id/layout_legend"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layout_sports"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginRight="8dp"
@@ -540,7 +616,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:gravity="center"
-                            android:text="bpm"
+                            android:text="pace"
                             android:textColor="@color/white"
                             android:textSize="6sp"/>
 
@@ -603,7 +679,7 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="无氧"
+                                android:text="@string/anaerobic"
                                 android:textColor="@color/GrayWrite"
                                 android:textSize="11sp"/>
 
@@ -626,7 +702,7 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="有氧"
+                                android:text="@string/aerobic"
                                 android:textColor="@color/GrayWrite"
                                 android:textSize="11sp"/>
 
@@ -650,7 +726,7 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="燃脂"
+                                android:text="@string/grease"
                                 android:textColor="@color/GrayWrite"
                                 android:textSize="11sp"/>
 
@@ -673,7 +749,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="热身"
+                                android:text="@string/warm"
                                 android:textColor="@color/GrayWrite"
                                 android:textSize="11sp"/>
 
@@ -696,7 +772,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="静息"
+                                android:text="@string/calm"
                                 android:textColor="@color/GrayWrite"
                                 android:textSize="11sp"
                                 />

@@ -50,7 +50,6 @@
             android:value="true"/>
 
 
-
         <!-- 屏幕适配 -->
         <meta-data
             android:name="design_width"

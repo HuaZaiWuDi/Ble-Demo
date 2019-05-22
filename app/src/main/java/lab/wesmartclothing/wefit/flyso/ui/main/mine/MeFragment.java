@@ -114,7 +114,8 @@ public class MeFragment extends BaseAcFragment {
                 .into(mTvSportingTime);
 
         UserInfo userInfo = MyAPP.gUserInfo;
-        mTvInvitation.setText(userInfo.getInvitationCode());
+        if (userInfo != null)
+            mTvInvitation.setText(userInfo.getInvitationCode());
     }
 
     @Override

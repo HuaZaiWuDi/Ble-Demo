@@ -338,23 +338,16 @@ public class UserInfofragment extends BaseActivity {
                     .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                     .setContent("您已经修改信息\n是否保存？")
                     .setSure("保存")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (userImgIsChange) {
-                                uploadImage();
-                            } else {
-                                requestSaveUserInfo();
-                            }
+                    .setSureListener(v -> {
+                        if (userImgIsChange) {
+                            uploadImage();
+                        } else {
+                            requestSaveUserInfo();
                         }
                     })
                     .setCancel("退出")
-                    .setCancelListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            RxActivityUtils.finishActivity();
-                        }
-                    });
+                    .setCancelListener(v ->
+                            RxActivityUtils.finishActivity());
             rxDialog.show();
         } else
             super.onBackPressed();
