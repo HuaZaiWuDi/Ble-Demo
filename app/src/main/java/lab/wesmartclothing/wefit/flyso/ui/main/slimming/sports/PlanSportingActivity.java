@@ -150,7 +150,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     private boolean pause = false;
 
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
-    private int heartRateFlag = 0;
     private int kilometreFlag = 0;
 
     @Override
@@ -392,12 +391,13 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                         //每km播报一次
                         if (kilometreFlag != (int) kilometre) {
                             kilometreFlag = (int) kilometre;
-                            speakAdd(getString(R.string.Speech_eachKm,
-                                    Number2Chinese.number2Chinese((int) kilometre + ""),
+                            speakAdd(getString(R.string.Speech_each8Min,
+                                    Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(kilometre, 2)),
                                     Number2Chinese.number2Chinese((int) currentKcal + ""),
                                     Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
                                             + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
-                                    Number2Chinese.number2Chinese((int) currentTime / 60 + "")
+                                    Number2Chinese.number2Chinese(currentTime / 60 + ""),
+                                    Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingScore, 1))
                             ));
                         }
                     }
@@ -490,7 +490,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             speed = "保持当前";
         }
 
-        speakAdd(getString(R.string.speech_completeStage, completeStage, speed, nextBean.strRange(mContext)));
+        speakAdd(getString(R.string.speech_completeStage, completeStage + "", speed, nextBean.strRange(mContext)));
 
     }
 
@@ -535,15 +535,15 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
 
             int score = 0;
             float abs = Math.abs(defaultSet.getEntryForIndex(count).getY() - currentValue);
-            if (abs <= 2) {
+            if (abs <= 10) {
                 score = 50;
-            } else if (abs <= 4) {
+            } else if (abs <= 20) {
                 score = 40;
-            } else if (abs <= 6) {
+            } else if (abs <= 30) {
                 score = 30;
-            } else if (abs <= 8) {
+            } else if (abs <= 40) {
                 score = 20;
-            } else if (abs <= 10) {
+            } else if (abs <= 50) {
                 score = 20;
             }
             totalSum += score;
@@ -673,24 +673,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         public void enterTimer() {
             currentTime++;
 
-            heartRateFlag++;
-            //10秒钟没有配速则，显示‘--’，有配速则重置为标记为0
-            if (heartRateFlag == 5) {
-                mTvAvHeartRate.setText("--");
-            }
 
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
-//            //每8分钟播报一次
-//            if (currentTime % (8 * 60) == 0) {
-//                speakAdd(getString(R.string.Speech_each8Min,
-//                        Number2Chinese.number2Chinese((int) kilometre + ""),
-//                        Number2Chinese.number2Chinese((int) currentKcal + ""),
-//                        Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
-//                                + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
-//                        Number2Chinese.number2Chinese((int) currentTime / 60 + ""),
-//                        Number2Chinese.number2Chinese(sportingScore + "")
-//                ));
-//            }
 
             if (type == 4) {
                 limitTimer.startTimer();

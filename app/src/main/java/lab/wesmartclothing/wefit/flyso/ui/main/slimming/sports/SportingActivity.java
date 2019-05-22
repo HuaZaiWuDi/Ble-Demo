@@ -359,7 +359,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                         if (kilometreFlag != (int) kilometre) {
                             kilometreFlag = (int) kilometre;
                             speakAdd(getString(R.string.Speech_eachKm,
-                                    Number2Chinese.number2Chinese((int) kilometre + ""),
+                                    Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(kilometre, 2)),
                                     Number2Chinese.number2Chinese((int) currentKcal + ""),
                                     Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
                                             + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",

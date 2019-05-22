@@ -78,7 +78,7 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all {
                 // apk_渠道名-版本号-版本名称-编译时间.apk
-                outputFileName  = "TimetofitLightness-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                outputFileName = "TimetofitLightness-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
                         "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
             }
         }
@@ -120,7 +120,6 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
-
 
 }
 

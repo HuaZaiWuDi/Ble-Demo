@@ -23,10 +23,10 @@ public class TextSpeakUtils {
 //                    mTextToSpeech.setPitch(0.8f);
                 RxLogUtils.e("支持中文:" + result);
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    RxLogUtils.e("支持中文:");
-                } else {
                     //不支持中文就将语言设置为英文
                     mTextToSpeech.setLanguage(Locale.US);
+                } else {
+                    RxLogUtils.e("支持中文:");
                 }
             }
         });

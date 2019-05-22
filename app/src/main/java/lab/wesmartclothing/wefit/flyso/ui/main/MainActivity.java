@@ -125,7 +125,6 @@ public class MainActivity extends BaseALocationActivity {
                     }
                 });
 
-
     }
 
     public void initView() {

@@ -103,6 +103,7 @@ public class RecipesActivity extends BaseActivity {
     private int totalKcal = 0;
     private UserInfo info;
     private boolean speechFlag = false;
+    private long dateTime = 0;
 
     @Override
     protected int layoutId() {
@@ -157,6 +158,7 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void foodRecipes(long foodTime) {
+        dateTime = foodTime;
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .fetchDietPlan(NetManager.fetchRequest(JSON.toJSONString(new DietPlanBean(foodTime)))))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -198,13 +200,15 @@ public class RecipesActivity extends BaseActivity {
 //            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
             mTvTip.setText(recommendBean.getPlanAdvice());
 
-            if (!speechFlag) {
+            //只播放今天的
+            if (!speechFlag && RxTimeUtils.getIntervalByNow(dateTime, RxConstUtils.TimeUnit.DAY) < 0) {
                 speechFlag = true;
                 TextSpeakUtils.speakAdd(getString(R.string.speech_recipes, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""),
                         recommendBean.getPlanAdvice()
                 ));
             }
         }
+
         mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
         mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);
     }

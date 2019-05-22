@@ -109,7 +109,7 @@
     <string name="speech_sportPlay">运动已恢复</string>
     <string name="speech_sportFast">请快一点，保持匀速有节奏的运动才能高效瘦身</string>
     <string name="speech_sportSlow">请慢一点，保持匀速有节奏的运动才能高效瘦身</string>
-    <string name="speech_completeStage">恭喜您完成第%1$d阶段训练，请%2$s速度至%3$s区间</string>
+    <string name="speech_completeStage">恭喜您完成第%1$s阶段训练，请%2$s速度至%3$s区间</string>
 
     <string name="tipOpenBlueTooth">检测到您未开启手机蓝牙，开启蓝牙</string>
     <string name="checkSporting">检测到您正在运动，点击查看</string>
