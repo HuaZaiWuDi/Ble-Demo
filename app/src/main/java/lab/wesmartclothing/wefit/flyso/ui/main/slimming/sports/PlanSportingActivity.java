@@ -680,17 +680,17 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
             }
 
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
-            //每8分钟播报一次
-            if (currentTime % (8 * 60) == 0) {
-                speakAdd(getString(R.string.Speech_each8Min,
-                        Number2Chinese.number2Chinese((int) kilometre + ""),
-                        Number2Chinese.number2Chinese((int) currentKcal + ""),
-                        Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
-                                + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
-                        Number2Chinese.number2Chinese((int) currentTime / 60 + ""),
-                        Number2Chinese.number2Chinese(sportingScore + "")
-                ));
-            }
+//            //每8分钟播报一次
+//            if (currentTime % (8 * 60) == 0) {
+//                speakAdd(getString(R.string.Speech_each8Min,
+//                        Number2Chinese.number2Chinese((int) kilometre + ""),
+//                        Number2Chinese.number2Chinese((int) currentKcal + ""),
+//                        Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
+//                                + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
+//                        Number2Chinese.number2Chinese((int) currentTime / 60 + ""),
+//                        Number2Chinese.number2Chinese(sportingScore + "")
+//                ));
+//            }
 
             if (type == 4) {
                 limitTimer.startTimer();
