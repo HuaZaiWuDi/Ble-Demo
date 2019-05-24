@@ -188,11 +188,11 @@ public class HeartRateUtil {
         }
     }
 
-    //一分钟只上传一次，防止重复上传
+    //10s只上传一次，防止重复上传
     public synchronized void uploadHeartRate() {
         RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_PLAN, HeartRateBean.class)
                 .map(new CacheResult.MapFunc<HeartRateBean>())
-                .throttleFirst(1, TimeUnit.MINUTES)
+                .throttleFirst(10, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
                     protected void _onNext(HeartRateBean mHeartRateBean) {
@@ -202,7 +202,7 @@ public class HeartRateUtil {
 
         RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_FREE, HeartRateBean.class)
                 .map(new CacheResult.MapFunc<HeartRateBean>())
-                .throttleFirst(1, TimeUnit.MINUTES)
+                .throttleFirst(10, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
                     protected void _onNext(HeartRateBean mHeartRateBean) {

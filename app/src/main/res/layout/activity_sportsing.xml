@@ -120,13 +120,14 @@
                 tools:text="68.7kcal"/>
 
             <TextView
+                android:id="@+id/tipWeigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_kcal"
                 android:layout_centerHorizontal="true"
                 android:text="@string/please_weigh"
                 android:textColor="@color/GrayWrite"
-                android:textSize="12sp"/>
+                android:textSize="11sp"/>
 
 
             <LinearLayout

@@ -136,7 +136,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     RelativeLayout mParent;
     @BindView(R.id.sw_heat)
     SwitchView mSwHeat;
-
+    @BindView(R.id.tipWeigh)
+    TextView mTipWeigh;
 
     private Button btn_Connect;
     private int currentTime = 0, stepSpeed = 0, type = -1, reversePace;//运动上一次状态
@@ -175,6 +176,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                     .setSureListener(v -> {
                         RxActivityUtils.finishActivity();
                     }).show();
+        } else {
+            mTipWeigh.setVisibility(View.GONE);
         }
     }
 

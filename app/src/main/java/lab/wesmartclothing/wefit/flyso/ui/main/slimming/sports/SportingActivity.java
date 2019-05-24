@@ -134,6 +134,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
     RelativeLayout mParent;
     @BindView(R.id.sw_heat)
     SwitchView mSwHeat;
+    @BindView(R.id.tipWeigh)
+    TextView mTipWeigh;
 
     private Button btn_Connect;
     private int currentTime = 0;
@@ -190,6 +192,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                     .setSureListener(v -> {
                         RxActivityUtils.finishActivity();
                     }).show();
+        } else {
+            mTipWeigh.setVisibility(View.GONE);
         }
 
     }
