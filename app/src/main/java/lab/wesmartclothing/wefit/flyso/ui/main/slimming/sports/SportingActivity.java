@@ -180,6 +180,18 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                 .into(mTvKcal);
 
         speakAdd(getString(R.string.speech_sprotStart));
+
+
+//        if (SPUtils.getFloat(SPKey.SP_realWeight, 0) == 0) {
+//            new RxDialogSure(mContext)
+//                    .setTitle(getString(R.string.sportTip))
+//                    .setContent("请使用体脂称记录体重信息，以便准确记算运动消耗的卡路里")
+//                    .setSure(getString(R.string.ok))
+//                    .setSureListener(v -> {
+//                        onBackPressed();
+//                    }).show();
+//        }
+
     }
 
 
@@ -363,7 +375,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                                     Number2Chinese.number2Chinese((int) currentKcal + ""),
                                     Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
                                             + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
-                                    Number2Chinese.number2Chinese((int) currentTime / 60 + "")
+                                    Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
+                                            (currentTime % 60 == 0 ? "" : Number2Chinese.number2Chinese(currentTime % 60 + "") + "秒")
                             ));
                         }
 
@@ -633,7 +646,8 @@ public class SportingActivity extends BaseActivity implements SportInterface {
         } else {
             timer.stopTimer();
             speakAdd(getString(R.string.speech_freeSportFinish,
-                    Number2Chinese.number2Chinese((currentTime / 60) + ""),
+                    Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
+                            (currentTime % 60 == 0 ? "" : Number2Chinese.number2Chinese(currentTime % 60 + "") + "秒"),
                     Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1))));
             //如果检测到运动已经结束，直接保存数据并进入详情页
             saveHeartRate();

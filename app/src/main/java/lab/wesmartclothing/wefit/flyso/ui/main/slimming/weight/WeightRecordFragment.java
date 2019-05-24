@@ -371,14 +371,16 @@ public class WeightRecordFragment extends BaseActivity {
                 .build(mSuitlines);
 
         mSuitlines.setLineChartSelectItemListener(valueX -> {
-            mTvCurWeight.setText(RxFormatValue.fromat4S5R(list.get(valueX).getWeight(), 1));
-            mTvBodyFat.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBodyFat(), 1));
-            mTvMuscle.setText(RxFormatValue.fromat4S5R((list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100f), 1));
-            mTvBmi.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBmi(), 1));
-            mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
-            currentWeightInfo = list.get(valueX);
+            if (!list.isEmpty()) {
+                mTvCurWeight.setText(RxFormatValue.fromat4S5R(list.get(valueX).getWeight(), 1));
+                mTvBodyFat.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBodyFat(), 1));
+                mTvMuscle.setText(RxFormatValue.fromat4S5R((list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100f), 1));
+                mTvBmi.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBmi(), 1));
+                mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
+                currentWeightInfo = list.get(valueX);
 
-            fetchOneDayWeightList(list.get(valueX).getGid());
+                fetchOneDayWeightList(list.get(valueX).getGid());
+            }
         });
 
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {

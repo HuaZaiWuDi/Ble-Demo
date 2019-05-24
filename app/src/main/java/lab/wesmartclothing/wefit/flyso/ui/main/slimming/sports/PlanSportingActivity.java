@@ -166,6 +166,16 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         initTypeface();
         finishAnim();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
+
+//        if (SPUtils.getFloat(SPKey.SP_realWeight, 0) == 0) {
+//            new RxDialogSure(mContext)
+//                    .setTitle(getString(R.string.sportTip))
+//                    .setContent("请使用体脂称记录体重信息，以便准确记算运动消耗的卡路里")
+//                    .setSure(getString(R.string.ok))
+//                    .setSureListener(v -> {
+//                        onBackPressed();
+//                    }).show();
+//        }
     }
 
     /**
@@ -182,8 +192,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
      * 暂停或继续运动
      */
     private void startOrPauseSport() {
-
-
         Drawable drawable = null;
         if (pause) {
             mQMUIAppBarLayout.setTitle(R.string.speech_sportPause);
@@ -396,7 +404,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                                     Number2Chinese.number2Chinese((int) currentKcal + ""),
                                     Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
                                             + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
-                                    Number2Chinese.number2Chinese(currentTime / 60 + ""),
+                                    Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
+                                            (currentTime % 60 == 0 ? "" : Number2Chinese.number2Chinese(currentTime % 60 + "") + "秒"),
                                     Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(sportingScore, 1))
                             ));
                         }
@@ -491,7 +500,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         }
 
         speakAdd(getString(R.string.speech_completeStage, completeStage + "", speed, nextBean.strRange(mContext)));
-
     }
 
 
@@ -528,10 +536,13 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
 
             mHeartRateBean.setComplete(count / tatolCount);
             //运动结束
-            if (count >= tatolCount) {
+            if (count == tatolCount) {
                 sportingFinish(true);
                 return;
             }
+
+            //防止下标越界
+            if (count > tatolCount) return;
 
             int score = 0;
             float abs = Math.abs(defaultSet.getEntryForIndex(count).getY() - currentValue);

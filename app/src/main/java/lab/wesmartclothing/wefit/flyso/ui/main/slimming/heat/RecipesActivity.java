@@ -103,7 +103,7 @@ public class RecipesActivity extends BaseActivity {
     private int totalKcal = 0;
     private UserInfo info;
     private boolean speechFlag = false;
-    private long dateTime = 0;
+    private long currentTime = 0;
 
     @Override
     protected int layoutId() {
@@ -158,7 +158,7 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void foodRecipes(long foodTime) {
-        dateTime = foodTime;
+        currentTime = foodTime;
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .fetchDietPlan(NetManager.fetchRequest(JSON.toJSONString(new DietPlanBean(foodTime)))))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -197,11 +197,11 @@ public class RecipesActivity extends BaseActivity {
                     .append(totalKcal + "").setProportion(1.5f)
                     .append("kcal")
                     .into(mTvTotalKcal);
-//            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
             mTvTip.setText(recommendBean.getPlanAdvice());
-
             //只播放今天的
-            if (!speechFlag && RxTimeUtils.getIntervalByNow(dateTime, RxConstUtils.TimeUnit.DAY) < 0) {
+            if (!speechFlag &&
+                    RxFormat.setFormatDate(currentTime, RxFormat.Date)
+                            .equals(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date))) {
                 speechFlag = true;
                 TextSpeakUtils.speakAdd(getString(R.string.speech_recipes, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""),
                         recommendBean.getPlanAdvice()

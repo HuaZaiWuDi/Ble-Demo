@@ -33,7 +33,7 @@
         android:lineSpacingExtra="8dp"
         android:text="@string/tv_firstTip"
         android:textColor="#FF312C35"
-        android:textSize="12sp"/>
+        android:textSize="11.5sp"/>
 
 
     <com.vondear.rxtools.view.layout.RxRelativeLayout
@@ -92,11 +92,11 @@
 
 
     <TextView
-        android:minLines="3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="19dp"
         android:lineSpacingExtra="8dp"
+        android:minLines="3"
         android:text="@string/tv_firstTip2"
         android:textColor="@color/GrayWrite"
         android:textSize="10sp"/>

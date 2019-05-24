@@ -199,6 +199,8 @@ public class SportsDetailsFragment extends BaseActivity {
         initTypeface();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
         lineChartUtils.setPlanLineColor(Color.parseColor("#3F3943"), Color.parseColor("#FFFFFF"));
+
+
     }
 
     private void initTopBar() {
@@ -216,10 +218,6 @@ public class SportsDetailsFragment extends BaseActivity {
         mLayoutQRcode.setVisibility(startShare ? View.VISIBLE : View.GONE);
 
         if (startShare) {
-            RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
-                    .codeSide(800)
-                    .logoBitmap(R.mipmap.icon_app_lightness_w, getResources())
-                    .into(mImgQRcode);
 
             //延迟500毫秒，需要等到控件显示
             new Handler().postDelayed(() -> {
@@ -260,6 +258,11 @@ public class SportsDetailsFragment extends BaseActivity {
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvUserName);
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
+
+        RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
+                .codeSide(800)
+                .logoBitmap(R.mipmap.icon_app_lightness_w, getResources())
+                .into(mImgQRcode);
     }
 
     @Override
@@ -377,32 +380,32 @@ public class SportsDetailsFragment extends BaseActivity {
         int aerobicCalorie = heartRateBean.getAerobicData();
         int anaerobicCalorie = heartRateBean.getAnaerobicData();
         int limitCalorie = heartRateBean.getLimitData();
-        int totalKcal = restCalorie + warmCalorie + greaseCalorie + aerobicCalorie + anaerobicCalorie + limitCalorie;
+        int totalKcal = warmCalorie + greaseCalorie + aerobicCalorie + anaerobicCalorie + limitCalorie;
 
         if (totalKcal == 0) return;
-        mBarCalm.setProgress(restCalorie * 100 / totalKcal);
-        if (restCalorie * 100 / totalKcal > 0)
-            mTvCalm.setText((int) (restCalorie * 100 / totalKcal) + "%");
+//        mBarCalm.setProgress(restCalorie * 100 / totalKcal);
+//        if (restCalorie * 100 / totalKcal > 0)
+//            mTvCalm.setText((int) (restCalorie * 100 / totalKcal) + "%");
 
         mBarWarm.setProgress(warmCalorie * 100 / totalKcal);
         if (warmCalorie * 100 / totalKcal > 0)
-            mTvWarm.setText((int) (warmCalorie * 100 / totalKcal) + "%");
+            mTvWarm.setText(RxFormatValue.fromat4S5R(warmCalorie * 100f / totalKcal, 0) + "%");
 
         mBarGrease.setProgress(greaseCalorie * 100 / totalKcal);
         if (greaseCalorie * 100 / totalKcal > 0)
-            mTvGrease.setText(((int) greaseCalorie * 100 / totalKcal) + "%");
+            mTvGrease.setText(RxFormatValue.fromat4S5R(greaseCalorie * 100f / totalKcal, 0) + "%");
 
         mBarAerobic.setProgress(aerobicCalorie * 100 / totalKcal);
         if (aerobicCalorie * 100 / totalKcal > 0)
-            mTvAerobic.setText(((int) aerobicCalorie * 100 / totalKcal) + "%");
+            mTvAerobic.setText(RxFormatValue.fromat4S5R(aerobicCalorie * 100f / totalKcal, 0) + "%");
 
         mBarAnaerobic.setProgress(anaerobicCalorie * 100 / totalKcal);
         if (anaerobicCalorie * 100 / totalKcal > 0)
-            mTvAnaerobic.setText(((int) anaerobicCalorie * 100 / totalKcal) + "%");
+            mTvAnaerobic.setText(RxFormatValue.fromat4S5R(anaerobicCalorie * 100f / totalKcal, 0) + "%");
 
         mBarLimit.setProgress(limitCalorie * 100 / totalKcal);
         if (limitCalorie * 100 / totalKcal > 0)
-            mTvLimit.setText(((int) limitCalorie * 100 / totalKcal) + "%");
+            mTvLimit.setText(RxFormatValue.fromat4S5R(limitCalorie * 100f / totalKcal, 0) + "%");
     }
 
     private void heartRateStatistics(List<HeartRateItemBean> realAthlList) {

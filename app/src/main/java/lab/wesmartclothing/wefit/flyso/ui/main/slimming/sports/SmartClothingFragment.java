@@ -302,12 +302,7 @@ public class SmartClothingFragment extends BaseActivity {
                     .setForegroundColor(getResources().getColor(R.color.red))
                     .setLength(12, tipOpenBlueTooth.length());
             mBtnStrongTip.setText(builder);
-            mBtnStrongTip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BleTools.getBleManager().enableBluetooth();
-                }
-            });
+            mBtnStrongTip.setOnClickListener(v -> BleTools.getBleManager().enableBluetooth());
         }
     }
 
@@ -344,9 +339,8 @@ public class SmartClothingFragment extends BaseActivity {
                 .add(timeLine)
                 .build(mSuitlines);
 
-        mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
-            @Override
-            public void selectItem(int valueX) {
+        mSuitlines.setLineChartSelectItemListener(valueX -> {
+            if (!list.isEmpty()) {
                 AthleticsInfo.ListBean.DayAthlBean bean = list.get(valueX).getDayAthl();
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getAthlDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getCalorie(), 1));
@@ -354,12 +348,10 @@ public class SmartClothingFragment extends BaseActivity {
             }
         });
 
-        mSuitlines.setLineChartStopItemListener(new SuitLines.LineChartStopItemListener() {
-            @Override
-            public void stopItem(int valueX) {
-                RxLogUtils.e("滑动停止：" + valueX);
+        mSuitlines.setLineChartStopItemListener(valueX -> {
+            RxLogUtils.e("滑动停止：" + valueX);
+            if (!list.isEmpty())
                 adapter.setNewData(list.get(valueX).getAthlList());
-            }
         });
 
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
@@ -373,16 +365,10 @@ public class SmartClothingFragment extends BaseActivity {
 
             }
         });
-
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("运动记录");
         btn_Connect = mQMUIAppBarLayout.addRightTextButton(
                 getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ? R.string.unBind : BleTools.getInstance().isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);

@@ -330,6 +330,30 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         initWareView();
         initTextTypeface();
         initChart(mMLineChart);
+        initShare();
+    }
+
+    private void initShare() {
+        RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
+                .codeSide(800)
+                .logoBitmap(R.mipmap.icon_app_round, getResources())
+                .into(mImgQRcode);
+
+        UserInfo info = MyAPP.gUserInfo;
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
+
+
+        RxTextUtils.getBuilder(info.getUserName() + "\n")
+                .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .into(mTvUserName);
+        mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
+
+        RxTextUtils.getBuilder("让 你 健 康 瘦\n")
+                .append(getString(R.string.appName) + "v" + RxDeviceUtils.getAppVersionName())
+                .setProportion(0.5f)
+                .into(mTvAppVersion);
 
     }
 
@@ -953,26 +977,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
 
         if (isStart) {
 
-            RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
-                    .codeSide(800)
-                    .logoBitmap(R.mipmap.icon_app_round, getResources())
-                    .into(mImgQRcode);
 
-            UserInfo info = MyAPP.gUserInfo;
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg2);
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg3);
-
-
-            RxTextUtils.getBuilder(info.getUserName() + "\n")
-                    .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
-                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .into(mTvUserName);
-            mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
-
-            RxTextUtils.getBuilder("让 你 健 康 瘦\n")
-                    .append(getString(R.string.appName) + "v" + RxDeviceUtils.getAppVersionName())
-                    .setProportion(0.5f)
-                    .into(mTvAppVersion);
             mProComplete2.setShowWave(true);
             //延迟500毫秒，需要等到控件显示
             new Handler().postDelayed(new Runnable() {

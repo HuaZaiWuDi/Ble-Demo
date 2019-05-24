@@ -104,7 +104,7 @@
     <string name="speech_anaerobicComplete">您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢率。建议运动时长不超过 15 分钟。</string>
     <string name="speech_planFinishFail">本次训练计划还未完成 ，你确定要结束吗？今天的坚持是为了更美的明天。小莱为您加油打气</string>
     <string name="speech_planFinishSuccess">好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动 ！本次训练共计燃烧%1$s千卡，请继续保持。</string>
-    <string name="speech_freeSportFinish">运动已结束,您一共运动%1$s分钟，共消耗%2$s千卡的能量</string>
+    <string name="speech_freeSportFinish">运动已结束,您一共运动%1$s，共消耗%2$s千卡的能量</string>
     <string name="speech_sportPause">运动已暂停</string>
     <string name="speech_sportPlay">运动已恢复</string>
     <string name="speech_sportFast">请快一点，保持匀速有节奏的运动才能高效瘦身</string>
@@ -235,7 +235,7 @@
     <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
     <string name="follow">跟着莱特妮丝智瘦</string>
     <string name="appDays">我在 %1$s 第%2$d 天</string>
-    <string name="tv_firstTip">感谢您使用莱特妮丝智瘦-AI智能瘦身衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
+    <string name="tv_firstTip">感谢您使用莱特妮丝智瘦-AI智能形体衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
     <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重 指标、体能状态和患病风险，获得专家的饮食和运动建 议。</string>
 
     <string name="planSporting">课程运动中</string>
@@ -245,9 +245,10 @@
     <string name="sportTip">运动提示</string>
     <string name="tip">提示</string>
     <string name="freeSporting">自由运动中</string>
-    <string name="Speech_eachKm"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s分钟,继续加油吧]]></string>
-    <string name="Speech_each8Min"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s分钟,您当前运动得分%5$s,请继续加油吧]]></string>
+    <string name="Speech_eachKm"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s,继续加油吧]]></string>
+    <string name="Speech_each8Min"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s,您当前运动得分%5$s,请继续加油吧]]></string>
     <string name="speech_recipes">营养师%1$s今天给您推荐的食谱是%2$s</string>
+    <string name="please_weigh">请光脚上称进行身体参数采集，以便为您计算运动时消耗的卡路里数</string>
 
 
 </resources>

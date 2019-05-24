@@ -92,7 +92,7 @@ public class HeartRateUtil {
             currentSteps = Math.abs(step - initSteps);
         }
 
-        float Weight = SPUtils.getFloat(SPKey.SP_realWeight);
+        float Weight = SPUtils.getFloat(SPKey.SP_realWeight, 0);
         double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
         double calorie = CalorieManager.run2Calorie(Weight, kilometre);
 
