@@ -167,15 +167,15 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         finishAnim();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
 
-//        if (SPUtils.getFloat(SPKey.SP_realWeight, 0) == 0) {
-//            new RxDialogSure(mContext)
-//                    .setTitle(getString(R.string.sportTip))
-//                    .setContent("请使用体脂称记录体重信息，以便准确记算运动消耗的卡路里")
-//                    .setSure(getString(R.string.ok))
-//                    .setSureListener(v -> {
-//                        onBackPressed();
-//                    }).show();
-//        }
+        if (SPUtils.getFloat(SPKey.SP_realWeight, 0) == 0) {
+            new RxDialogSure(mContext)
+                    .setTitle(getString(R.string.sportTip))
+                    .setContent("请使用体脂称记录体重信息，以便准确记算运动消耗的卡路里")
+                    .setSure(getString(R.string.ok))
+                    .setSureListener(v -> {
+                        RxActivityUtils.finishActivity();
+                    }).show();
+        }
     }
 
     /**
@@ -785,7 +785,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                         super._onError(error, code);
                         new RxDialogSure(mContext)
                                 .setTitle(getString(R.string.tip))
-                                .setContent("因网络异常，运动数据上传失败，您可在运动记录中进行查看")
+                                .setContent("因网络异常，运动数据上传失败，您可在网络恢复后再进行查看")
                                 .setSureListener(v -> RxActivityUtils.finishActivity()).show();
                     }
                 });
@@ -822,6 +822,11 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         }
     }
 
+    //拦截返回事件
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

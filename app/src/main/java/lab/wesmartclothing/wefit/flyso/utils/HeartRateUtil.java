@@ -9,6 +9,7 @@ import com.zchu.rxcache.data.CacheResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
@@ -187,10 +188,11 @@ public class HeartRateUtil {
         }
     }
 
-
-    public void uploadHeartRate() {
+    //一分钟只上传一次，防止重复上传
+    public synchronized void uploadHeartRate() {
         RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_PLAN, HeartRateBean.class)
                 .map(new CacheResult.MapFunc<HeartRateBean>())
+                .throttleFirst(1, TimeUnit.MINUTES)
                 .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
                     protected void _onNext(HeartRateBean mHeartRateBean) {
@@ -200,6 +202,7 @@ public class HeartRateUtil {
 
         RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_FREE, HeartRateBean.class)
                 .map(new CacheResult.MapFunc<HeartRateBean>())
+                .throttleFirst(1, TimeUnit.MINUTES)
                 .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
                     protected void _onNext(HeartRateBean mHeartRateBean) {
@@ -210,13 +213,21 @@ public class HeartRateUtil {
 
 
     public void saveHeartRate(final HeartRateBean heartRateBean) {
-        if (heartRateBean == null) return;
+        clearData(heartRateBean);
+        RxLogUtils.d("添加心率：获取保存数据：" + heartRateBean);
+        if (heartRateBean == null) {
+            RxLogUtils.d("添加心率：heartRateBean == null");
+            return;
+        }
         int sumTime = 0;
         List<HeartRateItemBean> heartList = heartRateBean.getHeartList();
         if (heartList != null) {
             sumTime = heartList.size() * 2;
         }
-        if (sumTime < 3 * 60) return;
+        if (sumTime < 3 * 60) {
+            RxLogUtils.d("添加心率：少于三分钟");
+            return;
+        }
 
         String s = JSON.toJSONString(heartRateBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
@@ -225,7 +236,6 @@ public class HeartRateUtil {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加心率：保存成功删除本地缓存：");
-                        clearData(heartRateBean);
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
                     }

@@ -77,6 +77,7 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
@@ -149,6 +150,11 @@ public class BleService extends Service {
                             RxToast.normal(RxNetUtils.getNetType(workType));
                         RxBus.getInstance().post(new NetWorkType(workType, workType != -1 && workType != 5));
                     }
+
+                    if (workType != -1 && workType != 5) {
+                        new HeartRateUtil().uploadHeartRate();
+                    }
+
                     RxLogUtils.d("网络状态：" + workType);
                     break;
             }

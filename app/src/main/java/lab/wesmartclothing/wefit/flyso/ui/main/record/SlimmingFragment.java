@@ -689,7 +689,8 @@ public class SlimmingFragment extends BaseAcFragment {
                 .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .into(mTvIngestionHeat);
 
-        if (lastKcal != heatInfoVO.getAbleIntake()) {
+        //已审核才会进行语音播报
+        if (bean.getPlanState() == 3 && lastKcal != heatInfoVO.getAbleIntake()) {
             lastKcal = heatInfoVO.getAbleIntake();
             if (warning) {
                 TextSpeakUtils.speakAdd("主人你吃的太多啦，今天不要再吃了");

@@ -36,7 +36,6 @@ import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
@@ -170,7 +169,6 @@ public class SplashActivity extends BaseActivity {
      */
     private void initData() {
         getSystemConfig();
-        uploadHistoryData();
         fetchSystemTime();
     }
 
@@ -245,11 +243,4 @@ public class SplashActivity extends BaseActivity {
                 });
     }
 
-
-    /**
-     * 判断本地是否有之前保存的心率数据：有则上传
-     */
-    public void uploadHistoryData() {
-        new HeartRateUtil().uploadHeartRate();
-    }
 }
