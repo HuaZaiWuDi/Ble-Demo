@@ -50,6 +50,7 @@ public class AboutUpdateDialog extends RxDialog {
     @BindView(R.id.loadView)
     RxLoadingView mLoadView;
 
+
     private String filePath;
     private Context mContext;
     private boolean mustUpdate;

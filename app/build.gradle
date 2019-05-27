@@ -9,13 +9,13 @@ android {
         debug {
             keyAlias 'jack'
             keyPassword '123456'
-            storeFile file('D:/Android/jack.jks')
+            storeFile file('/jack.jks')
             storePassword '123456'
         }
         release {
             keyAlias 'jack'
             keyPassword '123456'
-            storeFile file('D:/Android/jack.jks')
+            storeFile file('/jack.jks')
             storePassword '123456'
         }
     }
