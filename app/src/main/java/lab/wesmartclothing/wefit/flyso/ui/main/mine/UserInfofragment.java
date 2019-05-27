@@ -22,6 +22,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
@@ -219,7 +220,7 @@ public class UserInfofragment extends BaseActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 mTvBirth.setText(year + "-" + month + "-" + day);
-                Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
+                Date date = RxTimeUtils.string2Date(year + "-" + month + "-" + day, RxFormat.Date);
                 info.setBirthday(date.getTime());
             }
         });

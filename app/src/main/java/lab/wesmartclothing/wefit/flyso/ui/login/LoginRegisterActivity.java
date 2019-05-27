@@ -29,9 +29,9 @@ import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.UnScrollableViewPager;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.vondear.rxtools.view.viewpager.UnScrollableViewPager;
 
 import java.util.ArrayList;
 import java.util.Map;

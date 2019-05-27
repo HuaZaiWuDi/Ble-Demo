@@ -19,6 +19,7 @@ import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.layout.RxTextView;
@@ -230,7 +231,7 @@ public class WeightContrastActivity extends BaseActivity {
         datePicker.setOnDatePickListener((DatePicker.OnYearMonthDayPickListener) (year, month, day) -> {
             RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
 
-            Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
+            Date date = RxTimeUtils.string2Date(year + "-" + month + "-" + day, RxFormat.Date);
             if (isStart) {
                 if (date.getTime() >= endDate) {
                     RxToast.warning("开始时间不能早于结束时间");

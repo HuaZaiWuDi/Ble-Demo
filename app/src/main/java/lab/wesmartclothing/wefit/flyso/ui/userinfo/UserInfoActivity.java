@@ -23,6 +23,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 
@@ -281,7 +282,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 tv_bottom.setText(year + "-" + month + "-" + day);
-                Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
+                Date date = RxTimeUtils.string2Date(year + "-" + month + "-" + day, RxFormat.Date);
                 mUserInfo.setBirthday(date.getTime());
             }
         });
