@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by ZZP on 2018/5/20.
  */
 
-public class UserCenterBean implements Serializable{
+public class UserCenterBean implements Serializable {
 
 
     /**
@@ -32,6 +32,15 @@ public class UserCenterBean implements Serializable{
     private String signature;
     private int unreadCount;
     private String userName;
+    private int maxPace;
+
+    public int getMaxPace() {
+        return maxPace;
+    }
+
+    public void setMaxPace(int maxPace) {
+        this.maxPace = maxPace;
+    }
 
     public int getAthlDays() {
         return athlDays;

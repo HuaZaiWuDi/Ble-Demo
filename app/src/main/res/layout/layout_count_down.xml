@@ -21,7 +21,7 @@
         android:gravity="center"
         app:background_normal="@color/black">
 
-        <com.vondear.rxtools.view.ticker.RxTickerView
+        <com.vondear.rxtools.view.textview.ticker.RxTickerView
             android:id="@+id/ticker_days"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
         android:gravity="center"
         app:background_normal="@color/black">
 
-        <com.vondear.rxtools.view.ticker.RxTickerView
+        <com.vondear.rxtools.view.textview.ticker.RxTickerView
             android:id="@+id/ticker_hour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
         android:gravity="center"
         app:background_normal="@color/black">
 
-        <com.vondear.rxtools.view.ticker.RxTickerView
+        <com.vondear.rxtools.view.textview.ticker.RxTickerView
             android:id="@+id/ticker_min"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
         android:gravity="center"
         app:background_normal="@color/black">
 
-        <com.vondear.rxtools.view.ticker.RxTickerView
+        <com.vondear.rxtools.view.textview.ticker.RxTickerView
             android:id="@+id/ticker_sec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

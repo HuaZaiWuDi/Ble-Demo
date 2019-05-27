@@ -35,13 +35,13 @@
         app:tl_textUnselectColor="@color/GrayWrite"
         app:tl_textsize="20sp"/>
 
-    <com.vondear.rxtools.view.UnScrollableViewPager
+    <com.vondear.rxtools.view.viewpager.UnScrollableViewPager
         android:id="@+id/mViewPager"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dimen_200"
         android:layout_below="@+id/mCommonTabLayout">
 
-    </com.vondear.rxtools.view.UnScrollableViewPager>
+    </com.vondear.rxtools.view.viewpager.UnScrollableViewPager>
 
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton

@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
+import com.didichuxing.doraemonkit.DoraemonKit;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -88,7 +89,7 @@ public class MyAPP extends Application {
         initQN();
         sMyAPP = this;
         initSonic();
-
+        DoraemonKit.install(this);
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
             initRxCache();
@@ -230,6 +231,9 @@ public class MyAPP extends Application {
 
         // 安装tinker
         Beta.installTinker();
+
+
+
     }
 
 

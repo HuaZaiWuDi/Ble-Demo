@@ -212,4 +212,8 @@ dependencies {
     implementation 'com.clj.fastble:FastBleLib:2.3.2'
     implementation 'no.nordicsemi.android:dfu:1.8.1'
 
+    //滴滴性能检测库
+    debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:1.1.7'
+    releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:1.1.7'
+
 }

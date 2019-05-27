@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.netutil.net;
 
 import android.util.Log;
 
+import com.didichuxing.doraemonkit.kit.network.okhttp.DoraemonWeakNetworkInterceptor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -62,6 +63,8 @@ public class NetManager {
             loggingInterceptor.setLevel(level);
             //OkHttp进行添加拦截器loggingInterceptor
             builder.addNetworkInterceptor(loggingInterceptor);
+            //用于模拟弱网的拦截器
+            builder.addNetworkInterceptor(new DoraemonWeakNetworkInterceptor());
         }
 
         builder.addInterceptor(NetInterceptor);

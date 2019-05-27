@@ -230,7 +230,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="历史最高心率"
+                            android:text="历史最高配速"
                             android:textColor="@color/GrayWrite"
                             android:textSize="13sp"/>
 
@@ -252,7 +252,8 @@
                             android:layout_toRightOf="@+id/tv_MaxHeartRate"
                             android:text="\tbpm"
                             android:textColor="@color/GrayWrite"
-                            android:textSize="10sp"/>
+                            android:textSize="10sp"
+                            android:visibility="gone"/>
 
                     </RelativeLayout>
                 </LinearLayout>

@@ -12,6 +12,7 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.zchu.rxcache.data.CacheResult;
@@ -202,7 +203,7 @@ public class MeFragment extends BaseAcFragment {
                         SportingTime(user.getDuration());
                         mTvTotalHeat.setText(user.getCalorie() + "");
                         mTvTotalDays.setText(user.getAthlDays() + "");
-                        mTvMaxHeartRate.setText(user.getMaxHeart() + "");
+                        mTvMaxHeartRate.setText(RxFormat.setSec2MS(user.getMaxPace()));
                     }
 
                     @Override
