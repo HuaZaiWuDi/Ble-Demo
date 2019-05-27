@@ -188,7 +188,7 @@ dependencies {
     implementation files('libs/qnsdk-0.3.4.jar')
 
 
-    implementation 'com.jackUtil:RxTools:1.2.1'
+    implementation 'com.jackUtil:RxTools:1.2.3'
 
     implementation 'com.qmuiteam:qmui:1.1.12'
 
@@ -202,7 +202,7 @@ dependencies {
     //官方文档中没有这个依赖，要是不添加会导致初始化的时候的UMConfigure这个类不能识别
     implementation 'com.umeng.umsdk:share-wx:6.9.4'
 
-    implementation('com.jackUtil:ImagePicker:1.0.2') {
+    implementation('com.jackUtil:ImagePicker:1.0.3') {
         exclude group: 'com.android.support'
     }  //指定版本
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）

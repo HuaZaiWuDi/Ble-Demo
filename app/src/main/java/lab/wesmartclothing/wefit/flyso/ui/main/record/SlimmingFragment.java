@@ -812,7 +812,7 @@ public class SlimmingFragment extends BaseAcFragment {
             mCardFreeSporting.setVisibility(View.GONE);
             mCardCurriculumSporting.setVisibility(View.GONE);
             mBtnGoBindClothing.setText("去运动");
-            mTvClothingTip.setText("今天还没运动哦~");
+            mTvClothingTip.setText("今天还没定制运动哦~");
             mBtnGoBindClothing.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.orange_FF7200));
         } else {
             mLayoutClothingDefault.setVisibility(View.GONE);

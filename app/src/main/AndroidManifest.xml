@@ -31,6 +31,7 @@
         android:roundIcon="@mipmap/icon_app_lightness"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        tools:overrideLibrary="com.vondear.rxtools"
         tools:replace="label,icon,roundIcon,theme">
 
         <!--java.lang.NoClassDefFoundError: -->
