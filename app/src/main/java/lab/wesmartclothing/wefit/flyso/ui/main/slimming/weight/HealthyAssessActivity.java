@@ -88,7 +88,6 @@ public class HealthyAssessActivity extends BaseActivity {
         super.initViews();
         initTopBar();
 
-
     }
 
     private void initTopBar() {
@@ -114,7 +113,7 @@ public class HealthyAssessActivity extends BaseActivity {
         mProBodyAge.setProgress(bean.getBodyAge());
         mTvBodyValueBodyAge.setText(bean.getBodyAge() + "岁");
 
-        UserInfo userInfo = MyAPP.gUserInfo;
+        UserInfo userInfo = MyAPP.getgUserInfo();
 
         /**
          * 体脂率

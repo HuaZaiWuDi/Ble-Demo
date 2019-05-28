@@ -102,8 +102,7 @@ public class QNBleTools {
     }
 
     public QNUser createUser() {
-        UserInfo info = MyAPP.gUserInfo;
-        if (info == null) return null;
+        UserInfo info = MyAPP.getgUserInfo();
         String sex = info.getSex() == 1 ? "male" : "female";
         long birthDayMillis = info.getBirthday();
         String userId = SPUtils.getString(SPKey.SP_UserId);

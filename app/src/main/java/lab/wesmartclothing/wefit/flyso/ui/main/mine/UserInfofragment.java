@@ -115,7 +115,7 @@ public class UserInfofragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initImagePicker();
-        info = MyAPP.gUserInfo;
+        info = MyAPP.getgUserInfo();
         info.setChange(false);
         notifyData(info);
     }
@@ -220,7 +220,7 @@ public class UserInfofragment extends BaseActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 mTvBirth.setText(year + "-" + month + "-" + day);
-                Date date = RxTimeUtils.string2Date(year + "-" + month + "-" + day, RxFormat.Date);
+                Date date = RxTimeUtils.string2Date(RxFormat.Date,year + "-" + month + "-" + day);
                 info.setBirthday(date.getTime());
             }
         });

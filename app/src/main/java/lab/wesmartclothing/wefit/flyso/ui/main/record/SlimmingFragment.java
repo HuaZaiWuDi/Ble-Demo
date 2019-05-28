@@ -274,7 +274,7 @@ public class SlimmingFragment extends BaseAcFragment {
     @Override
     protected void initNetData() {
         super.initNetData();
-        UserInfo info = MyAPP.gUserInfo;
+        UserInfo info = MyAPP.getgUserInfo();
         if (info != null) {
             mTvUserName.setText(info.getUserName());
             MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);

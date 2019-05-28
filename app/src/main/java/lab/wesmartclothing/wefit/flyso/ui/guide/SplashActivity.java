@@ -81,9 +81,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initNetData() {
         super.initNetData();
-        if (MyAPP.gUserInfo == null) {
-            MyAPP.gUserInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
-        }
         initData();
         initUserInfo();
     }

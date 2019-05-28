@@ -366,7 +366,6 @@
                             android:layout_height="wrap_content"
                             android:src="@mipmap/icon_dietitian_title"/>
 
-
                         <TextView
                             android:id="@+id/tv_dietitianName"
                             android:layout_width="wrap_content"
@@ -386,7 +385,6 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginBottom="16dp"
                             android:gravity="left"
-                            android:text="@string/DietitianTip"
                             android:textColor="@color/Gray"
                             android:textSize="12sp"/>
 

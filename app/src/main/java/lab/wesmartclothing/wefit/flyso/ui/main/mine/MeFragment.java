@@ -114,8 +114,7 @@ public class MeFragment extends BaseAcFragment {
                 .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
 
-        UserInfo userInfo = MyAPP.gUserInfo;
-        if (userInfo != null)
+        UserInfo userInfo = MyAPP.getgUserInfo();
             mTvInvitation.setText(userInfo.getInvitationCode());
     }
 

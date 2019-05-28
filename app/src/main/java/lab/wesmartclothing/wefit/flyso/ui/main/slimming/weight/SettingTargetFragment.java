@@ -89,7 +89,7 @@ public class SettingTargetFragment extends BaseActivity {
      */
     private void bestWeight() {
         float standardWeight = 0;
-        UserInfo userInfo = MyAPP.gUserInfo;
+        UserInfo userInfo = MyAPP.getgUserInfo();
         if (userInfo.getSex() == 1) {
             standardWeight = (userInfo.getHeight() - 80) * 0.7f;
         } else {

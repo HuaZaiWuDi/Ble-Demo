@@ -250,10 +250,10 @@
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/tv_MaxHeartRate"
                             android:layout_toRightOf="@+id/tv_MaxHeartRate"
-                            android:text="\tbpm"
+                            android:text="\t每公里"
                             android:textColor="@color/GrayWrite"
                             android:textSize="10sp"
-                            android:visibility="gone"/>
+                            />
 
                     </RelativeLayout>
                 </LinearLayout>

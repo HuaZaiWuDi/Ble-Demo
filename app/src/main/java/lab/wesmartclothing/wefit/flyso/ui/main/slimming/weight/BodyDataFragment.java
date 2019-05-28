@@ -150,7 +150,7 @@ public class BodyDataFragment extends BaseActivity {
     //TODO 个人信息资料标准的限定需要两套，根据性别来判定
     private void initWeightData(HealthyInfoBean weightInfo) {
         mHealthyList.clear();
-        UserInfo userInfo = MyAPP.gUserInfo;
+        UserInfo userInfo = MyAPP.getgUserInfo();
         //体重
         Healthy healthy0 = new Healthy();
         mHealthyList.add(healthy0);

@@ -44,7 +44,7 @@ public class InvitationCodeActivity extends BaseActivity {
     @BindView(R.id.layout_edit)
     LinearLayout mLinearLayoutEdit;
 
-    private UserInfo mUserInfo = MyAPP.gUserInfo;
+    private UserInfo mUserInfo = MyAPP.getgUserInfo();
 
 
     @Override

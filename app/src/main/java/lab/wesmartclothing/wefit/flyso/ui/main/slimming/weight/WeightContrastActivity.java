@@ -231,7 +231,7 @@ public class WeightContrastActivity extends BaseActivity {
         datePicker.setOnDatePickListener((DatePicker.OnYearMonthDayPickListener) (year, month, day) -> {
             RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
 
-            Date date = RxTimeUtils.string2Date(year + "-" + month + "-" + day, RxFormat.Date);
+            Date date = RxTimeUtils.string2Date(RxFormat.Date, year + "-" + month + "-" + day);
             if (isStart) {
                 if (date.getTime() >= endDate) {
                     RxToast.warning("开始时间不能早于结束时间");
@@ -240,7 +240,7 @@ public class WeightContrastActivity extends BaseActivity {
                 mTvStartDate.setText(year + "-" + month + "-" + day);
                 startDate = date.getTime();
             } else {
-                if (date.getTime() >= startDate) {
+                if (date.getTime() <= startDate) {
                     RxToast.warning("结束时间不能晚于开始时间");
                     return;
                 }
@@ -292,7 +292,6 @@ public class WeightContrastActivity extends BaseActivity {
     private void updateUI(List<HealthyInfoBean> weightInfoLists) {
         valueEntrys.clear();
         dateEntrys.clear();
-        RxLogUtils.d("数据个数：" + weightInfoLists.size());
         if (RxDataUtils.isEmpty(weightInfoLists)) {
             initTextUtils(0, 0);
             mTvNoData.setVisibility(View.VISIBLE);

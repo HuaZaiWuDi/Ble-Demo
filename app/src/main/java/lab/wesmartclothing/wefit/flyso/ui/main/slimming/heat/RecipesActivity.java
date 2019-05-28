@@ -129,7 +129,7 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void initRecycler() {
-        info = MyAPP.gUserInfo;
+        info = MyAPP.getgUserInfo();
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
 
         mTvDietitianName.setText("营养师 " + SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""));

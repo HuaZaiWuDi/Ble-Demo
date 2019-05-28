@@ -48,7 +48,7 @@ public class HeartRateUtil {
 
     public HeartRateUtil() {
         heartLists = new ArrayList<>();
-        userInfo = MyAPP.gUserInfo;
+        userInfo = MyAPP.getgUserInfo();
     }
 
 

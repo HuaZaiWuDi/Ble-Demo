@@ -62,7 +62,7 @@ public class BleAPI {
         int LED = 50;
         byte[] heartSection = Key.heartRates;
         int[] stepSpeedSection = Key.HRART_SECTION;
-        int height = MyAPP.gUserInfo.getHeight();
+        int height = MyAPP.getgUserInfo().getHeight();
         int time = 10;
 
         byte[] bytes = new byte[50];

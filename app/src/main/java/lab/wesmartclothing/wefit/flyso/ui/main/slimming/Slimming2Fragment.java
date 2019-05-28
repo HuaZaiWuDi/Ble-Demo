@@ -263,16 +263,14 @@ public class Slimming2Fragment extends BaseAcFragment {
         super.initNetData();
         getFirstPageData();
 
-        UserInfo info = MyAPP.gUserInfo;
+        UserInfo info = MyAPP.getgUserInfo();
         RxLogUtils.d("用户数据:" + info);
-        if (info != null) {
-            mTvUserName.setText(info.getUserName());
-            mTvUserName2.setText(info.getUserName());
+        mTvUserName.setText(info.getUserName());
+        mTvUserName2.setText(info.getUserName());
 
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg2);
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg2);
 
-        }
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date));
 
         mCollapsingTopbarLayout.setScrimUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -613,8 +611,6 @@ public class Slimming2Fragment extends BaseAcFragment {
         mTvBodyFat.setText(bean.getWeightInfo() == null ? "--" : bean.getWeightInfo().getBodyFat() + "");
         mIvHealthyLevel.switchLevel(bean.getWeightInfo() == null ? "" : bean.getSickLevel());
         mTvRisk.setText(bean.getWeightInfo() == null ? "--" : bean.getLevelDesc());
-
-
 
 
         int targetProgress = (int) (bean.getComplete() * 100);

@@ -152,7 +152,7 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
     public void initView() {
-        mUserInfo = MyAPP.gUserInfo;
+        mUserInfo = MyAPP.getgUserInfo();
         if (mUserInfo == null) {
             mUserInfo = new UserInfo();
         }
@@ -282,7 +282,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 tv_bottom.setText(year + "-" + month + "-" + day);
-                Date date = RxTimeUtils.string2Date(year + "-" + month + "-" + day, RxFormat.Date);
+                Date date = RxTimeUtils.string2Date(RxFormat.Date, year + "-" + month + "-" + day);
                 mUserInfo.setBirthday(date.getTime());
             }
         });

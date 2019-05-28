@@ -93,7 +93,7 @@ public class CalorieManager {
      * @return 千卡
      */
     public static double getCalorie(int HR, double T) {
-        UserInfo info = MyAPP.gUserInfo;
+        UserInfo info = MyAPP.getgUserInfo();
         if (info == null) {
             RxLogUtils.e("UserInfo is null");
             return 0;

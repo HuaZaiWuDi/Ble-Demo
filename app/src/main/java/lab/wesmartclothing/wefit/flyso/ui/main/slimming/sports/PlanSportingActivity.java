@@ -179,6 +179,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         } else {
             mTipWeigh.setVisibility(View.GONE);
         }
+
+
     }
 
     /**

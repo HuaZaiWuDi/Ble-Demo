@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
 import com.didichuxing.doraemonkit.DoraemonKit;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -219,6 +220,13 @@ public class MyAPP extends Application {
     }
 
 
+    public static UserInfo getgUserInfo() {
+        if (gUserInfo == null) {
+            gUserInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+        }
+        return gUserInfo;
+    }
+
     /**
      * oppo (Android4.4.4 , api19) 手机上运行项目,一直闪退 ,
      * 可能是添加MultiDex分包，但未初始化的原因，在Application中重写attachBaseContext函数，对MultiDex初始化即可。
@@ -231,9 +239,6 @@ public class MyAPP extends Application {
 
         // 安装tinker
         Beta.installTinker();
-
-
-
     }
 
 
