@@ -348,13 +348,11 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                     @Override
                     protected void _onNext(HeartRateChangeBus heartRateData) {
                         if (pause) return;
-
-                        //撤销最大显示范围，让一屏显示所有数据
-                        if (mChartHeartRate.getData().getEntryCount() > 60) {
-                            XAxis xAxis = mChartHeartRate.getXAxis();
-                            xAxis.resetAxisMaximum();
-                        }
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
+                        if (sportsDataTab == null) {
+                            mTvAvHeartRate.setText("--");
+                            return;
+                        }
                         //配速
                         int stepSpeed = sportsDataTab.getStepSpeed();
 
@@ -389,6 +387,12 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                         freeTextSpeak(sportsDataTab.getReversePace());
                         guideLineMove();
                         saveData(sportsDataTab);
+
+                        //撤销最大显示范围，让一屏显示所有数据
+                        if (mChartHeartRate.getData().getEntryCount() > 60) {
+                            XAxis xAxis = mChartHeartRate.getXAxis();
+                            xAxis.resetAxisMaximum();
+                        }
                     }
                 });
 
@@ -613,7 +617,7 @@ public class SportingActivity extends BaseActivity implements SportInterface {
                         super._onError(error, code);
                         new RxDialogSure(mContext)
                                 .setTitle(getString(R.string.tip))
-                                .setContent("因网络异常，运动数据上传失败，您可在网络恢复后再进行查看")
+                                .setContent("因" + error + "，运动数据上传失败，您可在网络恢复后再进行查看")
                                 .setSureListener(v -> RxActivityUtils.finishActivity()).show();
                     }
                 });

@@ -55,7 +55,7 @@ public class MyAPP extends Application {
     public static QNBleApi QNapi;
     public static Typeface typeface;
     public static AMapLocation aMapLocation = null;//定位信息
-    public static GlideImageLoader sImageLoader;
+    private static GlideImageLoader sImageLoader;
     public static MyAPP sMyAPP;
 
     public static UserInfo gUserInfo;

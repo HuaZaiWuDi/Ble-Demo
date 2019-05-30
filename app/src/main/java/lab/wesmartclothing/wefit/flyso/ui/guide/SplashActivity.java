@@ -75,7 +75,6 @@ public class SplashActivity extends BaseActivity {
         super.initViews();
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-
     }
 
     @Override

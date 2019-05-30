@@ -154,7 +154,7 @@ public class RecordInfoActivity extends BaseActivity {
         gridAdapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_record_grid) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                MyAPP.sImageLoader.displayImage(mActivity, item, R.drawable.ic_default_image,
+                MyAPP.getImageLoader().displayImage(mActivity, item, R.drawable.ic_default_image,
                         (ImageView) helper.getView(R.id.img_item));
             }
         };

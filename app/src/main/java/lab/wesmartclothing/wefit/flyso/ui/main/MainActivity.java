@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -19,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -40,6 +40,8 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
+import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -57,6 +59,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
+import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_APP;
@@ -125,6 +128,45 @@ public class MainActivity extends BaseALocationActivity {
                     }
                 });
 
+        RxBus.getInstance().registerSticky(DeviceVersionBean.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(deviceVersion -> {
+                    checkFirmwareVersion(deviceVersion);
+                });
+    }
+
+    /**
+     * 检测瘦身衣是否需要升级
+     *
+     * @param object
+     */
+    private void checkFirmwareVersion(DeviceVersionBean object) {
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .getUpgradeInfo(NetManager.fetchRequest(new Gson().toJson(object))))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        final FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
+                        if (firmwareVersionUpdate.isHasNewVersion()) {
+                            RxLogUtils.d("有最新的版本");
+                            RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                                    .setTitle("提示")
+                                    .setContent("是否升级到最新的固件版本")
+                                    .setSure("升级")
+                                    .setSureListener(v -> {
+                                        AboutUpdateDialog updatedialog = new AboutUpdateDialog(mContext, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                                        updatedialog.show();
+                                    }).setCancelListener(v -> {
+                                        if (firmwareVersionUpdate.getMustUpgrade() != 0) {
+                                            RxActivityUtils.AppExit(mContext);
+                                        }
+                                    });
+                            rxDialog.show();
+                        } else {
+                            RxLogUtils.d("已经是最新的版本");
+                        }
+                    }
+                });
     }
 
     public void initView() {
@@ -136,14 +178,10 @@ public class MainActivity extends BaseALocationActivity {
 
         initMyViewPager();
         initBottomTab();
-        mBottomTab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mBottomTab.setOnClickListener(v -> {
 
-            }
         });
         startService(new Intent(mContext, BleService.class));
-
     }
 
     private void initSystemConfig() {

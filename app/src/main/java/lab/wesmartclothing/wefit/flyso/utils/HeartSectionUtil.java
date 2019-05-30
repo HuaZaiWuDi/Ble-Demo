@@ -64,12 +64,12 @@ public class HeartSectionUtil {
 //        }
 
 
-        Key.HRART_SECTION[0] = (int) (6 * 60);
-        Key.HRART_SECTION[1] = (int) (7 * 60);
-        Key.HRART_SECTION[2] = (int) (8 * 60);
-        Key.HRART_SECTION[3] = (int) (9 * 60);
-        Key.HRART_SECTION[4] = (int) (10 * 60);
-        Key.HRART_SECTION[5] = (int) (11 * 60);
+        Key.HRART_SECTION[0] = (int) (6 * 60);//慢走
+        Key.HRART_SECTION[1] = (int) (7 * 60);//快走
+        Key.HRART_SECTION[2] = (int) (8 * 60);//慢跑（这个2019-05-30需要去掉合并成5个区间）
+        Key.HRART_SECTION[3] = (int) (9 * 60);//慢燃
+        Key.HRART_SECTION[4] = (int) (10 * 60);//快燃
+        Key.HRART_SECTION[5] = (int) (11 * 60);//无氧
         Key.HRART_SECTION[6] = (int) (12 * 60);
 
 

@@ -37,6 +37,8 @@ public class CalorieManager {
 
     /**
      * 步幅（cm）=身高（cm）*0.45
+     * <p>
+     * 2019-05-30 修改为*0.36
      *
      * @param height
      * @return
@@ -70,12 +72,11 @@ public class CalorieManager {
     /**
      * 配速（格式化时间/km）=时长(秒)/距离（km）
      *
-     * @param kilometre
      * @param time
      * @return 11'11''
      */
-    public static int getStepSpeed(double time, double kilometre) {
-        return (int) (time / kilometre);
+    public static int getStepSpeed(double time, double currentkilometre, double last10Kilometre) {
+        return (int) (time / (currentkilometre - last10Kilometre));
     }
 
 

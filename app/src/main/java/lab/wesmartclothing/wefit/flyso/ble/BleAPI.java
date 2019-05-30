@@ -264,7 +264,7 @@ public class BleAPI {
 
         Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
         BleTools.getInstance().write(bytes, data -> {
-            
+
         });
     }
 

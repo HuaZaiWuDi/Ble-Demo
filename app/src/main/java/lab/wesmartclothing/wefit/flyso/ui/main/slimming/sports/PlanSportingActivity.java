@@ -149,7 +149,8 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
     private RxDialogSureCancel connectFailDialog;
     private RxDialogSure sportingShortDialog;
     private boolean pause = false;
-
+    private int sportUpWarnCount = 0;
+    private int sportDownWarnCount = 0;
     private HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     private int kilometreFlag = 0;
 
@@ -375,6 +376,10 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
 
                         if (pause) return;
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
+                        if (sportsDataTab == null) {
+                            mTvAvHeartRate.setText("--");
+                            return;
+                        }
                         //配速
                         stepSpeed = sportsDataTab.getStepSpeed();
 
@@ -689,7 +694,6 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
         public void enterTimer() {
             currentTime++;
 
-
             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
 
             if (type == 4) {
@@ -703,16 +707,23 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
 
             if (realTimeSet.getEntryCount() >= defaultSet.getEntryCount()) return;
 
-            if (currentTime >= 30 && currentTime % 30 == 15) {
-                int section = Math.abs((Key.HRART_SECTION[6]) - (Key.HRART_SECTION[5]));
+            int section = Math.abs((Key.HRART_SECTION[6]) - (Key.HRART_SECTION[5]));
 
-                RxLogUtils.d("配速区间：" + section);
-                //这里当运动比计划配速差值大于20提示用户块（慢）点
-                if ((defaultSet.getEntryForIndex(realTimeSet.getEntryCount()).getY() - reversePace) >= section) {
-                    speakAdd(getString(R.string.speech_sportFast));
-                } else if ((defaultSet.getEntryForIndex(realTimeSet.getEntryCount()).getY() - reversePace) <= -section) {
-                    speakAdd(getString(R.string.speech_sportSlow));
-                }
+            RxLogUtils.d("配速区间：" + section);
+            //这里当运动比计划配速差值大于20提示用户块（慢）点
+            if ((defaultSet.getEntryForIndex(realTimeSet.getEntryCount()).getY() - reversePace) >= section) {
+                sportUpWarnCount++;
+            } else if ((defaultSet.getEntryForIndex(realTimeSet.getEntryCount()).getY() - reversePace) <= -section) {
+                sportDownWarnCount++;
+            } else {
+                sportUpWarnCount = 0;
+                sportDownWarnCount = 0;
+            }
+            if (sportUpWarnCount != 0 && sportUpWarnCount % 30 == 0) {
+                speakAdd(getString(R.string.speech_sportFast));
+            }
+            if (sportDownWarnCount != 0 && sportDownWarnCount % 30 == 0) {
+                speakAdd(getString(R.string.speech_sportSlow));
             }
         }
     });
@@ -790,7 +801,7 @@ public class PlanSportingActivity extends BaseActivity implements SportInterface
                         super._onError(error, code);
                         new RxDialogSure(mContext)
                                 .setTitle(getString(R.string.tip))
-                                .setContent("因网络异常，运动数据上传失败，您可在网络恢复后再进行查看")
+                                .setContent("因" + error + "，运动数据上传失败，您可在网络恢复后再进行查看")
                                 .setSureListener(v -> RxActivityUtils.finishActivity()).show();
                     }
                 });

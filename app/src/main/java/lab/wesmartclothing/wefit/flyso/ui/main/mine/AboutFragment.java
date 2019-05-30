@@ -100,6 +100,7 @@ public class AboutFragment extends BaseActivity {
         RxBus.getInstance().registerSticky(DeviceVersionBean.class)
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .subscribe(deviceVersion -> {
+                    RxLogUtils.d("固件版本号：" + deviceVersion.toString());
                     currentVersion = deviceVersion.getFirmwareVersion();
                     mTvClothingVersion.setText("固件版本号 v" + currentVersion);
                     checkFirmwareVersion(deviceVersion);

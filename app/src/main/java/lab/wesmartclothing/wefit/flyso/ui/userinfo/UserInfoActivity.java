@@ -13,16 +13,17 @@ import com.amap.api.location.AMapLocation;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
@@ -326,6 +327,7 @@ public class UserInfoActivity extends BaseALocationActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
+                        MyAPP.gUserInfo = new Gson().fromJson(s, UserInfo.class);
                         //跳转扫描界面
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);

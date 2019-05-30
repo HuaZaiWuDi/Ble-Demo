@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -44,6 +45,7 @@ import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -220,7 +222,7 @@ public class UserInfofragment extends BaseActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 mTvBirth.setText(year + "-" + month + "-" + day);
-                Date date = RxTimeUtils.string2Date(RxFormat.Date,year + "-" + month + "-" + day);
+                Date date = RxTimeUtils.string2Date(RxFormat.Date, year + "-" + month + "-" + day);
                 info.setBirthday(date.getTime());
             }
         });
@@ -272,13 +274,10 @@ public class UserInfofragment extends BaseActivity {
                 .addItem("男")
                 .addItem("女")
                 .setCheckedIndex(info.getSex() - 1)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        dialog.dismiss();
-                        mTvUserSex.setText(tag);
-                        info.setSex(position + 1);
-                    }
+                .setOnSheetItemClickListener((dialog, itemView, position, tag) -> {
+                    dialog.dismiss();
+                    mTvUserSex.setText(tag);
+                    info.setSex(position + 1);
                 })
                 .build()
                 .show();
@@ -306,7 +305,8 @@ public class UserInfofragment extends BaseActivity {
     /*保存按钮，提交用户数据*/
     private void requestSaveUserInfo() {
         final String gson = JSON.toJSONString(info);
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().saveUserInfo(NetManager.fetchRequest(gson)))
+        RxManager.getInstance().doNetSubscribe(
+                NetManager.getApiService().saveUserInfo(NetManager.fetchRequest(gson)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
@@ -315,8 +315,10 @@ public class UserInfofragment extends BaseActivity {
                         RxLogUtils.d("结束" + s);
                         RxToast.success("保存成功", 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
+                        MyAPP.gUserInfo = new Gson().fromJson(gson, UserInfo.class);
                         RxActivityUtils.finishActivity();
                         QNBleTools.getInstance().disConnectDevice();
+                        BleTools.getInstance().disConnect();
                         //刷新数据
                         RxBus.getInstance().post(new RefreshMe());
                         RxBus.getInstance().post(new RefreshSlimming());

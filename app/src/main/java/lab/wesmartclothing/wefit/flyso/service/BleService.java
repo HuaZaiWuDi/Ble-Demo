@@ -13,7 +13,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.view.View;
 
 import com.alibaba.fastjson.JSON;
 import com.clj.fastble.callback.BleGattCallback;
@@ -22,7 +21,6 @@ import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.scan.BleScanRuleConfig;
-import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -32,7 +30,6 @@ import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
 import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
@@ -60,10 +57,6 @@ import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
-import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
-import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
@@ -79,7 +72,6 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
-import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
 import static no.nordicsemi.android.dfu.DfuBaseService.NOTIFICATION_ID;
 
@@ -515,54 +507,47 @@ public class BleService extends Service {
     }
 
     private void syncSetting() {
-        BleAPI.syncSetting(true, data -> {
+        BleAPI.syncSetting(!BuildConfig.DEBUG, data -> {
             RxLogUtils.d("配置参数");
             syncHistoryData();
         });
     }
 
     private void syncHistoryData() {
-        BleAPI.syncDataCount(new BleChartChangeCallBack() {
-            @Override
-            public void callBack(byte[] data) {
-                long packageCount = ByteUtil.bytesToLongLittle(data, 3);
-                RxLogUtils.d("包总数：" + packageCount);
-                if (packageCount > 0) {
-                    RxLogUtils.d("开始同步包数据");
-//                    synData();
-//                    RxToast.info("开始同步本地数据");
-                } else RxLogUtils.d("没有数据同步");
-                checkVersion();
-            }
-        });
+        checkVersion();
+//        BleAPI.syncDataCount(data -> {
+//            long packageCount = ByteUtil.bytesToLongLittle(data, 3);
+//            RxLogUtils.d("包总数：" + packageCount);
+//            if (packageCount > 0) {
+//                RxLogUtils.d("开始同步包数据");
+////                    synData();
+////                    RxToast.info("开始同步本地数据");
+//            } else RxLogUtils.d("没有数据同步");
+//
+//        });
     }
 
     private void checkVersion() {
-        if (isFirst) {
-            isFirst = false;
-            BleAPI.readDeviceInfo(data -> {
-                getVoltage();
-                //021309 010203000400050607090a0b0c10111213
-                String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
-                DeviceVersionBean versionBean = new DeviceVersionBean();
-                versionBean.setCategory(data[3] & 0xFF);
-                versionBean.setModelNo(data[4] & 0xFF);
-                versionBean.setManufacture(ByteUtil.bytesToIntLittle2(new byte[]{data[5], data[6]}));
-                versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
-                versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
+        BleAPI.readDeviceInfo(data -> {
+            getVoltage();
+            //021309 010203000400050607090a0b0c10111213
+            String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
+            DeviceVersionBean versionBean = new DeviceVersionBean();
+            versionBean.setCategory(data[3] & 0xFF);
+            versionBean.setModelNo(data[4] & 0xFF);
+            versionBean.setManufacture(ByteUtil.bytesToIntLittle2(new byte[]{data[5], data[6]}));
+            versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
+            versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
 
-                checkFirmwareVersion(versionBean);
+            //设备统计
+            DeviceLink deviceLink = new DeviceLink();
+            deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
+            deviceLink.setFirmwareVersion(firmwareVersion);
+            deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
+            deviceLink.deviceLink(deviceLink);
 
-                //设备统计
-                DeviceLink deviceLink = new DeviceLink();
-                deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
-                deviceLink.setFirmwareVersion(firmwareVersion);
-                deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
-                deviceLink.deviceLink(deviceLink);
-
-                RxBus.getInstance().postSticky(versionBean);
-            });
-        }
+            RxBus.getInstance().postSticky(versionBean);
+        });
     }
 
 
@@ -584,46 +569,6 @@ public class BleService extends Service {
             if (data.length < 20) return;
             RxBus.getInstance().post(new HeartRateChangeBus(data));
         });
-    }
-
-
-    /**
-     * 检测瘦身衣是否需要升级
-     *
-     * @param object
-     */
-    private void checkFirmwareVersion(DeviceVersionBean object) {
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .getUpgradeInfo(NetManager.fetchRequest(new Gson().toJson(object))))
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        final FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
-                        if (firmwareVersionUpdate.isHasNewVersion()) {
-                            RxLogUtils.d("有最新的版本");
-                            RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
-                                    .setContent("是否升级到最新的固件版本")
-                                    .setSure("升级")
-                                    .setSureListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            AboutUpdateDialog updatedialog = new AboutUpdateDialog(RxActivityUtils.currentActivity(), firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
-                                            updatedialog.show();
-                                        }
-                                    }).setCancelListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            if (firmwareVersionUpdate.getMustUpgrade() != 0) {
-                                                RxActivityUtils.AppExit(RxActivityUtils.currentActivity());
-                                            }
-                                        }
-                                    });
-                            rxDialog.show();
-                        } else {
-                            RxLogUtils.d("已经是最新的版本");
-                        }
-                    }
-                });
     }
 
 

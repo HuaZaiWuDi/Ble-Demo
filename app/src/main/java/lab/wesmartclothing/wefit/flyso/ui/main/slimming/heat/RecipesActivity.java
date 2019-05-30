@@ -258,6 +258,12 @@ public class RecipesActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        TextSpeakUtils.stop();
+        super.onDestroy();
+    }
+
     @OnClick(R.id.tv_changedDiet)
     public void onViewClicked() {
         changedDiet();

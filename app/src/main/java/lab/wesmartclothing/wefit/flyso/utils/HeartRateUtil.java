@@ -36,7 +36,7 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 public class HeartRateUtil {
     private int maxHeart = 0;//最大心率
     private int minHeart = 10000;//最小心率
-    private int maxPace = 10000;//最大配速
+    private int maxPace = Key.HRART_SECTION[6];//最大配速
     private int minPace = 0;//最小配速
     private int avPace = 0;//平均配速
     private double kcalTotal = 0;//总卡路里
@@ -44,10 +44,12 @@ public class HeartRateUtil {
     private int packageCounts = 0;//历史数据包序号
     private List<HeartRateItemBean> heartLists;
     private UserInfo userInfo;
-    private int initSteps = -1;
+    private int initSteps = -1, lastStep = 0;
+    private List<Double> kilometreList;
 
     public HeartRateUtil() {
         heartLists = new ArrayList<>();
+        kilometreList = new ArrayList<>();
         userInfo = MyAPP.getgUserInfo();
     }
 
@@ -71,19 +73,20 @@ public class HeartRateUtil {
 //            heartRate = (Key.HRART_SECTION[0] & 0xFF);
 //        }
 
-        maxHeart = Math.max(heartRate, maxHeart);
-        minHeart = Math.min(heartRate, minHeart);
+//        maxHeart = Math.max(heartRate, maxHeart);
+//        minHeart = Math.min(heartRate, minHeart);
 
-        //心率处于静息心率区间时不计算卡路里，
-        if (heartRate >= Key.HRART_SECTION[1]) {
-            kcalTotal += CalorieManager.getCalorie(heartRate, 2f / 3600);
-        } else {
-            //静息卡路里的计算：
-            //静息(Kcal/s)：基础代谢值/(24*60*60)*time*1.2
-            if (userInfo != null) {
-                kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60) * 1.2;
-            }
-        }
+//        //心率处于静息心率区间时不计算卡路里，
+//        if (heartRate >= Key.HRART_SECTION[1]) {
+//            kcalTotal += CalorieManager.getCalorie(heartRate, 2f / 3600);
+//        } else {
+//            //静息卡路里的计算：
+//            //静息(Kcal/s)：基础代谢值/(24*60*60)*time*1.2
+//            if (userInfo != null) {
+//                kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60) * 1.2;
+//            }
+//        }
+
         int currentSteps = 0;
         int step = ByteUtil.bytesToIntLittle2(new byte[]{bytes[12], bytes[13]});
 
@@ -96,17 +99,30 @@ public class HeartRateUtil {
         float Weight = SPUtils.getFloat(SPKey.SP_realWeight, 0);
         double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
         double calorie = CalorieManager.run2Calorie(Weight, kilometre);
+//        kilometreList.add(kilometre);
 
         int currentPace = ByteUtil.bytesToIntLittle2(new byte[]{bytes[18], bytes[19]});
+
+        //步数为0或者数据个数少于10或者步数没变（静止）
+        if (currentSteps == 0 || currentPace == 0) {
+            return null;
+        }
+//        if (currentSteps == 0 || currentSteps == lastStep || kilometreList.size() < 10) {
+//            return null;
+//        }
+
+        lastStep = currentSteps;
+        //2019-05-30需求修改为配速由APP来实现
+        //20秒的单位配速
+//        int currentPace = CalorieManager.getStepSpeed(20, kilometre, kilometreList.get(kilometreList.size() - 10));
+
         int reversePace = reversePace(currentPace);//反转配速，用于显示在图表上
 
         RxLogUtils.d("当前配速：" + currentPace);
         RxLogUtils.d("反转配速：" + reversePace);
         //最大最小配速(配速值越大，表示越小)
-        if (currentPace != 0) {
-            maxPace = Math.min(maxPace, currentPace);
-            minPace = Math.max(minPace, currentPace);
-        }
+        maxPace = Math.min(maxPace, currentPace);
+        minPace = Math.max(minPace, currentPace);
 
         SportsDataTab mSportsDataTab = new SportsDataTab();
         mSportsDataTab.setCurHeart(heartRate);
@@ -127,28 +143,25 @@ public class HeartRateUtil {
         mSportsDataTab.setMaxPace(maxPace);
         mSportsDataTab.setMinPace(minPace);
 
-        //配速不为0才上传
-        if (currentPace != 0) {
-            HeartRateItemBean heartRateTab = new HeartRateItemBean();
-            heartRateTab.setHeartRate(heartRate);
-            heartRateTab.setHeartTime(mSportsDataTab.getDate());
-            heartRateTab.setStepTime(2);
-            heartRateTab.step = currentSteps;
-            heartRateTab.pace = currentPace;
-            heartLists.add(heartRateTab);
+        HeartRateItemBean heartRateTab = new HeartRateItemBean();
+        heartRateTab.setHeartRate(heartRate);
+        heartRateTab.setHeartTime(mSportsDataTab.getDate());
+        heartRateTab.setStepTime(2);
+        heartRateTab.step = currentSteps;
+        heartRateTab.pace = currentPace;
+        heartLists.add(heartRateTab);
 
-            double asDouble = 0;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                asDouble = heartLists.stream().mapToInt(HeartRateItemBean::getPace).average().getAsDouble();
-            } else {
-                int sum = 0;
-                for (HeartRateItemBean bean : heartLists) {
-                    sum += bean.pace;
-                }
-                asDouble = sum * 1f / heartLists.size();
+        double asDouble = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            asDouble = heartLists.stream().mapToInt(HeartRateItemBean::getPace).average().getAsDouble();
+        } else {
+            int sum = 0;
+            for (HeartRateItemBean bean : heartLists) {
+                sum += bean.pace;
             }
-            mSportsDataTab.setAvPace(asDouble);
+            asDouble = sum * 1f / heartLists.size();
         }
+        mSportsDataTab.setAvPace(asDouble);
 
         RxLogUtils.i("瘦身衣心率数据：" + mSportsDataTab.toString());
         return mSportsDataTab;
@@ -192,7 +205,7 @@ public class HeartRateUtil {
     public synchronized void uploadHeartRate() {
         RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_PLAN, HeartRateBean.class)
                 .map(new CacheResult.MapFunc<HeartRateBean>())
-                .throttleFirst(10, TimeUnit.SECONDS)
+                .throttleFirst(60, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
                     protected void _onNext(HeartRateBean mHeartRateBean) {
@@ -202,7 +215,7 @@ public class HeartRateUtil {
 
         RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_FREE, HeartRateBean.class)
                 .map(new CacheResult.MapFunc<HeartRateBean>())
-                .throttleFirst(10, TimeUnit.SECONDS)
+                .throttleFirst(60, TimeUnit.SECONDS)
                 .subscribe(new RxSubscriber<HeartRateBean>() {
                     @Override
                     protected void _onNext(HeartRateBean mHeartRateBean) {

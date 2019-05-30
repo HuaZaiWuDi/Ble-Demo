@@ -67,7 +67,8 @@ public class RxHttpsException {
 //            HttpException httpException = (HttpException) t;
             msg = "网络异常";
         } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException || t instanceof JsonSyntaxException) {
-            msg = "请求网络失败";
+            Log.e("网络数据异常：", t.toString());
+            msg = "网络数据异常";
         } else if (t instanceof ConnectException) {
             msg = "请求网络失败";
         } else if (t instanceof ExplainException) {//返回后台解释性异常码
