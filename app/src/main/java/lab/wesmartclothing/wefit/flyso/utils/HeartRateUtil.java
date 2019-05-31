@@ -1,16 +1,23 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import android.annotation.SuppressLint;
+
 import com.alibaba.fastjson.JSON;
 import com.vondear.rxtools.utils.RxBus;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
@@ -18,8 +25,6 @@ import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -87,14 +92,8 @@ public class HeartRateUtil {
 //            }
 //        }
 
-        int currentSteps = 0;
-        int step = ByteUtil.bytesToIntLittle2(new byte[]{bytes[12], bytes[13]});
+        int currentSteps = ByteUtil.bytesToIntLittle2(new byte[]{bytes[12], bytes[13]});
 
-        if (initSteps < 0) {
-            initSteps = step;
-        } else {
-            currentSteps = Math.abs(step - initSteps);
-        }
 
         float Weight = SPUtils.getFloat(SPKey.SP_realWeight, 0);
         double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
@@ -201,74 +200,57 @@ public class HeartRateUtil {
         }
     }
 
+
+    public void saveSportKey(String sportKey) {
+        String keys = SPUtils.getString(Key.CACHE_SPORT_KET, "");
+        keys = keys + "," + sportKey;
+        SPUtils.put(Key.CACHE_SPORT_KET, keys);
+        RxLogUtils.d("保存运动Key：" + sportKey + "---:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(sportKey))));
+        RxLogUtils.d("本地Key列表：" + SPUtils.getString(Key.CACHE_SPORT_KET, ""));
+    }
+
     //10s只上传一次，防止重复上传
+    @SuppressLint("CheckResult")
     public synchronized void uploadHeartRate() {
-        RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_PLAN, HeartRateBean.class)
-                .map(new CacheResult.MapFunc<HeartRateBean>())
-                .throttleFirst(60, TimeUnit.SECONDS)
-                .subscribe(new RxSubscriber<HeartRateBean>() {
-                    @Override
-                    protected void _onNext(HeartRateBean mHeartRateBean) {
-                        saveHeartRate(mHeartRateBean);
-                    }
-                });
+        String keyStr = SPUtils.getString(Key.CACHE_SPORT_KET, "");
+        RxLogUtils.d("本地Key列表：" + keyStr);
+        String[] keys = keyStr.split(",");
 
-        RxCache.getDefault().<HeartRateBean>load(Key.CACHE_ATHL_RECORD_FREE, HeartRateBean.class)
-                .map(new CacheResult.MapFunc<HeartRateBean>())
-                .throttleFirst(60, TimeUnit.SECONDS)
-                .subscribe(new RxSubscriber<HeartRateBean>() {
-                    @Override
-                    protected void _onNext(HeartRateBean mHeartRateBean) {
-                        saveHeartRate(mHeartRateBean);
-                    }
-                });
+        Observable.fromArray(keys)
+                .filter(key -> !RxDataUtils.isNullString(key))
+                .flatMap((Function<String, ObservableSource<String>>) key ->
+                        RxCache.getDefault().<HeartRateBean>load(key, HeartRateBean.class)
+                                .map(new CacheResult.MapFunc<>())
+                                .filter(heartRateBean -> {
+                                    if (heartRateBean == null) {
+                                        RxLogUtils.d("添加心率：heartRateBean == null");
+                                    }
+                                    return heartRateBean != null;
+                                })
+                                .filter(heartRateBean -> {
+                                    List<HeartRateItemBean> heartList = heartRateBean.getHeartList();
+                                    if (heartList != null)
+                                        RxLogUtils.d("数据个数：" + heartList.size());
+                                    return heartList != null && heartList.size() >= 90;
+                                })
+                                .flatMap((Function<HeartRateBean, ObservableSource<String>>) heartRateBean ->
+                                        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                                                .addRunningData(NetManager.fetchRequest(JSON.toJSONString(heartRateBean)))))
+                )
+                .lastOrError()
+                .subscribe(s -> {
+                    SPUtils.put(Key.CACHE_SPORT_KET, "");
+                    RxLogUtils.d("添加心率：保存成功删除本地缓存：");
+                    //这里因为是后台上传数据，并不是跳转，使用RxBus方式
+                    RxBus.getInstance().post(new RefreshSlimming());
+                }, e -> RxLogUtils.e("上传出现异常：", e));
     }
 
-
-    public void saveHeartRate(final HeartRateBean heartRateBean) {
-        clearData(heartRateBean);
-        RxLogUtils.d("添加心率：获取保存数据：" + heartRateBean);
-        if (heartRateBean == null) {
-            RxLogUtils.d("添加心率：heartRateBean == null");
-            return;
-        }
-        int sumTime = 0;
-        List<HeartRateItemBean> heartList = heartRateBean.getHeartList();
-        if (heartList != null) {
-            sumTime = heartList.size() * 2;
-        }
-        if (sumTime < 3 * 60) {
-            RxLogUtils.d("添加心率：少于三分钟");
-            return;
-        }
-
-        String s = JSON.toJSONString(heartRateBean);
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .addRunningData(NetManager.fetchRequest(s)))
-                .subscribe(new RxNetSubscriber<String>() {
-                    @Override
-                    protected void _onNext(String s) {
-                        RxLogUtils.d("添加心率：保存成功删除本地缓存：");
-                        //这里因为是后台上传数据，并不是跳转，使用RxBus方式
-                        RxBus.getInstance().post(new RefreshSlimming());
-                    }
-
-                });
+    public synchronized void clearData(String sportKey) {
+        String keys = SPUtils.getString(Key.CACHE_SPORT_KET, "");
+        keys = keys.replace(sportKey, "");
+        SPUtils.put(Key.CACHE_SPORT_KET, keys);
+        RxLogUtils.d("删除运动Key：" + sportKey + "---:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(sportKey))));
+        RxLogUtils.d("本地Key列表：" + SPUtils.getString(Key.CACHE_SPORT_KET, ""));
     }
-
-
-    public void clearData(HeartRateBean heartRateBean) {
-        if (heartRateBean != null) {
-            try {
-                //RxCache 库的一个Bug
-                boolean remove = RxCache.getDefault().remove(heartRateBean.getPlanFlag() == 1 ? Key.CACHE_ATHL_RECORD_PLAN :
-                        Key.CACHE_ATHL_RECORD_FREE);
-                RxLogUtils.d("成功删除本地缓存：" + remove);
-            } catch (Exception e) {
-                RxLogUtils.e("RxCache LruDiskCache is null");
-            }
-        }
-    }
-
-
 }

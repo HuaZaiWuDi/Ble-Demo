@@ -28,6 +28,7 @@ import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
@@ -144,7 +145,10 @@ public class BleService extends Service {
                     }
 
                     if (workType != -1 && workType != 5) {
-                        new HeartRateUtil().uploadHeartRate();
+                        //一分钟之内只执行一次
+                        if (!RxUtils.isFastClick(60 * 1000)) {
+                            new HeartRateUtil().uploadHeartRate();
+                        }
                     }
 
                     RxLogUtils.d("网络状态：" + workType);
@@ -547,6 +551,8 @@ public class BleService extends Service {
             deviceLink.deviceLink(deviceLink);
 
             RxBus.getInstance().postSticky(versionBean);
+
+            RxLogUtils.d("当前版本：" + versionBean.toString());
         });
     }
 

@@ -39,45 +39,15 @@ public class HeartSectionUtil {
      * //最大心率计算公式改为“最大心率=208-0.7*年龄”,请知悉！
      */
     public static void initMaxHeart(UserInfo info) {
-//        if (info != null) {
-//            //最大心率计算公式改为“最大心率=208-0.7*年龄”,请知悉！
-//            int maxHeart = 190;
-////            int maxHeart = (int) (208 - info.getAge() * 0.7);
-//            maxHeart = info.getSex() == 1 ? (220 - info.getAge()) : (226 - info.getAge());
-//            Key.HRART_SECTION[0] = (byte) (maxHeart * 0.46);
-//            Key.HRART_SECTION[1] = (byte) (maxHeart * 0.55);
-//            Key.HRART_SECTION[2] = (byte) (maxHeart * 0.64);
-//            Key.HRART_SECTION[3] = (byte) (maxHeart * 0.73);
-//            Key.HRART_SECTION[4] = (byte) (maxHeart * 0.82);
-//            Key.HRART_SECTION[5] = (byte) (maxHeart * 0.91);
-//            Key.HRART_SECTION[6] = (byte) (maxHeart);
-//
-//            for (byte b : Key.HRART_SECTION) {
-//                RxLogUtils.d("心率区间：" + (b & 0xff));
-//            }
-//
-//            Key.heartRates[0] = Key.HRART_SECTION[1];
-//            Key.heartRates[1] = Key.HRART_SECTION[2];
-//            Key.heartRates[2] = Key.HRART_SECTION[3];
-//            Key.heartRates[3] = Key.HRART_SECTION[4];
-//            Key.heartRates[4] = Key.HRART_SECTION[5];
-//        }
 
 
         Key.HRART_SECTION[0] = (int) (6 * 60);//慢走
         Key.HRART_SECTION[1] = (int) (7 * 60);//快走
-        Key.HRART_SECTION[2] = (int) (8 * 60);//慢跑（这个2019-05-30需要去掉合并成5个区间）
+        Key.HRART_SECTION[2] = (int) (8 * 60);//热身（这个2019-05-30需要去掉合并成5个区间）
         Key.HRART_SECTION[3] = (int) (9 * 60);//慢燃
         Key.HRART_SECTION[4] = (int) (10 * 60);//快燃
         Key.HRART_SECTION[5] = (int) (11 * 60);//无氧
         Key.HRART_SECTION[6] = (int) (12 * 60);
-
-
-//        Key.heartRates[0] = Key.HRART_SECTION[1];
-//        Key.heartRates[1] = Key.HRART_SECTION[2];
-//        Key.heartRates[2] = Key.HRART_SECTION[3];
-//        Key.heartRates[3] = Key.HRART_SECTION[4];
-//        Key.heartRates[4] = Key.HRART_SECTION[5];
 
 
         for (int b : Key.HRART_SECTION) {

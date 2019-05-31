@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -79,7 +80,7 @@ public class MainActivity extends BaseALocationActivity {
 
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
     private List<Fragment> mFragments = new ArrayList<>();
-
+    private RxDialogSureCancel rxDialog;
 
     @Override
     protected int layoutId() {
@@ -116,6 +117,7 @@ public class MainActivity extends BaseALocationActivity {
         initReceiverPush(bundle);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initRxBus2() {
         super.initRxBus2();
@@ -149,7 +151,10 @@ public class MainActivity extends BaseALocationActivity {
                         final FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
                             RxLogUtils.d("有最新的版本");
-                            RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                            if (rxDialog != null) {
+                                rxDialog.dismiss();
+                            }
+                            rxDialog = new RxDialogSureCancel(mContext)
                                     .setTitle("提示")
                                     .setContent("是否升级到最新的固件版本")
                                     .setSure("升级")

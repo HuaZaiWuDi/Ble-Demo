@@ -310,7 +310,7 @@
                 android:layout_below="@+id/layout_sports"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_heartCount"

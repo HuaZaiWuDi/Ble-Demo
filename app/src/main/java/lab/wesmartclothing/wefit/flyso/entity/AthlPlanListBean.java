@@ -2,8 +2,6 @@ package lab.wesmartclothing.wefit.flyso.entity;
 
 import android.content.Context;
 
-import com.vondear.rxtools.utils.RxLogUtils;
-
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
@@ -66,7 +64,6 @@ public class AthlPlanListBean {
         int heart_6 = heartRates[6];
 
         int midValue = (heart_6 - heart_5) / 2;
-        RxLogUtils.d("中间值：" + midValue);
 
         switch (range) {
             case 0://静息

@@ -18,6 +18,7 @@ import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -26,12 +27,17 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
+import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
@@ -71,7 +77,6 @@ public class AboutFragment extends BaseActivity {
         initView();
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -86,6 +91,25 @@ public class AboutFragment extends BaseActivity {
                 .into(mTvTip);
         mTvAppVersion.setText("软件版本号 v" + RxDeviceUtils.getAppVersionName());
         mTvClothingVersion.setText("固件版本号 v--");
+
+        BleAPI.readDeviceInfo(data -> {
+            //021309 010203000400050607090a0b0c10111213
+            String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
+            DeviceVersionBean versionBean = new DeviceVersionBean();
+            versionBean.setCategory(data[3] & 0xFF);
+            versionBean.setModelNo(data[4] & 0xFF);
+            versionBean.setManufacture(ByteUtil.bytesToIntLittle2(new byte[]{data[5], data[6]}));
+            versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
+            versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
+
+            RxLogUtils.d("当前版本：" + versionBean.toString());
+
+            currentVersion = versionBean.getFirmwareVersion();
+            mTvClothingVersion.setText("固件版本号 v" + currentVersion);
+            checkFirmwareVersion(versionBean);
+        });
+
+
     }
 
     private void initTopBar() {
@@ -93,19 +117,6 @@ public class AboutFragment extends BaseActivity {
         mQMUIAppBarLayout.setTitle("关于我们");
     }
 
-    @SuppressLint("CheckResult")
-    @Override
-    protected void initRxBus2() {
-        super.initRxBus2();
-        RxBus.getInstance().registerSticky(DeviceVersionBean.class)
-                .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .subscribe(deviceVersion -> {
-                    RxLogUtils.d("固件版本号：" + deviceVersion.toString());
-                    currentVersion = deviceVersion.getFirmwareVersion();
-                    mTvClothingVersion.setText("固件版本号 v" + currentVersion);
-                    checkFirmwareVersion(deviceVersion);
-                });
-    }
 
     private void checkFirmwareVersion(final DeviceVersionBean object) {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
@@ -134,7 +145,6 @@ public class AboutFragment extends BaseActivity {
                         RxToast.normal(error);
                         checkState(false);
                     }
-
                 });
     }
 
