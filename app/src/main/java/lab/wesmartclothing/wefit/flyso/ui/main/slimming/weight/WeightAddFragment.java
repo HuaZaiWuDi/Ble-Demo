@@ -219,6 +219,7 @@ public class WeightAddFragment extends BaseActivity {
             RxToast.normal("测量体重失败");
             return;
         }
+
         bean.setMeasureTime(System.currentTimeMillis() + "");
         for (QNScaleItemData item : mQnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);

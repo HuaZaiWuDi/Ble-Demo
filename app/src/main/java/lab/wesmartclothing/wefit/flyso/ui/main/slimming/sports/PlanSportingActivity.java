@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
@@ -15,6 +16,7 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.view.dialog.RxDialogSure;
 
 import java.util.List;
 
@@ -40,18 +42,17 @@ public class PlanSportingActivity extends BaseSportActivity implements SportInte
 
     @Override
     public void sportFinish() {
-//        if (mChartHeartRate.getData().getEntryCount() < 90) {
-//            //       用户当前运动时间<3min，提示用户此次记录将不被保存
-//            sportingShortDialog = new RxDialogSure(mContext)
-//                    .setTitle(getString(R.string.sportTip))
-//                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
-//                    .setSure(getString(R.string.ok))
-//                    .setSureListener(v -> {
-//                        RxActivityUtils.finishActivity();
-//                    });
-//            sportingShortDialog.show();
-//        } else
-        {
+        if (mChartHeartRate.getData().getEntryCount() < 90) {
+            //       用户当前运动时间<3min，提示用户此次记录将不被保存
+            sportingShortDialog = new RxDialogSure(mContext)
+                    .setTitle(getString(R.string.sportTip))
+                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                    .setSure(getString(R.string.ok))
+                    .setSureListener(v -> {
+                        RxActivityUtils.finishActivity();
+                    });
+            sportingShortDialog.show();
+        } else {
             sportingFinish(false);
         }
     }

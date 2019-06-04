@@ -106,9 +106,6 @@ public class HeartRateUtil {
         if (currentSteps == 0 || currentPace == 0) {
             return null;
         }
-//        if (currentSteps == 0 || currentSteps == lastStep || kilometreList.size() < 10) {
-//            return null;
-//        }
 
         lastStep = currentSteps;
         //2019-05-30需求修改为配速由APP来实现

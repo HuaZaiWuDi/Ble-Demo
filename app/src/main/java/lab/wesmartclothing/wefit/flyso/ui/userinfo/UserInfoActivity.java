@@ -13,7 +13,6 @@ import com.amap.api.location.AMapLocation;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
@@ -318,7 +317,7 @@ public class UserInfoActivity extends BaseALocationActivity {
 
         String s = JSON.toJSONString(mUserInfo);
         SPUtils.put(SPKey.SP_UserInfo, s);
-
+        MyAPP.gUserInfo = mUserInfo;
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .saveUserInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -327,7 +326,7 @@ public class UserInfoActivity extends BaseALocationActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        MyAPP.gUserInfo = new Gson().fromJson(s, UserInfo.class);
+
                         //跳转扫描界面
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);

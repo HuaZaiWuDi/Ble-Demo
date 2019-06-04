@@ -157,6 +157,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     @Override
     protected void initViews() {
         super.initViews();
+        BleAPI.clearStep();
         initTopBar();
         initSwitch();
         initTypeface();
