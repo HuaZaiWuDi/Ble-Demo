@@ -157,7 +157,8 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     @Override
     protected void initViews() {
         super.initViews();
-        BleAPI.clearStep();
+        BleAPI.clearStep(data -> {
+        });
         initTopBar();
         initSwitch();
         initTypeface();
@@ -392,10 +393,9 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
 
                         Bundle bundle = new Bundle();
                         bundle.putString(Key.BUNDLE_DATA_GID, s);
-                        bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, true);
+                        bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, mHeartRateBean.getPlanFlag() == 1);
                         RxActivityUtils.skipActivityAndFinish(mContext, SportsDetailsFragment.class, bundle);
                     }
-
 
                     @Override
                     protected void _onError(String error, int code) {
@@ -571,7 +571,6 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     public void onDestroy() {
         timeTimer.stopTimer();
         dismissAllDialog();
-        BleAPI.clearStep();
         //向系统注册通知渠道，注册后不能改变重要性以及其他通知行为
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null)

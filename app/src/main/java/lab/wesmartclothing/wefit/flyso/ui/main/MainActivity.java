@@ -133,7 +133,18 @@ public class MainActivity extends BaseALocationActivity {
         RxBus.getInstance().registerSticky(DeviceVersionBean.class)
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .subscribe(deviceVersion -> {
-                    checkFirmwareVersion(deviceVersion);
+                    //判断是否有权限
+                    new RxPermissions((FragmentActivity) mActivity)
+                            .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                            .subscribe(new RxSubscriber<Permission>() {
+                                @Override
+                                protected void _onNext(Permission aBoolean) {
+                                    RxLogUtils.e("是否开启了权限：" + aBoolean);
+                                    if (aBoolean.granted)
+                                        checkFirmwareVersion(deviceVersion);
+                                }
+                            });
                 });
     }
 
@@ -145,6 +156,7 @@ public class MainActivity extends BaseALocationActivity {
     private void checkFirmwareVersion(DeviceVersionBean object) {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .getUpgradeInfo(NetManager.fetchRequest(new Gson().toJson(object))))
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

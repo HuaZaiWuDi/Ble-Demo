@@ -1,10 +1,12 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,11 +16,11 @@ import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
-import com.vondear.rxtools.utils.RxBus;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 
 import butterknife.BindView;
@@ -28,16 +30,14 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
-import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
@@ -132,6 +132,11 @@ public class AboutFragment extends BaseActivity {
                             updateURL = firmwareVersionUpdate.getFileUrl();
                             newVersion = firmwareVersionUpdate.getFirmwareVersion();
 
+                            RxTextUtils.getBuilder("固件版本号 v" + currentVersion)
+                                    .append("-> v" + newVersion)
+                                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.red))
+                                    .into(mTvClothingVersion);
+
                             checkState(true);
                         } else {
                             RxToast.normal("当前固件版本 v" + currentVersion + " 已经是最新版本，");
@@ -172,19 +177,31 @@ public class AboutFragment extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_update:
-                dialog = new AboutUpdateDialog(mContext, updateURL, false);
-                dialog.setBLEUpdateListener(new AboutUpdateDialog.BLEUpdateListener() {
-                    @Override
-                    public void success() {
-                    }
+                //判断是否有权限
+                new RxPermissions((FragmentActivity) mActivity)
+                        .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                        .subscribe(new RxSubscriber<Permission>() {
+                            @Override
+                            protected void _onNext(Permission aBoolean) {
+                                RxLogUtils.e("是否开启了权限：" + aBoolean);
+                                if (aBoolean.granted) {
+                                    dialog = new AboutUpdateDialog(mContext, updateURL, false);
+                                    dialog.setBLEUpdateListener(new AboutUpdateDialog.BLEUpdateListener() {
+                                        @Override
+                                        public void success() {
+                                        }
 
-                    @Override
-                    public void fail() {
-                        mLayoutUpdateFail.setVisibility(View.VISIBLE);
-                    }
-                });
-                //set进度值
-                dialog.show();
+                                        @Override
+                                        public void fail() {
+                                            mLayoutUpdateFail.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                                    //set进度值
+                                    dialog.show();
+                                }
+                            }
+                        });
                 break;
             case R.id.tv_tip:
                 //服务协议

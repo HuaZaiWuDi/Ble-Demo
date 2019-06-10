@@ -252,6 +252,8 @@ public class SlimmingFragment extends BaseAcFragment {
     LinearLayout mLayoutTargetComplete;
     @BindView(R.id.layout_slimmingTarget)
     RelativeLayout mLayoutSlimmingTarget;
+    @BindView(R.id.img_weightFlag)
+    ImageView ImgWeightFlag;
 
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
@@ -303,24 +305,21 @@ public class SlimmingFragment extends BaseAcFragment {
         lineChartUtils = new HeartLineChartUtils(mLineChart);
         lineChartUtils.setPlanLineColor(Color.parseColor("#E4CA9F"), Color.parseColor("#312C35"));
 
-        mScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY <= RxUtils.dp2px(32) && isFold) {
-                    isFold = false;
-                    //展开
-                    RxAnimationUtils.animateHeight(RxUtils.dp2px(64), RxUtils.dp2px(95), mLayoutTitle);
-                    mIvUserImg.animate().scaleX(1f).scaleY(1f).setDuration(500).start();
-                    mImgSeeRecord.animate().scaleX(1f).scaleY(1f).setDuration(500).alpha(1f).start();
-                    mImgSeeRecord.setEnabled(true);
-                } else if (scrollY > RxUtils.dp2px(32) && !isFold) {
-                    isFold = true;
-                    //收缩
-                    RxAnimationUtils.animateHeight(RxUtils.dp2px(95), RxUtils.dp2px(64), mLayoutTitle);
-                    mIvUserImg.animate().scaleX(0.45f).scaleY(0.45f).setDuration(500).start();
-                    mImgSeeRecord.animate().scaleX(0f).scaleY(0f).setDuration(500).alpha(0f).start();
-                    mImgSeeRecord.setEnabled(false);
-                }
+        mScroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY <= RxUtils.dp2px(32) && isFold) {
+                isFold = false;
+                //展开
+                RxAnimationUtils.animateHeight(RxUtils.dp2px(64), RxUtils.dp2px(95), mLayoutTitle);
+                mIvUserImg.animate().scaleX(1f).scaleY(1f).setDuration(500).start();
+                mImgSeeRecord.animate().scaleX(1f).scaleY(1f).setDuration(500).alpha(1f).start();
+                mImgSeeRecord.setEnabled(true);
+            } else if (scrollY > RxUtils.dp2px(32) && !isFold) {
+                isFold = true;
+                //收缩
+                RxAnimationUtils.animateHeight(RxUtils.dp2px(95), RxUtils.dp2px(64), mLayoutTitle);
+                mIvUserImg.animate().scaleX(0.45f).scaleY(0.45f).setDuration(500).start();
+                mImgSeeRecord.animate().scaleX(0f).scaleY(0f).setDuration(500).alpha(0f).start();
+                mImgSeeRecord.setEnabled(false);
             }
         });
     }
@@ -755,9 +754,11 @@ public class SlimmingFragment extends BaseAcFragment {
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
             mProTarget.setProgress(5);
         } else {
+            ImgWeightFlag.setTranslationX((float) (RxUtils.dp2px(230) * bean.getComplete()));
             mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mProTarget.setProgress((float) (bean.getComplete() * 100));
         }
+
     }
 
 

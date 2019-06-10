@@ -64,13 +64,8 @@ public class RxComposeUtils {
      * @return ObservableTransformer
      */
     public static <T> ObservableTransformer<T, T> rxThreadHelper() {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> observable) {
-                return observable.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread());
-            }
-        };
+        return observable -> observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
 
     }

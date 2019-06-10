@@ -151,13 +151,11 @@ public class PlanSportingActivity extends BaseSportActivity implements SportInte
                 .subscribe(new RxSubscriber<HeartRateChangeBus>() {
                     @Override
                     protected void _onNext(HeartRateChangeBus heartRateData) {
-
                         if (pause) return;
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
-                        if (sportsDataTab == null) {
-                            mTvAvHeartRate.setText("--");
+                        if (sportsDataTab == null) return;
+                        if (sportsDataTab.getHeartLists().size() < 3)
                             return;
-                        }
                         //配速
                         stepSpeed = sportsDataTab.getStepSpeed();
 

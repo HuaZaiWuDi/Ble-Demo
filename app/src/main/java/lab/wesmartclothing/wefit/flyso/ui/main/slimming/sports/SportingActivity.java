@@ -40,8 +40,7 @@ public class SportingActivity extends BaseSportActivity implements SportInterfac
                         RxActivityUtils.finishActivity();
                     });
             sportingShortDialog.show();
-        } else
-        {
+        } else {
             timeTimer.stopTimer();
             speakAdd(getString(R.string.speech_freeSportFinish,
                     Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
@@ -100,6 +99,8 @@ public class SportingActivity extends BaseSportActivity implements SportInterfac
                             mTvAvHeartRate.setText("--");
                             return;
                         }
+                        if (sportsDataTab.getHeartLists().size() < 3)
+                            return;
                         //配速
                         int stepSpeed = sportsDataTab.getStepSpeed();
 

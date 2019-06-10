@@ -31,6 +31,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
@@ -78,6 +79,7 @@ public class AboutUpdateDialog extends RxDialog {
         mContext = context;
         this.mustUpdate = mustUpdate;
 
+
         this.setCanceledOnTouchOutside(false);
         setFullScreenWidth();
 
@@ -102,11 +104,13 @@ public class AboutUpdateDialog extends RxDialog {
 
     private void downLoadFile(String filePath) {
         int lastIndexOf = filePath.lastIndexOf("/");
-        fileName = filePath.substring(lastIndexOf + 1, filePath.length());
+        fileName = filePath.substring(lastIndexOf + 1);
         RxLogUtils.i("文件名：" + fileName);
 
-        RxManager.getInstance().doLoadDownSubscribe(NetManager.getApiService().downLoadFile(filePath))
+        RxManager.getInstance().doLoadDownSubscribe(
+                NetManager.getApiService().downLoadFile(filePath))
                 .map(body -> mFileDownLoadObserver.saveFile(body, Dir, fileName))
+                .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(mFileDownLoadObserver);
     }
 
@@ -119,7 +123,7 @@ public class AboutUpdateDialog extends RxDialog {
 
         @Override
         public void onDownLoadFail(Throwable throwable) {
-            mTvUpdateTip.setText("下载文件失败:" + throwable.toString());
+            mTvUpdateTip.setText("下载文件失败");
             RxLogUtils.e(throwable.toString());
             setCanceledOnTouchOutside(true);
         }

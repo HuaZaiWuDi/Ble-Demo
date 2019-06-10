@@ -223,7 +223,7 @@
 
                         <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
                             android:id="@+id/pro_target"
-                            android:layout_width="match_parent"
+                            android:layout_width="222dp"
                             android:layout_height="8dp"
                             android:layout_margin="8dp"
                             android:layout_toLeftOf="@+id/tv_targetWeight"
@@ -237,6 +237,7 @@
 
 
                         <ImageView
+                            android:id="@+id/img_weightFlag"
                             android:layout_width="19dp"
                             android:layout_height="22dp"
                             android:layout_alignLeft="@+id/pro_target"
