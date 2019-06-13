@@ -176,8 +176,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         tipDialog = null;
         RxActivityUtils.removeActivity(this);
         super.onDestroy();
-        mContext = null;
-        mActivity = null;
     }
 
 

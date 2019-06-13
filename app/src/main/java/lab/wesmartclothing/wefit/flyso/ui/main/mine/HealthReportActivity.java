@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -28,6 +27,7 @@ import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 

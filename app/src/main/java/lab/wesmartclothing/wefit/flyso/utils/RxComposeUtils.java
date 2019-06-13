@@ -227,17 +227,9 @@ public class RxComposeUtils {
      * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
      */
     public static <T> ObservableTransformer<T, T> bindLife(final BehaviorSubject<LifeCycleEvent> subject) {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> upstream) {
-                return upstream.takeUntil(subject.skipWhile(new Predicate<LifeCycleEvent>() {
-                    @Override
-                    public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
-                        return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH;
-                    }
-                }));
-            }
-        };
+        return upstream ->
+                upstream.takeUntil(subject.skipWhile(activityLifeCycleEvent ->
+                        activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH));
     }
 
     /**

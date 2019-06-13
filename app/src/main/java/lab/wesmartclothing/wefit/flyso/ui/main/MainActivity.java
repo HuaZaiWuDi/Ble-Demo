@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,12 +26,12 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.socialize.UMShareAPI;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,7 +199,7 @@ public class MainActivity extends BaseALocationActivity {
         mBottomTab.setOnClickListener(v -> {
 
         });
-        startService(new Intent(mContext, BleService.class));
+        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
     }
 
     private void initSystemConfig() {

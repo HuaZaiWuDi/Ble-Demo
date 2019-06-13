@@ -7,12 +7,12 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;

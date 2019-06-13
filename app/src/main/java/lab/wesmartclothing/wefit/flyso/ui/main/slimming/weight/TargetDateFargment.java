@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -18,6 +17,7 @@ import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
 import com.vondear.rxtools.view.wheelhorizontal.view.DecimalScaleRulerView;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -151,7 +151,6 @@ public class TargetDateFargment extends BaseActivity {
         mInfoBean.setTargetWeight(targetWeight);
 
 
-        RxLogUtils.d("mSubmitInfoFrom：" + RecordInfoActivity.mSubmitInfoFrom);
         if (RecordInfoActivity.mSubmitInfoFrom == null) {
             settingTarget();
         } else {
@@ -160,9 +159,9 @@ public class TargetDateFargment extends BaseActivity {
     }
 
     private void submitPlan() {
-        RecordInfoActivity.mSubmitInfoFrom.setTargetInfo(mInfoBean);
+        RecordInfoActivity.getmSubmitInfoFrom().setTargetInfo(mInfoBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
-                .submitInform(NetManager.fetchRequest(JSON.toJSONString(RecordInfoActivity.mSubmitInfoFrom))))
+                .submitInform(NetManager.fetchRequest(JSON.toJSONString(RecordInfoActivity.getmSubmitInfoFrom()))))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {

@@ -14,18 +14,17 @@ import cn.jpush.android.api.CustomPushNotificationBuilder;
 import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * Created by jk on 2018/7/9.
  */
 public class JPushUtils {
-    private static Application mApplication;
     private static int sequence = 0;  // 用户自定义的操作序列号,同操作结果一起返回，用来标识一次操作的唯一性。
     private static Set<String> tags = new HashSet<>();
 
     public static void init(Application application) {
-        mApplication = application;
         JPushInterface.setDebugMode(BuildConfig.DEBUG);
         JPushInterface.init(application);
 
@@ -43,7 +42,8 @@ public class JPushUtils {
         tagAliasBean.tags = tags;
         tagAliasBean.isAliasAction = !SPUtils.getBoolean(SPKey.SP_PUSH_ALIAS);
         tagAliasBean.alias = SPUtils.getString(SPKey.SP_UserId);
-        TagAliasOperatorHelper.getInstance().handleAction(mApplication, sequence, tagAliasBean);
+        TagAliasOperatorHelper.getInstance().handleAction(MyAPP.sMyAPP, sequence, tagAliasBean);
+
     }
 
 

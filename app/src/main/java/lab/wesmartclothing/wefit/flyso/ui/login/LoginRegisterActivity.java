@@ -20,7 +20,6 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
@@ -32,6 +31,7 @@ import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.viewpager.UnScrollableViewPager;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
 import java.util.Map;

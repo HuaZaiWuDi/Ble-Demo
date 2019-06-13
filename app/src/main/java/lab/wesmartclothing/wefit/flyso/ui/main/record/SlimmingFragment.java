@@ -23,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -41,6 +40,7 @@ import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.VerticalProgress;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -409,9 +409,9 @@ public class SlimmingFragment extends BaseAcFragment {
     ///////////////////////////////////////////////////////////////////////////
     private void getData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().planIndex())
-                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
+                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override

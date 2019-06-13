@@ -2,14 +2,11 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.MotionEvent;
@@ -24,7 +21,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -40,6 +36,7 @@ import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 import com.vondear.rxtools.view.tooltips.RxToolTip;
 import com.vondear.rxtools.view.tooltips.RxToolTipsManager;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
 
@@ -69,8 +66,6 @@ import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
-
-import static no.nordicsemi.android.dfu.DfuBaseService.NOTIFICATION_ID;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports
@@ -538,12 +533,8 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         Intent intent = new Intent(this, BleService.class);
         intent.putExtra("APP_BACKGROUND", true);
 
-        // Android 8.0使用startForegroundService在前台启动新服务
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
+        ContextCompat.startForegroundService(mContext, intent);
+
         if (!pause) {
             stopTime = System.currentTimeMillis();
             timeTimer.stopTimer();
@@ -571,10 +562,6 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     public void onDestroy() {
         timeTimer.stopTimer();
         dismissAllDialog();
-        //向系统注册通知渠道，注册后不能改变重要性以及其他通知行为
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null)
-            notificationManager.cancel(NOTIFICATION_ID);
         super.onDestroy();
     }
 

@@ -34,6 +34,8 @@ import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
@@ -107,7 +109,25 @@ public class MyAPP extends Application {
 
             ActivityLifecycle();
             RxLogUtils.i("启动时长：初始化结束");
+            AdaptationOppo();
         });
+    }
+
+    /**
+     * 部分OPPO机型 AssetManager.finalize() timed out的修复
+     */
+    private void AdaptationOppo() {
+        try {
+            Class clazz = Class.forName("java.lang.Daemons$FinalizerWatchdogDaemon");
+            Method method = clazz.getSuperclass().getDeclaredMethod("stop");
+            method.setAccessible(true);
+            Field field = clazz.getDeclaredField("INSTANCE");
+            field.setAccessible(true);
+            method.invoke(field.get(null));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            RxLogUtils.e(e);
+        }
     }
 
     private void initSonic() {

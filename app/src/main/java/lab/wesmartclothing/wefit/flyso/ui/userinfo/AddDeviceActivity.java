@@ -24,7 +24,6 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -33,6 +32,7 @@ import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -140,7 +140,7 @@ public class AddDeviceActivity extends BaseActivity {
 
         scanTimeout.startTimer();
 
-        startService(new Intent(mContext, BleService.class));
+        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
         RxLogUtils.d("开启动画");
     }
 
@@ -277,11 +277,6 @@ public class AddDeviceActivity extends BaseActivity {
                 deviceList.setMacAddr(bean.getDeviceMac());
                 deviceList.setDeviceNo(bean.getDeivceType());
                 mDeviceLists.add(deviceList);
-                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
-                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
-                } else {
-                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
-                }
             }
         }
         mBindDeviceItem.setDeviceList(mDeviceLists);
@@ -304,6 +299,15 @@ public class AddDeviceActivity extends BaseActivity {
                         } else {
                             onBackPressed();
                         }
+
+                        for (BindDeviceItem.DeviceListBean bean : mBindDeviceItem.getDeviceList()) {
+                            if (BleKey.TYPE_SCALE.equals(bean.getDeviceNo())) {
+                                SPUtils.put(SPKey.SP_scaleMAC, bean.getMacAddr());
+                            } else {
+                                SPUtils.put(SPKey.SP_clothingMAC, bean.getMacAddr());
+                            }
+                        }
+
                     }
 
                     @Override

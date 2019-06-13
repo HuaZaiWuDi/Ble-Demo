@@ -30,44 +30,47 @@ public class GlideImageLoader implements ImageLoader {
     }
 
     public void displayImage(Context activity, Object path, ImageView imageView) {
-        Glide.with(activity)
-                .load(path)
-                .asBitmap()
-                .placeholder(R.mipmap.icon_placeholder)
-                .into(imageView);
+        if (activity != null)
+            Glide.with(activity)
+                    .load(path)
+                    .asBitmap()
+                    .placeholder(R.mipmap.icon_placeholder)
+                    .into(imageView);
     }
 
     public void displayImage(Context activity, Object path, @DrawableRes int defaultImg, ImageView imageView) {
-        Glide.with(activity)
-                .load(path)
-                .asBitmap()
-                .placeholder(defaultImg)
-                .centerCrop()
-                .into(imageView);
+        if (activity != null)
+            Glide.with(activity)
+                    .load(path)
+                    .asBitmap()
+                    .placeholder(defaultImg)
+                    .centerCrop()
+                    .into(imageView);
     }
 
 
     @Override
     public void displayImage(Activity activity, String path, ImageView imageView, int width, int height) {
-
-        Glide.with(activity)
-                .load(Uri.fromFile(new File(path)))
-                .placeholder(R.mipmap.icon_placeholder)
-                .centerCrop()
-                .crossFade(500)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(imageView);
+        if (activity != null)
+            Glide.with(activity)
+                    .load(Uri.fromFile(new File(path)))
+                    .placeholder(R.mipmap.icon_placeholder)
+                    .centerCrop()
+                    .crossFade(500)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(imageView);
     }
 
     @Override
     public void displayImagePreview(Activity activity, String path, ImageView imageView, int width, int height) {
-        Glide.with(activity)
-                .load(Uri.fromFile(new File(path)))
-                .placeholder(R.mipmap.icon_placeholder)
-                .centerCrop()
-                .crossFade(500)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(imageView);
+        if (activity != null)
+            Glide.with(activity)
+                    .load(Uri.fromFile(new File(path)))
+                    .placeholder(R.mipmap.icon_placeholder)
+                    .centerCrop()
+                    .crossFade(500)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(imageView);
     }
 
     @Override

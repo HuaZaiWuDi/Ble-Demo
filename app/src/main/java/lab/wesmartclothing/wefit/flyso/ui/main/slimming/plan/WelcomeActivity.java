@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,7 +103,8 @@ public class WelcomeActivity extends BaseActivity {
                             mTvTip.setVisibility(isQualified ? View.GONE : View.VISIBLE);
 
                             if (isQualified) {
-                                RecordInfoActivity.mSubmitInfoFrom.setWeightInfo(weightBean);
+
+                                RecordInfoActivity.getmSubmitInfoFrom().setWeightInfo(weightBean);
                             }
                         }
                     }

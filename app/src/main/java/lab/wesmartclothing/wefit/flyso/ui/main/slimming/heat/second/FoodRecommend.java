@@ -15,7 +15,6 @@ import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -23,6 +22,7 @@ import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -124,39 +124,30 @@ public class FoodRecommend extends BaseActivity {
         initTopBar();
         initRecycler();
         mChooseDate.setTheme(DateChoose.TYPE_FOOD_RECORD);
-        mChooseDate.setOnDateChangeListener(new DateChoose.OnDateChangeListener() {
-            @Override
-            public void onDateChangeListener(int year, int month, int day, long millis) {
-                currentTime = millis;
-                foodRecord(millis);
-            }
+        mChooseDate.setOnDateChangeListener((year, month, day, millis) -> {
+            currentTime = millis;
+            foodRecord(millis);
         });
 
         dialog.setLifecycleSubject(lifecycleSubject);
-        dialog.setDeleteFoodListener(new AddOrUpdateFoodDialog.DeleteFoodListener() {
-            @Override
-            public void deleteFood(FoodListBean listBean) {
-                foodRecord(currentTime);
-                RxBus.getInstance().post(new RefreshSlimming());
-            }
+        dialog.setDeleteFoodListener(listBean -> {
+            foodRecord(currentTime);
+            RxBus.getInstance().post(new RefreshSlimming());
         });
-        dialog.setAddOrUpdateFoodListener(new AddOrUpdateFoodDialog.AddOrUpdateFoodListener() {
-            @Override
-            public void complete(FoodListBean listBean) {
-                switch (listBean.getEatType()) {
-                    case Key.TYPE_BREAKFAST:
-                        update(breakfastAdapter, listBean, listBean.getEatType());
-                        break;
-                    case Key.TYPE_LUNCH:
-                        update(lunchAdapter, listBean, listBean.getEatType());
-                        break;
-                    case Key.TYPE_DINNER:
-                        update(dinnerAdapter, listBean, listBean.getEatType());
-                        break;
-                    case Key.TYPED_MEAL:
-                        update(mealAdapter, listBean, listBean.getEatType());
-                        break;
-                }
+        dialog.setAddOrUpdateFoodListener(listBean -> {
+            switch (listBean.getEatType()) {
+                case Key.TYPE_BREAKFAST:
+                    update(breakfastAdapter, listBean, listBean.getEatType());
+                    break;
+                case Key.TYPE_LUNCH:
+                    update(lunchAdapter, listBean, listBean.getEatType());
+                    break;
+                case Key.TYPE_DINNER:
+                    update(dinnerAdapter, listBean, listBean.getEatType());
+                    break;
+                case Key.TYPED_MEAL:
+                    update(mealAdapter, listBean, listBean.getEatType());
+                    break;
             }
         });
 
@@ -297,12 +288,7 @@ public class FoodRecommend extends BaseActivity {
 
 
     private void initTopBar() {
-        mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mTopBar.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mTopBar.setTitle("饮食记录");
     }
 

@@ -120,6 +120,7 @@ public class QNBleTools {
 
 
     public void connectDevice(QNBleDevice qnBleDevice) {
+        QNBleTools.device = qnBleDevice;
         MyAPP.QNapi.connectDevice(qnBleDevice, createUser(), new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {

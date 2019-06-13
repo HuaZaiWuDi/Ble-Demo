@@ -142,37 +142,34 @@ public class EnergyActivity extends BaseActivity {
                 .add(timeLine)
                 .build(mSuitlines);
 
-        mSuitlines.setLineChartSelectItemListener(new SuitLines.LineChartSelectItemListener() {
-            @Override
-            public void selectItem(int valueX) {
-                EnergyBean.ListBean bean = list.get(valueX);
-                currentDate = bean.getRecordDate();
-                mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
+        mSuitlines.setLineChartSelectItemListener(valueX -> {
+            EnergyBean.ListBean bean = list.get(valueX);
+            currentDate = bean.getRecordDate();
+            mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
 
 //                int surplusHeat = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
 
-                int surplusHeat = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
+            int surplusHeat = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
 
-                mTvSurplusHeat.setTextColor(ContextCompat.getColor(mContext, surplusHeat < 0 ? R.color.red : R.color.orange_FF7200));
-                RxTextUtils.getBuilder(Math.abs(surplusHeat) + "")
-                        .append("\tkacl").setProportion(0.5f)
-                        .into(mTvSurplusHeat);
+            mTvSurplusHeat.setTextColor(ContextCompat.getColor(mContext, surplusHeat < 0 ? R.color.red : R.color.orange_FF7200));
+            RxTextUtils.getBuilder(Math.abs(surplusHeat) + "")
+                    .append("\tkacl").setProportion(0.5f)
+                    .into(mTvSurplusHeat);
 
-                RxTextUtils.getBuilder("饮食摄入能量\n")
-                        .append(bean.getHeatCalorie() + "").setProportion(1.3f)
-                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
-                        .append("\tkcal").setProportion(0.7f)
-                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
-                        .into(mTvEatKcal);
+            RxTextUtils.getBuilder("饮食摄入能量\n")
+                    .append(bean.getHeatCalorie() + "").setProportion(1.3f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
+                    .append("\tkcal").setProportion(0.7f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
+                    .into(mTvEatKcal);
 
-                RxTextUtils.getBuilder("运动消耗能量\n")
-                        .append(bean.getAthlCalorie() + "").setProportion(1.3f)
-                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
-                        .append("\tkcal").setProportion(0.7f)
-                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
-                        .into(mTvSportingKcal);
+            RxTextUtils.getBuilder("运动消耗能量\n")
+                    .append(bean.getAthlCalorie() + "").setProportion(1.3f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
+                    .append("\tkcal").setProportion(0.7f)
+                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
+                    .into(mTvSportingKcal);
 
-            }
         });
 
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {

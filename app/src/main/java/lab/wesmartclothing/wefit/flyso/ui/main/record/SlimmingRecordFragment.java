@@ -30,7 +30,6 @@ import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.model.tool.RxQRCode;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -46,6 +45,7 @@ import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.waveview.RxWaveHelper;
 import com.vondear.rxtools.view.waveview.RxWaveView;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 

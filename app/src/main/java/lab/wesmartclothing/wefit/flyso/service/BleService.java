@@ -24,13 +24,13 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener;
 import com.yolanda.health.qnblesdk.listener.QNDataListener;
 import com.yolanda.health.qnblesdk.out.QNBleDevice;
@@ -53,7 +53,6 @@ import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
-import lab.wesmartclothing.wefit.flyso.ble.listener.BleOpenNotifyCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
@@ -203,11 +202,11 @@ public class BleService extends Service {
         if (intent != null && intent.getBooleanExtra("APP_BACKGROUND", false)) {
             stopScan();
             System.gc();
-            setForegroundService();
         } else {
             if (BleTools.getBleManager().isBlueEnable())
                 initBle();
         }
+        setForegroundService();
         return START_STICKY;
     }
 
@@ -284,7 +283,6 @@ public class BleService extends Service {
                 BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_CLOTHING,
                         getString(R.string.clothing), bleDevice.getMac(), bleDevice.getRssi());
                 RxBus.getInstance().post(bindDeviceBean);
-
             }
         });
     }
@@ -309,7 +307,6 @@ public class BleService extends Service {
                         mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                     mQNBleTools.connectDevice(bleDevice);
-                    mQNBleTools.setDevice(bleDevice);
                     connectDevices.put(bleDevice.getMac(), bleDevice);
 
                     mQNBleTools.stopScan();
@@ -343,9 +340,10 @@ public class BleService extends Service {
 //                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
                 Bundle bundle = new Bundle();
                 bundle.putDouble(Key.BUNDLE_WEIGHT_UNSTEADY, v);
-                if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
-                        && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
-                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+                if (RxActivityUtils.currentActivity() != null)
+                    if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
+                            && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
+                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
             }
 
             @Override
@@ -353,9 +351,11 @@ public class BleService extends Service {
                 RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
                 Bundle bundle = new Bundle();
                 bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, JSON.toJSONString(qnScaleData));
-                if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
-                        && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
-                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+                if (RxActivityUtils.currentActivity() != null) {
+                    if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
+                            && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
+                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+                }
 //                RxBus.getInstance().post(qnScaleData);
             }
 
@@ -466,9 +466,7 @@ public class BleService extends Service {
                 if (dfuStarting) return;
 
                 BleTools.getInstance().setBleDevice(bleDevice);
-                BleTools.getInstance().openNotify(new BleOpenNotifyCallBack() {
-                    @Override
-                    public void success(boolean isSuccess) {
+                BleTools.getInstance().openNotify(isSuccess ->
                         BleTools.getBleManager().setMtu(bleDevice, 200, new BleMtuChangedCallback() {
                             @Override
                             public void onSetMTUFailure(BleException exception) {
@@ -479,10 +477,7 @@ public class BleService extends Service {
                             public void onMtuChanged(int mtu) {
                                 syncBleSetting();
                             }
-                        });
-
-                    }
-                });
+                        }));
             }
 
             @Override

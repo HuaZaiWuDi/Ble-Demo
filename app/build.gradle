@@ -188,7 +188,8 @@ dependencies {
     implementation files('libs/qnsdk-0.3.4.jar')
 
 
-    implementation 'com.jackUtil:RxTools:1.2.3'
+    implementation 'com.jackUtil:RxTools:1.2.4'
+    implementation 'com.jackUtil:net:1.0.3'
 
     implementation 'com.qmuiteam:qmui:1.1.12'
 

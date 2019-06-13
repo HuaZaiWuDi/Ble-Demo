@@ -65,6 +65,12 @@ public class RecordInfoActivity extends BaseActivity {
     public static SubmitInfoFrom mSubmitInfoFrom;
     private boolean isOver = false;
 
+
+    public static SubmitInfoFrom getmSubmitInfoFrom() {
+        if (mSubmitInfoFrom == null) return new SubmitInfoFrom();
+        return mSubmitInfoFrom;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +81,6 @@ public class RecordInfoActivity extends BaseActivity {
     }
 
     private void init() {
-        mSubmitInfoFrom = new SubmitInfoFrom();
         initTopBar();
         initRecyclerView();
         initData();
@@ -94,8 +99,8 @@ public class RecordInfoActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -247,7 +252,7 @@ public class RecordInfoActivity extends BaseActivity {
                 switchQuestion();
                 break;
             case R.id.tv_nextWay:
-                mSubmitInfoFrom.setAnswer(submitQuestion());
+                RecordInfoActivity.getmSubmitInfoFrom().setAnswer(submitQuestion());
                 RxActivityUtils.skipActivity(mContext, WelcomeActivity.class);
                 break;
         }
