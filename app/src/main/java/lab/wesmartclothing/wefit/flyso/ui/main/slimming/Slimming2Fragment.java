@@ -560,7 +560,8 @@ public class Slimming2Fragment extends BaseAcFragment {
     private void getFirstPageData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class,
+                        CacheStrategy.cacheAndRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

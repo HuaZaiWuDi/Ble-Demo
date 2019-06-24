@@ -138,7 +138,8 @@ public class FoodDetailsFragment extends BaseActivity {
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getFoodType())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodType", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodType", String.class,
+                        CacheStrategy.firstCacheTimeout(Key.DAY_1)))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -306,7 +307,10 @@ public class FoodDetailsFragment extends BaseActivity {
     private void initData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getFoodInfo(pageNum, 15, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodInfo" + typeId + pageNum, String.class, CacheStrategy.firstCache()))
+                .compose(MyAPP.getRxCache().<String>transformObservable(
+                        "getFoodInfo" + typeId + pageNum,
+                        String.class,
+                        CacheStrategy.firstCacheTimeout(Key.DAY_1)))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -375,8 +379,8 @@ public class FoodDetailsFragment extends BaseActivity {
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }

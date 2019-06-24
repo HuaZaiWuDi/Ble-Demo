@@ -267,7 +267,8 @@ public class WeightContrastActivity extends BaseActivity {
                 NetManager.getApiService().weightCompare(
                         NetManager.fetchRequest(jsonObject.toString())))
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("weightCompare" + startDate + endDate, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().transformObservable("weightCompare" + startDate + endDate,
+                        String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

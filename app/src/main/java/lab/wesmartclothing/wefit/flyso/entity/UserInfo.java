@@ -44,6 +44,8 @@ public class UserInfo implements Serializable {
     private String invitationCode;
     private int baselHeat;
 
+
+
     public int getBaselHeat() {
         return baselHeat;
     }

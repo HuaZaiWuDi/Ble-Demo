@@ -197,7 +197,8 @@ public class EnergyActivity extends BaseActivity {
     private void getData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchHeatList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchHeatList" + pageNum, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchHeatList" + pageNum, String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -222,7 +223,7 @@ public class EnergyActivity extends BaseActivity {
             initLineChart(list);
             pageNum++;
         } else {
-            if ( RxDataUtils.isEmpty(bean.getList())) return;
+            if (RxDataUtils.isEmpty(bean.getList())) return;
             Collections.reverse(bean.getList());//
             list.addAll(0, bean.getList());
 

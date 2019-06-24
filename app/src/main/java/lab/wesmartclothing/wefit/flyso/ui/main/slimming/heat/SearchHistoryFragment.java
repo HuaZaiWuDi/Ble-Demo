@@ -355,7 +355,6 @@ public class SearchHistoryFragment extends BaseActivity {
 
 
     private void initSearchData(final String key) {
-
         mlayoutSearchData.setVisibility(View.VISIBLE);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().searchFoodInfo(key))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -385,7 +384,8 @@ public class SearchHistoryFragment extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .getKeyWord())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

@@ -124,7 +124,7 @@ public class VerificationPhoneActivity extends BaseActivity {
 
     private void getVCode() {
         String phone = mEditPhone.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -157,7 +157,7 @@ public class VerificationPhoneActivity extends BaseActivity {
     private void toRestPassword() {
         final String phone = mEditPhone.getText().toString();
         final String vCode = mEditVcode.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }

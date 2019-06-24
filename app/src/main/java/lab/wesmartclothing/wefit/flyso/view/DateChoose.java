@@ -259,7 +259,8 @@ public class DateChoose extends RelativeLayout {
     private void fetchPlanDate(long time) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(new DietPlanBean(time)));
         RxManager.getInstance().doNetSubscribe(Theme == TYPE_FOOD_RECORD ? NetManager.getApiService().fetchPlanDate(body) : NetManager.getApiService().fetchDietRecordDate(body))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchPlanDate" + time, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchPlanDate" + time, String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

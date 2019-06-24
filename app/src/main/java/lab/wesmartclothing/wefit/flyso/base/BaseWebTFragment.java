@@ -225,6 +225,7 @@ public class BaseWebTFragment extends BaseAcFragment {
             webView.clearHistory();
             webView.clearFormData();
             webView.clearSslPreferences();
+            webView.destroy();
             webView = null;
         }
     }

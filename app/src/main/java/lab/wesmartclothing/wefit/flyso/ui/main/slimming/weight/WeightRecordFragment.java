@@ -262,7 +262,8 @@ public class WeightRecordFragment extends BaseActivity {
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchWeightInfo(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo" + pageNum, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo" + pageNum, String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -284,7 +285,8 @@ public class WeightRecordFragment extends BaseActivity {
         //当日多次体重详情
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchOneDateWeightList(currentGid))
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("fetchOneDateWeightList" + currentGid, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().transformObservable("fetchOneDateWeightList" + currentGid,
+                        String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

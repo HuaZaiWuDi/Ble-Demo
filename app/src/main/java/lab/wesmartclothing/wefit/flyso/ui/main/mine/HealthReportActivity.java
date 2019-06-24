@@ -46,6 +46,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.RecyclerViewTouchListener;
@@ -130,12 +131,13 @@ public class HealthReportActivity extends BaseActivity {
             @Override
             public void destroyItem(ViewGroup container, int position, Object object) {
                 View view = (View) object;
-                WebView webView = view.findViewWithTag("webView");
+                WebView webView = view.findViewWithTag("webView" + position);
                 if (webView != null) {
                     webView.clearCache(true);
                     webView.clearHistory();
                     webView.clearFormData();
                     webView.clearSslPreferences();
+                    webView.destroy();
                 }
                 container.removeView(view);
             }
@@ -148,7 +150,7 @@ public class HealthReportActivity extends BaseActivity {
 
                 FrameLayout frameLayout = view.findViewById(R.id.layout_frame);
                 String url = ServiceAPI.SHARE_INFORM_URL + bean.getUserInform().getGid() + "&sign=true";
-                loadUrl(url, frameLayout);
+                loadUrl(url, frameLayout, position);
 
                 RxTextUtils.getBuilder("起始体重\n")
                         .append(RxFormatValue.fromat4S5R(bean.getTargetInfo().getInitialWeight(), 1)).setProportion(1.5f)
@@ -206,14 +208,13 @@ public class HealthReportActivity extends BaseActivity {
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private void loadUrl(String url, FrameLayout mLayoutWeb) {
+    private void loadUrl(String url, FrameLayout mLayoutWeb, int position) {
         RxLogUtils.d("加载URL：" + url);
 //        mLayoutWeb.addView(webView);
         //WebView 不响应onClick事件，只有onTouch事件
 
         WebView mWebView = new WebView(mContext);
-        mWebView.setTag("webView");
-        mWebView.setTransitionName("webView");
+        mWebView.setTag("webView" + position);
 
         RxWebViewTool.initWebView(mContext, mWebView);
 
@@ -240,7 +241,8 @@ public class HealthReportActivity extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(
                 NetManager.getApiService().fetchUserInformList())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("fetchUserInformList", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().transformObservable("fetchUserInformList", String.class,
+                        CacheStrategy.firstCacheTimeout(Key.DAY_1)))
                 .map(new CacheResult.MapFunc<>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -248,9 +250,9 @@ public class HealthReportActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
                         //类型擦除
+
                         List<HealthReportBean> beans = JSON.parseObject(s, new TypeToken<List<HealthReportBean>>() {
                         }.getType());
-
                         if (RxDataUtils.isEmpty(beans)) {
                             mLayoutNotReport.setVisibility(View.VISIBLE);
                         } else {

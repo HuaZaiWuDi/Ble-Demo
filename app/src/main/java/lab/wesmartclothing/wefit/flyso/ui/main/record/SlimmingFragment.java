@@ -409,7 +409,8 @@ public class SlimmingFragment extends BaseAcFragment {
     ///////////////////////////////////////////////////////////////////////////
     private void getData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().planIndex())
-                .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class,
+                        CacheStrategy.cacheAndRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .observeOn(AndroidSchedulers.mainThread())

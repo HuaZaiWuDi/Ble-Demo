@@ -231,7 +231,7 @@ public class ProblemFragemnt extends BaseActivity {
                         commitData("");
                     }
                 } else {
-                    RxToast.normal("有信息未填写");
+                    RxToast.normal("有信息填写错误");
                 }
                 break;
         }
@@ -250,7 +250,7 @@ public class ProblemFragemnt extends BaseActivity {
             problemDrawable.setStroke(1, getResources().getColor(R.color.red));
             return false;
         }
-        if (!RxRegUtils.isMobileExact(mEditPhoneEmail.getText().toString()) && !RxRegUtils.isEmail(mEditPhoneEmail.getText().toString())) {
+        if (!RxRegUtils.isMobileSimple(mEditPhoneEmail.getText().toString()) && !RxRegUtils.isEmail(mEditPhoneEmail.getText().toString())) {
             phoneDrawable.setStroke(1, getResources().getColor(R.color.red));
             return false;
         }

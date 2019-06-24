@@ -228,7 +228,8 @@ public class FoodRecommend extends BaseActivity {
                 .fetchOneDayHeatInfo(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo" + currentTime, String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo" + currentTime,
+                        String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

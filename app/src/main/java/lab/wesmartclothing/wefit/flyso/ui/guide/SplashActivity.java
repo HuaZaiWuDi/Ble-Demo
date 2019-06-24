@@ -31,6 +31,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -190,7 +191,8 @@ public class SplashActivity extends BaseActivity {
     private void getSystemConfig() {
         RxManager.getInstance().doNetSubscribe(
                 NetManager.getSystemService().getSystemConfig())
-                .compose(RxCache.getDefault().transformObservable("getSystemConfig", String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().transformObservable("getSystemConfig", String.class,
+                        CacheStrategy.firstCacheTimeout(Key.DAY_1)))
                 .map(new CacheResult.MapFunc<>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

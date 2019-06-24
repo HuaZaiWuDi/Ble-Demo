@@ -117,7 +117,8 @@ public class UserInfofragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initImagePicker();
-        info = MyAPP.getgUserInfo();
+        info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+
         info.setChange(false);
         notifyData(info);
     }
@@ -315,7 +316,7 @@ public class UserInfofragment extends BaseActivity {
                         RxLogUtils.d("结束" + s);
                         RxToast.success("保存成功", 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
-                        MyAPP.gUserInfo = new Gson().fromJson(gson, UserInfo.class);
+                        MyAPP.gUserInfo = info;
                         RxActivityUtils.finishActivity();
                         QNBleTools.getInstance().disConnectDevice();
                         BleTools.getInstance().disConnect();

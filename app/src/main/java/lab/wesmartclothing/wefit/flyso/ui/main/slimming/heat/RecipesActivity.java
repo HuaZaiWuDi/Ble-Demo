@@ -41,6 +41,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -164,7 +165,8 @@ public class RecipesActivity extends BaseActivity {
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
-                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
+                                RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class,
+                        CacheStrategy.firstCacheTimeout(Key.HOURS_1)))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -281,7 +283,8 @@ public class RecipesActivity extends BaseActivity {
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
-                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
+                                RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

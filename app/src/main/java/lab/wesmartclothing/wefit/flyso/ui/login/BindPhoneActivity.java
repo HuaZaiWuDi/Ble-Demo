@@ -147,7 +147,7 @@ public class BindPhoneActivity extends BaseActivity {
 
     private void getVCode() {
         String phone = mEditPhone.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -181,7 +181,7 @@ public class BindPhoneActivity extends BaseActivity {
     private void bindPhone() {
         final String phone = mEditPhone.getText().toString();
         String vCode = mEditVcode.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }

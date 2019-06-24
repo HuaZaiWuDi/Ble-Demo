@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -113,7 +114,7 @@ public class NetManager {
                     .header("version", RxDeviceUtils.getAppVersionName())
                     .header("phoneType", RxDeviceUtils.getBuildMANUFACTURER())
                     .header("system", "Android")
-                    .header("company", "lightness")
+                    .header("company", Key.COMPANY_KEY)
                     .header("Request-Type", "app")
                     .header("User-Agent", "WiseNFit/" +
                             RxDeviceUtils.getAppVersionName() + //软件版本号

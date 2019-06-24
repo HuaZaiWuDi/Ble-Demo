@@ -215,7 +215,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void checkRegister(final String phone, final String p2) {
-        if (RxRegUtils.isMobileExact(phone) && !RxDataUtils.isNullString(p2)) {
+        if (RxRegUtils.isMobileSimple(phone) && !RxDataUtils.isNullString(p2)) {
             ((QMUIRoundButtonDrawable) btn_login.getBackground()).setColor(getResources().getColor(R.color.red));
             btn_login.setEnabled(true);
         } else {
@@ -269,7 +269,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginVCode(String phone, String code) {
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -298,7 +298,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginPassword(String phone, String password) {
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
