@@ -36,6 +36,7 @@ public abstract class FileDownLoadObserver<T> extends DefaultObserver<T> {
     //下载进度监听
     public abstract void onProgress(int progress, long total);
 
+
     /**
      * 将文件写入本地
      *
@@ -67,6 +68,7 @@ public abstract class FileDownLoadObserver<T> extends DefaultObserver<T> {
                 fos.write(buf, 0, len);
                 final long finalSum = sum;
                 //这里就是对进度的监听回调
+
                 onProgress((int) (finalSum * 100 / total), total);
             }
             fos.flush();

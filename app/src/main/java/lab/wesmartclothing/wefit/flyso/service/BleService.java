@@ -350,6 +350,9 @@ public class BleService extends Service {
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
                 Bundle bundle = new Bundle();
+
+//                qnScaleData.setFatThreshold();
+
                 bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, JSON.toJSONString(qnScaleData));
                 if (RxActivityUtils.currentActivity() != null) {
                     if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
@@ -364,6 +367,11 @@ public class BleService extends Service {
                 RxLogUtils.d("历史数据：" + list.size());
                 historyWeightData = list;
                 RxBus.getInstance().post(new ScaleHistoryData(list));
+            }
+
+            @Override
+            public void onGetElectric(QNBleDevice qnBleDevice, int i) {
+                RxLogUtils.d("onGetElectric:" + i);
             }
         });
 

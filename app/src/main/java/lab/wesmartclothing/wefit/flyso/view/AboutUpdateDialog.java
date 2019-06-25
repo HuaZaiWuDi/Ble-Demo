@@ -22,16 +22,16 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
@@ -107,17 +107,22 @@ public class AboutUpdateDialog extends RxDialog {
         fileName = filePath.substring(lastIndexOf + 1);
         RxLogUtils.i("文件名：" + fileName);
 
-        RxManager.getInstance().doLoadDownSubscribe(
-                NetManager.getApiService().downLoadFile(filePath))
+
+        NetManager.getApiService().downLoadFile(filePath)
+                .subscribeOn(Schedulers.io())
                 .map(body -> mFileDownLoadObserver.saveFile(body, Dir, fileName))
-                .compose(RxComposeUtils.rxThreadHelper())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mFileDownLoadObserver);
+
     }
 
     FileDownLoadObserver<File> mFileDownLoadObserver = new FileDownLoadObserver<File>() {
         @Override
         public void onDownLoadSuccess(File o) {
+
+            RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
             mTvUpdateTip.setText("下载文件成功");
+
             startMyDFU(o);
         }
 
@@ -126,11 +131,16 @@ public class AboutUpdateDialog extends RxDialog {
             mTvUpdateTip.setText("下载文件失败");
             RxLogUtils.e(throwable.toString());
             setCanceledOnTouchOutside(true);
+
+            RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
         }
 
         @Override
         public void onProgress(int progress, long total) {
-            mTvUpdateTip.setText("正在下载文件：" + progress + "%");
+            RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
+            mTvUpdateTip.post(() -> {
+                mTvUpdateTip.setText("正在下载文件：" + progress + "%");
+            });
         }
     };
 

@@ -256,14 +256,14 @@ public class BleAPI {
         BleTools.getInstance().write(bytes, bleChartChange);
     }
 
-    public static void clearStep(BleChartChangeCallBack bleChartChange) {
+    public static void clearStep() {
         byte[] bytes = new byte[20];
         bytes[0] = 0x40;
         bytes[1] = 0x11;
         bytes[2] = 0x0b;
 
         Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
+        BleTools.getInstance().write(bytes, null);
     }
 
 

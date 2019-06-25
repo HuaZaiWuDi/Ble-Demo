@@ -21,6 +21,7 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.RxWebViewTool;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
@@ -166,11 +167,13 @@ public class HealthReportActivity extends BaseActivity {
 
 
                 RxRoundProgressBar mProTarget = view.findViewById(R.id.pro_target);
+                ImageView ImgWeightFlag = view.findViewById(R.id.img_weightFlag);
 
                 if (bean.getTargetWeight().getComplete() < 0) {
                     mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
                     mProTarget.setProgress(5);
                 } else {
+                    ImgWeightFlag.setTranslationX((float) (RxUtils.dp2px(230) * bean.getTargetWeight().getComplete()));
                     mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
                     mProTarget.setProgress((float) (bean.getTargetWeight().getComplete() * 100));
                 }

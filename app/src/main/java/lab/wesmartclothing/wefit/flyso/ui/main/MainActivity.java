@@ -205,12 +205,11 @@ public class MainActivity extends BaseALocationActivity {
     private void initSystemConfig() {
         //判断是否有权限
         new RxPermissions((FragmentActivity) mActivity)
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Permission>() {
+                .subscribe(new RxSubscriber<Boolean>() {
                     @Override
-                    protected void _onNext(Permission aBoolean) {
+                    protected void _onNext(Boolean aBoolean) {
                         RxLogUtils.e("是否开启了权限：" + aBoolean);
                     }
                 });

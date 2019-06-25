@@ -83,6 +83,7 @@
 
 
         <ImageView
+            android:id="@+id/img_WeightFlag"
             android:layout_width="19dp"
             android:layout_height="22dp"
             android:layout_alignLeft="@+id/pro_target"

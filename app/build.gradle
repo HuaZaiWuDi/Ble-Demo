@@ -185,7 +185,7 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
 
     //    //轻牛体重秤SDK
-    implementation files('libs/qnsdk-0.3.4.jar')
+//    implementation files('libs/qnsdk-0.3.4.jar')
 
 
     implementation 'com.jackUtil:RxTools:1.2.4'
@@ -213,6 +213,11 @@ dependencies {
     implementation 'com.clj.fastble:FastBleLib:2.3.2'
     implementation 'no.nordicsemi.android:dfu:1.8.1'
 
+    implementation 'no.nordicsemi.android:ble:2.1.1'
+    implementation 'no.nordicsemi.android.support.v18:scanner:1.4.0'
+
+    //轻牛体脂称
+    implementation 'com.github.YolandaQingniu:qnscalesdk:0.6.2'
     //滴滴性能检测库
     debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:1.1.7'
     releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:1.1.7'

@@ -138,6 +138,7 @@ public class QNBleTools {
                 RxLogUtils.d("轻牛SDK ：断开连接" + i + "----" + s);
             }
         });
+
     }
 
     public void disConnectDevice(QNBleDevice device) {
@@ -157,6 +158,9 @@ public class QNBleTools {
                 RxLogUtils.d("轻牛SDK ：构建BleDevice" + i + "----" + s);
             }
         });
+    }
+
+    public void setFatThreshold() {
     }
 
 

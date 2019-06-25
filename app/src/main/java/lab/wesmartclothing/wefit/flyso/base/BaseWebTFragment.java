@@ -77,19 +77,25 @@ public class BaseWebTFragment extends BaseAcFragment {
 
     @Override
     public void initBundle(Bundle bundle) {
+        url = bundle.getString(Key.BUNDLE_WEB_URL);
+
+        pageLayout = new PageLayout.Builder(mContext)
+                .initPage(mLayoutWeb)
+                .setError(R.layout.layout_web_error, 0)
+                .setOnRetryListener(() -> {
+                    if (url != null) {
+                        webView.loadUrl(url);
+                        RxLogUtils.d("重试");
+                    }
+                }).create();
+
+        if (!RxNetUtils.isAvailable(MyAPP.sMyAPP) || url == null) {
+            pageLayout.showError();
+        }
+        initWebView(url);
     }
 
     private void initWebView(String url) {
-        if (url == null) {
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                url = bundle.getString(Key.BUNDLE_WEB_URL);
-            }
-            if (url == null) {
-                pageLayout.showError();
-                return;
-            }
-        }
 
         SonicSessionConfig.Builder sessionConfigBuilder = new SonicSessionConfig.Builder();
         sessionConfigBuilder.setSupportLocalServer(true);
@@ -105,7 +111,6 @@ public class BaseWebTFragment extends BaseAcFragment {
             //相同的Url的Sonic会话只能存在一个，也就是说URL作为一个Key，保证唯一性
             RxLogUtils.e("create session fail!");
         }
-
 
         webView = new BridgeWebView(mContext);
 
@@ -244,22 +249,7 @@ public class BaseWebTFragment extends BaseAcFragment {
 
     @Override
     public void initViews() {
-        pageLayout = new PageLayout.Builder(mContext)
-                .initPage(mLayoutWeb)
-                .setError(R.layout.layout_web_error, 0)
-                .setOnRetryListener(() -> {
-                    if (url != null) {
-                        webView.loadUrl(url);
-                    }
-                }).create();
 
-        if (!RxNetUtils.isAvailable(MyAPP.sMyAPP)) {
-            pageLayout.showError();
-        }
-        initWebView(url);
     }
 
-    public BridgeWebView getWebView() {
-        return webView;
-    }
 }

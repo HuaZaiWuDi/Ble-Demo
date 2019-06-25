@@ -12,7 +12,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import okhttp3.HttpUrl;
@@ -51,7 +50,7 @@ public class NetManager {
                 .readTimeout(5, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
-        if (BuildConfig.DEBUG) {
+        if (true) {
             //日志显示级别
             HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
             //新建log拦截器
