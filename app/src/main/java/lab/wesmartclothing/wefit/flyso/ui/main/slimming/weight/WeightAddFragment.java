@@ -32,7 +32,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -93,7 +93,7 @@ public class WeightAddFragment extends BaseActivity {
         mTvTip.setText(R.string.pleaseWeigh);
         mTvTitle.setText(R.string.scaleWeight);
 
-        if (!QNBleTools.getInstance().isConnect()) {
+        if (!QNBleManager.getInstance().isConnect()) {
             startService(new Intent(mContext, BleService.class));
         }
         if (!BleTools.getBleManager().isBlueEnable())

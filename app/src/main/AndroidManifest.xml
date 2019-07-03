@@ -25,10 +25,10 @@
     <application
         android:name=".base.MyAPP"
         android:allowBackup="true"
-        android:icon="@mipmap/icon_app_lightness"
+        android:icon="@mipmap/icon_app"
         android:label="@string/appName"
         android:networkSecurityConfig="@xml/http_config"
-        android:roundIcon="@mipmap/icon_app_lightness"
+        android:roundIcon="@mipmap/icon_app"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:overrideLibrary="com.vondear.rxtools"
@@ -36,8 +36,7 @@
         <activity android:name=".ui.main.slimming.heat.DietRecordActivity">
         </activity>
         <!-- java.lang.NoClassDefFoundError: -->
-        <!--
-Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
+        <!--Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
         解决办法：
          <uses-library
             android:name="org.apache.http.legacy"
@@ -45,16 +44,13 @@ Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
         -->
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"/> <!-- android O Error inflating class android.webkit.WebView -->
+            android:required="false"/>
+        <!-- android O Error inflating class android.webkit.WebView -->
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
-            android:value="true"/> <!-- 屏幕适配 -->
-        <meta-data
-            android:name="design_width"
-            android:value="1080"/>
-        <meta-data
-            android:name="design_height"
-            android:value="1920"/> <!-- android7.0适配 -->
+            android:value="true"/>
+
+        <!-- android7.0适配 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -75,14 +71,20 @@ Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
             android:name="com.qingniu.scale.ble.ScaleBleService"
             android:enabled="true"
             android:exported="true">
-        </service> <!-- BUGly升级 -->
+        </service>
+        <!-- BUGly升级 -->
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent"/> <!-- 高德地图KEY -->
+            android:theme="@android:style/Theme.Translucent"/>
+        <!-- 高德地图KEY -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="d08d76ae6bd68061111b1bfd697accf1"/>
+            android:value="${AMAP_KEY}"/>
+
+        <!--<meta-data-->
+        <!--android:name="com.amap.api.v2.apikey"-->
+        <!--android:value="d08d76ae6bd68061111b1bfd697accf1"/>-->
 
         <service android:name="com.amap.api.location.APSService"/> <!-- 极光通知广播 -->
         <!-- Required SDK 核心功能 -->
@@ -205,12 +207,9 @@ Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
             android:name=".ble.dfu.DfuService"
             android:exported="true"/> <!-- 友盟社会SDK -->
         <!-- 友盟 -->
-        <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="5a38b2e8b27b0a02a7000026">
-        </meta-data> <!-- 友盟社会分享登录 -->
+        <!-- 友盟社会分享登录 -->
         <activity
-            android:name="com.lightness.wisenfit.wxapi.WXEntryActivity"
+            android:name="lab.wesmartclothing.wefit.flyso.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
@@ -252,7 +251,10 @@ Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
 
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-        </activity> <!-- 分割线============================================================================== -->
+        </activity>
+
+
+        <!-- 分割线============================================================================== -->
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -390,10 +392,7 @@ Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
             android:name=".ui.main.slimming.heat.FoodRecommend"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
-        <activity
-            android:name=".ui.main.slimming.heat.second.HeatDetailFragment"
-            android:launchMode="singleTask"
-            android:screenOrientation="nosensor"/>
+
         <activity
             android:name=".ui.main.slimming.heat.SearchHistoryFragment"
             android:launchMode="singleTop"

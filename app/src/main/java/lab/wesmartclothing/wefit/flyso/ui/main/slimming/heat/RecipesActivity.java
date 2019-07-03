@@ -21,6 +21,7 @@ import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -36,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.entity.DietPlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodRecommendBean;
@@ -46,7 +48,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
@@ -190,7 +191,7 @@ public class RecipesActivity extends BaseActivity {
                 .fetchDietPlan(NetManager.fetchRequest(JSON.toJSONString(new DietPlanBean(foodTime)))))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
+                .compose(RxCache.getDefault().<String>transformObservable("fetchFoodPlan" +
                                 RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class,
                         CacheStrategy.firstCacheTimeout(Key.HOURS_1)))
                 .map(new CacheResult.MapFunc<String>())
@@ -308,7 +309,7 @@ public class RecipesActivity extends BaseActivity {
                 .changeDietPlan(NetManager.fetchRequest(jsonObject.toString())))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
+                .compose(RxCache.getDefault().<String>transformObservable("fetchFoodPlan" +
                                 RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())

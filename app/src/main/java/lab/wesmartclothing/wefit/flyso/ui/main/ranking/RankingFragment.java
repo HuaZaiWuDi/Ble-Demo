@@ -17,6 +17,7 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.textview.RxTextviewVertical;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -27,7 +28,6 @@ import butterknife.BindView;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.RankingBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -164,7 +164,7 @@ public class RankingFragment extends BaseAcFragment {
         NetManager.getApiService().lastTopUser(10, 30)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("lastTopUser", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("lastTopUser", String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.rxThreadHelper())
@@ -182,7 +182,7 @@ public class RankingFragment extends BaseAcFragment {
         NetManager.getApiService().rankingSummary()
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("rankingSummary", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("rankingSummary", String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.rxThreadHelper())

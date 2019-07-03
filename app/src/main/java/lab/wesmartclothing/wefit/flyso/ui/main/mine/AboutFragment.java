@@ -29,6 +29,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
@@ -38,8 +39,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
@@ -63,6 +62,8 @@ public class AboutFragment extends BaseActivity {
     QMUIRoundButton mBtnReUpdate;
     @BindView(R.id.layout_updateFail)
     LinearLayout mLayoutUpdateFail;
+    @BindView(R.id.tv_appName)
+    TextView mTvAppName;
 
 
     private String updateURL = "";
@@ -85,13 +86,15 @@ public class AboutFragment extends BaseActivity {
 
     private void initView() {
         initTopBar();
-        RxTextUtils.getBuilder(Key.COMPANY_NAME + " ")
+        RxTextUtils.getBuilder(getString(R.string.companyName))
                 .append(getString(R.string.clause))
                 .setForegroundColor(getResources().getColor(R.color.red))
                 .setUnderline()
                 .into(mTvTip);
         mTvAppVersion.setText(getString(R.string.softwareVersion, RxDeviceUtils.getAppVersionName()));
         mTvClothingVersion.setText(getString(R.string.firmwareVersion, "--"));
+        mTvAppName.setText(getString(R.string.appName) + "APP");
+
 
         BleAPI.readDeviceInfo(data -> {
             //021309 010203000400050607090a0b0c10111213
@@ -108,6 +111,7 @@ public class AboutFragment extends BaseActivity {
             mTvClothingVersion.setText(getString(R.string.firmwareVersion, currentVersion));
             checkFirmwareVersion(versionBean);
         });
+
 
     }
 

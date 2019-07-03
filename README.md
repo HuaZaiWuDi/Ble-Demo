@@ -1,11 +1,59 @@
 
-莱特妮丝智瘦
 
-
+**智享瘦**
+~~~~
 调试SHA1：18:6F:C8:FE:18:F9:9B:38:AE:44:26:E5:F3:E4:11:69:9E:21:43:15
+
 发布SHA1： 18:6F:C8:FE:18:F9:9B:38:AE:44:26:E5:F3:E4:11:69:9E:21:43:15
+
 Debug签名：2a34a83c3bc235b96568a56ef62a65c0
+
 Release签名：2a34a83c3bc235b96568a56ef62a65c0
+
+应用包名：lab.wesmartclothing.wefit.flyso
+
+//友盟第三方
+应用名：TimeToFit-Android
+AppKey：5a38b2e8b27b0a02a7000026
+
+//极光
+AppKey e2e5a6aa5214e5968b569794
+Master Secret ? cc6b984efa822886b7b92165
+
+
+微信开放平台：
+AppID：wxaaeb0352e04684de
+AppSecret：0d23407fe42a2665dabe3ea2a958daf9
+
+QQ开放平台：
+安卓：
+APP ID：1106924585
+APP KEY：RGcOhc7q8qZMrhxz
+
+微博开放平台：
+App Key:3322261844
+AppSecret：60eabde1de49af086f53aa5fb230f7ed
+回调地址:https://sns.whalecloud.com/sina2/callback
+
+
+安卓 - 高德：
+Key：20cc8510855f543b2bf4c59d647852e2
+AppKey：5c662b4cf1f5567e310009e5
+~~~~
+
+
+
+**莱特妮丝智瘦**
+
+~~~~
+调试SHA1：18:6F:C8:FE:18:F9:9B:38:AE:44:26:E5:F3:E4:11:69:9E:21:43:15
+
+发布SHA1： 18:6F:C8:FE:18:F9:9B:38:AE:44:26:E5:F3:E4:11:69:9E:21:43:15
+
+Debug签名：2a34a83c3bc235b96568a56ef62a65c0
+
+Release签名：2a34a83c3bc235b96568a56ef62a65c0
+
 应用包名：com.lightness.wisenfit
 
 //友盟第三方
@@ -34,6 +82,8 @@ AppSecret：49b5d1a655eb0be6e0854ed32c9e3b7e
 安卓 - 高德：
 Key：d08d76ae6bd68061111b1bfd697accf1
 AppKey：5c662b4cf1f5567e310009e5
+~~~~
+
 
 
 

@@ -24,10 +24,10 @@ android {
             storePassword '123456'
         }
     }
-//    //Debug时不进行拆分包和png图片压缩
-//    splits.abi.enable = false
-//    splits.density.enable = false
-//    aaptOptions.cruncherEnabled = false
+    //Debug时不进行拆分包和png图片压缩
+    splits.abi.enable = false
+    splits.density.enable = false
+    aaptOptions.cruncherEnabled = false
 
 
     compileSdkVersion parent.ext.compileSdkVersion
@@ -39,33 +39,16 @@ android {
         versionCode parent.ext.versionCode
         versionName parent.ext.versionName
         multiDexEnabled true
+        flavorDimensions "default"
 //        // 取消掉系统对.9图片的检查
 //        aaptOptions.cruncherEnabled = false
 //        aaptOptions.useNewCruncher = false
 
-//        //强制指定包名，貌似是的
-//        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
-//        javaCompileOptions {
-//            annotationProcessorOptions {
-//                arguments = ['resourcePackageName': android.defaultConfig.applicationId]
-//            }
-//        }
-
-        //极光推送
         ndk {
             //选择要添加的对应cpu类型的.so库。
             abiFilters 'armeabi'
             // 还可以添加  'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips64', 'mips'
         }
-
-        //极光推送：
-        //替换符只能有一个
-        manifestPlaceholders = [
-                JPUSH_PKGNAME: applicationId,
-                JPUSH_APPKEY : "312a083f2aa786ea41bc8bfd", //JPush上注册的包名对应的appkey.
-                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
-                qqappid      : '1106924585',//QQ分享
-        ]
 
         //强制指定一个版本
         configurations.all {
@@ -78,31 +61,23 @@ android {
                 }
             }
         }
-
-        //修改apk名字
-        applicationVariants.all { variant ->
-            variant.outputs.all {
-                // apk_渠道名-版本号-版本名称-编译时间.apk
-                outputFileName = "TimetofitLightness-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
-                        "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
-            }
-        }
     }
     buildTypes {
         release {
-//            minifyEnabled false
-//            zipAlignEnabled true
-//            // 移除无用的resource文件
-//            shrinkResources true
+            //开启混淆
+            minifyEnabled true
+            //是否压缩对齐
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
             buildConfigField "boolean", "LeakCanary", "false"//9月5号演示版本置为true
-            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
         debug {
-//            crunchPngs false //关闭crunchPng优化, 以加快构建
-//            ext.enableCrashlytics = false
-//            ext.alwatsUpdateBuildId = false
+            crunchPngs false //关闭crunchPng优化, 以加快构建
+            ext.enableCrashlytics = false
+            ext.alwatsUpdateBuildId = false
             buildConfigField "boolean", "LeakCanary", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -125,6 +100,84 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+    // productFlavors 定义了一个应用的自定义构建版本
+    //一个单一的项目可以同时定义多个不同的 flavor 来改变应用的输出。
+    // productFlavors 这个概念是为了解决不同的版本之间的差异非常小的情况，通常用于区分同一个应用的不同渠道/客户等，可包含少量业务功能差别。
+    // productFlavors 中的 flavor 不能跟 buildType 中的一样,否则会报: "ProductFlavor names cannot collide with BuildType names"
+    productFlavors {
+
+        //发布版本,莱特妮丝智瘦
+        flavors_lightness {
+            dimension = "default"
+            applicationId "com.lightness.wisenfit"
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [AMAP_KEY     : "d08d76ae6bd68061111b1bfd697accf1",
+                                    JPUSH_PKGNAME: applicationId,
+                                    JPUSH_APPKEY : "312a083f2aa786ea41bc8bfd", //JPush上注册的包名对应的appkey.
+                                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+                                    qqappid      : '1108606528',//QQ分享
+            ]
+
+            buildConfigField "boolean", "Wesmart", "false"
+            //第三方配置
+            buildConfigField "String", "UM_KEY", '"5ca338162036572bc50017d8"'
+            buildConfigField "String", "WX_KEY", '"wx270d9fa3441b877e"'
+            buildConfigField "String", "WX_SECRET", '"2500e5de5ef522a51c816a58993b0333"'
+            buildConfigField "String", "QQ_KEY", '"1108606528"'
+            buildConfigField "String", "QQ_SECRET", '"yVyd71DGzFu8iJut"'
+            buildConfigField "String", "SINA_KEY", '"613183269"'
+            buildConfigField "String", "SINA_SECRET", '"49b5d1a655eb0be6e0854ed32c9e3b7e"'
+            buildConfigField "String", "BUGLY_KEY", '"dd2f9fff3f"'
+            buildConfigField "String", "URL_RELEASE", '"https://ltns.wesmartclothing.com/mix/"'
+            buildConfigField "String", "COMPANY_KEY", '"Lightness"'
+
+            //修改apk名字
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    // apk_渠道名-版本号-版本名称-编译时间.apk
+                    outputFileName = "TimetofitLightness-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                            "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
+                }
+            }
+
+        }
+
+        //发布版本, 智享瘦
+        flavors_wesmart {
+            buildConfigField "boolean", "Wesmart", "true"
+            //第三方配置
+            buildConfigField "String", "UM_KEY", '"5a38b2e8b27b0a02a7000026"'
+            buildConfigField "String", "WX_KEY", '"wxaaeb0352e04684de"'
+            buildConfigField "String", "WX_SECRET", '"0d23407fe42a2665dabe3ea2a958daf9"'
+            buildConfigField "String", "QQ_KEY", '"1106924585"'
+            buildConfigField "String", "QQ_SECRET", '"RGcOhc7q8qZMrhxz"'
+            buildConfigField "String", "SINA_KEY", '"3322261844"'
+            buildConfigField "String", "SINA_SECRET", '"60eabde1de49af086f53aa5fb230f7ed"'
+            buildConfigField "String", "BUGLY_KEY", '"11c87579c7"'
+            buildConfigField "String", "URL_RELEASE", '"https://api.wesmartclothing.com/mix/"'
+            buildConfigField "String", "COMPANY_KEY", '"Wesmart"'
+
+            applicationId "lab.wesmartclothing.wefit.flyso"
+            manifestPlaceholders = [AMAP_KEY     : "20cc8510855f543b2bf4c59d647852e2",
+                                    JPUSH_PKGNAME: applicationId,
+                                    JPUSH_APPKEY : "e2e5a6aa5214e5968b569794", //JPush上注册的包名对应的appkey.
+                                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+                                    qqappid      : '1106924585',//QQ分享
+            ]
+            signingConfig signingConfigs.release
+            multiDexEnabled = true
+            //修改apk名字
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    // apk_渠道名-版本号-版本名称-编译时间.apk
+                    outputFileName = "TimetofitWeSmart-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                            "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
+                }
+            }
+        }
+    }
+
 
 }
 

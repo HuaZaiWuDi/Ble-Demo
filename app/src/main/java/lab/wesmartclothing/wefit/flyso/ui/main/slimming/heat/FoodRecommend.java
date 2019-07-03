@@ -25,6 +25,7 @@ import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxLinearLayout;
 import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -235,7 +236,7 @@ public class FoodRecommend extends BaseActivity {
                 .fetchOneDayHeatInfo(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getAthleticsInfo" + currentTime,
+                .compose(RxCache.getDefault().<String>transformObservable("getAthleticsInfo" + currentTime,
                         String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())

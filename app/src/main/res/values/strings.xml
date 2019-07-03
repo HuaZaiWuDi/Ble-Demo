@@ -3,27 +3,18 @@
     <string name="nav_slimming">瘦身</string>
     <string name="nav_find">发现</string>
     <string name="nav_record">记录</string>
-    <string name="nav_store">商城</string>
-    <string name="nav_me">我的</string>
     <string name="nav_ranking">排行</string>
     <string name="heat">热量</string>
     <string name="sportsTime">时长</string>
     <string name="cancel">取消</string>
     <string name="ok">完成</string>
-    <string name="confirm">确认</string>
-    <string name="inputRightFoodName">请输入正确的食物名字</string>
     <string name="weightNoZero">重量不能为0</string>
     <string name="no_data">您还未收藏任何内容</string>
     <string name="addBreakfast">添加早餐</string>
     <string name="addLunch">添加午餐</string>
     <string name="addDinner">添加晚餐</string>
     <string name="addSnack">添加加餐</string>
-    <string name="breakfast">早餐</string>
-    <string name="lunch">午餐</string>
-    <string name="dinner">晚餐</string>
     <string name="clearHistoryData">清空历史数据</string>
-    <string name="can_eatHeat">还可以摄入热量</string>
-    <string name="EatMore">多吃了</string>
     <string name="btn_leave">离开</string>
     <string name="btn_continue">继续领取</string>
     <string name="receivedCount">%1$s领取的体重数据（%2$d）</string>
@@ -55,27 +46,13 @@
     <string name="weight_about">您的身高体重只会作为您的运动参考数据，我们会保证您的隐私。</string>
     <string name="info_about">我们需要一些你的信息来为您定制瘦身计划，这些信息都是经过高度加密的。</string>
     <string name="Location_about">为了给您推送优质的资讯，我们将要获得您的位置信息。</string>
-    <string name="device_about">请添加您最近购买的智能设备</string>
-    <string name="doing">进行中</string>
-    <string name="doingSubtitle">扫描附近的设备</string>
-    <string name="bindDevice">绑定设备</string>
-    <string name="bindDeviceSubtitle">绑定扫描到的设备</string>
     <string name="startUse">开始使用</string>
-    <string name="startUseSubtitle">马上开始运动</string>
-    <string name="scan">扫 描</string>
     <string name="reScan">重新扫描</string>
-    <string name="nearDevice">附近的设备</string>
     <string name="bind">绑定</string>
     <string name="bindings">已绑定</string>
-    <string name="notDevice">没有搜索到设备，请确保设备电量充足</string>
     <string name="web_load_error">出错啦！点击空白处刷新</string>
     <string name="scale">体脂称</string>
     <string name="clothing">瘦身衣</string>
-    <string name="wx">微信</string>
-    <string name="pengyouquan">朋友圈</string>
-    <string name="shareTo">分享到</string>
-    <string name="checkBle">请检查设备是否在附近,是否有电,或者关闭蓝牙重新开启试试</string>
-    <string name="tip_nodata">还未上传数据 ！</string>
     <string name="tv_loading">正在加载</string>
     <string name="open_loaction">未给予定位权限，无法搜索到蓝牙设备</string>
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
@@ -89,20 +66,11 @@
     <string name="complete">完成</string>
     <string name="password_not_same">两次输入的密码不一致</string>
     <string name="settingPasswordSuccess">密码设置成功</string>
-    <string name="speech_warm">您已进入热身区间，合理的热身运动可以避免运动损伤，建议热身五到十分钟</string>
-    <string name="speech_grease">您已进入燃脂区间，该状态为高效燃脂，建议保持二十分钟以上以达到最佳效果，请注意心率控制在一百二十到一百四十之间。</string>
-    <string name="speech_aerobic"> 您已进入有氧运动区间，该状态下的您可以充分的锻炼心肺功能，如果要达到瘦身效果，一定要坚持三十分钟以上 ！</string>
-    <string name="speech_anaerobic">您已进入无氧运动区间，建议您适当的降低运动强度。</string>
-    <string name="speech_limit"> 您的运动太快了，建议马上停止运动。</string>
     <string name="speech_currentKcal">您当前处于%1$s阶段</string>
     <string name="speech_sprotStart">运动模式已启动，让我们开始自由运动瘦身训练吧</string>
     <string name="speech_keepLimitSpeak">您当前运动量已超过身体最大极限，请立刻降低运动水平，防止意外损伤！</string>
     <string name="speech_planStart">主人您好，小莱今天帮您定制的运动课程总计%1$s分钟，预计燃烧%2$s卡路里，让我们开始运动吧</string>
     <string name="speech_ourseOne">第一节%1$s运动 请将配速保持在%2$d分钟每公里。</string>
-    <string name="speech_warmComplete">恭喜您完成热身训练，下一节燃脂运动，请调节运动至燃脂运动区间，保持匀速%1$d分钟。</string>
-    <string name="speech_fatBuringComplete">恭喜您完成燃脂训练，下一节有氧运动，请调节运动至有氧运动区间，保持匀速%1$d分钟。</string>
-    <string name="speech_aerobicComplete">恭喜您完成有氧训练，下一节无氧运动，请调节运动至无氧运动区间，保持匀速%1$d分钟。</string>
-    <string name="speech_anaerobicComplete">您当前处于无氧训练阶段，无氧训练有助于增强肌肉生长，提高基础代谢率。建议运动时长不超过 15 分钟。</string>
     <string name="speech_planFinishFail">本次训练计划还未完成 ，你确定要结束吗？今天的坚持是为了更美的明天。小莱为您加油打气</string>
     <string name="speech_planFinishSuccess">好棒呀，恭喜您完成本次瘦身训练。运动完记得做一下拉伸运动 ！本次训练共计燃烧%1$s千卡，请继续保持。</string>
     <string name="speech_freeSportFinish">运动已结束,您一共运动%1$s，共消耗%2$s千卡的能量</string>
@@ -113,14 +81,11 @@
     <string name="speech_completeStage">恭喜您完成第%1$s阶段训练，请%2$s速度至%3$s区间</string>
 
     <string name="tipOpenBlueTooth">检测到您未开启手机蓝牙，开启蓝牙</string>
-    <string name="checkSporting">检测到您正在运动，点击查看</string>
     <string name="checkHistoryWeight">您有新的体重数据，点击领取</string>
-    <string name="completeDaytarget">恭喜，今天的运动目标已经完成，要再接再厉呀！</string>
-    <string name="gotoSporting">今天还差%1$s\tkcal的运动量才能达到瘦身效果，快穿上减肥衣去运动吧。</string>
     <string name="bestWeight">你的最佳体重：%1$s-%2$s kg</string>
     <string name="search_noData">没有搜索到关于 " %1$s " 的食物 ，请您重新输入食物的关键字 ^-^</string>
     <string name="must_input">最多可以输入%1$d字</string>
-    <string name="plan">感谢使用莱特妮丝智瘦为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n
+    <string name="plan">感谢使用%1$s为你科学定制的瘦身计划，为保证您的安全及瘦身效果，在参加此计划前请确保自己的身体情况属于以下范围：\n
 \t1.\t身体质量指数（BMI）在18.5-40之间；\n
 \t2.年龄在18-60之间；\n
 \t3.产后女性已不在哺乳期，且距离上次生产一年以上；\n
@@ -214,30 +179,14 @@
         <item>六</item>
     </string-array>
 
-    <string-array name="foodTab">
-        <item>全部</item>
-        <item>主食</item>
-        <item>蛋/肉制品</item>
-        <item>奶制品</item>
-        <item>蔬果/菌藻</item>
-        <item>坚果/豆制品</item>
-        <item>饮料</item>
-        <item>零食/点心/冷饮</item>
-
-    </string-array>
-
     <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
     <string name="expectKcal">运动时间%1$d min,预计消耗热量%2$d kcal</string>
-    <string name="DietitianTip">亲爱的%1$s，了解到您过往的饮食习惯与爱好，今天为你制定的计划是%2$s。  \n养成良好的饮食习惯和健康科学的营养搭配能够更加快速健康的达到目标 ，加油！</string>
     <string name="dietPlanUser">%1$s营养师 为您搭配饮食</string>
     <string name="athlPlanUser">%1$s健身教练 为您定制课程</string>
-    <string name="follow">跟着莱特妮丝智瘦</string>
+    <string name="follow">跟着智享瘦</string>
     <string name="appDays">我在 %1$s 第%2$d 天</string>
-    <string name="tv_firstTip">感谢您使用莱特妮丝智瘦-AI智能形体衣产品，为了能 够向您提供更加精准的服务，建议您开启定制 计划，请您根据提示填写信息，准确的信息有 助于制定精确的瘦身计划。</string>
-    <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重 指标、体能状态和患病风险，获得专家的饮食和运动建 议。</string>
+    <string name="tv_firstTip">感谢您使用%1$s-AI智能形体衣产品，为了能够向您提供更加精准的服务，建议您开启定制计划，请您根据提示填写信息，准确的信息有助于制定精确的瘦身计划。</string>
+    <string name="tv_firstTip2">成功开启后您就可以在健康报告中，了解到自己的体重指标、体能状态和患病风险，获得专家的饮食和运动建议。</string>
 
     <string name="planSporting">课程运动中</string>
     <string name="play">继续</string>
@@ -321,7 +270,6 @@
     <string name="fatter">偏胖</string>
     <string name="weightAndUnit">体重(kg)</string>
     <string name="bodyFatAndUnit">体脂率(%)</string>
-    <string name="bmi">BMI</string>
     <string name="bmrAndUnit">基础代谢(kcal)</string>
     <string name="calorieIntakeTooMuch">多摄入热量</string>
     <string name="calorieAbleIntake">还可摄入热量</string>
@@ -388,7 +336,6 @@
     <string name="low">偏低</string>
     <string name="high">偏高</string>
     <string name="seriouslyHigh">严重偏高</string>
-    <string name="excellent">优秀</string>
     <string name="insufficient">不足</string>
     <string name="adequate">充足</string>
     <string name="reachingStandard">达标</string>
@@ -454,6 +401,8 @@
     <string name="intake">摄入</string>
     <string name="consume">消耗</string>
     <string name="energy">能量</string>
+    <string name="companyName">深圳市莱特妮丝服饰有限公司</string>
+    <string name="welcome">欢迎使用莱特妮丝智能瘦身衣</string>
 
 
 </resources>

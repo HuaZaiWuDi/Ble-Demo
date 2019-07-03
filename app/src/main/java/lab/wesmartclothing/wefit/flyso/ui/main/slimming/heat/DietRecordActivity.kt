@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON
 import com.vondear.rxtools.utils.*
 import com.vondear.rxtools.utils.dateUtils.RxFormat
 import com.vondear.rxtools.view.RxToast
+import com.zchu.rxcache.RxCache
 import com.zchu.rxcache.data.CacheResult
 import com.zchu.rxcache.stategy.CacheStrategy
 import kotlinx.android.synthetic.main.activity_diet_record.*
@@ -75,7 +76,7 @@ class DietRecordActivity : BaseActivity() {
         NetManager.getApiService().heatFetchGroupTypeRecordList(groupType, pageNum, 10)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("heatFetchGroupTypeRecordList$pageNum$groupType",
+                .compose(RxCache.getDefault().transformObservable("heatFetchGroupTypeRecordList$pageNum$groupType",
                         String::class.java, CacheStrategy.firstRemote()))
                 .map(CacheResult.MapFunc())
                 .compose(RxComposeUtils.rxThreadHelper())

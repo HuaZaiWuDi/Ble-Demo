@@ -33,6 +33,7 @@ import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -44,7 +45,6 @@ import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HealthReportBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -257,7 +257,7 @@ public class HealthReportActivity extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(
                 NetManager.getApiService().fetchUserInformList())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("fetchUserInformList", String.class,
+                .compose(RxCache.getDefault().transformObservable("fetchUserInformList", String.class,
                         CacheStrategy.firstCacheTimeout(Key.DAY_1)))
                 .map(new CacheResult.MapFunc<>())
                 .observeOn(AndroidSchedulers.mainThread())

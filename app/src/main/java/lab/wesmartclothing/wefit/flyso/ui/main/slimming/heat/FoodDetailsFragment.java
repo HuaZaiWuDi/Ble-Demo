@@ -27,6 +27,7 @@ import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -137,7 +138,7 @@ public class FoodDetailsFragment extends BaseActivity {
 
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getFoodType())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getFoodType", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("getFoodType", String.class,
                         CacheStrategy.firstCacheTimeout(Key.HOURS_6)))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -322,7 +323,7 @@ public class FoodDetailsFragment extends BaseActivity {
     private void initData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().getFoodInfo(pageNum, 15, typeId))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable(
+                .compose(RxCache.getDefault().<String>transformObservable(
                         "getFoodInfo" + typeId + pageNum,
                         String.class,
                         CacheStrategy.firstCacheTimeout(Key.HOURS_6)))

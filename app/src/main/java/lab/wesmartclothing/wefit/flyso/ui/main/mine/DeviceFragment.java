@@ -29,7 +29,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -78,7 +78,6 @@ public class DeviceFragment extends BaseActivity {
     QMUIRoundLinearLayout mBtnBind;
     Unbinder unbinder;
 
-    QNBleTools mQNBleTools = QNBleTools.getInstance();
 
 
     private List<DeviceListbean.ListBean> beanList;
@@ -223,7 +222,7 @@ public class DeviceFragment extends BaseActivity {
                         //添加绑定设备，这里实在不会
                         if (BleKey.TYPE_SCALE.equals(position)) {
                             //删除绑定
-                            mQNBleTools.disConnectDevice();
+                            QNBleManager.getInstance().disConnectDevice();
                             SPUtils.remove(SPKey.SP_scaleMAC);
                         } else if (BleKey.TYPE_CLOTHING.equals(position)) {
                             SPUtils.remove(SPKey.SP_clothingMAC);

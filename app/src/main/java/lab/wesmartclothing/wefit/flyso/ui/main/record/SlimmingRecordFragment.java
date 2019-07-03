@@ -42,6 +42,7 @@ import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.waveview.RxWaveHelper;
 import com.vondear.rxtools.view.waveview.RxWaveView;
 import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -337,7 +338,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     private void initShare() {
         RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                 .codeSide(800)
-                .logoBitmap(R.mipmap.icon_app_round, getResources())
+                .logoBitmap(R.mipmap.icon_app, getResources())
                 .into(mImgQRcode);
 
         UserInfo info = MyAPP.getgUserInfo();
@@ -424,7 +425,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     private void getData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().indexInfo(1, 7))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("indexInfo", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("indexInfo", String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())

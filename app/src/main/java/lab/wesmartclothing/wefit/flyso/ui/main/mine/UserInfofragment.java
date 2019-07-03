@@ -45,7 +45,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -317,7 +317,7 @@ public class UserInfofragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_UserInfo, gson);
                         MyAPP.gUserInfo = info;
                         RxActivityUtils.finishActivity();
-                        QNBleTools.getInstance().disConnectDevice();
+                        QNBleManager.getInstance().disConnectDevice();
                         BleTools.getInstance().disConnect();
                         //刷新数据
                         RxBus.getInstance().post(new RefreshMe());

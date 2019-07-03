@@ -26,7 +26,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -171,7 +171,7 @@ public class Settingfragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
                         BleTools.getInstance().disConnect();
-                        QNBleTools.getInstance().disConnectDevice();
+                        QNBleManager.getInstance().disConnectDevice();
                         try {
                             RxCache.getDefault().clear2();
                         } catch (IOException e) {

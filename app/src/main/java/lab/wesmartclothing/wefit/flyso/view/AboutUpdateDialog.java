@@ -55,7 +55,7 @@ public class AboutUpdateDialog extends RxDialog {
     private String filePath;
     private Context mContext;
     private boolean mustUpdate;
-    private final String Dir = "/" + Key.APP_KEY + "/";
+    private final String Dir = "/" + Key.COMPANY_KEY + "/";
     private String fileName = Key.COMPANY_KEY + ".zip";
 
     private BLEUpdateListener mBLEUpdateListener;

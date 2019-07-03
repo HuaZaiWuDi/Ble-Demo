@@ -126,7 +126,7 @@ public class PlanWebActivity extends BaseShareActivity {
             //控件转图片
             Bitmap bitmap = RxImageUtils.WebView2Bitmap(webView);
             //微信分享图片最大尺寸32KB
-            File timetofit = RxImageUtils.saveBitmap(bitmap, "/" + Key.APP_KEY + "/", "plan_" + System.currentTimeMillis());
+            File timetofit = RxImageUtils.saveBitmap(bitmap, "/" + Key.COMPANY_KEY + "/", "plan_" + System.currentTimeMillis());
             if (timetofit == null) {
                 emitter.onError(new Throwable(""));
             } else {

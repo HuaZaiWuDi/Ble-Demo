@@ -95,10 +95,10 @@
                 tools:text="固件版本号 v1.0"/>
 
             <TextView
+                android:id="@+id/tv_appName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="莱特妮丝智瘦APP"
                 android:textColor="@color/Gray"
                 android:textSize="18sp"/>
 
@@ -106,7 +106,7 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginTop="20dp"
-                android:src="@mipmap/icon_app_lightness"
+                android:src="@mipmap/icon_app"
                 />
 
 

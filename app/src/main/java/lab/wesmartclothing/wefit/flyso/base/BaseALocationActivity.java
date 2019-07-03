@@ -1286,6 +1286,8 @@ public abstract class BaseALocationActivity extends BaseShareActivity {
     public void init() {
         mLocationClient = new AMapLocationClient(MyAPP.sMyAPP);
 
+
+
         configLocation();
         //初始化定位
         //设置定位回调监听

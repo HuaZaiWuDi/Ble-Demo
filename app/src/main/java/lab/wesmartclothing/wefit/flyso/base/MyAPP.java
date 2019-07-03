@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
@@ -28,8 +27,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxThreadPoolUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
-import com.yolanda.health.qnblesdk.listener.QNResultCallback;
-import com.yolanda.health.qnblesdk.out.QNBleApi;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
 
@@ -40,6 +37,7 @@ import java.util.Arrays;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -53,12 +51,10 @@ import lab.wesmartclothing.wefit.flyso.utils.soinc.SonicRuntimeImpl;
  */
 public class MyAPP extends Application {
 
-    public static QNBleApi QNapi;
     public static Typeface typeface;
     public static AMapLocation aMapLocation = null;//定位信息
     private static GlideImageLoader sImageLoader;
     public static MyAPP sMyAPP;
-
     public static UserInfo gUserInfo;
 
 
@@ -88,7 +84,7 @@ public class MyAPP extends Application {
     public void onCreate() {
         super.onCreate();
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
-        initQN();
+        QNBleManager.init(this);
         sMyAPP = this;
         initSonic();
 
@@ -96,7 +92,7 @@ public class MyAPP extends Application {
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
             initRxCache();
             RxUtils.init(MyAPP.this);
-            RxLogUtils.setLogSwitch(true);
+            RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
             initUrl();
             MultiDex.install(MyAPP.this);
             initUM();
@@ -140,7 +136,7 @@ public class MyAPP extends Application {
         try {
             RxCache.initializeDefault(new RxCache.Builder()
                     .appVersion(2)
-                    .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
+                    .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, Key.COMPANY_KEY))
                     .diskConverter(new SerializableDiskConverter())
                     .diskMax((20 * 1024 * 1024))
                     .memoryMax(5 * 1024 * 1024)
@@ -161,7 +157,7 @@ public class MyAPP extends Application {
         boolean isDevelopmentDevice = BuildConfig.DEBUG && Arrays.asList(androidIds).contains(RxDeviceUtils.getAndroidId());
         RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
         if (!isDevelopmentDevice) {
-            Bugly.init(getApplicationContext(), Key.BUGly_id, BuildConfig.DEBUG);
+            Bugly.init(getApplicationContext(), Key.BUGLY_KEY, BuildConfig.DEBUG);
         }
     }
 
@@ -192,30 +188,13 @@ public class MyAPP extends Application {
 
     private void initUM() {
         UMConfigure.setLogEnabled(true);
-        UMConfigure.init(MyAPP.this, "5ca338162036572bc50017d8", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
-        PlatformConfig.setWeixin("wx270d9fa3441b877e", "2500e5de5ef522a51c816a58993b0333");
-        PlatformConfig.setQQZone("1108606528", "yVyd71DGzFu8iJut");
-        PlatformConfig.setSinaWeibo("613183269", "49b5d1a655eb0be6e0854ed32c9e3b7e", "https://sns.whalecloud.com/sina2/callback");
-    }
+        UMConfigure.init(MyAPP.this, Key.UM_KEY, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
+        PlatformConfig.setWeixin(Key.WX_KEY, Key.WX_SECRET);
+        PlatformConfig.setQQZone(Key.QQ_KEY, Key.QQ_SECRET);
+        PlatformConfig.setSinaWeibo(Key.SINA_KEY, Key.SINA_SECRET, "https://sns.whalecloud.com/sina2/callback");
 
 
-    public static RxCache getRxCache() {
-        return RxCache.getDefault();
-    }
-
-
-    private void initQN() {
-        QNapi = QNBleApi.getInstance(this);
-        //加密文件
-        String encryptPath = "file:///android_asset/szzskjyxgs2018.qn";
-
-        QNapi.initSdk("szzskjyxgs2018", encryptPath, new QNResultCallback() {
-            @Override
-            public void onResult(int i, String s) {
-                Log.d("轻牛SDK", i + "----初始化文件" + s);
-            }
-        });
-    }
+         }
 
 
     /**

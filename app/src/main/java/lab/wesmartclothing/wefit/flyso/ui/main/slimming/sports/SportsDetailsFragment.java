@@ -32,6 +32,7 @@ import com.vondear.rxtools.view.chart.bar.BarVerticalChart;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -256,7 +257,7 @@ public class SportsDetailsFragment extends BaseShareActivity {
 
         RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
                 .codeSide(800)
-                .logoBitmap(R.mipmap.icon_app_lightness_w, getResources())
+                .logoBitmap(R.mipmap.icon_app_white, getResources())
                 .into(mImgQRcode);
     }
 
@@ -300,7 +301,7 @@ public class SportsDetailsFragment extends BaseShareActivity {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .singleAthlDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail" + gid, String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("athleticsDetail" + gid, String.class,
                         CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())

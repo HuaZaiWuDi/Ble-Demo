@@ -383,7 +383,7 @@ public class SearchHistoryFragment extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .getKeyWord())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("getKeyWord", String.class,
                         CacheStrategy.firstCacheTimeout(Key.HOURS_6)))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())

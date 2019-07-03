@@ -47,7 +47,7 @@ public class SonicRuntimeImpl extends SonicRuntime {
      */
     @Override
     public String getCurrentUserAccount() {
-        return Key.APP_KEY;
+        return Key.COMPANY_KEY;
     }
 
     @Override

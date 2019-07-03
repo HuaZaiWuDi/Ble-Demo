@@ -26,6 +26,8 @@ public class PlanMatterActivity extends BaseActivity {
     RxTextView mTvUnAgree;
     @BindView(R.id.tv_Agree)
     RxTextView mTvAgree;
+    @BindView(R.id.tv_tip)
+    TextView mTvTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class PlanMatterActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         initTopBar();
+
+        mTvTip.setText(getString(R.string.plan, getString(R.string.appName)));
     }
 
     private void initTopBar() {

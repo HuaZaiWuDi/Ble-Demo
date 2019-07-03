@@ -17,6 +17,7 @@ import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -29,7 +30,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DataListBean;
 import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -198,7 +198,7 @@ public class EnergyActivity extends BaseActivity {
         NetManager.getApiService().heatFetchGroupTypeRecordList(groupType, pageNum, 10)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("heatFetchGroupTypeRecordList" + pageNum + groupType,
+                .compose(RxCache.getDefault().<String>transformObservable("heatFetchGroupTypeRecordList" + pageNum + groupType,
                         String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.rxThreadHelper())

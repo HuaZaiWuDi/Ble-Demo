@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@mipmap/icon_invitation_img_l"/>
+            android:src="@mipmap/icon_invitation_img"/>
 
 
         <TextView

@@ -393,7 +393,7 @@ public class SlimmingFragment extends BaseAcFragment {
     ///////////////////////////////////////////////////////////////////////////
     private void getData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().planIndex())
-                .compose(MyAPP.getRxCache().<String>transformObservable("planIndex", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("planIndex", String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -467,7 +467,7 @@ public class SlimmingFragment extends BaseAcFragment {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .courseAthlDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("courseAthlDetail", String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("courseAthlDetail", String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -827,6 +827,7 @@ public class SlimmingFragment extends BaseAcFragment {
         firsrUsedDialog.setContentView(view);
         if (firsrUsedDialog.isShowing()) firsrUsedDialog.dismiss();
         firsrUsedDialog.show();
+        view.<TextView>findViewById(R.id.tv_tip).setText(getString(R.string.tv_firstTip, getString(R.string.appName)));
         view.findViewById(R.id.tv_start)
                 .setOnClickListener(view1 -> {
                     firsrUsedDialog.dismiss();

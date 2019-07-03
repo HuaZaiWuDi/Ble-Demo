@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -9,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,11 +23,11 @@ import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.wesmarclothing.mylibrary.net.RxBus;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -44,19 +42,16 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightGroupListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.GroupType;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.line.LineBean;
 import lab.wesmartclothing.wefit.flyso.view.line.SuitLines;
@@ -111,8 +106,6 @@ public class WeightRecordFragment extends BaseActivity {
     ImageView mImgSwitchDate;
 
 
-    private QNBleTools mQNBleTools = QNBleTools.getInstance();
-    private Button btn_Connect;
     private HealthyInfoBean currentWeightInfo;
     //传递数据给我目标详情界面
     private List<HealthyInfoBean> list;
@@ -216,23 +209,6 @@ public class WeightRecordFragment extends BaseActivity {
                     }
                 });
 
-//        RxBus.getInstance().registerSticky(BleStateChangedBus.class)
-//                .compose(RxComposeUtils.bindLife(lifecycleSubject))
-//                .subscribe(bleState -> {
-//                    boolean state = bleState.isOn();
-//                    if (!state) {
-//                        checkStatus();
-//                    } else {
-//                        mLayoutStrongTip.setVisibility(View.GONE);
-//                    }
-//                });
-
-        RxBus.getInstance().registerSticky(ScaleConnectBus.class)
-                .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .subscribe(scaleConnect -> {
-                    btn_Connect.setText(getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
-                            scaleConnect.isConnect() ? R.string.connected : R.string.disConnected));
-                });
     }
 
     private void showHistoryWeightData(final List<QNScaleStoreData> mList) {
@@ -254,7 +230,7 @@ public class WeightRecordFragment extends BaseActivity {
         NetManager.getApiService().fetchGroupTypeRecordList(groupType, pageNum, 10)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchGroupTypeRecordList" + pageNum + groupType, String.class,
+                .compose(RxCache.getDefault().<String>transformObservable("fetchGroupTypeRecordList" + pageNum + groupType, String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.rxThreadHelper())
@@ -281,7 +257,7 @@ public class WeightRecordFragment extends BaseActivity {
         NetManager.getApiService().fetchDaysOrMonthRecordList(groupType, currentDate, 1, 31)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("fetchDaysOrMonthRecordList" + currentDate + groupType,
+                .compose(RxCache.getDefault().transformObservable("fetchDaysOrMonthRecordList" + currentDate + groupType,
                         String.class, CacheStrategy.firstCacheTimeout(5 * 60 * 1000)))
                 .map(new CacheResult.MapFunc())
                 .compose(RxComposeUtils.rxThreadHelper())

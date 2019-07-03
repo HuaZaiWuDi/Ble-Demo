@@ -46,12 +46,11 @@ import java.util.UUID;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
@@ -85,7 +84,7 @@ public class BleService extends Service {
     private Map<String, Object> connectDevices = new HashMap<>();
 
     public static boolean clothingFinish = true;
-    QNBleTools mQNBleTools = QNBleTools.getInstance();
+    QNBleManager mQNBleTools = QNBleManager.getInstance();
 
 
     private static boolean isFirstJoin = true;
@@ -179,7 +178,6 @@ public class BleService extends Service {
         filter.addAction(Intent.ACTION_DATE_CHANGED);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mBroadcastReceiver, filter);
-
     }
 
 
@@ -228,9 +226,9 @@ public class BleService extends Service {
         }
         //在创建的通知渠道上发送通知
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        builder.setSmallIcon(R.mipmap.icon_app_lightness) //设置通知图标
-                .setContentTitle("提示")//设置通知标题
-                .setContentText("智享瘦正在后台运行")//设置通知内容
+        builder.setSmallIcon(R.mipmap.icon_app) //设置通知图标
+                .setContentTitle(getString(R.string.tip))//设置通知标题
+                .setContentText(getString(R.string.appName) + "正在后台运行")//设置通知内容
                 .setAutoCancel(true) //用户触摸时，自动关闭
                 .setOngoing(true);//设置处于运行状态
         //将服务置于启动状态 NOTIFICATION_ID指的是创建的通知的ID
@@ -270,7 +268,6 @@ public class BleService extends Service {
             @Override
             public void onScanning(BleDevice bleDevice) {
                 RxLogUtils.d("扫描结果：" + bleDevice.toString());
-
                 if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_clothingMAC)) &&
                         !BleTools.getBleManager().isConnected(bleDevice.getMac()) &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
@@ -296,7 +293,7 @@ public class BleService extends Service {
 
     private void connectScaleCallBack() {
         //扫描体脂称
-        MyAPP.QNapi.setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
+        QNBleManager.getQNApi().setBleDeviceDiscoveryListener(new QNBleDeviceDiscoveryListener() {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
                 RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi() + ":" + bleDevice.getModeId());
@@ -304,7 +301,7 @@ public class BleService extends Service {
                 RxBus.getInstance().post(bindDeviceBean);
 
                 if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) &&
-                        mQNBleTools.getConnectState() == QNBleTools.QN_DISCONNECED &&
+                        mQNBleTools.getConnectState() == QNBleManager.QN_DISCONNECED &&
                         !connectDevices.containsKey(bleDevice.getMac())) {//判断是否正在连接，或者已经连接则不在连接
                     mQNBleTools.connectDevice(bleDevice);
                     connectDevices.put(bleDevice.getMac(), bleDevice);
@@ -334,7 +331,7 @@ public class BleService extends Service {
          * 修改逻辑判断有实时数据或者稳定数据时在跳转
          *
          * */
-        MyAPP.QNapi.setDataListener(new QNDataListener() {
+        QNBleManager.getQNApi().setDataListener(new QNDataListener() {
             @Override
             public void onGetUnsteadyWeight(QNBleDevice qnBleDevice, double v) {
 //                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
@@ -375,11 +372,11 @@ public class BleService extends Service {
             }
         });
 
-        MyAPP.QNapi.setBleConnectionChangeListener(new com.yolanda.health.qnblesdk.listener.QNBleConnectionChangeListener() {
+        QNBleManager.getQNApi().setBleConnectionChangeListener(new com.yolanda.health.qnblesdk.listener.QNBleConnectionChangeListener() {
             @Override
             public void onConnecting(QNBleDevice qnBleDevice) {
                 RxLogUtils.e("正在连接:");
-                mQNBleTools.setConnectState(QNBleTools.QN_CONNECTING);
+                mQNBleTools.setConnectState(QNBleManager.QN_CONNECTING);
             }
 
             @Override
@@ -390,7 +387,7 @@ public class BleService extends Service {
             @Override
             public void onServiceSearchComplete(QNBleDevice qnBleDevice) {
 
-                mQNBleTools.setConnectState(QNBleTools.QN_CONNECED);
+                mQNBleTools.setConnectState(QNBleManager.QN_CONNECED);
                 RxBus.getInstance().postSticky(new ScaleConnectBus(true));
 
                 DeviceLink deviceLink = new DeviceLink();
@@ -403,12 +400,12 @@ public class BleService extends Service {
             @Override
             public void onDisconnecting(QNBleDevice qnBleDevice) {
                 RxLogUtils.e("正在断开连接:");
-                mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECTING);
+                mQNBleTools.setConnectState(QNBleManager.QN_DISCONNECTING);
             }
 
             @Override
             public void onDisconnected(QNBleDevice qnBleDevice) {
-                mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
+                mQNBleTools.setConnectState(QNBleManager.QN_DISCONNECED);
                 RxBus.getInstance().postSticky(new ScaleConnectBus(false));
                 RxLogUtils.e("断开连接:");
                 connectDevices.remove(qnBleDevice.getMac());
@@ -418,7 +415,7 @@ public class BleService extends Service {
 
             @Override
             public void onConnectError(QNBleDevice qnBleDevice, int i) {
-                mQNBleTools.setConnectState(QNBleTools.QN_DISCONNECED);
+                mQNBleTools.setConnectState(QNBleManager.QN_DISCONNECED);
                 RxLogUtils.d("连接异常：" + i);
                 mQNBleTools.disConnectDevice();
                 RxBus.getInstance().postSticky(new ScaleConnectBus(false));

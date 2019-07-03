@@ -23,6 +23,7 @@ import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -42,7 +43,6 @@ import cn.qqtheme.framework.picker.DatePicker;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -267,7 +267,7 @@ public class WeightContrastActivity extends BaseActivity {
                 NetManager.getApiService().weightCompare(
                         NetManager.fetchRequest(jsonObject.toString())))
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("weightCompare" + startDate + endDate,
+                .compose(RxCache.getDefault().transformObservable("weightCompare" + startDate + endDate,
                         String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc())
                 .observeOn(AndroidSchedulers.mainThread())

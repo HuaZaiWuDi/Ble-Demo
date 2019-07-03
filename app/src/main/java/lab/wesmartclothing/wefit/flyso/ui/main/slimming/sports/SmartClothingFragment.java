@@ -27,6 +27,7 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -183,7 +184,7 @@ public class SmartClothingFragment extends BaseActivity {
         NetManager.getApiService().athlFetchGroupTypeRecordList(groupType, pageNum, 10)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchAthleticsListDetail" + pageNum + groupType,
+                .compose(RxCache.getDefault().<String>transformObservable("fetchAthleticsListDetail" + pageNum + groupType,
                         String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .compose(RxComposeUtils.rxThreadHelper())
@@ -207,7 +208,7 @@ public class SmartClothingFragment extends BaseActivity {
         NetManager.getApiService().athlFetchDaysOrMonthRecordList(groupType, recordDate, 1, 31)
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("athlFetchDaysOrMonthRecordList" + recordDate + groupType,
+                .compose(RxCache.getDefault().transformObservable("athlFetchDaysOrMonthRecordList" + recordDate + groupType,
                         String.class, CacheStrategy.firstCacheTimeout(5 * 60 * 1000)))
                 .map(new CacheResult.MapFunc())
                 .compose(RxComposeUtils.rxThreadHelper())

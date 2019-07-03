@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.tools;
 
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
+
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
@@ -83,15 +85,18 @@ public interface Key {
     String LoginType_QQ = "QQ";
     String LoginType_WEIBO = "MicroBlog";
 
-    //BUGLY
-    String BUGly_id = "dd2f9fff3f";
 
-
-    String APP_KEY = "wisenfit";
-
-    String COMPANY_KEY = "Lightness";
-
-    String COMPANY_NAME = "深圳市莱特妮丝服饰有限公司";
+    //友盟
+    String UM_KEY = BuildConfig.UM_KEY;
+    String WX_KEY = BuildConfig.WX_KEY;
+    String WX_SECRET = BuildConfig.WX_SECRET;
+    String QQ_KEY = BuildConfig.QQ_KEY;
+    String QQ_SECRET = BuildConfig.QQ_SECRET;
+    String SINA_KEY = BuildConfig.SINA_KEY;
+    String SINA_SECRET = BuildConfig.SINA_SECRET;
+    String BUGLY_KEY = BuildConfig.BUGLY_KEY;
+    String URL_RELEASE = BuildConfig.URL_RELEASE;
+    String COMPANY_KEY = BuildConfig.COMPANY_KEY;
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -114,8 +119,6 @@ public interface Key {
     int TYPE_LUNCH = 2;
     int TYPE_DINNER = 3;
     int TYPED_MEAL = 5;
-
-
 
 
     //心率阈值
