@@ -1,6 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.components.XAxis;
@@ -19,6 +21,7 @@ import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -28,27 +31,35 @@ import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 public class SportingActivity extends BaseSportActivity implements SportInterface {
 
 
+    public static void start(Context context, String key) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Key.BUNDLE_SPORTING_LAST_DATA, key);
+        RxActivityUtils.skipActivity(context, SportingActivity.class, bundle);
+    }
+
     @Override
     public void sportFinish() {
         if (mChartHeartRate.getData().getEntryCount() < 90) {
             //       用户当前运动时间<3min，提示用户此次记录将不被保存
             sportingShortDialog = new RxDialogSure(mContext)
                     .setTitle(getString(R.string.sportTip))
-                    .setContent("您当前运动时间过短，此次运动记录将不会被保存")
+                    .setContent(getString(R.string.runDataNotSave))
                     .setSure(getString(R.string.ok))
                     .setSureListener(v -> {
                         RxActivityUtils.finishActivity();
                     });
             sportingShortDialog.show();
+
+            mHeartRateUtil.clearData(SportKey);
         } else {
-            timeTimer.stopTimer();
             speakAdd(getString(R.string.speech_freeSportFinish,
                     Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
                             (currentTime % 60 == 0 ? "" : Number2Chinese.number2Chinese(currentTime % 60 + "") + "秒"),
-                    Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(currentKcal, 1))));
+                    Number2Chinese.number2Chinese((int) currentKcal + "")));
             //如果检测到运动已经结束，直接保存数据并进入详情页
             uploadData();
         }
+
     }
 
     @Override

@@ -25,4 +25,6 @@ public class EnergyUtil {
         float v = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) / 24f;
         return sportingKcal + (int) (baseKcal * (v)) - heatKcal;
     }
+
+
 }

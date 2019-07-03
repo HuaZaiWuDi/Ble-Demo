@@ -93,6 +93,16 @@ public interface ApiService {
     @POST("heat/changeDietPlan")
     Observable<String> changeDietPlan(@Body RequestBody body);
 
+
+    //获取日期分组信息列表
+    @FormUrlEncoded
+    @POST("heat/fetchGroupTypeRecordList")
+    Observable<String> heatFetchGroupTypeRecordList(
+            @Field("groupType") String groupType,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
+
     ///////////////////////////////////////////////////////////////////////////
     // 体重
     ///////////////////////////////////////////////////////////////////////////
@@ -147,6 +157,23 @@ public interface ApiService {
     @POST("weight/weightCompare")
     Observable<String> weightCompare(@Body RequestBody body);
 
+    //获取日期分组信息列表
+    @FormUrlEncoded
+    @POST("weight/fetchGroupTypeRecordList")
+    Observable<String> fetchGroupTypeRecordList(
+            @Field("groupType") String groupType,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize);
+
+    //获取日月对应的列表记录
+    @FormUrlEncoded
+    @POST("weight/fetchDaysOrMonthRecordList")
+    Observable<String> fetchDaysOrMonthRecordList(
+            @Field("groupType") String groupType,
+            @Field("recordDate") long recordDate,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 运动
@@ -185,6 +212,28 @@ public interface ApiService {
     //添加跑步数据信息
     @POST("athl/addRunningData")
     Observable<String> addRunningData(@Body RequestBody body);
+
+
+    //获取日期分组信息列表
+    @FormUrlEncoded
+    @POST("athl/fetchGroupTypeRecordList")
+    Observable<String> athlFetchGroupTypeRecordList(
+            @Field("groupType") String groupType,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
+
+
+    //获取日月对应的列表记录
+    @FormUrlEncoded
+    @POST("athl/fetchDaysOrMonthRecordList")
+    Observable<String> athlFetchDaysOrMonthRecordList(
+            @Field("groupType") String groupType,
+            @Field("recordDate") long recordDate,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 登录
@@ -363,6 +412,17 @@ public interface ApiService {
     @POST("find/detail.html")
     Observable<String> newsDetail(@Field("gid") String git);
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 排行榜
+    ///////////////////////////////////////////////////////////////////////////
+    //近30天所有用户减重排行
+    @GET("ranking/weight/lastTopUser")
+    Observable<String> lastTopUser(@Query("count") int count, @Query("days") int days);
+
+    //本人排名等概要
+    @GET("ranking/weight/rankingSummary")
+    Observable<String> rankingSummary();
 
     ///////////////////////////////////////////////////////////////////////////
     // 固件升级模块

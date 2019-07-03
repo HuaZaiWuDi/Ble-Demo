@@ -147,7 +147,7 @@ public class CollectFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("我的收藏");
+        mQMUIAppBarLayout.setTitle(R.string.myCollect);
     }
 
 

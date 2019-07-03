@@ -26,14 +26,25 @@
         android:background="@color/yellow_FFBC00">
 
 
-        <com.vondear.rxtools.view.chart.line.SuitLines
+        <ImageView
+            android:id="@+id/img_switchDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="8dp"
+            android:src="@mipmap/ic_select_day"/>
+
+        <lab.wesmartclothing.wefit.flyso.view.line.SuitLines
             android:id="@+id/suitlines"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/layout_lenged"/>
+            android:layout_above="@+id/img_pointer"
+            android:layout_below="@+id/img_switchDate"/>
 
 
         <ImageView
+            android:id="@+id/img_pointer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -41,36 +52,6 @@
             android:background="@mipmap/icon_triangle"
             android:scaleType="centerCrop"/>
 
-
-        <LinearLayout
-            android:id="@+id/layout_lenged"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:layout_marginRight="@dimen/dimen_16"
-            android:layout_marginBottom="@dimen/dimen_10"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/dimen_16"
-                android:text="一\t摄入"
-                android:textColor="@color/white"
-                android:textSize="8sp"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-\t-\t消耗"
-                android:textColor="@color/white"
-                android:textSize="8sp"/>
-
-
-        </LinearLayout>
 
     </RelativeLayout>
 

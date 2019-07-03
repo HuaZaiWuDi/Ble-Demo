@@ -167,7 +167,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
         healthy.setSectionLabels(userInfo.getSex() == 1 ? new String[]{"15.0%", "18.0%", "23.0%"} : new String[]{"20.0%", "25.0%", "30.0%"});
-        healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
+        healthy.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high), getString(R.string.seriouslyHigh)});
         mHealthyList.add(healthy);
 
         //BMI
@@ -176,7 +176,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy2.setSectionLabels(new String[]{"18.5", "25.0"});
         healthy2.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
-        healthy2.setLabels(new String[]{"偏低", "标准", "偏高"});
+        healthy2.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high)});
         mHealthyList.add(healthy2);
 
         //内脏脂肪等级
@@ -185,7 +185,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy3.setSectionLabels(new String[]{"9", "14"});
         healthy3.setColors(new int[]{Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
-        healthy3.setLabels(new String[]{"标准", "偏高", "严重偏高"});
+        healthy3.setLabels(new String[]{getString(R.string.normal), getString(R.string.high), getString(R.string.seriouslyHigh)});
         mHealthyList.add(healthy3);
 
         /**
@@ -207,7 +207,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy4.setSectionLabels(new String[]{RxFormatValue.fromat4S5R(value1, 1) + "kg", RxFormatValue.fromat4S5R(value2, 1) + "kg"});
         healthy4.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
-        healthy4.setLabels(new String[]{"偏低", "标准", "充足"});
+        healthy4.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), "充足"});
         mHealthyList.add(healthy4);
 
         //基础代谢
@@ -218,7 +218,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy5.setSectionLabels(new String[]{bmr + "kcal"});
         healthy5.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F")});
-        healthy5.setLabels(new String[]{"未达标", "达标"});
+        healthy5.setLabels(new String[]{getString(R.string.notStandard), getString(R.string.reachingStandard)});
         mHealthyList.add(healthy5);
 
         //水分
@@ -227,7 +227,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy6.setSectionLabels(new String[]{"55.0%", "65.0%"});
         healthy6.setColors(new int[]{Color.parseColor("#FF7200"),
                 Color.parseColor("#61D97F"), Color.parseColor("#17BD4F")});
-        healthy6.setLabels(new String[]{"偏低", "标准", "充足"});
+        healthy6.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.adequate)});
         mHealthyList.add(healthy6);
 
         /**
@@ -244,7 +244,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy7.setSectionLabels(new String[]{RxFormatValue.fromat4S5R(start, 1) + "kg", RxFormatValue.fromat4S5R(end, 1) + "kg"});
         healthy7.setColors(new int[]{Color.parseColor("#5A7BEE"),
                 Color.parseColor("#61D97F"), Color.parseColor("#FFBC00")});
-        healthy7.setLabels(new String[]{"偏低", "标准", "偏高"});
+        healthy7.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high)});
         mHealthyList.add(healthy7);
 
         //皮下脂肪率
@@ -253,7 +253,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy10.setSectionLabels(new String[]{"18.5%", "26.7%"});
         healthy10.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
-        healthy10.setLabels(new String[]{"偏低", "标准", "偏高"});
+        healthy10.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high)});
         mHealthyList.add(healthy10);
 
         //骨骼肌率
@@ -262,7 +262,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy11.setSectionLabels(new String[]{"40.0%", "50.0%"});
         healthy11.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00")});
-        healthy11.setLabels(new String[]{"偏低", "标准", "偏高"});
+        healthy11.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high)});
         mHealthyList.add(healthy11);
 
         //蛋白质
@@ -271,7 +271,7 @@ public class BodyDataFragment extends BaseActivity {
         healthy12.setSectionLabels(new String[]{"14.0%", "16.0%"});
         healthy12.setColors(new int[]{Color.parseColor("#FF7200"), Color.parseColor("#61D97F"),
                 Color.parseColor("#17BD4F")});
-        healthy12.setLabels(new String[]{"不足", "标准", "优秀"});
+        healthy12.setLabels(new String[]{getString(R.string.insufficient), getString(R.string.normal), getString(R.string.adequate)});
         mHealthyList.add(healthy12);
 
         //身体年龄
@@ -297,7 +297,6 @@ public class BodyDataFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("心率数据：" + s);
                         WeightDetailsBean detailsBean = JSON.parseObject(s, WeightDetailsBean.class);
                         HealthyInfoBean weightInfo = detailsBean.getWeightInfo();
                         notifyData(weightInfo);
@@ -366,7 +365,7 @@ public class BodyDataFragment extends BaseActivity {
             level0Bean.setBodyData(titles[i]);
             level0Bean.setBodyDataImg(imgs[i]);
             if (i == titles.length - 1 || i == titles.length - 2 || i == 0) {
-                level0Bean.setStatus("标准");
+                level0Bean.setStatus(getString(R.string.normal));
                 level0Bean.setStatusColor(Color.parseColor("#61D97F"));
                 level0Bean.setCanExpanded(false);
             } else {
@@ -451,7 +450,7 @@ public class BodyDataFragment extends BaseActivity {
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("身体数据");
+        mQMUIAppBarLayout.setTitle(R.string.bodyData);
     }
 
     @OnClick(R.id.tv_bodyFat)

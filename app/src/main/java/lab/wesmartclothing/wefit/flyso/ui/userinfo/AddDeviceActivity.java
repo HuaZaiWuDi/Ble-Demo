@@ -30,7 +30,6 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.wesmarclothing.mylibrary.net.RxBus;
 
@@ -169,12 +168,11 @@ public class AddDeviceActivity extends BaseActivity {
                     boolean state = bleState.isOn();
                     if (!state) {
                         switchStatus(STATUS_NO_DEVICE);
-                        mTvDetails.setText("监测到未开启蓝牙，请打开蓝牙重新扫描");
+                        mTvDetails.setText(R.string.checkUnenableBluetooth);
                     } else {
                         startScan();
                     }
                 });
-
     }
 
 
@@ -186,10 +184,10 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void initTopBar() {
-        mTopBar.setTitle("添加设备");
+        mTopBar.setTitle(R.string.AddDevice);
         mTopBar.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         if (!forceBind) {
-            Button skip = mTopBar.addRightTextButton("跳过", R.id.tv_skip);
+            Button skip = mTopBar.addRightTextButton(R.string.skip, R.id.tv_skip);
             skip.setOnClickListener(v -> {
                 //跳转主页
                 RxActivityUtils.skipActivity(mContext, MainActivity.class);
@@ -241,11 +239,11 @@ public class AddDeviceActivity extends BaseActivity {
 
                     final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
                     if (BleKey.TYPE_SCALE.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
-                        RxToast.normal("已绑定体脂称");
+                        RxToast.normal(getString(R.string.bindedScale));
                         return;
                     }
                     if (BleKey.TYPE_CLOTHING.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
-                        RxToast.normal("已绑定瘦身衣");
+                        RxToast.normal(getString(R.string.bindedClothing));
                         return;
                     }
                     List<BindDeviceBean> data = adapter.getData();
@@ -397,18 +395,16 @@ public class AddDeviceActivity extends BaseActivity {
         this.stepState = stepState;
         switch (stepState) {
             case STATUS_SCAN_DEVICE:
-                mTvTitle.setText("扫描搜索设备");
-                mTvDetails.setText("请添加您最近购买的智能设备");
-
+                mTvTitle.setText(R.string.scanDevice);
+                mTvDetails.setText(R.string.scanDeviceTip);
                 isScan(false);
-
                 mImgScan.setVisibility(View.VISIBLE);
                 mImgNoDevice.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.GONE);
                 break;
             case STATUS_FIND_DEVICE:
-                mTvTitle.setText("附近的设备");
-                mTvDetails.setText("请绑定并开始使用您的智能设备");
+                mTvTitle.setText(R.string.nearbyDevice);
+                mTvDetails.setText(R.string.BindDeviceTip);
                 mImgScan.clearAnimation();
                 mBtnScan.setVisibility(View.GONE);
                 mImgScan.setVisibility(View.GONE);
@@ -416,20 +412,20 @@ public class AddDeviceActivity extends BaseActivity {
                 mImgNoDevice.setVisibility(View.GONE);
                 break;
             case STATUS_BIND_DEVICE:
-                mTvTitle.setText("附近的设备");
-                mTvDetails.setText("请绑定并开始使用您的智能设备");
+                mTvTitle.setText(R.string.nearbyDevice);
+                mTvDetails.setText(R.string.BindDeviceTip);
                 mImgScan.clearAnimation();
 
                 isScan(true);
-                mBtnScan.setText("开始使用");
+                mBtnScan.setText(R.string.startUse);
 
                 mImgScan.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.VISIBLE);
                 mImgNoDevice.setVisibility(View.GONE);
                 break;
             case STATUS_NO_DEVICE:
-                mTvTitle.setText("扫描设备失败");
-                mTvDetails.setText("没有搜索到设备，请确保设备电量充足");
+                mTvTitle.setText(R.string.scanDeviceFail);
+                mTvDetails.setText(R.string.notScanDeviceTip);
                 mImgScan.clearAnimation();
 
                 isScan(true);
@@ -472,18 +468,7 @@ public class AddDeviceActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<Boolean>() {
                     @Override
                     protected void _onNext(Boolean aBoolean) {
-                        if (!aBoolean) {
-                            new RxDialogSureCancel(mContext)
-                                    .setTitle("提示")
-                                    .setContent("不定位权限，手机将无法连接蓝牙")
-                                    .setSure("去开启")
-                                    .setSureListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            initPermissions();
-                                        }
-                                    }).show();
-                        }
+
                     }
                 });
     }

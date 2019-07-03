@@ -134,7 +134,7 @@ public class VCodeLoginFragment extends BaseFragment {
 
     private void getVCode() {
         String phone = mEditPhone.getText().toString();
-        if (!RxRegUtils.isMobileSimple(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }

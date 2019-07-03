@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
-import com.didichuxing.doraemonkit.DoraemonKit;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -92,7 +91,7 @@ public class MyAPP extends Application {
         initQN();
         sMyAPP = this;
         initSonic();
-        DoraemonKit.install(this);
+
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
             initRxCache();
@@ -144,7 +143,7 @@ public class MyAPP extends Application {
                     .diskDir(RxFileUtils.getCecheFolder(MyAPP.this, "Timetofit-cache"))
                     .diskConverter(new SerializableDiskConverter())
                     .diskMax((20 * 1024 * 1024))
-                    .memoryMax(0)
+                    .memoryMax(5 * 1024 * 1024)
                     .setDebug(false)
                     .build());
             RxLogUtils.d("RxCache 缓存框架初始化成功");

@@ -36,14 +36,36 @@
             android:orientation="vertical">
 
 
-            <lab.wesmartclothing.wefit.flyso.view.DateChoose
-                android:id="@+id/chooseDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.vondear.rxtools.view.SwitchView
+                    android:id="@+id/sw_speak"
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    app:hasShadow="true"
+                    app:isOpened="true"
+                    app:offColor="@color/GrayWrite"
+                    app:offColorDark="@color/GrayWrite"
+                    app:primaryColor="@color/green_61D97F"
+                    />
+
+
+                <lab.wesmartclothing.wefit.flyso.view.DateChoose
+                    android:id="@+id/chooseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="24dp"
+                    />
+
+            </FrameLayout>
 
 
             <LinearLayout

@@ -80,6 +80,12 @@ public abstract class BaseAcFragment extends Fragment {
     }
 
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+    }
+
     /**
      * 要实现延迟加载Fragment内容,需要在 onCreateView
      * isPrepared = true;

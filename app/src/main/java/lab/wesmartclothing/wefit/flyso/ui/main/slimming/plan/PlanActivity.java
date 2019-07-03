@@ -36,7 +36,7 @@ public class PlanActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        mTopBar.setTitle("定制课程");
+        mTopBar.setTitle(R.string.customizedCourses);
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
                     @Override

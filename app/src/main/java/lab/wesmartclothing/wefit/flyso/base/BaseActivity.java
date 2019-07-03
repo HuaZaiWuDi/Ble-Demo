@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.flyso.utils.ScreenAdapter;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**

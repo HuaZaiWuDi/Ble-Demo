@@ -1,13 +1,17 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -109,8 +113,9 @@ public class HealthReportActivity extends BaseActivity {
 
                 HealthReportBean item = beans.get(i);
                 if (item != null)
-                    mTvTip.setText("报告编号：" + item.getUserInform().getInformNo() +
-                            "\n创建日期：" + RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd"));
+                    mTvTip.setText(getString(R.string.healthReportTip,
+                            item.getUserInform().getInformNo(), RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd"))
+                    );
             }
 
             @Override
@@ -151,15 +156,20 @@ public class HealthReportActivity extends BaseActivity {
 
                 FrameLayout frameLayout = view.findViewById(R.id.layout_frame);
                 String url = ServiceAPI.SHARE_INFORM_URL + bean.getUserInform().getGid() + "&sign=true";
-                loadUrl(url, frameLayout, position);
 
-                RxTextUtils.getBuilder("起始体重\n")
+                WebView mWebView = new WebView(mContext);
+                mWebView.setTag("webView" + position);
+
+                frameLayout.addView(mWebView);
+                loadUrl(url, mWebView, position);
+
+                RxTextUtils.getBuilder(getString(R.string.initWeight) + "\n")
                         .append(RxFormatValue.fromat4S5R(bean.getTargetInfo().getInitialWeight(), 1)).setProportion(1.5f)
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                         .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                         .into(view.findViewById(R.id.tv_initWeight));
 
-                RxTextUtils.getBuilder("目标体重\n")
+                RxTextUtils.getBuilder(getString(R.string.targetWeight) + "\n")
                         .append(RxFormatValue.fromat4S5R(bean.getTargetInfo().getTargetWeight(), 1)).setProportion(1.5f)
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                         .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
@@ -167,13 +177,13 @@ public class HealthReportActivity extends BaseActivity {
 
 
                 RxRoundProgressBar mProTarget = view.findViewById(R.id.pro_target);
-                ImageView ImgWeightFlag = view.findViewById(R.id.img_weightFlag);
+                ImageView ImgWeightFlag = view.findViewById(R.id.img_WeightFlag);
 
                 if (bean.getTargetWeight().getComplete() < 0) {
                     mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.red));
                     mProTarget.setProgress(5);
                 } else {
-                    ImgWeightFlag.setTranslationX((float) (RxUtils.dp2px(230) * bean.getTargetWeight().getComplete()));
+                    ImgWeightFlag.setTranslationX((float) (RxUtils.dp2px(160) * bean.getTargetWeight().getComplete()));
                     mProTarget.setProgressColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
                     mProTarget.setProgress((float) (bean.getTargetWeight().getComplete() * 100));
                 }
@@ -206,33 +216,36 @@ public class HealthReportActivity extends BaseActivity {
             }
         });
         mViewPagerHealthReport.setCurrentItem(beans.size() - 1);
-
     }
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private void loadUrl(String url, FrameLayout mLayoutWeb, int position) {
+    private void loadUrl(String url, WebView mWebView, int position) {
         RxLogUtils.d("加载URL：" + url);
-//        mLayoutWeb.addView(webView);
-        //WebView 不响应onClick事件，只有onTouch事件
 
-        WebView mWebView = new WebView(mContext);
-        mWebView.setTag("webView" + position);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWebView.setTransitionName("webView");
+        }
 
         RxWebViewTool.initWebView(mContext, mWebView);
-
-        mLayoutWeb.addView(mWebView);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         //WebView 不响应onClick事件，只有onTouch事件
         mWebView.setOnTouchListener(new RecyclerViewTouchListener(view -> {
-            PlanWebActivity.startActivity(mContext, url);
+//            PlanWebActivity.startActivity(mContext, url);
+            Bundle bundle = new Bundle();
+            bundle.putString(Key.BUNDLE_WEB_URL, url);
+            Intent intent = new Intent(mContext, PlanWebActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation
+                    (mActivity, mWebView, "webView").toBundle());
         }));
         mWebView.loadUrl(url);
-
     }
 
 
     private void initTopBar() {
-        mTopBar.setTitle("健康报告");
+        mTopBar.setTitle(R.string.healthReport);
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(view -> onBackPressed());
     }
@@ -268,8 +281,9 @@ public class HealthReportActivity extends BaseActivity {
                             }
                             HealthReportBean item = beans.get(0);
                             if (item != null) {
-                                mTvTip.setText("报告编号：" + item.getUserInform().getInformNo() +
-                                        "\n创建日期：" + RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd"));
+                                mTvTip.setText(getString(R.string.healthReportTip,
+                                        item.getUserInform().getInformNo(), RxFormat.setFormatDate(item.getTargetInfo().getCreateTime(), "yyyy/MM/dd"))
+                                );
                             }
                         }
                     }

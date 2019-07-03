@@ -86,7 +86,7 @@ public class WeightDataActivity extends BaseActivity {
                 else RxActivityUtils.finishActivity();
             }
         });
-        QMUIAppBarLayout.setTitle("体重数据");
+        QMUIAppBarLayout.setTitle(R.string.weightData);
     }
 
 
@@ -100,7 +100,7 @@ public class WeightDataActivity extends BaseActivity {
 
                 helper.setText(R.id.tv_weight, RxFormatValue.fromat4S5R(item.getWeight(), 1))
                         .setTypeface(R.id.tv_weight, typeface)
-                        .setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"))
+                        .setText(R.id.tv_date, getString(R.string.measureTime) + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"))
                         .setVisible(R.id.btn_new, helper.getAdapterPosition() == 0)
                         .addOnClickListener(R.id.btn_receive);
             }
@@ -185,7 +185,7 @@ public class WeightDataActivity extends BaseActivity {
         new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setContent("你还有未领取的体重数据，离开后将全部被忽略？")
+                .setContent(getString(R.string.weightNotReceiver))
                 .setCancel(getString(R.string.btn_leave))
                 .setCancelListener(new View.OnClickListener() {
                     @Override

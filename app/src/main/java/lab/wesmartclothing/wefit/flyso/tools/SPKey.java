@@ -32,4 +32,6 @@ public interface SPKey {
 
     String SP_ATHL_PLAN_USER = "SP_ATHL_PLAN_USER";
 
+    //运动界面弹窗提示次数
+    String SP_RUN_TIP_DIALOG_COUNT = "SP_RUN_TIP_DIALOG_COUNT";
 }

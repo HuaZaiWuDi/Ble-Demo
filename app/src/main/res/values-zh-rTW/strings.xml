@@ -29,7 +29,7 @@
 	<string name="receivedCount">%1$s領取的體重數據（%2$d）</string>
 	<string name="goBind">去綁定</string>
 	<string name="goSporting">去運動</string>
-	<string name="goWeight">去稱重</string>
+	<string name="goWeigh">去稱重</string>
 	<string name="disConnected">未連接</string>
 	<string name="connected">已連接</string>
 	<string name="unBind">未綁定</string>
@@ -79,7 +79,6 @@
 	<string name="open_loaction">未給予定位權限，無法搜索到藍牙設備</string>
 	<string name="open_BLE">未開啟藍牙，無法搜索到藍牙設備</string>
 	<string name="ServiceAgreement">服務協議</string>
-	<string name="phoneError">手機號碼號碼不正確</string>
 	<string name="passwordError">密碼不合理（請輸入不少於6位字母或數字）</string>
 	<string name="VCodeError">驗證碼不正確</string>
 	<string name="SMSSended">短信已發送</string>

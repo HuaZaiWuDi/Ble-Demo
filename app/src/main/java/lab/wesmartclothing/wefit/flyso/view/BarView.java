@@ -172,15 +172,6 @@ public class BarView extends View {
         int i = 1;
         if (percentList != null && !percentList.isEmpty()) {
             for (Float f : percentList) {
-//                rect.set(BAR_SIDE_MARGIN * i + barWidth * (i - 1), topMargin,
-//                        (BAR_SIDE_MARGIN + barWidth) * i,
-//                        getHeight() - bottomTextHeight - TEXT_TOP_MARGIN);
-//                canvas.drawRoundRect(rect, barWidth / 2, barWidth / 2, bgPaint);
-                /*rect.set(BAR_SIDE_MARGIN*i+barWidth*(i-1),
-                        topMargin+(int)((getHeight()-topMargin)*percentList.get(i-1)),
-                        (BAR_SIDE_MARGIN+barWidth)* i,
-                        getHeight()-bottomTextHeight-TEXT_TOP_MARGIN);*/
-
                 /**
                  * The correct total height is "getHeight()-topMargin-bottomTextHeight-TEXT_TOP_MARGIN",not "getHeight()-topMargin".
                  * fix by zhenghuiy@gmail.com on 11/11/13.
@@ -252,11 +243,10 @@ public class BarView extends View {
         if (percentList != null && !percentList.isEmpty()) {
             for (Float f : percentList) {
 
-                r.set(BAR_SIDE_MARGIN * i + barWidth * (i - 1),
+                r.set(BAR_SIDE_MARGIN * i - BAR_SIDE_MARGIN / 2,
                         0,
-                        (BAR_SIDE_MARGIN + barWidth) * i,
+                        (BAR_SIDE_MARGIN + barWidth) * i + BAR_SIDE_MARGIN / 2,
                         getHeight());
-
                 if (r.contains(x, y)) return i;
                 i++;
             }

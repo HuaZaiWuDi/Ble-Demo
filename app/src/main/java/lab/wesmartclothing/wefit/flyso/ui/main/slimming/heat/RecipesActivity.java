@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -28,6 +30,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -43,7 +46,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
@@ -99,6 +102,8 @@ public class RecipesActivity extends BaseActivity {
     LinearLayout mLayoutEmpty;
     @BindView(R.id.tv_changedDiet)
     RxTextView mTvChangedDiet;
+    @BindView(R.id.sw_speak)
+    SwitchView mSwSpeak;
 
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
     private int totalKcal = 0;
@@ -114,7 +119,9 @@ public class RecipesActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
+
         initTopBar();
+        initSwitch();
         initRecycler();
         mTvTotalKcal.setTypeface(MyAPP.typeface);
         mChooseDate.setTheme(DateChoose.TYPE_RECIPES);
@@ -126,7 +133,26 @@ public class RecipesActivity extends BaseActivity {
                 mTvChangedDiet.setVisibility(View.GONE);
             }
         });
+    }
 
+
+    private void initSwitch() {
+        mSwSpeak.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, true));
+
+        mSwSpeak.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
+            @Override
+            public void toggleToOn(SwitchView switchView) {
+                mSwSpeak.setOpened(true);
+                SPUtils.put(SPKey.SP_VoiceTip, true);
+            }
+
+            @Override
+            public void toggleToOff(SwitchView switchView) {
+                mSwSpeak.setOpened(false);
+                SPUtils.put(SPKey.SP_VoiceTip, false);
+                TextSpeakUtils.stop();
+            }
+        });
     }
 
     private void initRecycler() {
@@ -195,7 +221,7 @@ public class RecipesActivity extends BaseActivity {
             getSectionTotal(recommendBean.getFoodPlan().getDinnerList(), mTvDinnerKcal);
             getSectionTotal(recommendBean.getFoodPlan().getSnackList(), mTvMealKcal);
 
-            RxTextUtils.getBuilder("今日总计：\t\t")
+            RxTextUtils.getBuilder(getString(R.string.todayTotal))
                     .append(totalKcal + "").setProportion(1.5f)
                     .append("kcal")
                     .into(mTvTotalKcal);
@@ -219,7 +245,7 @@ public class RecipesActivity extends BaseActivity {
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(v -> onBackPressed());
-        mTopBar.setTitle("定制食谱");
+        mTopBar.setTitle(R.string.customizedRecipes);
         mTopBar.addRightImageButton(R.mipmap.ic_shipu, R.id.iv_right)
                 .setOnClickListener(view -> {
                     //TODO 跳转
@@ -293,5 +319,12 @@ public class RecipesActivity extends BaseActivity {
                         updateUI(s);
                     }
                 });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }

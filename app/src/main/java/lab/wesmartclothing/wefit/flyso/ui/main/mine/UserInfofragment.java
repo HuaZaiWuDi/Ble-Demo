@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -146,8 +145,8 @@ public class UserInfofragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("个人资料");
-        mQMUIAppBarLayout.addRightTextButton("保存", R.id.btn_save)
+        mQMUIAppBarLayout.setTitle(R.string.personalInfo);
+        mQMUIAppBarLayout.addRightTextButton(R.string.save, R.id.btn_save)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -167,7 +166,7 @@ public class UserInfofragment extends BaseActivity {
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
 
         mTvUserName.setText(info.getUserName());
-        mTvUserSex.setText(info.getSex() == 1 ? "男" : "女");
+        mTvUserSex.setText(info.getSex() == 1 ? getString(R.string.man) : getString(R.string.woman));
         mTvBirth.setText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
         mTvUserHeight.setText(info.getHeight() + "\tcm");
         if (!RxDataUtils.isNullString(info.getProvince()) && !RxDataUtils.isNullString(info.getCity()))
@@ -199,7 +198,7 @@ public class UserInfofragment extends BaseActivity {
         } else if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
             Bundle bundle = data.getExtras();
             String title = bundle.getString(Key.BUNDLE_TITLE);
-            if ("昵称".equals(title)) {
+            if (getString(R.string.nickname).equals(title)) {
                 mTvUserName.setText(bundle.getString(Key.BUNDLE_DATA));
                 info.setUserName(bundle.getString(Key.BUNDLE_DATA));
             } else {
@@ -237,7 +236,7 @@ public class UserInfofragment extends BaseActivity {
         task.setCallback(new AddressPickTask.Callback() {
             @Override
             public void onAddressInitFailed() {
-                RxLogUtils.e("数据初始化失败");
+                RxLogUtils.e(getString(R.string.initFail));
             }
 
             @Override
@@ -272,8 +271,8 @@ public class UserInfofragment extends BaseActivity {
 
     private void showSex() {
         new QMUIBottomSheet.BottomListSheetBuilder(mActivity)
-                .addItem("男")
-                .addItem("女")
+                .addItem(getString(R.string.man))
+                .addItem(getString(R.string.woman))
                 .setCheckedIndex(info.getSex() - 1)
                 .setOnSheetItemClickListener((dialog, itemView, position, tag) -> {
                     dialog.dismiss();
@@ -314,7 +313,7 @@ public class UserInfofragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        RxToast.success("保存成功", 2000);
+                        RxToast.success(getString(R.string.saveSuccess), 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
                         MyAPP.gUserInfo = info;
                         RxActivityUtils.finishActivity();
@@ -340,8 +339,8 @@ public class UserInfofragment extends BaseActivity {
             RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                     .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                    .setContent("您已经修改信息\n是否保存？")
-                    .setSure("保存")
+                    .setContent(getString(R.string.changedInfoAndSave))
+                    .setSure(getString(R.string.save))
                     .setSureListener(v -> {
                         if (userImgIsChange) {
                             uploadImage();
@@ -349,7 +348,7 @@ public class UserInfofragment extends BaseActivity {
                             requestSaveUserInfo();
                         }
                     })
-                    .setCancel("退出")
+                    .setCancel(getString(R.string.signOut))
                     .setCancelListener(v ->
                             RxActivityUtils.finishActivity());
             rxDialog.show();
@@ -369,7 +368,7 @@ public class UserInfofragment extends BaseActivity {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.layout_userName:
-                bundle.putString(Key.BUNDLE_TITLE, "昵称");
+                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.nickname));
                 bundle.putString(Key.BUNDLE_DATA, info.getUserName());
                 RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
                 break;
@@ -387,7 +386,7 @@ public class UserInfofragment extends BaseActivity {
                 showAddress();
                 break;
             case R.id.layout_userSign:
-                bundle.putString(Key.BUNDLE_TITLE, "签名");
+                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.sign));
                 bundle.putString(Key.BUNDLE_DATA, info.getSignature());
                 RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
                 break;

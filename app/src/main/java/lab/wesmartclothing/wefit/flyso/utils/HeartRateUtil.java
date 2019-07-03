@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import android.annotation.SuppressLint;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -49,15 +50,21 @@ public class HeartRateUtil {
     private int packageCounts = 0;//历史数据包序号
     private List<HeartRateItemBean> heartLists;
     private UserInfo userInfo;
-    private int initSteps = -1, lastStep = 0;
-    private List<Double> kilometreList;
+    private int initSteps = 0;
 
     public HeartRateUtil() {
         heartLists = new ArrayList<>();
-        kilometreList = new ArrayList<>();
         userInfo = MyAPP.getgUserInfo();
     }
 
+
+    //设置一个初始数据
+    public void setInitData(HeartRateBean mHeartRateBean) {
+        this.initSteps = mHeartRateBean.getStepNumber();
+        this.heartLists = mHeartRateBean.getHeartList();
+        this.maxPace = mHeartRateBean.getMaxPace();
+        this.minPace = mHeartRateBean.getMinPace();
+    }
 
     /**
      * 01 心率 1byte  7,8
@@ -67,38 +74,18 @@ public class HeartRateUtil {
      * 05 配速 2byte  17,19
      */
     public SportsDataTab addRealTimeData(byte[] bytes) {
-        //是否暂停
 
+        //心率
         int heartRate = bytes[8] & 0xff;
 
-//        //限制心率范围 2019-04-22 去掉最大最小心率范围
-//        if (heartRate > (Key.HRART_SECTION[6] & 0xFF)) {
-//            heartRate = (Key.HRART_SECTION[6] & 0xFF);
-//        } else if (heartRate < (Key.HRART_SECTION[0] & 0xFF)) {
-//            heartRate = (Key.HRART_SECTION[0] & 0xFF);
-//        }
-
-//        maxHeart = Math.max(heartRate, maxHeart);
-//        minHeart = Math.min(heartRate, minHeart);
-
-//        //心率处于静息心率区间时不计算卡路里，
-//        if (heartRate >= Key.HRART_SECTION[1]) {
-//            kcalTotal += CalorieManager.getCalorie(heartRate, 2f / 3600);
-//        } else {
-//            //静息卡路里的计算：
-//            //静息(Kcal/s)：基础代谢值/(24*60*60)*time*1.2
-//            if (userInfo != null) {
-//                kcalTotal += userInfo.getBaselHeat() * 2f / (24 * 60 * 60) * 1.2;
-//            }
-//        }
-
+        //步数
         int currentSteps = ByteUtil.bytesToIntLittle2(new byte[]{bytes[12], bytes[13]});
 
+        currentSteps += initSteps;
 
         float Weight = SPUtils.getFloat(SPKey.SP_realWeight, 0);
         double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
         double calorie = CalorieManager.run2Calorie(Weight, kilometre);
-//        kilometreList.add(kilometre);
 
         int currentPace = ByteUtil.bytesToIntLittle2(new byte[]{bytes[18], bytes[19]});
 
@@ -106,11 +93,6 @@ public class HeartRateUtil {
         if (currentSteps == 0 || currentPace == 0) {
             return null;
         }
-
-        lastStep = currentSteps;
-        //2019-05-30需求修改为配速由APP来实现
-        //20秒的单位配速
-//        int currentPace = CalorieManager.getStepSpeed(20, kilometre, kilometreList.get(kilometreList.size() - 10));
 
         int reversePace = reversePace(currentPace);//反转配速，用于显示在图表上
 
@@ -199,36 +181,42 @@ public class HeartRateUtil {
 
 
     public void saveSportKey(String sportKey) {
-        String keys = SPUtils.getString(Key.CACHE_SPORT_KET, "");
-        keys = keys + "," + sportKey;
-        SPUtils.put(Key.CACHE_SPORT_KET, keys);
         RxLogUtils.d("保存运动Key：" + sportKey + "---:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(sportKey))));
-        RxLogUtils.d("本地Key列表：" + SPUtils.getString(Key.CACHE_SPORT_KET, ""));
+        ArrayList<String> keys = getKeys();
+        keys.add(0, sportKey);
+        SPUtils.put(Key.CACHE_SPORT_KET, JSON.toJSONString(keys));
+
+        for (String key : getKeys()) {
+            RxLogUtils.d("saveSportKey", "历史运动数据Key:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(key))));
+        }
     }
 
-    //10s只上传一次，防止重复上传
     @SuppressLint("CheckResult")
     public synchronized void uploadHeartRate() {
-        String keyStr = SPUtils.getString(Key.CACHE_SPORT_KET, "");
-        RxLogUtils.d("本地Key列表：" + keyStr);
-        String[] keys = keyStr.split(",");
+        ArrayList<String> keys = getKeys();
+        if (RxDataUtils.isEmpty(keys)) return;
+        String[] keyArray = keys.toArray(new String[keys.size()]);
 
-        Observable.fromArray(keys)
+        for (String key : getKeys()) {
+            RxLogUtils.d("uploadHeartRate", "历史运动数据Key:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(key))));
+        }
+
+        Observable.fromArray(keyArray)
                 .filter(key -> !RxDataUtils.isNullString(key))
+                .filter(key -> !RxTimeUtils.isToday(Long.parseLong(key)))
                 .flatMap((Function<String, ObservableSource<String>>) key ->
                         RxCache.getDefault().<HeartRateBean>load(key, HeartRateBean.class)
                                 .map(new CacheResult.MapFunc<>())
                                 .filter(heartRateBean -> {
-                                    if (heartRateBean == null) {
-                                        RxLogUtils.d("添加心率：heartRateBean == null");
+                                    if (heartRateBean != null) {
+                                        List<HeartRateItemBean> heartList = heartRateBean.getHeartList();
+                                        if (!RxDataUtils.isEmpty(heartList)) {
+                                            RxLogUtils.d("数据个数：" + heartList.size());
+                                        }
+                                        return heartList != null && heartList.size() >= 90;
                                     }
-                                    return heartRateBean != null;
-                                })
-                                .filter(heartRateBean -> {
-                                    List<HeartRateItemBean> heartList = heartRateBean.getHeartList();
-                                    if (heartList != null)
-                                        RxLogUtils.d("数据个数：" + heartList.size());
-                                    return heartList != null && heartList.size() >= 90;
+                                    RxLogUtils.d("添加心率：heartRateBean == null");
+                                    return false;
                                 })
                                 .flatMap((Function<HeartRateBean, ObservableSource<String>>) heartRateBean ->
                                         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
@@ -236,18 +224,51 @@ public class HeartRateUtil {
                 )
                 .lastOrError()
                 .subscribe(s -> {
-                    SPUtils.put(Key.CACHE_SPORT_KET, "");
-                    RxLogUtils.d("添加心率：保存成功删除本地缓存：");
+                    //清除非当天的步数
+                    for (String key : getKeys()) {
+                        if (!RxTimeUtils.isToday(Long.parseLong(key))) {
+                            clearData(key);
+                        }
+                    }
+                    for (String key : getKeys()) {
+                        RxLogUtils.d("uploadHeartRate", "删除历史运动数据Key:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(key))));
+                    }
                     //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                     RxBus.getInstance().post(new RefreshSlimming());
                 }, e -> RxLogUtils.e("上传出现异常：", e));
     }
 
-    public synchronized void clearData(String sportKey) {
-        String keys = SPUtils.getString(Key.CACHE_SPORT_KET, "");
-        keys = keys.replace(sportKey, "");
-        SPUtils.put(Key.CACHE_SPORT_KET, keys);
-        RxLogUtils.d("删除运动Key：" + sportKey + "---:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(sportKey))));
-        RxLogUtils.d("本地Key列表：" + SPUtils.getString(Key.CACHE_SPORT_KET, ""));
+
+    @SuppressLint("CheckResult")
+    public static String getTodayData() {
+        for (String key : getKeys()) {
+            //如果是同一天的运动数据
+            RxLogUtils.d("getTodayData", "历史运动数据Key:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(key))));
+            if (RxTimeUtils.isToday(Long.parseLong(key))) {
+                return key;
+            }
+        }
+        return "";
     }
+
+
+    public void clearData(String sportKey) {
+        RxLogUtils.d("删除运动Key：" + sportKey + "---:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(sportKey))));
+
+        ArrayList<String> keys = getKeys();
+        keys.remove(sportKey);
+        SPUtils.put(Key.CACHE_SPORT_KET, JSON.toJSONString(keys));
+        for (String key : getKeys()) {
+            RxLogUtils.d("clearData", "删除历史运动数据Key:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(key))));
+        }
+    }
+
+    private static ArrayList<String> getKeys() {
+        ArrayList<String> keys = JSON.parseObject(SPUtils.getString(Key.CACHE_SPORT_KET, "[]"), new TypeToken<ArrayList<String>>() {
+        }.getType());
+        if (keys == null)
+            return new ArrayList<>();
+        return keys;
+    }
+
 }

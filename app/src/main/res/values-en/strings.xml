@@ -29,7 +29,7 @@
 	<string name="receivedCount">Weight data received by %1$s (%2$d)</string>
 	<string name="goBind">Unbind</string>
 	<string name="goSporting">go exercise</string>
-	<string name="goWeight">To weigh</string>
+	<string name="goWeigh">To weigh</string>
 	<string name="disConnected">not connected</string>
 	<string name="connected">connected</string>
 	<string name="unBind">Unbound</string>
@@ -79,7 +79,6 @@
 	<string name="open_loaction">Unable to locate targeting, unable to search for Bluetooth devices</string>
 	<string name="open_BLE">Bluetooth is not enabled, Bluetooth device cannot be searched</string>
 	<string name="ServiceAgreement">Service agreement</string>
-	<string name="phoneError">Mobile number is incorrect</string>
 	<string name="passwordError">The password is not reasonable (please enter no less than 6 letters or numbers)</string>
 	<string name="VCodeError">Incorrect verification code</string>
 	<string name="SMSSended">SMS has been sent</string>

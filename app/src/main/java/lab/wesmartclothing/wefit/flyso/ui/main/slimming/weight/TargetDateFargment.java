@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -55,10 +56,18 @@ public class TargetDateFargment extends BaseActivity {
     TextView mTvTips;
 
 
-    private float stillNeed = 1;
+    private double stillNeed = 1, initWeight, targetWeight;
     private int weeks;
-    private Bundle bundle;
     private TargetInfoBean mInfoBean = new TargetInfoBean();
+
+
+    public static void start(Context context, double targetWeight, double stillNeed, double initWeight) {
+        Bundle mBundle = new Bundle();
+        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(targetWeight, 2));
+        mBundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
+        mBundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
+        RxActivityUtils.skipActivity(context, TargetDateFargment.class, mBundle);
+    }
 
     @Override
     protected int statusBarColor() {
@@ -78,20 +87,19 @@ public class TargetDateFargment extends BaseActivity {
 
     private void initView() {
         initTopBar();
-        initRuler();
         Typeface typeface = MyAPP.typeface;
         mTvTargetWeight.setTypeface(typeface);
         mTvTips.setTypeface(typeface);
-        mBtnConfirm.setText("确认");
+        mBtnConfirm.setText(R.string.ok);
     }
 
-    private void initRuler() {
-        bundle = getIntent().getExtras();
-        if (bundle != null) {
-            RxLogUtils.d("BUNDLE：" + bundle);
-            stillNeed = (float) bundle.getDouble(Key.BUNDLE_STILL_NEED);
-        }
 
+    @Override
+    protected void initBundle(Bundle bundle) {
+        super.initBundle(bundle);
+        initWeight = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
+        targetWeight = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
+        stillNeed = bundle.getDouble(Key.BUNDLE_STILL_NEED);
         weeks = (int) (stillNeed / 0.5f);
         weeks = (weeks < 1 ? 1 : weeks);
         mTvTargetDays.setText((weeks * 7) + "天");
@@ -108,7 +116,7 @@ public class TargetDateFargment extends BaseActivity {
         mRulerWeight.setColor(getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.orange_FF7200));
         mRulerWeight.setParam(DrawUtil.dip2px(50), DrawUtil.dip2px(60), DrawUtil.dip2px(60),
                 DrawUtil.dip2px(60), DrawUtil.dip2px(1), DrawUtil.dip2px(12));
-        mRulerWeight.initViewParam((int) (weeks < 1 ? 1 : weeks), 1f, (stillNeed / 0.28f < 1 ? 1 : stillNeed / 0.28f), 10);
+        mRulerWeight.initViewParam((int) (weeks < 1 ? 1 : weeks), 1f, stillNeed / 0.28f < 1 ? 1 : (float) (stillNeed / 0.28f), 10);
         mRulerWeight.setValueChangeListener(new DecimalScaleRulerView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
@@ -129,6 +137,7 @@ public class TargetDateFargment extends BaseActivity {
                 }
             }
         });
+
     }
 
 
@@ -144,12 +153,9 @@ public class TargetDateFargment extends BaseActivity {
 
     @OnClick(R.id.btn_confirm)
     public void onViewClicked() {
-        double initWeight = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
-        double targetWeight = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         mInfoBean.setCount(weeks);
         mInfoBean.setInitialWeight(RxFormatValue.format4S5R(initWeight, 1));
         mInfoBean.setTargetWeight(targetWeight);
-
 
         if (RecordInfoActivity.mSubmitInfoFrom == null) {
             settingTarget();

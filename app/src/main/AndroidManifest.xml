@@ -33,9 +33,11 @@
         android:theme="@style/AppTheme"
         tools:overrideLibrary="com.vondear.rxtools"
         tools:replace="label,icon,roundIcon,theme">
-
-        <!--java.lang.NoClassDefFoundError: -->
-        <!--Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
+        <activity android:name=".ui.main.slimming.heat.DietRecordActivity">
+        </activity>
+        <!-- java.lang.NoClassDefFoundError: -->
+        <!--
+Failed resolution of: Lorg/apache/http/conn/scheme/SchemeRegistry;
         解决办法：
          <uses-library
             android:name="org.apache.http.legacy"
@@ -43,23 +45,16 @@
         -->
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false"/>
-
-        <!--android O Error inflating class android.webkit.WebView-->
+            android:required="false"/> <!-- android O Error inflating class android.webkit.WebView -->
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
-            android:value="true"/>
-
-
-        <!-- 屏幕适配 -->
+            android:value="true"/> <!-- 屏幕适配 -->
         <meta-data
             android:name="design_width"
             android:value="1080"/>
         <meta-data
             android:name="design_height"
-            android:value="1920"/>
-
-        <!-- android7.0适配 -->
+            android:value="1920"/> <!-- android7.0适配 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -70,9 +65,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path"/>
-        </provider>
-
-        <!-- 轻牛SDK -->
+        </provider> <!-- 轻牛SDK -->
         <service
             android:name="com.qingniu.qnble.scanner.BleScanService"
             android:enabled="true"
@@ -82,23 +75,16 @@
             android:name="com.qingniu.scale.ble.ScaleBleService"
             android:enabled="true"
             android:exported="true">
-        </service>
-
-        <!-- BUGly升级 -->
+        </service> <!-- BUGly升级 -->
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent"/>
-
-        <!-- 高德地图KEY -->
+            android:theme="@android:style/Theme.Translucent"/> <!-- 高德地图KEY -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="d08d76ae6bd68061111b1bfd697accf1"/>
 
-        <service android:name="com.amap.api.location.APSService"/>
-
-
-        <!-- 极光通知广播 -->
+        <service android:name="com.amap.api.location.APSService"/> <!-- 极光通知广播 -->
         <!-- Required SDK 核心功能 -->
         <!-- 可配置 android:process 参数将 PushService 放在其他进程中 -->
         <service
@@ -170,15 +156,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.amap.api.location.APSService"/>
-        <!-- 极光通知广播 -->
+        <service android:name="com.amap.api.location.APSService"/> <!-- 极光通知广播 -->
         <service
             android:name="cn.jpush.android.service.DownloadService"
             android:enabled="true"
             android:exported="false">
         </service> <!-- Required SDK 核心功能 -->
         <receiver android:name="cn.jpush.android.service.AlarmReceiver"/>
-
         <receiver
             android:name=".utils.jpush.MyJpushReceiver"
             android:enabled="true"
@@ -195,7 +179,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/> <!-- 开机广播 -->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/> <!-- 网络状态改变广播 -->
 
-                <!--对应app包名-->
+
+                <!-- 对应app包名 -->
                 <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver>
@@ -205,9 +190,7 @@
 
                 <category android:name="${applicationId}"/>
             </intent-filter>
-        </receiver>
-
-        <!-- Since JCore2.0.0 Required SDK核心功能-->
+        </receiver> <!-- Since JCore2.0.0 Required SDK核心功能 -->
         <!-- 这个Service要继承JCommonService -->
         <service
             android:name=".service.JPushService"
@@ -215,11 +198,8 @@
             <intent-filter>
                 <action android:name="cn.jiguang.user.service.action"/>
             </intent-filter>
-        </service>
-
-        <!-- DUF服务 -->
+        </service> <!-- DUF服务 -->
         <activity android:name=".ble.dfu.NotificationActivity"/>
-
 
         <service
             android:name=".ble.dfu.DfuService"
@@ -308,12 +288,7 @@
             android:screenOrientation="nosensor">
         </activity>
         <activity
-            android:name=".ui.WebActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="nosensor">
-        </activity>
-        <activity
-            android:name=".ui.WebTitleActivity"
+            android:name=".base.WebTitleActivity"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor">
         </activity>
@@ -404,15 +379,15 @@
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.heat.second.AddedFoodFragment"
+            android:name=".ui.main.slimming.heat.AddedFoodFragment"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.heat.second.FoodDetailsFragment"
+            android:name=".ui.main.slimming.heat.FoodDetailsFragment"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ui.main.slimming.heat.second.FoodRecommend"
+            android:name=".ui.main.slimming.heat.FoodRecommend"
             android:launchMode="singleTop"
             android:screenOrientation="nosensor"/>
         <activity
@@ -518,10 +493,6 @@
         </service>
 
         <activity
-            android:name=".ui.main.slimming.heat.ImageActivity"
-            android:launchMode="singleTop">
-        </activity>
-        <activity
             android:name=".ui.main.slimming.weight.HealthyAssessActivity"
             android:launchMode="singleTop">
         </activity>
@@ -529,12 +500,9 @@
             android:name=".ui.main.slimming.weight.WeightContrastActivity"
             android:launchMode="singleTop">
         </activity>
-
         <activity
             android:name=".ui.main.mine.HealthReportActivity"
-            android:launchMode="singleTop"
-            />
-
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>

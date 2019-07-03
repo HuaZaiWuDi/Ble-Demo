@@ -1,12 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -58,15 +56,15 @@ public class BaseWebFragment extends BaseAcFragment {
     @Override
     public void initBundle(Bundle bundle) {
         url = bundle.getString(Key.BUNDLE_WEB_URL);
-
+        RxLogUtils.d("加载URL：" + url);
         pageLayout = new PageLayout.Builder(mContext)
                 .initPage(mLayoutWeb)
                 .setError(R.layout.layout_web_error, 0)
                 .setOnRetryListener(() -> {
-                    if (url != null) {
-                        webView.loadUrl(url);
-                        RxLogUtils.d("重试");
-                    }
+                    RxLogUtils.d("重试");
+                    if (webView.canGoBack()) webView.goBack();
+                    else
+                        webView.reload();
                 }).create();
 
         if (!RxNetUtils.isAvailable(MyAPP.sMyAPP) || url == null) {
@@ -83,23 +81,18 @@ public class BaseWebFragment extends BaseAcFragment {
         mLayoutWeb.addView(webView);
 
         RxWebViewTool.initWebView(mContext, webView);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+
         webView.setWebViewClient(new BridgeWebViewClient(webView) {
             @Override
-            public void onPageFinished(WebView view, String url) {
+            public void onPageFinished(WebView view, String curl) {
                 super.onPageFinished(view, url);
+                RxLogUtils.d("【webView】:onPageFinished:");
                 if (!RxNetUtils.isAvailable(MyAPP.sMyAPP)) {
                     pageLayout.showError();
                 } else {
                     pageLayout.hide();
                 }
-                if (mProgressWeb != null)
-                    mProgressWeb.setVisibility(View.GONE);
-            }
-
-            @TargetApi(21)
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return shouldInterceptRequest(view, request.getUrl().toString());
             }
 
 
@@ -111,6 +104,16 @@ public class BaseWebFragment extends BaseAcFragment {
                 RxLogUtils.d("【webView】:onPageStarted");
             }
 
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                //view.clearView()方法已过时，不再使用
+                //接收到错误时加载空页面，如果没有这个过程，在显示我们自己的错误页面之前默认错误页面会一闪而过，
+                // 可自行实验验证
+                pageLayout.showError();
+                view.loadUrl("about:blank");
+                RxLogUtils.d("【webView】:onReceivedError");
+                super.onReceivedError(view, errorCode, description, failingUrl);
+            }
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -126,13 +129,13 @@ public class BaseWebFragment extends BaseAcFragment {
                 RxLogUtils.d("【webView】:onProgressChanged：" + newProgress);
             }
         });
-
+        webView.loadUrl(url);
 
     }
 
     @Override
     public void onPause() {
-
+        webView.onPause();
         super.onPause();
     }
 

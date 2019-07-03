@@ -65,18 +65,18 @@ public class Settingfragment extends BaseActivity {
     }
 
     private void groupList() {
-        QMUICommonListItemView changePasswordItem = mGroupListView.createItemView("修改密码");
+        QMUICommonListItemView changePasswordItem = mGroupListView.createItemView(getString(R.string.updatePassword));
         changePasswordItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         changePasswordItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         changePasswordItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
-        final QMUICommonListItemView clearCacheItem = mGroupListView.createItemView("清除缓存");
+        final QMUICommonListItemView clearCacheItem = mGroupListView.createItemView(getString(R.string.cleanCache));
         clearCacheItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
         clearCacheItem.setDetailText(RxFileUtils.getTotalCacheSize(mContext.getApplicationContext()));
         clearCacheItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         clearCacheItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
-        QMUICommonListItemView accountItem = mGroupListView.createItemView("账号管理");
+        QMUICommonListItemView accountItem = mGroupListView.createItemView(getString(R.string.accountManager));
         accountItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         accountItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         accountItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
@@ -97,8 +97,8 @@ public class Settingfragment extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         new RxDialogSureCancel(mActivity)
-                                .setTitle("清除缓存？")
-                                .setSure("清除")
+                                .setTitle(getString(R.string.cleanCache) + "?")
+                                .setSure(getString(R.string.clean))
                                 .setSureListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -136,7 +136,7 @@ public class Settingfragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("设置");
+        mQMUIAppBarLayout.setTitle(R.string.setting);
     }
 
     @OnClick(R.id.tv_logout)
@@ -144,8 +144,8 @@ public class Settingfragment extends BaseActivity {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setTitle("退出登录？")
-                .setSure("退出")
+                .setTitle(getString(R.string.logout)+"?")
+                .setSure(getString(R.string.signOut))
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -95,7 +95,6 @@ public class RecordInfoActivity extends BaseActivity {
                         listBean = JSON.parseObject(s, new TypeToken<List<QuestionListBean>>() {
                         }.getType());
                         switchQuestion();
-
                     }
 
                     @Override
@@ -121,30 +120,27 @@ public class RecordInfoActivity extends BaseActivity {
         mRecyclerView.setAdapter(adapter);
 
         adapter.setOnItemClickListener(
-                new BaseQuickAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        List<QuestionListBean.OptionListBean> data = adapter.getData();
-                        for (int i = 0; i < data.size(); i++) {
-                            QuestionListBean.OptionListBean item = data.get(i);
-                            if (i == position && !item.isSelect()) {
-                                item.setSelect(true);
-                                adapter.setData(i, item);
-                            } else if (i != position && item.isSelect()) {
-                                item.setSelect(false);
-                                adapter.setData(i, item);
-                            }
+                (adapter, view, position) -> {
+                    List<QuestionListBean.OptionListBean> data = adapter.getData();
+                    for (int i = 0; i < data.size(); i++) {
+                        QuestionListBean.OptionListBean item = data.get(i);
+                        if (i == position && !item.isSelect()) {
+                            item.setSelect(true);
+                            adapter.setData(i, item);
+                        } else if (i != position && item.isSelect()) {
+                            item.setSelect(false);
+                            adapter.setData(i, item);
                         }
+                    }
 
-                        if (currentIndex == listBean.size()) {
-                            isOver = true;
-                            mTvNextWay.setVisibility(View.VISIBLE);
-                        } else {
-                            mTvNextWay.setVisibility(View.GONE);
-                            currentIndex++;
-                            seeIndex = Math.max(seeIndex, currentIndex);
-                            switchQuestion();
-                        }
+                    if (currentIndex == listBean.size()) {
+                        isOver = true;
+                        mTvNextWay.setVisibility(View.VISIBLE);
+                    } else {
+                        mTvNextWay.setVisibility(View.GONE);
+                        currentIndex++;
+                        seeIndex = Math.max(seeIndex, currentIndex);
+                        switchQuestion();
                     }
                 }
         );
@@ -225,15 +221,6 @@ public class RecordInfoActivity extends BaseActivity {
         } else {
             adapter.removeHeaderView(gridView);
         }
-//        if (!RxDataUtils.isNullString(question.getImgUrl())) {
-//            String[] imgUrls = question.getImgUrl().split(",");
-//            for (String url : imgUrls) {
-//                gridAdapter.addData(url);
-//            }
-//
-//        } else {
-//
-//        }
     }
 
 

@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -104,10 +103,10 @@ public class SettingTargetFragment extends BaseActivity {
         stillNeed = initWeight - targetWeight;
         if (stillNeed < 0) {
             //TODO 当前体重小于目标体重着
-            tipDialog.showInfo("您当前体重小于目标体重，\n请设置目标体重~", 2000);
+            tipDialog.showInfo(getString(R.string.currentWeightLessTargetWeight), 2000);
         }
 
-        String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
+        String tips = (stillNeed < 0 ? getString(R.string.WeightGain) : getString(R.string.WeightReduction)) + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
         SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
                 .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
                 .setProportion(1.4f)
@@ -126,27 +125,24 @@ public class SettingTargetFragment extends BaseActivity {
         mWeightRulerView.setParam(DrawUtil.dip2px(10), DrawUtil.dip2px(60), DrawUtil.dip2px(40),
                 DrawUtil.dip2px(25), DrawUtil.dip2px(1), DrawUtil.dip2px(12));
         mWeightRulerView.initViewParam(weight, 35.0f, 90.0f, 1);
-        mWeightRulerView.setValueChangeListener(new DecimalScaleRulerView.OnValueChangeListener() {
-            @Override
-            public void onValueChange(float value) {
-                targetWeight = value;
-                mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
+        mWeightRulerView.setValueChangeListener(value -> {
+            targetWeight = value;
+            mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
 
-                stillNeed = initWeight - targetWeight;
-                String tips = (stillNeed < 0 ? "需增重：" : "需减重：") + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
-                SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
-                        .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
-                        .setProportion(1.4f)
-                        .setLength(4, tips.length() - 3);
-                mTvTips.setText(builder);
+            stillNeed = initWeight - targetWeight;
+            String tips = (stillNeed < 0 ? getString(R.string.WeightGain) : getString(R.string.WeightReduction)) + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
+            SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
+                    .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
+                    .setProportion(1.4f)
+                    .setLength(4, tips.length() - 3);
+            mTvTips.setText(builder);
 
-                tv_targetDays.setCompoundDrawables(null, null, null, null);
+            tv_targetDays.setCompoundDrawables(null, null, null, null);
 
-                if (targetWeight > maxWeight) {
-                    RxToast.normal("您设定的体重目标有点高哦，\n可能会影响到身体健康～");
-                } else if (targetWeight < minWeight) {
-                    RxToast.normal("您设定的体重目标有点低哦，\n可能会影响到身体健康～");
-                }
+            if (targetWeight > maxWeight) {
+                RxToast.normal(getString(R.string.targetHigh));
+            } else if (targetWeight < minWeight) {
+                RxToast.normal(getString(R.string.targetLow));
             }
         });
     }
@@ -154,19 +150,15 @@ public class SettingTargetFragment extends BaseActivity {
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("目标设置");
+        mQMUIAppBarLayout.setTitle(R.string.setTarget);
     }
 
     private void nextStep() {
         if (targetWeight >= initWeight) {
-            tipDialog.showInfo("您设定的目标体重超过或等于当前体重，\n请重新设置~", 2000);
+            tipDialog.showInfo(getString(R.string.setTargetWeightError), 2000);
             return;
         }
-        Bundle mBundle = new Bundle();
-        mBundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, RxFormatValue.format4S5R(targetWeight, 2));
-        mBundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
-        mBundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
-        RxActivityUtils.skipActivity(mContext, TargetDateFargment.class, mBundle);
+        TargetDateFargment.start(mContext, targetWeight, stillNeed, initWeight);
     }
 
 

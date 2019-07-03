@@ -44,6 +44,7 @@ public class PasswordLoginFragment extends BaseFragment {
     }
 
 
+
     @Override
     public void initData() {
         RxBus.getInstance().post(new PasswordLoginBus(phone, password));

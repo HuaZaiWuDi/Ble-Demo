@@ -91,7 +91,7 @@ public class HealthyAssessActivity extends BaseActivity {
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.setTitle("健康评估");
+        mQMUIAppBarLayout.setTitle(R.string.healthAssessment);
         mQMUIAppBarLayout.addLeftBackImageButton()
                 .setOnClickListener(view -> onBackPressed());
     }
@@ -111,7 +111,7 @@ public class HealthyAssessActivity extends BaseActivity {
 
         mProBodyAge.setUpDownText(bean.getBodyAge() + "", new String[]{"20", "30", "40", "50"});
         mProBodyAge.setProgress(bean.getBodyAge());
-        mTvBodyValueBodyAge.setText(bean.getBodyAge() + "岁");
+        mTvBodyValueBodyAge.setText(bean.getBodyAge() + getString(R.string.age));
 
         UserInfo userInfo = MyAPP.getgUserInfo();
 
@@ -127,7 +127,7 @@ public class HealthyAssessActivity extends BaseActivity {
         healthy.setColors(new int[]{Color.parseColor("#5A7BEE"), Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
         healthy.setSectionLabels(userInfo.getSex() == 1 ? new String[]{"15.0%", "18.0%", "23.0%"} : new String[]{"20.0%", "25.0%", "30.0%"});
-        healthy.setLabels(new String[]{"偏低", "标准", "偏高", "严重偏高"});
+        healthy.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high), getString(R.string.seriouslyHigh)});
         mProBodyFit.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
         mProBodyFit.setColors(healthy.getColors());
         mProBodyFit.setProgress(bodyDataUtil.transformation(healthy, bean.getBodyFat()));
@@ -142,22 +142,18 @@ public class HealthyAssessActivity extends BaseActivity {
 
         String healthyDetailStr = "";
         Drawable drawable = null;
-        //异常
-        switch (statusStr) {
-            case "偏低":
-                healthyDetailStr = "体脂率病理性降低会引起功能性失调。";
-                drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_error_tip);
-                break;
-            case "标准":
-                drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_normal_tip);
-                healthyDetailStr = "您的体脂率处于标准范围，请继续保持哦！";
-                break;
-            case "偏高":
-            case "严重偏高":
-                drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_error_tip);
-                healthyDetailStr = " 体脂率病理性增高会增加患高血压、肾病、糖尿病、痛风、月经异常的风险。";
-                break;
+
+        if (statusStr.equals(getString(R.string.low))) {
+            healthyDetailStr = getString(R.string.healthLow);
+            drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_error_tip);
+        } else if (statusStr.equals(getString(R.string.normal))) {
+            drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_normal_tip);
+            healthyDetailStr = getString(R.string.healthNormal);
+        } else {
+            drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_error_tip);
+            healthyDetailStr = getString(R.string.healthHigh);
         }
+
         mTvBodyFatTip.setText(healthyDetailStr);
         mTvBodyFatTip.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
 
@@ -168,7 +164,7 @@ public class HealthyAssessActivity extends BaseActivity {
         healthy3.setSectionLabels(new String[]{"9", "14"});
         healthy3.setColors(new int[]{Color.parseColor("#61D97F"),
                 Color.parseColor("#FFBC00"), Color.parseColor("#FF7200")});
-        healthy3.setLabels(new String[]{"标准", "偏高", "严重偏高"});
+        healthy3.setLabels(new String[]{getString(R.string.normal), getString(R.string.high), getString(R.string.seriouslyHigh)});
         mProVisceralFat.setUpDownText(healthy3.getSectionLabels(), healthy3.getLabels());
         mProVisceralFat.setColors(healthy3.getColors());
         mProVisceralFat.setProgress(bodyDataUtil.transformation(healthy3, bean.getVisfat()));
@@ -182,24 +178,20 @@ public class HealthyAssessActivity extends BaseActivity {
         mBtnStatusVisceralFat.getHelper().setBorderColorNormal(stateColor);
 
 
-        //异常
-        switch (statusStr) {
-            case "标准":
-                drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_normal_tip);
-                healthyDetailStr = "您的内脏脂肪等级处于标准范围，请继续保持哦！";
-                break;
-            case "偏高":
-            case "严重偏高":
-                drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_error_tip);
-                healthyDetailStr = "内脏脂肪等级增加会引发脂肪肝，扰乱新陈代谢，还可能致癌。";
-                break;
+        if (statusStr.equals(getString(R.string.normal))) {
+            drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_normal_tip);
+            healthyDetailStr = getString(R.string.visfatNormal);
+        } else {
+            drawable = ContextCompat.getDrawable(mContext, R.mipmap.icon_error_tip);
+            healthyDetailStr = getString(R.string.visfatHigh);
         }
+
         mTvVisceralFatTip.setText(healthyDetailStr);
         mTvVisceralFatTip.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
 
 
         //健康指数
-        RxTextUtils.getBuilder("健康指数\n")
+        RxTextUtils.getBuilder(getString(R.string.HealthIndex) + "\n")
                 .append(bean.getHealthScore() + "").setProportion(2f).setBold()
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.orange_FF7200))
                 .into(mTvHealthScore);

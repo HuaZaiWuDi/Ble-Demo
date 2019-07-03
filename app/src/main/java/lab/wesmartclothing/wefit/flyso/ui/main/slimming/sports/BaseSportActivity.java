@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -22,10 +23,12 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.utils.RxConstUtils;
-import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.SwitchView;
@@ -39,6 +42,10 @@ import com.vondear.rxtools.view.tooltips.RxToolTipsManager;
 import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.CacheTarget;
 import com.zchu.rxcache.RxCache;
+import com.zchu.rxcache.data.CacheResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -51,6 +58,7 @@ import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -137,7 +145,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     public boolean pause = false;
     public HeartRateUtil mHeartRateUtil = new HeartRateUtil();
     public int kilometreFlag = 0;
-    private String SportKey = System.currentTimeMillis() + "";
+    public String SportKey = System.currentTimeMillis() + "";
     public MyTimer timeTimer = null;
     public String currentMode;
 
@@ -158,15 +166,36 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         initTypeface();
         finishAnim();
         weightWarn();
+        sportTip();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
-        mHeartRateUtil.saveSportKey(SportKey);
+    }
+
+    /**
+     * 1、每次在自由运动或者定制运动进去的第一时间弹出一个温馨提醒的弹窗，
+     * 用户点确认或不再提醒后消失（默认连续提醒10次后面就别提醒了）。
+     */
+    private void sportTip() {
+        RxDialogSureCancel runTipDialog = new RxDialogSureCancel(mContext)
+                .setTitle(getString(R.string.tip))
+                .setContent(getString(R.string.runTip))
+                .setCancel(getString(R.string.NoReminders))
+                .setCancelListener(v -> SPUtils.put(SPKey.SP_RUN_TIP_DIALOG_COUNT, 10));
+        runTipDialog.getTvContent().setGravity(Gravity.START);
+
+        int count = SPUtils.getInt(SPKey.SP_RUN_TIP_DIALOG_COUNT, 0);
+        if (count < 10) {
+            count++;
+            SPUtils.put(SPKey.SP_RUN_TIP_DIALOG_COUNT, count);
+            //showDialog
+            runTipDialog.show();
+        }
     }
 
     private void weightWarn() {
         if (SPUtils.getFloat(SPKey.SP_realWeight, 0) == 0) {
             new RxDialogSure(mContext)
                     .setTitle(getString(R.string.sportTip))
-                    .setContent("请使用体脂称记录体重信息，以便准确记算运动消耗的卡路里")
+                    .setContent(getString(R.string.goweighTip))
                     .setSure(getString(R.string.ok))
                     .setSureListener(v -> {
                         RxActivityUtils.finishActivity();
@@ -270,32 +299,22 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     }
 
     private void initSwitch() {
-        mSwMusic.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
-            @Override
-            public void toggleToOn(final SwitchView view) {
-                mSwMusic.setOpened(true);
-                SPUtils.put(SPKey.SP_VoiceTip, true);
-                type = -1;
-            }
-
-            @Override
-            public void toggleToOff(SwitchView view) {
-                view.setOpened(false);
-                SPUtils.put(SPKey.SP_VoiceTip, false);
-                TextSpeakUtils.stop();
-            }
-        });
         mSwMusic.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, true));
 
         mSwHeat.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
             @Override
             public void toggleToOn(SwitchView switchView) {
                 toggleHeat(true);
+
+                SPUtils.put(SPKey.SP_VoiceTip, true);
+                type = -1;
             }
 
             @Override
             public void toggleToOff(SwitchView switchView) {
                 toggleHeat(false);
+                SPUtils.put(SPKey.SP_VoiceTip, false);
+                TextSpeakUtils.stop();
             }
         });
     }
@@ -319,7 +338,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         btn_Connect.setTextSize(13);
         btn_Connect.setOnClickListener(view -> {
             if (!BleTools.getInstance().isConnect()) {
-                RxToast.normal("蓝牙正在连接", 2000);
+                RxToast.normal(getString(R.string.connecting), 2000);
             }
         });
     }
@@ -368,6 +387,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     }
 
     public void uploadData() {
+        timeTimer.stopTimer();
         String s = JSON.toJSONString(mHeartRateBean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addRunningData(NetManager.fetchRequest(s)))
@@ -376,12 +396,9 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        if (RxDataUtils.isNullString(s)) {
-                            RxToast.normal("数据保存失败");
-                            return;
-                        }
                         mHeartRateUtil.clearData(SportKey);
 
+                        BleService.clothingFinish = true;
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
 
@@ -410,6 +427,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     public void saveData(SportsDataTab sportsDataTab) {
         mHeartRateBean.setAthlDesc(mTvHeartCount.getText().toString());
         mHeartRateBean.setAthlScore(sportingScore);
+        mHeartRateBean.setAthlDate(SportKey);
         mHeartRateBean.setTotalCalorie(sportsDataTab.getKcal());
         mHeartRateBean.setHeartList(sportsDataTab.getHeartLists());
         mHeartRateBean.setAvgPace(sportsDataTab.getAvPace());
@@ -417,8 +435,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         mHeartRateBean.setMinPace(sportsDataTab.getMinPace());
         mHeartRateBean.setStepNumber(sportsDataTab.getSteps());
         mHeartRateBean.setKilometers(sportsDataTab.getKilometre());
-        if (currentTime != 0)
-            mHeartRateBean.setCadence(sportsDataTab.getSteps() * 1f / currentTime);
+        mHeartRateBean.setCadence(sportsDataTab.getSteps() * 0.5f / sportsDataTab.getHeartLists().size());
 
         //如果上传失败则保存本地
         RxCache.getDefault().save(SportKey, mHeartRateBean, CacheTarget.Disk)
@@ -470,14 +487,14 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
                     .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                     .setTitle(getString(R.string.tip))
-                    .setContent("蓝牙设备已断开")
-                    .setCancel("继续运动")
+                    .setContent(getString(R.string.bleDeviceDisconnected))
+                    .setCancel(getString(R.string.continueRun))
                     .setCancelListener(view -> {
                         if (!BleTools.getBleManager().isBlueEnable()) {
                             BleTools.getBleManager().enableBluetooth();
                         }
                     })
-                    .setSure("结束运动")
+                    .setSure(getString(R.string.finishRun))
                     .setSureListener(v -> sportFinish());
             connectFailDialog.show();
         }
@@ -494,9 +511,59 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
             sportingShortDialog.dismiss();
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
+
+        String key = bundle.getString(Key.BUNDLE_SPORTING_LAST_DATA, "");
+        RxCache.getDefault().<HeartRateBean>load(key, HeartRateBean.class)
+                .map(new CacheResult.MapFunc<>())
+                .subscribe(bean -> {
+                            //获取到数据之后进行数据复位
+                            RxLogUtils.d("上一次的运动数据", bean.toString());
+                            mHeartRateBean = bean;
+                            mHeartRateUtil.setInitData(bean);
+
+                            currentTime = mHeartRateBean.getHeartList().size() * 2;
+                            mTvHeartCount.setText(mHeartRateBean.getAthlDesc());
+                            sportingScore = mHeartRateBean.getAthlScore();
+                            SportKey = mHeartRateBean.getAthlDate();
+                            currentKcal = RxFormatValue.format4S5R(mHeartRateBean.getTotalCalorie(), 1);
+
+                            List<Integer> realLists = new ArrayList<>();
+                            for (HeartRateItemBean itemBean : mHeartRateBean.getHeartList()) {
+                                realLists.add(HeartRateUtil.reversePace(itemBean.getPace()));
+                            }
+                            lineChartUtils.setRealTimeData(realLists);
+
+                            //自由运动
+                            if (bean.getPlanFlag() == 0) {
+                                RxTextUtils.getBuilder(currentKcal + "")
+                                        .append("\tkcal").setProportion(0.3f)
+                                        .into(mTvKcal);
+                            } else {
+                                RxTextUtils.getBuilder(currentKcal + "")
+                                        .append("\tkcal").setProportion(0.5f)
+                                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                                        .into(mTvSportskcal);
+
+                                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(sportingScore, 1))
+                                        .append("\t分").setProportion(0.3f)
+                                        .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                                        .into(mTvKcal);
+                            }
+
+                            mTvMaxHeartRate.setText(RxFormatValue.fromat4S5R(bean.getKilometers(), 2));
+                            mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
+                            mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
+
+//                            mHeartRateUtil.saveSportKey(SportKey);
+                        },
+                        e -> {
+                            RxLogUtils.e("上一次的运动数据", e);
+                            mHeartRateUtil.saveSportKey(SportKey);
+                        });
     }
 
     @Override

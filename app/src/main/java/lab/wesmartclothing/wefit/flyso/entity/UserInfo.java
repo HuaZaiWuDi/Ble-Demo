@@ -43,8 +43,16 @@ public class UserInfo implements Serializable {
     private boolean hasInviteCode;
     private String invitationCode;
     private int baselHeat;
+    private String informId;
 
 
+    public String getInformId() {
+        return informId;
+    }
+
+    public void setInformId(String informId) {
+        this.informId = informId;
+    }
 
     public int getBaselHeat() {
         return baselHeat;

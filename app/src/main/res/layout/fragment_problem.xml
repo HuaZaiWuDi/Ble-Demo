@@ -106,6 +106,7 @@
             app:qmui_radius="4dp">
 
             <EditText
+                android:inputType="phone|textEmailAddress"
                 android:id="@+id/edit_phone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

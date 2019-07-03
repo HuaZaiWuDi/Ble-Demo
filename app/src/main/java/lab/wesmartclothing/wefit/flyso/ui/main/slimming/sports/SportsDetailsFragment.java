@@ -1,13 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
@@ -21,11 +19,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.umeng.socialize.ShareAction;
-import com.umeng.socialize.UMShareAPI;
-import com.umeng.socialize.UMShareListener;
-import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -48,7 +41,7 @@ import java.util.List;
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.BaseShareActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
@@ -67,7 +60,7 @@ import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 /**
  * Created by jk on 2018/7/19.
  */
-public class SportsDetailsFragment extends BaseActivity {
+public class SportsDetailsFragment extends BaseShareActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
@@ -207,7 +200,9 @@ public class SportsDetailsFragment extends BaseActivity {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("");
         QMUIAlphaImageButton imageButton = mQMUIAppBarLayout.addRightImageButton(R.mipmap.icon_share, R.id.img_share);
-        imageButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
+        }
         imageButton.setOnClickListener(v -> share(true));
     }
 
@@ -220,12 +215,12 @@ public class SportsDetailsFragment extends BaseActivity {
         if (startShare) {
 
             //延迟500毫秒，需要等到控件显示
-            new Handler().postDelayed(() -> {
+            mLayoutQRcode.postDelayed(() -> {
                 //控件转图片
                 Bitmap bitmap = RxImageUtils.view2Bitmap(mLayoutContent, ContextCompat.getColor(mContext, R.color.Gray));
                 //微信分享图片最大尺寸32KB
 //                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
-                showSimpleBottomSheetGrid(bitmap);
+                shareBitmap(bitmap);
                 share(false);
             }, 500);
         }
@@ -246,7 +241,7 @@ public class SportsDetailsFragment extends BaseActivity {
         mTvDate.setTypeface(typeface);
         mTvCalmTime.setTypeface(typeface);
 
-        RxTextUtils.getBuilder("让 你 健 康 瘦\n")
+        RxTextUtils.getBuilder(getString(R.string.HealthSlim) + "\n")
                 .append(getString(R.string.appName) + " v" + RxDeviceUtils.getAppVersionName())
                 .setProportion(0.5f)
                 .into(mTvAppVersion);
@@ -272,7 +267,7 @@ public class SportsDetailsFragment extends BaseActivity {
         goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
 
         RxTextUtils.getBuilder(isFreeSporting ? "0" : "0.0")
-                .append(isFreeSporting ? "kcal" : "分").setProportion(0.1f)
+                .append(isFreeSporting ? "kcal" : getString(R.string.min)).setProportion(0.1f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvKcal);
 
@@ -282,10 +277,10 @@ public class SportsDetailsFragment extends BaseActivity {
                 .into(mTvAvPace);
 
         if (isFreeSporting) {
-            mTvDetailTitle.setText("消耗热量");
+            mTvDetailTitle.setText(R.string.consumeCalorie);
             mLayoutLegend.setVisibility(View.GONE);
         } else {
-            mTvDetailTitle.setText("运动评分");
+            mTvDetailTitle.setText(R.string.sportsScore);
             mLayoutSportingKcal.setVisibility(View.VISIBLE);
         }
 
@@ -333,7 +328,7 @@ public class SportsDetailsFragment extends BaseActivity {
 
         } else {
             RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getAthlScore(), 1))
-                    .append("分").setProportion(0.3f)
+                    .append(getString(R.string.min)).setProportion(0.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
@@ -347,7 +342,7 @@ public class SportsDetailsFragment extends BaseActivity {
         mTvAvPace.setText(RxFormat.setSec2MS((int) heartRateBean.getAvgPace()));
 
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCadence(), 1))
-                .append("\t步/秒").setProportion(0.5f)
+                .append("\t" + getString(R.string.StrideUnit)).setProportion(0.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvStepFrequency);
 
@@ -464,56 +459,6 @@ public class SportsDetailsFragment extends BaseActivity {
         } else {
             limitTime += stepTime;
         }
-    }
-
-
-    private void showSimpleBottomSheetGrid(final Bitmap imgUrl) {
-        UMImage image = new UMImage(this, imgUrl);//网络图片
-//        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
-        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
-
-        UMImage thumb = new UMImage(this, imgUrl);
-        image.setThumb(thumb);
-        new ShareAction(mActivity)
-                .withMedia(image)
-                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
-                .setCallback(mUMShareListener).open();
-
-    }
-
-    UMShareListener mUMShareListener = new UMShareListener() {
-        @Override
-        public void onStart(SHARE_MEDIA share_media) {
-            RxLogUtils.d("开始分享");
-            tipDialog.show("正在分享...", 3000);
-        }
-
-        @Override
-        public void onResult(SHARE_MEDIA share_media) {
-            RxLogUtils.d("分享成功");
-            RxToast.normal("分享成功");
-            tipDialog.dismiss();
-        }
-
-        @Override
-        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-            RxLogUtils.d("分享失败");
-            RxToast.normal("分享失败");
-            tipDialog.dismiss();
-        }
-
-        @Override
-        public void onCancel(SHARE_MEDIA share_media) {
-            RxLogUtils.d("分享关闭");
-            RxToast.normal("分享关闭");
-            tipDialog.dismiss();
-        }
-    };
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
 

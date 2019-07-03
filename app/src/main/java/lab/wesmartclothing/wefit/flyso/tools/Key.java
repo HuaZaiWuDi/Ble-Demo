@@ -60,7 +60,12 @@ public interface Key {
     //计划的状态
     String BUNDLE_PLAN_STATUS = "BUNDLE_PLAN_STATUS";
 
+    //运动计划
     String BUNDLE_SPORTING_PLAN = "BUNDLE_SPORTING_PLAN";
+
+    //运动上传数据
+    String BUNDLE_SPORTING_LAST_DATA = "BUNDLE_SPORTING_DATA";
+
     String BUNDLE_GO_BCAK = "BUNDLE_GO_BCAK";
 
     ///////////////////////////////////////////////////////////////////////////
@@ -86,6 +91,9 @@ public interface Key {
 
     String COMPANY_KEY = "Lightness";
 
+    String COMPANY_NAME = "深圳市莱特妮丝服饰有限公司";
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY
     ///////////////////////////////////////////////////////////////////////////
@@ -106,6 +114,9 @@ public interface Key {
     int TYPE_LUNCH = 2;
     int TYPE_DINNER = 3;
     int TYPED_MEAL = 5;
+
+
+
 
     //心率阈值
     //100-120-140-160-180

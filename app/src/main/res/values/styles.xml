@@ -41,5 +41,7 @@
         <item name="qmui_topbar_need_separator">false</item>
     </style>
 
-
+    <style name="SwitchTheme" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@drawable/switcher_text</item>
+    </style>
 </resources>

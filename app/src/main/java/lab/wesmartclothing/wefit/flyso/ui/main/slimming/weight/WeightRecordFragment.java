@@ -2,7 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -12,14 +11,12 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.reflect.TypeToken;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -31,44 +28,39 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.chart.line.LineBean;
-import com.vondear.rxtools.view.chart.line.SuitLines;
-import com.vondear.rxtools.view.chart.line.Unit;
 import com.wesmarclothing.mylibrary.net.RxBus;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
 import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
-import lab.wesmartclothing.wefit.flyso.entity.WeightDataBean;
+import lab.wesmartclothing.wefit.flyso.entity.WeightGroupListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
+import lab.wesmartclothing.wefit.flyso.tools.GroupType;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.view.line.LineBean;
+import lab.wesmartclothing.wefit.flyso.view.line.SuitLines;
+import lab.wesmartclothing.wefit.flyso.view.line.Unit;
 
 /**
  * Created by jk on 2018/7/26.
@@ -109,35 +101,37 @@ public class WeightRecordFragment extends BaseActivity {
     TextView mTvMuscleTitle;
     @BindView(R.id.tv_muscle)
     TextView mTvMuscle;
-    @BindView(R.id.layout_lenged)
-    LinearLayout mLayoutLenged;
     @BindView(R.id.recycler_historyWeight)
     RecyclerView mRecyclerHistoryWeight;
     @BindView(R.id.tv_dataContrast)
     TextView mTvDataContrast;
+    @BindView(R.id.img_switch)
+    ImageView mImgSwitch;
+    @BindView(R.id.img_switchDate)
+    ImageView mImgSwitchDate;
 
 
     private QNBleTools mQNBleTools = QNBleTools.getInstance();
     private Button btn_Connect;
     private HealthyInfoBean currentWeightInfo;
     //传递数据给我目标详情界面
-    private double lastWeight = 0;//最后一条体重数据
     private List<HealthyInfoBean> list;
     private Bundle bundle = new Bundle();
     private int pageNum = 1;
     private BaseQuickAdapter dayWeightAdapter;
+    private @GroupType
+    String groupType = GroupType.TYPE_DAYS;
+    private boolean mIsWeight = true;
 
     @Override
     protected int layoutId() {
         return R.layout.fragment_weight_record;
     }
 
-
     @Override
     protected int statusBarColor() {
         return getResources().getColor(R.color.green_61D97F);
     }
-
 
     @Override
     protected void initViews() {
@@ -150,15 +144,15 @@ public class WeightRecordFragment extends BaseActivity {
         mTvBmi.setTypeface(typeface);
 
         initTopBar();
-        checkStatus();
+//        checkStatus();
         initRecyclerHistoryWeight();
 
         mTvSportDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date_CH));
 
         showHistoryWeightData(BleService.historyWeightData);
 
-        RxTextUtils.getBuilder("了解详细数据变化趋势？请进行")
-                .append("数据对比")
+        RxTextUtils.getBuilder(getString(R.string.dataChange))
+                .append(getString(R.string.dataContrast))
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .into(mTvDataContrast);
     }
@@ -187,7 +181,6 @@ public class WeightRecordFragment extends BaseActivity {
             bundle.putSerializable(Key.BUNDLE_DATA, weightInfoBean);
             RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
         });
-
     }
 
 
@@ -223,16 +216,16 @@ public class WeightRecordFragment extends BaseActivity {
                     }
                 });
 
-        RxBus.getInstance().registerSticky(BleStateChangedBus.class)
-                .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .subscribe(bleState -> {
-                    boolean state = bleState.isOn();
-                    if (!state) {
-                        checkStatus();
-                    } else {
-                        mLayoutStrongTip.setVisibility(View.GONE);
-                    }
-                });
+//        RxBus.getInstance().registerSticky(BleStateChangedBus.class)
+//                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+//                .subscribe(bleState -> {
+//                    boolean state = bleState.isOn();
+//                    if (!state) {
+//                        checkStatus();
+//                    } else {
+//                        mLayoutStrongTip.setVisibility(View.GONE);
+//                    }
+//                });
 
         RxBus.getInstance().registerSticky(ScaleConnectBus.class)
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
@@ -257,20 +250,22 @@ public class WeightRecordFragment extends BaseActivity {
         }
     }
 
-
     private void initData() {
-
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchWeightInfo(pageNum, 10))
+        NetManager.getApiService().fetchGroupTypeRecordList(groupType, pageNum, 10)
+                .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchWeightInfo" + pageNum, String.class,
+                .compose(MyAPP.getRxCache().<String>transformObservable("fetchGroupTypeRecordList" + pageNum + groupType, String.class,
                         CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        WeightDataBean bean = JSON.parseObject(s, WeightDataBean.class);
-                        updateUI(bean);
+                        WeightGroupListBean bean = JSON.parseObject(s, WeightGroupListBean.class);
+                        if (RxDataUtils.isEmpty(bean.getList())) {
+                            return;
+                        }
+                        updateUI(bean.getList());
                     }
 
                     @Override
@@ -281,95 +276,80 @@ public class WeightRecordFragment extends BaseActivity {
                 });
     }
 
-    private void fetchOneDayWeightList(String currentGid) {
-        //当日多次体重详情
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchOneDateWeightList(currentGid))
+    //当日多次体重详情
+    private void fetchOneDayWeightList(long currentDate) {
+        NetManager.getApiService().fetchDaysOrMonthRecordList(groupType, currentDate, 1, 31)
+                .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().transformObservable("fetchOneDateWeightList" + currentGid,
-                        String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().transformObservable("fetchDaysOrMonthRecordList" + currentDate + groupType,
+                        String.class, CacheStrategy.firstCacheTimeout(5 * 60 * 1000)))
                 .map(new CacheResult.MapFunc())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        Type type = new TypeToken<List<HealthyInfoBean>>() {
-                        }.getType();
-
-                        List<HealthyInfoBean> beanList = JSON.parseObject(s, type);
-                        dayWeightAdapter.setNewData(beanList);
+                        WeightGroupListBean bean = JSON.parseObject(s, WeightGroupListBean.class);
+                        dayWeightAdapter.setNewData(bean.getList());
                     }
 
                     @Override
                     protected void _onError(String error, int code) {
                         super._onError(error, code);
                         RxToast.normal(error);
+                        dayWeightAdapter.setNewData(null);
                     }
                 });
     }
 
-
-    private void updateUI(WeightDataBean bean) {
-        lastWeight = bean.getWeight();
-        if (bean.getWeightList() == null) {
-            return;
-        }
-        Map<Float, String> map = new HashMap<>();
-        map.put((float) bean.getNormWeight(), (float) bean.getNormWeight() + "kg");
-        mSuitlines.setlimitLabels(map);
-
+    private void updateUI(List<HealthyInfoBean> infoBeanList) {
         if (pageNum == 1) {
-            list = bean.getWeightList().getList();
+            list = infoBeanList;
+            Collections.reverse(list);
             initLineChart();
             pageNum++;
         } else {
-            if (RxDataUtils.isEmpty(bean.getWeightList().getList()))
-                return;
-            Collections.reverse(bean.getWeightList().getList());//
-            list.addAll(0, bean.getWeightList().getList());
+            Collections.reverse(infoBeanList);
+            list.addAll(0, infoBeanList);
 
             List<Unit> lines_weight = new ArrayList<>();
             List<Unit> lines_bodyFat = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 HealthyInfoBean itemBean = list.get(i);
-                Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
-                Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
+
+                String date = RxFormat.setFormatDate(itemBean.getWeightDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
+                Unit unit_weight = new Unit((float) itemBean.getWeight(), date);
+                Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), "");
                 lines_weight.add(unit_weight);
                 lines_bodyFat.add(unit_bodyFat);
             }
-            mSuitlines.addDataChart(Arrays.asList(lines_weight, lines_bodyFat));
+            mSuitlines.addDataChart(Arrays.asList(mIsWeight ? lines_weight : lines_bodyFat));
             pageNum++;
         }
     }
 
 
     private void initLineChart() {
-        Collections.reverse(list);
+        if (RxDataUtils.isEmpty(list)) return;
         List<Unit> lines_weight = new ArrayList<>();
         List<Unit> lines_bodyFat = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             HealthyInfoBean itemBean = list.get(i);
-            Unit unit_weight = new Unit((float) itemBean.getWeight(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
-            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), RxFormat.setFormatDate(itemBean.getWeightDate(), "MM/dd"));
+            String date = RxFormat.setFormatDate(itemBean.getWeightDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
+            Unit unit_weight = new Unit((float) itemBean.getWeight(), date);
+            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), "");
             lines_weight.add(unit_weight);
             lines_bodyFat.add(unit_bodyFat);
         }
+
         LineBean weightLine = new LineBean();
-        weightLine.setUnits(lines_weight);
+        weightLine.setUnits(mIsWeight ? lines_weight : lines_bodyFat);
         weightLine.setShowPoint(true);
+        weightLine.setFill(true);
         weightLine.setLineWidth(RxUtils.dp2px(2));
-        weightLine.setColor(0x7fffffff);
-
-
-        LineBean bodyFatLine = new LineBean();
-        bodyFatLine.setFill(true);
-        bodyFatLine.setShowPoint(list.size() == 1);
-        bodyFatLine.setUnits(lines_bodyFat);
-        bodyFatLine.setColor(0x7fffffff);
-
+        weightLine.setColor(0x7fffffff, 0x00ffffff);
 
         new SuitLines.LineBuilder()
                 .add(weightLine)
-                .add(bodyFatLine)
                 .build(mSuitlines);
 
         mSuitlines.setLineChartSelectItemListener(valueX -> {
@@ -381,7 +361,7 @@ public class WeightRecordFragment extends BaseActivity {
                 mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
                 currentWeightInfo = list.get(valueX);
 
-                fetchOneDayWeightList(list.get(valueX).getGid());
+                fetchOneDayWeightList(list.get(valueX).getWeightDate());
             }
         });
 
@@ -411,35 +391,66 @@ public class WeightRecordFragment extends BaseActivity {
     }
 
 
-    @OnClick({R.id.layout_sports, R.id.tv_dataContrast})
-    public void onViewClicked(View view) {
-        if (view.getId() == R.id.layout_sports) {
-            if (currentWeightInfo == null || RxDataUtils.isEmpty(list)) return;
-            bundle.putSerializable(Key.BUNDLE_DATA, currentWeightInfo);
-            RxActivityUtils.skipActivity(mContext, HealthyAssessActivity.class, bundle);
-        } else if (view.getId() == R.id.tv_dataContrast) {
-            RxActivityUtils.skipActivity(mContext, WeightContrastActivity.class);
-        }
-    }
-
-
     @Override
     protected void onDestroy() {
+        if (list != null) {
+            list.clear();
+            list = null;
+        }
         super.onDestroy();
+
     }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("体重记录");
-        btn_Connect = mQMUIAppBarLayout.addRightTextButton(
-                getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
-                        mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
-        btn_Connect.setTextColor(Color.WHITE);
-        btn_Connect.setTextSize(13);
+        mQMUIAppBarLayout.setTitle(R.string.weightRecord);
+//        btn_Connect = mQMUIAppBarLayout.addRightTextButton(
+//                getString(!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC)) ? R.string.unBind :
+//                        mQNBleTools.isConnect() ? R.string.connected : R.string.disConnected), R.id.tv_connect);
+//        btn_Connect.setTextColor(Color.WHITE);
+//        btn_Connect.setTextSize(13);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @OnClick({R.id.img_switch, R.id.img_switchDate, R.id.layout_sports, R.id.tv_dataContrast})
+    public void onViewClicked(View view) {
+        if (RxUtils.isFastClick(800))
+            return;
+        switch (view.getId()) {
+            case R.id.img_switch:
+                if (mIsWeight) {
+                    mIsWeight = false;
+                    mImgSwitch.setImageResource(R.mipmap.ic_weight_close);
+                } else {
+                    mIsWeight = true;
+                    mImgSwitch.setImageResource(R.mipmap.ic_weight_open);
+                }
+                initLineChart();
+                break;
+            case R.id.img_switchDate:
+                if (groupType.equals(GroupType.TYPE_DAYS)) {
+                    groupType = GroupType.TYPE_MONTHS;
+                    mImgSwitchDate.setImageResource(R.mipmap.ic_select_month);
+                } else {
+                    groupType = GroupType.TYPE_DAYS;
+                    mImgSwitchDate.setImageResource(R.mipmap.ic_select_day);
+                }
+                pageNum = 1;
+                initData();
+                break;
+            case R.id.layout_sports:
+                if (currentWeightInfo == null || RxDataUtils.isEmpty(list)) return;
+                bundle.putSerializable(Key.BUNDLE_DATA, currentWeightInfo);
+                RxActivityUtils.skipActivity(mContext, HealthyAssessActivity.class, bundle);
+                break;
+            case R.id.tv_dataContrast:
+                RxActivityUtils.skipActivity(mContext, WeightContrastActivity.class);
+                break;
+            default:
+        }
     }
 }

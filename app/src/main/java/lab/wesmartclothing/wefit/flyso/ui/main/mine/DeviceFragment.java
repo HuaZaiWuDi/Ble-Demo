@@ -138,7 +138,7 @@ public class DeviceFragment extends BaseActivity {
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("我的设备");
+        mQMUIAppBarLayout.setTitle(R.string.myDevice);
     }
 
 
@@ -236,7 +236,7 @@ public class DeviceFragment extends BaseActivity {
 
                     @Override
                     protected void _onError(String error, int code) {
-                        RxToast.error("删除失败");
+                        RxToast.error(getString(R.string.deleteFail));
                     }
 
 

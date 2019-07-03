@@ -35,7 +35,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
@@ -109,13 +109,13 @@ public class MeFragment extends BaseAcFragment {
         super.initViews();
         initTypeface();
         RxTextUtils.getBuilder("--")
-                .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.hour) + "\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .append("--")
-                .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.min)).setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
 
         UserInfo userInfo = MyAPP.getgUserInfo();
-            mTvInvitation.setText(userInfo.getInvitationCode());
+        mTvInvitation.setText(userInfo.getInvitationCode());
     }
 
     @Override
@@ -172,9 +172,9 @@ public class MeFragment extends BaseAcFragment {
         int hour = (totalMin / 60);
         int min = totalMin % 60;
         RxTextUtils.getBuilder(hour + "")
-                .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.hour) + "\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .append(min + "")
-                .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.min)).setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
     }
 
@@ -198,7 +198,7 @@ public class MeFragment extends BaseAcFragment {
 
                         //更新消息未读状态
                         mIvNotify.setImageResource(user.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
-                        mTvSign.setText(RxDataUtils.isNullString(user.getSignature()) ? "他什么也没留下" : user.getSignature());
+                        mTvSign.setText(RxDataUtils.isNullString(user.getSignature()) ? getString(R.string.signEmpty) : user.getSignature());
                         SportingTime(user.getDuration());
                         mTvTotalHeat.setText(user.getCalorie() + "");
                         mTvTotalDays.setText(user.getAthlDays() + "");
@@ -233,10 +233,10 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, CollectFragment.class);
                 break;
             case R.id.layout_myOrder:
-                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url, true);
+                WebTitleActivity.startWebActivity(mActivity, getString(R.string.myOrder), ServiceAPI.Order_Url, true);
                 break;
             case R.id.layout_myShoppingAddress:
-                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address, true);
+                WebTitleActivity.startWebActivity(mActivity, getString(R.string.myShoppingAddr), ServiceAPI.Shopping_Address, true);
                 break;
             case R.id.layout_problem:
                 RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);

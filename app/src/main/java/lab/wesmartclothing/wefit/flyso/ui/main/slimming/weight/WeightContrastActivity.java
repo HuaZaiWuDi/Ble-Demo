@@ -150,7 +150,7 @@ public class WeightContrastActivity extends BaseActivity {
 
 
     private void initTitle() {
-        mQMUIAppBarLayout.setTitle("对比");
+        mQMUIAppBarLayout.setTitle(R.string.Contrast);
         mQMUIAppBarLayout.addLeftBackImageButton()
                 .setOnClickListener(view -> onBackPressed());
     }
@@ -159,7 +159,7 @@ public class WeightContrastActivity extends BaseActivity {
     private void initTextUtils(double startWeight, double endWeight) {
         //增重
         if (startWeight < endWeight) {
-            mTvWeightDiffDec.setText("周期内减重失败");
+            mTvWeightDiffDec.setText(R.string.WeightReductionFail);
             mTvDiffWeight.setTextColor(ContextCompat.getColor(mContext, R.color.red));
         }
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(Math.abs(startWeight - endWeight), 1))
@@ -167,13 +167,13 @@ public class WeightContrastActivity extends BaseActivity {
                 .setProportion(0.5f)
                 .into(mTvDiffWeight);
 
-        RxTextUtils.getBuilder("起始体重\n")
+        RxTextUtils.getBuilder(getString(R.string.initWeight) + "\n")
                 .append(RxFormatValue.fromat4S5R(startWeight, 1)).setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(1.3f)
                 .append("\tkg").setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(0.5f)
                 .into(mTvStartWeight);
-        RxTextUtils.getBuilder("最终体重\n")
+        RxTextUtils.getBuilder(getString(R.string.lastWeight) + "\n")
                 .append(RxFormatValue.fromat4S5R(endWeight, 1)).setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
                 .setProportion(1.3f)
                 .append("\tkg").setForegroundColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
@@ -204,8 +204,9 @@ public class WeightContrastActivity extends BaseActivity {
             }
         });
 
-        String[] tabs = {"体脂率", "BMI", "内脏脂肪等级", "肌肉量", "基础代谢率",
-                "水分", "骨量", "身体年龄", "去脂体重", "皮下脂肪率", "骨骼肌率", "蛋白质"};
+        String[] tabs = {getString(R.string.bodyFatAndUnit), "BMI", getString(R.string.visfat), getString(R.string.muscleMass),
+                getString(R.string.bmr), getString(R.string.water), getString(R.string.bone), getString(R.string.bodyAge),
+                getString(R.string.LBM), getString(R.string.subfat), getString(R.string.muslce), getString(R.string.protein)};
 
         for (String s : tabs) {
             TabLayout.Tab tab = mTabLayout.newTab();
@@ -234,21 +235,20 @@ public class WeightContrastActivity extends BaseActivity {
             Date date = RxTimeUtils.string2Date(RxFormat.Date, year + "-" + month + "-" + day);
             if (isStart) {
                 if (date.getTime() >= endDate) {
-                    RxToast.warning("开始时间不能早于结束时间");
+                    RxToast.warning(getString(R.string.startTimeNotAfterEndTime));
                     return;
                 }
                 mTvStartDate.setText(year + "-" + month + "-" + day);
                 startDate = date.getTime();
             } else {
                 if (date.getTime() <= startDate) {
-                    RxToast.warning("结束时间不能晚于开始时间");
+                    RxToast.warning(getString(R.string.endTimeNotBeforeStartTime));
                     return;
                 }
                 mTvEndDate.setText(year + "-" + month + "-" + day);
                 endDate = date.getTime();
             }
             getWeightContrast();
-
         });
         datePicker.show();
     }
@@ -421,7 +421,7 @@ public class WeightContrastActivity extends BaseActivity {
                 break;
             //身体年龄
             case 7:
-                unit = "岁";
+                unit = getString(R.string.age);
                 value = weightInfoBean.getBodyAge();
                 break;
             //去脂体重

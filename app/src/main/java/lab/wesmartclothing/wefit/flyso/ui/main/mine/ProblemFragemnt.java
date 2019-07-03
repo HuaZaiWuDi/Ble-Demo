@@ -211,7 +211,7 @@ public class ProblemFragemnt extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("问题与建议");
+        mQMUIAppBarLayout.setTitle(R.string.porblemAndAdvise);
     }
 
     @OnClick({R.id.btn_type, R.id.btn_times, R.id.btn_submit})
@@ -231,7 +231,7 @@ public class ProblemFragemnt extends BaseActivity {
                         commitData("");
                     }
                 } else {
-                    RxToast.normal("有信息填写错误");
+                    RxToast.normal(getString(R.string.infomationError));
                 }
                 break;
         }
@@ -263,14 +263,11 @@ public class ProblemFragemnt extends BaseActivity {
                 .addItem(problemType.get(1))
                 .addItem(problemType.get(2))
                 .addItem(problemType.get(3))
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        dialog.dismiss();
-                        mBtnType.setText(tag);
-                        mBtnType.setTextColor(getResources().getColor(R.color.GrayWrite));
-                        mBtntypeDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
-                    }
+                .setOnSheetItemClickListener((dialog, itemView, position, tag) -> {
+                    dialog.dismiss();
+                    mBtnType.setText(tag);
+                    mBtnType.setTextColor(getResources().getColor(R.color.GrayWrite));
+                    mBtntypeDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
                 })
                 .build()
                 .show();
@@ -282,14 +279,11 @@ public class ProblemFragemnt extends BaseActivity {
                 .addItem(problemTimes.get(1))
                 .addItem(problemTimes.get(2))
                 .addItem(problemTimes.get(3))
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        dialog.dismiss();
-                        mBtnTimes.setText(tag);
-                        mBtnTimes.setTextColor(getResources().getColor(R.color.GrayWrite));
-                        mBtnTimesDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
-                    }
+                .setOnSheetItemClickListener((dialog, itemView, position, tag) -> {
+                    dialog.dismiss();
+                    mBtnTimes.setText(tag);
+                    mBtnTimes.setTextColor(getResources().getColor(R.color.GrayWrite));
+                    mBtnTimesDrawable.setStroke(1, getResources().getColor(R.color.BrightGray));
                 })
                 .build()
                 .show();
@@ -374,7 +368,6 @@ public class ProblemFragemnt extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("上传多张图片成功" + s);
-                        Log.d("上传图片", "_onNext: " + s);
                         commitData(s);
                     }
 

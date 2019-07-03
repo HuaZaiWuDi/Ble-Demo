@@ -38,7 +38,8 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
@@ -84,13 +85,13 @@ public class AboutFragment extends BaseActivity {
 
     private void initView() {
         initTopBar();
-        RxTextUtils.getBuilder("深圳市莱特妮丝服饰有限公司 ")
-                .append("服务条款和隐私条款")
+        RxTextUtils.getBuilder(Key.COMPANY_NAME + " ")
+                .append(getString(R.string.clause))
                 .setForegroundColor(getResources().getColor(R.color.red))
                 .setUnderline()
                 .into(mTvTip);
-        mTvAppVersion.setText("软件版本号 v" + RxDeviceUtils.getAppVersionName());
-        mTvClothingVersion.setText("固件版本号 v--");
+        mTvAppVersion.setText(getString(R.string.softwareVersion, RxDeviceUtils.getAppVersionName()));
+        mTvClothingVersion.setText(getString(R.string.firmwareVersion, "--"));
 
         BleAPI.readDeviceInfo(data -> {
             //021309 010203000400050607090a0b0c10111213
@@ -102,19 +103,17 @@ public class AboutFragment extends BaseActivity {
             versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
             versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
 
-            RxLogUtils.d("当前版本：" + versionBean.toString());
 
             currentVersion = versionBean.getFirmwareVersion();
-            mTvClothingVersion.setText("固件版本号 v" + currentVersion);
+            mTvClothingVersion.setText(getString(R.string.firmwareVersion, currentVersion));
             checkFirmwareVersion(versionBean);
         });
-
 
     }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("关于我们");
+        mQMUIAppBarLayout.setTitle(R.string.aboutUs);
     }
 
 
@@ -128,18 +127,17 @@ public class AboutFragment extends BaseActivity {
                         RxLogUtils.d("获取固件版本：" + s);
                         FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
                         if (firmwareVersionUpdate.isHasNewVersion()) {
-                            RxLogUtils.d("有最新的版本");
                             updateURL = firmwareVersionUpdate.getFileUrl();
                             newVersion = firmwareVersionUpdate.getFirmwareVersion();
 
-                            RxTextUtils.getBuilder("固件版本号 v" + currentVersion)
+                            RxTextUtils.getBuilder(getString(R.string.firmwareVersion, currentVersion))
                                     .append("-> v" + newVersion)
                                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.red))
                                     .into(mTvClothingVersion);
 
                             checkState(true);
                         } else {
-                            RxToast.normal("当前固件版本 v" + currentVersion + " 已经是最新版本，");
+                            RxToast.normal(getString(R.string.firmwareVersion, currentVersion) + getString(R.string.newest));
                             checkState(false);
                         }
                     }

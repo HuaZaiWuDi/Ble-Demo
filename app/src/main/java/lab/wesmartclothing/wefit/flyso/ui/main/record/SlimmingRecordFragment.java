@@ -2,9 +2,10 @@ package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
@@ -16,20 +17,15 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.umeng.socialize.ShareAction;
-import com.umeng.socialize.UMShareAPI;
-import com.umeng.socialize.UMShareListener;
-import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.model.tool.RxQRCode;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -56,10 +52,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
+import lab.wesmartclothing.wefit.flyso.base.BaseShareActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.DataListBean;
 import lab.wesmartclothing.wefit.flyso.entity.SlimmingRecordBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -71,11 +70,14 @@ import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.energy.EnergyActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.DietRecordActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightRecordFragment;
+import lab.wesmartclothing.wefit.flyso.utils.EnergyUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.HealthLevelView;
+import lab.wesmartclothing.wefit.flyso.view.NormalLineView;
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.ui.main.record
@@ -128,10 +130,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     HealthLevelView mHealthyLevel;
     @BindView(R.id.layout_title)
     RelativeLayout mLayoutTitle;
-    @BindView(R.id.iv_weight)
-    ImageView mIvWeight;
-    @BindView(R.id.layout_weight_title)
-    RxLinearLayout mLayoutWeightTitle;
     @BindView(R.id.mLineChart)
     LineChart mMLineChart;
     @BindView(R.id.tv_currentWeight)
@@ -150,8 +148,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     TextView mTvWeightChart6;
     @BindView(R.id.tv_weight_chart_7)
     RxTextView mTvWeightChart7;
-    @BindView(R.id.iv_diet)
-    ImageView mIvDiet;
     @BindView(R.id.layout_diet_title)
     RxLinearLayout mLayoutDietTitle;
     @BindView(R.id.tv_currentDiet)
@@ -188,8 +184,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     TextView mTvDietChart6;
     @BindView(R.id.tv_diet_chart_7)
     RxTextView mTvDietChart7;
-    @BindView(R.id.iv_sports)
-    ImageView mIvSports;
     @BindView(R.id.layout_sports_title)
     RxLinearLayout mLayoutSportsTitle;
     @BindView(R.id.tv_currentKcal)
@@ -210,8 +204,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     BarVerticalChart mSportingProgress7;
     @BindView(R.id.layout_sportingChart)
     LinearLayout mLayoutSportingChart;
-    @BindView(R.id.line_chart)
-    View mLineChart;
     @BindView(R.id.tv_sporting_chart_1)
     TextView mTvSportingChart1;
     @BindView(R.id.tv_sporting_chart_2)
@@ -226,8 +218,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     TextView mTvSportingChart6;
     @BindView(R.id.tv_sporting_chart_7)
     RxTextView mTvSportingChart7;
-    @BindView(R.id.iv_energy)
-    ImageView mIvEnergy;
     @BindView(R.id.layout_energy_title)
     RxLinearLayout mLayoutEnergyTitle;
     @BindView(R.id.tv_currentEnergy)
@@ -304,12 +294,23 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     RelativeLayout mLayoutShareTitle;
     @BindView(R.id.img_QRcode)
     ImageView mImgQRcode;
+    @BindView(R.id.img_weightSwitch)
+    ImageView imgWeightSwitch;
+    @BindView(R.id.line_normalDiet)
+    NormalLineView lineNormalDiet;
+    @BindView(R.id.line_normalSport)
+    NormalLineView lineNormalSport;
+    @BindView(R.id.line_normalEnergy)
+    NormalLineView lineNormalEnergy;
+
+    Unbinder unbinder;
+
 
     private RxWaveHelper mWaveHelper;
-    private int[] colors = {R.color.BrightGray, R.color.BrightGray, R.color.BrightGray,
-            R.color.BrightGray, R.color.BrightGray, R.color.BrightGray, R.color.green_61D97F};
-    private List<String> dates = new ArrayList<>();
-    private List<Integer> item = new ArrayList<>();
+
+    private List<String> dates = new ArrayList<>(7);
+    private List<Integer> recommendList = new ArrayList<>(7);
+    private List<Integer> item = new ArrayList<>(7);
 
 
     public static SlimmingRecordFragment newInstance() {
@@ -350,7 +351,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .into(mTvUserName);
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
 
-        RxTextUtils.getBuilder("让 你 健 康 瘦\n")
+        RxTextUtils.getBuilder(getString(R.string.HealthSlim))
                 .append(getString(R.string.appName) + "v" + RxDeviceUtils.getAppVersionName())
                 .setProportion(0.5f)
                 .into(mTvAppVersion);
@@ -446,8 +447,8 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         slimmingTarget(bean);
         healthScore(bean);
         weightRecord(bean);
-        dietRecord(bean.getDietList());
-        sportingRecord(bean.getAthleticsInfoList());
+        dietRecord(bean.getDataList());
+        sportingRecord(bean.getDataList());
         energyRecord(bean.getDataList());
     }
 
@@ -456,33 +457,31 @@ public class SlimmingRecordFragment extends BaseAcFragment {
      *
      * @param list
      */
-    private void dietRecord(List<SlimmingRecordBean.DietListBean> list) {
+    private void dietRecord(List<DataListBean> list) {
         Calendar calendar = Calendar.getInstance();
-        float dietMax = 0;
+        float max = 1;
+        recommendList.clear();
         dates.clear();
         item.clear();
-        if (list != null && !list.isEmpty()) {
-            calendar.setTimeInMillis(list.get(list.size() - 1).getHeatDate());
+
+        if (!RxDataUtils.isEmpty(list)) {
+            calendar.setTimeInMillis(list.get(list.size() - 1).getRecordDate());
             int size = list.size();
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
-                    SlimmingRecordBean.DietListBean bean = list.get(i);
-                    dates.add(RxFormat.setFormatDate(bean.getHeatDate(), "MM/dd"));
-                    item.add((int) bean.getCalorie());
-                    dietMax = (float) Math.max(dietMax, bean.getCalorie());
+                    DataListBean bean = list.get(i);
+                    dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
+                    item.add((int) bean.getHeatCalorie());
+                    max = (float) Math.max(max, bean.getHeatCalorie());
+                    recommendList.add(bean.getDietPlan());
+                    max = (float) Math.max(max, bean.getDietPlan());
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                     item.add(0);
+                    recommendList.add(0);
                 }
             }
-
-            SlimmingRecordBean.DietListBean bean = list.get(0);
-
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getCalorie(), 0))
-                    .append("\tkcal").setProportion(0.5f)
-                    .into(mTvCurrentDiet);
-
         } else {
             RxTextUtils.getBuilder(0 + "")
                     .append("\tkcal").setProportion(0.5f)
@@ -492,92 +491,153 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 item.add(i, 0);
+                recommendList.add(0);
             }
         }
 
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.get(0), 0))
+                .append("\tkcal").setProportion(0.5f)
+                .into(mTvCurrentDiet);
 
-        mTvDietChart7.setText(dates.get(0));
-        mTvDietChart6.setText(dates.get(1));
-        mTvDietChart5.setText(dates.get(2));
+        Collections.reverse(recommendList);
+        Collections.reverse(item);
+        Collections.reverse(dates);
+
+        for (Integer integer : recommendList) {
+            RxLogUtils.d("能量标准：" + integer);
+        }
+
+        lineNormalDiet.setBezierLine(true);
+        lineNormalDiet.setDashPath(new DashPathEffect(new float[]{10, 5}, 5));
+        lineNormalDiet.setColor(ContextCompat.getColor(mContext, R.color.Gray));
+        lineNormalDiet.setTexts(new String[]{getString(R.string.proposal), getString(R.string.intake)});
+        lineNormalDiet.setData(recommendList);
+        lineNormalDiet.setMaxMinValue((int) max, 0);
+
+        mTvDietChart7.setText(dates.get(6));
+        mTvDietChart6.setText(dates.get(5));
+        mTvDietChart5.setText(dates.get(4));
         mTvDietChart4.setText(dates.get(3));
-        mTvDietChart3.setText(dates.get(4));
-        mTvDietChart2.setText(dates.get(5));
-        mTvDietChart1.setText(dates.get(6));
+        mTvDietChart3.setText(dates.get(2));
+        mTvDietChart2.setText(dates.get(1));
+        mTvDietChart1.setText(dates.get(0));
 
-        mDietProgress7.setProgress((int) (item.get(0) * 100 / dietMax), false);
-        mDietProgress6.setProgress((int) (item.get(1) * 100 / dietMax), false);
-        mDietProgress5.setProgress((int) (item.get(2) * 100 / dietMax), false);
-        mDietProgress4.setProgress((int) (item.get(3) * 100 / dietMax), false);
-        mDietProgress3.setProgress((int) (item.get(4) * 100 / dietMax), false);
-        mDietProgress2.setProgress((int) (item.get(5) * 100 / dietMax), false);
-        mDietProgress1.setProgress((int) (item.get(6) * 100 / dietMax), false);
+        mDietProgress6.setColor(item.get(5) > recommendList.get(5) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mDietProgress5.setColor(item.get(4) > recommendList.get(4) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mDietProgress4.setColor(item.get(3) > recommendList.get(3) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mDietProgress3.setColor(item.get(2) > recommendList.get(2) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mDietProgress2.setColor(item.get(1) > recommendList.get(1) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mDietProgress1.setColor(item.get(0) > recommendList.get(0) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+
+        mDietProgress7.setProgress((int) (item.get(6) * 100 / max), false);
+        mDietProgress6.setProgress((int) (item.get(5) * 100 / max), false);
+        mDietProgress5.setProgress((int) (item.get(4) * 100 / max), false);
+        mDietProgress4.setProgress((int) (item.get(3) * 100 / max), false);
+        mDietProgress3.setProgress((int) (item.get(2) * 100 / max), false);
+        mDietProgress2.setProgress((int) (item.get(1) * 100 / max), false);
+        mDietProgress1.setProgress((int) (item.get(0) * 100 / max), false);
     }
+
 
     /**
      * 能量记录
      *
      * @param list
      */
-    private void energyRecord(List<SlimmingRecordBean.DataListBean> list) {
+    private void energyRecord(List<DataListBean> list) {
         Calendar calendar = Calendar.getInstance();
-        float max = 0;
+        float max = 1;
         dates.clear();
         item.clear();
-
+        recommendList.clear();
         if (list != null && !list.isEmpty()) {
             calendar.setTimeInMillis(list.get(list.size() - 1).getRecordDate());
             int size = list.size();
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
-                    SlimmingRecordBean.DataListBean bean = list.get(i);
+                    DataListBean bean = list.get(i);
                     dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
-                    double value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
+                    double value = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
                     max = (float) Math.max(max, Math.abs(value));
                     item.add((int) Math.abs(value));
+                    int normalEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+                    normalEnergy = normalEnergy < 0 ? 0 : normalEnergy;
+                    recommendList.add(normalEnergy);
+                    max = Math.max(max, Math.abs(normalEnergy));
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                     item.add(0);
+                    recommendList.add(0);
                 }
             }
-
-            SlimmingRecordBean.DataListBean bean = list.get(0);
-            double value = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
-
-            mEnergyProgress7.setColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
-            mTvCurrentEnergy.setTextColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
-            mTvEnergyChart7.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(Math.abs(value), 0))
-                    .append("\tkcal").setProportion(0.5f)
-                    .into(mTvCurrentEnergy);
         } else {
-            RxTextUtils.getBuilder(0 + "")
-                    .append("\tkcal").setProportion(0.5f)
-                    .into(mTvCurrentEnergy);
             for (int i = 0; i < 7; i++) {
                 dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 item.add(i, 0);
+                recommendList.add(0);
             }
         }
 
+        int value = item.get(0);
+        mEnergyProgress7.setColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
+        mTvCurrentEnergy.setTextColor(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
+        mTvEnergyChart7.getHelper().setBackgroundColorNormal(ContextCompat.getColor(mContext, value < 0 ? R.color.red : R.color.orange_FF7200));
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(Math.abs(value), 0))
+                .append("\tkcal").setProportion(0.5f)
+                .into(mTvCurrentEnergy);
 
-        mEnergyProgress7.setProgress((int) (item.get(0) * 100 / max), false);
-        mEnergyProgress6.setProgress((int) (item.get(1) * 100 / max), false);
-        mEnergyProgress5.setProgress((int) (item.get(2) * 100 / max), false);
+        Collections.reverse(recommendList);
+        Collections.reverse(item);
+        Collections.reverse(dates);
+
+        lineNormalEnergy.setBezierLine(true);
+        lineNormalEnergy.setDashPath(new DashPathEffect(new float[]{10, 5}, 5));
+        lineNormalEnergy.setColor(ContextCompat.getColor(mContext, R.color.Gray));
+        lineNormalEnergy.setTexts(new String[]{getString(R.string.energy), getString(R.string.proposal)});
+        lineNormalEnergy.setData(recommendList);
+        lineNormalEnergy.setMaxMinValue((int) max, 0);
+
+
+        for (Integer integer : recommendList) {
+            RxLogUtils.d("能量标准：" + integer);
+        }
+
+        mEnergyProgress7.setProgress((int) (item.get(6) * 100 / max), false);
+        mEnergyProgress6.setProgress((int) (item.get(5) * 100 / max), false);
+        mEnergyProgress5.setProgress((int) (item.get(4) * 100 / max), false);
         mEnergyProgress4.setProgress((int) (item.get(3) * 100 / max), false);
-        mEnergyProgress3.setProgress((int) (item.get(4) * 100 / max), false);
-        mEnergyProgress2.setProgress((int) (item.get(5) * 100 / max), false);
-        mEnergyProgress1.setProgress((int) (item.get(6) * 100 / max), false);
+        mEnergyProgress3.setProgress((int) (item.get(2) * 100 / max), false);
+        mEnergyProgress2.setProgress((int) (item.get(1) * 100 / max), false);
+        mEnergyProgress1.setProgress((int) (item.get(0) * 100 / max), false);
 
+        mEnergyProgress6.setColor(item.get(5) > recommendList.get(5) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mEnergyProgress5.setColor(item.get(4) > recommendList.get(4) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mEnergyProgress4.setColor(item.get(3) > recommendList.get(3) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mEnergyProgress3.setColor(item.get(2) > recommendList.get(2) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mEnergyProgress2.setColor(item.get(1) > recommendList.get(1) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mEnergyProgress1.setColor(item.get(0) > recommendList.get(0) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
 
-        mTvEnergyChart7.setText(dates.get(0));
-        mTvEnergyChart6.setText(dates.get(1));
-        mTvEnergyChart5.setText(dates.get(2));
+        mTvEnergyChart7.setText(dates.get(6));
+        mTvEnergyChart6.setText(dates.get(5));
+        mTvEnergyChart5.setText(dates.get(4));
         mTvEnergyChart4.setText(dates.get(3));
-        mTvEnergyChart3.setText(dates.get(4));
-        mTvEnergyChart2.setText(dates.get(5));
-        mTvEnergyChart1.setText(dates.get(6));
+        mTvEnergyChart3.setText(dates.get(2));
+        mTvEnergyChart2.setText(dates.get(1));
+        mTvEnergyChart1.setText(dates.get(0));
 
     }
 
@@ -586,57 +646,86 @@ public class SlimmingRecordFragment extends BaseAcFragment {
      *
      * @param list
      */
-    private void sportingRecord(List<SlimmingRecordBean.AthleticsInfoListBean> list) {
+    private void sportingRecord(List<DataListBean> list) {
         Calendar calendar = Calendar.getInstance();
-        float max = 0;
+        float max = 1;
         dates.clear();
         item.clear();
+        recommendList.clear();
         if (list != null && !list.isEmpty()) {
-            calendar.setTimeInMillis(list.get(list.size() - 1).getAthlDate());
+            calendar.setTimeInMillis(list.get(list.size() - 1).getRecordDate());
             int size = list.size();
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
-                    dates.add(RxFormat.setFormatDate(list.get(i).getAthlDate(), "MM/dd"));
-                    max = (float) Math.max(max, list.get(i).getCalorie());
-                    item.add((int) list.get(i).getCalorie());
+                    DataListBean bean = list.get(i);
+                    dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
+                    max = Math.max(max, bean.getAthlCalorie());
+                    item.add(bean.getAthlCalorie());
+                    recommendList.add(bean.getAthlPlan());
+                    max = Math.max(max, bean.getAthlPlan());
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                     item.add(0);
+                    recommendList.add(0);
                 }
             }
-
-            RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(list.get(0).getCalorie(), 0))
-                    .append("\tkcal").setProportion(0.5f)
-                    .into(mTvCurrentKcal);
         } else {
-            RxTextUtils.getBuilder(0 + "")
-                    .append("\tkcal").setProportion(0.5f)
-                    .into(mTvCurrentKcal);
-
             for (int i = 0; i < 7; i++) {
                 dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 item.add(i, 0);
+                recommendList.add(0);
             }
         }
 
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.get(0), 0))
+                .append("\tkcal").setProportion(0.5f)
+                .into(mTvCurrentKcal);
 
-        mSportingProgress7.setProgress((int) (item.get(0) * 100 / max), false);
-        mSportingProgress6.setProgress((int) (item.get(1) * 100 / max), false);
-        mSportingProgress5.setProgress((int) (item.get(2) * 100 / max), false);
+        Collections.reverse(recommendList);
+        Collections.reverse(item);
+        Collections.reverse(dates);
+
+        lineNormalSport.setBezierLine(true);
+        lineNormalSport.setDashPath(new DashPathEffect(new float[]{20, 5}, 0));
+        lineNormalSport.setColor(ContextCompat.getColor(mContext, R.color.Gray));
+        lineNormalSport.setTexts(new String[]{getString(R.string.proposal), getString(R.string.consume)});
+        lineNormalSport.setData(recommendList);
+        lineNormalSport.setMaxMinValue((int) max, 0);
+
+        for (Integer integer : recommendList) {
+            RxLogUtils.d("运动标准：" + integer);
+        }
+
+        mSportingProgress6.setColor(item.get(5) > recommendList.get(5) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mSportingProgress5.setColor(item.get(4) > recommendList.get(4) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mSportingProgress4.setColor(item.get(3) > recommendList.get(3) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mSportingProgress3.setColor(item.get(2) > recommendList.get(2) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mSportingProgress2.setColor(item.get(1) > recommendList.get(1) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+        mSportingProgress1.setColor(item.get(0) > recommendList.get(0) ?
+                ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
+
+        mSportingProgress7.setProgress((int) (item.get(6) * 100 / max), false);
+        mSportingProgress6.setProgress((int) (item.get(5) * 100 / max), false);
+        mSportingProgress5.setProgress((int) (item.get(4) * 100 / max), false);
         mSportingProgress4.setProgress((int) (item.get(3) * 100 / max), false);
-        mSportingProgress3.setProgress((int) (item.get(4) * 100 / max), false);
-        mSportingProgress2.setProgress((int) (item.get(5) * 100 / max), false);
-        mSportingProgress1.setProgress((int) (item.get(6) * 100 / max), false);
+        mSportingProgress3.setProgress((int) (item.get(2) * 100 / max), false);
+        mSportingProgress2.setProgress((int) (item.get(1) * 100 / max), false);
+        mSportingProgress1.setProgress((int) (item.get(0) * 100 / max), false);
 
-        mTvSportingChart7.setText(dates.get(0));
-        mTvSportingChart6.setText(dates.get(1));
-        mTvSportingChart5.setText(dates.get(2));
+        mTvSportingChart7.setText(dates.get(6));
+        mTvSportingChart6.setText(dates.get(5));
+        mTvSportingChart5.setText(dates.get(4));
         mTvSportingChart4.setText(dates.get(3));
-        mTvSportingChart3.setText(dates.get(4));
-        mTvSportingChart2.setText(dates.get(5));
-        mTvSportingChart1.setText(dates.get(6));
+        mTvSportingChart3.setText(dates.get(2));
+        mTvSportingChart2.setText(dates.get(1));
+        mTvSportingChart1.setText(dates.get(0));
     }
 
 
@@ -646,11 +735,21 @@ public class SlimmingRecordFragment extends BaseAcFragment {
      * @param bean
      */
     private void weightRecord(SlimmingRecordBean bean) {
-        setLineChartData(bean);
-        if (bean.getNormWeight() != 0)
-            addLimitLine2Y(mMLineChart, (float) (double) bean.getNormWeight(), bean.getNormWeight() + "kg");
+        imgWeightSwitch.setOnClickListener(v -> {
+                    if ((Boolean) imgWeightSwitch.getTag()) {
+                        imgWeightSwitch.setTag(false);
+                        setLineChartData(bean, false);
+                        imgWeightSwitch.setImageResource(R.mipmap.ic_weight_close);
+                    } else {
+                        imgWeightSwitch.setImageResource(R.mipmap.ic_weight_open);
+                        imgWeightSwitch.setTag(true);
+                        setLineChartData(bean, true);
+                    }
+                }
+        );
+        imgWeightSwitch.setTag(true);
+        setLineChartData(bean, true);
     }
-
 
     private void initChart(BarLineChartBase lineChartBase) {
         lineChartBase.setEnabled(false);
@@ -671,40 +770,39 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         leftAxis.setDrawAxisLine(false);
         leftAxis.setDrawLabels(false);
         mMLineChart.setData(new LineData());
-        createSet();
+
     }
 
-    private void setLineChartData(SlimmingRecordBean bean) {
+    private void setLineChartData(SlimmingRecordBean bean, boolean isWeight) {
         dates.clear();
         List<SlimmingRecordBean.WeightInfoListBean> list = bean.getWeightInfoList();
         Calendar calendar = Calendar.getInstance();
         ArrayList<Entry> lineEntry = new ArrayList<>();
-        float max = 0;
-        float min = 100;
 
         if (list != null && !list.isEmpty()) {
             calendar.setTimeInMillis(list.get(list.size() - 1).getWeightDate());
             int size = list.size();
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
-                    float weight = (float) (double) list.get(i).getWeight();
-                    lineEntry.add(new Entry(6 - i, weight));
+                    float value = 0;
+                    if (isWeight) {
+                        value = (float) (double) list.get(i).getWeight();
+                    } else
+                        value = (float) (double) list.get(i).getBodyFat();
+                    lineEntry.add(new Entry(6 - i, value));
                     dates.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "MM/dd"));
-                    max = Math.max(max, weight);
-                    min = Math.min(min, weight);
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                     lineEntry.add(new Entry(6 - i, 0));
-                    min = Math.min(min, 0);
                 }
             }
-            RxTextUtils.getBuilder(list.get(0).getWeight() + "")
-                    .append("\tkg").setProportion(0.5f)
+            RxTextUtils.getBuilder((isWeight ? list.get(0).getWeight() : list.get(0).getBodyFat()) + "")
+                    .append("\t" + (isWeight ? "kg" : "%")).setProportion(0.5f)
                     .into(mTvCurrentWeight);
         } else {
             RxTextUtils.getBuilder(0 + "")
-                    .append("\tkg").setProportion(0.5f)
+                    .append("\t" + (isWeight ? "kg" : "%")).setProportion(0.5f)
                     .into(mTvCurrentWeight);
 
             for (int i = 0; i < 7; i++) {
@@ -714,14 +812,26 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             }
         }
 
+        float max = 0;
+        float min = 100;
+        max = Collections.max(lineEntry, (o1, o2) ->
+                (int) (o1.getY() - o2.getY())).getY();
+
+        min = Collections.min(lineEntry, (o1, o2) ->
+                (int) (o1.getY() - o2.getY())).getY();
+
         YAxis yAxis = mMLineChart.getAxisLeft();
         max *= 1.2f;
-        max = (float) Math.max(max, bean.getNormWeight());
-        min = (float) Math.min(min, bean.getNormWeight());
+        max = Math.max(max, bean.getNormWeight());
+        min = Math.min(min, bean.getNormWeight());
         yAxis.setAxisMaximum(max);
         yAxis.setAxisMinimum(min);
 
         LineDataSet set = (LineDataSet) mMLineChart.getData().getDataSetByIndex(0);
+        if (set == null) {
+            set = createSet();
+            mMLineChart.getData().addDataSet(set);
+        }
         Collections.reverse(lineEntry);
 //        Logger.d("体重数据：" + lineEntry.size());
         set.setValues(lineEntry);
@@ -730,7 +840,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mMLineChart.notifyDataSetChanged();
         mMLineChart.invalidate();
         mMLineChart.setVisibleXRangeMaximum(7);
-        mMLineChart.animateX(1000);
+        mMLineChart.animateX(500);
 
         mTvWeightChart1.setText(dates.get(6));
         mTvWeightChart2.setText(dates.get(5));
@@ -741,41 +851,29 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mTvWeightChart7.setText(dates.get(0));
     }
 
-    private void createSet() {
-        LineDataSet set1 = new LineDataSet(null, "weight");
-        set1.setDrawIcons(false);
-        set1.setDrawValues(false);
-        set1.setColor(getResources().getColor(R.color.BrightGray));
-        set1.setDrawCircleHole(false);
-        set1.setDrawCircles(true);
-        set1.setCircleRadius(5f);
-        set1.setLineWidth(1f);
-        set1.setCircleColors(colors, mActivity);
-        mMLineChart.getData().addDataSet(set1);
-        mMLineChart.invalidate();
+    private LineDataSet createSet() {
+        LineDataSet set = new LineDataSet(null, "weight");
+        set.setDrawIcons(false);
+        set.setDrawValues(true);
+        int[] colors = {R.color.BrightGray, R.color.BrightGray, R.color.BrightGray,
+                R.color.BrightGray, R.color.BrightGray, R.color.BrightGray, R.color.green_61D97F};
+
+        set.setValueTextColor(ContextCompat.getColor(mContext, R.color.Gray));
+        set.setValueTextSize(8);
+        set.setColor(ContextCompat.getColor(mContext, R.color.green_62D981));
+        //渐变
+        set.setDrawFilled(true);
+        Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.fade_green);
+        set.setFillDrawable(drawable);
+
+        set.setDrawCircleHole(false);
+        set.setDrawCircles(true);
+        set.setCircleRadius(3f);
+        set.setLineWidth(1f);
+        set.setCircleColors(colors, mActivity);
+        return set;
     }
 
-    //添加提示线
-    public void addLimitLine2Y(BarLineChartBase lineChartBase, float value, String label) {
-        YAxis y = lineChartBase.getAxisLeft();
-        LimitLine.LimitLabelPosition pos = LimitLine.LimitLabelPosition.LEFT_TOP;
-        if (y.mAxisMaximum - value < 5) {
-            pos = LimitLine.LimitLabelPosition.LEFT_BOTTOM;
-        }
-        //提示线，
-        LimitLine ll = new LimitLine(value, label);//线条颜色宽度等
-        ll.setLineColor(getResources().getColor(R.color.gray_ECEBF0));
-        ll.setLineWidth(1f);
-        ll.enableDashedLine(10f, 10f, 0f);
-        ll.setLabelPosition(pos);//文字颜色、大小
-        ll.setTextColor(getResources().getColor(R.color.GrayWrite));
-        ll.setTextSize(10f);
-
-        y.removeAllLimitLines();
-        //加入到 mXAxis 或 mYAxis
-        y.addLimitLine(ll);
-
-    }
 
     /**
      * 健康分数
@@ -786,16 +884,16 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         SlimmingRecordBean.WeightInfoBean weightInfo = bean.getWeightInfo();
         if (weightInfo == null) {
             RxTextUtils.getBuilder("--")
-                    .append("\t体重(kg)\n").setProportion(0.8f)
+                    .append("\t" + getString(R.string.weightAndUnit) + "\n").setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .append("--")
                     .append("\tBMI\n").setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .append("--")
-                    .append("\t体脂率(%)\n").setProportion(0.8f)
+                    .append("\t" + getString(R.string.bodyFatAndUnit) + "\n").setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .append("--")
-                    .append("\t基础代谢(kcal)\n").setProportion(0.8f)
+                    .append("\t" + getString(R.string.bmrAndUnit)).setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvWeightInfo);
 
@@ -804,12 +902,12 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     .into(mTvHealthScore);
 
 
-            RxTextUtils.getBuilder("身材：\t").setProportion(0.8f)
+            RxTextUtils.getBuilder(getString(R.string.body) + "：\t").setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .append("未知")
-                    .append("\t\t\t患病风险：").setProportion(0.8f)
+                    .append(getString(R.string.unknown))
+                    .append("\t\t\t" + getString(R.string.riskOfLllness) + "：").setProportion(0.8f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .append("未知")
+                    .append(getString(R.string.unknown))
                     .into(mTvHealthInfo);
 
             mTvHealthDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "yyyy/MM/dd"));
@@ -817,16 +915,16 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         }
 
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(weightInfo.getWeight(), 1))
-                .append("\t体重(kg)\n").setProportion(0.8f)
+                .append("\t" + getString(R.string.weightAndUnit) + "\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .append(RxFormatValue.fromat4S5R(weightInfo.getBmi(), 1))
                 .append("\tBMI\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .append(RxFormatValue.fromat4S5R(weightInfo.getBodyFat(), 1))
-                .append("\t体脂率(%)\n").setProportion(0.8f)
+                .append("\t" + getString(R.string.bodyFatAndUnit) + "\n").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .append(weightInfo.getBmr() + "")
-                .append("\t基础代谢(kcal)\n").setProportion(0.8f)
+                .append("\t" + getString(R.string.bmrAndUnit)).setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvWeightInfo);
 
@@ -834,10 +932,10 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .append("\t分").setProportion(0.5f)
                 .into(mTvHealthScore);
 
-        RxTextUtils.getBuilder("身材：\t").setProportion(0.8f)
+        RxTextUtils.getBuilder(getString(R.string.body) + "：\t").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .append(weightInfo.getBodyType())
-                .append("\t\t\t患病风险：").setProportion(0.8f)
+                .append("\t\t\t" + getString(R.string.riskOfLllness) + "：").setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .append(bean.getLevelDesc())
                 .into(mTvHealthInfo);
@@ -906,11 +1004,11 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 .into(mTvProgress2);
 
 
-        RxTextUtils.getBuilder("总共记录\t")
+        RxTextUtils.getBuilder(getString(R.string.totalRecord) + "\t")
                 .append(bean.getTotalCompleteDays() + "").setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("\t天").into(mTvContinuousRecord);
-        RxTextUtils.getBuilder("总共记录\t")
+        RxTextUtils.getBuilder(getString(R.string.totalRecord) + "\t")
                 .append(bean.getTotalCompleteDays() + "").setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("\t天").into(mTvContinuousRecord2);
@@ -949,6 +1047,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             R.id.layout_weight_title,
             R.id.layout_diet_title,
             R.id.layout_sports_title,
+            R.id.layout_HealthReport,
             R.id.layout_energy_title})
     public void onViewClicked(View view) {
         if (AntiShake.getInstance().check(view.getId())) return;
@@ -961,13 +1060,21 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, WeightRecordFragment.class);
                 break;
             case R.id.layout_diet_title:
-                RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
+                RxActivityUtils.skipActivity(mContext, DietRecordActivity.class);
                 break;
             case R.id.layout_sports_title:
                 RxActivityUtils.skipActivity(mContext, SmartClothingFragment.class);
                 break;
             case R.id.layout_energy_title:
                 RxActivityUtils.skipActivity(mContext, EnergyActivity.class);
+                break;
+            case R.id.layout_HealthReport:
+                //判断是否审核通过
+                UserInfo userInfo = MyAPP.getgUserInfo();
+                if (userInfo.getPlanState() == 3) {
+                    String url = ServiceAPI.SHARE_INFORM_URL + userInfo.getInformId() + "&sign=true";
+                    PlanWebActivity.startActivity(mContext, url);
+                }
                 break;
         }
     }
@@ -977,72 +1084,20 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mLayoutShareTitle.setVisibility(isStart ? View.VISIBLE : View.GONE);
 
         if (isStart) {
-
-
             mProComplete2.setShowWave(true);
             //延迟500毫秒，需要等到控件显示
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //控件转图片
-                    Bitmap bitmap = RxImageUtils.view2Bitmap(mPrant, ContextCompat.getColor(mContext, R.color.white));
-                    showSimpleBottomSheetGrid(bitmap);
-                    share(false);
+            mProComplete2.postDelayed(() -> {
+                //控件转图片
+                Bitmap bitmap = RxImageUtils.view2Bitmap(mPrant, ContextCompat.getColor(mContext, R.color.white));
+
+                if (getActivity() instanceof BaseShareActivity) {
+                    BaseShareActivity activity = (BaseShareActivity) getActivity();
+                    if (activity != null)
+                        activity.shareBitmap(bitmap);
                 }
-            }, 500);
+                share(false);
+            }, 100);
         }
-    }
-
-    private void showSimpleBottomSheetGrid(final Bitmap imgUrl) {
-        UMImage image = new UMImage(mContext, imgUrl);//网络图片
-
-//        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
-        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
-        image.compressFormat = Bitmap.CompressFormat.PNG;//图片格式
-
-        UMImage thumb = new UMImage(mContext, imgUrl);
-        image.setThumb(thumb);
-        new ShareAction(mActivity)
-                .withMedia(image)
-                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
-                .setCallback(mUMShareListener).open();
-    }
-
-
-    UMShareListener mUMShareListener = new UMShareListener() {
-        @Override
-        public void onStart(SHARE_MEDIA share_media) {
-            tipDialog.show("正在分享...", 3000);
-            RxLogUtils.d("开始分享");
-        }
-
-        @Override
-        public void onResult(SHARE_MEDIA share_media) {
-            RxLogUtils.d("分享成功");
-            RxToast.normal("分享成功");
-            tipDialog.dismiss();
-        }
-
-        @Override
-        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-            RxLogUtils.d("分享失败");
-            RxToast.normal("分享失败");
-            tipDialog.dismiss();
-        }
-
-        @Override
-        public void onCancel(SHARE_MEDIA share_media) {
-            RxLogUtils.d("分享关闭");
-            RxToast.normal("分享关闭");
-            tipDialog.dismiss();
-        }
-    };
-
-
-    @Override
-    public void onDestroy() {
-        UMShareAPI.get(mContext).release();
-        super.onDestroy();
     }
 
 }

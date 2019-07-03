@@ -149,11 +149,11 @@ public class HeartRateBean implements Serializable {
                 "athlDate='" + athlDate + '\'' +
                 ", athlDesc='" + athlDesc + '\'' +
                 ", athlScore=" + athlScore +
-                ", planFlag=" + planFlag +
+                ", planFlag=" + (planFlag == 0 ? "自由运动" : "课程运动") +
                 ", stepNumber=" + stepNumber +
                 ", complete=" + complete +
                 ", totalCalorie=" + totalCalorie +
-                ", heartList=" + heartList +
+                ", heartList=" + (heartList == null ? 0 : heartList.size()) +
                 '}';
     }
 }

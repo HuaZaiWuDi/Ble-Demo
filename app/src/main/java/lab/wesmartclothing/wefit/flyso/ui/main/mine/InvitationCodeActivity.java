@@ -133,7 +133,7 @@ public class InvitationCodeActivity extends BaseActivity {
                                 RxActivityUtils.skipActivity(mActivity, MainActivity.class);
                             }
                         } else {
-                            RxToast.normal("邀请码无效，请正确输入有效邀请码");
+                            RxToast.normal(getString(R.string.incitationInvalid));
 //                            RxToast.showToast("邀请码无效，请正确输入有效邀请码");
                         }
                     }

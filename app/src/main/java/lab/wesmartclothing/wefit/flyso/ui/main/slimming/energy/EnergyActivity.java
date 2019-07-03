@@ -1,26 +1,21 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.energy;
 
-import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.chart.line.LineBean;
-import com.vondear.rxtools.view.chart.line.SuitLines;
-import com.vondear.rxtools.view.chart.line.Unit;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -32,19 +27,21 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.EnergyBean;
+import lab.wesmartclothing.wefit.flyso.entity.DataListBean;
+import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
+import lab.wesmartclothing.wefit.flyso.tools.GroupType;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
 import lab.wesmartclothing.wefit.flyso.utils.EnergyUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.view.line.LineBean;
+import lab.wesmartclothing.wefit.flyso.view.line.SuitLines;
+import lab.wesmartclothing.wefit.flyso.view.line.Unit;
 
 public class EnergyActivity extends BaseActivity {
 
@@ -53,8 +50,6 @@ public class EnergyActivity extends BaseActivity {
     QMUITopBar mTopBar;
     @BindView(R.id.suitlines)
     SuitLines mSuitlines;
-    @BindView(R.id.layout_lenged)
-    LinearLayout mLayoutLenged;
     @BindView(R.id.iv_sports)
     ImageView mIvSports;
     @BindView(R.id.tv_sportDate)
@@ -75,11 +70,15 @@ public class EnergyActivity extends BaseActivity {
     TextView mTvEatKcal;
     @BindView(R.id.tv_sportingKcal)
     TextView mTvSportingKcal;
+    @BindView(R.id.img_switchDate)
+    ImageView mImgSwitchDate;
 
 
     private long currentDate = System.currentTimeMillis();
     private int pageNum = 1;
-    private List<EnergyBean.ListBean> list;
+    private List<DataListBean> list;
+    private @GroupType
+    String groupType = GroupType.TYPE_DAYS;
 
     @Override
     protected int layoutId() {
@@ -106,48 +105,50 @@ public class EnergyActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        mTopBar.setTitle("能量记录");
+        mTopBar.setTitle(R.string.energyRecord);
     }
 
-    private void initLineChart(final List<EnergyBean.ListBean> list) {
+    private void initLineChart() {
         List<Unit> lines_Heat = new ArrayList<>();
-        List<Unit> lines_Time = new ArrayList<>();
-        if (RxDataUtils.isEmpty(list)) return;
-        Collections.reverse(list);
-        for (int i = 0; i < list.size(); i++) {
-            EnergyBean.ListBean bean = list.get(i);
-            Unit unit_heat = new Unit(bean.getHeatCalorie(), RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
-            Unit unit_time = new Unit(bean.getAthlCalorie());
+        List<Unit> lines_Base = new ArrayList<>();
+        if (RxDataUtils.isEmpty(this.list)) return;
+        Collections.reverse(this.list);
+        for (int i = 0; i < this.list.size(); i++) {
+            DataListBean bean = this.list.get(i);
 
-            lines_Heat.add(unit_heat);
-            lines_Time.add(unit_time);
+            int energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
+            int baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+            baseEnergy = Math.max(0, baseEnergy);
+            energy = Math.max(0, energy);
+            String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
+            int color = energy < baseEnergy ? 0x87FFFFFF : 0xFFFFFFFF;
+            lines_Heat.add(new Unit(energy, date, color));
+            lines_Base.add(new Unit(baseEnergy, ""));
+            RxLogUtils.d("能量标准：" + baseEnergy);
         }
 
         LineBean heatLine = new LineBean();
         heatLine.setUnits(lines_Heat);
-        heatLine.setShowPoint(true);
-        heatLine.setLineWidth(RxUtils.dp2px(2));
-        heatLine.setColor(Color.parseColor("#FFFFFF"));
+        heatLine.setBarWidth(RxUtils.dp2px(10));
+        heatLine.setChartType(SuitLines.ChartType.TYPE_BAR);
 
         LineBean timeLine = new LineBean();
-        timeLine.setShowPoint(true);
-        timeLine.setUnits(lines_Time);
-        timeLine.setLineWidth(RxUtils.dp2px(2));
-        timeLine.setColor(Color.parseColor("#FFFFFF"));
+        timeLine.setUnits(lines_Base);
+        timeLine.setShowUpText(false);
+        timeLine.setLineType(SuitLines.LineType.CURVE);
+        timeLine.setLineWidth(RxUtils.dp2px(1));
         timeLine.setDashed(true);
 
-        mSuitlines.setSpaceMin(RxUtils.dp2px(4));
         new SuitLines.LineBuilder()
                 .add(heatLine)
                 .add(timeLine)
                 .build(mSuitlines);
 
         mSuitlines.setLineChartSelectItemListener(valueX -> {
-            EnergyBean.ListBean bean = list.get(valueX);
+            if (this.list.isEmpty()) return;
+            DataListBean bean = this.list.get(valueX);
             currentDate = bean.getRecordDate();
             mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
-
-//                int surplusHeat = bean.getAthlCalorie() + bean.getBasalCalorie() - bean.getHeatCalorie();
 
             int surplusHeat = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
 
@@ -156,14 +157,14 @@ public class EnergyActivity extends BaseActivity {
                     .append("\tkacl").setProportion(0.5f)
                     .into(mTvSurplusHeat);
 
-            RxTextUtils.getBuilder("饮食摄入能量\n")
+            RxTextUtils.getBuilder(getString(R.string.intakeEnergy))
                     .append(bean.getHeatCalorie() + "").setProportion(1.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .append("\tkcal").setProportion(0.7f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .into(mTvEatKcal);
 
-            RxTextUtils.getBuilder("运动消耗能量\n")
+            RxTextUtils.getBuilder(getString(R.string.consumeEnergy))
                     .append(bean.getAthlCalorie() + "").setProportion(1.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .append("\tkcal").setProportion(0.7f)
@@ -175,7 +176,7 @@ public class EnergyActivity extends BaseActivity {
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
             @Override
             public void leftEdge() {
-                getData();
+                initData();
             }
 
             @Override
@@ -183,29 +184,30 @@ public class EnergyActivity extends BaseActivity {
 
             }
         });
-
     }
 
 
     @Override
     protected void initNetData() {
         super.initNetData();
-        getData();
+        initData();
     }
 
 
-    private void getData() {
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().fetchHeatList(pageNum, 10))
+    private void initData() {
+        NetManager.getApiService().heatFetchGroupTypeRecordList(groupType, pageNum, 10)
+                .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchHeatList" + pageNum, String.class,
-                        CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("heatFetchGroupTypeRecordList" + pageNum + groupType,
+                        String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        EnergyBean bean = JSON.parseObject(s, EnergyBean.class);
-                        updateUI(bean);
+                        GroupDataListBean bean = JSON.parseObject(s, GroupDataListBean.class);
+                        if (!RxDataUtils.isEmpty(bean.getList()))
+                            updateUI(bean.getList());
                     }
 
                     @Override
@@ -217,43 +219,56 @@ public class EnergyActivity extends BaseActivity {
                 });
     }
 
-    private void updateUI(EnergyBean bean) {
+    private void updateUI(List<DataListBean> dataListBeanList) {
         if (pageNum == 1) {
-            list = bean.getList();
-            initLineChart(list);
+            this.list = dataListBeanList;
+            initLineChart();
             pageNum++;
         } else {
-            if (RxDataUtils.isEmpty(bean.getList())) return;
-            Collections.reverse(bean.getList());//
-            list.addAll(0, bean.getList());
+            Collections.reverse(dataListBeanList);//
+            this.list.addAll(0, dataListBeanList);
 
             List<Unit> lines_Heat = new ArrayList<>();
-            List<Unit> lines_Time = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                EnergyBean.ListBean listBean = list.get(i);
-                Unit unit_heat = new Unit(listBean.getHeatCalorie(), RxFormat.setFormatDate(listBean.getRecordDate(), "MM/dd"));
-                Unit unit_time = new Unit(listBean.getAthlCalorie());
+            List<Unit> lines_Base = new ArrayList<>();
+            for (int i = 0; i < this.list.size(); i++) {
+                DataListBean bean = this.list.get(i);
+                int energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
+                int baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
 
-                lines_Heat.add(unit_heat);
-                lines_Time.add(unit_time);
+                String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
+                int color = energy < baseEnergy ? 0x87FFFFFF : 0xFFFFFFFF;
+                lines_Heat.add(new Unit(bean.getAthlCalorie(), date, color));
+                lines_Base.add(new Unit(baseEnergy, ""));
             }
-            mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Time));
+            mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Base));
             pageNum++;
         }
     }
 
 
-    @OnClick({R.id.layout_eatEnergy, R.id.layout_sportingEnergy})
+    @OnClick({R.id.layout_eatEnergy, R.id.layout_sportingEnergy, R.id.img_switchDate})
     public void onViewClicked(View view) {
-        Bundle bundle = new Bundle();
+        if (RxUtils.isFastClick(800))
+            return;
         switch (view.getId()) {
             case R.id.layout_eatEnergy:
-                bundle.putLong(Key.BUNDLE_DATE_TIME, currentDate);
-                RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
+                FoodRecommend.start(mContext, currentDate);
                 break;
             case R.id.layout_sportingEnergy:
                 RxActivityUtils.skipActivity(mContext, SmartClothingFragment.class);
                 break;
+            case R.id.img_switchDate:
+                if (groupType.equals(GroupType.TYPE_DAYS)) {
+                    groupType = GroupType.TYPE_MONTHS;
+                    mImgSwitchDate.setImageResource(R.mipmap.ic_select_month);
+                } else {
+                    groupType = GroupType.TYPE_DAYS;
+                    mImgSwitchDate.setImageResource(R.mipmap.ic_select_day);
+                }
+                pageNum = 1;
+                initData();
+                break;
         }
     }
+
 }

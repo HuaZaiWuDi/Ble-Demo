@@ -4,6 +4,11 @@ apply plugin: 'com.android.application'
 // 依赖插件脚本
 //apply from: 'tinker-support.gradle'
 
+//Kotlin
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
 android {
     signingConfigs {
         debug {
@@ -128,15 +133,10 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation "com.android.support:design:$supportVersion"
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     //快速开发顶部、底部导航栏
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
-    //数据库
-    implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 
     //BUGly
     //其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
@@ -180,12 +180,8 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-
     // Optional, if you use support library fragments:
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
-
-    //    //轻牛体重秤SDK
-//    implementation files('libs/qnsdk-0.3.4.jar')
 
 
     implementation 'com.jackUtil:RxTools:1.2.4'
@@ -222,4 +218,5 @@ dependencies {
     debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:1.1.7'
     releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:1.1.7'
 
+//    implementation 'com.tencent:mmkv:1.0.22'
 }

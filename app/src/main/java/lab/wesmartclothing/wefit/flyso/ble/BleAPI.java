@@ -262,8 +262,10 @@ public class BleAPI {
         bytes[1] = 0x11;
         bytes[2] = 0x0b;
 
-        Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, null);
+        Log.d("【清除步数】", HexUtil.encodeHexStr(bytes));
+        BleTools.getInstance().write(bytes, data -> {
+
+        });
     }
 
 

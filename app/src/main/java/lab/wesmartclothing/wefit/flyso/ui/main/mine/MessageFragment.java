@@ -15,7 +15,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.RxDataUtils;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.wesmarclothing.mylibrary.net.RxBus;
@@ -36,7 +35,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 
@@ -136,8 +135,8 @@ public class MessageFragment extends BaseActivity {
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("消息通知");
-        mQMUIAppBarLayout.addRightTextButton("标记已读", R.id.spread_inside)
+        mQMUIAppBarLayout.setTitle(R.string.messageNotify);
+        mQMUIAppBarLayout.addRightTextButton(R.string.readed, R.id.spread_inside)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -199,7 +198,7 @@ public class MessageFragment extends BaseActivity {
 
     private void readAllRequest() {
         if (!hasUnRead()) {
-            RxToast.normal("没有未读消息");
+            RxToast.normal(getString(R.string.notunreadMessage));
             return;
         }
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().readedAll())
@@ -208,7 +207,6 @@ public class MessageFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
                         List<MessageBean.ListBean> listBeans = adapter.getData();
                         for (MessageBean.ListBean bean : listBeans) {
                             bean.setReadState(1);
@@ -234,7 +232,6 @@ public class MessageFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
                         if (item.getReadState() != 1) {
                             item.setReadState(1);
                             adapter.setData(position, item);
@@ -275,7 +272,6 @@ public class MessageFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
                         //如果成功，刷新列表，不加载数据
                         adapter.remove(position);
                     }

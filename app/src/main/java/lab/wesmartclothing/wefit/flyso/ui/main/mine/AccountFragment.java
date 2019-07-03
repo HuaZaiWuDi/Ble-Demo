@@ -33,7 +33,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.LoginResult;
 import lab.wesmartclothing.wefit.flyso.entity.OtherLoginBean;
-import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -89,15 +88,15 @@ public class AccountFragment extends BaseActivity {
         initTopBar();
         initMyDialog();
         otherData();
-            mTvPhone.setText(MyAPP.getgUserInfo().getPhone());
+        mTvPhone.setText(MyAPP.getgUserInfo().getPhone());
     }
 
     private void initMyDialog() {
         dialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setContent("解绑后将不能作为登录方式，确定解除微信账号绑定么？")
-                .setSure("解除绑定");
+                .setContent(getString(R.string.unbindOtherAccount))
+                .setSure(getString(R.string.unbind));
 
     }
 
@@ -108,7 +107,7 @@ public class AccountFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("账号管理");
+        mQMUIAppBarLayout.setTitle(R.string.accountManager);
     }
 
     private void switchBind(boolean isBind, final String type, final SwitchBindListener switchBindListener) {
@@ -123,8 +122,6 @@ public class AccountFragment extends BaseActivity {
             });
             dialog.show();
         } else {
-            //绑定
-            tipDialog.show("正在登陆", 3000);
             SHARE_MEDIA media = convertType(type);
 
             UMShareAPI umShareAPI = UMShareAPI.get(this);
@@ -181,7 +178,7 @@ public class AccountFragment extends BaseActivity {
         @Override
         public void onStart(SHARE_MEDIA share_media) {
             RxLogUtils.d("开始登录");
-            tipDialog.show("正在登陆", 3000);
+            tipDialog.show(getString(R.string.logining), 3000);
         }
 
         @Override
@@ -200,14 +197,14 @@ public class AccountFragment extends BaseActivity {
         @Override
         public void onError(SHARE_MEDIA share_media, int i, Throwable throwable) {
             RxLogUtils.e("登录失败", throwable);
-            RxToast.error("登录失败");
+            RxToast.error(getString(R.string.loginFail));
             tipDialog.dismiss();
         }
 
         @Override
         public void onCancel(SHARE_MEDIA share_media, int i) {
             RxLogUtils.e("登录取消");
-            RxToast.error("登录取消");
+            RxToast.error(getString(R.string.loginCancel));
             tipDialog.dismiss();
         }
     };
@@ -242,7 +239,7 @@ public class AccountFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         dialog.dismiss();
-                        RxToast.normal("解绑成功", 3000);
+                        RxToast.normal(getString(R.string.unbindSuccess), 3000);
                         RxLogUtils.d("结束" + s);
                         SHARE_MEDIA media = convertType(otherType);
 

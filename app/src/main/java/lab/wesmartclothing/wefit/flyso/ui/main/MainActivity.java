@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
+import com.didichuxing.doraemonkit.DoraemonKit;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -53,10 +54,11 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.ranking.RankingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -103,6 +105,8 @@ public class MainActivity extends BaseALocationActivity {
     protected void initViews() {
         super.initViews();
         initView();
+
+
     }
 
     @Override
@@ -136,17 +140,18 @@ public class MainActivity extends BaseALocationActivity {
                 .subscribe(deviceVersion -> {
                     //判断是否有权限
                     new RxPermissions((FragmentActivity) mActivity)
-                            .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
-                            .subscribe(new RxSubscriber<Permission>() {
+                            .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                            .subscribe(new RxSubscriber<Boolean>() {
                                 @Override
-                                protected void _onNext(Permission aBoolean) {
+                                protected void _onNext(Boolean aBoolean) {
                                     RxLogUtils.e("是否开启了权限：" + aBoolean);
-                                    if (aBoolean.granted)
+                                    if (aBoolean)
                                         checkFirmwareVersion(deviceVersion);
                                 }
                             });
                 });
+
     }
 
     /**
@@ -168,9 +173,9 @@ public class MainActivity extends BaseALocationActivity {
                                 rxDialog.dismiss();
                             }
                             rxDialog = new RxDialogSureCancel(mContext)
-                                    .setTitle("提示")
-                                    .setContent("是否升级到最新的固件版本")
-                                    .setSure("升级")
+                                    .setTitle(getString(R.string.tip))
+                                    .setContent(getString(R.string.updateBleFirmwareVersion))
+                                    .setSure(getString(R.string.update))
                                     .setSureListener(v -> {
                                         AboutUpdateDialog updatedialog = new AboutUpdateDialog(mContext, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
                                         updatedialog.show();
@@ -205,12 +210,12 @@ public class MainActivity extends BaseALocationActivity {
     private void initSystemConfig() {
         //判断是否有权限
         new RxPermissions((FragmentActivity) mActivity)
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new RxSubscriber<Boolean>() {
+                .subscribe(new RxSubscriber<Permission>() {
                     @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        RxLogUtils.e("是否开启了权限：" + aBoolean);
+                    protected void _onNext(Permission aBoolean) {
+                        RxLogUtils.e("是否开启了权限：" + aBoolean.toString());
                     }
                 });
 
@@ -218,9 +223,9 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.e("通知栏权限：" + NotificationManagerCompat.from(mContext).areNotificationsEnabled());
         if (!NotificationManagerCompat.from(mContext).areNotificationsEnabled()) {
             new RxDialogSureCancel(mContext)
-                    .setTitle("提示")
-                    .setContent("您的通知权限未开启，可能影响APP的正常使用")
-                    .setSure("现在去开启")
+                    .setTitle(getString(R.string.tip))
+                    .setContent(getString(R.string.openNotification))
+                    .setSure(getString(R.string.open))
                     .setSureListener(view -> {
                         /**
                          * 跳到通知栏设置界面
@@ -244,13 +249,13 @@ public class MainActivity extends BaseALocationActivity {
     private void initBottomTab() {
         String[] tab_text = getResources().getStringArray(R.array.tab_text);
         int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_record,
-                R.mipmap.icon_find_unselect, R.mipmap.icon_mine_unselect};
+                R.mipmap.ic_ranking_unselect, R.mipmap.icon_mine_unselect};
         int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_record_unselect,
-                R.mipmap.icon_find_select, R.mipmap.icon_mine_select};
+                R.mipmap.ic_ranking_select, R.mipmap.icon_mine_select};
         mBottomTabItems.clear();
         for (int i = 0; i < tab_text.length; i++) {
-            if (i != 2)
-                mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
+//            if (i != 2)
+            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
         }
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
@@ -265,8 +270,9 @@ public class MainActivity extends BaseALocationActivity {
 
             @Override
             public void onTabReselect(int position) {
+                if (!BuildConfig.DEBUG) return;
                 //双击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
+                if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000)) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
                             .addItem(ServiceAPI.BASE_URL_208)
@@ -282,6 +288,12 @@ public class MainActivity extends BaseALocationActivity {
                             })
                             .build()
                             .show();
+                } else if (position == 0) {
+                    DoraemonKit.install(getApplication());
+                    if (DoraemonKit.isShow()) {
+                        DoraemonKit.hide();
+                    } else
+                        DoraemonKit.show();
                 }
             }
         });
@@ -295,6 +307,7 @@ public class MainActivity extends BaseALocationActivity {
         mFragments.add(SlimmingRecordFragment.newInstance());
 //        mFragments.add(FindFragment.getInstance());
 //        mFragments.add(StoreFragment.getInstance());
+        mFragments.add(RankingFragment.getInstance());
         mFragments.add(MeFragment.getInstance());
 
         mViewpager.setOffscreenPageLimit(4);
@@ -389,7 +402,7 @@ public class MainActivity extends BaseALocationActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
     }
 

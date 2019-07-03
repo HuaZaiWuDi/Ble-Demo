@@ -122,7 +122,7 @@ public class BleService extends Service {
                     stopScan();
                     break;
                 case Key.ACTION_CLOTHING_STOP:
-                    clothingFinish = true;
+
                     BleAPI.clothingStop();
                     break;
                 case Intent.ACTION_DATE_CHANGED://日期的变化

@@ -59,6 +59,8 @@ public class SplashActivity extends BaseActivity {
         }
     };
 
+    public static String weightTipList;
+
 
     @Override
     protected int layoutId() {
@@ -74,6 +76,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
+
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
     }
@@ -81,6 +84,13 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initNetData() {
         super.initNetData();
+
+//        if (true) {
+//            RxActivityUtils.skipActivity(mContext, Main2Activity.class);
+//            return;
+//        }
+
+
         initData();
         initUserInfo();
     }
@@ -232,6 +242,9 @@ public class SplashActivity extends BaseActivity {
                                     break;
                                 case "recommend.html"://推荐食材图片
                                     ServiceAPI.RECIPES_URL = bean.getConfValue();
+                                    break;
+                                case "weight.ranking.tips"://推荐食材图片
+                                    weightTipList = bean.getConfValue();
                                     break;
                                 default:
                                     break;

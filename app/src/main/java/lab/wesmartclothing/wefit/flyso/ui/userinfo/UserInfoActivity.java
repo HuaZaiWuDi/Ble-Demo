@@ -53,8 +53,6 @@ import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
 public class UserInfoActivity extends BaseALocationActivity {
 
 
-    UserInfo mUserInfo;
-
     @BindView(R.id.tv_titleTop)
     TextView tv_titleTop;
     @BindView(R.id.mCommonTabLayout)
@@ -129,15 +127,15 @@ public class UserInfoActivity extends BaseALocationActivity {
                 viewState--;
                 switchView(viewState);
             } else {
-                if (!RxUtils.isFastClick(2000)) {
+                if (RxUtils.isFastClick(2000)) {
                     RxToast.normal("再按一次退出");
-                } else moveTaskToBack(true);
+                } else onBackPressed();
             }
         return true;
     }
 
     private int viewState = 0;
-
+    private UserInfo mUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,10 +150,7 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
     public void initView() {
-        mUserInfo = MyAPP.getgUserInfo();
-        if (mUserInfo == null) {
-            mUserInfo = new UserInfo();
-        }
+        mUserInfo = new UserInfo();
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
 
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
@@ -317,7 +312,6 @@ public class UserInfoActivity extends BaseALocationActivity {
 
         String s = JSON.toJSONString(mUserInfo);
         SPUtils.put(SPKey.SP_UserInfo, s);
-        MyAPP.gUserInfo = mUserInfo;
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .saveUserInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -325,8 +319,8 @@ public class UserInfoActivity extends BaseALocationActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
 
+                        MyAPP.gUserInfo = mUserInfo;
                         //跳转扫描界面
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);

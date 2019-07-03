@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
@@ -41,6 +42,7 @@ import com.vondear.rxtools.view.roundprogressbar.RoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
 import com.vondear.rxtools.view.roundprogressbar.VerticalProgress;
 import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -56,6 +58,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.entity.PlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -74,9 +77,8 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodRecommend;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.HeatDetailFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodDetailsFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
@@ -356,47 +358,29 @@ public class SlimmingFragment extends BaseAcFragment {
                 });
 
 
+        //设备连接
         RxBus.getInstance().register2(HeartRateChangeBus.class)
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .subscribe(new RxSubscriber<HeartRateChangeBus>() {
+                    @SuppressLint("CheckResult")
                     @Override
                     protected void _onNext(HeartRateChangeBus sportsDataTab) {
                         if (BleService.clothingFinish && isVisibled()) {
                             BleService.clothingFinish = false;
 
-                            if (bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                                RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
-                                        .setTitle("运动提示")
-                                        .setContent("瘦身衣已连接，是否立即开始运动？")
-                                        .setCancel("自由运动")
-                                        .setCancelListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
-                                            }
-                                        })
-                                        .setSure("课程运动")
-                                        .setSureListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Bundle bundle = new Bundle();
-                                                bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
-                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), PlanSportingActivity.class, bundle);
-                                            }
+                            String key = HeartRateUtil.getTodayData();
+                            if (!RxDataUtils.isNullString(key)) {
+                                RxCache.getDefault().<HeartRateBean>load(key, HeartRateBean.class)
+                                        .map(new CacheResult.MapFunc<>())
+                                        .subscribe(bean -> {
+                                            int planFlag = bean.getPlanFlag();
+                                            showSkipSportAcDialog(key, planFlag == 1);
+                                        }, e -> {
+                                            RxLogUtils.e("上一次的运动数据", e);
+                                            showSkipSportAcDialog(key, bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
                                         });
-                                rxDialog.show();
                             } else {
-                                RxDialogSureCancel rxDialog = new RxDialogSureCancel(RxActivityUtils.currentActivity())
-                                        .setTitle("运动提示")
-                                        .setContent("瘦身衣已连接，是否开始自由运动？")
-                                        .setSure("进入")
-                                        .setSureListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), SportingActivity.class);
-                                            }
-                                        });
-                                rxDialog.show();
+                                showSkipSportAcDialog(key, bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
                             }
                         }
                     }
@@ -466,13 +450,13 @@ public class SlimmingFragment extends BaseAcFragment {
         lineChartUtils.setPlanLineData(athlPlanList);
         getCurrentRealHeart();
         RxTextUtils.getBuilder(RxFormat.setSec2MS(bean.getTotalTime() * 60))
-                .append("本次运动时间")
+                .append(getString(R.string.thisRunTime))
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvSportingTime);
 
         RxTextUtils.getBuilder(bean.getTotalDeplete() + "\t")
-                .append("预计消耗热量(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append(getString(R.string.expectCalorie)).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.8f)
                 .into(mTvSportingKcal);
     }
@@ -483,7 +467,8 @@ public class SlimmingFragment extends BaseAcFragment {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .courseAthlDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("courseAthlDetail", String.class, CacheStrategy.firstRemote()))
+                .compose(MyAPP.getRxCache().<String>transformObservable("courseAthlDetail", String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -586,38 +571,38 @@ public class SlimmingFragment extends BaseAcFragment {
         SPUtils.put(SPKey.SP_realWeight, (float) weight);
 
         if (weight > minNormalWeight && weight <= maxNormalWeight) {
-            mTvWeightStatus.setText("标准");
+            mTvWeightStatus.setText(R.string.normal);
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_61D97F));
             mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.green_61D97F))
                     .setBorderWidthNormal(RxUtils.dp2px(1));
         } else if (weight <= minNormalWeight) {
-            mTvWeightStatus.setText("偏瘦");
+            mTvWeightStatus.setText(R.string.slim);
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
             mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.blue))
                     .setBorderWidthNormal(RxUtils.dp2px(1));
         } else if (weight > maxNormalWeight) {
-            mTvWeightStatus.setText("偏胖");
+            mTvWeightStatus.setText(R.string.fatter);
             mTvWeightStatus.setTextColor(ContextCompat.getColor(mContext, R.color.orange_FF7200));
             mTvWeightStatus.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.orange_FF7200))
                     .setBorderWidthNormal(RxUtils.dp2px(1));
         }
 
         RxTextUtils.getBuilder(weight + "")
-                .append(" 体重(kg)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append("\t" + getString(R.string.weightAndUnit)).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.5f).into(mTvWeight);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBodyFat() + "")
-                .append(" 体脂率(%)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append("\t" + getString(R.string.bodyFatAndUnit)).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.6f)
                 .into(mTvBodyFat);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmi() + "")
-                .append(" BMI").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append("\tBMI").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.6f)
                 .into(mTvBmi);
 
         RxTextUtils.getBuilder(weightChangeVO.getWeight().getBmr() + "")
-                .append(" 基础代谢(kcal)").setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .append("\t" + getString(R.string.bmrAndUnit)).setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setProportion(0.6f)
                 .into(mTvBmr);
 
@@ -683,7 +668,7 @@ public class SlimmingFragment extends BaseAcFragment {
         boolean warning = heatInfoVO.isWarning();
         int basalCalorie = heatInfoVO.getBasalCalorie();
 
-        RxTextUtils.getBuilder(heatInfoVO.getAbleIntake() < 0 ? "多摄入热量\n" : "还可摄入热量\n")
+        RxTextUtils.getBuilder(heatInfoVO.getAbleIntake() < 0 ? getString(R.string.calorieIntakeTooMuch) : getString(R.string.calorieAbleIntake))
                 .append(Math.abs(heatInfoVO.getAbleIntake()) + "").setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
@@ -693,9 +678,9 @@ public class SlimmingFragment extends BaseAcFragment {
         if (bean.getPlanState() == 3 && lastKcal != heatInfoVO.getAbleIntake()) {
             lastKcal = heatInfoVO.getAbleIntake();
             if (warning) {
-                TextSpeakUtils.speakAdd("主人你吃的太多啦，今天不要再吃了");
+                TextSpeakUtils.speakAdd(getString(R.string.speak_eatTooMuch));
             } else {
-                TextSpeakUtils.speakAdd("您今天还可以吃" + Number2Chinese.number2Chinese(lastKcal + "") + "大卡的食物");
+                TextSpeakUtils.speakAdd(getString(R.string.speak_ableIntake, Number2Chinese.number2Chinese(lastKcal + "")));
             }
         }
 
@@ -739,13 +724,13 @@ public class SlimmingFragment extends BaseAcFragment {
         RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(bean.getWeightChangeVO().getWeight().getWeight(), 1))
                 .append("\tkg").setProportion(0.5f).into(mTvCurrentWeight);
 
-        RxTextUtils.getBuilder("起始体重\n")
+        RxTextUtils.getBuilder(getString(R.string.initWeight) + "\n")
                 .append(bean.getTargetInfo().getInitialWeight() + "").setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .into(mTvInitWeight);
 
-        RxTextUtils.getBuilder("目标体重\n")
+        RxTextUtils.getBuilder(getString(R.string.targetWeight) + "\n")
                 .append(bean.getTargetInfo().getTargetWeight() + "").setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("kg").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
@@ -768,8 +753,8 @@ public class SlimmingFragment extends BaseAcFragment {
         mLayoutTargetTitle.setAlpha(finish ? 0.3f : 1f);
         mLayoutTargetContent.setAlpha(finish ? 0.3f : 1f);
         mResetTarget.setEnabled(!finish);
-        mTvTargetComplete.setText(complete ? "恭喜您已达成瘦身目标！" : "很遗憾，您的瘦身目标未达成！");
-        mTvResetTarget.setText(complete ? "开启新目标" : "重置目标");
+        mTvTargetComplete.setText(complete ? getString(R.string.completePlanTarget) : getString(R.string.incompletePlanTarget));
+        mTvResetTarget.setText(complete ? getString(R.string.openNewTarget) : getString(R.string.resetTarget));
     }
 
 
@@ -808,13 +793,13 @@ public class SlimmingFragment extends BaseAcFragment {
             mCardFreeSporting.setVisibility(View.GONE);
             mCardCurriculumSporting.setVisibility(View.GONE);
             mBtnGoBindClothing.setText(R.string.goBind);
-            mTvClothingTip.setText("请绑定您的智能瘦身衣");
+            mTvClothingTip.setText(R.string.bindClothing);
         } else if (planState != 3) {
             mLayoutClothingDefault.setVisibility(View.VISIBLE);
             mCardFreeSporting.setVisibility(View.GONE);
             mCardCurriculumSporting.setVisibility(View.GONE);
-            mBtnGoBindClothing.setText("去运动");
-            mTvClothingTip.setText("今天还没定制运动哦~");
+            mBtnGoBindClothing.setText(R.string.goSporting);
+            mTvClothingTip.setText(R.string.todayNotPlan);
             mBtnGoBindClothing.getHelper().setBorderColorNormal(ContextCompat.getColor(mContext, R.color.orange_FF7200));
         } else {
             mLayoutClothingDefault.setVisibility(View.GONE);
@@ -826,11 +811,11 @@ public class SlimmingFragment extends BaseAcFragment {
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
             mBtnGoBindScale.setText(R.string.goBind);
-            mTvWeightTip.setText("请绑定您的体脂称");
+            mTvWeightTip.setText(R.string.bindScale);
         } else if (!bean.isHasTodayWeight()) {//去称重
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
-            mBtnGoBindScale.setText("去称重");
-            mTvWeightTip.setText("今天还没有称重哦～");
+            mBtnGoBindScale.setText(R.string.goWeigh);
+            mTvWeightTip.setText(R.string.todayNotWeigh);
         } else {
             mLayoutScaleDefault.setVisibility(View.GONE);
         }
@@ -873,8 +858,7 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.layout_foodRecord
     })
     public void onViewClicked(View view) {
-        RxLogUtils.d("点击");
-        Bundle bundle = new Bundle();
+        Bundle bundle = null;
         switch (view.getId()) {
             case R.id.iv_userImg:
                 RxActivityUtils.skipActivity(mContext, UserInfofragment.class);
@@ -887,6 +871,7 @@ public class SlimmingFragment extends BaseAcFragment {
                     String url = ServiceAPI.SHARE_INFORM_URL + bean.getInformGid() + "&sign=true";
                     PlanWebActivity.startActivity(mContext, url);
                 } else if (bean.getPlanState() != 0) {
+                    bundle = new Bundle();
                     bundle.putInt(Key.BUNDLE_PLAN_STATUS, bean.getPlanState());
                     RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class, bundle);
                 }
@@ -901,19 +886,23 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, RecipesActivity.class);
                 break;
             case R.id.layout_breakfast:
-                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_BREAKFAST);
+                bundle = new Bundle();
+                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_BREAKFAST);
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_lunch:
-                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_LUNCH);
+                bundle = new Bundle();
+                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_LUNCH);
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_dinner:
-                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPE_DINNER);
+                bundle = new Bundle();
+                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_DINNER);
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.layout_meal:
-                bundle.putInt(Key.ADD_FOOD_TYPE, HeatDetailFragment.TYPED_MEAL);
+                bundle = new Bundle();
+                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPED_MEAL);
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.reWeigh:
@@ -938,28 +927,28 @@ public class SlimmingFragment extends BaseAcFragment {
                 if (getString(R.string.goBind).equals(mBtnGoBindClothing.getText().toString())) {
                     RxActivityUtils.skipActivity(mContext, AddDeviceActivity.class);
                 } else {
-                    spikSportAc(bundle, false);
+                    skipSportAc(false, "");
                 }
                 break;
             case R.id.tv_freeSporting:
-                spikSportAc(bundle, false);
+                skipSportAc(false, "");
                 break;
             case R.id.tv_curriculumSporting:
-                spikSportAc(bundle, true);
+                skipSportAc(true, "");
                 break;
             case R.id.layout_gotoPlanSporting:
-                spikSportAc(bundle, true);
+                skipSportAc(true, "");
                 break;
             case R.id.img_weight_tip:
                 new RxDialogSure(mContext)
-                        .setTitle("今日体重")
-                        .setContent("您今日的体重数据，变化趋势是与您首次称重数据进行对比")
+                        .setTitle(getString(R.string.todayWeight))
+                        .setContent(getString(R.string.todayWeightDetail))
                         .show();
                 break;
             case R.id.img_sporting_tip:
                 new RxDialogSure(mContext)
-                        .setTitle("今日能量")
-                        .setContent("您今日的能量摄入与消耗，综合消耗是通过摄入、运动消耗、基础代谢综合计算所得")
+                        .setTitle(getString(R.string.todayEnergy))
+                        .setContent(getString(R.string.todayEnergyDatail))
                         .show();
                 break;
             case R.id.layout_foodRecord:
@@ -978,27 +967,25 @@ public class SlimmingFragment extends BaseAcFragment {
     }
 
     //跳转运动界面钱的判断
-    private void spikSportAc(Bundle bundle, boolean isPlan) {
+    private void skipSportAc(boolean isPlan, String key) {
         //进入实时运动界面，定制课程
         if (!BleTools.getBleManager().isBlueEnable()) {
             showOpenBlueTooth();
         } else if (!BleTools.getInstance().isConnect()) {
-            tipDialog.show("瘦身衣正在连接中", 3000);
+            tipDialog.show(getString(R.string.connecting), 3000);
             mActivity.startService(new Intent(mContext, BleService.class));
             if (tipDialog.getTipDialog() != null) {
                 tipDialog.getTipDialog().setOnDismissListener(dialogInterface -> {
                     if (BleTools.getInstance().isConnect()) {
-
                         if (isPlan) {
                             if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                                bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
-                                RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                                PlanSportingActivity.start(mContext, bean, key);
                             } else {
                                 showFreeSportDialog();
                             }
                         } else {
                             //进入实时运动界面，没有定制课程
-                            RxActivityUtils.skipActivity(mContext, SportingActivity.class);
+                            SportingActivity.start(mContext, key);
                         }
                     }
                 });
@@ -1006,14 +993,54 @@ public class SlimmingFragment extends BaseAcFragment {
         } else {
             if (isPlan) {
                 if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                    bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
-                    RxActivityUtils.skipActivity(mContext, PlanSportingActivity.class, bundle);
+                    PlanSportingActivity.start(mContext, bean, key);
                 } else {
                     showFreeSportDialog();
                 }
             } else {
                 //进入实时运动界面，没有定制课程
-                RxActivityUtils.skipActivity(mContext, SportingActivity.class);
+                SportingActivity.start(mContext, key);
+            }
+        }
+    }
+
+
+    private void showSkipSportAcDialog(String key, boolean isPlan) {
+        if (!"".equals(key)) {
+            RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                    .setTitle(getString(R.string.tip))
+                    .setContent(getString(R.string.continueLastRun))
+                    .setSure(getString(R.string.enter))
+                    .setSureListener(v -> {
+                        if (isPlan) {
+                            PlanSportingActivity.start(mContext, bean, key);
+                        } else
+                            SportingActivity.start(mContext, key);
+                    });
+            rxDialog.show();
+        } else {
+            if (isPlan) {
+                RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                        .setTitle(getString(R.string.tip))
+                        .setContent(getString(R.string.deviceConnectAndRun))
+                        .setCancel(getString(R.string.freeRun))
+                        .setCancelListener(v -> {
+                            SportingActivity.start(mContext, key);
+                        })
+                        .setSure(getString(R.string.planRun))
+                        .setSureListener(v -> {
+                            PlanSportingActivity.start(mContext, bean, key);
+                        });
+                rxDialog.show();
+            } else {
+                RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                        .setTitle(getString(R.string.tip))
+                        .setContent(getString(R.string.deviceConnectAndRun))
+                        .setSure(getString(R.string.enter))
+                        .setSureListener(v -> {
+                            SportingActivity.start(mContext, key);
+                        });
+                rxDialog.show();
             }
         }
     }
@@ -1021,16 +1048,14 @@ public class SlimmingFragment extends BaseAcFragment {
 
     private void showFreeSportDialog() {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                .setTitle(getString(R.string.tip))
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setContent("您还未制定课程，去自由运动试试吧")
-                .setSure("自由运动")
-                .setSureListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //进入实时运动界面，没有定制课程
-                        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
-                    }
+                .setContent(getString(R.string.pleaseFreeRun))
+                .setSure(getString(R.string.freeRun))
+                .setSureListener(v -> {
+                    //进入实时运动界面，没有定制课程
+                    RxActivityUtils.skipActivity(mContext, SportingActivity.class);
                 });
         rxDialog.show();
     }
@@ -1040,9 +1065,9 @@ public class SlimmingFragment extends BaseAcFragment {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setTitle("提示")
-                .setContent("请先开启蓝牙，并允许新连接")
-                .setSure("开启")
+                .setTitle(getString(R.string.tip))
+                .setContent(getString(R.string.open_BLE))
+                .setSure(getString(R.string.open))
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1062,9 +1087,9 @@ public class SlimmingFragment extends BaseAcFragment {
                     protected void _onNext(Boolean aBoolean) {
                         if (!aBoolean) {
                             new RxDialogSureCancel(mContext)
-                                    .setTitle("提示")
-                                    .setContent("不定位权限，手机将无法连接蓝牙")
-                                    .setSure("去开启")
+                                    .setTitle(getString(R.string.tip))
+                                    .setContent(getString(R.string.open_loaction))
+                                    .setSure(getString(R.string.open))
                                     .setSureListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
