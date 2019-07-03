@@ -94,7 +94,8 @@ public class RankingFragment extends BaseAcFragment {
         mRunText.setAnimTime(500);
         mRunText.setTextStillTime(2000);
         mRunText.setText(RxUtils.sp2px(13), RxUtils.dp2px(20), ContextCompat.getColor(mContext, R.color.GrayWrite));
-        mRunText.setTextList(tips);
+        if (!RxDataUtils.isEmpty(tips))
+            mRunText.setTextList(tips);
     }
 
     private void initRecycler() {
