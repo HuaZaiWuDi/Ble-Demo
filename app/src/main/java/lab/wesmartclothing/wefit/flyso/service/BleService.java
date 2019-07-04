@@ -66,8 +66,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.PlanSportingActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
@@ -337,10 +335,10 @@ public class BleService extends Service {
 //                RxBus.getInstance().post(new ScaleUnsteadyWeight(v));
                 Bundle bundle = new Bundle();
                 bundle.putDouble(Key.BUNDLE_WEIGHT_UNSTEADY, v);
-                if (RxActivityUtils.currentActivity() != null)
-                    if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
-                            && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
-                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+                if (RxActivityUtils.currentActivity() instanceof SportInterface) {
+                } else {
+                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+                }
             }
 
             @Override
@@ -351,10 +349,10 @@ public class BleService extends Service {
 //                qnScaleData.setFatThreshold();
 
                 bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, JSON.toJSONString(qnScaleData));
-                if (RxActivityUtils.currentActivity() != null) {
-                    if (!RxActivityUtils.currentActivity().getClass().equals(PlanSportingActivity.class)
-                            && !RxActivityUtils.currentActivity().getClass().equals(SportingActivity.class))
-                        RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
+
+                if (RxActivityUtils.currentActivity() instanceof SportInterface) {
+                } else {
+                    RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
                 }
 //                RxBus.getInstance().post(qnScaleData);
             }

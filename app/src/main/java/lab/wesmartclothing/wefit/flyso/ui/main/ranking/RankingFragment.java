@@ -192,12 +192,12 @@ public class RankingFragment extends BaseAcFragment {
                         List<Double> rankingBean = JSON.parseObject(s, new TypeToken<List<Double>>() {
                         }.getType());
                         if (!RxDataUtils.isEmpty(rankingBean)) {
-                            RxTextUtils.getBuilder("参与用户 " + rankingBean.get(0) + "人\n你的排名\n")
-                                    .append(rankingBean.get(1) + "").setProportion(3f)
+                            RxTextUtils.getBuilder("参与用户 " + rankingBean.get(0).intValue() + "人\n你的排名\n")
+                                    .append(rankingBean.get(2).intValue() + "").setProportion(3f)
                                     .append("名").into(mTvRanking);
 
-                            RxTextUtils.getBuilder("累计减重 " + rankingBean.get(2) + "KG\n成功减重\n")
-                                    .append("" + rankingBean.get(3)).setProportion(3f)
+                            RxTextUtils.getBuilder("累计减重 " + String.format("%.1f", Math.abs(rankingBean.get(1))) + "KG\n成功减重\n")
+                                    .append("" + String.format("%.1f", Math.abs(rankingBean.get(2)))).setProportion(3f)
                                     .append("KG").into(mTvReduceWeight);
                         }
                     }
