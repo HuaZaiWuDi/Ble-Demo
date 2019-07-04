@@ -24,10 +24,10 @@ android {
             storePassword '123456'
         }
     }
-    //Debug时不进行拆分包和png图片压缩
-    splits.abi.enable = false
-    splits.density.enable = false
-    aaptOptions.cruncherEnabled = false
+//    //Debug时不进行拆分包和png图片压缩
+//    splits.abi.enable = false
+//    splits.density.enable = false
+//    aaptOptions.cruncherEnabled = false
 
 
     compileSdkVersion parent.ext.compileSdkVersion
@@ -75,9 +75,9 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-            crunchPngs false //关闭crunchPng优化, 以加快构建
-            ext.enableCrashlytics = false
-            ext.alwatsUpdateBuildId = false
+//            crunchPngs false //关闭crunchPng优化, 以加快构建
+//            ext.enableCrashlytics = false
+//            ext.alwatsUpdateBuildId = false
             buildConfigField "boolean", "LeakCanary", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -166,7 +166,6 @@ android {
                                     qqappid      : '1106924585',//QQ分享
             ]
             signingConfig signingConfigs.release
-            multiDexEnabled = true
             //修改apk名字
             applicationVariants.all { variant ->
                 variant.outputs.all {
@@ -266,7 +265,7 @@ dependencies {
     implementation 'no.nordicsemi.android.support.v18:scanner:1.4.0'
 
     //轻牛体脂称
-    implementation 'com.github.YolandaQingniu:qnscalesdk:0.6.2'
+    implementation 'com.github.YolandaQingniu:qnscalesdk:0.5.8'
     //滴滴性能检测库
     debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:1.1.7'
     releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:1.1.7'

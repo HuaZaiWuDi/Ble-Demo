@@ -755,7 +755,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
     private void initChart(BarLineChartBase lineChartBase) {
         lineChartBase.setEnabled(false);
         lineChartBase.setTouchEnabled(false);//可以点击
-        lineChartBase.setMaxVisibleValueCount(60);
         lineChartBase.getLegend().setEnabled(false);
         lineChartBase.getDescription().setEnabled(false);
         lineChartBase.setDrawGridBackground(false);
@@ -778,7 +777,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         dates.clear();
         List<SlimmingRecordBean.WeightInfoListBean> list = bean.getWeightInfoList();
         Calendar calendar = Calendar.getInstance();
-        ArrayList<Entry> lineEntry = new ArrayList<>();
+        ArrayList<Entry> lineEntry = new ArrayList<>(7);
 
         if (list != null && !list.isEmpty()) {
             calendar.setTimeInMillis(list.get(list.size() - 1).getWeightDate());
@@ -809,29 +808,24 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             for (int i = 0; i < 7; i++) {
                 dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
-                lineEntry.add(new Entry(i, 0));
+                lineEntry.add(new Entry(6 - i, 0));
             }
         }
 
-        float max = 0;
-        float min = 100;
-        max = Collections.max(lineEntry, (o1, o2) ->
+        int max, min;
+        max = (int) Collections.max(lineEntry, (o1, o2) ->
                 (int) (o1.getY() - o2.getY())).getY();
-
-        min = Collections.min(lineEntry, (o1, o2) ->
+        min = (int) Collections.min(lineEntry, (o1, o2) ->
                 (int) (o1.getY() - o2.getY())).getY();
 
         YAxis yAxis = mMLineChart.getAxisLeft();
-        max *= 1.2f;
-        max = Math.max(max, bean.getNormWeight());
-        min = Math.min(min, bean.getNormWeight());
         yAxis.setAxisMaximum(max);
         yAxis.setAxisMinimum(min);
 
-        LineDataSet set = (LineDataSet) mMLineChart.getData().getDataSetByIndex(0);
+        LineDataSet set = (LineDataSet) mMLineChart.getData().getDataSetByLabel("weight", false);
         if (set == null) {
             set = createSet();
-            mMLineChart.getData().addDataSet(set);
+            mMLineChart.getLineData().addDataSet(set);
         }
         Collections.reverse(lineEntry);
 //        Logger.d("体重数据：" + lineEntry.size());
@@ -840,7 +834,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         mMLineChart.getData().notifyDataChanged();
         mMLineChart.notifyDataSetChanged();
         mMLineChart.invalidate();
-        mMLineChart.setVisibleXRangeMaximum(7);
         mMLineChart.animateX(500);
 
         mTvWeightChart1.setText(dates.get(6));

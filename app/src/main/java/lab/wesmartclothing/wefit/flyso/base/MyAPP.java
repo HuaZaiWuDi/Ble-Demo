@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.base;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -79,11 +80,26 @@ public class MyAPP extends Application {
 //        });
     }
 
+    //获取进程名字
+    private String getCurrentProcessName() {
+        String currentProcName = "";
+        int pid = android.os.Process.myPid();
+        ActivityManager manager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
+            if (processInfo.pid == pid) {
+                currentProcName = processInfo.processName;
+                break;
+            }
+        }
+        return currentProcName;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
+        RxLogUtils.d("当前进程：" + getCurrentProcessName());
+        if (!this.getPackageName().equals(getCurrentProcessName())) return;
         QNBleManager.init(this);
         sMyAPP = this;
         initSonic();
@@ -194,7 +210,7 @@ public class MyAPP extends Application {
         PlatformConfig.setSinaWeibo(Key.SINA_KEY, Key.SINA_SECRET, "https://sns.whalecloud.com/sina2/callback");
 
 
-         }
+    }
 
 
     /**
