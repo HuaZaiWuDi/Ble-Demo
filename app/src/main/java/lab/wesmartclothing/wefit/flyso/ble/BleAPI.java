@@ -3,11 +3,21 @@ package lab.wesmartclothing.wefit.flyso.ble;
 import android.util.Log;
 
 import com.clj.fastble.utils.HexUtil;
+import com.vondear.rxtools.utils.RxDataUtils;
+import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.SPUtils;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.listener.BleChartChangeCallBack;
 import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
+import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
+import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 
 /**
  * Created by jk on 2018/5/19.
@@ -21,6 +31,24 @@ public class BleAPI {
         long time = System.currentTimeMillis() / 1000;
         byte[] bytes = ByteUtil.longToBytesLittle(time);
         return bytes;
+    }
+
+
+    public static void handleBleData(byte[] bytes) {
+        if (RxDataUtils.isEmpty(bytes)) return;
+        switch (bytes[2]) {
+            //读设备信息
+            case 0x09:
+                handleDeviceInfo(bytes);
+                break;
+            //读设备电压
+            case 0x0a:
+                handleVoltage(bytes);
+                break;
+            case 0x07:
+                RxBus.getInstance().post(new HeartRateChangeBus(bytes));
+                break;
+        }
     }
 
 
@@ -47,15 +75,14 @@ public class BleAPI {
      */
 
     /**
-     * @param heatState      加热状态
-     *                       heartSection   硬件心率区间
-     *                       heat           温度
-     *                       LED            灯光
-     *                       height         用户身高（cm）
-     *                       time           采集时长（s）
-     * @param bleChartChange 回调
+     * @param heatState 加热状态
+     *                  heartSection   硬件心率区间
+     *                  heat           温度
+     *                  LED            灯光
+     *                  height         用户身高（cm）
+     *                  time           采集时长（s）
      */
-    public static void syncSetting(boolean heatState, BleChartChangeCallBack bleChartChange) {
+    public static void syncSetting(boolean heatState) {
 //        0x40 0x11 0x01 0x01 0x41 0x42 0x43 0x440x45 0x02 0x20 0x03 0x32 0x04 0x01
 //        0x02 0x11 0x01
         int heat = 40;
@@ -117,7 +144,8 @@ public class BleAPI {
         }
 
         Log.d("【写配置】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
+        MyBleManager.Companion.getInstance().write(bytes);
+
     }
 
 
@@ -135,10 +163,10 @@ public class BleAPI {
         bytes[6] = time2Byte()[3];
 
         Log.d("【读配置】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
+//        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
-    public static void syncDeviceTime(BleChartChangeCallBack bleChartChange) {
+    public static void syncDeviceTime() {
 //        0x40 0x11 0x03 0x11 0x12 0x33 0x44
 //        0x02 0x11 0x03
         byte[] bytes = new byte[20];
@@ -150,8 +178,10 @@ public class BleAPI {
         bytes[5] = time2Byte()[2];
         bytes[6] = time2Byte()[3];
 
+
+        MyBleManager.Companion.getInstance().write(bytes);
+
         Log.d("【同步设备时间】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
 
@@ -165,7 +195,7 @@ public class BleAPI {
         bytes[2] = 0x04;
 
         Log.d("【同步本地数据包数】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
+//        BleTools.getInstance().write(bytes, bleChartChange);
     }
 
     public static void queryData() {
@@ -177,7 +207,7 @@ public class BleAPI {
         bytes[2] = 0x05;
 
         Log.d("【请求包】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().writeNo(bytes);
+//        BleTools.getInstance().writeNo(bytes);
     }
 
 
@@ -200,7 +230,7 @@ public class BleAPI {
         bytes[6] = time[3];
 
         Log.d("【反馈数据】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().writeNo(bytes);
+//        BleTools.getInstance().writeNo(bytes);
     }
 
     //notify
@@ -217,11 +247,12 @@ public class BleAPI {
         bytes[2] = 0x08;
 
         Log.d("【结束活动反馈数据】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().writeNo(bytes);
+//        BleTools.getInstance().writeNo(bytes);
+        MyBleManager.Companion.getInstance().write(bytes);
     }
 
     //读设备信息
-    public static void readDeviceInfo(BleChartChangeCallBack bleChartChange) {
+    public static void readDeviceInfo() {
         /**
          * typedef struct
          {
@@ -243,18 +274,52 @@ public class BleAPI {
         bytes[2] = 0x09;
 
         Log.d("【读设备信息】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
+        MyBleManager.Companion.getInstance().write(bytes);
     }
 
-    public static void getVoltage(BleChartChangeCallBack bleChartChange) {
+
+    private static void handleDeviceInfo(byte[] data) {
+        //021309 010203000400050607090a0b0c10111213
+        String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
+        DeviceVersionBean versionBean = new DeviceVersionBean();
+        versionBean.setCategory(data[3] & 0xFF);
+        versionBean.setModelNo(data[4] & 0xFF);
+        versionBean.setManufacture(ByteUtil.bytesToIntLittle2(new byte[]{data[5], data[6]}));
+        versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
+        versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
+
+        RxBus.getInstance().postSticky(versionBean);
+
+        RxLogUtils.d("当前版本：" + versionBean.toString());
+        //设备统计
+        DeviceLink deviceLink = new DeviceLink();
+        deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
+        deviceLink.setFirmwareVersion(firmwareVersion);
+        deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
+        deviceLink.deviceLink(deviceLink);
+    }
+
+
+    public static void getVoltage() {
         byte[] bytes = new byte[20];
         bytes[0] = 0x40;
         bytes[1] = 0x11;
         bytes[2] = 0x0a;
 
         Log.d("【读设备电压】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, bleChartChange);
+        MyBleManager.Companion.getInstance().write(bytes);
     }
+
+    private static void handleVoltage(byte[] data) {
+        int voltage = ByteUtil.bytesToIntLittle2(new byte[]{data[3], data[4]});
+        RxLogUtils.d("电压：" + voltage);
+        VoltageToPower toPower = new VoltageToPower();
+        int capacity = toPower.getBatteryCapacity(voltage / 1000f);
+        double time = toPower.canUsedTime(voltage / 1000f, false);
+        RxLogUtils.d("capacity:" + capacity + "time：" + time);
+        RxBus.getInstance().postSticky(new DeviceVoltageBus(voltage, capacity, time));
+    }
+
 
     public static void clearStep() {
         byte[] bytes = new byte[20];
@@ -263,9 +328,7 @@ public class BleAPI {
         bytes[2] = 0x0b;
 
         Log.d("【清除步数】", HexUtil.encodeHexStr(bytes));
-        BleTools.getInstance().write(bytes, data -> {
-
-        });
+        MyBleManager.Companion.getInstance().write(bytes);
     }
 
 

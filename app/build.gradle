@@ -101,12 +101,21 @@ android {
         targetCompatibility = '1.8'
     }
 
+    //修改apk名字
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            // apk_渠道名-版本号-版本名称-编译时间.apk
+            outputFileName = "${variant.flavorName}-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
+                    "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
+        }
+    }
+
+
     // productFlavors 定义了一个应用的自定义构建版本
     //一个单一的项目可以同时定义多个不同的 flavor 来改变应用的输出。
     // productFlavors 这个概念是为了解决不同的版本之间的差异非常小的情况，通常用于区分同一个应用的不同渠道/客户等，可包含少量业务功能差别。
     // productFlavors 中的 flavor 不能跟 buildType 中的一样,否则会报: "ProductFlavor names cannot collide with BuildType names"
     productFlavors {
-
         //发布版本,莱特妮丝智瘦
         flavors_lightness {
             dimension = "default"
@@ -131,16 +140,6 @@ android {
             buildConfigField "String", "BUGLY_KEY", '"dd2f9fff3f"'
             buildConfigField "String", "URL_RELEASE", '"https://ltns.wesmartclothing.com/mix/"'
             buildConfigField "String", "COMPANY_KEY", '"Lightness"'
-
-            //修改apk名字
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    // apk_渠道名-版本号-版本名称-编译时间.apk
-                    outputFileName = "TimetofitLightness-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
-                            "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
-                }
-            }
-
         }
 
         //发布版本, 智享瘦
@@ -166,15 +165,15 @@ android {
                                     qqappid      : '1106924585',//QQ分享
             ]
             signingConfig signingConfigs.release
-            //修改apk名字
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    // apk_渠道名-版本号-版本名称-编译时间.apk
-                    outputFileName = "TimetofitWeSmart-v${defaultConfig.versionName}" + "c${defaultConfig.versionCode}" +
-                            "-${new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))}-${variant.buildType.name}.apk"
-                }
-            }
         }
+
+        flavors_zouyun {
+            applicationId "com.zouyun.wisenfit"
+            buildConfigField "String", "COMPANY_KEY", '"Zouyun"'
+
+            signingConfig signingConfigs.release
+        }
+
     }
 
 

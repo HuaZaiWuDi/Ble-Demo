@@ -56,7 +56,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
@@ -76,9 +76,9 @@ import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodRecommend;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.RecipesActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanDetailsActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanMatterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity;
@@ -907,14 +907,14 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
                 break;
             case R.id.reWeigh:
-                if (!BleTools.getBleManager().isBlueEnable()) {
+                if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
                     showOpenBlueTooth();
                 } else {
                     RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
                 }
                 break;
             case R.id.btn_goBind_scale:
-                if (!BleTools.getBleManager().isBlueEnable()) {
+                if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
                     showOpenBlueTooth();
                 } else {
                     if (getString(R.string.goBind).equals(mBtnGoBindScale.getText().toString())) {
@@ -970,14 +970,14 @@ public class SlimmingFragment extends BaseAcFragment {
     //跳转运动界面钱的判断
     private void skipSportAc(boolean isPlan, String key) {
         //进入实时运动界面，定制课程
-        if (!BleTools.getBleManager().isBlueEnable()) {
+        if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
             showOpenBlueTooth();
-        } else if (!BleTools.getInstance().isConnect()) {
+        } else if (!MyBleManager.Companion.getInstance().isConnect()) {
             tipDialog.show(getString(R.string.connecting), 3000);
             mActivity.startService(new Intent(mContext, BleService.class));
             if (tipDialog.getTipDialog() != null) {
                 tipDialog.getTipDialog().setOnDismissListener(dialogInterface -> {
-                    if (BleTools.getInstance().isConnect()) {
+                    if (MyBleManager.Companion.getInstance().isConnect()) {
                         if (isPlan) {
                             if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                                 PlanSportingActivity.start(mContext, bean, key);
@@ -1072,7 +1072,7 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        BleTools.getBleManager().enableBluetooth();
+                        MyBleManager.Companion.getInstance().enableBLE();
                     }
                 });
         rxDialog.show();

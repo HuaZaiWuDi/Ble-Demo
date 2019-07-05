@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
-import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -26,8 +26,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
@@ -98,7 +97,7 @@ public class AboutUpdateDialog extends RxDialog {
 
         setOnDismissListener(dialog -> {
             DfuServiceListenerHelper.unregisterProgressListener(mContext, listenerAdapter);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
         });
     }
 
@@ -146,25 +145,28 @@ public class AboutUpdateDialog extends RxDialog {
 
 
     private void startMyDFU(File o) {
-        if (!BleTools.getInstance().isConnect()) {
-            mTvUpdateTip.setText("未连接设备，请连上设备再重试");
-            setCanceledOnTouchOutside(true);
-            return;
-        }
-
         if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
             mTvUpdateTip.setText("升级文件有误");
             setCanceledOnTouchOutside(true);
             return;
         }
 
-        final DfuServiceInitiator starter = new DfuServiceInitiator(BleTools.getInstance().getBleDevice().getMac())
-                .setDeviceName(BleTools.getInstance().getBleDevice().getName());
+        BluetoothDevice bluetoothDevice = MyBleManager.Companion.getInstance().getBluetoothDevice();
+        if (bluetoothDevice == null) {
+            mTvUpdateTip.setText("设备未连接");
+            setCanceledOnTouchOutside(true);
+            return;
+        }
+
+        final DfuServiceInitiator starter = new DfuServiceInitiator(bluetoothDevice.getAddress())
+                .setDeviceName(bluetoothDevice.getName());
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
 //        starter.setZip(R.raw.nrf52832_xxaa_app_7);
         starter.setZip(o.getPath());
         starter.start(mContext, DfuService.class);
 
+        MyBleManager.Companion.getInstance().disConnect();
+        MyBleManager.Companion.setDFUStarting(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DfuServiceInitiator.createDfuNotificationChannel(mContext);
         }
@@ -201,8 +203,7 @@ public class AboutUpdateDialog extends RxDialog {
         public void onDfuAborted(String deviceAddress) {
             super.onDfuAborted(deviceAddress);
             RxLogUtils.d("onDfuAborted：" + deviceAddress);
-
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
             mTvUpdateTip.setText("升级中断,请重试");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
@@ -220,7 +221,7 @@ public class AboutUpdateDialog extends RxDialog {
             super.onDfuProcessStarting(deviceAddress);
             RxLogUtils.d("onDfuProcessStarting");
             mTvUpdateTip.setText("正在升级，请稍后...");
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, true);
+
         }
 
         @Override
@@ -238,7 +239,7 @@ public class AboutUpdateDialog extends RxDialog {
         @Override
         public void onDfuCompleted(String deviceAddress) {
             super.onDfuCompleted(deviceAddress);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
             RxLogUtils.d("onDfuCompleted");
             mTvUpdateTip.setText("升级完成");
             setCanceledOnTouchOutside(true);
@@ -262,7 +263,7 @@ public class AboutUpdateDialog extends RxDialog {
         public void onError(String deviceAddress, int error, int errorType, String message) {
             super.onError(deviceAddress, error, errorType, message);
             RxLogUtils.e("onError:" + message);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
             mTvUpdateTip.setText("升级失败,请重试");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)

@@ -797,9 +797,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     lineEntry.add(new Entry(6 - i, 0));
                 }
             }
-            RxTextUtils.getBuilder((isWeight ? list.get(0).getWeight() : list.get(0).getBodyFat()) + "")
-                    .append("\t" + (isWeight ? "kg" : "%")).setProportion(0.5f)
-                    .into(mTvCurrentWeight);
         } else {
             RxTextUtils.getBuilder(0 + "")
                     .append("\t" + (isWeight ? "kg" : "%")).setProportion(0.5f)
@@ -812,15 +809,16 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             }
         }
 
-        int max, min;
-        max = (int) Collections.max(lineEntry, (o1, o2) ->
-                (int) (o1.getY() - o2.getY())).getY();
-        min = (int) Collections.min(lineEntry, (o1, o2) ->
-                (int) (o1.getY() - o2.getY())).getY();
+        RxTextUtils.getBuilder((String.format("%.1f", lineEntry.get(0).getY())))
+                .append("\t" + (isWeight ? "kg" : "%")).setProportion(0.5f)
+                .into(mTvCurrentWeight);
 
-        YAxis yAxis = mMLineChart.getAxisLeft();
-        yAxis.setAxisMaximum(max);
-        yAxis.setAxisMinimum(min);
+        int max = (int) Collections.max(lineEntry, (o1, o2) ->
+                (int) (o1.getY() - o2.getY())).getY();
+        if (max == 0) {
+            YAxis yAxis = mMLineChart.getAxisLeft();
+            yAxis.setAxisMaximum(10);
+        }
 
         LineDataSet set = (LineDataSet) mMLineChart.getData().getDataSetByLabel("weight", false);
         if (set == null) {

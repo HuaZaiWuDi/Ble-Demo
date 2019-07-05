@@ -104,8 +104,6 @@ public class MainActivity extends BaseALocationActivity {
     protected void initViews() {
         super.initViews();
         initView();
-
-
     }
 
     @Override
@@ -150,7 +148,6 @@ public class MainActivity extends BaseALocationActivity {
                                 }
                             });
                 });
-
     }
 
     /**

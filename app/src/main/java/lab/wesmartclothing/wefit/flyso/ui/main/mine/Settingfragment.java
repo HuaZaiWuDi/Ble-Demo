@@ -25,7 +25,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -144,7 +144,7 @@ public class Settingfragment extends BaseActivity {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setTitle(getString(R.string.logout)+"?")
+                .setTitle(getString(R.string.logout) + "?")
                 .setSure(getString(R.string.signOut))
                 .setSureListener(new View.OnClickListener() {
                     @Override
@@ -170,7 +170,7 @@ public class Settingfragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
                         SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
-                        BleTools.getInstance().disConnect();
+                        MyBleManager.Companion.getInstance().disConnect();
                         QNBleManager.getInstance().disConnectDevice();
                         try {
                             RxCache.getDefault().clear2();

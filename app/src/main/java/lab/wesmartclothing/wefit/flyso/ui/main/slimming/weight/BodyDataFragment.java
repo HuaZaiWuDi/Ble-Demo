@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -89,6 +90,14 @@ public class BodyDataFragment extends BaseActivity {
     private double[] bodyValue = new double[13];
     private boolean goBack = false;
 
+
+    public static void start(Context context, String gid, boolean goBack) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Key.BUNDLE_GO_BCAK, goBack);
+        bundle.putSerializable(Key.BUNDLE_DATA_GID, gid);
+        RxActivityUtils.skipActivity(context, BodyDataFragment.class, bundle);
+    }
+
     @Override
     protected int layoutId() {
         return R.layout.fragment_body_data;
@@ -118,12 +127,12 @@ public class BodyDataFragment extends BaseActivity {
         gid = bundle.getString(Key.BUNDLE_DATA_GID, "");
         goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
 
-        if (weightInfoBean != null) {
-            notifyData(weightInfoBean);
-            gid = weightInfoBean.getGid();
-        } else {
-            initData();
-        }
+//        if (weightInfoBean != null) {
+//            notifyData(weightInfoBean);
+//            gid = weightInfoBean.getGid();
+//        } else {
+        initData();
+//        }
     }
 
     @Override

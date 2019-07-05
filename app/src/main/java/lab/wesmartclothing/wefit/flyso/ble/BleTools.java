@@ -41,7 +41,7 @@ public class BleTools {
     private static final String TAG = "【BleTools】";
 
     //燃脂衣主UUID
-    public BleTools() {
+    private BleTools() {
 
     }
 
@@ -101,7 +101,7 @@ public class BleTools {
         @Override
         public void run() {
             Log.e(TAG, "重新写");
-            write(bytes, bleChartChange);
+//            write(bytes, bleChartChange);
         }
     };
 

@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.Manifest;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -31,7 +30,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -39,7 +38,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.WelcomeActivity;
@@ -93,11 +91,14 @@ public class WeightAddFragment extends BaseActivity {
         mTvTip.setText(R.string.pleaseWeigh);
         mTvTitle.setText(R.string.scaleWeight);
 
+
+        if (!MyBleManager.Companion.getInstance().isBLEEnabled())
+            MyBleManager.Companion.getInstance().enableBLE();
+
         if (!QNBleManager.getInstance().isConnect()) {
-            startService(new Intent(mContext, BleService.class));
+            QNBleManager.getInstance().scanBle();
         }
-        if (!BleTools.getBleManager().isBlueEnable())
-            BleTools.getBleManager().enableBluetooth();
+
     }
 
     @Override
@@ -244,9 +245,7 @@ public class WeightAddFragment extends BaseActivity {
                             RxBus.getInstance().post(bean);
                             onBackPressed();
                         } else {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Key.BUNDLE_DATA_GID, s);
-                            RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
+                            BodyDataFragment.start(mContext, s, false);
                         }
                     }
 

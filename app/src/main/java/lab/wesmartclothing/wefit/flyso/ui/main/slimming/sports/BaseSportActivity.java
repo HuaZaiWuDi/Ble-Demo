@@ -2,8 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -56,7 +54,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -178,8 +176,11 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         RxDialogSureCancel runTipDialog = new RxDialogSureCancel(mContext)
                 .setTitle(getString(R.string.tip))
                 .setContent(getString(R.string.runTip))
+                .setSureListener(v -> {
+                })
                 .setCancel(getString(R.string.NoReminders))
-                .setCancelListener(v -> SPUtils.put(SPKey.SP_RUN_TIP_DIALOG_COUNT, 10));
+                .setCancelListener(v ->
+                        SPUtils.put(SPKey.SP_RUN_TIP_DIALOG_COUNT, 10));
         runTipDialog.getTvContent().setGravity(Gravity.START);
 
         int count = SPUtils.getInt(SPKey.SP_RUN_TIP_DIALOG_COUNT, 0);
@@ -324,20 +325,18 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
      * 切换是否加热
      */
     private void toggleHeat(boolean isHeat) {
-        BleAPI.syncSetting(isHeat, data -> mSwHeat.setOpened(isHeat));
+        BleAPI.syncSetting(isHeat);
+        mSwHeat.setOpened(isHeat);
     }
 
 
     private void initTopBar() {
         mQMUIAppBarLayout.setTitle(currentMode);
-        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(
-                !BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC)) ?
-                        R.string.unBind : BleTools.getInstance().isConnect() ?
-                        R.string.connected : R.string.connecting), R.id.tv_connect);
+        btn_Connect = mQMUIAppBarLayout.addRightTextButton(getString(R.string.connected), R.id.tv_connect);
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
         btn_Connect.setOnClickListener(view -> {
-            if (!BleTools.getInstance().isConnect()) {
+            if (!MyBleManager.Companion.getInstance().isConnect()) {
                 RxToast.normal(getString(R.string.connecting), 2000);
             }
         });
@@ -478,7 +477,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
      * 尝试继续运动，继续运动：提示开启蓝牙，并重连10秒,结束运动：直接结束
      */
     private void trySporting() {
-        if (BleTools.getInstance().isConnect()) {
+        if (MyBleManager.Companion.getInstance().isConnect()) {
             pause = !pause;
             startOrPauseSport();
             speakAdd(pause ? getString(R.string.speech_sportPause) : getString(R.string.speech_sportPlay));
@@ -490,9 +489,8 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
                     .setContent(getString(R.string.bleDeviceDisconnected))
                     .setCancel(getString(R.string.continueRun))
                     .setCancelListener(view -> {
-                        if (!BleTools.getBleManager().isBlueEnable()) {
-                            BleTools.getBleManager().enableBluetooth();
-                        }
+                        if (!MyBleManager.Companion.getInstance().isBLEEnabled())
+                            MyBleManager.Companion.getInstance().enableBLE();
                     })
                     .setSure(getString(R.string.finishRun))
                     .setSureListener(v -> sportFinish());
@@ -595,11 +593,6 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     @Override
     protected void onStop() {
         super.onStop();
-        RxLogUtils.d("运动退回后台");
-        Intent intent = new Intent(this, BleService.class);
-        intent.putExtra("APP_BACKGROUND", true);
-
-        ContextCompat.startForegroundService(mContext, intent);
 
         if (!pause) {
             stopTime = System.currentTimeMillis();

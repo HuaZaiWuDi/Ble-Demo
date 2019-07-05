@@ -27,8 +27,10 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -79,7 +81,6 @@ public class DeviceFragment extends BaseActivity {
     Unbinder unbinder;
 
 
-
     private List<DeviceListbean.ListBean> beanList;
 
 
@@ -105,6 +106,7 @@ public class DeviceFragment extends BaseActivity {
         initData();
         notifyData();
         initRxBus();
+        BleAPI.getVoltage();
     }
 
 
@@ -226,7 +228,7 @@ public class DeviceFragment extends BaseActivity {
                             SPUtils.remove(SPKey.SP_scaleMAC);
                         } else if (BleKey.TYPE_CLOTHING.equals(position)) {
                             SPUtils.remove(SPKey.SP_clothingMAC);
-                            BleTools.getInstance().disConnect();
+                            MyBleManager.Companion.getInstance().disConnect();
                         }
                         notifyData();
                         RxBus.getInstance().post(new RefreshMe());

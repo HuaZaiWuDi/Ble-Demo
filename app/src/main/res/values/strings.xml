@@ -4,6 +4,7 @@
     <string name="nav_find">发现</string>
     <string name="nav_record">记录</string>
     <string name="nav_ranking">排行</string>
+    <string name="nav_my">我的</string>
     <string name="heat">热量</string>
     <string name="sportsTime">时长</string>
     <string name="cancel">取消</string>
@@ -111,8 +112,8 @@
     <string-array name="tab_text">
         <item>@string/nav_slimming</item>
         <item>@string/nav_record</item>
-        <item>@string/nav_find</item>
         <item>@string/nav_ranking</item>
+        <item>@string/nav_my</item>
     </string-array>
 
     <string-array name="add_food">

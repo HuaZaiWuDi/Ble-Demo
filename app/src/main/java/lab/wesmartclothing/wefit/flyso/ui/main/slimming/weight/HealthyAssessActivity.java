@@ -16,8 +16,8 @@ import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.entity.HealthInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.Healthy;
-import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.BodyDataUtil;
@@ -104,14 +104,14 @@ public class HealthyAssessActivity extends BaseActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
-        HealthyInfoBean bean = (HealthyInfoBean) bundle.getSerializable(Key.BUNDLE_DATA);
+        HealthInfoBean bean = (HealthInfoBean) bundle.getSerializable(Key.BUNDLE_DATA);
         if (bean == null) return;
 
         BodyDataUtil bodyDataUtil = new BodyDataUtil();
 
-        mProBodyAge.setUpDownText(bean.getBodyAge() + "", new String[]{"20", "30", "40", "50"});
-        mProBodyAge.setProgress(bean.getBodyAge());
-        mTvBodyValueBodyAge.setText(bean.getBodyAge() + getString(R.string.age));
+        mProBodyAge.setUpDownText(bean.getMetabolicAge() + "", new String[]{"20", "30", "40", "50"});
+        mProBodyAge.setProgress(bean.getMetabolicAge());
+        mTvBodyValueBodyAge.setText(bean.getMetabolicAge() + getString(R.string.age));
 
         UserInfo userInfo = MyAPP.getgUserInfo();
 
@@ -130,10 +130,10 @@ public class HealthyAssessActivity extends BaseActivity {
         healthy.setLabels(new String[]{getString(R.string.low), getString(R.string.normal), getString(R.string.high), getString(R.string.seriouslyHigh)});
         mProBodyFit.setUpDownText(healthy.getSectionLabels(), healthy.getLabels());
         mProBodyFit.setColors(healthy.getColors());
-        mProBodyFit.setProgress(bodyDataUtil.transformation(healthy, bean.getBodyFat()));
-        String statusStr = (String) bodyDataUtil.checkStatus(bean.getBodyFat(), healthy)[0];
-        Integer stateColor = (Integer) bodyDataUtil.checkStatus(bean.getBodyFat(), healthy)[1];
-        mTvBodyValueBodyFit.setText(bean.getBodyFat() + " %");
+        mProBodyFit.setProgress(bodyDataUtil.transformation(healthy, bean.getBodyFatRate()));
+        String statusStr = (String) bodyDataUtil.checkStatus(bean.getBodyFatRate(), healthy)[0];
+        Integer stateColor = (Integer) bodyDataUtil.checkStatus(bean.getBodyFatRate(), healthy)[1];
+        mTvBodyValueBodyFit.setText(bean.getBodyFatRate() + " %");
         mTvBodyValueBodyFit.setTextColor(stateColor);
 
         mBtnStatusBodyFit.setText(statusStr);
@@ -167,10 +167,10 @@ public class HealthyAssessActivity extends BaseActivity {
         healthy3.setLabels(new String[]{getString(R.string.normal), getString(R.string.high), getString(R.string.seriouslyHigh)});
         mProVisceralFat.setUpDownText(healthy3.getSectionLabels(), healthy3.getLabels());
         mProVisceralFat.setColors(healthy3.getColors());
-        mProVisceralFat.setProgress(bodyDataUtil.transformation(healthy3, bean.getVisfat()));
-        statusStr = (String) bodyDataUtil.checkStatus(bean.getVisfat(), healthy3)[0];
-        stateColor = (Integer) bodyDataUtil.checkStatus(bean.getVisfat(), healthy3)[1];
-        mTvBodyValueVisceralFat.setText(bean.getVisfat() + " %");
+        mProVisceralFat.setProgress(bodyDataUtil.transformation(healthy3, bean.getVisceralFat()));
+        statusStr = (String) bodyDataUtil.checkStatus(bean.getVisceralFat(), healthy3)[0];
+        stateColor = (Integer) bodyDataUtil.checkStatus(bean.getVisceralFat(), healthy3)[1];
+        mTvBodyValueVisceralFat.setText(bean.getVisceralFat() + " %");
         mTvBodyValueVisceralFat.setTextColor(stateColor);
 
         mBtnStatusVisceralFat.setText(statusStr);

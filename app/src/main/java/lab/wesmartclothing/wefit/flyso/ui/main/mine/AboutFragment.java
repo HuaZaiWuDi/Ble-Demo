@@ -22,6 +22,7 @@ import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,8 +31,6 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
-import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.util.ByteUtil;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -95,24 +94,14 @@ public class AboutFragment extends BaseActivity {
         mTvClothingVersion.setText(getString(R.string.firmwareVersion, "--"));
         mTvAppName.setText(getString(R.string.appName) + "APP");
 
-
-        BleAPI.readDeviceInfo(data -> {
-            //021309 010203000400050607090a0b0c10111213
-            String firmwareVersion = data[9] + "." + data[10] + "." + data[11];
-            DeviceVersionBean versionBean = new DeviceVersionBean();
-            versionBean.setCategory(data[3] & 0xFF);
-            versionBean.setModelNo(data[4] & 0xFF);
-            versionBean.setManufacture(ByteUtil.bytesToIntLittle2(new byte[]{data[5], data[6]}));
-            versionBean.setHwVersion(ByteUtil.bytesToIntLittle2(new byte[]{data[7], data[8]}));
-            versionBean.setFirmwareVersion(firmwareVersion);//当前固件版本
-
-
-            currentVersion = versionBean.getFirmwareVersion();
-            mTvClothingVersion.setText(getString(R.string.firmwareVersion, currentVersion));
-            checkFirmwareVersion(versionBean);
-        });
-
-
+        RxBus.getInstance().registerSticky(DeviceVersionBean.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(versionBean -> {
+                    RxLogUtils.d("硬件版本号");
+                    currentVersion = versionBean.getFirmwareVersion();
+                    mTvClothingVersion.setText(getString(R.string.firmwareVersion, currentVersion));
+                    checkFirmwareVersion(versionBean);
+                });
     }
 
     private void initTopBar() {

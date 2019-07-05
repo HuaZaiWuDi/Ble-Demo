@@ -45,7 +45,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AlthDataBean;
 import lab.wesmartclothing.wefit.flyso.entity.AlthDataListBean;
-import lab.wesmartclothing.wefit.flyso.entity.AthleticsInfo;
 import lab.wesmartclothing.wefit.flyso.entity.DataListBean;
 import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -140,10 +139,16 @@ public class SmartClothingFragment extends BaseActivity {
         adapter = new BaseQuickAdapter<AlthDataBean, BaseViewHolder>(R.layout.item_sporting_list) {
             @Override
             protected void convert(BaseViewHolder helper, AlthDataBean item) {
-                String timeSection = RxFormat.setFormatDate(item.getStartTime(), RxFormat.Date_Time) + "-"
-                        + RxFormat.setFormatDate(item.getEndTime(), RxFormat.Date_Time);
+                String timeSection = "";
+                if (GroupType.TYPE_DAYS.equals(groupType)) {
+                    timeSection = RxFormat.setFormatDate(item.getStartTime(), RxFormat.Date_Time) + "-"
+                            + RxFormat.setFormatDate(item.getEndTime(), RxFormat.Date_Time);
+                } else {
+                    timeSection = RxFormat.setFormatDate(item.getStartTime(), RxFormat.Date);
+                }
 
-                SpannableStringBuilder timeBuilder = RxTextUtils.getBuilder(getString(R.string.timeSlot) + "\n")
+                SpannableStringBuilder timeBuilder = RxTextUtils.getBuilder(GroupType.TYPE_DAYS.equals(groupType) ?
+                        getString(R.string.timeSlot) : "运动日期" + "\n")
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                         .append(timeSection)
                         .create();
@@ -162,14 +167,15 @@ public class SmartClothingFragment extends BaseActivity {
             }
         };
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            Bundle bundle = new Bundle();
-            AthleticsInfo.ListBean.AthlListBean item = (AthleticsInfo.ListBean.AthlListBean) adapter.getItem(position % adapter.getData().size());
-            if (item == null) return;
-            bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
-            bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
-            bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
-            RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
-
+            if (GroupType.TYPE_DAYS.equals(groupType)) {
+                Bundle bundle = new Bundle();
+                AlthDataBean item = (AlthDataBean) adapter.getItem(position % adapter.getData().size());
+                if (item == null) return;
+                bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
+                bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getDataFlag() == 1);
+                bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
+                RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
+            }
         });
         mRecyclerSporting.setAdapter(adapter);
     }
@@ -209,7 +215,7 @@ public class SmartClothingFragment extends BaseActivity {
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .compose(RxCache.getDefault().transformObservable("athlFetchDaysOrMonthRecordList" + recordDate + groupType,
-                        String.class, CacheStrategy.firstCacheTimeout(5 * 60 * 1000)))
+                        String.class, CacheStrategy.firstCacheTimeout(60 * 1000)))
                 .map(new CacheResult.MapFunc())
                 .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(new RxNetSubscriber<String>() {

@@ -12,13 +12,13 @@ import java.util.List;
  */
 public class WeightGroupListBean extends GroupRecordBean {
 
-    private List<HealthyInfoBean> list;
+    private List<HealthInfoBean> list;
 
-    public List<HealthyInfoBean> getList() {
+    public List<HealthInfoBean> getList() {
         return list;
     }
 
-    public void setList(List<HealthyInfoBean> list) {
+    public void setList(List<HealthInfoBean> list) {
         this.list = list;
     }
 }

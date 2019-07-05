@@ -12,14 +12,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
-import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
@@ -41,8 +40,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
+import lab.wesmartclothing.wefit.flyso.entity.HealthInfoBean;
 import lab.wesmartclothing.wefit.flyso.entity.WeightGroupListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -106,15 +104,16 @@ public class WeightRecordFragment extends BaseActivity {
     ImageView mImgSwitchDate;
 
 
-    private HealthyInfoBean currentWeightInfo;
+    private HealthInfoBean currentWeightInfo;
     //传递数据给我目标详情界面
-    private List<HealthyInfoBean> list;
+    private List<HealthInfoBean> list;
     private Bundle bundle = new Bundle();
     private int pageNum = 1;
     private BaseQuickAdapter dayWeightAdapter;
     private @GroupType
     String groupType = GroupType.TYPE_DAYS;
     private boolean mIsWeight = true;
+    private boolean needRefresh = true;//通过flag判断是否需要刷新数据
 
     @Override
     protected int layoutId() {
@@ -152,27 +151,23 @@ public class WeightRecordFragment extends BaseActivity {
 
     private void initRecyclerHistoryWeight() {
         mRecyclerHistoryWeight.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
-        dayWeightAdapter = new BaseQuickAdapter<HealthyInfoBean, BaseViewHolder>(R.layout.item_today_weight) {
+        dayWeightAdapter = new BaseQuickAdapter<HealthInfoBean, BaseViewHolder>(R.layout.item_today_weight) {
 
             @Override
-            protected void convert(BaseViewHolder helper, HealthyInfoBean item) {
+            protected void convert(BaseViewHolder helper, HealthInfoBean item) {
                 TextView view = helper.getView(R.id.tv_weight);
-                RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(item.getWeight(), 1))
+                RxTextUtils.getBuilder(String.format("%.1f", item.getWeight()))
                         .append(" kg").setProportion(0.5f)
                         .into(view);
-                helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getMeasureTime(), "HH:mm"))
+                helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getCreateTime(), "HH:mm"))
                         .setGone(R.id.img_weightFlag, item.getHealthScore() != 0);
-
-                //TODO 通过分数判断体重是否合理
-
             }
         };
         mRecyclerHistoryWeight.setAdapter(dayWeightAdapter);
         dayWeightAdapter.setOnItemClickListener((adapter, view, position) -> {
-            HealthyInfoBean weightInfoBean = (HealthyInfoBean) adapter.getItem(position);
-            bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
-            bundle.putSerializable(Key.BUNDLE_DATA, weightInfoBean);
-            RxActivityUtils.skipActivity(mContext, BodyDataFragment.class, bundle);
+            HealthInfoBean weightInfoBean = (HealthInfoBean) adapter.getItem(position);
+            if (weightInfoBean != null)
+                BodyDataFragment.start(mContext, weightInfoBean.getGid(), true);
         });
     }
 
@@ -204,11 +199,11 @@ public class WeightRecordFragment extends BaseActivity {
                     @Override
                     protected void _onNext(RefreshSlimming refreshSlimming) {
                         RxLogUtils.d("刷新数据");
+                        needRefresh = true;
                         pageNum = 1;
                         initData();
                     }
                 });
-
     }
 
     private void showHistoryWeightData(final List<QNScaleStoreData> mList) {
@@ -237,7 +232,7 @@ public class WeightRecordFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        WeightGroupListBean bean = JSON.parseObject(s, WeightGroupListBean.class);
+                        WeightGroupListBean bean = new Gson().fromJson(s, WeightGroupListBean.class);
                         if (RxDataUtils.isEmpty(bean.getList())) {
                             return;
                         }
@@ -258,13 +253,14 @@ public class WeightRecordFragment extends BaseActivity {
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .compose(RxCache.getDefault().transformObservable("fetchDaysOrMonthRecordList" + currentDate + groupType,
-                        String.class, CacheStrategy.firstCacheTimeout(5 * 60 * 1000)))
+                        String.class, needRefresh ? CacheStrategy.firstRemote() : CacheStrategy.firstCacheTimeout(60 * 1000)))
                 .map(new CacheResult.MapFunc())
                 .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        WeightGroupListBean bean = JSON.parseObject(s, WeightGroupListBean.class);
+                        needRefresh = false;
+                        WeightGroupListBean bean = new Gson().fromJson(s, WeightGroupListBean.class);
                         dayWeightAdapter.setNewData(bean.getList());
                     }
 
@@ -277,7 +273,7 @@ public class WeightRecordFragment extends BaseActivity {
                 });
     }
 
-    private void updateUI(List<HealthyInfoBean> infoBeanList) {
+    private void updateUI(List<HealthInfoBean> infoBeanList) {
         if (pageNum == 1) {
             list = infoBeanList;
             Collections.reverse(list);
@@ -290,11 +286,11 @@ public class WeightRecordFragment extends BaseActivity {
             List<Unit> lines_weight = new ArrayList<>();
             List<Unit> lines_bodyFat = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
-                HealthyInfoBean itemBean = list.get(i);
+                HealthInfoBean itemBean = list.get(i);
 
-                String date = RxFormat.setFormatDate(itemBean.getWeightDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
+                String date = RxFormat.setFormatDate(itemBean.getDateNo(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
                 Unit unit_weight = new Unit((float) itemBean.getWeight(), date);
-                Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), "");
+                Unit unit_bodyFat = new Unit((float) itemBean.getBodyFatRate(), date);
                 lines_weight.add(unit_weight);
                 lines_bodyFat.add(unit_bodyFat);
             }
@@ -309,10 +305,10 @@ public class WeightRecordFragment extends BaseActivity {
         List<Unit> lines_weight = new ArrayList<>();
         List<Unit> lines_bodyFat = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            HealthyInfoBean itemBean = list.get(i);
-            String date = RxFormat.setFormatDate(itemBean.getWeightDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
+            HealthInfoBean itemBean = list.get(i);
+            String date = RxFormat.setFormatDate(itemBean.getDateNo(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
             Unit unit_weight = new Unit((float) itemBean.getWeight(), date);
-            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFat(), "");
+            Unit unit_bodyFat = new Unit((float) itemBean.getBodyFatRate(), date);
             lines_weight.add(unit_weight);
             lines_bodyFat.add(unit_bodyFat);
         }
@@ -330,14 +326,14 @@ public class WeightRecordFragment extends BaseActivity {
 
         mSuitlines.setLineChartSelectItemListener(valueX -> {
             if (!list.isEmpty()) {
-                mTvCurWeight.setText(RxFormatValue.fromat4S5R(list.get(valueX).getWeight(), 1));
-                mTvBodyFat.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBodyFat(), 1));
-                mTvMuscle.setText(RxFormatValue.fromat4S5R((list.get(valueX).getSinew() / list.get(valueX).getWeight() * 100f), 1));
-                mTvBmi.setText(RxFormatValue.fromat4S5R(list.get(valueX).getBmi(), 1));
-                mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getWeightDate(), RxFormat.Date_CH));
+                mTvCurWeight.setText(String.format("%.1f", list.get(valueX).getWeight()));
+                mTvBodyFat.setText(String.format("%.1f", list.get(valueX).getBodyFatRate()));
+                mTvMuscle.setText(String.format("%.1f", (list.get(valueX).getMuscleMass() / list.get(valueX).getWeight() * 100f)));
+                mTvBmi.setText(String.format("%.1f", list.get(valueX).getBmi()));
+                mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getDateNo(), RxFormat.Date_CH));
                 currentWeightInfo = list.get(valueX);
 
-                fetchOneDayWeightList(list.get(valueX).getWeightDate());
+                fetchOneDayWeightList(list.get(valueX).getDateNo());
             }
         });
 
@@ -352,18 +348,6 @@ public class WeightRecordFragment extends BaseActivity {
 
             }
         });
-    }
-
-    private void checkStatus() {
-        if (!BleTools.getBleManager().isBlueEnable()) {
-            mLayoutStrongTip.setVisibility(View.VISIBLE);
-            String tipOpenBlueTooth = getString(R.string.tipOpenBlueTooth);
-            SpannableStringBuilder builder = RxTextUtils.getBuilder(tipOpenBlueTooth)
-                    .setForegroundColor(getResources().getColor(R.color.green_61D97F))
-                    .setLength(12, tipOpenBlueTooth.length());
-            mBtnStrongTip.setText(builder);
-            mBtnStrongTip.setOnClickListener(v -> BleTools.getBleManager().enableBluetooth());
-        }
     }
 
 

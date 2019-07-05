@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -45,7 +44,8 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -55,7 +55,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -113,22 +112,17 @@ public class AddDeviceActivity extends BaseActivity {
 
         initView();
         initRxBus();
-
+        startScan();
     }
 
     private void startScan() {
-        if (!BleTools.getBleManager().isBlueEnable()) {
-            BleTools.getBleManager().enableBluetooth();
+        if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
+            MyBleManager.Companion.getInstance().enableBLE();
             return;
         }
 
-        if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
-            RxLogUtils.d("未开启GPS定位");
-//            RxToast.warning(getString(R.string.open_GPS));
-            RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
-            rxDialogGPSCheck.show();
-            return;
-        }
+        MyBleManager.Companion.getInstance().scanService();
+        QNBleManager.getInstance().scanBle();
 
         mDeviceLists.clear();
         scanDevice.clear();
@@ -138,9 +132,6 @@ public class AddDeviceActivity extends BaseActivity {
         isScan(false);
 
         scanTimeout.startTimer();
-
-        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
-        RxLogUtils.d("开启动画");
     }
 
     private MyTimer scanTimeout = new MyTimer(new MyTimerListener() {
@@ -179,7 +170,6 @@ public class AddDeviceActivity extends BaseActivity {
     public void initView() {
         initTopBar();
         initRecycler();
-        startScan();
         switchStatus(STATUS_SCAN_DEVICE);
     }
 
@@ -288,24 +278,28 @@ public class AddDeviceActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加绑定设备：" + s);
 
+                        for (BindDeviceBean bean : beans) {
+                            if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                                SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
+                                if (bean.getQNBleDevice() != null)
+                                    QNBleManager.getInstance().connectDevice(bean.getQNBleDevice());
+                            } else {
+                                if (bean.getBluetoothDevice() != null) {
+                                    MyBleManager.Companion.getInstance().disConnect();
+                                    MyBleManager.Companion.getInstance().doConnect(bean.getBluetoothDevice());
+                                }
+                                SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
+                            }
+                        }
+
                         RxBus.getInstance().post(new RefreshSlimming());
                         RxBus.getInstance().post(new RefreshMe());
-                        mActivity.startService(new Intent(mContext, BleService.class));
                         //跳转主页
                         if (!forceBind) {
                             RxActivityUtils.skipActivity(mContext, MainActivity.class);
                         } else {
                             onBackPressed();
                         }
-
-                        for (BindDeviceItem.DeviceListBean bean : mBindDeviceItem.getDeviceList()) {
-                            if (BleKey.TYPE_SCALE.equals(bean.getDeviceNo())) {
-                                SPUtils.put(SPKey.SP_scaleMAC, bean.getMacAddr());
-                            } else {
-                                SPUtils.put(SPKey.SP_clothingMAC, bean.getMacAddr());
-                            }
-                        }
-
                     }
 
                     @Override
@@ -325,11 +319,9 @@ public class AddDeviceActivity extends BaseActivity {
                 bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
             return;
         }
-
         if (scanDevice.containsKey(bean.getDeviceMac())) {
             return;
         }
-
         if (mBtnScan.isEnabled()) return;
 
         scanDevice.put(bean.getDeviceMac(), bean);
@@ -471,6 +463,13 @@ public class AddDeviceActivity extends BaseActivity {
 
                     }
                 });
+
+        if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
+            RxLogUtils.d("未开启GPS定位");
+//            RxToast.warning(getString(R.string.open_GPS));
+            RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
+            rxDialogGPSCheck.show();
+        }
     }
 
 }

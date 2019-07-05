@@ -864,9 +864,15 @@ public class SuitLines extends View {
                 Unit unit = mLineBeans.get(j).getUnits().get(i);
 
                 if (isUnifiedInterval) {
+                    float p = 1f - (unit.getValue() - minValueY) / (maxValueY - minValueY);
+                    if (minValueY == maxValueY) {
+                        if (maxValueY != 0)
+                            p = 0.5f;
+                        else
+                            p = 1f;
+                    }
                     unit.setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
-                            Math.min(linesArea.height(), Util.getTextHeight(xyPaint) * 2f + linesArea.height() * (1f - (unit.getValue() - minValueY) / (maxValueY - minValueY)))));
-
+                            Math.min(linesArea.height(), Util.getTextHeight(xyPaint) * 2f + linesArea.height() * p)));
                 } else {
 //                    unit.setXY(new PointF(linesArea.left + realBetween * i + linesArea.width() * 0.5f,
 //                            linesArea.top + linesArea.height() * (1 - (unit.getValue() - mLineBeans.get(j).getMinValue())

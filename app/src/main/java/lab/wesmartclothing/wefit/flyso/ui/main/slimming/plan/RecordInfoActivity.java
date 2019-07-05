@@ -65,9 +65,10 @@ public class RecordInfoActivity extends BaseActivity {
     public static SubmitInfoFrom mSubmitInfoFrom;
     private boolean isOver = false;
 
-
     public static SubmitInfoFrom getmSubmitInfoFrom() {
-        if (mSubmitInfoFrom == null) return new SubmitInfoFrom();
+        if (mSubmitInfoFrom == null) {
+            mSubmitInfoFrom = new SubmitInfoFrom();
+        }
         return mSubmitInfoFrom;
     }
 
