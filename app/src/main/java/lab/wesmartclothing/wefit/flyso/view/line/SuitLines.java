@@ -199,6 +199,16 @@ public class SuitLines extends View {
     private float minValueY = Integer.MAX_VALUE;
 
     /**
+     * Y轴Top控件
+     */
+    private float yTopSpace = 1f;
+
+    /**
+     * Y轴bottom控件
+     */
+    private float yBottomSpace = 1f;
+
+    /**
      * 是否统一使用默认的最大最小值
      */
     private boolean isUnifiedInterval = true;
@@ -859,6 +869,9 @@ public class SuitLines extends View {
             }
         }
 
+        maxValueY = yTopSpace * maxValueY;
+        minValueY = yBottomSpace * minValueY;
+
         for (int i = 0; i < mLineBeans.get(0).getUnits().size(); i++) {
             for (int j = 0; j < mLineBeans.size(); j++) {
                 Unit unit = mLineBeans.get(j).getUnits().get(i);
@@ -921,6 +934,13 @@ public class SuitLines extends View {
         this.selectColor = selectColor;
     }
 
+    /**
+     * 设置Y轴空间
+     */
+    public void setYSpace(float yTopSpace, float yBottomSpace) {
+        this.yTopSpace = yTopSpace;
+        this.yBottomSpace = yBottomSpace;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

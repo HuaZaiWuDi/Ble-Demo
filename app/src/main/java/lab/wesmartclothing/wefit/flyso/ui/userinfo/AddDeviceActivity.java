@@ -121,7 +121,7 @@ public class AddDeviceActivity extends BaseActivity {
             return;
         }
 
-        MyBleManager.Companion.getInstance().scanService();
+        MyBleManager.Companion.getInstance().scanMacAddress("");
         QNBleManager.getInstance().scanBle();
 
         mDeviceLists.clear();

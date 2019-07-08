@@ -1,7 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
-import java.util.Calendar;
-
 /**
  * @Package lab.wesmartclothing.wefit.flyso.utils
  * @FileName EnergyUtil
@@ -21,10 +19,10 @@ public class EnergyUtil {
      * @param baseKcal
      * @return
      */
-    public static int energy(int sportingKcal, int heatKcal, int baseKcal) {
-        float v = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) / 24f;
+    public static double energy(double sportingKcal, double heatKcal, double baseKcal) {
+//        float v = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) / 24f;
+        float v = 1f;
         return sportingKcal + (int) (baseKcal * (v)) - heatKcal;
     }
-
 
 }

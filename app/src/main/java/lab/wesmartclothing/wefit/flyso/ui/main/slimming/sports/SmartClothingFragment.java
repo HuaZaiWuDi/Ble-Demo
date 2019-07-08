@@ -155,7 +155,7 @@ public class SmartClothingFragment extends BaseActivity {
 
                 SpannableStringBuilder kcalBuilder = RxTextUtils.getBuilder(getString(R.string.consumeCalorie) + "\n")
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                        .append(item.getCalorie() + "")
+                        .append(String.format("%.1f", item.getCalorie()))
                         .append("\tkcal")
                         .create();
 
@@ -250,8 +250,8 @@ public class SmartClothingFragment extends BaseActivity {
 
                 String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
                 int color = bean.getAthlCalorie() < bean.getAthlPlan() ? 0x87FFFFFF : 0xFFFFFFFF;
-                lines_Heat.add(new Unit(bean.getAthlCalorie(), date, color));
-                lines_Base.add(new Unit(bean.getAthlPlan(), ""));
+                lines_Heat.add(new Unit((float) bean.getAthlCalorie(), date, color));
+                lines_Base.add(new Unit((float) bean.getAthlPlan(), ""));
             }
             mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Base));
             pageNum++;
@@ -268,8 +268,8 @@ public class SmartClothingFragment extends BaseActivity {
 
             String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
             int color = bean.getAthlCalorie() < bean.getAthlPlan() ? 0x87FFFFFF : 0xFFFFFFFF;
-            lines_Heat.add(new Unit(bean.getAthlCalorie(), date, color));
-            lines_Base.add(new Unit(bean.getAthlPlan(), ""));
+            lines_Heat.add(new Unit((float) bean.getAthlCalorie(), date, color));
+            lines_Base.add(new Unit((float) bean.getAthlPlan(), ""));
             RxLogUtils.d("运动标准：" + bean.getAthlPlan());
         }
 
@@ -285,6 +285,7 @@ public class SmartClothingFragment extends BaseActivity {
         timeLine.setLineWidth(RxUtils.dp2px(1));
         timeLine.setDashed(true);
 
+        mSuitlines.setYSpace(1f, 0);
         new SuitLines.LineBuilder()
                 .add(heatLine)
                 .add(timeLine)

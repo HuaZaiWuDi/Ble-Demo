@@ -34,27 +34,27 @@ public class DataListBean {
      * weightCount : 1
      */
 
-    private int athlCalorie;
+    private double athlCalorie;
     private int athlCount;
-    private int athlPlan;
-    private int basalCalorie;
+    private double athlPlan;
+    private double basalCalorie;
     private int completeAthl;
     private int completeDiet;
-    private int dietPlan;
+    private double dietPlan;
     private int duration;
     private String gid;
-    private int heatCalorie;
+    private double heatCalorie;
     private int heatCount;
     private int planDuration;
     private long recordDate;
     private double weight;
     private int weightCount;
 
-    public int getAthlCalorie() {
+    public double getAthlCalorie() {
         return athlCalorie;
     }
 
-    public void setAthlCalorie(int athlCalorie) {
+    public void setAthlCalorie(double athlCalorie) {
         this.athlCalorie = athlCalorie;
     }
 
@@ -66,19 +66,19 @@ public class DataListBean {
         this.athlCount = athlCount;
     }
 
-    public int getAthlPlan() {
+    public double getAthlPlan() {
         return athlPlan;
     }
 
-    public void setAthlPlan(int athlPlan) {
+    public void setAthlPlan(double athlPlan) {
         this.athlPlan = athlPlan;
     }
 
-    public int getBasalCalorie() {
+    public double getBasalCalorie() {
         return basalCalorie;
     }
 
-    public void setBasalCalorie(int basalCalorie) {
+    public void setBasalCalorie(double basalCalorie) {
         this.basalCalorie = basalCalorie;
     }
 
@@ -98,12 +98,11 @@ public class DataListBean {
         this.completeDiet = completeDiet;
     }
 
-
-    public int getDietPlan() {
+    public double getDietPlan() {
         return dietPlan;
     }
 
-    public void setDietPlan(int dietPlan) {
+    public void setDietPlan(double dietPlan) {
         this.dietPlan = dietPlan;
     }
 
@@ -123,11 +122,11 @@ public class DataListBean {
         this.gid = gid;
     }
 
-    public int getHeatCalorie() {
+    public double getHeatCalorie() {
         return heatCalorie;
     }
 
-    public void setHeatCalorie(int heatCalorie) {
+    public void setHeatCalorie(double heatCalorie) {
         this.heatCalorie = heatCalorie;
     }
 

@@ -12,7 +12,10 @@ import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.BleManagerCallbacks
-import no.nordicsemi.android.support.v18.scanner.*
+import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
+import no.nordicsemi.android.support.v18.scanner.ScanCallback
+import no.nordicsemi.android.support.v18.scanner.ScanResult
+import no.nordicsemi.android.support.v18.scanner.ScanSettings
 import java.util.*
 
 /**
@@ -32,11 +35,10 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
         }
     }
 
-    var autoConnect = false
     private var mBytes: ByteArray? = null
     var writeChar: BluetoothGattCharacteristic? = null
     var notifyChar: BluetoothGattCharacteristic? = null
-    var bleDevice: BluetoothDevice? = null
+    var bindMacAddress: String = ""
 
     private val bluetoothManager: BluetoothManager by lazy {
         MyAPP.sMyAPP?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -120,55 +122,25 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     }
 
     fun scanMacAddress(macAddress: String) {
-        if (!BluetoothAdapter.checkBluetoothAddress(macAddress))
-            return
         stopScan()
-        autoConnect = true
-
-        val scanFilter = ScanFilter.Builder()
-//                .setServiceUuid(ParcelUuid.fromString(BleKey.UUID_Servie))
-//                .setDeviceAddress(macAddress)
-                .build()
+        bindMacAddress = macAddress
 
         val build = ScanSettings.Builder()
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build()
 
-        val list = mutableListOf(scanFilter)
-
         if (isBLEEnabled())
-            BluetoothLeScannerCompat.getScanner().startScan(list, build, scanCallback)
+            BluetoothLeScannerCompat.getScanner().startScan(null, build, scanCallback)
     }
 
-    fun scanService() {
-        stopScan()
-        autoConnect = false
-        val scanFilter = ScanFilter.Builder()
-//                .setServiceUuid(ParcelUuid.fromString(BleKey.UUID_Servie))
-//                .setDeviceName("WeSma")
-                .build()
-
-        val build = ScanSettings.Builder()
-                .setLegacy(false)
-                .setUseHardwareBatchingIfSupported(true)
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                .build()
-
-        val list = mutableListOf(scanFilter)
-
-        if (isBLEEnabled())
-            BluetoothLeScannerCompat.getScanner().startScan(list, build, scanCallback)
-    }
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             super.onScanResult(callbackType, result)
-
             if (BleKey.Smart_Clothing.equals(result.device.name)) {
                 "扫描到设备${result.device.name}".d(result.device.address)
-                if (autoConnect)
+                if (BluetoothAdapter.checkBluetoothAddress(bindMacAddress))
                     doConnect(result.device)
                 else {
                     val bindDeviceBean = BindDeviceBean(BleKey.TYPE_CLOTHING,

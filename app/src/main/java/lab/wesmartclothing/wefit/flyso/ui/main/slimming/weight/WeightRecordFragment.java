@@ -320,6 +320,7 @@ public class WeightRecordFragment extends BaseActivity {
         weightLine.setLineWidth(RxUtils.dp2px(2));
         weightLine.setColor(0x7fffffff, 0x00ffffff);
 
+        mSuitlines.setYSpace(1f, 0);
         new SuitLines.LineBuilder()
                 .add(weightLine)
                 .build(mSuitlines);

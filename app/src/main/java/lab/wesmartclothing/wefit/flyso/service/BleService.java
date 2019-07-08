@@ -194,8 +194,8 @@ public class BleService extends Service {
         }
 
         QNBleManager.getInstance().scanBle();
-    }
 
+    }
 
     private void stopScan() {
         QNBleManager.getInstance().stopScan();

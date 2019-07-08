@@ -459,16 +459,15 @@ public class SearchHistoryFragment extends BaseActivity {
     }
 
 
-    @OnClick(R.id.tv_delete)
-    public void onViewClicked() {
-        RxCache.getDefault().remove(Key.CACHE_SEARCH_KEY);
-        searchKeyLists.clear();
-        notifySearchKey();
-    }
-
-    @OnClick(R.id.iv_complete)
-    public void iv_complete() {
-        addFood();
+    @OnClick({R.id.tv_delete,R.id.iv_complete})
+    public void onViewClicked(View view) {
+        if(view.getId()==R.id.tv_delete){
+            RxCache.getDefault().remove(Key.CACHE_SEARCH_KEY);
+            searchKeyLists.clear();
+            notifySearchKey();
+        }else if(view.getId()==R.id.iv_complete){
+            addFood();
+        }
     }
 
 }

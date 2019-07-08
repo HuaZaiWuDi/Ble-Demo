@@ -13,7 +13,6 @@ import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -31,7 +30,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -46,7 +44,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
@@ -128,7 +125,7 @@ public class RecipesActivity extends BaseActivity {
         mChooseDate.setTheme(DateChoose.TYPE_RECIPES);
         mChooseDate.setOnDateChangeListener((year, month, day, millis) -> {
             foodRecipes(millis);
-            if (RxTimeUtils.getIntervalByNow(millis, RxConstUtils.TimeUnit.DAY) <= 0) {
+            if (RxTimeUtils.isToday(millis)) {
                 mTvChangedDiet.setVisibility(View.VISIBLE);
             } else {
                 mTvChangedDiet.setVisibility(View.GONE);
@@ -192,8 +189,8 @@ public class RecipesActivity extends BaseActivity {
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxCache.getDefault().<String>transformObservable("fetchFoodPlan" +
-                                RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class,
-                        CacheStrategy.firstCacheTimeout(Key.HOURS_1)))
+                                RxFormat.setFormatDate(foodTime, RxFormat.Date), String.class,
+                        RxTimeUtils.isToday(foodTime) ? CacheStrategy.firstRemote() : CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -228,9 +225,7 @@ public class RecipesActivity extends BaseActivity {
                     .into(mTvTotalKcal);
             mTvTip.setText(recommendBean.getPlanAdvice());
             //只播放今天的
-            if (!speechFlag &&
-                    RxFormat.setFormatDate(currentTime, RxFormat.Date)
-                            .equals(RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date))) {
+            if (!speechFlag && RxTimeUtils.isToday(currentTime) && mSwSpeak.isOpened()) {
                 speechFlag = true;
                 TextSpeakUtils.speakAdd(getString(R.string.speech_recipes, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""),
                         recommendBean.getPlanAdvice()
@@ -325,7 +320,5 @@ public class RecipesActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 }

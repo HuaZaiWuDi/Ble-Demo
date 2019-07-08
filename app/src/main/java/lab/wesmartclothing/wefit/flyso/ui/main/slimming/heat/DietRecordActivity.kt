@@ -12,7 +12,6 @@ import com.zchu.rxcache.stategy.CacheStrategy
 import kotlinx.android.synthetic.main.activity_diet_record.*
 import lab.wesmartclothing.wefit.flyso.R
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity
-import lab.wesmartclothing.wefit.flyso.base.MyAPP
 import lab.wesmartclothing.wefit.flyso.entity.DataListBean
 import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager
@@ -141,7 +140,7 @@ class DietRecordActivity : BaseActivity() {
         timeLine.lineType = SuitLines.LineType.CURVE
         timeLine.lineWidth = RxUtils.dp2px(1f)
         timeLine.setDashed(true)
-
+        suitChart.setYSpace(1f, 0f)
         SuitLines.LineBuilder()
                 .add(heatLine)
                 .add(timeLine)

@@ -26,9 +26,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
@@ -56,7 +54,6 @@ public class QNBleManager {
     private static QNBleManager mQNBleTools;
     private static QNBleApi QNapi;
     private static QNBleDevice device;
-    private Map<String, Object> connectDevices = new HashMap<>();
 
     public static QNBleManager getInstance() {
         if (mQNBleTools == null) {

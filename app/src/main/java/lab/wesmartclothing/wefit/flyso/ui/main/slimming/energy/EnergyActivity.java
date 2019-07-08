@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.energy;
 
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,6 +73,10 @@ public class EnergyActivity extends BaseActivity {
     TextView mTvSportingKcal;
     @BindView(R.id.img_switchDate)
     ImageView mImgSwitchDate;
+    @BindView(R.id.img_pointer)
+    ImageView mImgPointer;
+    @BindView(R.id.tv_energyTitle)
+    TextView mTvEnergyTitle;
 
 
     private long currentDate = System.currentTimeMillis();
@@ -116,14 +121,14 @@ public class EnergyActivity extends BaseActivity {
         for (int i = 0; i < this.list.size(); i++) {
             DataListBean bean = this.list.get(i);
 
-            int energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
-            int baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+            double energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
+            double baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
             baseEnergy = Math.max(0, baseEnergy);
             energy = Math.max(0, energy);
             String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
             int color = energy < baseEnergy ? 0x87FFFFFF : 0xFFFFFFFF;
-            lines_Heat.add(new Unit(energy, date, color));
-            lines_Base.add(new Unit(baseEnergy, ""));
+            lines_Heat.add(new Unit((float) energy, date, color));
+            lines_Base.add(new Unit((float) baseEnergy, ""));
             RxLogUtils.d("能量标准：" + baseEnergy);
         }
 
@@ -138,6 +143,7 @@ public class EnergyActivity extends BaseActivity {
         timeLine.setLineType(SuitLines.LineType.CURVE);
         timeLine.setLineWidth(RxUtils.dp2px(1));
         timeLine.setDashed(true);
+        mSuitlines.setYSpace(1f, 0);
 
         new SuitLines.LineBuilder()
                 .add(heatLine)
@@ -150,27 +156,29 @@ public class EnergyActivity extends BaseActivity {
             currentDate = bean.getRecordDate();
             mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
 
-            int surplusHeat = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
+            double surplusHeat = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
 
             mTvSurplusHeat.setTextColor(ContextCompat.getColor(mContext, surplusHeat < 0 ? R.color.red : R.color.orange_FF7200));
-            RxTextUtils.getBuilder(Math.abs(surplusHeat) + "")
+
+            mTvEnergyTitle.setText(surplusHeat < 0 ? "能量盈余" : "综合消耗");
+
+            RxTextUtils.getBuilder(String.format("%.1f", Math.abs(surplusHeat)))
                     .append("\tkacl").setProportion(0.5f)
                     .into(mTvSurplusHeat);
 
-            RxTextUtils.getBuilder(getString(R.string.intakeEnergy))
-                    .append(bean.getHeatCalorie() + "").setProportion(1.3f)
+            RxTextUtils.getBuilder(getString(R.string.intakeEnergy) + "\n")
+                    .append(String.format("%.1f", Math.abs(bean.getHeatCalorie()))).setProportion(1.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .append("\tkcal").setProportion(0.7f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .into(mTvEatKcal);
 
-            RxTextUtils.getBuilder(getString(R.string.consumeEnergy))
-                    .append(bean.getAthlCalorie() + "").setProportion(1.3f)
+            RxTextUtils.getBuilder(getString(R.string.consumeEnergy) + "\n")
+                    .append(String.format("%.1f", Math.abs(bean.getAthlCalorie()))).setProportion(1.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .append("\tkcal").setProportion(0.7f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .into(mTvSportingKcal);
-
         });
 
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
@@ -232,13 +240,13 @@ public class EnergyActivity extends BaseActivity {
             List<Unit> lines_Base = new ArrayList<>();
             for (int i = 0; i < this.list.size(); i++) {
                 DataListBean bean = this.list.get(i);
-                int energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
-                int baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+                double energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
+                double baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
 
                 String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
                 int color = energy < baseEnergy ? 0x87FFFFFF : 0xFFFFFFFF;
-                lines_Heat.add(new Unit(bean.getAthlCalorie(), date, color));
-                lines_Base.add(new Unit(baseEnergy, ""));
+                lines_Heat.add(new Unit((float) bean.getAthlCalorie(), date, color));
+                lines_Base.add(new Unit((float) baseEnergy, ""));
             }
             mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Base));
             pageNum++;
@@ -271,4 +279,8 @@ public class EnergyActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 }

@@ -669,7 +669,7 @@ public class SlimmingFragment extends BaseAcFragment {
         int basalCalorie = heatInfoVO.getBasalCalorie();
 
         RxTextUtils.getBuilder(heatInfoVO.getAbleIntake() < 0 ? getString(R.string.calorieIntakeTooMuch) : getString(R.string.calorieAbleIntake))
-                .append(Math.abs(heatInfoVO.getAbleIntake()) + "").setProportion(1.5f)
+                .append("\n" + Math.abs(heatInfoVO.getAbleIntake())).setProportion(1.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .append("kcal").setForegroundColor(ContextCompat.getColor(mContext, R.color.Gray))
                 .into(mTvIngestionHeat);

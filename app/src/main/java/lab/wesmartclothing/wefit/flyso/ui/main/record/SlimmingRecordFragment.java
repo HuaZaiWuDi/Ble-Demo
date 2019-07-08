@@ -474,7 +474,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
                     item.add((int) bean.getHeatCalorie());
                     max = (float) Math.max(max, bean.getHeatCalorie());
-                    recommendList.add(bean.getDietPlan());
+                    recommendList.add((int) bean.getDietPlan());
                     max = (float) Math.max(max, bean.getDietPlan());
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -567,10 +567,11 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                     double value = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
                     max = (float) Math.max(max, Math.abs(value));
                     item.add((int) Math.abs(value));
-                    int normalEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+                    double normalEnergy = EnergyUtil.energy(bean.getAthlPlan(), bean.getDietPlan(), bean.getBasalCalorie());
+
                     normalEnergy = normalEnergy < 0 ? 0 : normalEnergy;
-                    recommendList.add(normalEnergy);
-                    max = Math.max(max, Math.abs(normalEnergy));
+                    recommendList.add((int) normalEnergy);
+                    max = (float) Math.max(max, Math.abs(normalEnergy));
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));
@@ -660,10 +661,10 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                 if (i < size) {
                     DataListBean bean = list.get(i);
                     dates.add(RxFormat.setFormatDate(bean.getRecordDate(), "MM/dd"));
-                    max = Math.max(max, bean.getAthlCalorie());
-                    item.add(bean.getAthlCalorie());
-                    recommendList.add(bean.getAthlPlan());
-                    max = Math.max(max, bean.getAthlPlan());
+                    max = (float) Math.max(max, bean.getAthlCalorie());
+                    item.add((int) bean.getAthlCalorie());
+                    recommendList.add((int) bean.getAthlPlan());
+                    max = (float) Math.max(max, bean.getAthlPlan());
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);
                     dates.add(RxFormat.setFormatDate(calendar, "MM/dd"));

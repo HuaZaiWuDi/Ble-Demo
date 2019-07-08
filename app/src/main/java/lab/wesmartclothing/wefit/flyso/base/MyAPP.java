@@ -37,7 +37,6 @@ import java.util.Arrays;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
@@ -116,7 +115,6 @@ public class MyAPP extends Application {
             initBugly();
             TextSpeakUtils.init(MyAPP.this);
             MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
-            BleTools.initBLE(MyAPP.this);
 
             ActivityLifecycle();
             RxLogUtils.i("启动时长：初始化结束");

@@ -47,7 +47,6 @@ public class PlanMatterActivity extends BaseActivity {
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(v -> onBackPressed());
-
     }
 
     @OnClick({R.id.tv_unAgree, R.id.tv_Agree})
