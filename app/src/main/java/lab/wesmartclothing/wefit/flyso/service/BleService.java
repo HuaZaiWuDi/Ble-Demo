@@ -20,7 +20,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxNetUtils;
 import com.vondear.rxtools.utils.RxSystemBroadcastUtil;
 import com.vondear.rxtools.utils.RxUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.wesmarclothing.mylibrary.net.RxBus;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
@@ -33,12 +32,10 @@ import lab.wesmartclothing.wefit.flyso.base.ActivityLifecycleImpl;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 
 import static no.nordicsemi.android.dfu.DfuBaseService.NOTIFICATION_ID;
@@ -73,14 +70,14 @@ public class BleService extends Service {
                     break;
                 case RxSystemBroadcastUtil.SCREEN_ON:
                     RxLogUtils.d("亮屏");
-                    initBle();
+//                    initBle();
                     break;
                 case RxSystemBroadcastUtil.SCREEN_OFF:
                     RxLogUtils.d("息屏");
                     if (RxActivityUtils.currentActivity() instanceof SportInterface) {
                         RxActivityUtils.skipActivityTop(RxActivityUtils.currentActivity(), RxActivityUtils.currentActivity().getClass());
                     }
-                    stopScan();
+//                    stopScan();
                     break;
                 case Key.ACTION_CLOTHING_STOP:
                     BleAPI.clothingStop();
@@ -189,16 +186,11 @@ public class BleService extends Service {
 
 
     private void initBle() {
-        if (!MyBleManager.Companion.getInstance().isConnect()) {
-            MyBleManager.Companion.getInstance().scanMacAddress(SPUtils.getString(SPKey.SP_clothingMAC));
-        }
-
-        QNBleManager.getInstance().scanBle();
-
+        MyBleManager.Companion.getInstance().scanMacAddress();
     }
 
     private void stopScan() {
-        QNBleManager.getInstance().stopScan();
+//        QNBleManager.getInstance().stopScan();
         MyBleManager.Companion.getInstance().stopScan();
     }
 

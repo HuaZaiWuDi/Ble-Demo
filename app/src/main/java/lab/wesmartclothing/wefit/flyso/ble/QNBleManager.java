@@ -2,12 +2,12 @@ package lab.wesmartclothing.wefit.flyso.ble;
 
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.clj.fastble.data.BleDevice;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -30,7 +30,6 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
-import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
@@ -104,17 +103,14 @@ public class QNBleManager {
         return device;
     }
 
-    public void setDevice(QNBleDevice device) {
-        QNBleManager.device = device;
-    }
 
     public void scanBle() {
-        stopScan();
-        saveUserInfo();
+//        stopScan();
+        saveQNConfig();
         QNapi.startBleDeviceDiscovery(mQNResultCallback);
     }
 
-    private void saveUserInfo() {
+    private void saveQNConfig() {
         QNConfig config = QNapi.getConfig();
         config.setDuration(0);
         config.setOnlyScreenOn(false);
@@ -170,17 +166,10 @@ public class QNBleManager {
 
 
     public void disConnectDevice() {
-        String mac = SPUtils.getString(SPKey.SP_scaleMAC);
-        QNapi.disconnectDevice(mac, new QNResultCallback() {
-            @Override
-            public void onResult(int i, String s) {
-                RxLogUtils.d("轻牛SDK ：断开连接" + i + "----" + s);
-            }
-        });
-
+        disConnectDevice(device);
     }
 
-    public void disConnectDevice(QNBleDevice device) {
+    private void disConnectDevice(QNBleDevice device) {
         QNapi.disconnectDevice(device, new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
@@ -190,18 +179,14 @@ public class QNBleManager {
     }
 
 
-    public QNBleDevice bleDevice2QNDevice(BleDevice result) {
-        return QNapi.buildDevice(result.getDevice(), result.getRssi(), result.getScanRecord(), new QNResultCallback() {
+    public QNBleDevice convert2QNDevice(BluetoothDevice device, int rssi, byte[] scanRecord) {
+        return QNapi.buildDevice(device, rssi, scanRecord, new QNResultCallback() {
             @Override
             public void onResult(int i, String s) {
                 RxLogUtils.d("轻牛SDK ：构建BleDevice" + i + "----" + s);
             }
         });
     }
-
-    public void setFatThreshold() {
-    }
-
 
     public boolean isConnect() {
         return connectState == QN_CONNECED;
@@ -217,14 +202,14 @@ public class QNBleManager {
             @Override
             public void onDeviceDiscover(QNBleDevice bleDevice) {
                 RxLogUtils.d("扫描体脂称：" + bleDevice.getMac() + ":" + bleDevice.getRssi() + ":" + bleDevice.getModeId());
-                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
-                bindDeviceBean.setQNBleDevice(bleDevice);
-                RxBus.getInstance().post(bindDeviceBean);
-
-                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {//判断是否正在连接，或者已经连接则不在连接
-                    mQNBleTools.connectDevice(bleDevice);
-                    stopScan();
-                }
+//                BindDeviceBean bindDeviceBean = new BindDeviceBean(BleKey.TYPE_SCALE, bleDevice.getName(), bleDevice.getMac(), bleDevice.getRssi());
+//                bindDeviceBean.setQNBleDevice(bleDevice);
+//                RxBus.getInstance().post(bindDeviceBean);
+//
+//                if (bleDevice.getMac().equals(SPUtils.getString(SPKey.SP_scaleMAC))) {//判断是否正在连接，或者已经连接则不在连接
+//                    mQNBleTools.connectDevice(bleDevice);
+//                    stopScan();
+//                }
             }
 
             @Override
@@ -262,14 +247,24 @@ public class QNBleManager {
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
+                String hmac = SPUtils.getString(SPKey.SP_QN_SCALE_HMAC);
+
+                RxLogUtils.d("HMac:" + hmac);
+                qnScaleData.setFatThreshold(hmac, 1.0, new QNResultCallback() {
+                    @Override
+                    public void onResult(int i, String s) {
+                        RxLogUtils.d("设置体脂率误差值：" + s + "---状态码：" + i);
+                    }
+                });
                 Bundle bundle = new Bundle();
-
                 bundle.putString(Key.BUNDLE_WEIGHT_QNDATA, JSON.toJSONString(qnScaleData));
-
                 if (RxActivityUtils.currentActivity() instanceof SportInterface) {
                 } else {
                     RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
                 }
+
+                SPUtils.put(SPKey.SP_QN_SCALE_HMAC, qnScaleData.getHmac());
+                RxLogUtils.d("HMac:" + qnScaleData.getHmac());
             }
 
             @Override
@@ -322,7 +317,7 @@ public class QNBleManager {
                 RxLogUtils.e("断开连接:");
 //                connectDevices.remove(qnBleDevice.getMac());
 
-                scanBle();
+//                scanBle();
             }
 
             @Override
@@ -333,7 +328,7 @@ public class QNBleManager {
                 RxBus.getInstance().postSticky(new ScaleConnectBus(false));
 //                connectDevices.remove(qnBleDevice.getMac());
 
-                scanBle();
+//                scanBle();
             }
 
             @Override

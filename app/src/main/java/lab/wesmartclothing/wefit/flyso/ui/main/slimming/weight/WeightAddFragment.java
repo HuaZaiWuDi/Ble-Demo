@@ -32,7 +32,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -96,9 +96,8 @@ public class WeightAddFragment extends BaseActivity {
             MyBleManager.Companion.getInstance().enableBLE();
 
         if (!QNBleManager.getInstance().isConnect()) {
-            QNBleManager.getInstance().scanBle();
+            MyBleManager.Companion.getInstance().scanMacAddress();
         }
-
     }
 
     @Override
@@ -213,13 +212,13 @@ public class WeightAddFragment extends BaseActivity {
     }
 
     private void saveWeight() {
-        final WeightAddBean bean = new WeightAddBean();
+        final HealthyInfoBean bean = new HealthyInfoBean();
         if (mQnScaleData == null) {
             RxToast.normal(getString(R.string.bodyCompositionMeasureFail));
             return;
         }
 
-        bean.setMeasureTime(System.currentTimeMillis() + "");
+        bean.setMeasureTime(System.currentTimeMillis());
         for (QNScaleItemData item : mQnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);
         }
@@ -245,7 +244,7 @@ public class WeightAddFragment extends BaseActivity {
                             RxBus.getInstance().post(bean);
                             onBackPressed();
                         } else {
-                            BodyDataFragment.start(mContext, s, false);
+                            BodyDataFragment.start(mContext, s, bean, false);
                         }
                     }
 

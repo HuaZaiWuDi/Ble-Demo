@@ -52,6 +52,8 @@ data class AlthDataBean(
         val stepNumber: Int,
         @JSONField(name = "userId")
         val userId: String,
+        @JSONField(name = "planFlag")
+        val planFlag: Int,
         @JSONField(name = "gid")
         val gid: String
 )

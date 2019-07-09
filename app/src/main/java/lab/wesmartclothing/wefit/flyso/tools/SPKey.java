@@ -34,4 +34,6 @@ public interface SPKey {
 
     //运动界面弹窗提示次数
     String SP_RUN_TIP_DIALOG_COUNT = "SP_RUN_TIP_DIALOG_COUNT";
+
+    String SP_QN_SCALE_HMAC = "SP_QN_SCALE_HMAC";
 }

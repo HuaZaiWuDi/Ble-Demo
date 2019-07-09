@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
 import com.alibaba.fastjson.JSON;
@@ -112,10 +111,9 @@ public class MyAPP extends Application {
             MultiDex.install(MyAPP.this);
             initUM();
             initLeakCanary();
-            initBugly();
             TextSpeakUtils.init(MyAPP.this);
             MyAPP.typeface = Typeface.createFromAsset(MyAPP.this.getAssets(), "fonts/DIN-Regular.ttf");
-
+            initBugly();
             ActivityLifecycle();
             RxLogUtils.i("启动时长：初始化结束");
             AdaptationOppo();
@@ -216,11 +214,11 @@ public class MyAPP extends Application {
      */
     private void initLeakCanary() {
         if (BuildConfig.LeakCanary) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() //
-                    .detectAll() //
-                    .penaltyLog() //
-                    .penaltyDeath() //
-                    .build());
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() //
+//                    .detectAll() //
+//                    .penaltyLog() //
+//                    .penaltyDeath() //
+//                    .build());
 
             if (LeakCanary.isInAnalyzerProcess(this)) {
                 // This process is dedicated to LeakCanary for heap analysis.

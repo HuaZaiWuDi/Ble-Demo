@@ -122,7 +122,7 @@ public class EnergyActivity extends BaseActivity {
             DataListBean bean = this.list.get(i);
 
             double energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
-            double baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+            double baseEnergy = EnergyUtil.energy(bean.getAthlPlan(), bean.getDietPlan(), bean.getBasalCalorie());
             baseEnergy = Math.max(0, baseEnergy);
             energy = Math.max(0, energy);
             String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
@@ -241,11 +241,11 @@ public class EnergyActivity extends BaseActivity {
             for (int i = 0; i < this.list.size(); i++) {
                 DataListBean bean = this.list.get(i);
                 double energy = EnergyUtil.energy(bean.getAthlCalorie(), bean.getHeatCalorie(), bean.getBasalCalorie());
-                double baseEnergy = bean.getAthlPlan() + bean.getBasalCalorie() - bean.getDietPlan();
+                double baseEnergy = EnergyUtil.energy(bean.getAthlPlan(), bean.getDietPlan(), bean.getBasalCalorie());
 
                 String date = RxFormat.setFormatDate(bean.getRecordDate(), GroupType.TYPE_DAYS.equals(groupType) ? "MM/dd" : "yyyy/MM");
                 int color = energy < baseEnergy ? 0x87FFFFFF : 0xFFFFFFFF;
-                lines_Heat.add(new Unit((float) bean.getAthlCalorie(), date, color));
+                lines_Heat.add(new Unit((float) energy, date, color));
                 lines_Base.add(new Unit((float) baseEnergy, ""));
             }
             mSuitlines.addDataChart(Arrays.asList(lines_Heat, lines_Base));

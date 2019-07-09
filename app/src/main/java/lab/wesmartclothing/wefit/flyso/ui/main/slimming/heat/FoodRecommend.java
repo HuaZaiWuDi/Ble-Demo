@@ -178,7 +178,6 @@ public class FoodRecommend extends BaseActivity {
         }
     }
 
-
     private void initRecycler() {
         UserInfo info = MyAPP.getgUserInfo();
         mTvEmpty.setText(getString(R.string.empty_record, info.getUserName()));

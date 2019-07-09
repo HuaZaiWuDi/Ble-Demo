@@ -150,8 +150,10 @@ public class UserInfoActivity extends BaseALocationActivity {
     }
 
     public void initView() {
-        mUserInfo = new UserInfo();
+        mUserInfo = MyAPP.gUserInfo;
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
+        if (mUserInfo.getHeight() == 0) mUserInfo.setHeight(175);
+        if (mUserInfo.getBirthday() == 0) mUserInfo.setBirthday(new Date(1990, 1, 1).getTime());
 
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();

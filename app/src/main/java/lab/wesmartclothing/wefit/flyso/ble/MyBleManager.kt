@@ -4,12 +4,14 @@ import android.bluetooth.*
 import android.content.Context
 import android.util.Log
 import com.vondear.rxtools.utils.RxLogUtils
+import com.vondear.rxtools.utils.SPUtils
 import com.wesmarclothing.mylibrary.net.RxBus
 import lab.wesmartclothing.wefit.flyso.BuildConfig
 import lab.wesmartclothing.wefit.flyso.R
 import lab.wesmartclothing.wefit.flyso.base.MyAPP
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus
+import lab.wesmartclothing.wefit.flyso.tools.SPKey
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.BleManagerCallbacks
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
@@ -38,10 +40,9 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     private var mBytes: ByteArray? = null
     var writeChar: BluetoothGattCharacteristic? = null
     var notifyChar: BluetoothGattCharacteristic? = null
-    var bindMacAddress: String = ""
 
     private val bluetoothManager: BluetoothManager by lazy {
-        MyAPP.sMyAPP?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        getContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     }
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         bluetoothManager.adapter
@@ -55,7 +56,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
             super.initialize()
             setNotificationCallback(notifyChar)
                     .with { device, data ->
-                        "蓝牙通知数据${data.toString()}".d()
+                        "蓝牙通知数据$data".d()
                         BleAPI.handleBleData(data.value)
                     }
 
@@ -121,13 +122,12 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
         return bluetoothAdapter.disable()
     }
 
-    fun scanMacAddress(macAddress: String) {
+    fun scanMacAddress() {
         stopScan()
-        bindMacAddress = macAddress
 
         val build = ScanSettings.Builder()
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+//                .setCallbackType(ScanSettings.CALLBACK_TYPE_FIRST_MATCH)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build()
 
         if (isBLEEnabled())
@@ -138,14 +138,25 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             super.onScanResult(callbackType, result)
-            if (BleKey.Smart_Clothing.equals(result.device.name)) {
+            if (BleKey.Smart_Clothing == result.device.name) {
                 "扫描到设备${result.device.name}".d(result.device.address)
-                if (BluetoothAdapter.checkBluetoothAddress(bindMacAddress))
+                if (result.device.address == SPUtils.getString(SPKey.SP_clothingMAC))
                     doConnect(result.device)
                 else {
                     val bindDeviceBean = BindDeviceBean(BleKey.TYPE_CLOTHING,
                             getContext().getString(R.string.clothing), result.device.address, result.rssi)
                     bindDeviceBean.bluetoothDevice = result.device
+                    RxBus.getInstance().post(bindDeviceBean)
+                }
+            } else if (BleKey.ScaleName == result.device.name) {
+                "扫描到设备${result.device.name}".d(result.device.address)
+                val qnBleDevice = QNBleManager.getInstance().convert2QNDevice(result.device, result.rssi, result.scanRecord?.bytes)
+                if (result.device.address == SPUtils.getString(SPKey.SP_scaleMAC)) {
+                    QNBleManager.getInstance().connectDevice(qnBleDevice)
+                } else {
+                    val bindDeviceBean = BindDeviceBean(BleKey.TYPE_SCALE,
+                            getContext().getString(R.string.scale), result.device.address, result.rssi)
+                    bindDeviceBean.qnBleDevice = qnBleDevice
                     RxBus.getInstance().post(bindDeviceBean)
                 }
             }
@@ -168,7 +179,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     }
 
     fun doConnect(bleDevice: BluetoothDevice) {
-        stopScan()
+//        stopScan()
         setGattCallbacks(object : BleManagerCallbacks {
             override fun onDeviceDisconnecting(device: BluetoothDevice) {
                 "正在断开连接".d(device.address)

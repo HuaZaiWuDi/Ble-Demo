@@ -194,7 +194,7 @@
     <string name="pause">暂停</string>
 
     <string name="sportTip">运动提示</string>
-    <string name="tip">提示</string>
+    <string name="tip">温馨提示</string>
     <string name="freeSporting">自由运动中</string>
     <string name="Speech_eachKm"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s,继续加油吧]]></string>
     <string name="Speech_each8Min"><![CDATA[您已经跑步%1$s公里，累计消耗%2$s卡路里，当前配速%3$s每公里,累计用时%4$s,您当前运动得分%5$s,请继续加油吧]]></string>

@@ -27,6 +27,7 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -49,6 +50,8 @@ import lab.wesmartclothing.wefit.flyso.entity.DataListBean;
 import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.GroupType;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -100,6 +103,7 @@ public class SmartClothingFragment extends BaseActivity {
     private int pageNum = 1;
     private @GroupType
     String groupType = GroupType.TYPE_DAYS;
+    private boolean needRefresh = true;//通过flag判断是否需要刷新数据
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,6 +135,17 @@ public class SmartClothingFragment extends BaseActivity {
     protected void initNetData() {
         super.initNetData();
 
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        RxLogUtils.d("刷新数据");
+                        needRefresh = true;
+                        pageNum = 1;
+                        initData();
+                    }
+                });
     }
 
     private void initSportingList() {
@@ -148,7 +163,7 @@ public class SmartClothingFragment extends BaseActivity {
                 }
 
                 SpannableStringBuilder timeBuilder = RxTextUtils.getBuilder(GroupType.TYPE_DAYS.equals(groupType) ?
-                        getString(R.string.timeSlot) : "运动日期" + "\n")
+                        getString(R.string.timeSlot) + "\n" : "运动日期" + "\n")
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                         .append(timeSection)
                         .create();
@@ -160,7 +175,7 @@ public class SmartClothingFragment extends BaseActivity {
                         .create();
 
                 //getPlanFlag():0是自由运动，1是课程运动
-                helper.setText(R.id.tv_sportingType, item.getDataFlag() != 1 ? getString(R.string.freeRun) : getString(R.string.planRun))
+                helper.setText(R.id.tv_sportingType, item.getPlanFlag() != 1 ? getString(R.string.freeRun) : getString(R.string.planRun))
                         .setText(R.id.tv_sportingTime, timeBuilder)
                         .setTypeface(MyAPP.typeface, R.id.tv_sportingTime, R.id.tv_sportingKcal)
                         .setText(R.id.tv_sportingKcal, kcalBuilder);
@@ -172,7 +187,7 @@ public class SmartClothingFragment extends BaseActivity {
                 AlthDataBean item = (AlthDataBean) adapter.getItem(position % adapter.getData().size());
                 if (item == null) return;
                 bundle.putString(Key.BUNDLE_DATA_GID, item.getGid());
-                bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getDataFlag() == 1);
+                bundle.putBoolean(Key.BUNDLE_SPORTING_PLAN, item.getPlanFlag() == 1);
                 bundle.putBoolean(Key.BUNDLE_GO_BCAK, true);
                 RxActivityUtils.skipActivity(mContext, SportsDetailsFragment.class, bundle);
             }
@@ -215,12 +230,13 @@ public class SmartClothingFragment extends BaseActivity {
                 .compose(RxComposeUtils.handleResult())
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .compose(RxCache.getDefault().transformObservable("athlFetchDaysOrMonthRecordList" + recordDate + groupType,
-                        String.class, CacheStrategy.firstCacheTimeout(60 * 1000)))
+                        String.class, needRefresh ? CacheStrategy.firstRemote() : CacheStrategy.firstCacheTimeout(60 * 1000)))
                 .map(new CacheResult.MapFunc())
                 .compose(RxComposeUtils.rxThreadHelper())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        needRefresh = false;
                         AlthDataListBean bean = new Gson().fromJson(s, AlthDataListBean.class);
                         adapter.setNewData(bean.getList());
                     }

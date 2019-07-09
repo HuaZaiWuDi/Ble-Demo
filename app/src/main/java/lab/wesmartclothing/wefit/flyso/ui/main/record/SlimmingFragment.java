@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.record;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -974,7 +973,7 @@ public class SlimmingFragment extends BaseAcFragment {
             showOpenBlueTooth();
         } else if (!MyBleManager.Companion.getInstance().isConnect()) {
             tipDialog.show(getString(R.string.connecting), 3000);
-            mActivity.startService(new Intent(mContext, BleService.class));
+            MyBleManager.Companion.getInstance().scanMacAddress();
             if (tipDialog.getTipDialog() != null) {
                 tipDialog.getTipDialog().setOnDismissListener(dialogInterface -> {
                     if (MyBleManager.Companion.getInstance().isConnect()) {

@@ -30,7 +30,7 @@ import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -130,9 +130,9 @@ public class WeightDataActivity extends BaseActivity {
     private void addWeightData(final int position) {
         final QNScaleStoreData qnScaleData = (QNScaleStoreData) adapter_Receive.getItem(position);
         if (RxDataUtils.isEmpty(qnScaleData)) return;
-        WeightAddBean bean = new WeightAddBean();
+        HealthyInfoBean bean = new HealthyInfoBean();
 
-        bean.setMeasureTime(qnScaleData.getMeasureTime().getTime() + "");
+        bean.setMeasureTime(qnScaleData.getMeasureTime().getTime());
         QNScaleData scaleData = qnScaleData.generateScaleData();
         if (scaleData != null)
             for (QNScaleItemData item : scaleData.getAllItem()) {

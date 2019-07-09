@@ -89,12 +89,14 @@ public class BodyDataFragment extends BaseActivity {
     private BodyDataUtil bodyDataUtil;
     private double[] bodyValue = new double[13];
     private boolean goBack = false;
+    private HealthyInfoBean weightInfoBean;
 
 
-    public static void start(Context context, String gid, boolean goBack) {
+    public static void start(Context context, String gid, HealthyInfoBean healthyInfoBean, boolean goBack) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(Key.BUNDLE_GO_BCAK, goBack);
-        bundle.putSerializable(Key.BUNDLE_DATA_GID, gid);
+        bundle.putString(Key.BUNDLE_DATA_GID, gid);
+        bundle.putSerializable(Key.BUNDLE_DATA, healthyInfoBean);
         RxActivityUtils.skipActivity(context, BodyDataFragment.class, bundle);
     }
 
@@ -123,12 +125,12 @@ public class BodyDataFragment extends BaseActivity {
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
-        HealthyInfoBean weightInfoBean = (HealthyInfoBean) bundle.getSerializable(Key.BUNDLE_DATA);
+        weightInfoBean = (HealthyInfoBean) bundle.getSerializable(Key.BUNDLE_DATA);
         gid = bundle.getString(Key.BUNDLE_DATA_GID, "");
         goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
 
 //        if (weightInfoBean != null) {
-//            notifyData(weightInfoBean);
+
 //            gid = weightInfoBean.getGid();
 //        } else {
         initData();
@@ -314,7 +316,9 @@ public class BodyDataFragment extends BaseActivity {
 
                     @Override
                     protected void _onError(String error, int code) {
-                        RxToast.error(error, code);
+                        if (weightInfoBean != null) {
+                            notifyData(weightInfoBean);
+                        }
                     }
                 });
     }

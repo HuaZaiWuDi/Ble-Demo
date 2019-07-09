@@ -118,11 +118,12 @@ public class AddDeviceActivity extends BaseActivity {
     private void startScan() {
         if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
             MyBleManager.Companion.getInstance().enableBLE();
+            switchStatus(STATUS_NO_DEVICE);
+            mTvDetails.setText(R.string.checkUnenableBluetooth);
             return;
         }
 
-        MyBleManager.Companion.getInstance().scanMacAddress("");
-        QNBleManager.getInstance().scanBle();
+        switchStatus(STATUS_SCAN_DEVICE);
 
         mDeviceLists.clear();
         scanDevice.clear();
@@ -157,11 +158,11 @@ public class AddDeviceActivity extends BaseActivity {
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .subscribe(bleState -> {
                     boolean state = bleState.isOn();
-                    if (!state) {
+                    if (state) {
+                        startScan();
+                    } else {
                         switchStatus(STATUS_NO_DEVICE);
                         mTvDetails.setText(R.string.checkUnenableBluetooth);
-                    } else {
-                        startScan();
                     }
                 });
     }
@@ -375,6 +376,7 @@ public class AddDeviceActivity extends BaseActivity {
             }
         }
         adapter.addData(index, bean);
+
     }
 
 

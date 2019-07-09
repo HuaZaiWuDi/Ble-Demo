@@ -24,12 +24,12 @@ public class UserInfo implements Serializable {
      * userName : string
      */
 
-    private long birthday = Long.parseLong("631123200000");
+    private long birthday;
     private String clothesMacAddr;
-    private int height = 175;
+    private int height;
     private String phone;
     private String scalesMacAddr;
-    private int sex = 2;//1男2女0未知（未录入）
+    private int sex;//1男2女0未知（未录入）
     private String signature;
     private String imgUrl;
     private String userName;

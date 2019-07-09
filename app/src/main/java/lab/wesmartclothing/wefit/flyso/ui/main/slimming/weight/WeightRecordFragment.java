@@ -167,7 +167,7 @@ public class WeightRecordFragment extends BaseActivity {
         dayWeightAdapter.setOnItemClickListener((adapter, view, position) -> {
             HealthInfoBean weightInfoBean = (HealthInfoBean) adapter.getItem(position);
             if (weightInfoBean != null)
-                BodyDataFragment.start(mContext, weightInfoBean.getGid(), true);
+                BodyDataFragment.start(mContext, weightInfoBean.getGid(), null, true);
         });
     }
 
