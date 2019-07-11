@@ -332,16 +332,20 @@ public class BodyDataFragment extends BaseActivity {
 
 
     private void notifyData(HealthyInfoBean weightInfo) {
-
         mTvDate.setText(RxFormat.setFormatDate(weightInfo.getMeasureTime(), "yyyy年MM月dd日 HH:mm"));
         mTvHealthScore.setText(weightInfo.getHealthScore() + "");
-        Drawable drawable = getResources().getDrawable(bodyImgs[(weightInfo.getBodyLevel() - 1) % 9]);
+        int bodyLevel = weightInfo.getBodyLevel();
+        if (bodyLevel == 0) {
+            bodyLevel = 4;
+        }
+        Drawable drawable = getResources().getDrawable(bodyImgs[(bodyLevel - 1) % 9]);
         //一定要加这行！！！！！！！！！！！
         drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
         mTvBodyFat.setCompoundDrawables(null, drawable, null, null);
-        mTvBodyFat.setText(bodys[(weightInfo.getBodyLevel() - 1) % 9]);
 
-        bodyIndex = weightInfo.getBodyLevel();
+        mTvBodyFat.setText(bodys[(bodyLevel - 1) % 9]);
+
+        bodyIndex = bodyLevel;
 
         initWeightData(weightInfo);
         String[] titles = getResources().getStringArray(R.array.weightDatas);

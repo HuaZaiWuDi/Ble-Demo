@@ -44,7 +44,15 @@ public class UserInfo implements Serializable {
     private String invitationCode;
     private int baselHeat;
     private String informId;
+    private String hmac;
 
+    public String getHmac() {
+        return hmac;
+    }
+
+    public void setHmac(String hmac) {
+        this.hmac = hmac;
+    }
 
     public String getInformId() {
         return informId;

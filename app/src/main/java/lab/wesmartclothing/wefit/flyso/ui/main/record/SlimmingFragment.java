@@ -376,10 +376,10 @@ public class SlimmingFragment extends BaseAcFragment {
                                             showSkipSportAcDialog(key, planFlag == 1);
                                         }, e -> {
                                             RxLogUtils.e("上一次的运动数据", e);
-                                            showSkipSportAcDialog(key, bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
+                                            showSkipSportAcDialog("", bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
                                         });
                             } else {
-                                showSkipSportAcDialog(key, bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
+                                showSkipSportAcDialog("", bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
                             }
                         }
                     }

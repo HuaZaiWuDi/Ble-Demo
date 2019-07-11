@@ -572,6 +572,7 @@ public class SuitLines extends View {
     private void drawLines(Canvas canvas) {
         Path path = null;
         List<Path> paths;
+        int lastIndex = 0;
 
         for (int i = 0; i < mLineBeans.size(); i++) {
             LineBean lineBean = mLineBeans.get(i);
@@ -585,29 +586,9 @@ public class SuitLines extends View {
                 Unit current = lineBean.getUnits().get(j);
                 float curY = current.getXY().y;
                 //每30个点分一个path保存，防止出现一个Path保存的数据过大的问题
-                if (j % 30 == 0) {
-                    if (j != 0) {
-                        if (lineBean.getLineType() == LineType.SEGMENT) {
-                            path.lineTo(current.getXY().x, curY);
-                        } else if (lineBean.getLineType() == LineType.CURVE) {
-                            // 到这里肯定不是起始点，所以可以减1
-                            Unit previous = lineBean.getUnits().get(j - 1);
-                            // 两个锚点的坐标x为中点的x，y分别是两个连接点的y
-                            path.cubicTo((previous.getXY().x + current.getXY().x) / 2,
-                                    linesArea.bottom - (linesArea.bottom - previous.getXY().y) * previous.getPercent(),
-                                    (previous.getXY().x + current.getXY().x) / 2, curY,
-                                    current.getXY().x, curY);
-                        }
-                        //绘制阴影需要连接底部的点
-                        if (lineBean.isFill() && j == lineBean.getUnits().size() - 1) {
-                            path.lineTo(current.getXY().x, linesArea.bottom);
-                            path.lineTo(lineBean.getUnits().get(0).getXY().x, linesArea.bottom);
-                            path.close();
-                        }
-                    }
+                if (path == null || (!lineBean.isFill() && j % 50 == 0)) {
                     path = new Path();
                     paths.add(path);
-                    path.reset();
                     path.moveTo(current.getXY().x, curY);
                     continue;
                 }
@@ -623,9 +604,10 @@ public class SuitLines extends View {
                             (previous.getXY().x + current.getXY().x) / 2, curY,
                             current.getXY().x, curY);
                 }
+
                 //绘制阴影需要连接底部的点
-                if (lineBean.isFill() && j == lineBean.getUnits().size() - 1) {
-                    path.lineTo(current.getXY().x, linesArea.bottom);
+                if (lineBean.isFill() && j == size - 1) {
+                    path.lineTo(lineBean.getUnits().get(j).getXY().x, linesArea.bottom);
                     path.lineTo(lineBean.getUnits().get(0).getXY().x, linesArea.bottom);
                     path.close();
                 }
@@ -913,6 +895,12 @@ public class SuitLines extends View {
         maxValueY = 0;
         minValueY = Integer.MAX_VALUE;
 
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        reset();
     }
 
     ///APIs/////////////////////////////////////////////////////////////////////////////////////////

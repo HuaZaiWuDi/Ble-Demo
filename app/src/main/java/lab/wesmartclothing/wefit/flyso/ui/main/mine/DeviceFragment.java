@@ -28,7 +28,7 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;

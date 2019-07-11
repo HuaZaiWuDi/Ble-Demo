@@ -149,6 +149,10 @@ public class LineBean {
     }
 
     public void setUnits(List<Unit> units) {
+        if (mUnits != null) {
+            mUnits.clear();
+            mUnits = null;
+        }
         mUnits = units;
         checkMaxAndMinValue(units);
     }

@@ -65,11 +65,11 @@ android {
     buildTypes {
         release {
             //开启混淆
-            minifyEnabled true
+            minifyEnabled false
             //是否压缩对齐
             zipAlignEnabled true
-            // 移除无用的resource文件
-            shrinkResources true
+//            // 移除无用的resource文件
+//            shrinkResources true
             buildConfigField "boolean", "LeakCanary", "false"//9月5号演示版本置为true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
@@ -78,7 +78,7 @@ android {
             crunchPngs false //关闭crunchPng优化, 以加快构建
             ext.enableCrashlytics = false
             ext.alwatsUpdateBuildId = false
-            buildConfigField "boolean", "LeakCanary", "true"
+            buildConfigField "boolean", "LeakCanary", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug

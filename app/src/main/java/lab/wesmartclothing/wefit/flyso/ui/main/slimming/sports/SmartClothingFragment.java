@@ -312,7 +312,7 @@ public class SmartClothingFragment extends BaseActivity {
                 DataListBean bean = this.list.get(valueX);
                 mTvSportDate.setText(RxFormat.setFormatDate(bean.getRecordDate(), RxFormat.Date_CH));
                 mTvHeatKcal.setText(RxFormatValue.fromat4S5R(bean.getAthlCalorie(), 1));
-                mTvSportsTime.setText(RxFormatValue.fromatUp(bean.getDuration() < 60 ? 1 : bean.getDuration() / 60, 0));
+                mTvSportsTime.setText((bean.getDuration() / 60) + "");
             }
         });
 

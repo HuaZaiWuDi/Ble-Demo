@@ -1,4 +1,4 @@
-package lab.wesmartclothing.wefit.flyso.ble;
+package lab.wesmartclothing.wefit.flyso.tools;
 
 /**
  * Created by jk on 2018/5/19.

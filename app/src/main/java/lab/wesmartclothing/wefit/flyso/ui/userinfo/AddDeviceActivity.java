@@ -43,7 +43,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
@@ -338,13 +338,6 @@ public class AddDeviceActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        if ("true".equals(s)) {
-                            if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
-                                SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
-                            } else {
-                                SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
-                            }
-                        }
                         bean.setBind("true".equals(s));
 //                        adapter.addData(bean);
                         sortList(bean);

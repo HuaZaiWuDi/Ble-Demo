@@ -200,9 +200,9 @@ public class RankingFragment extends BaseAcFragment {
                                     .append(rankingBean.get(2).intValue() + "").setProportion(3f)
                                     .append("名").into(mTvRanking);
 
-                            RxTextUtils.getBuilder("累计减重 " + String.format("%.1f", Math.abs(rankingBean.get(1))) + "KG\n成功减重\n")
-                                    .append("" + String.format("%.1f", Math.abs(rankingBean.get(3)))).setProportion(3f)
-                                    .append("KG").into(mTvReduceWeight);
+                            RxTextUtils.getBuilder("累计减重 " + String.format("%.1f", Math.abs(rankingBean.get(1) * 2)) + "斤\n成功减重\n")
+                                    .append("" + String.format("%.1f", Math.abs(rankingBean.get(3) * 2))).setProportion(3f)
+                                    .append("斤").into(mTvReduceWeight);
                         }
                     }
                 });
@@ -221,7 +221,7 @@ public class RankingFragment extends BaseAcFragment {
         adapter.setNewData(rankingBean);
 
         RankingBean no1Bean = rankingBean.get(1);
-        GlideImageLoader.getInstance().displayImage(mActivity, no1Bean.getAvatar(), mImgNo1);
+        GlideImageLoader.getInstance().displayImage(mActivity, no1Bean.getAvatar(), R.mipmap.userimg, mImgNo1);
 
         String nickname = no1Bean.getUserName().length() > 4 ? no1Bean.getUserName().substring(no1Bean.getUserName().length() - 4) : no1Bean.getUserName();
         String phone = no1Bean.getPhone();

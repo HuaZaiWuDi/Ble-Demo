@@ -214,7 +214,8 @@
 
 -keep class lab.wesmartclothing.wefit.flyso.entity.** { *; }
 -keep class lab.wesmartclothing.wefit.flyso.view.** { *; }
--keep class lab.wesmartclothing.wefit.netlib.** { *; }
+-keep class lab.wesmartclothing.wefit.netutil.** { *; }
+-keep class lab.wesmartclothing.wefit.tools.** { *; }
 
 
 # Retrofit

@@ -11,6 +11,7 @@ import lab.wesmartclothing.wefit.flyso.R
 import lab.wesmartclothing.wefit.flyso.base.MyAPP
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus
+import lab.wesmartclothing.wefit.flyso.tools.BleKey
 import lab.wesmartclothing.wefit.flyso.tools.SPKey
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.BleManagerCallbacks
@@ -28,6 +29,11 @@ import java.util.*
  * @Describe TODO
  * @Project Android_WeFit_2.0
  */
+
+fun MyBleManager.Companion.instance(): MyBleManager {
+    return instance
+}
+
 class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) {
 
     companion object {
@@ -36,6 +42,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
             MyBleManager(MyAPP.sMyAPP)
         }
     }
+
 
     private var mBytes: ByteArray? = null
     var writeChar: BluetoothGattCharacteristic? = null
@@ -46,6 +53,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     }
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         bluetoothManager.adapter
+
     }
 
     override fun getGattCallback() = mBleCallback
@@ -80,6 +88,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
         override fun onDeviceDisconnected() {
             writeChar = null
             notifyChar = null
+
         }
 
         override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
@@ -241,7 +250,6 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     }
 
     fun disConnect() {
-        refreshDeviceCache().enqueue()
         disconnect().enqueue()
     }
 

@@ -332,11 +332,16 @@ public class WeightRecordFragment extends BaseActivity {
                 mTvMuscle.setText(String.format("%.1f", (list.get(valueX).getMuscleMass() / list.get(valueX).getWeight() * 100f)));
                 mTvBmi.setText(String.format("%.1f", list.get(valueX).getBmi()));
                 mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getDateNo(), RxFormat.Date_CH));
-                currentWeightInfo = list.get(valueX);
+            }
+        });
 
+        mSuitlines.setLineChartStopItemListener(valueX -> {
+            if (!list.isEmpty()) {
+                currentWeightInfo = list.get(valueX);
                 fetchOneDayWeightList(list.get(valueX).getDateNo());
             }
         });
+
 
         mSuitlines.setLineChartScrollEdgeListener(new SuitLines.LineChartScrollEdgeListener() {
             @Override
@@ -359,7 +364,6 @@ public class WeightRecordFragment extends BaseActivity {
             list = null;
         }
         super.onDestroy();
-
     }
 
     private void initTopBar() {

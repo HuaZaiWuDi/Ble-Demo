@@ -21,7 +21,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -72,11 +72,11 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void initRxBus() {
-        RxBus.getInstance().register2(WeightAddBean.class)
-                .compose(RxComposeUtils.<WeightAddBean>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<WeightAddBean>() {
+        RxBus.getInstance().register2(HealthyInfoBean.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<HealthyInfoBean>() {
                     @Override
-                    protected void _onNext(WeightAddBean weightBean) {
+                    protected void _onNext(HealthyInfoBean weightBean) {
                         if (weightBean != null) {
                             mTvWeightInfo.setVisibility(View.VISIBLE);
                             boolean isQualified = weightBean.getBmr() != 0;
@@ -103,7 +103,6 @@ public class WelcomeActivity extends BaseActivity {
                             mTvTip.setVisibility(isQualified ? View.GONE : View.VISIBLE);
 
                             if (isQualified) {
-
                                 RecordInfoActivity.getmSubmitInfoFrom().setWeightInfo(weightBean);
                             }
                         }

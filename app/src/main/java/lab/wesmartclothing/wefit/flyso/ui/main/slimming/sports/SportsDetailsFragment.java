@@ -371,13 +371,19 @@ public class SportsDetailsFragment extends BaseShareActivity {
     }
 
     private void updateBar(SportingDetailBean heartRateBean) {
+//        int restCalorie = heartRateBean.getRestData();
+//        int warmCalorie = heartRateBean.getWarmData();
+//        int greaseCalorie = heartRateBean.getGreaseData();
+//        int aerobicCalorie = heartRateBean.getAerobicData();
+//        int anaerobicCalorie = heartRateBean.getAnaerobicData();
+//        int limitCalorie = heartRateBean.getLimitData();
         int restCalorie = heartRateBean.getRestData();
-        int warmCalorie = heartRateBean.getWarmData();
-        int greaseCalorie = heartRateBean.getGreaseData();
-        int aerobicCalorie = heartRateBean.getAerobicData();
-        int anaerobicCalorie = heartRateBean.getAnaerobicData();
+        int warmCalorie = heartRateBean.getRestData();
+        int greaseCalorie = heartRateBean.getWarmData();
+        int aerobicCalorie = heartRateBean.getGreaseData();
+        int anaerobicCalorie = heartRateBean.getAerobicData();
         int limitCalorie = heartRateBean.getLimitData();
-        int totalKcal = warmCalorie + greaseCalorie + aerobicCalorie + anaerobicCalorie + limitCalorie;
+        int totalKcal = restCalorie + warmCalorie + greaseCalorie + aerobicCalorie + anaerobicCalorie + limitCalorie;
 
         if (totalKcal == 0) return;
 //        mBarCalm.setProgress(restCalorie * 100 / totalKcal);

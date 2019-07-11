@@ -35,6 +35,7 @@ import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleHistoryData;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment;
@@ -247,7 +248,7 @@ public class QNBleManager {
             @Override
             public void onGetScaleData(QNBleDevice qnBleDevice, final QNScaleData qnScaleData) {
                 RxLogUtils.d("实时的稳定测量数据是否有效：" + Arrays.toString(qnScaleData.getAllItem().toArray()));
-                String hmac = SPUtils.getString(SPKey.SP_QN_SCALE_HMAC);
+                String hmac = MyAPP.getgUserInfo().getHmac();
 
                 RxLogUtils.d("HMac:" + hmac);
                 qnScaleData.setFatThreshold(hmac, 1.0, new QNResultCallback() {
@@ -263,7 +264,7 @@ public class QNBleManager {
                     RxActivityUtils.skipActivity(RxActivityUtils.currentActivity(), WeightAddFragment.class, bundle);
                 }
 
-                SPUtils.put(SPKey.SP_QN_SCALE_HMAC, qnScaleData.getHmac());
+                MyAPP.getgUserInfo().setHmac(qnScaleData.getHmac());
                 RxLogUtils.d("HMac:" + qnScaleData.getHmac());
             }
 

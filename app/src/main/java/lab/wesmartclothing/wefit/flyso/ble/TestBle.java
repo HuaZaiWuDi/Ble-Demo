@@ -15,8 +15,9 @@ import org.jetbrains.annotations.NotNull;
 public class TestBle implements BleInterface<BluetoothDevice> {
     @Override
     public void write(@NotNull byte[] bytes) {
-
     }
+
+
 
     @Override
     public void scanMacAddress(@NotNull String macAddress) {
