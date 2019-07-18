@@ -244,11 +244,11 @@ dependencies {
     implementation 'com.umeng.umsdk:share-qq:6.9.4'
 //    implementation 'com.umeng.umsdk:share-wechat:6.9.4'
     implementation 'com.umeng.umsdk:share-sina:6.9.4'
-    implementation 'com.umeng.umsdk:common:1.5.4'
+    implementation 'com.umeng.umsdk:common:2.0.0'
     implementation 'com.umeng.umsdk:utdid:1.1.5.3'
     //官方文档中没有这个依赖，要是不添加会导致初始化的时候的UMConfigure这个类不能识别
     implementation 'com.umeng.umsdk:share-wx:6.9.4'
-
+    implementation  'com.umeng.umsdk:analytics:8.0.0'
     implementation('com.jackUtil:ImagePicker:1.0.3') {
         exclude group: 'com.android.support'
     }  //指定版本
@@ -257,8 +257,8 @@ dependencies {
 
     //蓝牙库
     implementation 'com.clj.fastble:FastBleLib:2.3.2'
-    implementation 'no.nordicsemi.android:dfu:1.8.1'
 
+    implementation 'no.nordicsemi.android:dfu:1.8.1'
     implementation 'no.nordicsemi.android:ble:2.1.1'
     implementation 'no.nordicsemi.android.support.v18:scanner:1.4.0'
 

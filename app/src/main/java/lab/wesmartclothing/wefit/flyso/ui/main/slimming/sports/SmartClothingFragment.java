@@ -286,7 +286,6 @@ public class SmartClothingFragment extends BaseActivity {
             int color = bean.getAthlCalorie() < bean.getAthlPlan() ? 0x87FFFFFF : 0xFFFFFFFF;
             lines_Heat.add(new Unit((float) bean.getAthlCalorie(), date, color));
             lines_Base.add(new Unit((float) bean.getAthlPlan(), ""));
-            RxLogUtils.d("运动标准：" + bean.getAthlPlan());
         }
 
         LineBean heatLine = new LineBean();

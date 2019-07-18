@@ -11,7 +11,6 @@ import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
@@ -129,7 +128,6 @@ public class EnergyActivity extends BaseActivity {
             int color = energy < baseEnergy ? 0x87FFFFFF : 0xFFFFFFFF;
             lines_Heat.add(new Unit((float) energy, date, color));
             lines_Base.add(new Unit((float) baseEnergy, ""));
-            RxLogUtils.d("能量标准：" + baseEnergy);
         }
 
         LineBean heatLine = new LineBean();

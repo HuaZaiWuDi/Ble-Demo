@@ -74,6 +74,7 @@ public class HeartRateUtil {
      * 05 配速 2byte  17,19
      */
     public SportsDataTab addRealTimeData(byte[] bytes) {
+        if (bytes.length < 20) return null;
 
         //心率
         int heartRate = bytes[8] & 0xff;
@@ -264,11 +265,17 @@ public class HeartRateUtil {
     }
 
     private static ArrayList<String> getKeys() {
-        ArrayList<String> keys = JSON.parseObject(SPUtils.getString(Key.CACHE_SPORT_KET, "[]"), new TypeToken<ArrayList<String>>() {
-        }.getType());
-        if (keys == null)
+        try {
+            ArrayList<String> keys = JSON.parseObject(SPUtils.getString(Key.CACHE_SPORT_KET, "[]"), new TypeToken<ArrayList<String>>() {
+            }.getType());
+            if (keys == null)
+                return new ArrayList<>();
+            return keys;
+        } catch (Exception e) {
+            RxLogUtils.e(e);
+            SPUtils.remove(Key.CACHE_SPORT_KET);
             return new ArrayList<>();
-        return keys;
+        }
     }
 
 }

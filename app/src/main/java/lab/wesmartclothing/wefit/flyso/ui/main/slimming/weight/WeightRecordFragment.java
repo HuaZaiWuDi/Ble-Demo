@@ -359,11 +359,11 @@ public class WeightRecordFragment extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (list != null) {
             list.clear();
             list = null;
         }
-        super.onDestroy();
     }
 
     private void initTopBar() {

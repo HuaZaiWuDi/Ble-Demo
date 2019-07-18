@@ -43,9 +43,9 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -55,6 +55,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -280,17 +281,20 @@ public class AddDeviceActivity extends BaseActivity {
                         RxLogUtils.d("添加绑定设备：" + s);
 
                         for (BindDeviceBean bean : beans) {
-                            if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
-                                SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
-                                if (bean.getQNBleDevice() != null)
-                                    QNBleManager.getInstance().connectDevice(bean.getQNBleDevice());
-                            } else {
-                                if (bean.getBluetoothDevice() != null) {
-                                    MyBleManager.Companion.getInstance().disConnect();
-                                    MyBleManager.Companion.getInstance().doConnect(bean.getBluetoothDevice());
+                            if (bean.isBind())
+                                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
+                                    BuryingPoint.INSTANCE.clothingState(bean.getDeviceMac(), "绑定设备：");
+                                    if (bean.getQNBleDevice() != null)
+                                        QNBleManager.getInstance().connectDevice(bean.getQNBleDevice());
+                                } else {
+                                    if (bean.getBluetoothDevice() != null) {
+                                        MyBleManager.Companion.getInstance().disConnect();
+                                        MyBleManager.Companion.getInstance().doConnect(bean.getBluetoothDevice());
+                                    }
+                                    BuryingPoint.INSTANCE.scaleState(bean.getDeviceMac(), "绑定设备：");
+                                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
                                 }
-                                SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
-                            }
                         }
 
                         RxBus.getInstance().post(new RefreshSlimming());

@@ -28,6 +28,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -115,7 +116,7 @@ public class AboutUpdateDialog extends RxDialog {
 
     }
 
-    FileDownLoadObserver<File> mFileDownLoadObserver = new FileDownLoadObserver<File>() {
+    private FileDownLoadObserver<File> mFileDownLoadObserver = new FileDownLoadObserver<File>() {
         @Override
         public void onDownLoadSuccess(File o) {
 
@@ -132,6 +133,7 @@ public class AboutUpdateDialog extends RxDialog {
             setCanceledOnTouchOutside(true);
 
             RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
+            BuryingPoint.INSTANCE.netErrorMessage("DFUDownLoad", "DFU下载文件失败");
         }
 
         @Override
@@ -208,12 +210,14 @@ public class AboutUpdateDialog extends RxDialog {
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
                 mBLEUpdateListener.fail();
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级中断,请重试");
         }
 
         @Override
         public void onDfuProcessStarted(String deviceAddress) {
             super.onDfuProcessStarted(deviceAddress);
             RxLogUtils.d("onDfuProcessStarted");
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级开始");
         }
 
         @Override
@@ -242,6 +246,7 @@ public class AboutUpdateDialog extends RxDialog {
             MyBleManager.Companion.setDFUStarting(false);
             RxLogUtils.d("onDfuCompleted");
             mTvUpdateTip.setText("升级完成");
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级完成");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
                 mBLEUpdateListener.success();
@@ -265,6 +270,7 @@ public class AboutUpdateDialog extends RxDialog {
             RxLogUtils.e("onError:" + message);
             MyBleManager.Companion.setDFUStarting(false);
             mTvUpdateTip.setText("升级失败,请重试");
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级失败");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
                 mBLEUpdateListener.fail();

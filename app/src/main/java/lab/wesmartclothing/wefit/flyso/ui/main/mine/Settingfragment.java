@@ -174,7 +174,7 @@ public class Settingfragment extends BaseActivity {
                         QNBleManager.getInstance().disConnectDevice();
                         try {
                             RxCache.getDefault().clear2();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);

@@ -5,10 +5,12 @@ import android.content.Context
 import android.util.Log
 import com.vondear.rxtools.utils.RxLogUtils
 import com.vondear.rxtools.utils.SPUtils
+import com.vondear.rxtools.utils.aboutByte.HexUtil
 import com.wesmarclothing.mylibrary.net.RxBus
 import lab.wesmartclothing.wefit.flyso.BuildConfig
 import lab.wesmartclothing.wefit.flyso.R
 import lab.wesmartclothing.wefit.flyso.base.MyAPP
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus
 import lab.wesmartclothing.wefit.flyso.tools.BleKey
@@ -53,7 +55,6 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
     }
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         bluetoothManager.adapter
-
     }
 
     override fun getGattCallback() = mBleCallback
@@ -95,6 +96,9 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
             val service = gatt.getService(UUID.fromString(BleKey.UUID_Servie)) ?: return false
             writeChar = service.getCharacteristic(UUID.fromString(BleKey.UUID_CHART_WRITE))
             notifyChar = service.getCharacteristic(UUID.fromString(BleKey.UUID_CHART_READ_NOTIFY))
+
+            BuryingPoint.clothingState(bluetoothDevice?.address
+                    ?: "", "设备是否支持：${writeChar != null && notifyChar != null}")
             return writeChar != null && notifyChar != null
         }
     }
@@ -116,6 +120,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
 
     private fun doFail(device: BluetoothDevice, status: Int) {
         RxLogUtils.d("执行失败,状态：$status--设备信息：$device")
+        BuryingPoint.clothingState(device.address, "执行失败,状态：$status-${HexUtil.encodeHexStr(mBytes)}")
 //        disConnect()
     }
 
@@ -141,6 +146,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
 
         if (isBLEEnabled())
             BluetoothLeScannerCompat.getScanner().startScan(null, build, scanCallback)
+        BuryingPoint.clothingState("", "开启：${isBLEEnabled()}")
     }
 
 
@@ -149,9 +155,10 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
             super.onScanResult(callbackType, result)
             if (BleKey.Smart_Clothing == result.device.name) {
                 "扫描到设备${result.device.name}".d(result.device.address)
-                if (result.device.address == SPUtils.getString(SPKey.SP_clothingMAC))
+                if (result.device.address == SPUtils.getString(SPKey.SP_clothingMAC)) {
                     doConnect(result.device)
-                else {
+                    BuryingPoint.clothingState(result.device.address, "扫描到绑定设备${result.device.name}-${result.device.address}")
+                } else {
                     val bindDeviceBean = BindDeviceBean(BleKey.TYPE_CLOTHING,
                             getContext().getString(R.string.clothing), result.device.address, result.rssi)
                     bindDeviceBean.bluetoothDevice = result.device
@@ -162,6 +169,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
                 val qnBleDevice = QNBleManager.getInstance().convert2QNDevice(result.device, result.rssi, result.scanRecord?.bytes)
                 if (result.device.address == SPUtils.getString(SPKey.SP_scaleMAC)) {
                     QNBleManager.getInstance().connectDevice(qnBleDevice)
+                    BuryingPoint.scaleState(result.device.address, "扫描到绑定设备${result.device.name}-${result.device.address}")
                 } else {
                     val bindDeviceBean = BindDeviceBean(BleKey.TYPE_SCALE,
                             getContext().getString(R.string.scale), result.device.address, result.rssi)
@@ -179,12 +187,14 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
             "扫描失败状态码：$errorCode".d()
+            BuryingPoint.clothingState("", "扫描失败状态码：$errorCode")
         }
     }
 
     fun stopScan() {
         if (isBLEEnabled())
             BluetoothLeScannerCompat.getScanner().stopScan(scanCallback)
+        BuryingPoint.clothingState("", "停止扫描：${isBLEEnabled()}")
     }
 
     fun doConnect(bleDevice: BluetoothDevice) {
@@ -192,18 +202,22 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
         setGattCallbacks(object : BleManagerCallbacks {
             override fun onDeviceDisconnecting(device: BluetoothDevice) {
                 "正在断开连接".d(device.address)
+                BuryingPoint.clothingState(device.address, "正在断开连接")
             }
 
             override fun onDeviceDisconnected(device: BluetoothDevice) {
                 "断开连接不在重连".d(device.address)
+                BuryingPoint.clothingState(device.address, "断开连接不在重连")
             }
 
             override fun onDeviceConnected(device: BluetoothDevice) {
                 "设备连接".d(device.address)
+                BuryingPoint.clothingState(device.address, "设备连接")
             }
 
             override fun onDeviceNotSupported(device: BluetoothDevice) {
                 "设备不支持".d(device.address)
+                BuryingPoint.clothingState(device.address, "设备不支持")
             }
 
             override fun onBondingFailed(device: BluetoothDevice) {
@@ -212,6 +226,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
 
             override fun onServicesDiscovered(device: BluetoothDevice, optionalServicesFound: Boolean) {
                 "发现服务".d(device.address)
+                BuryingPoint.clothingState(device.address, "发现服务")
             }
 
             override fun onBondingRequired(device: BluetoothDevice) {
@@ -221,6 +236,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
             override fun onLinkLossOccurred(device: BluetoothDevice) {
                 "断开连接准备重新连接".d(device.address)
                 RxBus.getInstance().postSticky(ClothingConnectBus(false))
+                BuryingPoint.clothingState(device.address, "准备重新连接")
             }
 
             override fun onBonded(device: BluetoothDevice) {
@@ -231,14 +247,17 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
             override fun onDeviceReady(device: BluetoothDevice) {
                 "设备准备好了".d(device.address)
                 RxBus.getInstance().postSticky(ClothingConnectBus(true))
+                BuryingPoint.clothingState(device.address, "设备准备")
             }
 
             override fun onError(device: BluetoothDevice, message: String, errorCode: Int) {
                 "异常:$message:状态码：$errorCode".d(device.address)
+                BuryingPoint.clothingState(device.address, "异常:$message:状态码：$errorCode")
             }
 
             override fun onDeviceConnecting(device: BluetoothDevice) {
                 "正在连接".d(device.address)
+                BuryingPoint.clothingState(device.address, "正在连接")
             }
         })
 

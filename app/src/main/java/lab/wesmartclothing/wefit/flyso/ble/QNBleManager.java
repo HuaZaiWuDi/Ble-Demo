@@ -30,6 +30,7 @@ import java.util.List;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceLink;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
@@ -151,6 +152,9 @@ public class QNBleManager {
                 RxLogUtils.d("轻牛SDK ：创建用户" + i + "----" + s);
             }
         });
+        RxLogUtils.d("轻牛SDK ：创建用户：" + qnUser.toString());
+        if (device != null)
+            BuryingPoint.INSTANCE.scaleState(device.getMac(), "体重用户：身高：" + height + "-性别：" + sex + "-age：" + info.getAge());
         return qnUser;
     }
 
@@ -165,7 +169,6 @@ public class QNBleManager {
         });
     }
 
-
     public void disConnectDevice() {
         disConnectDevice(device);
     }
@@ -178,7 +181,6 @@ public class QNBleManager {
             }
         });
     }
-
 
     public QNBleDevice convert2QNDevice(BluetoothDevice device, int rssi, byte[] scanRecord) {
         return QNapi.buildDevice(device, rssi, scanRecord, new QNResultCallback() {
@@ -255,6 +257,7 @@ public class QNBleManager {
                     @Override
                     public void onResult(int i, String s) {
                         RxLogUtils.d("设置体脂率误差值：" + s + "---状态码：" + i);
+                        BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "体脂率误差值：" + s + "---状态码：" + i);
                     }
                 });
                 Bundle bundle = new Bundle();
@@ -266,6 +269,8 @@ public class QNBleManager {
 
                 MyAPP.getgUserInfo().setHmac(qnScaleData.getHmac());
                 RxLogUtils.d("HMac:" + qnScaleData.getHmac());
+
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "稳定体重：");
             }
 
             @Override
@@ -273,11 +278,13 @@ public class QNBleManager {
                 RxLogUtils.d("历史数据：" + list.size());
                 BleService.historyWeightData = list;
                 RxBus.getInstance().post(new ScaleHistoryData(list));
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "历史体重数据个数：" + list.size());
             }
 
             @Override
             public void onGetElectric(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("onGetElectric:" + i);
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "onGetElectric：" + i);
             }
         });
 
@@ -286,11 +293,13 @@ public class QNBleManager {
             public void onConnecting(QNBleDevice qnBleDevice) {
                 RxLogUtils.e("正在连接:");
                 setConnectState(QNBleManager.QN_CONNECTING);
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "正在连接");
             }
 
             @Override
             public void onConnected(QNBleDevice qnBleDevice) {
                 RxLogUtils.d("连接成功:");
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "连接成功");
             }
 
             @Override
@@ -302,6 +311,7 @@ public class QNBleManager {
                 deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_scaleMAC));
                 deviceLink.setDeviceNo(BleKey.TYPE_SCALE);
                 deviceLink.deviceLink(deviceLink);
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "发现服务");
 
             }
 
@@ -309,6 +319,7 @@ public class QNBleManager {
             public void onDisconnecting(QNBleDevice qnBleDevice) {
                 RxLogUtils.e("正在断开连接:");
                 setConnectState(QNBleManager.QN_DISCONNECTING);
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "正在断开连接");
             }
 
             @Override
@@ -316,9 +327,9 @@ public class QNBleManager {
                 setConnectState(QNBleManager.QN_DISCONNECED);
                 RxBus.getInstance().postSticky(new ScaleConnectBus(false));
                 RxLogUtils.e("断开连接:");
-//                connectDevices.remove(qnBleDevice.getMac());
 
-//                scanBle();
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "断开连接");
+
             }
 
             @Override
@@ -327,14 +338,14 @@ public class QNBleManager {
                 RxLogUtils.d("连接异常：" + i);
                 disConnectDevice();
                 RxBus.getInstance().postSticky(new ScaleConnectBus(false));
-//                connectDevices.remove(qnBleDevice.getMac());
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "连接异常");
 
-//                scanBle();
             }
 
             @Override
             public void onScaleStateChange(QNBleDevice qnBleDevice, int i) {
                 RxLogUtils.d("体重秤状态变化:" + i);
+                BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "体重秤状态变化:" + i);
                 switch (i) {
                     case 5://正在测量
                         break;

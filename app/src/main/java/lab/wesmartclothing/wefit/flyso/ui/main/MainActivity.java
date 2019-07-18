@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
@@ -41,6 +42,7 @@ import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
@@ -104,6 +106,7 @@ public class MainActivity extends BaseALocationActivity {
     protected void initViews() {
         super.initViews();
         initView();
+
     }
 
     @Override
@@ -240,6 +243,11 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("启动时长" + "主页可交互");
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
     private void initBottomTab() {
         String[] tab_text = getResources().getStringArray(R.array.tab_text);
@@ -289,6 +297,8 @@ public class MainActivity extends BaseALocationActivity {
                         DoraemonKit.hide();
                     } else
                         DoraemonKit.show();
+                } else {
+                    MobclickAgent.onEvent(MyAPP.sMyAPP, "test");
                 }
             }
         });

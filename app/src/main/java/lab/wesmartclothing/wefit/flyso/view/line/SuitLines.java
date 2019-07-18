@@ -889,7 +889,8 @@ public class SuitLines extends View {
     private void reset() {
         offset = 0;
         realBetween = 0;
-        mLineBeans.clear();
+        if (mLineBeans != null)
+            mLineBeans.clear();
         mLineBeans = null;
 
         maxValueY = 0;

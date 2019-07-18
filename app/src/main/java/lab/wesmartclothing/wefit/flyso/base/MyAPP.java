@@ -18,6 +18,7 @@ import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.sonic.sdk.SonicConfig;
 import com.tencent.sonic.sdk.SonicEngine;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -170,6 +171,7 @@ public class MyAPP extends Application {
         RxLogUtils.d("是否是开发设备：" + isDevelopmentDevice);
         if (!isDevelopmentDevice) {
             Bugly.init(getApplicationContext(), Key.BUGLY_KEY, BuildConfig.DEBUG);
+            Bugly.putUserData(this, "APP_CODE", BuildConfig.VERSION_CODE + "");
         }
     }
 
@@ -204,8 +206,7 @@ public class MyAPP extends Application {
         PlatformConfig.setWeixin(Key.WX_KEY, Key.WX_SECRET);
         PlatformConfig.setQQZone(Key.QQ_KEY, Key.QQ_SECRET);
         PlatformConfig.setSinaWeibo(Key.SINA_KEY, Key.SINA_SECRET, "https://sns.whalecloud.com/sina2/callback");
-
-
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
     }
 
 

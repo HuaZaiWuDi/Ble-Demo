@@ -3,7 +3,10 @@ package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.alibaba.fastjson.JSON
-import com.vondear.rxtools.utils.*
+import com.vondear.rxtools.utils.RxDataUtils
+import com.vondear.rxtools.utils.RxTextUtils
+import com.vondear.rxtools.utils.RxUtils
+import com.vondear.rxtools.utils.StatusBarUtils
 import com.vondear.rxtools.utils.dateUtils.RxFormat
 import com.vondear.rxtools.view.RxToast
 import com.zchu.rxcache.RxCache
@@ -126,7 +129,6 @@ class DietRecordActivity : BaseActivity() {
             val color = if (it.heatCalorie < it.dietPlan) -0x78000001 else -0x1
             lines_Heat.add(Unit(it.heatCalorie.toFloat(), date, color))
             lines_Base.add(Unit(it.dietPlan.toFloat(), ""))
-            RxLogUtils.d("摄入标准：${it.dietPlan}")
         }
 
         val heatLine = LineBean()

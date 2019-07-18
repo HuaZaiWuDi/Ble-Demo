@@ -28,7 +28,6 @@ import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
-import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
@@ -504,9 +503,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         Collections.reverse(item);
         Collections.reverse(dates);
 
-        for (Integer integer : recommendList) {
-            RxLogUtils.d("能量标准：" + integer);
-        }
 
         lineNormalDiet.setBezierLine(true);
         lineNormalDiet.setDashPath(new DashPathEffect(new float[]{10, 5}, 5));
@@ -608,10 +604,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         lineNormalEnergy.setMaxMinValue((int) max, 0);
 
 
-        for (Integer integer : recommendList) {
-            RxLogUtils.d("能量标准：" + integer);
-        }
-
         mEnergyProgress7.setProgress((int) (item.get(6) * 100 / max), false);
         mEnergyProgress6.setProgress((int) (item.get(5) * 100 / max), false);
         mEnergyProgress5.setProgress((int) (item.get(4) * 100 / max), false);
@@ -696,9 +688,6 @@ public class SlimmingRecordFragment extends BaseAcFragment {
         lineNormalSport.setData(recommendList);
         lineNormalSport.setMaxMinValue((int) max, 0);
 
-        for (Integer integer : recommendList) {
-            RxLogUtils.d("运动标准：" + integer);
-        }
 
         mSportingProgress6.setColor(item.get(5) > recommendList.get(5) ?
                 ContextCompat.getColor(mContext, R.color.Gray) : ContextCompat.getColor(mContext, R.color.BrightGray));
