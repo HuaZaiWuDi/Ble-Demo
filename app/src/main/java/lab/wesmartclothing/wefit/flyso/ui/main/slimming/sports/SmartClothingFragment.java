@@ -170,7 +170,7 @@ public class SmartClothingFragment extends BaseActivity {
 
                 SpannableStringBuilder kcalBuilder = RxTextUtils.getBuilder(getString(R.string.consumeCalorie) + "\n")
                         .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                        .append(String.format("%.1f", item.getCalorie()))
+                        .append(String.format("%.1f",  (float)item.getCalorie()))
                         .append("\tkcal")
                         .create();
 

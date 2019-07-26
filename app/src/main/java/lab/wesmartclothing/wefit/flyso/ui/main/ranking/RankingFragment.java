@@ -140,7 +140,7 @@ public class RankingFragment extends BaseAcFragment {
                     helper
                             .setText(R.id.tv_nickname, item.getUserName())
                             .setText(R.id.tv_phone, item.getPhone())
-                            .setText(R.id.tv_loseWeight, String.format("%.1f", Math.abs(item.getLoseWeight() * 2)) + "斤")
+                            .setText(R.id.tv_loseWeight, String.format("%.1f",  (float)Math.abs(item.getLoseWeight() * 2)) + "斤")
                             .setText(R.id.tv_duration, item.getTotalDays() + "天");
                     helper.setTypeface(Typeface.DEFAULT,
                             R.id.tv_ranking, R.id.tv_nickname, R.id.tv_phone, R.id.tv_loseWeight, R.id.tv_duration);
@@ -200,8 +200,8 @@ public class RankingFragment extends BaseAcFragment {
                                     .append(rankingBean.get(2).intValue() + "").setProportion(3f)
                                     .append("名").into(mTvRanking);
 
-                            RxTextUtils.getBuilder("累计减重 " + String.format("%.1f", Math.abs(rankingBean.get(1) * 2)) + "斤\n成功减重\n")
-                                    .append("" + String.format("%.1f", Math.abs(rankingBean.get(3) * 2))).setProportion(3f)
+                            RxTextUtils.getBuilder("累计减重 " + String.format("%.1f",  (float)Math.abs(rankingBean.get(1) * 2)) + "斤\n成功减重\n")
+                                    .append("" + String.format("%.1f",  (float)Math.abs(rankingBean.get(3) * 2))).setProportion(3f)
                                     .append("斤").into(mTvReduceWeight);
                         }
                     }
@@ -227,7 +227,7 @@ public class RankingFragment extends BaseAcFragment {
         String phone = no1Bean.getPhone();
 
         mTvNo1.setText(nickname + "\t\t\t\t\t\t" + phone + "\t\t\t\t\t\t" +
-                String.format("%.1f", Math.abs(no1Bean.getLoseWeight() * 2)) + "斤\t\t\t\t\t\t" + no1Bean.getTotalDays() + "天");
+                String.format("%.1f",  (float)Math.abs(no1Bean.getLoseWeight() * 2)) + "斤\t\t\t\t\t\t" + no1Bean.getTotalDays() + "天");
 
     }
 

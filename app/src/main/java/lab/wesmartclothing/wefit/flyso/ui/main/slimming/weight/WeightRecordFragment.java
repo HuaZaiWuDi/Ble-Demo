@@ -156,7 +156,7 @@ public class WeightRecordFragment extends BaseActivity {
             @Override
             protected void convert(BaseViewHolder helper, HealthInfoBean item) {
                 TextView view = helper.getView(R.id.tv_weight);
-                RxTextUtils.getBuilder(String.format("%.1f", item.getWeight()))
+                RxTextUtils.getBuilder(String.format("%.1f", (float) item.getWeight()))
                         .append(" kg").setProportion(0.5f)
                         .into(view);
                 helper.setText(R.id.tv_weightTime, RxFormat.setFormatDate(item.getCreateTime(), "HH:mm"))
@@ -327,10 +327,10 @@ public class WeightRecordFragment extends BaseActivity {
 
         mSuitlines.setLineChartSelectItemListener(valueX -> {
             if (!list.isEmpty()) {
-                mTvCurWeight.setText(String.format("%.1f", list.get(valueX).getWeight()));
-                mTvBodyFat.setText(String.format("%.1f", list.get(valueX).getBodyFatRate()));
-                mTvMuscle.setText(String.format("%.1f", (list.get(valueX).getMuscleMass() / list.get(valueX).getWeight() * 100f)));
-                mTvBmi.setText(String.format("%.1f", list.get(valueX).getBmi()));
+                mTvCurWeight.setText(String.format("%.1f", (float) list.get(valueX).getWeight()));
+                mTvBodyFat.setText(String.format("%.1f", (float) list.get(valueX).getBodyFatRate()));
+                mTvMuscle.setText(String.format("%.1f", (float) (list.get(valueX).getMuscleMass() / list.get(valueX).getWeight() * 100f)));
+                mTvBmi.setText(String.format("%.1f", (float) list.get(valueX).getBmi()));
                 mTvSportDate.setText(RxFormat.setFormatDate(list.get(valueX).getDateNo(), RxFormat.Date_CH));
             }
         });
@@ -381,7 +381,14 @@ public class WeightRecordFragment extends BaseActivity {
         super.onCreate(savedInstanceState);
     }
 
-    @OnClick({R.id.img_switch, R.id.img_switchDate, R.id.layout_sports, R.id.tv_dataContrast})
+    @OnClick({
+            R.id.img_switch,
+            R.id.img_switchDate,
+            R.id.layout_sports,
+            R.id.tv_dataContrast,
+            R.id.layout_weightData,
+            R.id.layout_weightDetail
+    })
     public void onViewClicked(View view) {
         if (RxUtils.isFastClick(800))
             return;
@@ -415,6 +422,12 @@ public class WeightRecordFragment extends BaseActivity {
             case R.id.tv_dataContrast:
                 RxActivityUtils.skipActivity(mContext, WeightContrastActivity.class);
                 break;
+            case R.id.layout_weightData:
+            case R.id.layout_weightDetail:
+                if (RxDataUtils.isEmpty(list)) return;
+                HealthInfoBean weightInfoBean = list.get(0);
+                if (weightInfoBean != null)
+                    BodyDataFragment.start(mContext, weightInfoBean.getGid(), null, true);
             default:
         }
     }

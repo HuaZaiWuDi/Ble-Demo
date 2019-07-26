@@ -160,19 +160,19 @@ public class EnergyActivity extends BaseActivity {
 
             mTvEnergyTitle.setText(surplusHeat < 0 ? "能量盈余" : "综合消耗");
 
-            RxTextUtils.getBuilder(String.format("%.1f", Math.abs(surplusHeat)))
+            RxTextUtils.getBuilder(String.format("%.1f", (float) Math.abs(surplusHeat)))
                     .append("\tkacl").setProportion(0.5f)
                     .into(mTvSurplusHeat);
 
             RxTextUtils.getBuilder(getString(R.string.intakeEnergy) + "\n")
-                    .append(String.format("%.1f", Math.abs(bean.getHeatCalorie()))).setProportion(1.3f)
+                    .append(String.format("%.1f", (float) Math.abs(bean.getHeatCalorie()))).setProportion(1.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .append("\tkcal").setProportion(0.7f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .into(mTvEatKcal);
 
             RxTextUtils.getBuilder(getString(R.string.consumeEnergy) + "\n")
-                    .append(String.format("%.1f", Math.abs(bean.getAthlCalorie()))).setProportion(1.3f)
+                    .append(String.format("%.1f", (float) Math.abs(bean.getAthlCalorie()))).setProportion(1.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))
                     .append("\tkcal").setProportion(0.7f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.yellow_FFBC00))

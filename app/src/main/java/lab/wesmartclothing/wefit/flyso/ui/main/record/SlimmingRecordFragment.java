@@ -774,12 +774,12 @@ public class SlimmingRecordFragment extends BaseAcFragment {
             int size = list.size();
             for (int i = 0; i < 7; i++) {
                 if (i < size) {
-                    float value = 0;
+                    double value = 0;
                     if (isWeight) {
-                        value = (float) (double) list.get(i).getWeight();
+                        value = list.get(i).getWeight();
                     } else
-                        value = (float) (double) list.get(i).getBodyFat();
-                    lineEntry.add(new Entry(6 - i, value));
+                        value = list.get(i).getBodyFat();
+                    lineEntry.add(new Entry(6 - i, (float) value));
                     dates.add(RxFormat.setFormatDate(list.get(i).getWeightDate(), "MM/dd"));
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, -1);

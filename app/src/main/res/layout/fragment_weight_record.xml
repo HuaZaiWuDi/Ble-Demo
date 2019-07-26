@@ -163,6 +163,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/layout_weightData"
                     android:layout_width="match_parent"
                     android:layout_height="84dp"
                     android:background="@color/white"
@@ -195,6 +196,7 @@
 
                 <!--体重数据-->
                 <LinearLayout
+                    android:id="@+id/layout_weightDetail"
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:background="@color/white"

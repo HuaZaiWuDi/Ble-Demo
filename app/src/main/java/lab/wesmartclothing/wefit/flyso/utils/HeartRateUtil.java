@@ -259,6 +259,8 @@ public class HeartRateUtil {
         ArrayList<String> keys = getKeys();
         keys.remove(sportKey);
         SPUtils.put(Key.CACHE_SPORT_KET, JSON.toJSONString(keys));
+        RxCache.getDefault().remove(sportKey);
+
         for (String key : getKeys()) {
             RxLogUtils.d("clearData", "删除历史运动数据Key:" + RxTimeUtils.date2String(new Date(RxDataUtils.stringToLong(key))));
         }

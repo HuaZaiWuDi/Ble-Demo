@@ -495,6 +495,7 @@ public class SuitLines extends View {
                     xyPaint.setTextSize(Util.size2sp(13, getContext()));
                     xyPaint.setAlpha(255);
                 }
+
                 //画每个点上的文字
                 if (mLineBeans.get(i).isShowUpText())
                     canvas.drawText(String.format("%.1f", value), unit.getXY().x, unit.getXY().y - Util.dip2px(6), xyPaint);
