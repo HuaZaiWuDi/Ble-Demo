@@ -23,10 +23,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -73,8 +75,8 @@ public class MeFragment extends BaseAcFragment {
     ImageView mIvCollect;
     @BindView(R.id.tv_collectCount)
     TextView mTvCollectCount;
-    @BindView(R.id.layout_myCollect)
-    RxRelativeLayout mLayoutMyCollect;
+    @BindView(R.id.layout_chatKefu)
+    RxRelativeLayout mLayoutChatKefu;
     @BindView(R.id.iv_Order)
     ImageView mIvOrder;
     @BindView(R.id.layout_myOrder)
@@ -117,6 +119,12 @@ public class MeFragment extends BaseAcFragment {
 
         UserInfo userInfo = MyAPP.getgUserInfo();
         mTvInvitation.setText(userInfo.getInvitationCode());
+
+        if (BuildConfig.Wesmart) {
+            mLayoutChatKefu.setVisibility(View.VISIBLE);
+        } else
+            mLayoutChatKefu.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -218,6 +226,7 @@ public class MeFragment extends BaseAcFragment {
             R.id.layout_myDevice,
             R.id.layout_myCollect,
             R.id.layout_myOrder,
+            R.id.layout_chatKefu,
             R.id.layout_myShoppingAddress,
             R.id.layout_problem,
             R.id.layout_aboutUs,
@@ -235,6 +244,9 @@ public class MeFragment extends BaseAcFragment {
                 break;
             case R.id.layout_myOrder:
                 WebTitleActivity.startWebActivity(mActivity, getString(R.string.myOrder), ServiceAPI.Order_Url, true);
+                break;
+            case R.id.layout_chatKefu:
+                ChatManager.INSTANCE.register();
                 break;
             case R.id.layout_myShoppingAddress:
                 WebTitleActivity.startWebActivity(mActivity, getString(R.string.myShoppingAddr), ServiceAPI.Shopping_Address, true);
@@ -258,7 +270,6 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, HealthReportActivity.class);
                 break;
             default:
-
         }
     }
 

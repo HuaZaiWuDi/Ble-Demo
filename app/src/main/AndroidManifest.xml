@@ -68,11 +68,6 @@
             android:enabled="true"
             android:exported="true">
         </service>
-        <service
-            android:name="com.qingniu.scale.ble.ScaleBleService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
         <!-- BUGly升级 -->
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"

@@ -18,7 +18,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -31,6 +30,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.test.Test;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
@@ -85,10 +85,10 @@ public class SplashActivity extends BaseActivity {
     protected void initNetData() {
         super.initNetData();
 
-//        if (true) {
-//            RxActivityUtils.skipActivity(mContext, Main2Activity.class);
-//            return;
-//        }
+        if (Test.testEnable) {
+            Test.INSTANCE.main(this);
+            return;
+        }
 
 
         initData();
@@ -104,7 +104,7 @@ public class SplashActivity extends BaseActivity {
         }
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .timeout(3, TimeUnit.SECONDS)
+//                .timeout(3, TimeUnit.SECONDS)
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {

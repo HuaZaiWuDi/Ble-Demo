@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import android.support.v4.app.Fragment;
+
 import com.flyco.tablayout.listener.CustomTabEntity;
 
 /**
@@ -10,7 +12,7 @@ public class BottomTabItem implements CustomTabEntity {
     int select_img;
     int unselect_img;
     String text;
-
+    Fragment mFragment;
 
     @Override
     public String getTabTitle() {
@@ -28,6 +30,10 @@ public class BottomTabItem implements CustomTabEntity {
     }
 
 
+    public Fragment getFragment() {
+        return mFragment;
+    }
+
     public BottomTabItem(String text) {
         this.text = text;
     }
@@ -36,5 +42,12 @@ public class BottomTabItem implements CustomTabEntity {
         this.select_img = select_img;
         this.unselect_img = unselect_img;
         this.text = text;
+    }
+
+    public BottomTabItem(int select_img, int unselect_img, String text, Fragment fragment) {
+        this.select_img = select_img;
+        this.unselect_img = unselect_img;
+        this.text = text;
+        mFragment = fragment;
     }
 }

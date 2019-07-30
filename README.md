@@ -39,6 +39,23 @@ AppSecret：60eabde1de49af086f53aa5fb230f7ed
 安卓 - 高德：
 Key：20cc8510855f543b2bf4c59d647852e2
 AppKey：5c662b4cf1f5567e310009e5
+
+环信-
+Appkey: 
+1407190726061449#kefuchannelapp22550
+Client ID?: 
+YXA6Cb3FYK9aEem0VAEpHZ8k2A
+Client Secret: 
+YXA6W02ZGLTP1itx4nFH-AdsYPW6WHs
+IM服务号?: 
+kefuchannelimid_332674
+组织: 
+1407190726061449
+应用名称: 
+kefuchannelapp22550
+关联ID: 
+106868
+
 ~~~~
 
 
@@ -82,6 +99,9 @@ AppSecret：49b5d1a655eb0be6e0854ed32c9e3b7e
 安卓 - 高德：
 Key：d08d76ae6bd68061111b1bfd697accf1
 AppKey：5c662b4cf1f5567e310009e5
+
+
+
 ~~~~
 
 

@@ -1,8 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.netutil.net;
 
 
-import android.util.Log;
-
 import com.didichuxing.doraemonkit.kit.network.okhttp.DoraemonWeakNetworkInterceptor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -12,8 +10,10 @@ import com.vondear.rxtools.utils.SPUtils;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.utils.Logger;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -32,6 +32,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  * 创建时间：2016/8/30 11:57
  */
 public class NetManager {
+    private static final String TAG = "【NetManager】";
     private static NetManager netManager = null;
     private static ApiService mApiService;
     private static SystemService mSystemService;
@@ -47,17 +48,25 @@ public class NetManager {
     public NetManager() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
-        if (true) {
+        if (BuildConfig.DEBUG) {
             //日志显示级别
             HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
+            StringBuilder mMessage = new StringBuilder();
             //新建log拦截器
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                @Override
-                public void log(String message) {
-                    Log.w("【NetManager】", message);
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+                if (message.startsWith("--> POST")) {
+                    mMessage.setLength(0);
+                }
+                if ((message.startsWith("{") && message.endsWith("}"))
+                        || (message.startsWith("[") && message.endsWith("]"))) {
+                    message = Logger.formatJson(message);
+                }
+                mMessage.append(message.concat("\n"));
+                if (message.startsWith("<-- END HTTP")) {
+                    Logger.e(TAG, mMessage.toString());
                 }
             });
             loggingInterceptor.setLevel(level);

@@ -9,4 +9,12 @@ package lab.wesmartclothing.wefit.flyso.ble;
  * @Project Android_WeFit_2.0
  */
 public class TestBle {
+
+
+    public TestBle() {
+
+
+    }
+
+
 }

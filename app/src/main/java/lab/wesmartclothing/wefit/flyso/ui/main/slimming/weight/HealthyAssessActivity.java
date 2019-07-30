@@ -199,7 +199,32 @@ public class HealthyAssessActivity extends BaseActivity {
 
 
         //健康评级
-        mHealthyLevel.switchLevel(bean.getBmiLevel());
+        mHealthyLevel.switchLevel(getSickLevel(bean.getHealthScore()));
     }
 
+    /**
+     * 需求更改，患病风险改为用健康分数计算
+     * S: (95 ~ 100]
+     * A: (85 ~ 95]
+     * B: (75 ~ 85]
+     * C: (65 ~ 75]
+     * F: (0 ~ 65]
+     *
+     * @param healthScore
+     * @return
+     */
+    private String getSickLevel(double healthScore) {
+        if (healthScore > 95) {
+            return "S";
+        } else if (healthScore > 85) {
+            return "A";
+        } else if (healthScore > 75) {
+            return "B";
+        } else if (healthScore > 65) {
+            return "C";
+        } else if (healthScore == 0) {
+            return "";
+        }
+        return "F";
+    }
 }

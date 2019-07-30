@@ -311,16 +311,13 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/line"/>
 
             <!--我的收藏-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_myCollect"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="1dp"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 android:visibility="gone"
@@ -367,15 +364,12 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/line"/>
-
+            <!--我的订单-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_myOrder"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="1dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
@@ -412,15 +406,12 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/line"/>
-
+            <!--我的购物车-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_myShoppingAddress"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="1dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
@@ -457,11 +448,54 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
+            <!--在线客服-->
+            <com.vondear.rxtools.view.layout.RxRelativeLayout
+                android:id="@+id/layout_chatKefu"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="1dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dimen_16"
+                android:paddingRight="@dimen/dimen_16"
+                app:background_normal="@color/white"
+                app:ripple_color="@color/ripple_ECEAE6">
+
+                <ImageView
+                    android:id="@+id/iv_chatKefu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/ic_chat_kefu"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="6dp"
+                    android:layout_toRightOf="@+id/iv_chatKefu"
+                    android:text="在线客服"
+                    android:textColor="@color/Gray"
+                    android:textSize="15sp"
+                    />
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/icon_goto"
+                    />
+
+
+            </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
             <!--邀请码-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_invitation"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="1dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
@@ -509,16 +543,13 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/line"/>
 
             <!--健康报告-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_HealthReport"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="1dp"
                 android:paddingLeft="@dimen/dimen_16"
                 android:paddingRight="@dimen/dimen_16"
                 app:background_normal="@color/white"
@@ -595,16 +626,13 @@
 
             </com.vondear.rxtools.view.layout.RxRelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/line"/>
 
             <!--关于我们-->
             <com.vondear.rxtools.view.layout.RxRelativeLayout
                 android:id="@+id/layout_aboutUs"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="1dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/dimen_16"

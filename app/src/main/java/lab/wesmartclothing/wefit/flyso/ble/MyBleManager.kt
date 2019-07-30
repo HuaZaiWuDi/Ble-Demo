@@ -277,8 +277,8 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
         return isConnected
     }
 
-    fun String.d(tag: String = "【MyBleManager】") {
-        Log.d(tag, this)
-    }
+}
 
+fun Any.d(tag: String = "【智瘦】") {
+    Log.d(tag, this.toString())
 }

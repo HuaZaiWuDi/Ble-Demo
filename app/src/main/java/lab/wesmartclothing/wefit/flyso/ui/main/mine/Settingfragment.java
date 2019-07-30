@@ -27,6 +27,7 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -86,44 +87,37 @@ public class Settingfragment extends BaseActivity {
         clothing.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         clothing.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
+        QMUICommonListItemView customerService = mGroupListView.createItemView("客服");
+        customerService.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        customerService.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        customerService.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+
+
         QMUIGroupListView.newSection(mContext)
-                .addItemView(changePasswordItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class);
-                    }
-                })
-                .addItemView(clearCacheItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new RxDialogSureCancel(mActivity)
-                                .setTitle(getString(R.string.cleanCache) + "?")
-                                .setSure(getString(R.string.clean))
-                                .setSureListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        RxFileUtils.clearAllCache(mContext.getApplicationContext());
-                                        try {
-                                            RxCache.getDefault().clear2();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        clearCacheItem.setDetailText("0MB");
-                                    }
-                                }).show();
-                    }
-                })
-                .addItemView(accountItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, AccountFragment.class);
-                    }
-                })
+                .addItemView(changePasswordItem, v ->
+                        RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class))
+                .addItemView(clearCacheItem, v -> new RxDialogSureCancel(mActivity)
+                        .setTitle(getString(R.string.cleanCache) + "?")
+                        .setSure(getString(R.string.clean))
+                        .setSureListener(v1 -> {
+                            RxFileUtils.clearAllCache(mContext.getApplicationContext());
+                            try {
+                                RxCache.getDefault().clear2();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            clearCacheItem.setDetailText("0MB");
+                        }).show())
+                .addItemView(accountItem, v ->
+                        RxActivityUtils.skipActivity(mContext, AccountFragment.class))
 //                .addItemView(clothing, new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View v) {
 ////                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
 //                    }
+//                })
+//                .addItemView(customerService, v -> {
+//                    ChatManager.INSTANCE.register();
 //                })
                 .setUseTitleViewForSectionSpace(false)
                 .addTo(mGroupListView);
@@ -163,6 +157,7 @@ public class Settingfragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        ChatManager.INSTANCE.logout();
                         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
                         boolean SP_GUIDE = SPUtils.getBoolean(SPKey.SP_GUIDE);
                         MyAPP.aMapLocation = null;

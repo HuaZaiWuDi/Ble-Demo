@@ -310,4 +310,6 @@
 -keep class com.linkedin.** { *; }
 -keep class com.android.dingtalk.share.ddsharemodule.** { *; }
 -keepattributes Signature
-
+#环信客服
+-keep class com.hyphenate.** {*;}
+-dontwarn  com.hyphenate.**

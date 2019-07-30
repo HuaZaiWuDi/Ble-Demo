@@ -1,12 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.netutil.utils;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import lab.wesmartclothing.wefit.flyso.BuildConfig;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 
 /**
  * 项目名称：MyProject
@@ -30,8 +27,6 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     public void onError(Throwable e) {
 
         Log.e(TAG, "onError: " + e.toString());
-        if (BuildConfig.DEBUG)
-            Toast.makeText(MyAPP.sMyAPP, e.toString(), Toast.LENGTH_LONG).show();
         _onError(new RxHttpsException().handleResponseError(e),
                 e instanceof ExplainException ? ((ExplainException) e).getCode() : -1);
 

@@ -7,12 +7,12 @@ import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.lzy.imagepicker.loader.ImageLoader;
 
 import java.io.File;
 
-import lab.wesmartclothing.wefit.flyso.R;
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * @author Jack
@@ -32,19 +32,22 @@ public class GlideImageLoader implements ImageLoader {
     public void displayImage(Context activity, Object path, ImageView imageView) {
         if (activity != null)
             Glide.with(activity)
-                    .load(path)
                     .asBitmap()
-                    .placeholder(R.mipmap.icon_placeholder)
+                    .load(path)
                     .into(imageView);
     }
 
     public void displayImage(Context activity, Object path, @DrawableRes int defaultImg, ImageView imageView) {
         if (activity != null)
             Glide.with(activity)
-                    .load(path)
                     .asBitmap()
-                    .placeholder(defaultImg)
-                    .centerCrop()
+                    .load(path)
+                    .apply(
+                            RequestOptions.placeholderOf(defaultImg)
+                    )
+                    .apply(
+                            RequestOptions.centerCropTransform()
+                    )
                     .into(imageView);
     }
 
@@ -54,10 +57,10 @@ public class GlideImageLoader implements ImageLoader {
         if (activity != null)
             Glide.with(activity)
                     .load(Uri.fromFile(new File(path)))
-                    .placeholder(R.mipmap.icon_placeholder)
-                    .centerCrop()
-                    .crossFade(500)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .apply(
+                            RequestOptions.centerCropTransform()
+                    )
+                    .transition(withCrossFade(500))
                     .into(imageView);
     }
 
@@ -66,10 +69,10 @@ public class GlideImageLoader implements ImageLoader {
         if (activity != null)
             Glide.with(activity)
                     .load(Uri.fromFile(new File(path)))
-                    .placeholder(R.mipmap.icon_placeholder)
-                    .centerCrop()
-                    .crossFade(500)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .apply(
+                            RequestOptions.centerCropTransform()
+                    )
+                    .transition(withCrossFade(500))
                     .into(imageView);
     }
 

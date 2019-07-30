@@ -52,10 +52,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
@@ -255,6 +257,8 @@ public class SlimmingFragment extends BaseAcFragment {
     RelativeLayout mLayoutSlimmingTarget;
     @BindView(R.id.img_weightFlag)
     ImageView ImgWeightFlag;
+    @BindView(R.id.iv_kefu)
+    ImageView mIvKefu;
 
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
@@ -306,6 +310,14 @@ public class SlimmingFragment extends BaseAcFragment {
         lineChartUtils = new HeartLineChartUtils(mLineChart);
         lineChartUtils.setPlanLineColor(Color.parseColor("#E4CA9F"), Color.parseColor("#312C35"));
 
+
+        //版本：只有智享瘦有这个版本
+        if (BuildConfig.Wesmart) {
+            mIvKefu.setVisibility(View.VISIBLE);
+        } else {
+            mIvKefu.setVisibility(View.GONE);
+        }
+
         mScroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             if (scrollY <= RxUtils.dp2px(32) && isFold) {
                 isFold = false;
@@ -314,6 +326,9 @@ public class SlimmingFragment extends BaseAcFragment {
                 mIvUserImg.animate().scaleX(1f).scaleY(1f).setDuration(500).start();
                 mImgSeeRecord.animate().scaleX(1f).scaleY(1f).setDuration(500).alpha(1f).start();
                 mImgSeeRecord.setEnabled(true);
+                if (BuildConfig.Wesmart)
+                    mIvKefu.animate().translationY(0).translationX(0)
+                            .setDuration(500).start();
             } else if (scrollY > RxUtils.dp2px(32) && !isFold) {
                 isFold = true;
                 //收缩
@@ -321,6 +336,9 @@ public class SlimmingFragment extends BaseAcFragment {
                 mIvUserImg.animate().scaleX(0.45f).scaleY(0.45f).setDuration(500).start();
                 mImgSeeRecord.animate().scaleX(0f).scaleY(0f).setDuration(500).alpha(0f).start();
                 mImgSeeRecord.setEnabled(false);
+                if (BuildConfig.Wesmart)
+                    mIvKefu.animate().translationY(-RxUtils.dp2px(15)).translationX(RxUtils.dp2px(100))
+                            .setDuration(500).start();
             }
         });
     }
@@ -855,7 +873,8 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.img_sporting_tip,
             R.id.img_Recipes,
             R.id.tv_resetTarget,
-            R.id.layout_foodRecord
+            R.id.layout_foodRecord,
+            R.id.iv_kefu
     })
     public void onViewClicked(View view) {
         Bundle bundle = null;
@@ -962,6 +981,9 @@ public class SlimmingFragment extends BaseAcFragment {
                 //2019-3-26更改，重置目标计划，重走健康报告流程
                 RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
 
+                break;
+            case R.id.iv_kefu:
+                ChatManager.INSTANCE.register();
                 break;
         }
     }

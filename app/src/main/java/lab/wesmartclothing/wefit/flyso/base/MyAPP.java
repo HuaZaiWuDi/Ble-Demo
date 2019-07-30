@@ -38,6 +38,7 @@ import java.util.Arrays;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -96,18 +97,18 @@ public class MyAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        sMyAPP = this;
+        RxUtils.init(MyAPP.this);
+        RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
+
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         RxLogUtils.d("当前进程：" + getCurrentProcessName());
         if (!this.getPackageName().equals(getCurrentProcessName())) return;
         QNBleManager.init(this);
-        sMyAPP = this;
         initSonic();
-
         //优化启动速度，把一些没必要立即初始化的操作放到子线程
         new RxThreadPoolUtils(RxThreadPoolUtils.Type.SingleThread, 1).execute(() -> {
             initRxCache();
-            RxUtils.init(MyAPP.this);
-            RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
             initUrl();
             MultiDex.install(MyAPP.this);
             initUM();
@@ -119,6 +120,14 @@ public class MyAPP extends Application {
             RxLogUtils.i("启动时长：初始化结束");
             AdaptationOppo();
         });
+        initHyphenate();
+    }
+
+    /**
+     * 环信客服云
+     */
+    private void initHyphenate() {
+        ChatManager.INSTANCE.initChat(this);
     }
 
     /**

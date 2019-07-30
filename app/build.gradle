@@ -46,7 +46,7 @@ android {
 
         ndk {
             //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi'
+            abiFilters 'armeabi-v7a'
             // 还可以添加  'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips64', 'mips'
         }
 
@@ -248,7 +248,7 @@ dependencies {
     implementation 'com.umeng.umsdk:utdid:1.1.5.3'
     //官方文档中没有这个依赖，要是不添加会导致初始化的时候的UMConfigure这个类不能识别
     implementation 'com.umeng.umsdk:share-wx:6.9.4'
-    implementation  'com.umeng.umsdk:analytics:8.0.0'
+    implementation 'com.umeng.umsdk:analytics:8.0.0'
     implementation('com.jackUtil:ImagePicker:1.0.3') {
         exclude group: 'com.android.support'
     }  //指定版本
@@ -268,5 +268,9 @@ dependencies {
     debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:1.1.7'
     releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:1.1.7'
 
-//    implementation 'com.tencent:mmkv:1.0.22'
+    //环信客服SDK http://docs.easemob.com/cs/300visitoraccess/androidsdk
+    //或者 compile 'com.hyphenate:kefu-easeui-android:1.1.9r2'
+    implementation('com.hyphenate:kefu-easeui-android:1.1.9') {
+//        exclude group: 'com.github.bumptech.glide'
+    }
 }

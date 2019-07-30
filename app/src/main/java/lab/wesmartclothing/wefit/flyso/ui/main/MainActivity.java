@@ -35,7 +35,6 @@ import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
@@ -82,8 +81,6 @@ public class MainActivity extends BaseALocationActivity {
     @BindView(R.id.parent)
     RelativeLayout mParent;
 
-    private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
-    private List<Fragment> mFragments = new ArrayList<>();
     private RxDialogSureCancel rxDialog;
 
     @Override
@@ -106,7 +103,6 @@ public class MainActivity extends BaseALocationActivity {
     protected void initViews() {
         super.initViews();
         initView();
-
     }
 
     @Override
@@ -197,13 +193,34 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress());
         RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
+        initData();
 
-        initMyViewPager();
-        initBottomTab();
         mBottomTab.setOnClickListener(v -> {
 
         });
         ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
+    }
+
+    private void initData() {
+        ArrayList<CustomTabEntity> pageList = new ArrayList<>(4);
+
+        pageList.add(new BottomTabItem(R.mipmap.icon_slimming_select, R.mipmap.icon_slimming_unselect,
+                getString(R.string.nav_slimming),
+                SlimmingFragment.newInstance()));
+        pageList.add(new BottomTabItem(R.mipmap.icon_record_unselect, R.mipmap.icon_record,
+                getString(R.string.nav_record),
+                SlimmingRecordFragment.newInstance()));
+        pageList.add(new BottomTabItem(R.mipmap.ic_ranking_select, R.mipmap.ic_ranking_unselect,
+                getString(R.string.nav_ranking),
+                RankingFragment.getInstance()));
+        pageList.add(new BottomTabItem(R.mipmap.icon_mine_select, R.mipmap.icon_mine_unselect,
+                getString(R.string.nav_my),
+                MeFragment.getInstance()));
+
+
+        initMyViewPager(pageList);
+        initBottomTab(pageList);
+
     }
 
     private void initSystemConfig() {
@@ -249,17 +266,7 @@ public class MainActivity extends BaseALocationActivity {
     }
 
 
-    private void initBottomTab() {
-        String[] tab_text = getResources().getStringArray(R.array.tab_text);
-        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_record,
-                R.mipmap.ic_ranking_unselect, R.mipmap.icon_mine_unselect};
-        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_record_unselect,
-                R.mipmap.ic_ranking_select, R.mipmap.icon_mine_select};
-        mBottomTabItems.clear();
-        for (int i = 0; i < tab_text.length; i++) {
-//            if (i != 2)
-            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
-        }
+    private void initBottomTab(ArrayList<CustomTabEntity> mBottomTabItems) {
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
         mCommonTabLayout.setTextUnselectColor(getResources().getColor(R.color.GrayWrite));
@@ -275,7 +282,7 @@ public class MainActivity extends BaseALocationActivity {
             public void onTabReselect(int position) {
                 if (!BuildConfig.DEBUG) return;
                 //双击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000)) {
+                if (position == mBottomTabItems.size() - 1 && RxUtils.isFastClick(1000)) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
                             .addItem(ServiceAPI.BASE_URL_208)
@@ -305,26 +312,17 @@ public class MainActivity extends BaseALocationActivity {
     }
 
 
-    private void initMyViewPager() {
-        mFragments.clear();
-        mFragments.add(SlimmingFragment.newInstance());
-//        mFragments.add(Slimming2Fragment.getInstance());
-        mFragments.add(SlimmingRecordFragment.newInstance());
-//        mFragments.add(FindFragment.getInstance());
-//        mFragments.add(StoreFragment.getInstance());
-        mFragments.add(RankingFragment.getInstance());
-        mFragments.add(MeFragment.getInstance());
-
+    private void initMyViewPager(ArrayList<CustomTabEntity> pageList) {
         mViewpager.setOffscreenPageLimit(4);
         mViewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return mFragments.get(position);
+                return ((BottomTabItem) pageList.get(position)).getFragment();
             }
 
             @Override
             public int getCount() {
-                return mFragments.size();
+                return pageList.size();
             }
         });
 
