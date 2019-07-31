@@ -24,15 +24,14 @@ import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +44,9 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -57,6 +57,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
@@ -112,24 +113,21 @@ public class AddDeviceActivity extends BaseActivity {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
         }
 
+        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
         initView();
         initRxBus();
-
+        startScan();
     }
 
     private void startScan() {
-        if (!BleTools.getBleManager().isBlueEnable()) {
-            BleTools.getBleManager().enableBluetooth();
+        if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
+            MyBleManager.Companion.getInstance().enableBLE();
+            switchStatus(STATUS_NO_DEVICE);
+            mTvDetails.setText(R.string.checkUnenableBluetooth);
             return;
         }
 
-        if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
-            RxLogUtils.d("未开启GPS定位");
-//            RxToast.warning(getString(R.string.open_GPS));
-            RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
-            rxDialogGPSCheck.show();
-            return;
-        }
+        switchStatus(STATUS_SCAN_DEVICE);
 
         mDeviceLists.clear();
         scanDevice.clear();
@@ -139,9 +137,6 @@ public class AddDeviceActivity extends BaseActivity {
         isScan(false);
 
         scanTimeout.startTimer();
-
-        startService(new Intent(mContext, BleService.class));
-        RxLogUtils.d("开启动画");
     }
 
     private MyTimer scanTimeout = new MyTimer(new MyTimerListener() {
@@ -167,9 +162,11 @@ public class AddDeviceActivity extends BaseActivity {
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
                 .subscribe(bleState -> {
                     boolean state = bleState.isOn();
-                    if (!state) {
+                    if (state) {
+                        startScan();
+                    } else {
                         switchStatus(STATUS_NO_DEVICE);
-                        mTvDetails.setText("监测到未开启蓝牙，请打开蓝牙重新扫描");
+                        mTvDetails.setText(R.string.checkUnenableBluetooth);
                     }
                 });
     }
@@ -178,26 +175,17 @@ public class AddDeviceActivity extends BaseActivity {
     public void initView() {
         initTopBar();
         initRecycler();
-        startScan();
         switchStatus(STATUS_SCAN_DEVICE);
     }
 
     private void initTopBar() {
-        mTopBar.setTitle("添加设备");
-        mTopBar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mTopBar.setTitle(R.string.AddDevice);
+        mTopBar.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         if (!forceBind) {
-            Button skip = mTopBar.addRightTextButton("跳过", R.id.tv_skip);
-            skip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //跳转主页
-                    RxActivityUtils.skipActivity(mContext, MainActivity.class);
-                }
+            Button skip = mTopBar.addRightTextButton(R.string.skip, R.id.tv_skip);
+            skip.setOnClickListener(v -> {
+                //跳转主页
+                RxActivityUtils.skipActivity(mContext, MainActivity.class);
             });
             skip.setTextColor(ContextCompat.getColor(mContext, R.color.Gray));
         }
@@ -246,11 +234,11 @@ public class AddDeviceActivity extends BaseActivity {
 
                     final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
                     if (BleKey.TYPE_SCALE.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
-                        RxToast.normal("已绑定体脂称");
+                        RxToast.normal(getString(R.string.bindedScale));
                         return;
                     }
                     if (BleKey.TYPE_CLOTHING.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
-                        RxToast.normal("已绑定瘦身衣");
+                        RxToast.normal(getString(R.string.bindedClothing));
                         return;
                     }
                     List<BindDeviceBean> data = adapter.getData();
@@ -282,11 +270,6 @@ public class AddDeviceActivity extends BaseActivity {
                 deviceList.setMacAddr(bean.getDeviceMac());
                 deviceList.setDeviceNo(bean.getDeivceType());
                 mDeviceLists.add(deviceList);
-                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
-                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
-                } else {
-                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
-                }
             }
         }
         mBindDeviceItem.setDeviceList(mDeviceLists);
@@ -300,9 +283,25 @@ public class AddDeviceActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加绑定设备：" + s);
 
+                        for (BindDeviceBean bean : beans) {
+                            if (bean.isBind())
+                                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
+                                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
+                                    BuryingPoint.INSTANCE.clothingState(bean.getDeviceMac(), "绑定设备：");
+                                    if (bean.getQNBleDevice() != null)
+                                        QNBleManager.getInstance().connectDevice(bean.getQNBleDevice());
+                                } else {
+                                    if (bean.getBluetoothDevice() != null) {
+                                        MyBleManager.Companion.getInstance().disConnect();
+                                        MyBleManager.Companion.getInstance().doConnect(bean.getBluetoothDevice());
+                                    }
+                                    BuryingPoint.INSTANCE.scaleState(bean.getDeviceMac(), "绑定设备：");
+                                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
+                                }
+                        }
+
                         RxBus.getInstance().post(new RefreshSlimming());
                         RxBus.getInstance().post(new RefreshMe());
-                        startService(new Intent(mContext, BleService.class));
                         //跳转主页
                         if (!forceBind) {
                             RxActivityUtils.skipActivity(mContext, MainActivity.class);
@@ -328,11 +327,9 @@ public class AddDeviceActivity extends BaseActivity {
                 bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
             return;
         }
-
         if (scanDevice.containsKey(bean.getDeviceMac())) {
             return;
         }
-
         if (mBtnScan.isEnabled()) return;
 
         scanDevice.put(bean.getDeviceMac(), bean);
@@ -342,20 +339,12 @@ public class AddDeviceActivity extends BaseActivity {
             scanTimeout.stopTimer();
         }
 
-
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().isBindDevice(bean.getDeviceMac()))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
-                        if ("true".equals(s)) {
-                            if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
-                                SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
-                            } else {
-                                SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
-                            }
-                        }
                         bean.setBind("true".equals(s));
 //                        adapter.addData(bean);
                         sortList(bean);
@@ -387,6 +376,7 @@ public class AddDeviceActivity extends BaseActivity {
             }
         }
         adapter.addData(index, bean);
+
     }
 
 
@@ -399,18 +389,16 @@ public class AddDeviceActivity extends BaseActivity {
         this.stepState = stepState;
         switch (stepState) {
             case STATUS_SCAN_DEVICE:
-                mTvTitle.setText("扫描搜索设备");
-                mTvDetails.setText("请添加您最近购买的智能设备");
-
+                mTvTitle.setText(R.string.scanDevice);
+                mTvDetails.setText(R.string.scanDeviceTip);
                 isScan(false);
-
                 mImgScan.setVisibility(View.VISIBLE);
                 mImgNoDevice.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.GONE);
                 break;
             case STATUS_FIND_DEVICE:
-                mTvTitle.setText("附近的设备");
-                mTvDetails.setText("请绑定并开始使用您的智能设备");
+                mTvTitle.setText(R.string.nearbyDevice);
+                mTvDetails.setText(R.string.BindDeviceTip);
                 mImgScan.clearAnimation();
                 mBtnScan.setVisibility(View.GONE);
                 mImgScan.setVisibility(View.GONE);
@@ -418,20 +406,20 @@ public class AddDeviceActivity extends BaseActivity {
                 mImgNoDevice.setVisibility(View.GONE);
                 break;
             case STATUS_BIND_DEVICE:
-                mTvTitle.setText("附近的设备");
-                mTvDetails.setText("请绑定并开始使用您的智能设备");
+                mTvTitle.setText(R.string.nearbyDevice);
+                mTvDetails.setText(R.string.BindDeviceTip);
                 mImgScan.clearAnimation();
 
                 isScan(true);
-                mBtnScan.setText("开始使用");
+                mBtnScan.setText(R.string.startUse);
 
                 mImgScan.setVisibility(View.GONE);
                 mMRecyclerView.setVisibility(View.VISIBLE);
                 mImgNoDevice.setVisibility(View.GONE);
                 break;
             case STATUS_NO_DEVICE:
-                mTvTitle.setText("扫描设备失败");
-                mTvDetails.setText("没有搜索到设备，请确保设备电量充足");
+                mTvTitle.setText(R.string.scanDeviceFail);
+                mTvDetails.setText(R.string.notScanDeviceTip);
                 mImgScan.clearAnimation();
 
                 isScan(true);
@@ -474,20 +462,16 @@ public class AddDeviceActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<Boolean>() {
                     @Override
                     protected void _onNext(Boolean aBoolean) {
-                        if (!aBoolean) {
-                            new RxDialogSureCancel(mContext)
-                                    .setTitle("提示")
-                                    .setContent("不定位权限，手机将无法连接蓝牙")
-                                    .setSure("去开启")
-                                    .setSureListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            initPermissions();
-                                        }
-                                    }).show();
-                        }
+
                     }
                 });
+
+        if (!RxLocationUtils.isLocationEnabled(this.getApplicationContext())) {
+            RxLogUtils.d("未开启GPS定位");
+//            RxToast.warning(getString(R.string.open_GPS));
+            RxDialogGPSCheck rxDialogGPSCheck = new RxDialogGPSCheck(mContext);
+            rxDialogGPSCheck.show();
+        }
     }
 
 }

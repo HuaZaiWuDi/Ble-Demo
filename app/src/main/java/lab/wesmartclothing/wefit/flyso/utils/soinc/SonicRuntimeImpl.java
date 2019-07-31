@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
  * the sonic host application must implement SonicRuntime to do right things.
@@ -36,7 +37,7 @@ public class SonicRuntimeImpl extends SonicRuntime {
      */
     @Override
     public String getUserAgent() {
-        return "zhishang";
+        return Key.COMPANY_KEY;
     }
 
     /**
@@ -46,7 +47,7 @@ public class SonicRuntimeImpl extends SonicRuntime {
      */
     @Override
     public String getCurrentUserAccount() {
-        return "Timetofit";
+        return Key.COMPANY_KEY;
     }
 
     @Override

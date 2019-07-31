@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,9 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.qmuiteam.qmui.layout.QMUIRelativeLayout;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import com.vondear.rxtools.boradcast.B;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
@@ -24,12 +22,16 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.dfu.DfuService;
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.FileDownLoadObserver;
-import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import no.nordicsemi.android.dfu.DfuProgressListenerAdapter;
 import no.nordicsemi.android.dfu.DfuServiceInitiator;
 import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
@@ -49,11 +51,12 @@ public class AboutUpdateDialog extends RxDialog {
     @BindView(R.id.loadView)
     RxLoadingView mLoadView;
 
+
     private String filePath;
     private Context mContext;
     private boolean mustUpdate;
-    private final String Dir = "/Timetofit/";
-    private String fileName = "weSmartClothing" + ".zip";
+    private final String Dir = "/" + Key.COMPANY_KEY + "/";
+    private String fileName = Key.COMPANY_KEY + ".zip";
 
     private BLEUpdateListener mBLEUpdateListener;
 
@@ -76,6 +79,7 @@ public class AboutUpdateDialog extends RxDialog {
         mContext = context;
         this.mustUpdate = mustUpdate;
 
+
         this.setCanceledOnTouchOutside(false);
         setFullScreenWidth();
 
@@ -94,61 +98,77 @@ public class AboutUpdateDialog extends RxDialog {
 
         setOnDismissListener(dialog -> {
             DfuServiceListenerHelper.unregisterProgressListener(mContext, listenerAdapter);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
         });
     }
 
     private void downLoadFile(String filePath) {
         int lastIndexOf = filePath.lastIndexOf("/");
-        fileName = filePath.substring(lastIndexOf + 1, filePath.length());
+        fileName = filePath.substring(lastIndexOf + 1);
         RxLogUtils.i("文件名：" + fileName);
 
-        RxManager.getInstance().doLoadDownSubscribe(NetManager.getApiService().downLoadFile(filePath))
+
+        NetManager.getApiService().downLoadFile(filePath)
+                .subscribeOn(Schedulers.io())
                 .map(body -> mFileDownLoadObserver.saveFile(body, Dir, fileName))
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mFileDownLoadObserver);
+
     }
 
-    FileDownLoadObserver<File> mFileDownLoadObserver = new FileDownLoadObserver<File>() {
+    private FileDownLoadObserver<File> mFileDownLoadObserver = new FileDownLoadObserver<File>() {
         @Override
         public void onDownLoadSuccess(File o) {
+
+            RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
             mTvUpdateTip.setText("下载文件成功");
+
             startMyDFU(o);
         }
 
         @Override
         public void onDownLoadFail(Throwable throwable) {
-            mTvUpdateTip.setText("下载文件失败:" + throwable.toString());
+            mTvUpdateTip.setText("下载文件失败");
             RxLogUtils.e(throwable.toString());
             setCanceledOnTouchOutside(true);
+
+            RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
+            BuryingPoint.INSTANCE.netErrorMessage("DFUDownLoad", "DFU下载文件失败");
         }
 
         @Override
         public void onProgress(int progress, long total) {
-            mTvUpdateTip.setText("正在下载文件：" + progress + "%");
+            RxLogUtils.e("当前线程：" + Thread.currentThread().getName());
+            mTvUpdateTip.post(() -> {
+                mTvUpdateTip.setText("正在下载文件：" + progress + "%");
+            });
         }
     };
 
 
     private void startMyDFU(File o) {
-        if (!BleTools.getInstance().isConnect()) {
-            mTvUpdateTip.setText("未连接设备，请连上设备再重试");
-            setCanceledOnTouchOutside(true);
-            return;
-        }
-
         if (o == null || !o.exists() || o.getAbsolutePath().equals("") || !o.getAbsolutePath().endsWith(".zip")) {
             mTvUpdateTip.setText("升级文件有误");
             setCanceledOnTouchOutside(true);
             return;
         }
 
-        final DfuServiceInitiator starter = new DfuServiceInitiator(BleTools.getInstance().getBleDevice().getMac())
-                .setDeviceName(BleTools.getInstance().getBleDevice().getName());
+        BluetoothDevice bluetoothDevice = MyBleManager.Companion.getInstance().getBluetoothDevice();
+        if (bluetoothDevice == null) {
+            mTvUpdateTip.setText("设备未连接");
+            setCanceledOnTouchOutside(true);
+            return;
+        }
+
+        final DfuServiceInitiator starter = new DfuServiceInitiator(bluetoothDevice.getAddress())
+                .setDeviceName(bluetoothDevice.getName());
         starter.setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true);
 //        starter.setZip(R.raw.nrf52832_xxaa_app_7);
         starter.setZip(o.getPath());
         starter.start(mContext, DfuService.class);
 
+        MyBleManager.Companion.getInstance().disConnect();
+        MyBleManager.Companion.setDFUStarting(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DfuServiceInitiator.createDfuNotificationChannel(mContext);
         }
@@ -185,18 +205,19 @@ public class AboutUpdateDialog extends RxDialog {
         public void onDfuAborted(String deviceAddress) {
             super.onDfuAborted(deviceAddress);
             RxLogUtils.d("onDfuAborted：" + deviceAddress);
-
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
             mTvUpdateTip.setText("升级中断,请重试");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
                 mBLEUpdateListener.fail();
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级中断,请重试");
         }
 
         @Override
         public void onDfuProcessStarted(String deviceAddress) {
             super.onDfuProcessStarted(deviceAddress);
             RxLogUtils.d("onDfuProcessStarted");
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级开始");
         }
 
         @Override
@@ -204,7 +225,7 @@ public class AboutUpdateDialog extends RxDialog {
             super.onDfuProcessStarting(deviceAddress);
             RxLogUtils.d("onDfuProcessStarting");
             mTvUpdateTip.setText("正在升级，请稍后...");
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, true);
+
         }
 
         @Override
@@ -222,9 +243,10 @@ public class AboutUpdateDialog extends RxDialog {
         @Override
         public void onDfuCompleted(String deviceAddress) {
             super.onDfuCompleted(deviceAddress);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
             RxLogUtils.d("onDfuCompleted");
             mTvUpdateTip.setText("升级完成");
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级完成");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
                 mBLEUpdateListener.success();
@@ -246,8 +268,9 @@ public class AboutUpdateDialog extends RxDialog {
         public void onError(String deviceAddress, int error, int errorType, String message) {
             super.onError(deviceAddress, error, errorType, message);
             RxLogUtils.e("onError:" + message);
-            B.broadUpdate(mContext, BleKey.ACTION_DFU_STARTING, BleKey.EXTRA_DFU_STARTING, false);
+            MyBleManager.Companion.setDFUStarting(false);
             mTvUpdateTip.setText("升级失败,请重试");
+            BuryingPoint.INSTANCE.clothingState(deviceAddress, "DFU升级失败");
             setCanceledOnTouchOutside(true);
             if (mBLEUpdateListener != null)
                 mBLEUpdateListener.fail();

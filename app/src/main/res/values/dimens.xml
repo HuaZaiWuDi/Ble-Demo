@@ -3,12 +3,9 @@
 
     <dimen name="bottom_padding">55dp</dimen>
 
-    <dimen name="barHeight">200px</dimen>
-
     <dimen name="dimen_0.5">0.5dp</dimen>
     <dimen name="dimen_1">1dp</dimen>
     <dimen name="dimen_2">2dp</dimen>
-    <dimen name="dimen_3">3dp</dimen>
     <dimen name="dimen_4">4dp</dimen>
     <dimen name="dimen_5">5dp</dimen>
     <dimen name="dimen_8">8dp</dimen>
@@ -17,7 +14,6 @@
     <dimen name="dimen_11">11dp</dimen>
     <dimen name="dimen_15">15dp</dimen>
     <dimen name="dimen_16">16dp</dimen>
-    <dimen name="dimen_17">17dp</dimen>
     <dimen name="dimen_18">18dp</dimen>
     <dimen name="dimen_20">20dp</dimen>
     <dimen name="dimen_24">24dp</dimen>
@@ -26,11 +22,9 @@
     <dimen name="dimen_35">35dp</dimen>
     <dimen name="dimen_36">36dp</dimen>
     <dimen name="dimen_40">40dp</dimen>
-    <dimen name="dimen_46">46dp</dimen>
     <dimen name="dimen_50">50dp</dimen>
     <dimen name="dimen_70">70dp</dimen>
     <dimen name="dimen_100">100dp</dimen>
-    <dimen name="dimen_150">150dp</dimen>
     <dimen name="dimen_200">200dp</dimen>
     <dimen name="dimen_280">280dp</dimen>
 
@@ -44,22 +38,15 @@
     <dimen name="d_30">30px</dimen>
     <dimen name="d_40">40px</dimen>
     <dimen name="d_50">50px</dimen>
-    <dimen name="d_60">60px</dimen>
-    <dimen name="d_80">80px</dimen>
     <dimen name="d_25">25px</dimen>
     <dimen name="d_35">35px</dimen>
-    <dimen name="d_45">45px</dimen>
     <dimen name="d_100">100px</dimen>
     <dimen name="d_120">120px</dimen>
-    <dimen name="d_150">150px</dimen>
     <dimen name="d_200">200px</dimen>
-    <dimen name="d_250">250px</dimen>
     <dimen name="d_300">300px</dimen>
     <dimen name="d_450">450px</dimen>
     <dimen name="d_500">500px</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
 
 
 </resources>

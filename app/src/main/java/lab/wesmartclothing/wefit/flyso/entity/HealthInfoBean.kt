@@ -1,0 +1,70 @@
+package lab.wesmartclothing.wefit.flyso.entity
+
+
+import com.alibaba.fastjson.annotation.JSONField
+import java.io.Serializable
+
+data class HealthInfoBean(
+        @JSONField(name = "basalHeat")
+        val basalHeat: Int,
+        @JSONField(name = "birthday")
+        val birthday: String,
+        @JSONField(name = "bmi")
+        val bmi: Double,
+        @JSONField(name = "bmiLevel")
+        val bmiLevel: String,
+        @JSONField(name = "bmr")
+        val bmr: Double,
+        @JSONField(name = "bodyFatRate")
+        val bodyFatRate: Double,
+        @JSONField(name = "bodyLevel")
+        val bodyLevel: Int,
+        @JSONField(name = "bodyType")
+        val bodyType: String,
+        @JSONField(name = "boneMass")
+        val boneMass: Double,
+        @JSONField(name = "dateNo")
+        val dateNo: Long,
+        @JSONField(name = "gid")
+        val gid: String,
+        @JSONField(name = "healthScore")
+        val healthScore: Double,
+        @JSONField(name = "height")
+        val height: Double,
+        @JSONField(name = "initialFlag")
+        val initialFlag: Int,
+        @JSONField(name = "leanBodyWeight")
+        val leanBodyWeight: Double,
+        @JSONField(name = "metabolicAge")
+        val metabolicAge: Int,
+        @JSONField(name = "monthNo")
+        val monthNo: Int,
+        @JSONField(name = "muscleMass")
+        val muscleMass: Double,
+        @JSONField(name = "muscleMassRate")
+        val muscleMassRate: Double,
+        @JSONField(name = "muscleRate")
+        val muscleRate: Double,
+        @JSONField(name = "protein")
+        val protein: Double,
+        @JSONField(name = "sex")
+        val sex: Int,
+        @JSONField(name = "status")
+        val status: Int,
+        @JSONField(name = "subcutaneousFat")
+        val subcutaneousFat: Double,
+        @JSONField(name = "userName")
+        val userName: String,
+        @JSONField(name = "visceralFat")
+        val visceralFat: Double,
+        @JSONField(name = "waterRate")
+        val waterRate: Double,
+        @JSONField(name = "weekNo")
+        val weekNo: Int,
+        @JSONField(name = "weight")
+        val weight: Double,
+        @JSONField(name = "yearNo")
+        val yearNo: Int,
+        @JSONField(name = "createTime")
+        val createTime: Long
+) : Serializable

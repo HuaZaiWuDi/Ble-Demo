@@ -15,10 +15,11 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -147,7 +148,7 @@ public class CollectFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("我的收藏");
+        mQMUIAppBarLayout.setTitle(R.string.myCollect);
     }
 
 
@@ -178,7 +179,7 @@ public class CollectFragment extends BaseActivity {
     public void initData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().collectionList(pageNum, 10))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("collectionList" + pageNum, String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().<String>transformObservable("collectionList" + pageNum, String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

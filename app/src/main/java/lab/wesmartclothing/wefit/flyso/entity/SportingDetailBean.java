@@ -50,34 +50,88 @@ public class SportingDetailBean {
      * warmCalorie : 0
      */
 
-    private int aerobicCalorie;
-    private int anaerobicCalorie;
+    private int aerobicData;
+    private int anaerobicData;
     private long athlDate;
     private String athlDesc;
     private double athlScore;
-    private int avgHeart;
+    private double avgHeart;
     private double calorie;
     private int duration;
     private long endTime;
-    private int greaseCalorie;
+    private int greaseData;
     private int heartCount;
     private int height;
-    private int kilometers;
-    private int limitCalorie;
+    private double kilometers;
+    private int limitData;
     private int maxHeart;
     private int minHeart;
     private int planFlag;
-    private int restCalorie;
+    private int restData;
     private long startTime;
     private int status;
     private int stepNumber;
     private long updateTime;
-    private int warmCalorie;
+    private int warmData;
     private List<AthlPlanListBean> planAthlList;
-    private List<RealAthlListBean> realAthlList;
+    private List<HeartRateItemBean> realAthlList;
     private int planTotalDeplete;
     private double complete;
+    private double avgPace;
+    private double cadence;
+    private int maxPace;
+    private int minPace;
+    private long planTotalTime;
+    private String runningData;
 
+
+    public double getAvgPace() {
+        return avgPace;
+    }
+
+    public void setAvgPace(double avgPace) {
+        this.avgPace = avgPace;
+    }
+
+    public double getCadence() {
+        return cadence;
+    }
+
+    public void setCadence(double cadence) {
+        this.cadence = cadence;
+    }
+
+    public int getMaxPace() {
+        return maxPace;
+    }
+
+    public void setMaxPace(int maxPace) {
+        this.maxPace = maxPace;
+    }
+
+    public int getMinPace() {
+        return minPace;
+    }
+
+    public void setMinPace(int minPace) {
+        this.minPace = minPace;
+    }
+
+    public long getPlanTotalTime() {
+        return planTotalTime;
+    }
+
+    public void setPlanTotalTime(long planTotalTime) {
+        this.planTotalTime = planTotalTime;
+    }
+
+    public String getRunningData() {
+        return runningData;
+    }
+
+    public void setRunningData(String runningData) {
+        this.runningData = runningData;
+    }
 
     public double getComplete() {
         return complete;
@@ -87,13 +141,6 @@ public class SportingDetailBean {
         return planTotalDeplete;
     }
 
-    public int getAerobicCalorie() {
-        return aerobicCalorie;
-    }
-
-    public int getAnaerobicCalorie() {
-        return anaerobicCalorie;
-    }
 
     public long getAthlDate() {
         return athlDate;
@@ -107,7 +154,7 @@ public class SportingDetailBean {
         return athlScore;
     }
 
-    public int getAvgHeart() {
+    public double getAvgHeart() {
         return avgHeart;
     }
 
@@ -123,9 +170,6 @@ public class SportingDetailBean {
         return endTime;
     }
 
-    public int getGreaseCalorie() {
-        return greaseCalorie;
-    }
 
     public int getHeartCount() {
         return heartCount;
@@ -135,13 +179,10 @@ public class SportingDetailBean {
         return height;
     }
 
-    public int getKilometers() {
+    public double getKilometers() {
         return kilometers;
     }
 
-    public int getLimitCalorie() {
-        return limitCalorie;
-    }
 
     public int getMaxHeart() {
         return maxHeart;
@@ -155,9 +196,6 @@ public class SportingDetailBean {
         return planFlag;
     }
 
-    public int getRestCalorie() {
-        return restCalorie;
-    }
 
     public long getStartTime() {
         return startTime;
@@ -175,26 +213,15 @@ public class SportingDetailBean {
         return updateTime;
     }
 
-    public int getWarmCalorie() {
-        return warmCalorie;
-    }
 
     public List<AthlPlanListBean> getPlanAthlList() {
         return planAthlList;
     }
 
-    public List<RealAthlListBean> getRealAthlList() {
+    public List<HeartRateItemBean> getRealAthlList() {
         return realAthlList;
     }
 
-
-    public void setAerobicCalorie(int aerobicCalorie) {
-        this.aerobicCalorie = aerobicCalorie;
-    }
-
-    public void setAnaerobicCalorie(int anaerobicCalorie) {
-        this.anaerobicCalorie = anaerobicCalorie;
-    }
 
     public void setAthlDate(long athlDate) {
         this.athlDate = athlDate;
@@ -208,7 +235,7 @@ public class SportingDetailBean {
         this.athlScore = athlScore;
     }
 
-    public void setAvgHeart(int avgHeart) {
+    public void setAvgHeart(double avgHeart) {
         this.avgHeart = avgHeart;
     }
 
@@ -224,9 +251,6 @@ public class SportingDetailBean {
         this.endTime = endTime;
     }
 
-    public void setGreaseCalorie(int greaseCalorie) {
-        this.greaseCalorie = greaseCalorie;
-    }
 
     public void setHeartCount(int heartCount) {
         this.heartCount = heartCount;
@@ -236,13 +260,10 @@ public class SportingDetailBean {
         this.height = height;
     }
 
-    public void setKilometers(int kilometers) {
+    public void setKilometers(double kilometers) {
         this.kilometers = kilometers;
     }
 
-    public void setLimitCalorie(int limitCalorie) {
-        this.limitCalorie = limitCalorie;
-    }
 
     public void setMaxHeart(int maxHeart) {
         this.maxHeart = maxHeart;
@@ -256,9 +277,6 @@ public class SportingDetailBean {
         this.planFlag = planFlag;
     }
 
-    public void setRestCalorie(int restCalorie) {
-        this.restCalorie = restCalorie;
-    }
 
     public void setStartTime(long startTime) {
         this.startTime = startTime;
@@ -276,15 +294,12 @@ public class SportingDetailBean {
         this.updateTime = updateTime;
     }
 
-    public void setWarmCalorie(int warmCalorie) {
-        this.warmCalorie = warmCalorie;
-    }
 
     public void setPlanAthlList(List<AthlPlanListBean> planAthlList) {
         this.planAthlList = planAthlList;
     }
 
-    public void setRealAthlList(List<RealAthlListBean> realAthlList) {
+    public void setRealAthlList(List<HeartRateItemBean> realAthlList) {
         this.realAthlList = realAthlList;
     }
 
@@ -296,39 +311,54 @@ public class SportingDetailBean {
         this.complete = complete;
     }
 
-    public static class RealAthlListBean {
-        /**
-         * heartRate : 120
-         * heartTime : 2018-11-07T08:57:09.109Z
-         * stepTime : 2
-         */
 
-        private int heartRate;
-        private String heartTime;
-        private int stepTime;
-
-        public int getHeartRate() {
-            return heartRate;
-        }
-
-        public void setHeartRate(int heartRate) {
-            this.heartRate = heartRate;
-        }
-
-        public String getHeartTime() {
-            return heartTime;
-        }
-
-        public void setHeartTime(String heartTime) {
-            this.heartTime = heartTime;
-        }
-
-        public int getStepTime() {
-            return stepTime;
-        }
-
-        public void setStepTime(int stepTime) {
-            this.stepTime = stepTime;
-        }
+    public int getAerobicData() {
+        return aerobicData;
     }
+
+    public void setAerobicData(int aerobicData) {
+        this.aerobicData = aerobicData;
+    }
+
+    public int getAnaerobicData() {
+        return anaerobicData;
+    }
+
+    public void setAnaerobicData(int anaerobicData) {
+        this.anaerobicData = anaerobicData;
+    }
+
+    public int getGreaseData() {
+        return greaseData;
+    }
+
+    public void setGreaseData(int greaseData) {
+        this.greaseData = greaseData;
+    }
+
+    public int getLimitData() {
+        return limitData;
+    }
+
+    public void setLimitData(int limitData) {
+        this.limitData = limitData;
+    }
+
+    public int getRestData() {
+        return restData;
+    }
+
+    public void setRestData(int restData) {
+        this.restData = restData;
+    }
+
+    public int getWarmData() {
+        return warmData;
+    }
+
+    public void setWarmData(int warmData) {
+        this.warmData = warmData;
+    }
+
+
 }

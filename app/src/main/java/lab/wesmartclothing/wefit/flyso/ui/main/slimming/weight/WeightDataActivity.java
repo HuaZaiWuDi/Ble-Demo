@@ -13,13 +13,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 import com.yolanda.health.qnblesdk.out.QNScaleStoreData;
@@ -30,7 +30,7 @@ import butterknife.BindView;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -86,7 +86,7 @@ public class WeightDataActivity extends BaseActivity {
                 else RxActivityUtils.finishActivity();
             }
         });
-        QMUIAppBarLayout.setTitle("体重数据");
+        QMUIAppBarLayout.setTitle(R.string.weightData);
     }
 
 
@@ -100,7 +100,7 @@ public class WeightDataActivity extends BaseActivity {
 
                 helper.setText(R.id.tv_weight, RxFormatValue.fromat4S5R(item.getWeight(), 1))
                         .setTypeface(R.id.tv_weight, typeface)
-                        .setText(R.id.tv_date, "测量时间:" + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"))
+                        .setText(R.id.tv_date, getString(R.string.measureTime) + RxFormat.setFormatDateG8(item.getMeasureTime(), "yyyy年MM月dd日 HH:mm"))
                         .setVisible(R.id.btn_new, helper.getAdapterPosition() == 0)
                         .addOnClickListener(R.id.btn_receive);
             }
@@ -130,9 +130,9 @@ public class WeightDataActivity extends BaseActivity {
     private void addWeightData(final int position) {
         final QNScaleStoreData qnScaleData = (QNScaleStoreData) adapter_Receive.getItem(position);
         if (RxDataUtils.isEmpty(qnScaleData)) return;
-        WeightAddBean bean = new WeightAddBean();
+        HealthyInfoBean bean = new HealthyInfoBean();
 
-        bean.setMeasureTime(qnScaleData.getMeasureTime().getTime() + "");
+        bean.setMeasureTime(qnScaleData.getMeasureTime().getTime());
         QNScaleData scaleData = qnScaleData.generateScaleData();
         if (scaleData != null)
             for (QNScaleItemData item : scaleData.getAllItem()) {
@@ -185,7 +185,7 @@ public class WeightDataActivity extends BaseActivity {
         new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setContent("你还有未领取的体重数据，离开后将全部被忽略？")
+                .setContent(getString(R.string.weightNotReceiver))
                 .setCancel(getString(R.string.btn_leave))
                 .setCancelListener(new View.OnClickListener() {
                     @Override

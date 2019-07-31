@@ -64,8 +64,8 @@ public class HeartLineChartUtils {
         leftAxis.setDrawLabels(false);
 
         YAxis yAxis = mLineChart.getAxisLeft();
-        yAxis.setAxisMaximum((Key.HRART_SECTION[6] & 0xFF));
-        yAxis.setAxisMinimum((Key.HRART_SECTION[0] & 0xFF));
+        yAxis.setAxisMaximum((Key.HRART_SECTION[6]));
+        yAxis.setAxisMinimum((Key.HRART_SECTION[0]));
 
         mLineChart.setData(new LineData());
         createRealTimeSet(null);
@@ -149,6 +149,12 @@ public class HeartLineChartUtils {
 
 
     public void setRealTimeData(float value) {
+        if (value > (Key.HRART_SECTION[6])) {
+            value = (Key.HRART_SECTION[6]);
+        } else if (value < (Key.HRART_SECTION[0])) {
+            value = (Key.HRART_SECTION[0]);
+        }
+
         LineDataSet realTimeSet = (LineDataSet) mLineChart.getData().getDataSetByLabel("RealTime", true);
 
         mLineChart.highlightValue(realTimeSet.getEntryCount(), mLineChart.getData().getIndexOfDataSet(realTimeSet));
@@ -166,10 +172,10 @@ public class HeartLineChartUtils {
         List<Entry> heartValues = new ArrayList<>();
         for (int i = 0; i < athlList.size(); i++) {
             int value = athlList.get(i);
-            if (value > (Key.HRART_SECTION[6] & 0xFF)) {
-                value = (Key.HRART_SECTION[6] & 0xFF);
-            } else if (value < (Key.HRART_SECTION[0] & 0xFF)) {
-                value = (Key.HRART_SECTION[0] & 0xFF);
+            if (value > (Key.HRART_SECTION[6])) {
+                value = (Key.HRART_SECTION[6]);
+            } else if (value < (Key.HRART_SECTION[0])) {
+                value = (Key.HRART_SECTION[0]);
             }
             heartValues.add(new Entry(i, value));
         }
@@ -271,7 +277,7 @@ public class HeartLineChartUtils {
             if (index == 0) {
                 AthlPlanListBean first = planList.get(0);
                 if (i <= 30) {
-                    startYValue = Key.HRART_SECTION[0] & 0xff;
+                    startYValue = Key.HRART_SECTION[0];
                     endYValue = first.getMidRange();
                     startXValue = 0;
                     endXValue = 30;

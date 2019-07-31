@@ -1,6 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.ui.guide;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -18,10 +17,10 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 
 public class GuideActivity extends BaseActivity {
@@ -47,7 +46,8 @@ public class GuideActivity extends BaseActivity {
         mImageItems.add(R.mipmap.guide_1);
         mImageItems.add(R.mipmap.guide_2);
         mImageItems.add(R.mipmap.guide_3);
-        mImageItems.add(R.mipmap.guide_4);
+        if (BuildConfig.Wesmart)
+            mImageItems.add(R.mipmap.guide_4);
         mViewpager.setOffscreenPageLimit(2);
         mViewpager.setAdapter(new PagerAdapter() {
             @Override
@@ -76,12 +76,8 @@ public class GuideActivity extends BaseActivity {
                 MyAPP.getImageLoader().displayImage(mActivity, mImageItems.get(position), 0, photoView);
                 container.addView(photoView);
                 if (position == mImageItems.size() - 1) {
-                    photoView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class);
-                        }
-                    });
+                    photoView.setOnClickListener(view ->
+                            RxActivityUtils.skipActivityAndFinish(mContext, LoginRegisterActivity.class));
                 }
                 return photoView;
 

@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">RxTools</string>
-
-    <string name="cancel">取消</string>
-
-    <string name="page_error">网络开小差了</string>
-    <string name="page_error_retry">点击重试</string>
-    <string name="page_empty">暂无新数据</string>
-</resources>

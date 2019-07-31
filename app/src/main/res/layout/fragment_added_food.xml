@@ -21,8 +21,8 @@
         app:qmui_topbar_need_separator="false"
         app:qmui_topbar_title_color="@color/white"
         tools:visibility="visible"
-        />
 
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

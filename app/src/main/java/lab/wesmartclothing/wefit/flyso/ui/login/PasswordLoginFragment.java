@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +42,7 @@ public class PasswordLoginFragment extends BaseFragment {
     public static Fragment getInstance() {
         return new PasswordLoginFragment();
     }
+
 
 
     @Override

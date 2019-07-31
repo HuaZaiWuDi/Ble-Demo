@@ -35,7 +35,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.view.PasswordView;
 
@@ -197,7 +197,7 @@ public class RegisterActivity extends BaseActivity {
 
     private void getVCode() {
         String phone = mEditPhone.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -230,7 +230,7 @@ public class RegisterActivity extends BaseActivity {
         String phone = mEditPhone.getText().toString();
         String vCode = mEditVcode.getText().toString();
         String password = mPasswordView.getPassword().getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -248,7 +248,7 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("验证码：" + s);
-                        RxToast.success("注册成功");
+                        RxToast.success(getString(R.string.registerSuccess));
                         new LoginSuccessUtils(mContext, s);
                     }
 

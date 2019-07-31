@@ -65,6 +65,13 @@ public class RecordInfoActivity extends BaseActivity {
     public static SubmitInfoFrom mSubmitInfoFrom;
     private boolean isOver = false;
 
+    public static SubmitInfoFrom getmSubmitInfoFrom() {
+        if (mSubmitInfoFrom == null) {
+            mSubmitInfoFrom = new SubmitInfoFrom();
+        }
+        return mSubmitInfoFrom;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +82,6 @@ public class RecordInfoActivity extends BaseActivity {
     }
 
     private void init() {
-        mSubmitInfoFrom = new SubmitInfoFrom();
         initTopBar();
         initRecyclerView();
         initData();
@@ -90,12 +96,11 @@ public class RecordInfoActivity extends BaseActivity {
                         listBean = JSON.parseObject(s, new TypeToken<List<QuestionListBean>>() {
                         }.getType());
                         switchQuestion();
-
                     }
 
                     @Override
-                    protected void _onError(String error,int code) {
-                        RxToast.error(error,code);
+                    protected void _onError(String error, int code) {
+                        RxToast.error(error, code);
                     }
                 });
     }
@@ -116,30 +121,27 @@ public class RecordInfoActivity extends BaseActivity {
         mRecyclerView.setAdapter(adapter);
 
         adapter.setOnItemClickListener(
-                new BaseQuickAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        List<QuestionListBean.OptionListBean> data = adapter.getData();
-                        for (int i = 0; i < data.size(); i++) {
-                            QuestionListBean.OptionListBean item = data.get(i);
-                            if (i == position && !item.isSelect()) {
-                                item.setSelect(true);
-                                adapter.setData(i, item);
-                            } else if (i != position && item.isSelect()) {
-                                item.setSelect(false);
-                                adapter.setData(i, item);
-                            }
+                (adapter, view, position) -> {
+                    List<QuestionListBean.OptionListBean> data = adapter.getData();
+                    for (int i = 0; i < data.size(); i++) {
+                        QuestionListBean.OptionListBean item = data.get(i);
+                        if (i == position && !item.isSelect()) {
+                            item.setSelect(true);
+                            adapter.setData(i, item);
+                        } else if (i != position && item.isSelect()) {
+                            item.setSelect(false);
+                            adapter.setData(i, item);
                         }
+                    }
 
-                        if (currentIndex == listBean.size()) {
-                            isOver = true;
-                            mTvNextWay.setVisibility(View.VISIBLE);
-                        } else {
-                            mTvNextWay.setVisibility(View.GONE);
-                            currentIndex++;
-                            seeIndex = Math.max(seeIndex, currentIndex);
-                            switchQuestion();
-                        }
+                    if (currentIndex == listBean.size()) {
+                        isOver = true;
+                        mTvNextWay.setVisibility(View.VISIBLE);
+                    } else {
+                        mTvNextWay.setVisibility(View.GONE);
+                        currentIndex++;
+                        seeIndex = Math.max(seeIndex, currentIndex);
+                        switchQuestion();
                     }
                 }
         );
@@ -154,7 +156,7 @@ public class RecordInfoActivity extends BaseActivity {
         gridAdapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_record_grid) {
             @Override
             protected void convert(BaseViewHolder helper, Object item) {
-                MyAPP.sImageLoader.displayImage(mActivity, item, R.drawable.ic_default_image,
+                MyAPP.getImageLoader().displayImage(mActivity, item, R.drawable.ic_default_image,
                         (ImageView) helper.getView(R.id.img_item));
             }
         };
@@ -220,15 +222,6 @@ public class RecordInfoActivity extends BaseActivity {
         } else {
             adapter.removeHeaderView(gridView);
         }
-//        if (!RxDataUtils.isNullString(question.getImgUrl())) {
-//            String[] imgUrls = question.getImgUrl().split(",");
-//            for (String url : imgUrls) {
-//                gridAdapter.addData(url);
-//            }
-//
-//        } else {
-//
-//        }
     }
 
 
@@ -247,7 +240,7 @@ public class RecordInfoActivity extends BaseActivity {
                 switchQuestion();
                 break;
             case R.id.tv_nextWay:
-                mSubmitInfoFrom.setAnswer(submitQuestion());
+                RecordInfoActivity.getmSubmitInfoFrom().setAnswer(submitQuestion());
                 RxActivityUtils.skipActivity(mContext, WelcomeActivity.class);
                 break;
         }

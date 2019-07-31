@@ -16,15 +16,16 @@ import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.bitmap.RxImageUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -114,7 +116,8 @@ public class UserInfofragment extends BaseActivity {
     private void initView() {
         initTopBar();
         initImagePicker();
-        info = MyAPP.gUserInfo;
+        info = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
+
         info.setChange(false);
         notifyData(info);
     }
@@ -122,7 +125,7 @@ public class UserInfofragment extends BaseActivity {
 
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
+        imagePicker.setImageLoader(GlideImageLoader.INSTANCE);   //设置图片加载器
         imagePicker.setShowCamera(true);//显示拍照按钮
         imagePicker.setMultiMode(false);
         imagePicker.setCrop(true);        //允许裁剪（单选才有效）
@@ -142,8 +145,8 @@ public class UserInfofragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("个人资料");
-        mQMUIAppBarLayout.addRightTextButton("保存", R.id.btn_save)
+        mQMUIAppBarLayout.setTitle(R.string.personalInfo);
+        mQMUIAppBarLayout.addRightTextButton(R.string.save, R.id.btn_save)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -163,7 +166,7 @@ public class UserInfofragment extends BaseActivity {
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
 
         mTvUserName.setText(info.getUserName());
-        mTvUserSex.setText(info.getSex() == 1 ? "男" : "女");
+        mTvUserSex.setText(info.getSex() == 1 ? getString(R.string.man) : getString(R.string.woman));
         mTvBirth.setText(RxFormat.setFormatDate(info.getBirthday(), RxFormat.Date));
         mTvUserHeight.setText(info.getHeight() + "\tcm");
         if (!RxDataUtils.isNullString(info.getProvince()) && !RxDataUtils.isNullString(info.getCity()))
@@ -195,7 +198,7 @@ public class UserInfofragment extends BaseActivity {
         } else if (resultCode == UserInfofragment.RESULT_CODE && requestCode == UserInfofragment.REQUEST_CODE) {
             Bundle bundle = data.getExtras();
             String title = bundle.getString(Key.BUNDLE_TITLE);
-            if ("昵称".equals(title)) {
+            if (getString(R.string.nickname).equals(title)) {
                 mTvUserName.setText(bundle.getString(Key.BUNDLE_DATA));
                 info.setUserName(bundle.getString(Key.BUNDLE_DATA));
             } else {
@@ -219,7 +222,7 @@ public class UserInfofragment extends BaseActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 mTvBirth.setText(year + "-" + month + "-" + day);
-                Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
+                Date date = RxTimeUtils.string2Date(RxFormat.Date, year + "-" + month + "-" + day);
                 info.setBirthday(date.getTime());
             }
         });
@@ -233,7 +236,7 @@ public class UserInfofragment extends BaseActivity {
         task.setCallback(new AddressPickTask.Callback() {
             @Override
             public void onAddressInitFailed() {
-                RxLogUtils.e("数据初始化失败");
+                RxLogUtils.e(getString(R.string.initFail));
             }
 
             @Override
@@ -268,16 +271,13 @@ public class UserInfofragment extends BaseActivity {
 
     private void showSex() {
         new QMUIBottomSheet.BottomListSheetBuilder(mActivity)
-                .addItem("男")
-                .addItem("女")
+                .addItem(getString(R.string.man))
+                .addItem(getString(R.string.woman))
                 .setCheckedIndex(info.getSex() - 1)
-                .setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        dialog.dismiss();
-                        mTvUserSex.setText(tag);
-                        info.setSex(position + 1);
-                    }
+                .setOnSheetItemClickListener((dialog, itemView, position, tag) -> {
+                    dialog.dismiss();
+                    mTvUserSex.setText(tag);
+                    info.setSex(position + 1);
                 })
                 .build()
                 .show();
@@ -305,17 +305,20 @@ public class UserInfofragment extends BaseActivity {
     /*保存按钮，提交用户数据*/
     private void requestSaveUserInfo() {
         final String gson = JSON.toJSONString(info);
-        RxManager.getInstance().doNetSubscribe(NetManager.getApiService().saveUserInfo(NetManager.fetchRequest(gson)))
+        RxManager.getInstance().doNetSubscribe(
+                NetManager.getApiService().saveUserInfo(NetManager.fetchRequest(gson)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束" + s);
-                        RxToast.success("保存成功", 2000);
+                        RxToast.success(getString(R.string.saveSuccess), 2000);
                         SPUtils.put(SPKey.SP_UserInfo, gson);
+                        MyAPP.gUserInfo = info;
                         RxActivityUtils.finishActivity();
-                        QNBleTools.getInstance().disConnectDevice();
+                        QNBleManager.getInstance().disConnectDevice();
+                        MyBleManager.Companion.getInstance().disConnect();
                         //刷新数据
                         RxBus.getInstance().post(new RefreshMe());
                         RxBus.getInstance().post(new RefreshSlimming());
@@ -336,25 +339,18 @@ public class UserInfofragment extends BaseActivity {
             RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                     .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                    .setContent("您已经修改信息\n是否保存？")
-                    .setSure("保存")
-                    .setSureListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (userImgIsChange) {
-                                uploadImage();
-                            } else {
-                                requestSaveUserInfo();
-                            }
+                    .setContent(getString(R.string.changedInfoAndSave))
+                    .setSure(getString(R.string.save))
+                    .setSureListener(v -> {
+                        if (userImgIsChange) {
+                            uploadImage();
+                        } else {
+                            requestSaveUserInfo();
                         }
                     })
-                    .setCancel("退出")
-                    .setCancelListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            RxActivityUtils.finishActivity();
-                        }
-                    });
+                    .setCancel(getString(R.string.signOut))
+                    .setCancelListener(v ->
+                            RxActivityUtils.finishActivity());
             rxDialog.show();
         } else
             super.onBackPressed();
@@ -372,7 +368,7 @@ public class UserInfofragment extends BaseActivity {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
             case R.id.layout_userName:
-                bundle.putString(Key.BUNDLE_TITLE, "昵称");
+                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.nickname));
                 bundle.putString(Key.BUNDLE_DATA, info.getUserName());
                 RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
                 break;
@@ -390,7 +386,7 @@ public class UserInfofragment extends BaseActivity {
                 showAddress();
                 break;
             case R.id.layout_userSign:
-                bundle.putString(Key.BUNDLE_TITLE, "签名");
+                bundle.putString(Key.BUNDLE_TITLE, getString(R.string.sign));
                 bundle.putString(Key.BUNDLE_DATA, info.getSignature());
                 RxActivityUtils.skipActivityForResult(mActivity, EditFragment.class, bundle, UserInfofragment.REQUEST_CODE);
                 break;

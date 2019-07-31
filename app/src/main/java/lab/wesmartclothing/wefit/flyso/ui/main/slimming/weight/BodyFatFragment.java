@@ -67,7 +67,7 @@ public class BodyFatFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("体型");
+        mQMUIAppBarLayout.setTitle(R.string.shape);
     }
 
     private void initData() {

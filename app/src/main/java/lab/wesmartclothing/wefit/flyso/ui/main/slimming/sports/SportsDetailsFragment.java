@@ -1,13 +1,11 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
@@ -21,11 +19,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.umeng.socialize.ShareAction;
-import com.umeng.socialize.UMShareAPI;
-import com.umeng.socialize.UMShareListener;
-import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.media.UMImage;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.tool.RxQRCode;
 import com.vondear.rxtools.utils.RxDeviceUtils;
@@ -39,6 +32,7 @@ import com.vondear.rxtools.view.chart.bar.BarVerticalChart;
 import com.vondear.rxtools.view.layout.RxImageView;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
 import com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -48,9 +42,10 @@ import java.util.List;
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.BaseShareActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
+import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.entity.SportingDetailBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -60,32 +55,31 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
+import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
  * Created by jk on 2018/7/19.
  */
-public class SportsDetailsFragment extends BaseActivity {
+public class SportsDetailsFragment extends BaseShareActivity {
 
 
     @BindView(R.id.QMUIAppBarLayout)
     QMUITopBar mQMUIAppBarLayout;
     @BindView(R.id.tv_kcal)
     TextView mTvKcal;
-    @BindView(R.id.tv_avHeartRate)
-    TextView mTvAvHeartRate;
-    @BindView(R.id.tv_maxHeartRate)
-    TextView mTvMaxHeartRate;
+    @BindView(R.id.tv_avPace)
+    TextView mTvAvPace;
+    @BindView(R.id.tv_maxPace)
+    TextView mTvMaxPace;
     @BindView(R.id.tv_sportsTime)
     TextView mTvSportsTime;
     @BindView(R.id.tv_sportskcal)
     TextView mTvSportskcal;
     @BindView(R.id.layout_sportingKcal)
     LinearLayout mLayoutSportingKcal;
-    @BindView(R.id.layout_maxHeart)
-    LinearLayout mLayoutMaxHeart;
-    @BindView(R.id.layout_sports)
-    LinearLayout mLayoutSports;
+    @BindView(R.id.layout_maxPace)
+    LinearLayout mLayoutMaxPace;
     @BindView(R.id.bar_calm)
     BarVerticalChart mBarCalm;
     @BindView(R.id.tv_calm)
@@ -168,6 +162,12 @@ public class SportsDetailsFragment extends BaseActivity {
     NestedScrollView mScroll;
     @BindView(R.id.tv_currentTime)
     TextView mTvCurrentTime;
+    @BindView(R.id.tv_stepFrequency)
+    TextView mTvStepFrequency;
+    @BindView(R.id.tv_distance)
+    TextView mTvDistance;
+    @BindView(R.id.tv_endTime)
+    TextView mTvEndTime;
 
     int warmTime = 0;
     int greaseTime = 0;
@@ -175,6 +175,7 @@ public class SportsDetailsFragment extends BaseActivity {
     int anaerobicTime = 0;
     int limitTime = 0;
     int calmTime = 0;
+
     private HeartLineChartUtils lineChartUtils;
     private boolean isFreeSporting = true;//是否是自由运动
     private boolean goBack = false;
@@ -192,24 +193,18 @@ public class SportsDetailsFragment extends BaseActivity {
         initTypeface();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
         lineChartUtils.setPlanLineColor(Color.parseColor("#3F3943"), Color.parseColor("#FFFFFF"));
+
+
     }
 
     private void initTopBar() {
-        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
         mQMUIAppBarLayout.setTitle("");
         QMUIAlphaImageButton imageButton = mQMUIAppBarLayout.addRightImageButton(R.mipmap.icon_share, R.id.img_share);
-        imageButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                share(true);
-            }
-        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.white)));
+        }
+        imageButton.setOnClickListener(v -> share(true));
     }
 
     private void share(final boolean startShare) {
@@ -220,22 +215,14 @@ public class SportsDetailsFragment extends BaseActivity {
 
         if (startShare) {
 
-            RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
-                    .codeSide(800)
-                    .logoBitmap(R.mipmap.icon_app_round, getResources())
-                    .into(mImgQRcode);
-
             //延迟500毫秒，需要等到控件显示
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //控件转图片
-                    Bitmap bitmap = RxImageUtils.view2Bitmap(mLayoutContent, ContextCompat.getColor(mContext, R.color.Gray));
-                    //微信分享图片最大尺寸32KB
+            mLayoutQRcode.postDelayed(() -> {
+                //控件转图片
+                Bitmap bitmap = RxImageUtils.view2Bitmap(mLayoutContent, ContextCompat.getColor(mContext, R.color.Gray));
+                //微信分享图片最大尺寸32KB
 //                    bitmap = RxImageUtils.compressByScale(bitmap, 0.5f, 0.5f);
-                    showSimpleBottomSheetGrid(bitmap);
-                    share(false);
-                }
+                shareBitmap(bitmap);
+                share(false);
             }, 500);
         }
     }
@@ -243,8 +230,8 @@ public class SportsDetailsFragment extends BaseActivity {
     private void initTypeface() {
         Typeface typeface = MyAPP.typeface;
         mTvKcal.setTypeface(typeface);
-        mTvAvHeartRate.setTypeface(typeface);
-        mTvMaxHeartRate.setTypeface(typeface);
+        mTvAvPace.setTypeface(typeface);
+        mTvMaxPace.setTypeface(typeface);
         mTvSportsTime.setTypeface(typeface);
         mTvLimitTime.setTypeface(typeface);
         mTvAnaerobicTime.setTypeface(typeface);
@@ -255,19 +242,23 @@ public class SportsDetailsFragment extends BaseActivity {
         mTvDate.setTypeface(typeface);
         mTvCalmTime.setTypeface(typeface);
 
-
-        RxTextUtils.getBuilder("让 你 健 康 瘦\n")
+        RxTextUtils.getBuilder(getString(R.string.HealthSlim) + "\n")
                 .append(getString(R.string.appName) + " v" + RxDeviceUtils.getAppVersionName())
                 .setProportion(0.5f)
                 .into(mTvAppVersion);
 
-        UserInfo info = MyAPP.gUserInfo;
+        UserInfo info = MyAPP.getgUserInfo();
         MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mImgUserImg);
         RxTextUtils.getBuilder(info.getUserName() + "\n")
                 .append(getString(R.string.appDays, getString(R.string.appName), info.getRegisterTime())).setProportion(0.8f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvUserName);
         mTvDate.setText(RxFormat.setFormatDate(System.currentTimeMillis(), "MM/dd"));
+
+        RxQRCode.builder(ServiceAPI.APP_DOWN_LOAD_URL)
+                .codeSide(800)
+                .logoBitmap(R.mipmap.icon_app_white, getResources())
+                .into(mImgQRcode);
     }
 
     @Override
@@ -277,33 +268,21 @@ public class SportsDetailsFragment extends BaseActivity {
         goBack = bundle.getBoolean(Key.BUNDLE_GO_BCAK);
 
         RxTextUtils.getBuilder(isFreeSporting ? "0" : "0.0")
-                .append(isFreeSporting ? "kcal" : "分").setProportion(0.1f)
+                .append(isFreeSporting ? "kcal" : getString(R.string.min)).setProportion(0.1f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .into(mTvKcal);
 
         RxTextUtils.getBuilder("0")
                 .append("\tbpm").setProportion(0.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .into(mTvAvHeartRate);
+                .into(mTvAvPace);
 
         if (isFreeSporting) {
-            mTvDetailTitle.setText("消耗热量");
+            mTvDetailTitle.setText(R.string.consumeCalorie);
             mLayoutLegend.setVisibility(View.GONE);
-
-            RxTextUtils.getBuilder("0")
-                    .append("\tbpm").setProportion(0.5f)
-                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .into(mTvMaxHeartRate);
-
         } else {
-            mTvDetailTitle.setText("运动评分");
+            mTvDetailTitle.setText(R.string.sportsScore);
             mLayoutSportingKcal.setVisibility(View.VISIBLE);
-            mLayoutMaxHeart.setVisibility(View.GONE);
-
-            RxTextUtils.getBuilder("0")
-                    .append("\tkcal").setProportion(0.5f)
-                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .into(mTvSportskcal);
         }
 
         String gid = bundle.getString(Key.BUNDLE_DATA_GID);
@@ -322,7 +301,8 @@ public class SportsDetailsFragment extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .singleAthlDetail(NetManager.fetchRequest(object.toString())))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("athleticsDetail" + gid, String.class, CacheStrategy.firstCache()))
+                .compose(RxCache.getDefault().<String>transformObservable("athleticsDetail" + gid, String.class,
+                        CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -347,14 +327,9 @@ public class SportsDetailsFragment extends BaseActivity {
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
-            RxTextUtils.getBuilder(heartRateBean.getMaxHeart() + "")
-                    .append("\tbpm").setProportion(0.5f)
-                    .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                    .into(mTvMaxHeartRate);
-
         } else {
             RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getAthlScore(), 1))
-                    .append("分").setProportion(0.3f)
+                    .append(getString(R.string.min)).setProportion(0.3f)
                     .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                     .into(mTvKcal);
 
@@ -364,12 +339,18 @@ public class SportsDetailsFragment extends BaseActivity {
                     .into(mTvSportskcal);
         }
 
+        mTvMaxPace.setText(RxFormat.setSec2MS(heartRateBean.getMaxPace()));
+        mTvAvPace.setText(RxFormat.setSec2MS((int) heartRateBean.getAvgPace()));
 
-        RxTextUtils.getBuilder(heartRateBean.getAvgHeart() + "")
-                .append("\tbpm").setProportion(0.5f)
+        RxTextUtils.getBuilder(RxFormatValue.fromat4S5R(heartRateBean.getCadence(), 1))
+                .append("\t" + getString(R.string.StrideUnit)).setProportion(0.5f)
                 .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                .into(mTvAvHeartRate);
+                .into(mTvStepFrequency);
 
+        RxTextUtils.getBuilder(heartRateBean.getKilometers() + "")
+                .append("\tkm").setProportion(0.5f)
+                .setForegroundColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                .into(mTvDistance);
 
         int sunTime = 0;
         for (AthlPlanListBean bean : heartRateBean.getPlanAthlList()) {
@@ -390,47 +371,54 @@ public class SportsDetailsFragment extends BaseActivity {
     }
 
     private void updateBar(SportingDetailBean heartRateBean) {
-        int restCalorie = heartRateBean.getRestCalorie();
-        int warmCalorie = heartRateBean.getWarmCalorie();
-        int greaseCalorie = heartRateBean.getGreaseCalorie();
-        int aerobicCalorie = heartRateBean.getAerobicCalorie();
-        int anaerobicCalorie = heartRateBean.getAnaerobicCalorie();
-        int limitCalorie = heartRateBean.getLimitCalorie();
+//        int restCalorie = heartRateBean.getRestData();
+//        int warmCalorie = heartRateBean.getWarmData();
+//        int greaseCalorie = heartRateBean.getGreaseData();
+//        int aerobicCalorie = heartRateBean.getAerobicData();
+//        int anaerobicCalorie = heartRateBean.getAnaerobicData();
+//        int limitCalorie = heartRateBean.getLimitData();
+        int restCalorie = heartRateBean.getRestData();
+        int warmCalorie = heartRateBean.getRestData();
+        int greaseCalorie = heartRateBean.getWarmData();
+        int aerobicCalorie = heartRateBean.getGreaseData();
+        int anaerobicCalorie = heartRateBean.getAerobicData();
+        int limitCalorie = heartRateBean.getLimitData();
         int totalKcal = restCalorie + warmCalorie + greaseCalorie + aerobicCalorie + anaerobicCalorie + limitCalorie;
 
         if (totalKcal == 0) return;
-        mBarCalm.setProgress(restCalorie * 100 / totalKcal);
-        if (restCalorie * 100 / totalKcal > 0)
-            mTvCalm.setText((int) (restCalorie * 100 / totalKcal) + "%");
+//        mBarCalm.setProgress(restCalorie * 100 / totalKcal);
+//        if (restCalorie * 100 / totalKcal > 0)
+//            mTvCalm.setText((int) (restCalorie * 100 / totalKcal) + "%");
 
         mBarWarm.setProgress(warmCalorie * 100 / totalKcal);
         if (warmCalorie * 100 / totalKcal > 0)
-            mTvWarm.setText((int) (warmCalorie * 100 / totalKcal) + "%");
+            mTvWarm.setText(RxFormatValue.fromat4S5R(warmCalorie * 100f / totalKcal, 0) + "%");
 
         mBarGrease.setProgress(greaseCalorie * 100 / totalKcal);
         if (greaseCalorie * 100 / totalKcal > 0)
-            mTvGrease.setText(((int) greaseCalorie * 100 / totalKcal) + "%");
+            mTvGrease.setText(RxFormatValue.fromat4S5R(greaseCalorie * 100f / totalKcal, 0) + "%");
 
         mBarAerobic.setProgress(aerobicCalorie * 100 / totalKcal);
         if (aerobicCalorie * 100 / totalKcal > 0)
-            mTvAerobic.setText(((int) aerobicCalorie * 100 / totalKcal) + "%");
+            mTvAerobic.setText(RxFormatValue.fromat4S5R(aerobicCalorie * 100f / totalKcal, 0) + "%");
 
         mBarAnaerobic.setProgress(anaerobicCalorie * 100 / totalKcal);
         if (anaerobicCalorie * 100 / totalKcal > 0)
-            mTvAnaerobic.setText(((int) anaerobicCalorie * 100 / totalKcal) + "%");
+            mTvAnaerobic.setText(RxFormatValue.fromat4S5R(anaerobicCalorie * 100f / totalKcal, 0) + "%");
 
         mBarLimit.setProgress(limitCalorie * 100 / totalKcal);
         if (limitCalorie * 100 / totalKcal > 0)
-            mTvLimit.setText(((int) limitCalorie * 100 / totalKcal) + "%");
+            mTvLimit.setText(RxFormatValue.fromat4S5R(limitCalorie * 100f / totalKcal, 0) + "%");
     }
 
-    private void heartRateStatistics(List<SportingDetailBean.RealAthlListBean> realAthlList) {
+    private void heartRateStatistics(List<HeartRateItemBean> realAthlList) {
         RxLogUtils.d("心率数据个数：" + realAthlList.size());
         int totalTime = 0;
         List<Integer> heartLists = new ArrayList<>();
         for (int i = 0; i < realAthlList.size(); i++) {
-            heartLists.add(realAthlList.get(i).getHeartRate());
-            checkHeartRate(realAthlList.get(i));
+            int reversePace = HeartRateUtil.reversePace(realAthlList.get(i).getPace());
+            heartLists.add(reversePace);
+            checkHeartRate(reversePace, realAthlList.get(i).getStepTime());
             totalTime += realAthlList.get(i).getStepTime();
         }
         lineChartUtils.setRealTimeData(heartLists);
@@ -452,86 +440,32 @@ public class SportsDetailsFragment extends BaseActivity {
         mTvAnaerobicTime.setText(RxFormat.setSec2MS(anaerobicTime));
         mTvLimitTime.setText(RxFormat.setSec2MS(limitTime));
         mTvCalmTime.setText(RxFormat.setSec2MS(calmTime));
-
     }
 
 
-    private void checkHeartRate(SportingDetailBean.RealAthlListBean bean) {
-        int heart = bean.getHeartRate();
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+    private void checkHeartRate(int reversePace, int stepTime) {
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0];
+        int heart_1 = heartRates[1];
+        int heart_2 = heartRates[2];
+        int heart_3 = heartRates[3];
+        int heart_4 = heartRates[4];
+        int heart_5 = heartRates[5];
+        int heart_6 = heartRates[6];
 
-        if (heart >= heart_1 && heart <= heart_2) {
-            warmTime += bean.getStepTime();
-        } else if (heart >= heart_2 && heart < heart_3) {
-            greaseTime += bean.getStepTime();
-        } else if (heart >= heart_3 && heart < heart_4) {
-            aerobicTime += bean.getStepTime();
-        } else if (heart >= heart_4 && heart < heart_5) {
-            anaerobicTime += bean.getStepTime();
-        } else if (heart >= heart_5) {
-            limitTime += bean.getStepTime();
-        } else if (heart < heart_1) {
-            calmTime += bean.getStepTime();
+        if (reversePace < heart_1) {
+            calmTime += stepTime;
+        } else if (reversePace <= heart_2) {
+            warmTime += stepTime;
+        } else if (reversePace <= heart_3) {
+            greaseTime += stepTime;
+        } else if (reversePace <= heart_4) {
+            aerobicTime += stepTime;
+        } else if (reversePace <= heart_5) {
+            anaerobicTime += stepTime;
+        } else {
+            limitTime += stepTime;
         }
-    }
-
-
-    private void showSimpleBottomSheetGrid(final Bitmap imgUrl) {
-
-        UMImage image = new UMImage(this, imgUrl);//网络图片
-
-//        image.compressStyle = UMImage.CompressStyle.SCALE;//大小压缩，默认为大小压缩，适合普通很大的图
-        image.compressStyle = UMImage.CompressStyle.QUALITY;//质量压缩，适合长图的分享压缩格式设置
-
-        UMImage thumb = new UMImage(this, imgUrl);
-        image.setThumb(thumb);
-        new ShareAction(mActivity)
-                .withMedia(image)
-                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.SINA)
-                .setCallback(mUMShareListener).open();
-
-    }
-
-    UMShareListener mUMShareListener = new UMShareListener() {
-        @Override
-        public void onStart(SHARE_MEDIA share_media) {
-            RxLogUtils.d("开始分享");
-            tipDialog.show("正在分享...", 3000);
-        }
-
-        @Override
-        public void onResult(SHARE_MEDIA share_media) {
-            RxLogUtils.d("分享成功");
-            RxToast.normal("分享成功");
-            tipDialog.dismiss();
-        }
-
-        @Override
-        public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-            RxLogUtils.d("分享失败");
-            RxToast.normal("分享失败");
-            tipDialog.dismiss();
-        }
-
-        @Override
-        public void onCancel(SHARE_MEDIA share_media) {
-            RxLogUtils.d("分享关闭");
-            RxToast.normal("分享关闭");
-            tipDialog.dismiss();
-        }
-    };
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -542,5 +476,10 @@ public class SportsDetailsFragment extends BaseActivity {
         } else {
             RxActivityUtils.skipActivity(mContext, MainActivity.class);
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 }

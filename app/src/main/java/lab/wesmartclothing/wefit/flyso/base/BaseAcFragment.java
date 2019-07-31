@@ -65,8 +65,16 @@ public abstract class BaseAcFragment extends Fragment {
         // 取消 isFirstLoad = true的注释 , 因为上述的initData本身就是应该执行的
         // onCreateView执行 证明被移出过FragmentManager initData确实要执行.
         // 如果这里有数据累加的Bug 请在initViews方法里初始化您的数据 比如 list.clear();
+
+        return LayoutInflater.from(mContext).inflate(layoutId(), null);
+
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         isFirstLoad = true;
-        View view = LayoutInflater.from(mContext).inflate(layoutId(), null);
         unbinder = ButterKnife.bind(this, view);
         initViews();
         initRxBus();
@@ -76,9 +84,7 @@ public abstract class BaseAcFragment extends Fragment {
         }
         isPrepared = true;
         lazyLoad();
-        return view;
     }
-
 
     /**
      * 要实现延迟加载Fragment内容,需要在 onCreateView
@@ -265,6 +271,7 @@ public abstract class BaseAcFragment extends Fragment {
             final RefWatcher refWatcher = LeakCanary.installedRefWatcher();
             refWatcher.watch(this);
         }
+
     }
 
 

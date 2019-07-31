@@ -6,6 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/Gray"
     android:orientation="vertical"
     tools:context=".ui.toolui.Main2Activity">
 
@@ -49,6 +50,18 @@
         app:text_gradient_orientation="vertical"
         app:text_gradient_startColor="@color/red"/>
 
+
+    <lab.wesmartclothing.wefit.flyso.view.NormalLineView
+        android:id="@+id/lineView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
+
+
+    <lab.wesmartclothing.wefit.flyso.view.line.SuitLines
+        android:id="@+id/suitLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

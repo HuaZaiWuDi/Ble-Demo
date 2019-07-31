@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/Gray"
     android:fitsSystemWindows="true"
-    tools:context=".ui.WebTitleActivity">
+    tools:context=".base.WebTitleActivity">
 
 
     <RelativeLayout

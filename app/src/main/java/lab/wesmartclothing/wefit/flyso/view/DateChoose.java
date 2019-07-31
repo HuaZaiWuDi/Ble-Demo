@@ -21,9 +21,10 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -35,7 +36,6 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.DietPlanBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -259,7 +259,8 @@ public class DateChoose extends RelativeLayout {
     private void fetchPlanDate(long time) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSON.toJSONString(new DietPlanBean(time)));
         RxManager.getInstance().doNetSubscribe(Theme == TYPE_FOOD_RECORD ? NetManager.getApiService().fetchPlanDate(body) : NetManager.getApiService().fetchDietRecordDate(body))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchPlanDate" + time, String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().<String>transformObservable("fetchPlanDate" + time, String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {

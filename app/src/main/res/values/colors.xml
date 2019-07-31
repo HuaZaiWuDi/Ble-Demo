@@ -15,23 +15,18 @@
     <color name="textHeatColor">#999999</color>
 
     <!--第二期UI-->
-    <color name="Gray">#574D5F</color>
+    <color name="Gray">#006AB8</color>
     <color name="GrayWrite">#978E9D</color>
     <color name="BrightGray">#D9D8E1</color>
     <color name="Gray_ECEBF0">#FFECEBF0</color>
     <color name="Gray_DCDAE6">#FFDCDAE6</color>
-    <color name="gray_ECEBF0">#FFECEBF0</color>
     <color name="red">#E74C3C</color>
     <color name="green_61D97F">#61D97F</color>
-    <color name="green_ACF2BE">#FFACF2BE</color>
     <color name="green_62D981">#FF62D981</color>
     <color name="line">#F7F7F9</color>
     <color name="orange_FF7200">#FF7200</color>
-    <color name="gray_FBFBFC">#FBFBFC</color>
-    <color name="brown_ABA08E">#ABA08E</color>
     <color name="yellow_FFBC00">#FFBC00</color>
     <color name="black_312B36">#312B36</color>
-    <color name="black_443C4A">#443C4A</color>
     <color name="black_312C35">#312C35</color>
     <color name="black_3F3943">#3F3943</color>
     <color name="bg_F7F7F9">#F7F7F9</color>
@@ -40,6 +35,7 @@
     <color name="yellow_D6B58A">#FFD6B58A</color>
     <color name="yellow_E2C891">#FFE2C891</color>
     <color name="yellow_E5CBA0">#FFE5CBA0</color>
+    <color name="yellow_FFEED7AE">#FFEED7AE</color>
     <color name="gray_EDECF0">#FFEDECF0</color>
 
     <color name="colorFontWhite">#ffffff</color>
@@ -51,6 +47,5 @@
     <color name="aerobic">#DA70D6</color>
     <color name="anaerobic">#FF7200</color>
     <color name="limit">#E74C3C</color>
-
 
 </resources>

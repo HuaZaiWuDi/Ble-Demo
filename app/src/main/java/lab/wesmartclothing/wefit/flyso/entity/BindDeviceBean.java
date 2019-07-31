@@ -1,5 +1,9 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
+import android.bluetooth.BluetoothDevice;
+
+import com.yolanda.health.qnblesdk.out.QNBleDevice;
+
 import java.io.Serializable;
 
 /**
@@ -17,7 +21,8 @@ public class BindDeviceBean implements Serializable {
     String deviceName;
     String deviceMac;
     int rssi;
-
+    QNBleDevice mQNBleDevice;
+    BluetoothDevice mBluetoothDevice;
 
     public BindDeviceBean(String deivceType, String deviceName, String deviceMac, int rssi) {
         this.deivceType = deivceType;
@@ -26,6 +31,21 @@ public class BindDeviceBean implements Serializable {
         this.rssi = rssi;
     }
 
+    public QNBleDevice getQNBleDevice() {
+        return mQNBleDevice;
+    }
+
+    public void setQNBleDevice(QNBleDevice QNBleDevice) {
+        mQNBleDevice = QNBleDevice;
+    }
+
+    public BluetoothDevice getBluetoothDevice() {
+        return mBluetoothDevice;
+    }
+
+    public void setBluetoothDevice(BluetoothDevice bluetoothDevice) {
+        mBluetoothDevice = bluetoothDevice;
+    }
 
     public String getDeviceName() {
         return deviceName;

@@ -4,6 +4,8 @@ package lab.wesmartclothing.wefit.flyso.netutil.net;
 import java.util.List;
 
 import io.reactivex.Observable;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.HttpResult;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -94,6 +96,15 @@ public interface ApiService {
     Observable<String> changeDietPlan(@Body RequestBody body);
 
 
+    //获取日期分组信息列表
+    @FormUrlEncoded
+    @POST("heat/fetchGroupTypeRecordList")
+    Observable<String> heatFetchGroupTypeRecordList(
+            @Field("groupType") String groupType,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
+
     ///////////////////////////////////////////////////////////////////////////
     // 体重
     ///////////////////////////////////////////////////////////////////////////
@@ -148,6 +159,23 @@ public interface ApiService {
     @POST("weight/weightCompare")
     Observable<String> weightCompare(@Body RequestBody body);
 
+    //获取日期分组信息列表
+    @FormUrlEncoded
+    @POST("weight/fetchGroupTypeRecordList")
+    Observable<String> fetchGroupTypeRecordList(
+            @Field("groupType") String groupType,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize);
+
+    //获取日月对应的列表记录
+    @FormUrlEncoded
+    @POST("weight/fetchDaysOrMonthRecordList")
+    Observable<String> fetchDaysOrMonthRecordList(
+            @Field("groupType") String groupType,
+            @Field("recordDate") long recordDate,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 运动
@@ -181,6 +209,32 @@ public interface ApiService {
     //获取某一天定制课程运动记录信息
     @POST("athl/courseAthlDetail")
     Observable<String> courseAthlDetail(@Body RequestBody body);
+
+
+    //添加跑步数据信息
+    @POST("athl/addRunningData")
+    Observable<String> addRunningData(@Body RequestBody body);
+
+
+    //获取日期分组信息列表
+    @FormUrlEncoded
+    @POST("athl/fetchGroupTypeRecordList")
+    Observable<String> athlFetchGroupTypeRecordList(
+            @Field("groupType") String groupType,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
+
+
+    //获取日月对应的列表记录
+    @FormUrlEncoded
+    @POST("athl/fetchDaysOrMonthRecordList")
+    Observable<String> athlFetchDaysOrMonthRecordList(
+            @Field("groupType") String groupType,
+            @Field("recordDate") long recordDate,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -235,6 +289,13 @@ public interface ApiService {
 
     @POST("user/saveUserInfo")
     Observable<String> saveUserInfo(@Body RequestBody body);
+
+    @POST("user/saveUserInfo")
+    Observable<HttpResult<String>> saveUserInfo(@Body UserInfo body);
+
+    @POST("https://api.wesmartclothing.com/notify/sms/send")
+    Observable<HttpResult<String>> sendSms(@Query("phone") String phone);
+
 
     @POST("user/addBindDevice")
     Observable<String> addBindDevice(@Body RequestBody body);
@@ -338,7 +399,6 @@ public interface ApiService {
     Observable<String> verifyInvitationCode(@Field("invitationCode") String invitationCode);
 
 
-
     //获取报告信息列表
     @POST("user/fetchUserInformList")
     Observable<String> fetchUserInformList();
@@ -361,6 +421,17 @@ public interface ApiService {
     @POST("find/detail.html")
     Observable<String> newsDetail(@Field("gid") String git);
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 排行榜
+    ///////////////////////////////////////////////////////////////////////////
+    //近30天所有用户减重排行
+    @GET("ranking/weight/lastTopUser")
+    Observable<String> lastTopUser(@Query("count") int count, @Query("days") int days);
+
+    //本人排名等概要
+    @GET("ranking/weight/rankingSummary")
+    Observable<String> rankingSummary();
 
     ///////////////////////////////////////////////////////////////////////////
     // 固件升级模块

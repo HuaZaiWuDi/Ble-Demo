@@ -1,9 +1,17 @@
 package lab.wesmartclothing.wefit.flyso.tools;
 
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
+
 /**
  * Created icon_hide_password jk on 2018/5/7.
  */
 public interface Key {
+
+
+    long HOURS_12 = 12 * 60 * 60 * 1000;
+    long HOURS_6 = 6 * 60 * 60 * 1000;
+    long HOURS_1 = 60 * 60 * 1000;
+    long DAY_1 = 24 * 60 * 60 * 1000;
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -15,18 +23,13 @@ public interface Key {
     String ADD_FOOD_DATE = "ADD_FOOD_DATE";
 
     String ADD_FOOD_INFO = "ADD_FOOD_INFO";
-    String ADDED_FOOD_INFO = "ADDED_FOOD_INFO";//已经添加的书屋列表
 
-    String BUNDLE_WEIGHT_HISTORY = "BUNDLE_WEIGHT_HISTORY";//跳转体重信息
-    String BUNDLE_SPORTS_INFO = "BUNDLE_SPORTS_INFO";//跳转运动信息
 
     String BUNDLE_FORCE_BIND = "BUNDLE_FORCE_BIND";//是否强制绑定
-    String BUNDLE_BIND_TYPE = "BUNDLE_BIND_TYPE";//绑定类型
 
 
     String BUNDLE_WEB_URL = "BUNDLE_WEB_URL";//跳转网页URL
 
-    String BUNDLE_RELOGIN = "BUNDLE_RELOGIN";//重新登录
 
     //标题
     String BUNDLE_TITLE = "BUNDLE_TITLE";
@@ -35,12 +38,10 @@ public interface Key {
 
     String BUNDLE_OTHER_LOGIN_INFO = "BUNDLE_OTHER_LOGIN_INFO";//第三方登录用户信息
 
-    String BUNDLE_FRAGMENT = "BUNDLE_FRAGMENT";//跳转制定页面
 
     String BUNDLE_DATE_TIME = "BUNDLE_DATE_TIME";//日期
     String BUNDLE_DATA_GID = "BUNDLE_DATA_GID";//数据的GID
 
-    String BUNDLE_IS_CONNECT = "BUNDLE_IS_CONNECT";//传递蓝牙的链接状态
 
     //设置体重目标传递参数
     String BUNDLE_HAS_DAYS = "BUNDLE_HAS_DAYS";
@@ -48,14 +49,10 @@ public interface Key {
     String BUNDLE_STILL_NEED = "BUNDLE_STILL_NEED";
     String BUNDLE_TARGET_WEIGHT = "BUNDLE_TARGET_WEIGHT";
 
-    //最近一次上秤的真实体重
-    String BUNDLE_LAST_WEIGHT = "BUNDLE_LAST_WEIGHT";
 
     //传递体型类型
     String BUNDLE_BODY_INDEX = "BUNDLE_BODY_INDEX";
 
-    //是否结束前一个Fragment
-    String BUNDLE_FINISH_FRAGMENT = "BUNDLE_FINISH_FRAGMENT";
 
     //体重秤实时数据
     String BUNDLE_WEIGHT_UNSTEADY = "BUNDLE_WEIGHT_UNSTEADY";
@@ -65,49 +62,42 @@ public interface Key {
     //计划的状态
     String BUNDLE_PLAN_STATUS = "BUNDLE_PLAN_STATUS";
 
+    //运动计划
     String BUNDLE_SPORTING_PLAN = "BUNDLE_SPORTING_PLAN";
+
+    //运动上传数据
+    String BUNDLE_SPORTING_LAST_DATA = "BUNDLE_SPORTING_DATA";
+
     String BUNDLE_GO_BCAK = "BUNDLE_GO_BCAK";
 
     ///////////////////////////////////////////////////////////////////////////
     // 广播
     ///////////////////////////////////////////////////////////////////////////
 
-
-    //瘦身衣连接状态
-    String ACTION_CLOTHING_CONNECT = "ACTION_CLOTHING_CONNECT";
-    String EXTRA_CLOTHING_CONNECT = "EXTRA_CLOTHING_CONNECT";
-
-    //心率更改
-    String ACTION_HEART_RATE_CHANGED = "ACTION_HEART_RATE_CHANGED";
-    String EXTRA_HEART_RATE_CHANGED = "EXTRA_HEART_RATE_CHANGED";
-
-
-    //体脂称连接状态
-    String ACTION_SCALE_CONNECT = "ACTION_SCALE_CONNECT";
-    String EXTRA_SCALE_CONNECT = "EXTRA_SCALE_CONNECT";
-    //蓝牙秤状态改变(开始测量)
-    String ACTION_STATE_START_MEASURE = "ACTION_STATE_START_MEASURE";
-
-
     String ACTION_CLOTHING_STOP = "ACTION_CLOTHING_STOP";
-    String EXTRA_CLOTHING_STOP = "EXTRA_CLOTHING_STOP";
 
 
     ///////////////////////////////////////////////////////////////////////////
     // 分享登录SDK
     ///////////////////////////////////////////////////////////////////////////
-    String QQ_ID = "1106924585";//QQkey：RGcOhc7q8qZMrhxz
-    String WX_ID = "wxaaeb0352e04684de";
-    String WX_SECRET = "0d23407fe42a2665dabe3ea2a958daf9";
-    String WEIBO_ID = "3322261844";
-    String WB_URL = "https://sns.whalecloud.com/sina2/callback";
 
     String LoginType_WEXIN = "WeChat";
     String LoginType_QQ = "QQ";
     String LoginType_WEIBO = "MicroBlog";
 
-    //BUGLY
-    String BUGly_id = "11c87579c7";
+
+    //友盟
+    String UM_KEY = BuildConfig.UM_KEY;
+    String WX_KEY = BuildConfig.WX_KEY;
+    String WX_SECRET = BuildConfig.WX_SECRET;
+    String QQ_KEY = BuildConfig.QQ_KEY;
+    String QQ_SECRET = BuildConfig.QQ_SECRET;
+    String SINA_KEY = BuildConfig.SINA_KEY;
+    String SINA_SECRET = BuildConfig.SINA_SECRET;
+    String BUGLY_KEY = BuildConfig.BUGLY_KEY;
+    String URL_RELEASE = BuildConfig.URL_RELEASE;
+    String COMPANY_KEY = BuildConfig.COMPANY_KEY;
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 缓存KEY
@@ -117,6 +107,10 @@ public interface Key {
 
     String CACHE_SEARCH_KEY = "CACHE_SEARCH_KEY";//历史搜索词
 
+
+    String CACHE_SPORT_KET = "CACHE_SPORT_KET";
+
+
     ///////////////////////////////////////////////////////////////////////////
     // 常量
     ///////////////////////////////////////////////////////////////////////////
@@ -125,6 +119,7 @@ public interface Key {
     int TYPE_LUNCH = 2;
     int TYPE_DINNER = 3;
     int TYPED_MEAL = 5;
+
 
     //心率阈值
     //100-120-140-160-180
@@ -140,6 +135,6 @@ public interface Key {
      * 6.极限
      * 7.最大心率
      */
-    byte[] HRART_SECTION = new byte[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};
+    int[] HRART_SECTION = new int[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};
 
 }

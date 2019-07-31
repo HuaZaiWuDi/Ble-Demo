@@ -36,7 +36,7 @@ public class PlanActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        mTopBar.setTitle("定制课程");
+        mTopBar.setTitle(R.string.customizedCourses);
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -45,7 +45,7 @@ public class PlanActivity extends BaseActivity {
                     }
                 });
 
-        UserInfo info = MyAPP.gUserInfo;
+        UserInfo info = MyAPP.getgUserInfo();
         mTvPlanTip.setText(getString(R.string.empty_plan, info.getUserName()));
     }
 

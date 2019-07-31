@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/sportsStatus"
-                android:text="开始热身"
+                android:text="@string/calm"
                 android:textColor="@color/warm"
                 android:textSize="15sp"/>
 
@@ -119,6 +119,16 @@
                 android:textStyle="bold"
                 tools:text="68.7kcal"/>
 
+            <TextView
+                android:id="@+id/tipWeigh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_kcal"
+                android:layout_centerHorizontal="true"
+                android:text="@string/please_weigh"
+                android:textColor="@color/GrayWrite"
+                android:textSize="11sp"/>
+
 
             <LinearLayout
                 android:id="@+id/layout_sports"
@@ -148,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:layout_marginBottom="8dp"
-                        android:text="当前心率"
+                        android:text="当前配速"
                         android:textColor="@color/GrayWrite"
                         android:textSize="11sp"/>
 
@@ -162,18 +172,11 @@
                             android:id="@+id/tv_avHeartRate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLength="3"
                             android:text="--"
                             android:textColor="@color/white"
                             android:textSize="24sp"
                             tools:text="110"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="\tbpm"
-                            android:textColor="@color/GrayWrite"
-                            android:textSize="18sp"/>
 
                     </LinearLayout>
 
@@ -197,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:layout_marginBottom="8dp"
-                        android:text="最大心率"
+                        android:text="公里数"
                         android:textColor="@color/GrayWrite"
                         android:textSize="11sp"/>
 
@@ -211,7 +214,6 @@
                             android:id="@+id/tv_maxHeartRate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLength="3"
                             android:text="--"
                             android:textColor="@color/white"
                             android:textSize="24sp"
@@ -220,7 +222,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="\tbpm"
+                            android:text="\t公里"
                             android:textColor="@color/GrayWrite"
                             android:textSize="18sp"/>
 
@@ -308,7 +310,7 @@
                 android:layout_below="@+id/layout_sports"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_heartCount"
@@ -403,7 +405,8 @@
                             android:gravity="center"
                             android:text="bpm"
                             android:textColor="@color/white"
-                            android:textSize="6sp"/>
+                            android:textSize="6sp"
+                            android:visibility="invisible"/>
 
 
                         <TextView
@@ -439,7 +442,7 @@
                                 android:gravity="center"
                                 android:text="@string/limit"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"
+                                android:textSize="10sp"
                                 />
 
                             <com.vondear.rxtools.view.layout.RxView
@@ -464,9 +467,9 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="无氧"
+                                android:text="@string/anaerobic"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="10sp"/>
 
                             <View
                                 android:layout_width="match_parent"
@@ -487,9 +490,9 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="有氧"
+                                android:text="@string/aerobic"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="10sp"/>
 
 
                             <View
@@ -511,9 +514,9 @@
                                 android:layout_height="match_parent"
                                 android:alpha="1"
                                 android:gravity="center"
-                                android:text="燃脂"
+                                android:text="@string/grease"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="10sp"/>
 
                             <View
                                 android:layout_width="match_parent"
@@ -534,9 +537,9 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="热身"
+                                android:text="@string/warm"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"/>
+                                android:textSize="10sp"/>
 
                             <View
                                 android:layout_width="match_parent"
@@ -557,9 +560,9 @@
                                 android:layout_width="24dp"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="静息"
+                                android:text="@string/calm"
                                 android:textColor="@color/GrayWrite"
-                                android:textSize="8sp"
+                                android:textSize="10sp"
                                 />
 
                             <com.vondear.rxtools.view.layout.RxView

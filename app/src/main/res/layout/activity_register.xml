@@ -54,8 +54,6 @@
             android:drawableLeft="@mipmap/icon_phone"
             android:drawablePadding="10dp"
             android:hint="@string/please_input_phone"
-            android:inputType="phone"
-            android:maxLength="11"
             android:maxLines="1"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"

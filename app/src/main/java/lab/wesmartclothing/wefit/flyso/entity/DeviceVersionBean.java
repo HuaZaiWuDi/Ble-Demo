@@ -56,4 +56,15 @@ public class DeviceVersionBean {
     public void setFirmwareVersion(String firmwareVersion) {
         this.firmwareVersion = firmwareVersion;
     }
+
+    @Override
+    public String toString() {
+        return "DeviceVersionBean{" +
+                "category=" + category +
+                ", modelNo=" + modelNo +
+                ", manufacture=" + manufacture +
+                ", hwVersion=" + hwVersion +
+                ", firmwareVersion='" + firmwareVersion + '\'' +
+                '}';
+    }
 }

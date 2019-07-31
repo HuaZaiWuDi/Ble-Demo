@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +21,7 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -43,6 +43,7 @@ public class WelcomeActivity extends BaseActivity {
     @BindView(R.id.tv_tip)
     TextView mTvTip;
 
+    private HealthyInfoBean mHealthyInfoBean;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -72,15 +73,16 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void initRxBus() {
-        RxBus.getInstance().register2(WeightAddBean.class)
-                .compose(RxComposeUtils.<WeightAddBean>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<WeightAddBean>() {
+        RxBus.getInstance().register2(HealthyInfoBean.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<HealthyInfoBean>() {
                     @Override
-                    protected void _onNext(WeightAddBean weightBean) {
+                    protected void _onNext(HealthyInfoBean weightBean) {
+                        mHealthyInfoBean = weightBean;
                         if (weightBean != null) {
                             mTvWeightInfo.setVisibility(View.VISIBLE);
                             boolean isQualified = weightBean.getBmr() != 0;
-                            mTvGoBind.setText(isQualified ? getString(R.string.nextWay) : "重新称重");
+                            mTvGoBind.setText(isQualified ? getString(R.string.nextWay) : getString(R.string.resetWeigh));
                             RxTextUtils.getBuilder(weightBean.getWeight() + "")
                                     .setProportion(3f)
                                     .setBold()
@@ -90,20 +92,20 @@ public class WelcomeActivity extends BaseActivity {
                                     .into(mTvWeight);
 
                             RxTextUtils.getBuilder(weightBean.getBodyFat() + " ")
-                                    .append("体脂率(%)\t\t\t").setProportion(0.8f)
+                                    .append(getString(R.string.bodyFatAndUnit) + "\t\t\t").setProportion(0.8f)
                                     .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
                                     .append(weightBean.getBmi() + " ")
                                     .append("BMI\t\t\t").setProportion(0.8f)
                                     .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
                                     .append(weightBean.getBmr() + " ")
-                                    .append("基础代谢(kcal)").setProportion(0.8f)
+                                    .append(getString(R.string.bmrAndUnit)).setProportion(0.8f)
                                     .setForegroundColor(ContextCompat.getColor(mActivity, R.color.GrayWrite))
                                     .into(mTvWeightInfo);
 
                             mTvTip.setVisibility(isQualified ? View.GONE : View.VISIBLE);
 
                             if (isQualified) {
-                                RecordInfoActivity.mSubmitInfoFrom.setWeightInfo(weightBean);
+                                RecordInfoActivity.getmSubmitInfoFrom().setWeightInfo(weightBean);
                             }
                         }
                     }
@@ -122,10 +124,10 @@ public class WelcomeActivity extends BaseActivity {
     private void checkState() {
         if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
             mTvGoBind.setText(R.string.goBind);
-            mTvWeight.setText("请绑定您的体脂称");
+            mTvWeight.setText(R.string.bindScale);
         } else {
-            mTvWeight.setText("请赤脚站在体脂秤上，两脚自然分布两侧确保脚底干净，避免过于潮湿");
-            mTvGoBind.setText("去称重");
+            mTvWeight.setText(R.string.weighTip);
+            mTvGoBind.setText(R.string.goWeigh);
         }
     }
 
@@ -144,10 +146,10 @@ public class WelcomeActivity extends BaseActivity {
         String text = mTvGoBind.getText().toString();
         if (getString(R.string.goBind).equals(text)) {
             RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
-        } else if ("去称重".equals(text) || "重新称重".equals(text)) {
+        } else if (getString(R.string.goWeigh).equals(text) || getString(R.string.resetWeigh).equals(text)) {
             RxActivityUtils.skipActivity(mActivity, WeightAddFragment.class);
         } else if (getString(R.string.nextWay).equals(text)) {
-            RxActivityUtils.skipActivity(mActivity, SettingTargetFragment.class);
+            SettingTargetFragment.start(mContext, mHealthyInfoBean.getWeight());
         }
     }
 

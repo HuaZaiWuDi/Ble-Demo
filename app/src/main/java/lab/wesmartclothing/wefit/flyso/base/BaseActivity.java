@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import io.reactivex.subjects.BehaviorSubject;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.LifeCycleEvent;
+import lab.wesmartclothing.wefit.flyso.utils.ScreenAdapter;
 import lab.wesmartclothing.wefit.flyso.view.TipDialog;
 
 /**
@@ -63,9 +64,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             initViews();
             if (getIntent().getExtras() != null)
                 initBundle(getIntent().getExtras());
-            initRxBus2();
             initNetData();
         }
+        initRxBus2();
     }
 
 
@@ -176,8 +177,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         tipDialog = null;
         RxActivityUtils.removeActivity(this);
         super.onDestroy();
-        mContext = null;
-        mActivity = null;
     }
 
 

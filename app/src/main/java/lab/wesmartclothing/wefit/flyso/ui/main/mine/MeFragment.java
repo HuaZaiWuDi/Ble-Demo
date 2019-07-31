@@ -9,11 +9,13 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
+import com.wesmarclothing.mylibrary.net.RxBus;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -21,9 +23,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserCenterBean;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -32,9 +37,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
@@ -71,8 +74,8 @@ public class MeFragment extends BaseAcFragment {
     ImageView mIvCollect;
     @BindView(R.id.tv_collectCount)
     TextView mTvCollectCount;
-    @BindView(R.id.layout_myCollect)
-    RxRelativeLayout mLayoutMyCollect;
+    @BindView(R.id.layout_chatKefu)
+    RxRelativeLayout mLayoutChatKefu;
     @BindView(R.id.iv_Order)
     ImageView mIvOrder;
     @BindView(R.id.layout_myOrder)
@@ -108,13 +111,19 @@ public class MeFragment extends BaseAcFragment {
         super.initViews();
         initTypeface();
         RxTextUtils.getBuilder("--")
-                .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.hour) + "\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .append("--")
-                .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.min)).setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
 
-        UserInfo userInfo = MyAPP.gUserInfo;
+        UserInfo userInfo = MyAPP.getgUserInfo();
         mTvInvitation.setText(userInfo.getInvitationCode());
+
+        if (BuildConfig.Wesmart) {
+            mLayoutChatKefu.setVisibility(View.VISIBLE);
+        } else
+            mLayoutChatKefu.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -136,16 +145,6 @@ public class MeFragment extends BaseAcFragment {
                     }
                 });
 
-        //只有在显示时才会网络请求
-        RxBus.getInstance().register2(NetWorkType.class)
-                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
-                .subscribe(new RxSubscriber<NetWorkType>() {
-                    @Override
-                    protected void _onNext(NetWorkType netWorkType) {
-                        if (netWorkType.isBoolean())
-                            initMineData();
-                    }
-                });
 
         //消息通知
         RxBus.getInstance().register2(MessageChangeBus.class)
@@ -171,9 +170,9 @@ public class MeFragment extends BaseAcFragment {
         int hour = (totalMin / 60);
         int min = totalMin % 60;
         RxTextUtils.getBuilder(hour + "")
-                .append("\t小时\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.hour) + "\t").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .append(min + "")
-                .append("\t分").setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
+                .append("\t" + getString(R.string.min)).setProportion(0.6f).setForegroundColor(getResources().getColor(R.color.GrayWrite))
                 .into(mTvSportingTime);
     }
 
@@ -181,7 +180,7 @@ public class MeFragment extends BaseAcFragment {
     private void initMineData() {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userCenter())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().<String>transformObservable("userCenter", String.class, CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -197,11 +196,11 @@ public class MeFragment extends BaseAcFragment {
 
                         //更新消息未读状态
                         mIvNotify.setImageResource(user.getUnreadCount() == 0 ? R.mipmap.icon_email_white : R.mipmap.icon_email_white_mark);
-                        mTvSign.setText(RxDataUtils.isNullString(user.getSignature()) ? "他什么也没留下" : user.getSignature());
+                        mTvSign.setText(RxDataUtils.isNullString(user.getSignature()) ? getString(R.string.signEmpty) : user.getSignature());
                         SportingTime(user.getDuration());
                         mTvTotalHeat.setText(user.getCalorie() + "");
                         mTvTotalDays.setText(user.getAthlDays() + "");
-                        mTvMaxHeartRate.setText(user.getMaxHeart() + "");
+                        mTvMaxHeartRate.setText(RxFormat.setSec2MS(user.getMaxPace()));
                     }
 
                     @Override
@@ -216,6 +215,7 @@ public class MeFragment extends BaseAcFragment {
             R.id.layout_myDevice,
             R.id.layout_myCollect,
             R.id.layout_myOrder,
+            R.id.layout_chatKefu,
             R.id.layout_myShoppingAddress,
             R.id.layout_problem,
             R.id.layout_aboutUs,
@@ -232,10 +232,13 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, CollectFragment.class);
                 break;
             case R.id.layout_myOrder:
-                WebTitleActivity.startWebActivity(mActivity, "我的订单", ServiceAPI.Order_Url, true);
+                WebTitleActivity.startWebActivity(mActivity, getString(R.string.myOrder), ServiceAPI.Order_Url, true);
+                break;
+            case R.id.layout_chatKefu:
+                ChatManager.INSTANCE.register();
                 break;
             case R.id.layout_myShoppingAddress:
-                WebTitleActivity.startWebActivity(mActivity, "我的购物车", ServiceAPI.Shopping_Address, true);
+                WebTitleActivity.startWebActivity(mActivity, getString(R.string.myShoppingAddr), ServiceAPI.Shopping_Address, true);
                 break;
             case R.id.layout_problem:
                 RxActivityUtils.skipActivity(mContext, ProblemFragemnt.class);
@@ -256,7 +259,6 @@ public class MeFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, HealthReportActivity.class);
                 break;
             default:
-
         }
     }
 

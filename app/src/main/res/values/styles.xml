@@ -25,7 +25,7 @@
 
     <style name="StartTheme" parent="AppTheme">
         <item name="android:windowFullscreen">false</item>
-        <item name="android:windowBackground">@mipmap/img_start_up</item>
+        <item name="android:windowBackground">@mipmap/img_startup</item>
 
     </style>
 
@@ -40,6 +40,5 @@
         <item name="qmui_topbar_left_back_drawable_id">@mipmap/icon_back</item>
         <item name="qmui_topbar_need_separator">false</item>
     </style>
-
 
 </resources>

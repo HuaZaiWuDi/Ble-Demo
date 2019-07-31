@@ -27,7 +27,6 @@ import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.RecordInfoActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -54,7 +53,6 @@ public class TargetDetailsFragment extends BaseActivity {
     Unbinder unbinder;
 
 
-    Bundle bundle = new Bundle();
     RxDialogSureCancel rxDialog;
 
     @Override
@@ -89,7 +87,7 @@ public class TargetDetailsFragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("目标设置");
+        mQMUIAppBarLayout.setTitle(R.string.setTarget);
     }
 
     @OnClick(R.id.btn_reSet)
@@ -131,10 +129,6 @@ public class TargetDetailsFragment extends BaseActivity {
                         mTvTargetWeight.setText(targetWeight + "");
                         mTvDistanceTarget.setText(RxFormatValue.fromat4S5R(stillNeed, 2));
 
-                        bundle.putInt(Key.BUNDLE_HAS_DAYS, hasDays);
-                        bundle.putDouble(Key.BUNDLE_STILL_NEED, RxFormatValue.format4S5R(stillNeed, 2));
-                        bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, targetWeight);
-                        bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, initialWeight);
                     }
 
                     @Override

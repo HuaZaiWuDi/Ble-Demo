@@ -11,8 +11,8 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingLeft="@dimen/dimen_35"
-    android:paddingRight="@dimen/dimen_35"
     android:paddingTop="@dimen/dimen_35"
+    android:paddingRight="@dimen/dimen_35"
     >
 
 
@@ -24,8 +24,6 @@
         android:drawableLeft="@mipmap/icon_phone"
         android:drawablePadding="10dp"
         android:hint="@string/please_input_phone"
-        android:inputType="phone"
-        android:maxLength="11"
         android:maxLines="1"
         android:textColor="@color/Gray"
         android:textColorHint="@color/GrayWrite"

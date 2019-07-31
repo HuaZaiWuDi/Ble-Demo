@@ -12,7 +12,6 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxRegUtils;
@@ -20,6 +19,7 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +36,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.VCodeBus;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.LoginSuccessUtils;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -60,7 +60,7 @@ public class BindPhoneActivity extends BaseActivity {
     @OnClick(R.id.tv_clause)
     void tv_clause() {
         //服务协议
-        WebTitleActivity.startWebActivity(mActivity,getString(R.string.ServiceAgreement),ServiceAPI.Term_Service);
+        WebTitleActivity.startWebActivity(mActivity, getString(R.string.ServiceAgreement), ServiceAPI.Term_Service);
 
     }
 
@@ -147,7 +147,7 @@ public class BindPhoneActivity extends BaseActivity {
 
     private void getVCode() {
         String phone = mEditPhone.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -181,7 +181,7 @@ public class BindPhoneActivity extends BaseActivity {
     private void bindPhone() {
         final String phone = mEditPhone.getText().toString();
         String vCode = mEditVcode.getText().toString();
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }

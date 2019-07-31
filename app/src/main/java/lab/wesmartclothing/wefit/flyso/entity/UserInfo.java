@@ -24,12 +24,12 @@ public class UserInfo implements Serializable {
      * userName : string
      */
 
-    private long birthday = Long.parseLong("631123200000");
+    private long birthday;
     private String clothesMacAddr;
-    private int height = 175;
+    private int height;
     private String phone;
     private String scalesMacAddr;
-    private int sex = 2;//1男2女0未知（未录入）
+    private int sex;//1男2女0未知（未录入）
     private String signature;
     private String imgUrl;
     private String userName;
@@ -37,12 +37,30 @@ public class UserInfo implements Serializable {
     private String country;
     private String province;
     private boolean isChange = false;
-    private long registerTime;
+    public long registerTime;
     private int planState;
     private int age;
     private boolean hasInviteCode;
     private String invitationCode;
     private int baselHeat;
+    private String informId;
+    private String hmac;
+
+    public String getHmac() {
+        return hmac;
+    }
+
+    public void setHmac(String hmac) {
+        this.hmac = hmac;
+    }
+
+    public String getInformId() {
+        return informId;
+    }
+
+    public void setInformId(String informId) {
+        this.informId = informId;
+    }
 
     public int getBaselHeat() {
         return baselHeat;
@@ -221,11 +239,18 @@ public class UserInfo implements Serializable {
                 ", scalesMacAddr='" + scalesMacAddr + '\'' +
                 ", sex=" + sex +
                 ", signature='" + signature + '\'' +
-                ", userImg='" + imgUrl + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
                 ", userName='" + userName + '\'' +
                 ", city='" + city + '\'' +
                 ", country='" + country + '\'' +
                 ", province='" + province + '\'' +
+                ", isChange=" + isChange +
+                ", registerTime=" + registerTime +
+                ", planState=" + planState +
+                ", age=" + age +
+                ", hasInviteCode=" + hasInviteCode +
+                ", invitationCode='" + invitationCode + '\'' +
+                ", baselHeat=" + baselHeat +
                 '}';
     }
 }

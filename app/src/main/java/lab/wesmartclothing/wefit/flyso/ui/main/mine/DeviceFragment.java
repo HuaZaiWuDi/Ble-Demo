@@ -2,10 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -17,11 +13,11 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.List;
 
@@ -31,9 +27,10 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.ble.BleKey;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -43,7 +40,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
-import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
@@ -83,8 +79,6 @@ public class DeviceFragment extends BaseActivity {
     QMUIRoundLinearLayout mBtnBind;
     Unbinder unbinder;
 
-    QNBleTools mQNBleTools = QNBleTools.getInstance();
-
 
     private List<DeviceListbean.ListBean> beanList;
 
@@ -111,6 +105,7 @@ public class DeviceFragment extends BaseActivity {
         initData();
         notifyData();
         initRxBus();
+        BleAPI.getVoltage();
     }
 
 
@@ -143,7 +138,7 @@ public class DeviceFragment extends BaseActivity {
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
-        mQMUIAppBarLayout.setTitle("我的设备");
+        mQMUIAppBarLayout.setTitle(R.string.myDevice);
     }
 
 
@@ -228,11 +223,11 @@ public class DeviceFragment extends BaseActivity {
                         //添加绑定设备，这里实在不会
                         if (BleKey.TYPE_SCALE.equals(position)) {
                             //删除绑定
-                            mQNBleTools.disConnectDevice();
+                            QNBleManager.getInstance().disConnectDevice();
                             SPUtils.remove(SPKey.SP_scaleMAC);
                         } else if (BleKey.TYPE_CLOTHING.equals(position)) {
                             SPUtils.remove(SPKey.SP_clothingMAC);
-                            BleTools.getInstance().disConnect();
+                            MyBleManager.Companion.getInstance().disConnect();
                         }
                         notifyData();
                         RxBus.getInstance().post(new RefreshMe());
@@ -241,7 +236,7 @@ public class DeviceFragment extends BaseActivity {
 
                     @Override
                     protected void _onError(String error, int code) {
-                        RxToast.error("删除失败");
+                        RxToast.error(getString(R.string.deleteFail));
                     }
 
 

@@ -1,7 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
 import android.Manifest;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -15,11 +14,10 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.model.timer.MyTimerListener;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.yolanda.health.qnblesdk.out.QNScaleData;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 
@@ -32,15 +30,14 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.WelcomeActivity;
@@ -91,14 +88,16 @@ public class WeightAddFragment extends BaseActivity {
         lastWeight = SPUtils.getFloat(SPKey.SP_realWeight, (float) lastWeight);
         RxLogUtils.d("上一次体重数据：" + lastWeight);
 
-        mTvTip.setText("请上称...");
-        mTvTitle.setText("测量体重");
+        mTvTip.setText(R.string.pleaseWeigh);
+        mTvTitle.setText(R.string.scaleWeight);
 
-        if (!QNBleTools.getInstance().isConnect()) {
-            startService(new Intent(mContext, BleService.class));
+
+        if (!MyBleManager.Companion.getInstance().isBLEEnabled())
+            MyBleManager.Companion.getInstance().enableBLE();
+
+        if (!QNBleManager.getInstance().isConnect()) {
+            MyBleManager.Companion.getInstance().scanMacAddress();
         }
-        if (!BleTools.getBleManager().isBlueEnable())
-            BleTools.getBleManager().enableBluetooth();
     }
 
     @Override
@@ -126,9 +125,9 @@ public class WeightAddFragment extends BaseActivity {
         final QNScaleData qnScaleData = JSON.parseObject(extras.getString(Key.BUNDLE_WEIGHT_QNDATA), QNScaleData.class);
         if (unsteadyWeight > 0) {
             mTvTargetWeight.setText((float) unsteadyWeight + "");
-            mTvTip.setText("称重中...");
-            if (!mTvTitle.getText().toString().equals("正在测量体重")) {
-                mTvTitle.setText("正在测量体重");
+            mTvTip.setText(R.string.weighing);
+            if (!mTvTitle.getText().toString().equals(getString(R.string.weightMeasured))) {
+                mTvTitle.setText(R.string.weightMeasured);
                 mTvTip.setVisibility(View.VISIBLE);
                 mBtnForget.setVisibility(View.INVISIBLE);
                 mBtnSave.setVisibility(View.INVISIBLE);
@@ -143,8 +142,8 @@ public class WeightAddFragment extends BaseActivity {
 
             final float realWeight = (float) qnScaleData.getAllItem().get(0).getValue();
             mTvTargetWeight.setText(realWeight + "");
-            mTvTip.setText("身体成分测量中...");
-            mTvTitle.setText("正在测量身体成分");
+            mTvTip.setText(R.string.bodyCompositionMeasuring);
+            mTvTitle.setText(R.string.bodyCompositionMeasure);
             mMRoundDisPlayView.stopAnimation();
             mMRoundDisPlayView.showPoint(true);
             mMRoundDisPlayView.startAnim();
@@ -161,15 +160,15 @@ public class WeightAddFragment extends BaseActivity {
                     mQnScaleData = qnScaleData;
                     if (qnScaleData.getItemValue(3) == 0) {
                         //无效
-                        mTvTitle.setText("测量身体成分失败");
+                        mTvTitle.setText(R.string.bodyCompositionMeasureFail);
                     } else if (lastWeight != 0 && (Math.abs(realWeight - lastWeight) > 2)) {
                         //无效
-                        mTvTitle.setText("测量数据和之前相差过大");
+                        mTvTitle.setText(R.string.bodyCompositionless);
                     } else if (realWeight >= 25) {//身体成分成功直接跳转回去
-                        mTvTitle.setText("测量身体成分成功");
+                        mTvTitle.setText(R.string.bodyCompositionMeasureSuccess);
                         saveWeight();
                     } else {
-                        mTvTitle.setText("测量体重失败");
+                        mTvTitle.setText(R.string.bodyCompositionMeasureFail);
                     }
                 }
             }, 3000);
@@ -191,7 +190,7 @@ public class WeightAddFragment extends BaseActivity {
             mBtnForget.setVisibility(View.VISIBLE);
             mBtnSave.setVisibility(View.VISIBLE);
             mMRoundDisPlayView.stopAnimation();
-            mTvTitle.setText("测量超时，请再试一次");
+            mTvTitle.setText(R.string.measeureTimeoutAndRetry);
             TimeOutTimer.stopTimer();
         }
     }, 20000);
@@ -213,18 +212,20 @@ public class WeightAddFragment extends BaseActivity {
     }
 
     private void saveWeight() {
-        final WeightAddBean bean = new WeightAddBean();
+        final HealthyInfoBean bean = new HealthyInfoBean();
         if (mQnScaleData == null) {
-            RxToast.normal("测量体重失败");
+            RxToast.normal(getString(R.string.bodyCompositionMeasureFail));
             return;
         }
-        bean.setMeasureTime(System.currentTimeMillis() + "");
+
+        bean.setMeasureTime(System.currentTimeMillis());
         for (QNScaleItemData item : mQnScaleData.getAllItem()) {
             WeightTools.ble2Backstage(item, bean);
         }
 
+
+        bean.setHmac(MyAPP.getgUserInfo().getHmac());
         String s = JSON.toJSONString(bean);
-        SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .addWeightInfo(NetManager.fetchRequest(s)))
                 .throttleFirst(2, TimeUnit.SECONDS)
@@ -234,7 +235,9 @@ public class WeightAddFragment extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("添加体重：");
+//                        onBackPressed();
 
+                        SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
                         //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
 
@@ -243,9 +246,7 @@ public class WeightAddFragment extends BaseActivity {
                             RxBus.getInstance().post(bean);
                             onBackPressed();
                         } else {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Key.BUNDLE_DATA_GID, s);
-                            RxActivityUtils.skipActivityAndFinish(mContext, BodyDataFragment.class, bundle);
+                            BodyDataFragment.start(mContext, s, bean, false);
                         }
                     }
 
@@ -264,18 +265,6 @@ public class WeightAddFragment extends BaseActivity {
                 .subscribe(new RxSubscriber<Boolean>() {
                     @Override
                     protected void _onNext(Boolean aBoolean) {
-                        if (!aBoolean) {
-                            new RxDialogSureCancel(mContext)
-                                    .setTitle("提示")
-                                    .setContent("不定位权限，手机将无法连接蓝牙")
-                                    .setSure("去开启")
-                                    .setSureListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            initPermissions();
-                                        }
-                                    }).show();
-                        }
                     }
                 });
     }

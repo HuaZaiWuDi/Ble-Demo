@@ -1,11 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.view;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
+import android.os.Handler;
 
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
-import com.vondear.rxtools.model.timer.MyTimer;
-import com.vondear.rxtools.model.timer.MyTimerListener;
+import com.kongzue.dialog.v2.WaitDialog;
+import com.vondear.rxtools.activity.RxActivityUtils;
 
 import lab.wesmartclothing.wefit.flyso.R;
 
@@ -13,112 +12,69 @@ import lab.wesmartclothing.wefit.flyso.R;
  * Created icon_hide_password jk on 2018/5/28.
  */
 public class TipDialog {
-    private final long defaultTimeout = 10 * 1000;
-    private QMUITipDialog tipDialog;
+    private final long defaultTimeout = 5 * 1000;
+    private WaitDialog dialog;
     private Context mContext;
+    private Handler timeoutHandler = new Handler();
 
     public TipDialog(Context mContext) {
         this.mContext = mContext;
     }
 
-
-    public QMUITipDialog getTipDialog() {
-        return tipDialog;
+    public TipDialog() {
+        this.mContext = RxActivityUtils.currentActivity();
     }
 
-    private MyTimer timeoutTimer = new MyTimer(new MyTimerListener() {
-        @Override
-        public void enterTimer() {
-            if (tipDialog != null && tipDialog.isShowing()) {
-                tipDialog.dismiss();
-            }
-        }
-    });
+    public WaitDialog getTipDialog() {
+        return dialog;
+    }
+
 
     public void setDuration(long timeOut) {
         if (timeOut <= 0) return;
-        timeoutTimer.setPeriodAndDelay(0, timeOut);
-        timeoutTimer.startTimer();
+        timeoutHandler.removeCallbacksAndMessages(null);
+        timeoutHandler.postDelayed(() -> {
+            if (dialog != null) {
+                dialog.doDismiss();
+            }
+        }, timeOut);
     }
 
     public void show(long timeOut) {
         dismiss();
-        tipDialog = new QMUITipDialog.Builder(mContext)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(mContext.getString(R.string.tv_loading))
-                .create();
+        dialog = WaitDialog.show(mContext, mContext.getString(R.string.tv_loading));
         setDuration(timeOut);
-        tipDialog.show();
     }
 
     public void show(String text, long timeOut) {
         dismiss();
-        tipDialog = new QMUITipDialog.Builder(mContext)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(text)
-                .create();
+        dialog = WaitDialog.show(mContext, text);
         setDuration(timeOut);
-        tipDialog.show();
     }
 
     public void show() {
         dismiss();
-        tipDialog = new QMUITipDialog.Builder(mContext)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(mContext.getString(R.string.tv_loading))
-                .create();
+        dialog = WaitDialog.show(mContext, mContext.getString(R.string.tv_loading));
         setDuration(defaultTimeout);
-        tipDialog.show();
     }
 
-    public void showSuccess(String content, long timeOut) {
-        dismiss();
-        tipDialog = new QMUITipDialog.Builder(mContext)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
-                .setTipWord(content)
-                .create();
-        tipDialog.setCanceledOnTouchOutside(true);
-        setDuration(timeOut);
-        tipDialog.show();
+    public void showSuccess(String content) {
+        com.kongzue.dialog.v2.TipDialog.show(mContext, content, com.kongzue.dialog.v2.TipDialog.TYPE_FINISH);
+
     }
 
     public void showFail(String content, long timeOut) {
-        dismiss();
-        tipDialog = new QMUITipDialog.Builder(mContext)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
-                .setTipWord(content)
-                .create();
-        tipDialog.setCanceledOnTouchOutside(true);
-        setDuration(timeOut);
-        tipDialog.show();
+        com.kongzue.dialog.v2.TipDialog.show(mContext, content, (int) timeOut, com.kongzue.dialog.v2.TipDialog.TYPE_ERROR);
     }
 
     public void showInfo(String content, long timeOut) {
-        dismiss();
-        tipDialog = new QMUITipDialog.Builder(mContext)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_INFO)
-                .setTipWord(content)
-                .create();
-        tipDialog.setCanceledOnTouchOutside(true);
-        setDuration(timeOut);
-        tipDialog.show();
-    }
-
-    public void showCustom(@LayoutRes int resId) {
-        dismiss();
-        tipDialog = new QMUITipDialog.CustomBuilder(mContext)
-                .setContent(resId)
-                .create();
-        tipDialog.setCanceledOnTouchOutside(true);
-        setDuration(defaultTimeout);
-        tipDialog.show();
+        com.kongzue.dialog.v2.TipDialog.show(mContext, content, (int) timeOut, com.kongzue.dialog.v2.TipDialog.TYPE_WARNING);
     }
 
     public void dismiss() {
-        if (tipDialog == null) return;
-        if (timeoutTimer != null) timeoutTimer.stopTimer();
-        if (tipDialog.isShowing())
-            tipDialog.dismiss();
+        timeoutHandler.removeCallbacksAndMessages(null);
+        if (dialog != null)
+            dialog.doDismiss();
     }
 
 }

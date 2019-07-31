@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.reflect.TypeToken;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -19,7 +18,6 @@ import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
@@ -32,12 +30,13 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.test.Test;
+import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.InvitationCodeActivity;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.UserInfoActivity;
-import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
 import lab.wesmartclothing.wefit.flyso.utils.HeartSectionUtil;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.JPushUtils;
@@ -60,6 +59,8 @@ public class SplashActivity extends BaseActivity {
         }
     };
 
+    public static String weightTipList;
+
 
     @Override
     protected int layoutId() {
@@ -76,25 +77,23 @@ public class SplashActivity extends BaseActivity {
     protected void initViews() {
         super.initViews();
 
-
-//        startService(new Intent(mContext, WebProcessService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
-
-        RxLogUtils.e("用户ID：" + SPUtils.getString(SPKey.SP_UserId));
-        RxLogUtils.e("用户token：" + SPUtils.getString(SPKey.SP_token));
-
     }
 
     @Override
     protected void initNetData() {
         super.initNetData();
+
+        if (Test.testEnable) {
+            Test.INSTANCE.main(this);
+            return;
+        }
+
+
         initData();
         initUserInfo();
-
-//        RxActivityUtils.skipActivity(mContext, SportingActivity.class);
     }
-
 
     private void initUserInfo() {
         RxLogUtils.i("启动时长：获取用户信息");
@@ -105,7 +104,7 @@ public class SplashActivity extends BaseActivity {
         }
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .timeout(3, TimeUnit.SECONDS)
+//                .timeout(3, TimeUnit.SECONDS)
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -133,11 +132,11 @@ public class SplashActivity extends BaseActivity {
             hasInviteCode = userInfo.isHasInviteCode();
 
             HeartSectionUtil.initMaxHeart(userInfo);
+            RxLogUtils.d("跳转:" + userInfo.toString());
         }
 
-        RxLogUtils.d("跳转");
         //通过验证是否保存userId来判断是否登录
-        if (userInfo == null || RxDataUtils.isNullString(SPUtils.getString(SPKey.SP_UserId))) {
+        if (userInfo == null || userInfo.registerTime == 0) {
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
             return;
         }
@@ -157,7 +156,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void goError(int code) {
-        if (code == -99 || code == 6) {//token验证失败
+        if (code == -99 || code == 6 || code == 9001) {//token验证失败
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else {
             gotoMain(SPUtils.getString(SPKey.SP_UserInfo));
@@ -168,9 +167,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         unregisterReceiver(APPReplacedReceiver);
-        if (MyAPP.gUserInfo == null) {
-            MyAPP.gUserInfo = JSON.parseObject(SPUtils.getString(SPKey.SP_UserInfo), UserInfo.class);
-        }
         super.onDestroy();
     }
 
@@ -180,7 +176,6 @@ public class SplashActivity extends BaseActivity {
      */
     private void initData() {
         getSystemConfig();
-        uploadHistoryData();
         fetchSystemTime();
     }
 
@@ -206,7 +201,8 @@ public class SplashActivity extends BaseActivity {
     private void getSystemConfig() {
         RxManager.getInstance().doNetSubscribe(
                 NetManager.getSystemService().getSystemConfig())
-                .compose(RxCache.getDefault().transformObservable("getSystemConfig", String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().transformObservable("getSystemConfig", String.class,
+                        CacheStrategy.firstCacheTimeout(Key.DAY_1)))
                 .map(new CacheResult.MapFunc<>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -247,6 +243,9 @@ public class SplashActivity extends BaseActivity {
                                 case "recommend.html"://推荐食材图片
                                     ServiceAPI.RECIPES_URL = bean.getConfValue();
                                     break;
+                                case "weight.ranking.tips"://推荐食材图片
+                                    weightTipList = bean.getConfValue();
+                                    break;
                                 default:
                                     break;
                             }
@@ -255,11 +254,4 @@ public class SplashActivity extends BaseActivity {
                 });
     }
 
-
-    /**
-     * 判断本地是否有之前保存的心率数据：有则上传
-     */
-    public void uploadHistoryData() {
-        new HeartRateUtil().uploadHeartRate();
-    }
 }

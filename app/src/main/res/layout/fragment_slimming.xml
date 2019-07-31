@@ -63,6 +63,17 @@
             tools:visibility="visible"
             />
 
+        <ImageView
+            android:id="@+id/iv_kefu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_toRightOf="@+id/iv_userImg"
+            android:src="@mipmap/icon_kefu"/>
+
 
         <LinearLayout
             android:id="@+id/layout_notify"
@@ -223,7 +234,7 @@
 
                         <com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar
                             android:id="@+id/pro_target"
-                            android:layout_width="match_parent"
+                            android:layout_width="222dp"
                             android:layout_height="8dp"
                             android:layout_margin="8dp"
                             android:layout_toLeftOf="@+id/tv_targetWeight"
@@ -237,6 +248,7 @@
 
 
                         <ImageView
+                            android:id="@+id/img_weightFlag"
                             android:layout_width="19dp"
                             android:layout_height="22dp"
                             android:layout_alignLeft="@+id/pro_target"
@@ -766,6 +778,7 @@
                                     android:scaleType="fitXY"
                                     android:src="@mipmap/bg_sporting_chart"/>
 
+
                                 <com.github.mikephil.charting.charts.LineChart
                                     android:id="@+id/lineChart"
                                     android:layout_width="match_parent"
@@ -775,8 +788,6 @@
                                     tools:background="#50574D5F">
 
                                 </com.github.mikephil.charting.charts.LineChart>
-
-
                             </RelativeLayout>
 
 
@@ -804,6 +815,12 @@
                                 android:id="@+id/layout_lineChart"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"/>
+
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="8dp"
+                                android:background="@color/white"/>
 
                         </RelativeLayout>
 

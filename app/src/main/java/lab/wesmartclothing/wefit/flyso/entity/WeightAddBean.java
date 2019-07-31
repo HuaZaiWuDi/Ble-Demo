@@ -44,6 +44,7 @@ public class WeightAddBean implements Serializable {
     double sinew;
     int bodyTypeIndex = 0;
 
+
     public int getBodyTypeIndex() {
         return bodyTypeIndex;
     }

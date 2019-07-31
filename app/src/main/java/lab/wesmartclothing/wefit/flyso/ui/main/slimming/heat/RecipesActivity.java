@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,13 +13,14 @@ import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.utils.RxConstUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.SwitchView;
 import com.vondear.rxtools.view.layout.RxTextView;
+import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
 
@@ -33,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.entity.DietPlanBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodListBean;
 import lab.wesmartclothing.wefit.flyso.entity.FoodRecommendBean;
@@ -42,8 +45,8 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.TextSpeakUtils;
 import lab.wesmartclothing.wefit.flyso.view.DateChoose;
 
 public class RecipesActivity extends BaseActivity {
@@ -97,10 +100,14 @@ public class RecipesActivity extends BaseActivity {
     LinearLayout mLayoutEmpty;
     @BindView(R.id.tv_changedDiet)
     RxTextView mTvChangedDiet;
+    @BindView(R.id.sw_speak)
+    SwitchView mSwSpeak;
 
     private BaseQuickAdapter breakfastAdapter, lunchAdapter, dinnerAdapter, mealAdapter;
     private int totalKcal = 0;
     private UserInfo info;
+    private boolean speechFlag = false;
+    private long currentTime = 0;
 
     @Override
     protected int layoutId() {
@@ -110,13 +117,15 @@ public class RecipesActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
+
         initTopBar();
+        initSwitch();
         initRecycler();
         mTvTotalKcal.setTypeface(MyAPP.typeface);
         mChooseDate.setTheme(DateChoose.TYPE_RECIPES);
         mChooseDate.setOnDateChangeListener((year, month, day, millis) -> {
             foodRecipes(millis);
-            if (RxTimeUtils.getIntervalByNow(millis, RxConstUtils.TimeUnit.DAY) <= 0) {
+            if (RxTimeUtils.isToday(millis)) {
                 mTvChangedDiet.setVisibility(View.VISIBLE);
             } else {
                 mTvChangedDiet.setVisibility(View.GONE);
@@ -124,8 +133,28 @@ public class RecipesActivity extends BaseActivity {
         });
     }
 
+
+    private void initSwitch() {
+        mSwSpeak.setOpened(SPUtils.getBoolean(SPKey.SP_VoiceTip, true));
+
+        mSwSpeak.setOnStateChangedListener(new SwitchView.OnStateChangedListener() {
+            @Override
+            public void toggleToOn(SwitchView switchView) {
+                mSwSpeak.setOpened(true);
+                SPUtils.put(SPKey.SP_VoiceTip, true);
+            }
+
+            @Override
+            public void toggleToOff(SwitchView switchView) {
+                mSwSpeak.setOpened(false);
+                SPUtils.put(SPKey.SP_VoiceTip, false);
+                TextSpeakUtils.stop();
+            }
+        });
+    }
+
     private void initRecycler() {
-        info = MyAPP.gUserInfo;
+        info = MyAPP.getgUserInfo();
         mTvEmpty.setText(getString(R.string.empty_recipes, info.getUserName()));
 
         mTvDietitianName.setText("营养师 " + SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""));
@@ -154,12 +183,14 @@ public class RecipesActivity extends BaseActivity {
     }
 
     private void foodRecipes(long foodTime) {
+        currentTime = foodTime;
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .fetchDietPlan(NetManager.fetchRequest(JSON.toJSONString(new DietPlanBean(foodTime)))))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
-                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().<String>transformObservable("fetchFoodPlan" +
+                                RxFormat.setFormatDate(foodTime, RxFormat.Date), String.class,
+                        RxTimeUtils.isToday(foodTime) ? CacheStrategy.firstRemote() : CacheStrategy.firstCache()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -188,13 +219,20 @@ public class RecipesActivity extends BaseActivity {
             getSectionTotal(recommendBean.getFoodPlan().getDinnerList(), mTvDinnerKcal);
             getSectionTotal(recommendBean.getFoodPlan().getSnackList(), mTvMealKcal);
 
-            RxTextUtils.getBuilder("今日总计：\t\t")
+            RxTextUtils.getBuilder(getString(R.string.todayTotal))
                     .append(totalKcal + "").setProportion(1.5f)
                     .append("kcal")
                     .into(mTvTotalKcal);
-//            mTvTip.setText(getString(R.string.DietitianTip, info.getUserName(), recommendBean.getPlanName()));
             mTvTip.setText(recommendBean.getPlanAdvice());
+            //只播放今天的
+            if (!speechFlag && RxTimeUtils.isToday(currentTime) && mSwSpeak.isOpened()) {
+                speechFlag = true;
+                TextSpeakUtils.speakAdd(getString(R.string.speech_recipes, SPUtils.getString(SPKey.SP_DIET_PLAN_USER, ""),
+                        recommendBean.getPlanAdvice()
+                ));
+            }
         }
+
         mLayoutFoodList.setVisibility(!recommendBean.isHasFoodPlan() ? View.GONE : View.VISIBLE);
         mLayoutEmpty.setVisibility(!recommendBean.isHasFoodPlan() ? View.VISIBLE : View.GONE);
     }
@@ -203,7 +241,7 @@ public class RecipesActivity extends BaseActivity {
     private void initTopBar() {
         mTopBar.addLeftBackImageButton()
                 .setOnClickListener(v -> onBackPressed());
-        mTopBar.setTitle("定制食谱");
+        mTopBar.setTitle(R.string.customizedRecipes);
         mTopBar.addRightImageButton(R.mipmap.ic_shipu, R.id.iv_right)
                 .setOnClickListener(view -> {
                     //TODO 跳转
@@ -244,6 +282,12 @@ public class RecipesActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        TextSpeakUtils.stop();
+        super.onDestroy();
+    }
+
     @OnClick(R.id.tv_changedDiet)
     public void onViewClicked() {
         changedDiet();
@@ -260,8 +304,9 @@ public class RecipesActivity extends BaseActivity {
                 .changeDietPlan(NetManager.fetchRequest(jsonObject.toString())))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("fetchFoodPlan" +
-                        RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().<String>transformObservable("fetchFoodPlan" +
+                                RxFormat.setFormatDate(System.currentTimeMillis(), RxFormat.Date), String.class,
+                        CacheStrategy.firstRemote()))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -270,5 +315,10 @@ public class RecipesActivity extends BaseActivity {
                         updateUI(s);
                     }
                 });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 }

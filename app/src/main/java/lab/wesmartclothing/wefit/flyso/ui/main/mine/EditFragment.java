@@ -52,7 +52,7 @@ public class EditFragment extends BaseActivity {
         title = bundle.getString(Key.BUNDLE_TITLE);
         String data = bundle.getString(Key.BUNDLE_DATA);
         mEditText.setText(data);
-        if ("昵称".equals(title)) {
+        if (getString(R.string.nickname).equals(title)) {
             mEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
             mTvTip.setText(getString(R.string.must_input, 16));
         } else {
@@ -71,7 +71,7 @@ public class EditFragment extends BaseActivity {
             }
         });
         mQMUIAppBarLayout.setTitle(title);
-        mQMUIAppBarLayout.addRightTextButton("保存", R.id.btn_save)
+        mQMUIAppBarLayout.addRightTextButton(R.string.save, R.id.btn_save)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -82,9 +82,9 @@ public class EditFragment extends BaseActivity {
 
     private void save() {
         String name = mEditText.getText().toString();
-        if ("昵称".equals(title)) {
+        if (getString(R.string.nickname).equals(title)) {
             if (RxDataUtils.isNullString(name.trim())) {
-                RxToast.normal("请输入正确的昵称");
+                RxToast.normal(getString(R.string.inputNormalNickname));
                 return;
             }
 
@@ -95,7 +95,7 @@ public class EditFragment extends BaseActivity {
             onBackPressed();
         } else {
             if (RxDataUtils.isNullString(name.trim())) {
-                RxToast.normal("请输入正确的签名");
+                RxToast.normal(getString(R.string.inoutNormalSign));
                 return;
             }
 

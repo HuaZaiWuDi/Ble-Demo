@@ -11,12 +11,6 @@ public interface SPKey {
 
     String SP_phone = "SP_phone";
 
-    String SP_height = "SP_height";
-
-    String SP_weight = "SP_height";
-
-    String SP_sex = "SP_sex";
-
     String SP_VoiceTip = "SP_VoiceTip";
 
     String SP_scaleMAC = "SP_scaleMAC";
@@ -26,9 +20,6 @@ public interface SPKey {
     //真实体重(最近的一次称重的体重)
     String SP_realWeight = "SP_realWeight";
 
-    //标准体重
-    String SP_standardWeight = "SP_standardWeight";
-
     String SP_UserInfo = "SP_UserInfo";
 
     String SP_BSER_URL = "SP_BSER_URL";
@@ -37,13 +28,12 @@ public interface SPKey {
 
     String SP_GUIDE = "SP_GUIDE";//引导页
 
-    String SP_BMR = "SP_BMR";
-
-    String SP_SET_PLAN = "SP_SET_PLAN";//是否定制计划
-
-
     String SP_DIET_PLAN_USER = "SP_DIET_PLAN_USER";
 
     String SP_ATHL_PLAN_USER = "SP_ATHL_PLAN_USER";
 
+    //运动界面弹窗提示次数
+    String SP_RUN_TIP_DIALOG_COUNT = "SP_RUN_TIP_DIALOG_COUNT";
+
+    String SP_QN_SCALE_HMAC = "SP_QN_SCALE_HMAC";
 }

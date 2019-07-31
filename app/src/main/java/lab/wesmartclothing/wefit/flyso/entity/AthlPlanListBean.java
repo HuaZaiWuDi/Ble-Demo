@@ -1,7 +1,8 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import com.vondear.rxtools.utils.RxLogUtils;
+import android.content.Context;
 
+import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 public class AthlPlanListBean {
@@ -28,55 +29,24 @@ public class AthlPlanListBean {
      *
      * @return
      */
-    public String strRange() {
+    public String strRange(Context context) {
         switch (range) {
             case 0:
-                return "静息";
+                return context.getString(R.string.calm);
             case 1:
-                return "热身";
+                return context.getString(R.string.warm);
             case 2:
-                return "燃脂";
+                return context.getString(R.string.grease);
             case 3:
-                return "有氧";
+                return context.getString(R.string.aerobic);
             case 4:
-                return "无氧";
+                return context.getString(R.string.anaerobic);
             case 5:
-                return "极限";
+                return context.getString(R.string.limit);
         }
-        return "静息";
+        return context.getString(R.string.calm);
     }
 
-    /**
-     * 获取心率对应的范围
-     *
-     * @return
-     */
-    public int getHeartRange() {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
-
-        switch (range) {
-            case 0:
-                return heart_0;
-            case 1:
-                return heart_1;
-            case 2:
-                return heart_2;
-            case 3:
-                return heart_3;
-            case 4:
-                return heart_4;
-            case 5:
-                return heart_5;
-        }
-        return heart_6;
-    }
 
     /**
      * 获取区间中间值
@@ -84,17 +54,16 @@ public class AthlPlanListBean {
      * @return
      */
     public int getMidRange() {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
+        int[] heartRates = Key.HRART_SECTION;
+        int heart_0 = heartRates[0];
+        int heart_1 = heartRates[1];
+        int heart_2 = heartRates[2];
+        int heart_3 = heartRates[3];
+        int heart_4 = heartRates[4];
+        int heart_5 = heartRates[5];
+        int heart_6 = heartRates[6];
 
         int midValue = (heart_6 - heart_5) / 2;
-        RxLogUtils.d("中间值：" + midValue);
 
         switch (range) {
             case 0://静息
@@ -109,34 +78,6 @@ public class AthlPlanListBean {
                 return heart_4 + midValue;
             case 5://极限
                 return heart_5 + midValue;
-        }
-        return heart_6;
-    }
-
-
-    public int getRange2() {
-        byte[] heartRates = Key.HRART_SECTION;
-        int heart_0 = heartRates[0] & 0xff;
-        int heart_1 = heartRates[1] & 0xff;
-        int heart_2 = heartRates[2] & 0xff;
-        int heart_3 = heartRates[3] & 0xff;
-        int heart_4 = heartRates[4] & 0xff;
-        int heart_5 = heartRates[5] & 0xff;
-        int heart_6 = heartRates[6] & 0xff;
-
-        switch (range) {
-            case 0:
-                return heart_1;
-            case 1:
-                return heart_2;
-            case 2:
-                return heart_3;
-            case 3:
-                return heart_4;
-            case 4:
-                return heart_5;
-            case 5:
-                return heart_6;
         }
         return heart_6;
     }

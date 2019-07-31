@@ -19,7 +19,7 @@ public class SubmitInfoFrom {
 
     private String answer;
     private TargetInfoBean targetInfo;
-    private WeightAddBean weightInfo;
+    private HealthyInfoBean weightInfo;
 
     public String getAnswer() {
         return answer;
@@ -37,11 +37,11 @@ public class SubmitInfoFrom {
         this.targetInfo = targetInfo;
     }
 
-    public WeightAddBean getWeightInfo() {
+    public HealthyInfoBean getWeightInfo() {
         return weightInfo;
     }
 
-    public void setWeightInfo(WeightAddBean weightInfo) {
+    public void setWeightInfo(HealthyInfoBean weightInfo) {
         this.weightInfo = weightInfo;
     }
 

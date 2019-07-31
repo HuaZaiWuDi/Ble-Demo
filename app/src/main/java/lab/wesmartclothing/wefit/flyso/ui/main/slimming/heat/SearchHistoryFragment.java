@@ -23,7 +23,6 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextDrawable;
@@ -31,6 +30,7 @@ import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxEditText;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -57,7 +57,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.second.FoodDetailsFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.view.AddOrUpdateFoodDialog;
 import lab.wesmartclothing.wefit.flyso.view.DynamicTagFlowLayout;
@@ -355,7 +354,6 @@ public class SearchHistoryFragment extends BaseActivity {
 
 
     private void initSearchData(final String key) {
-
         mlayoutSearchData.setVisibility(View.VISIBLE);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().searchFoodInfo(key))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
@@ -385,7 +383,8 @@ public class SearchHistoryFragment extends BaseActivity {
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .getKeyWord())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(MyAPP.getRxCache().<String>transformObservable("getKeyWord", String.class, CacheStrategy.firstRemote()))
+                .compose(RxCache.getDefault().<String>transformObservable("getKeyWord", String.class,
+                        CacheStrategy.firstCacheTimeout(Key.HOURS_6)))
                 .map(new CacheResult.MapFunc<String>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
@@ -460,16 +459,15 @@ public class SearchHistoryFragment extends BaseActivity {
     }
 
 
-    @OnClick(R.id.tv_delete)
-    public void onViewClicked() {
-        RxCache.getDefault().remove(Key.CACHE_SEARCH_KEY);
-        searchKeyLists.clear();
-        notifySearchKey();
-    }
-
-    @OnClick(R.id.iv_complete)
-    public void iv_complete() {
-        addFood();
+    @OnClick({R.id.tv_delete,R.id.iv_complete})
+    public void onViewClicked(View view) {
+        if(view.getId()==R.id.tv_delete){
+            RxCache.getDefault().remove(Key.CACHE_SEARCH_KEY);
+            searchKeyLists.clear();
+            notifySearchKey();
+        }else if(view.getId()==R.id.iv_complete){
+            addFood();
+        }
     }
 
 }

@@ -20,7 +20,6 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxEncryptUtils;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
@@ -29,9 +28,10 @@ import com.vondear.rxtools.utils.RxRegUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.UnScrollableViewPager;
 import com.vondear.rxtools.view.dialog.RxDialogSure;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.vondear.rxtools.view.viewpager.UnScrollableViewPager;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -73,7 +73,6 @@ public class LoginRegisterActivity extends BaseActivity {
 
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
-    private int softHeight = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +127,7 @@ public class LoginRegisterActivity extends BaseActivity {
         @Override
         public void onStart(SHARE_MEDIA share_media) {
             RxLogUtils.d("开始登录");
-            tipDialog.show("正在登陆", 3000);
+            tipDialog.show(getString(R.string.logining), 3000);
         }
 
         @Override
@@ -146,14 +145,14 @@ public class LoginRegisterActivity extends BaseActivity {
         @Override
         public void onError(SHARE_MEDIA share_media, int i, Throwable throwable) {
             RxLogUtils.e("登录失败", throwable);
-            RxToast.error("登录失败");
+            RxToast.error(getString(R.string.loginFail));
             tipDialog.dismiss();
         }
 
         @Override
         public void onCancel(SHARE_MEDIA share_media, int i) {
             RxLogUtils.e("登录取消");
-            RxToast.error("登录取消");
+            RxToast.error(getString(R.string.loginCancel));
             tipDialog.dismiss();
         }
     };
@@ -215,7 +214,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void checkRegister(final String phone, final String p2) {
-        if (RxRegUtils.isMobileExact(phone) && !RxDataUtils.isNullString(p2)) {
+        if ((RxRegUtils.isMobileSimple(phone) || RxRegUtils.isEmail(phone)) && !RxDataUtils.isNullString(p2)) {
             ((QMUIRoundButtonDrawable) btn_login.getBackground()).setColor(getResources().getColor(R.color.red));
             btn_login.setEnabled(true);
         } else {
@@ -251,8 +250,8 @@ public class LoginRegisterActivity extends BaseActivity {
             }
         });
 
-        mBottomTabItems.add(new BottomTabItem("密码登录"));
-        mBottomTabItems.add(new BottomTabItem("验证码登录"));
+        mBottomTabItems.add(new BottomTabItem(getString(R.string.loginPassword)));
+        mBottomTabItems.add(new BottomTabItem(getString(R.string.loginVCode)));
         mCommonTabLayout.setTabData(mBottomTabItems);
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -269,7 +268,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginVCode(String phone, String code) {
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -283,7 +282,7 @@ public class LoginRegisterActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.success("登录成功");
+                        RxToast.success(getString(R.string.loginSuccess));
                         RxLogUtils.d("结束：" + s);
                         new LoginSuccessUtils(mContext, s);
                     }
@@ -298,7 +297,7 @@ public class LoginRegisterActivity extends BaseActivity {
 
 
     private void loginPassword(String phone, String password) {
-        if (!RxRegUtils.isMobileExact(phone)) {
+        if (!RxRegUtils.isMobileSimple(phone) && !RxRegUtils.isEmail(phone)) {
             RxToast.warning(getString(R.string.phoneError));
             return;
         }
@@ -312,7 +311,7 @@ public class LoginRegisterActivity extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.success("登录成功");
+                        RxToast.success(getString(R.string.loginSuccess));
                         new LoginSuccessUtils(mContext, s);
                     }
 
@@ -330,8 +329,8 @@ public class LoginRegisterActivity extends BaseActivity {
 
     private void showDialog2Register() {
         RxDialogSure dialog = new RxDialogSure(mActivity)
-                .setTitle("手机号未注册")
-                .setSure("立即注册")
+                .setTitle(getString(R.string.notResigter))
+                .setSure(getString(R.string.register))
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -344,8 +343,8 @@ public class LoginRegisterActivity extends BaseActivity {
 
     private void showDialog2settingPassword() {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
-                .setContent("该手机号还未设置密码")
-                .setSure("设置密码")
+                .setContent(getString(R.string.notPassword))
+                .setSure(getString(R.string.setPassword))
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -353,7 +352,7 @@ public class LoginRegisterActivity extends BaseActivity {
                         RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class);
                     }
                 })
-                .setCancel("验证码登录")
+                .setCancel(getString(R.string.loginVCode))
                 .setCancelListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

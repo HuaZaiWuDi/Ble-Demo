@@ -27,10 +27,9 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
     public void onError(Throwable e) {
 
         Log.e(TAG, "onError: " + e.toString());
-//        if (BuildConfig.DEBUG)
-//            Toast.makeText(RxManager.getInstance().getApplication(), e.getMessage(), Toast.LENGTH_LONG).show();
         _onError(new RxHttpsException().handleResponseError(e),
                 e instanceof ExplainException ? ((ExplainException) e).getCode() : -1);
+
     }
 
     @Override

@@ -12,7 +12,6 @@ import org.json.JSONException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 
 import retrofit2.HttpException;
 
@@ -64,15 +63,22 @@ public class RxHttpsException {
             msg = "网络连接超时";
         } else if (t instanceof HttpException) {
             Log.e("网络异常：", t.toString());
-//            HttpException httpException = (HttpException) t;
+            HttpException httpException = (HttpException) t;
             msg = "网络异常";
-        } else if (t instanceof JsonParseException || t instanceof ParseException || t instanceof JSONException || t instanceof JsonIOException || t instanceof JsonSyntaxException) {
-            msg = "请求网络失败";
+        } else if (t instanceof JsonParseException
+                || t instanceof ParseException
+                || t instanceof JSONException
+                || t instanceof JsonIOException
+                || t instanceof JsonSyntaxException
+                || t instanceof com.alibaba.fastjson.JSONException
+        ) {
+            Log.e("网络数据异常：", t.toString());
+            msg = "网络数据异常";
         } else if (t instanceof ConnectException) {
             msg = "请求网络失败";
         } else if (t instanceof ExplainException) {//返回后台解释性异常码
             ExplainException exception = (ExplainException) t;
-            if (Arrays.toString(Arrays.asList("0006", "-1").toArray()).contains(exception.getCode() + "")) {
+            if (exception.getCode() == 6 || exception.getCode() == -1) {
                 msg = "请求网络失败";
             } else {
                 msg = exception.getMsg();
@@ -82,10 +88,9 @@ public class RxHttpsException {
     }
 
     private String convertStatusCode(HttpException httpException) {
-
         String msg;
         if (httpException.code() == 500) {
-            msg = "服务器发生错误";
+            msg = "服务器异常";
         } else if (httpException.code() == 404) {
             msg = "请求地址不存在";
         } else if (httpException.code() == 403) {

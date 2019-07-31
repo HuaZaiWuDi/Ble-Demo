@@ -19,9 +19,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
@@ -64,13 +62,8 @@ public class RxComposeUtils {
      * @return ObservableTransformer
      */
     public static <T> ObservableTransformer<T, T> rxThreadHelper() {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> observable) {
-                return observable.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread());
-            }
-        };
+        return observable -> observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
 
     }
@@ -82,29 +75,18 @@ public class RxComposeUtils {
      * @return ObservableTransformer
      */
     public static <T> ObservableTransformer<T, T> showDialog(final TipDialog dialog) {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> observable) {
-                return observable
-                        .doOnSubscribe(new Consumer<Disposable>() {
-                            @Override
-                            public void accept(Disposable disposable) throws Exception {
-                                if (Looper.getMainLooper() == Looper.myLooper())
-                                    if (dialog != null)
-                                        dialog.show();
-                                RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
-                            }
-                        }).doFinally(new Action() {
-                            @Override
-                            public void run() throws Exception {
-                                if (Looper.getMainLooper() == Looper.myLooper())
-                                    if (dialog != null)
-                                        dialog.dismiss();
-                                RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
-                            }
-                        });
-            }
-        };
+        return observable -> observable
+                .doOnSubscribe(disposable -> {
+                    if (Looper.getMainLooper() == Looper.myLooper())
+                        if (dialog != null)
+                            dialog.show();
+                    RxLogUtils.d("showDialog当前线程：" + Thread.currentThread().getName());
+                }).doFinally((Action) () -> {
+                    if (Looper.getMainLooper() == Looper.myLooper())
+                        if (dialog != null)
+                            dialog.dismiss();
+                    RxLogUtils.d("dismiss当前线程：" + Thread.currentThread().getName());
+                });
     }
 
     /**
@@ -180,29 +162,6 @@ public class RxComposeUtils {
      * @param <T>
      * @return
      */
-//    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
-//        return new ObservableTransformer<HttpResult<T>, T>() {
-//            @Override
-//            public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
-//                return upstream.map(new Function<HttpResult<T>, T>() {
-//                    @Override
-//                    public T apply(HttpResult<T> tHttpResult) throws Exception {
-//                        if (tHttpResult.getCode() != 0) {
-//                            throw new ExplainException(tHttpResult.getMessage(), tHttpResult.getMessage(), tHttpResult.getCode());
-//                        }
-//                        return tHttpResult.getData();
-//                    }
-//                });
-//            }
-//        };
-//    }
-
-    /**
-     * 对结果进行预处理
-     *
-     * @param <T>
-     * @return
-     */
     public static <T> ObservableTransformer<HttpResult<T>, T> handleResult2() {
         return new ObservableTransformer<HttpResult<T>, T>() {
             @Override
@@ -232,17 +191,9 @@ public class RxComposeUtils {
      * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
      */
     public static <T> ObservableTransformer<T, T> bindLife(final BehaviorSubject<LifeCycleEvent> subject) {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> upstream) {
-                return upstream.takeUntil(subject.skipWhile(new Predicate<LifeCycleEvent>() {
-                    @Override
-                    public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
-                        return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH;
-                    }
-                }));
-            }
-        };
+        return upstream ->
+                upstream.takeUntil(subject.skipWhile(activityLifeCycleEvent ->
+                        activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH));
     }
 
     /**

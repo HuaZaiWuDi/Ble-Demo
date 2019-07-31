@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_F7F7F9"
+    android:orientation="vertical"
+    tools:context="lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.DietRecordActivity">
+
+
+    <com.vondear.rxtools.view.RxTitle
+        android:id="@+id/rxtitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topBarHeight"
+        android:background="@color/orange_FF7200"
+        app:leftIcon="@mipmap/back_icon"
+        app:title="@string/dietRecord"
+        app:titleColor="@color/white">
+
+    </com.vondear.rxtools.view.RxTitle>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="216dp"
+        android:background="@color/orange_FF7200">
+
+
+        <ImageView
+            android:id="@+id/img_switchDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="8dp"
+            android:src="@mipmap/ic_select_day"/>
+
+        <lab.wesmartclothing.wefit.flyso.view.line.SuitLines
+            android:id="@+id/suitChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/img_sign"
+            android:layout_below="@+id/img_switchDate"/>
+
+        <ImageView
+            android:id="@+id/img_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@mipmap/icon_triangle"
+            android:scaleType="centerCrop"/>
+
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tv_dietDetail"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_ripple_bg_"
+            android:drawableLeft="@mipmap/icon_food_recommend"
+            android:drawableRight="@mipmap/icon_goto"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dimen_16"
+            android:paddingRight="@dimen/dimen_16"
+            android:textColor="@color/Gray"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="44dp"
+            android:text="查看详情"
+            android:textColor="@color/GrayWrite"
+            android:textSize="13sp"/>
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/tv_baseCalorie"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1"
+            android:drawableLeft="@mipmap/ic_base_calorie"
+            android:drawablePadding="19dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/GrayWrite"
+            android:textSize="10sp"
+            tools:text="基础代谢\n1200kcal"/>
+
+
+        <TextView
+            android:id="@+id/tv_intakeCalorie"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1"
+            android:drawableLeft="@mipmap/icon_breakfast"
+            android:drawablePadding="19dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/GrayWrite"
+            android:textSize="10sp"
+            tools:text="摄入热量\n1200kcal"/>
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:drawableLeft="@mipmap/icon_tip"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:text="小贴士"
+        android:textColor="@color/Gray"
+        android:textSize="14sp"/>
+
+
+    <TextView
+        android:id="@+id/tv_tip"
+        android:layout_width="match_parent"
+        android:layout_height="69dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white"
+        android:padding="16dp"
+        android:text="通过你的身体各项数据，为你量身定制的饮食计划，快来看看吧！"
+        android:textColor="@color/GrayWrite"
+        android:textSize="13sp"/>
+
+
+</LinearLayout>

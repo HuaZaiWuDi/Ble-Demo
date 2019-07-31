@@ -17,12 +17,13 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButtonDrawable;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
+import com.vondear.rxtools.utils.dateUtils.RxFormat;
+import com.vondear.rxtools.utils.dateUtils.RxTimeUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
 
@@ -51,8 +52,6 @@ import lab.wesmartclothing.wefit.flyso.view.picker.CustomNumberPicker;
 
 public class UserInfoActivity extends BaseALocationActivity {
 
-
-    UserInfo mUserInfo;
 
     @BindView(R.id.tv_titleTop)
     TextView tv_titleTop;
@@ -128,15 +127,15 @@ public class UserInfoActivity extends BaseALocationActivity {
                 viewState--;
                 switchView(viewState);
             } else {
-                if (!RxUtils.isFastClick(2000)) {
+                if (RxUtils.isFastClick(2000)) {
                     RxToast.normal("再按一次退出");
-                } else moveTaskToBack(true);
+                } else onBackPressed();
             }
         return true;
     }
 
     private int viewState = 0;
-
+    private UserInfo mUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,10 +151,9 @@ public class UserInfoActivity extends BaseALocationActivity {
 
     public void initView() {
         mUserInfo = MyAPP.gUserInfo;
-        if (mUserInfo == null) {
-            mUserInfo = new UserInfo();
-        }
         if (mUserInfo.getSex() == 0) mUserInfo.setSex(2);
+        if (mUserInfo.getHeight() == 0) mUserInfo.setHeight(175);
+        if (mUserInfo.getBirthday() == 0) mUserInfo.setBirthday(Long.parseLong("631987200000"));
 
         RxLogUtils.e("用户信息：" + mUserInfo.toString());
         initTab();
@@ -281,7 +279,7 @@ public class UserInfoActivity extends BaseALocationActivity {
             public void onDatePicked(String year, String month, String day) {
                 RxLogUtils.d("年：" + year + "------月：" + month + "---------日：" + day);
                 tv_bottom.setText(year + "-" + month + "-" + day);
-                Date date = RxFormat.setParseDate(year + "-" + month + "-" + day, RxFormat.Date);
+                Date date = RxTimeUtils.string2Date(RxFormat.Date, year + "-" + month + "-" + day);
                 mUserInfo.setBirthday(date.getTime());
             }
         });
@@ -316,7 +314,6 @@ public class UserInfoActivity extends BaseALocationActivity {
 
         String s = JSON.toJSONString(mUserInfo);
         SPUtils.put(SPKey.SP_UserInfo, s);
-
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .saveUserInfo(NetManager.fetchRequest(s)))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
@@ -324,7 +321,8 @@ public class UserInfoActivity extends BaseALocationActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束：" + s);
+
+                        MyAPP.gUserInfo = mUserInfo;
                         //跳转扫描界面
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(Key.BUNDLE_FORCE_BIND, false);

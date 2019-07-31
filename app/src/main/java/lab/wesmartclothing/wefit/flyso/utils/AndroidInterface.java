@@ -31,7 +31,6 @@ public class AndroidInterface {
 
         RxLogUtils.d("msg：" + msg);
 
-
         deliver.post(new Runnable() {
             @Override
             public void run() {

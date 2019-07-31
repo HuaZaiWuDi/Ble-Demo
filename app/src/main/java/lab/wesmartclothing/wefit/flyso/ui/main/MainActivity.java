@@ -1,6 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,36 +11,41 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
+import com.didichuxing.doraemonkit.DoraemonKit;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.umeng.socialize.UMShareAPI;
+import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtools.activity.RxActivityUtils;
-import com.vondear.rxtools.utils.RxBus;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
+import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
+import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
 import lab.wesmartclothing.wefit.flyso.entity.NotifyDataBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -49,15 +55,15 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
-import lab.wesmartclothing.wefit.flyso.ui.WebTitleActivity;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.ranking.RankingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.RecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
+import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_ACTIVITY;
 import static lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver.TYPE_OPEN_APP;
@@ -75,9 +81,7 @@ public class MainActivity extends BaseALocationActivity {
     @BindView(R.id.parent)
     RelativeLayout mParent;
 
-    private ArrayList<CustomTabEntity> mBottomTabItems = new ArrayList<>();
-    private List<Fragment> mFragments = new ArrayList<>();
-
+    private RxDialogSureCancel rxDialog;
 
     @Override
     protected int layoutId() {
@@ -114,6 +118,7 @@ public class MainActivity extends BaseALocationActivity {
         initReceiverPush(bundle);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initRxBus2() {
         super.initRxBus2();
@@ -126,7 +131,60 @@ public class MainActivity extends BaseALocationActivity {
                     }
                 });
 
+        RxBus.getInstance().registerSticky(DeviceVersionBean.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(deviceVersion -> {
+                    //判断是否有权限
+                    new RxPermissions((FragmentActivity) mActivity)
+                            .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
+                            .subscribe(new RxSubscriber<Boolean>() {
+                                @Override
+                                protected void _onNext(Boolean aBoolean) {
+                                    RxLogUtils.e("是否开启了权限：" + aBoolean);
+                                    if (aBoolean)
+                                        checkFirmwareVersion(deviceVersion);
+                                }
+                            });
+                });
+    }
 
+    /**
+     * 检测瘦身衣是否需要升级
+     *
+     * @param object
+     */
+    private void checkFirmwareVersion(DeviceVersionBean object) {
+        RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
+                .getUpgradeInfo(NetManager.fetchRequest(new Gson().toJson(object))))
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(new RxNetSubscriber<String>() {
+                    @Override
+                    protected void _onNext(String s) {
+                        final FirmwareVersionUpdate firmwareVersionUpdate = JSON.parseObject(s, FirmwareVersionUpdate.class);
+                        if (firmwareVersionUpdate.isHasNewVersion()) {
+                            RxLogUtils.d("有最新的版本");
+                            if (rxDialog != null) {
+                                rxDialog.dismiss();
+                            }
+                            rxDialog = new RxDialogSureCancel(mContext)
+                                    .setTitle(getString(R.string.tip))
+                                    .setContent(getString(R.string.updateBleFirmwareVersion))
+                                    .setSure(getString(R.string.update))
+                                    .setSureListener(v -> {
+                                        AboutUpdateDialog updatedialog = new AboutUpdateDialog(mContext, firmwareVersionUpdate.getFileUrl(), firmwareVersionUpdate.getMustUpgrade() == 0);
+                                        updatedialog.show();
+                                    }).setCancelListener(v -> {
+                                        if (firmwareVersionUpdate.getMustUpgrade() != 0) {
+                                            RxActivityUtils.AppExit(mContext);
+                                        }
+                                    });
+                            rxDialog.show();
+                        } else {
+                            RxLogUtils.d("已经是最新的版本");
+                        }
+                    }
+                });
     }
 
     public void initView() {
@@ -135,29 +193,44 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("手机MAC地址:" + RxDeviceUtils.getMacAddress());
         RxLogUtils.d("androidID:" + RxDeviceUtils.getAndroidId());
         RxLogUtils.d("UserId:" + SPUtils.getString(SPKey.SP_UserId));
+        initData();
 
-        initMyViewPager();
-        initBottomTab();
-        mBottomTab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mBottomTab.setOnClickListener(v -> {
 
-            }
         });
-        startService(new Intent(mContext, BleService.class));
+        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
+    }
+
+    private void initData() {
+        ArrayList<CustomTabEntity> pageList = new ArrayList<>(4);
+
+        pageList.add(new BottomTabItem(R.mipmap.icon_slimming_select, R.mipmap.icon_slimming_unselect,
+                getString(R.string.nav_slimming),
+                SlimmingFragment.newInstance()));
+        pageList.add(new BottomTabItem(R.mipmap.icon_record_unselect, R.mipmap.icon_record,
+                getString(R.string.nav_record),
+                RecordFragment.Companion.newInstance()));
+        pageList.add(new BottomTabItem(R.mipmap.ic_ranking_select, R.mipmap.ic_ranking_unselect,
+                getString(R.string.nav_ranking),
+                RankingFragment.getInstance()));
+        pageList.add(new BottomTabItem(R.mipmap.icon_mine_select, R.mipmap.icon_mine_unselect,
+                getString(R.string.nav_my),
+                MeFragment.getInstance()));
+
+
+        initMyViewPager(pageList);
+        initBottomTab(pageList);
 
     }
 
     private void initSystemConfig() {
         //判断是否有权限
         new RxPermissions((FragmentActivity) mActivity)
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .compose(RxComposeUtils.<Permission>bindLife(lifecycleSubject))
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(new RxSubscriber<Permission>() {
                     @Override
                     protected void _onNext(Permission aBoolean) {
-                        RxLogUtils.e("是否开启了权限：" + aBoolean);
+                        RxLogUtils.e("是否开启了权限：" + aBoolean.toString());
                     }
                 });
 
@@ -165,9 +238,9 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.e("通知栏权限：" + NotificationManagerCompat.from(mContext).areNotificationsEnabled());
         if (!NotificationManagerCompat.from(mContext).areNotificationsEnabled()) {
             new RxDialogSureCancel(mContext)
-                    .setTitle("提示")
-                    .setContent("您的通知权限未开启，可能影响APP的正常使用")
-                    .setSure("现在去开启")
+                    .setTitle(getString(R.string.tip))
+                    .setContent(getString(R.string.openNotification))
+                    .setSure(getString(R.string.open))
                     .setSureListener(view -> {
                         /**
                          * 跳到通知栏设置界面
@@ -187,17 +260,13 @@ public class MainActivity extends BaseALocationActivity {
         RxLogUtils.d("启动时长" + "主页可交互");
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
-    private void initBottomTab() {
-        String[] tab_text = getResources().getStringArray(R.array.tab_text);
-        int[] imgs_unselect = {R.mipmap.icon_slimming_unselect, R.mipmap.icon_record,
-                R.mipmap.icon_find_unselect, R.mipmap.icon_mine_unselect};
-        int[] imgs_select = {R.mipmap.icon_slimming_select, R.mipmap.icon_record_unselect,
-                R.mipmap.icon_find_select, R.mipmap.icon_mine_select};
-        mBottomTabItems.clear();
-        for (int i = 0; i < tab_text.length; i++) {
-            mBottomTabItems.add(new BottomTabItem(imgs_select[i], imgs_unselect[i], tab_text[i]));
-        }
+
+    private void initBottomTab(ArrayList<CustomTabEntity> mBottomTabItems) {
 
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
         mCommonTabLayout.setTextUnselectColor(getResources().getColor(R.color.GrayWrite));
@@ -211,8 +280,9 @@ public class MainActivity extends BaseALocationActivity {
 
             @Override
             public void onTabReselect(int position) {
+                if (!BuildConfig.DEBUG) return;
                 //双击我的按钮，出现切换网络界面，同时需要退出重新登录
-                if (position == mFragments.size() - 1 && RxUtils.isFastClick(1000) && BuildConfig.DEBUG) {
+                if (position == mBottomTabItems.size() - 1 && RxUtils.isFastClick(1000)) {
                     new QMUIBottomSheet.BottomListSheetBuilder(mContext)
                             .addItem(ServiceAPI.BASE_URL_192)
                             .addItem(ServiceAPI.BASE_URL_208)
@@ -228,31 +298,31 @@ public class MainActivity extends BaseALocationActivity {
                             })
                             .build()
                             .show();
+                } else if (position == 0) {
+                    DoraemonKit.install(getApplication());
+                    if (DoraemonKit.isShow()) {
+                        DoraemonKit.hide();
+                    } else
+                        DoraemonKit.show();
+                } else {
+                    MobclickAgent.onEvent(MyAPP.sMyAPP, "test");
                 }
             }
         });
     }
 
 
-    private void initMyViewPager() {
-        mFragments.clear();
-        mFragments.add(SlimmingFragment.newInstance());
-//        mFragments.add(Slimming2Fragment.getInstance());
-        mFragments.add(SlimmingRecordFragment.newInstance());
-        mFragments.add(FindFragment.getInstance());
-//        mFragments.add(StoreFragment.getInstance());
-        mFragments.add(MeFragment.getInstance());
-
+    private void initMyViewPager(ArrayList<CustomTabEntity> pageList) {
         mViewpager.setOffscreenPageLimit(4);
         mViewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return mFragments.get(position);
+                return ((BottomTabItem) pageList.get(position)).getFragment();
             }
 
             @Override
             public int getCount() {
-                return mFragments.size();
+                return pageList.size();
             }
         });
 
@@ -335,7 +405,7 @@ public class MainActivity extends BaseALocationActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
     }
 
@@ -350,10 +420,5 @@ public class MainActivity extends BaseALocationActivity {
                 });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-    }
 
 }

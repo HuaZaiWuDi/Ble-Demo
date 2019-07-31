@@ -9,12 +9,14 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
-import lab.wesmartclothing.wefit.flyso.ble.BleTools;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
+import com.zchu.rxcache.RxCache;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +25,9 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleTools;
+import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
@@ -62,18 +66,18 @@ public class Settingfragment extends BaseActivity {
     }
 
     private void groupList() {
-        QMUICommonListItemView changePasswordItem = mGroupListView.createItemView("修改密码");
+        QMUICommonListItemView changePasswordItem = mGroupListView.createItemView(getString(R.string.updatePassword));
         changePasswordItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         changePasswordItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         changePasswordItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
-        final QMUICommonListItemView clearCacheItem = mGroupListView.createItemView("清除缓存");
+        final QMUICommonListItemView clearCacheItem = mGroupListView.createItemView(getString(R.string.cleanCache));
         clearCacheItem.setOrientation(QMUICommonListItemView.HORIZONTAL);
         clearCacheItem.setDetailText(RxFileUtils.getTotalCacheSize(mContext.getApplicationContext()));
         clearCacheItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         clearCacheItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
-        QMUICommonListItemView accountItem = mGroupListView.createItemView("账号管理");
+        QMUICommonListItemView accountItem = mGroupListView.createItemView(getString(R.string.accountManager));
         accountItem.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         accountItem.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         accountItem.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
@@ -83,39 +87,37 @@ public class Settingfragment extends BaseActivity {
         clothing.getTextView().setTextColor(getResources().getColor(R.color.Gray));
         clothing.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
 
+        QMUICommonListItemView customerService = mGroupListView.createItemView("客服");
+        customerService.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        customerService.getTextView().setTextColor(getResources().getColor(R.color.Gray));
+        customerService.getDetailTextView().setTextColor(getResources().getColor(R.color.GrayWrite));
+
+
         QMUIGroupListView.newSection(mContext)
-                .addItemView(changePasswordItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class);
-                    }
-                })
-                .addItemView(clearCacheItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new RxDialogSureCancel(mActivity)
-                                .setTitle("清除缓存？")
-                                .setSure("清除")
-                                .setSureListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        RxFileUtils.clearAllCache(mContext.getApplicationContext());
-                                        clearCacheItem.setDetailText("0MB");
-                                    }
-                                }).show();
-                    }
-                })
-                .addItemView(accountItem, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RxActivityUtils.skipActivity(mContext, AccountFragment.class);
-                    }
-                })
+                .addItemView(changePasswordItem, v ->
+                        RxActivityUtils.skipActivity(mActivity, VerificationPhoneActivity.class))
+                .addItemView(clearCacheItem, v -> new RxDialogSureCancel(mActivity)
+                        .setTitle(getString(R.string.cleanCache) + "?")
+                        .setSure(getString(R.string.clean))
+                        .setSureListener(v1 -> {
+                            RxFileUtils.clearAllCache(mContext.getApplicationContext());
+                            try {
+                                RxCache.getDefault().clear2();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            clearCacheItem.setDetailText("0MB");
+                        }).show())
+                .addItemView(accountItem, v ->
+                        RxActivityUtils.skipActivity(mContext, AccountFragment.class))
 //                .addItemView(clothing, new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View v) {
 ////                        RxActivityUtils.skipActivity(mContext, TempActivity.class);
 //                    }
+//                })
+//                .addItemView(customerService, v -> {
+//                    ChatManager.INSTANCE.register();
 //                })
                 .setUseTitleViewForSectionSpace(false)
                 .addTo(mGroupListView);
@@ -128,7 +130,7 @@ public class Settingfragment extends BaseActivity {
                 onBackPressed();
             }
         });
-        mQMUIAppBarLayout.setTitle("设置");
+        mQMUIAppBarLayout.setTitle(R.string.setting);
     }
 
     @OnClick(R.id.tv_logout)
@@ -136,8 +138,8 @@ public class Settingfragment extends BaseActivity {
         RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
                 .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
                 .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                .setTitle("退出登录？")
-                .setSure("退出")
+                .setTitle(getString(R.string.logout) + "?")
+                .setSure(getString(R.string.signOut))
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -155,6 +157,7 @@ public class Settingfragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
+                        ChatManager.INSTANCE.logout();
                         String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
                         boolean SP_GUIDE = SPUtils.getBoolean(SPKey.SP_GUIDE);
                         MyAPP.aMapLocation = null;
@@ -162,9 +165,13 @@ public class Settingfragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
                         SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
 
-                        BleTools.getInstance().disConnect();
-                        QNBleTools.getInstance().disConnectDevice();
-
+                        MyBleManager.Companion.getInstance().disConnect();
+                        QNBleManager.getInstance().disConnectDevice();
+                        try {
+                            RxCache.getDefault().clear2();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
 
                     }

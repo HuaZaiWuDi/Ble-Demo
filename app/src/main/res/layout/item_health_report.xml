@@ -76,13 +76,11 @@
             android:layout_toRightOf="@+id/tv_initWeight"
             app:rcBackgroundColor="@color/BrightGray"
             app:rcMax="100"
-            app:rcProgressColor="@color/red">
-
-
-        </com.vondear.rxtools.view.roundprogressbar.RxRoundProgressBar>
+            app:rcProgressColor="@color/red"/>
 
 
         <ImageView
+            android:id="@+id/img_WeightFlag"
             android:layout_width="19dp"
             android:layout_height="22dp"
             android:layout_alignLeft="@+id/pro_target"

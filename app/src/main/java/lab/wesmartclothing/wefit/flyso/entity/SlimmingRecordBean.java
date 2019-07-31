@@ -1,7 +1,5 @@
 package lab.wesmartclothing.wefit.flyso.entity;
 
-import com.vondear.rxtools.utils.RxFormatValue;
-
 import java.util.List;
 
 /**
@@ -69,11 +67,32 @@ public class SlimmingRecordBean {
     private boolean warning;
     private boolean weightDone;
     private WeightInfoBean weightInfo;
-    private List<AthleticsInfoListBean> athleticsInfoList;
-    private List<DataListBean> dataList;
-    private List<DietListBean> dietList;
+    private List<DataListBean> heatList;
     private List<WeightInfoListBean> weightInfoList;
 
+    public int getIntakePercent() {
+        return intakePercent;
+    }
+
+    public void setIntakePercent(int intakePercent) {
+        this.intakePercent = intakePercent;
+    }
+
+    public List<DataListBean> getHeatList() {
+        return heatList;
+    }
+
+    public void setHeatList(List<DataListBean> heatList) {
+        this.heatList = heatList;
+    }
+
+    public List<WeightInfoListBean> getWeightInfoList() {
+        return weightInfoList;
+    }
+
+    public void setWeightInfoList(List<WeightInfoListBean> weightInfoList) {
+        this.weightInfoList = weightInfoList;
+    }
 
     public boolean isAthlDone() {
         return athlDone;
@@ -259,37 +278,15 @@ public class SlimmingRecordBean {
         this.weightInfo = weightInfo;
     }
 
-    public List<AthleticsInfoListBean> getAthleticsInfoList() {
-        return athleticsInfoList;
-    }
-
-    public void setAthleticsInfoList(List<AthleticsInfoListBean> athleticsInfoList) {
-        this.athleticsInfoList = athleticsInfoList;
-    }
 
     public List<DataListBean> getDataList() {
-        return dataList;
+        return heatList;
     }
 
     public void setDataList(List<DataListBean> dataList) {
-        this.dataList = dataList;
+        this.heatList = dataList;
     }
 
-    public List<DietListBean> getDietList() {
-        return dietList;
-    }
-
-    public void setDietList(List<DietListBean> dietList) {
-        this.dietList = dietList;
-    }
-
-    public List<WeightInfoListBean> getWeightInfoList() {
-        return weightInfoList;
-    }
-
-    public void setWeightInfoList(List<WeightInfoListBean> weightInfoList) {
-        this.weightInfoList = weightInfoList;
-    }
 
     public static class WeightInfoBean {
         /**
@@ -587,403 +584,6 @@ public class SlimmingRecordBean {
         }
     }
 
-    public static class AthleticsInfoListBean {
-        /**
-         * age : 0
-         * athlDate : 1542988800000
-         * athlDesc :
-         * avgHeart : 79
-         * calorie : 68
-         * complete : 0
-         * createTime : 1542988800000
-         * createUser :
-         * duration : 1282
-         * gid :
-         * heartCount : 0
-         * height : 1
-         * kilometers : 0
-         * maxHeart : 118
-         * minHeart : 59
-         * sex : 1
-         * status : 1
-         * stepNumber : 0
-         */
-
-        private int age;
-        private long athlDate;
-        private String athlDesc;
-        private int avgHeart;
-        private double calorie;
-        private int complete;
-        private long createTime;
-        private String createUser;
-        private int duration;
-        private String gid;
-        private int heartCount;
-        private int height;
-        private int kilometers;
-        private int maxHeart;
-        private int minHeart;
-        private int sex;
-        private int status;
-        private int stepNumber;
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public long getAthlDate() {
-            return athlDate;
-        }
-
-        public void setAthlDate(long athlDate) {
-            this.athlDate = athlDate;
-        }
-
-        public String getAthlDesc() {
-            return athlDesc;
-        }
-
-        public void setAthlDesc(String athlDesc) {
-            this.athlDesc = athlDesc;
-        }
-
-        public int getAvgHeart() {
-            return avgHeart;
-        }
-
-        public void setAvgHeart(int avgHeart) {
-            this.avgHeart = avgHeart;
-        }
-
-        public double getCalorie() {
-            return calorie;
-        }
-
-        public void setCalorie(double calorie) {
-            this.calorie = calorie;
-        }
-
-        public int getComplete() {
-            return complete;
-        }
-
-        public void setComplete(int complete) {
-            this.complete = complete;
-        }
-
-        public long getCreateTime() {
-            return createTime;
-        }
-
-        public void setCreateTime(long createTime) {
-            this.createTime = createTime;
-        }
-
-        public String getCreateUser() {
-            return createUser;
-        }
-
-        public void setCreateUser(String createUser) {
-            this.createUser = createUser;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public void setDuration(int duration) {
-            this.duration = duration;
-        }
-
-        public String getGid() {
-            return gid;
-        }
-
-        public void setGid(String gid) {
-            this.gid = gid;
-        }
-
-        public int getHeartCount() {
-            return heartCount;
-        }
-
-        public void setHeartCount(int heartCount) {
-            this.heartCount = heartCount;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public int getKilometers() {
-            return kilometers;
-        }
-
-        public void setKilometers(int kilometers) {
-            this.kilometers = kilometers;
-        }
-
-        public int getMaxHeart() {
-            return maxHeart;
-        }
-
-        public void setMaxHeart(int maxHeart) {
-            this.maxHeart = maxHeart;
-        }
-
-        public int getMinHeart() {
-            return minHeart;
-        }
-
-        public void setMinHeart(int minHeart) {
-            this.minHeart = minHeart;
-        }
-
-        public int getSex() {
-            return sex;
-        }
-
-        public void setSex(int sex) {
-            this.sex = sex;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
-        public int getStepNumber() {
-            return stepNumber;
-        }
-
-        public void setStepNumber(int stepNumber) {
-            this.stepNumber = stepNumber;
-        }
-    }
-
-    public static class DataListBean {
-        /**
-         * athlCalorie : 0
-         * athlCount : 0
-         * athlPlan : 0
-         * basalCalorie : 0
-         * createTime : 1544424700000
-         * createUser : 9801eee7ffce4364bed693e9cca8b681
-         * dietPlan : 0
-         * duration : 0
-         * gid : 9198663ad31f47c699111d778c3e144e
-         * heatCalorie : 0
-         * heatCount : 0
-         * recordDate : 1544371200000
-         * status : 101
-         * updateTime : 1544424700000
-         * updateUser : 9801eee7ffce4364bed693e9cca8b681
-         * userId : 9801eee7ffce4364bed693e9cca8b681
-         * weight : 66.15
-         * weightCount : 1
-         */
-
-        private double athlCalorie;
-        private int athlCount;
-        private int athlPlan;
-        private double basalCalorie;
-        private long createTime;
-        private String createUser;
-        private int dietPlan;
-        private int duration;
-        private String gid;
-        private double heatCalorie;
-        private int heatCount;
-        private long recordDate;
-        private int status;
-        private long updateTime;
-        private String updateUser;
-        private String userId;
-        private double weight;
-        private int weightCount;
-
-        public double getAthlCalorie() {
-            return athlCalorie;
-        }
-
-        public void setAthlCalorie(double athlCalorie) {
-            this.athlCalorie = athlCalorie;
-        }
-
-        public int getAthlCount() {
-            return athlCount;
-        }
-
-        public void setAthlCount(int athlCount) {
-            this.athlCount = athlCount;
-        }
-
-        public int getAthlPlan() {
-            return athlPlan;
-        }
-
-        public void setAthlPlan(int athlPlan) {
-            this.athlPlan = athlPlan;
-        }
-
-        public double getBasalCalorie() {
-            return basalCalorie;
-        }
-
-        public void setBasalCalorie(double basalCalorie) {
-            this.basalCalorie = basalCalorie;
-        }
-
-        public long getCreateTime() {
-            return createTime;
-        }
-
-        public void setCreateTime(long createTime) {
-            this.createTime = createTime;
-        }
-
-        public String getCreateUser() {
-            return createUser;
-        }
-
-        public void setCreateUser(String createUser) {
-            this.createUser = createUser;
-        }
-
-        public int getDietPlan() {
-            return dietPlan;
-        }
-
-        public void setDietPlan(int dietPlan) {
-            this.dietPlan = dietPlan;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public void setDuration(int duration) {
-            this.duration = duration;
-        }
-
-        public String getGid() {
-            return gid;
-        }
-
-        public void setGid(String gid) {
-            this.gid = gid;
-        }
-
-        public double getHeatCalorie() {
-            return heatCalorie;
-        }
-
-        public void setHeatCalorie(double heatCalorie) {
-            this.heatCalorie = heatCalorie;
-        }
-
-        public int getHeatCount() {
-            return heatCount;
-        }
-
-        public void setHeatCount(int heatCount) {
-            this.heatCount = heatCount;
-        }
-
-        public long getRecordDate() {
-            return recordDate;
-        }
-
-        public void setRecordDate(long recordDate) {
-            this.recordDate = recordDate;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
-        public long getUpdateTime() {
-            return updateTime;
-        }
-
-        public void setUpdateTime(long updateTime) {
-            this.updateTime = updateTime;
-        }
-
-        public String getUpdateUser() {
-            return updateUser;
-        }
-
-        public void setUpdateUser(String updateUser) {
-            this.updateUser = updateUser;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public double getWeight() {
-            return weight;
-        }
-
-        public void setWeight(double weight) {
-            this.weight = weight;
-        }
-
-        public int getWeightCount() {
-            return weightCount;
-        }
-
-        public void setWeightCount(int weightCount) {
-            this.weightCount = weightCount;
-        }
-    }
-
-    public static class DietListBean {
-        /**
-         * calorie : 968
-         * heatDate : 1544025600000
-         */
-
-        private double calorie;
-        private long heatDate;
-
-        public double getCalorie() {
-            return RxFormatValue.format4S5R(calorie, 1);
-        }
-
-        public void setCalorie(int calorie) {
-            this.calorie = calorie;
-        }
-
-        public long getHeatDate() {
-            return heatDate;
-        }
-
-        public void setHeatDate(long heatDate) {
-            this.heatDate = heatDate;
-        }
-    }
 
     public static class WeightInfoListBean {
         /**

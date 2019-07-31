@@ -3,7 +3,6 @@ package lab.wesmartclothing.wefit.flyso.utils;
 import com.yolanda.health.qnblesdk.out.QNScaleItemData;
 
 import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
-import lab.wesmartclothing.wefit.flyso.entity.WeightAddBean;
 
 /**
  * Created icon_hide_password jk on 2018/5/17.
@@ -56,7 +55,7 @@ public class WeightTools {
         return bodyType;
     }
 
-    public static void ble2Backstage(QNScaleItemData item, WeightAddBean bean) {
+    public static void ble2Backstage(QNScaleItemData item, HealthyInfoBean bean) {
         if (item == null) return;
         double value = item.getValue();
         switch (item.getType()) {
@@ -89,7 +88,7 @@ public class WeightTools {
                 break;
             case 10:
                 bean.setBodyType(body2String((int) value));
-                bean.setBodyTypeIndex((int) value);
+                bean.setBodyLevel((int) value);
                 break;
             case 11:
                 bean.setProtein(value);

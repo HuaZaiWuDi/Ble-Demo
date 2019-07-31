@@ -79,7 +79,15 @@ public class HealthyInfoBean implements Serializable {
     private double weight;
     private long weightDate;
     private String bmiLevel;
+    private String hmac;
 
+    public String getHmac() {
+        return hmac;
+    }
+
+    public void setHmac(String hmac) {
+        this.hmac = hmac;
+    }
 
     public String getBmiLevel() {
         return bmiLevel;

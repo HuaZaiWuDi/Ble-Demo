@@ -31,8 +31,8 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingLeft="@dimen/dimen_35"
-        android:paddingRight="@dimen/dimen_35"
-        android:paddingTop="@dimen/dimen_20">
+        android:paddingTop="@dimen/dimen_20"
+        android:paddingRight="@dimen/dimen_35">
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,8 +52,7 @@
             android:drawableLeft="@mipmap/icon_phone"
             android:drawablePadding="10dp"
             android:hint="@string/please_input_phone"
-            android:inputType="phone"
-            android:maxLength="11"
+            android:maxLines="1"
             android:textColor="@color/Gray"
             android:textColorHint="@color/GrayWrite"
             android:textSize="@dimen/dimen_15"
@@ -90,13 +89,13 @@
             <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                 android:id="@+id/btn_getVCode"
                 android:layout_width="85dp"
-                android:textSize="13sp"
                 android:layout_height="36dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/dimen_35"
                 android:background="@mipmap/icon_biyan"
                 android:text="@string/getVCode"
                 android:textColor="@color/GrayWrite"
+                android:textSize="13sp"
                 app:qmui_borderColor="@color/GrayWrite"
                 app:qmui_radius="@dimen/dimen_4"/>
 

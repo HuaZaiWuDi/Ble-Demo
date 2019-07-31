@@ -35,7 +35,7 @@
             android:layout_height="64dp"
             android:background="@color/green_61D97F"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
                 android:id="@+id/btn_strongTip"
@@ -60,14 +60,34 @@
             android:background="@color/green_61D97F">
 
 
-            <com.vondear.rxtools.view.chart.line.SuitLines
+            <ImageView
+                android:id="@+id/img_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:src="@mipmap/ic_weight_open"
+                />
+
+            <ImageView
+                android:id="@+id/img_switchDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                android:src="@mipmap/ic_select_day"/>
+
+
+            <lab.wesmartclothing.wefit.flyso.view.line.SuitLines
                 android:id="@+id/suitlines"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/layout_lenged"/>
+                android:layout_above="@+id/img_pointer"
+                android:layout_below="@+id/img_switch"/>
 
 
             <ImageView
+                android:id="@+id/img_pointer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -75,42 +95,6 @@
                 android:background="@mipmap/icon_triangle"
                 android:scaleType="centerCrop"/>
 
-
-            <LinearLayout
-                android:id="@+id/layout_lenged"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="@dimen/dimen_10"
-                android:layout_marginRight="@dimen/dimen_16"
-                android:layout_marginBottom="@dimen/dimen_10"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/dimen_16"
-                    android:text="一\t体重"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"/>
-
-
-                <TextView
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
-                    android:alpha="0.5"
-                    android:background="@color/white"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="\t体脂"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"/>
-
-
-            </LinearLayout>
 
         </RelativeLayout>
 
@@ -179,6 +163,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/layout_weightData"
                     android:layout_width="match_parent"
                     android:layout_height="84dp"
                     android:background="@color/white"
@@ -211,6 +196,7 @@
 
                 <!--体重数据-->
                 <LinearLayout
+                    android:id="@+id/layout_weightDetail"
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:background="@color/white"
