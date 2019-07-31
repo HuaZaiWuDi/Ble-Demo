@@ -3,6 +3,7 @@ package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -55,6 +56,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -111,6 +113,7 @@ public class AddDeviceActivity extends BaseActivity {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
         }
 
+        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
         initView();
         initRxBus();
         startScan();

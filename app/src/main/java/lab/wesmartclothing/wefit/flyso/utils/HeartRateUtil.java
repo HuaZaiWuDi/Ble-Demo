@@ -51,6 +51,7 @@ public class HeartRateUtil {
     private List<HeartRateItemBean> heartLists;
     private UserInfo userInfo;
     private int initSteps = 0;
+    private int dataFlag = 0;//数据标记，前3条有效数据丢弃
 
     public HeartRateUtil() {
         heartLists = new ArrayList<>();
@@ -94,6 +95,10 @@ public class HeartRateUtil {
         if (currentSteps == 0 || currentPace == 0) {
             return null;
         }
+        dataFlag++;
+        //前3条数据丢弃
+        if (dataFlag < 3)
+            return null;
 
         int reversePace = reversePace(currentPace);//反转配速，用于显示在图表上
 

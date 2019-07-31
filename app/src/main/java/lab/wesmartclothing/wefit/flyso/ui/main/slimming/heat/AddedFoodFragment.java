@@ -157,7 +157,6 @@ public class AddedFoodFragment extends BaseActivity {
             public void onClick(View v) {
                 //跳转添加食物
                 RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
-
             }
         });
         adapter.addFooterView(footerView);

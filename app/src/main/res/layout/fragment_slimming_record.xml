@@ -97,13 +97,13 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.vondear.rxtools.view.layout.RxImageView
+                <ImageView
                     android:id="@+id/img_breakfast"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_centerHorizontal="true"
-                    app:icon_src_normal="@color/Gray_ECEBF0"
-                    app:is_circle="true"/>
+                    android:src="@drawable/shape_gray_17dp"
+                    />
 
 
                 <TextView
@@ -122,13 +122,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.vondear.rxtools.view.layout.RxImageView
+                <ImageView
                     android:id="@+id/img_lunch"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_centerHorizontal="true"
-                    app:icon_src_normal="@color/Gray_ECEBF0"
-                    app:is_circle="true"/>
+                    android:src="@drawable/shape_gray_17dp"/>
 
 
                 <TextView
@@ -147,13 +146,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.vondear.rxtools.view.layout.RxImageView
+                <ImageView
                     android:id="@+id/img_dinner"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_centerHorizontal="true"
-                    app:icon_src_normal="@color/Gray_ECEBF0"
-                    app:is_circle="true"/>
+                    android:src="@drawable/shape_gray_17dp"/>
 
 
                 <TextView
@@ -172,13 +170,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.vondear.rxtools.view.layout.RxImageView
+                <ImageView
                     android:id="@+id/img_sporting"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_centerHorizontal="true"
-                    app:icon_src_normal="@color/Gray_ECEBF0"
-                    app:is_circle="true"/>
+                    android:src="@drawable/shape_gray_17dp"/>
 
 
                 <TextView
@@ -197,13 +194,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.vondear.rxtools.view.layout.RxImageView
+                <ImageView
                     android:id="@+id/img_weigh"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_centerHorizontal="true"
-                    app:icon_src_normal="@color/Gray_ECEBF0"
-                    app:is_circle="true"/>
+                    android:src="@drawable/shape_gray_17dp"/>
 
 
                 <TextView
@@ -390,13 +386,12 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                            <com.vondear.rxtools.view.layout.RxImageView
+                            <ImageView
                                 android:id="@+id/img_breakfast2"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:layout_centerHorizontal="true"
-                                app:icon_src_normal="@color/Gray_ECEBF0"
-                                app:is_circle="true"/>
+                                android:src="@drawable/shape_gray_17dp"/>
 
 
                             <TextView
@@ -415,13 +410,12 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                            <com.vondear.rxtools.view.layout.RxImageView
+                            <ImageView
                                 android:id="@+id/img_lunch2"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:layout_centerHorizontal="true"
-                                app:icon_src_normal="@color/Gray_ECEBF0"
-                                app:is_circle="true"/>
+                                android:src="@drawable/shape_gray_17dp"/>
 
 
                             <TextView
@@ -440,13 +434,12 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                            <com.vondear.rxtools.view.layout.RxImageView
+                            <ImageView
                                 android:id="@+id/img_dinner2"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:layout_centerHorizontal="true"
-                                app:icon_src_normal="@color/Gray_ECEBF0"
-                                app:is_circle="true"/>
+                                android:src="@drawable/shape_gray_17dp"/>
 
 
                             <TextView
@@ -465,13 +458,12 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                            <com.vondear.rxtools.view.layout.RxImageView
+                            <ImageView
                                 android:id="@+id/img_sporting2"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:layout_centerHorizontal="true"
-                                app:icon_src_normal="@color/Gray_ECEBF0"
-                                app:is_circle="true"/>
+                                android:src="@drawable/shape_gray_17dp"/>
 
 
                             <TextView
@@ -490,13 +482,12 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                            <com.vondear.rxtools.view.layout.RxImageView
+                            <ImageView
                                 android:id="@+id/img_weigh2"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:layout_centerHorizontal="true"
-                                app:icon_src_normal="@color/Gray_ECEBF0"
-                                app:is_circle="true"/>
+                                android:src="@drawable/shape_gray_17dp"/>
 
 
                             <TextView
@@ -590,9 +581,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:lineSpacingExtra="8dp"
+                        android:text="-- 体重(kg)\n-- BMI\n-- 体脂率(%)\n-- 基础代谢(kcal)"
                         android:textColor="@color/Gray"
-                        android:textSize="12sp"
-                        tools:text="-- 体重(kg)\n-- 体重(kg)\n-- 体重(kg)\n-- 体重(kg)"/>
+                        android:textSize="12sp"/>
 
 
                     <LinearLayout

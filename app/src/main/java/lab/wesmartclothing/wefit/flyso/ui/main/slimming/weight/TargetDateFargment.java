@@ -100,6 +100,7 @@ public class TargetDateFargment extends BaseActivity {
         initWeight = bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
         targetWeight = bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
         stillNeed = bundle.getDouble(Key.BUNDLE_STILL_NEED);
+
         weeks = (int) (stillNeed / 0.5f);
         weeks = (weeks < 1 ? 1 : weeks);
         mTvTargetDays.setText((weeks * 7) + "天");
@@ -137,9 +138,7 @@ public class TargetDateFargment extends BaseActivity {
                 }
             }
         });
-
     }
-
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
@@ -178,7 +177,6 @@ public class TargetDateFargment extends BaseActivity {
                         RxBus.getInstance().post(new RefreshSlimming());
                         //直接跳转到指定的Fragment（同时清栈）
                         RxActivityUtils.skipActivity(mContext, PlanDetailsActivity.class);
-
                     }
 
                     @Override

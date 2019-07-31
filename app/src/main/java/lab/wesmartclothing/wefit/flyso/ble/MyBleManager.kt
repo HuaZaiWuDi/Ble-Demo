@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import com.vondear.rxtools.utils.RxLogUtils
 import com.vondear.rxtools.utils.SPUtils
-import com.vondear.rxtools.utils.aboutByte.HexUtil
 import com.wesmarclothing.mylibrary.net.RxBus
 import lab.wesmartclothing.wefit.flyso.BuildConfig
 import lab.wesmartclothing.wefit.flyso.R
@@ -120,7 +119,7 @@ class MyBleManager(context: Context) : BleManager<BleManagerCallbacks>(context) 
 
     private fun doFail(device: BluetoothDevice, status: Int) {
         RxLogUtils.d("执行失败,状态：$status--设备信息：$device")
-        BuryingPoint.clothingState(device.address, "执行失败,状态：$status-${HexUtil.encodeHexStr(mBytes)}")
+        BuryingPoint.clothingState(device.address, "执行失败,状态：$status}")
 //        disConnect()
     }
 

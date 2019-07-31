@@ -79,6 +79,7 @@ public class NetManager {
         builder.addInterceptor(NetInterceptor);
 
         Retrofit apiRetrofit = new Retrofit.Builder()
+//                .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(builder.build())
@@ -88,6 +89,7 @@ public class NetManager {
         mApiService = apiRetrofit.create(ApiService.class);
 
         Retrofit retrofit = new Retrofit.Builder()
+//                .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(builder.build())

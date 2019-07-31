@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -221,6 +223,15 @@ public class FoodDetailsFragment extends BaseActivity {
     }
 
 
+    public static void start(Context context, int foodType, long currentTime, boolean isSlimmingPage) {
+        Intent starter = new Intent(context, FoodDetailsFragment.class);
+        starter.putExtra(Key.ADD_FOOD_TYPE, foodType);
+        starter.putExtra(Key.ADD_FOOD_DATE, currentTime);
+        starter.putExtra(Key.ADD_FOOD_NAME, isSlimmingPage);
+        context.startActivity(starter);
+    }
+
+
     @Override
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
@@ -246,7 +257,6 @@ public class FoodDetailsFragment extends BaseActivity {
         }
         return 0;
     }
-
 
 
     private void initRecyclerView() {
@@ -388,10 +398,10 @@ public class FoodDetailsFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxToast.success(getString(R.string.addSuccess));
+                        RxLogUtils.d("添加食材成功");
+                        RxBus.getInstance().post(new RefreshSlimming());
                         addedLists.clear();
                         onBackPressed();
-                        RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
@@ -405,7 +415,7 @@ public class FoodDetailsFragment extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.recyclerAddFoods:
-                RxActivityUtils.skipActivity(mContext, AddedFoodFragment.class);
+//                RxActivityUtils.skipActivity(mContext, AddedFoodFragment.class);
                 break;
             case R.id.iv_complete:
                 //添加食物

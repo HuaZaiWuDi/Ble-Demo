@@ -223,6 +223,7 @@ public class WeightAddFragment extends BaseActivity {
             WeightTools.ble2Backstage(item, bean);
         }
 
+
         bean.setHmac(MyAPP.getgUserInfo().getHmac());
         String s = JSON.toJSONString(bean);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
@@ -236,6 +237,7 @@ public class WeightAddFragment extends BaseActivity {
                         RxLogUtils.d("添加体重：");
 //                        onBackPressed();
 
+                        SPUtils.put(SPKey.SP_realWeight, (float) bean.getWeight());
                         //刷新数据
                         RxBus.getInstance().post(new RefreshSlimming());
 

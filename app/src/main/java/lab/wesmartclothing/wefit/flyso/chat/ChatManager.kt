@@ -137,7 +137,7 @@ object ChatManager {
                 .setTitleName("在线客服")
                 .setScheduleAgent(agentIdentityInfo)
                 .setVisitorInfo(visitorInfo)
-                .setShowUserNick(false)
+                .setShowUserNick(true)
                 .build()
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         currentActivity.startActivity(intent)

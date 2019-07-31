@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex;
 
 import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
+import com.kongzue.dialog.v2.DialogSettings;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.DefaultRefreshHeaderCreator;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -30,6 +31,7 @@ import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.diskconverter.SerializableDiskConverter;
+import com.zchu.rxcache.utils.LogUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -54,7 +56,6 @@ public class MyAPP extends Application {
 
     public static Typeface typeface;
     public static AMapLocation aMapLocation = null;//定位信息
-    private static GlideImageLoader sImageLoader;
     public static MyAPP sMyAPP;
     public static UserInfo gUserInfo;
 
@@ -101,6 +102,8 @@ public class MyAPP extends Application {
         RxUtils.init(MyAPP.this);
         RxLogUtils.setLogSwitch(BuildConfig.DEBUG);
 
+        DialogSettings.use_blur = false;
+
         RxLogUtils.i("启动时长：初始化" + BuildConfig.DEBUG);
         RxLogUtils.d("当前进程：" + getCurrentProcessName());
         if (!this.getPackageName().equals(getCurrentProcessName())) return;
@@ -145,6 +148,17 @@ public class MyAPP extends Application {
             e.printStackTrace();
             RxLogUtils.e(e);
         }
+
+        try {
+            Class<?> c = Class.forName("java.lang.Daemons");
+            Field maxField = c.getDeclaredField("MAX_FINALIZE_NANOS");
+            maxField.setAccessible(true);
+            maxField.set(null, Long.MAX_VALUE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            RxLogUtils.e(e);
+        }
+
     }
 
     private void initSonic() {
@@ -164,6 +178,7 @@ public class MyAPP extends Application {
                     .memoryMax(5 * 1024 * 1024)
                     .setDebug(false)
                     .build());
+            LogUtils.DEBUG = false;
             RxLogUtils.d("RxCache 缓存框架初始化成功");
         } catch (Exception e) {
             RxLogUtils.e(e);
@@ -202,10 +217,7 @@ public class MyAPP extends Application {
 
 
     public static GlideImageLoader getImageLoader() {
-        if (sImageLoader == null) {
-            sImageLoader = new GlideImageLoader();
-        }
-        return sImageLoader;
+        return GlideImageLoader.INSTANCE;
     }
 
 

@@ -155,7 +155,7 @@ public class ProblemFragemnt extends BaseActivity {
 
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
+        imagePicker.setImageLoader(GlideImageLoader.INSTANCE);   //设置图片加载器
         imagePicker.setShowCamera(false);//显示拍照按钮
         imagePicker.setMultiMode(true);
         imagePicker.setCrop(false);        //允许裁剪（单选才有效）

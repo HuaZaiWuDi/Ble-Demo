@@ -60,7 +60,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.ranking.RankingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
-import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingRecordFragment;
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.RecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
@@ -209,7 +209,7 @@ public class MainActivity extends BaseALocationActivity {
                 SlimmingFragment.newInstance()));
         pageList.add(new BottomTabItem(R.mipmap.icon_record_unselect, R.mipmap.icon_record,
                 getString(R.string.nav_record),
-                SlimmingRecordFragment.newInstance()));
+                RecordFragment.Companion.newInstance()));
         pageList.add(new BottomTabItem(R.mipmap.ic_ranking_select, R.mipmap.ic_ranking_unselect,
                 getString(R.string.nav_ranking),
                 RankingFragment.getInstance()));

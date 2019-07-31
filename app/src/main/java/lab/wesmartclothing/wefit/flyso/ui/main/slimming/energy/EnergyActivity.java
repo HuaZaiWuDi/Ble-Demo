@@ -17,6 +17,7 @@ import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxRelativeLayout;
+import com.wesmarclothing.mylibrary.net.RxBus;
 import com.zchu.rxcache.RxCache;
 import com.zchu.rxcache.data.CacheResult;
 import com.zchu.rxcache.stategy.CacheStrategy;
@@ -34,6 +35,8 @@ import lab.wesmartclothing.wefit.flyso.entity.DataListBean;
 import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.GroupType;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodRecommend;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SmartClothingFragment;
@@ -192,6 +195,20 @@ public class EnergyActivity extends BaseActivity {
         });
     }
 
+
+    @Override
+    protected void initRxBus2() {
+        super.initRxBus2();
+        RxBus.getInstance().register2(RefreshSlimming.class)
+                .compose(RxComposeUtils.<RefreshSlimming>bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<RefreshSlimming>() {
+                    @Override
+                    protected void _onNext(RefreshSlimming refreshSlimming) {
+                        pageNum = 1;
+                        initData();
+                    }
+                });
+    }
 
     @Override
     protected void initNetData() {

@@ -33,7 +33,7 @@ import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.HeartRateUtil;
@@ -97,7 +97,10 @@ public class BleService extends Service {
                     } else {
                         if (ActivityLifecycleImpl.APP_IS_FOREGROUND)
                             RxToast.normal(RxNetUtils.getNetType(workType));
-                        RxBus.getInstance().post(new NetWorkType(workType, workType != -1 && workType != 5));
+                        if (workType != -1 && workType != 5) {
+                            RxBus.getInstance().post(new RefreshSlimming());
+                            RxBus.getInstance().post(new RefreshMe());
+                        }
                     }
                     if (workType != -1 && workType != 5) {
                         //一分钟之内只执行一次

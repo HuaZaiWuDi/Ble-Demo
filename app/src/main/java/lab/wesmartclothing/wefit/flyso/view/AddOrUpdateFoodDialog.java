@@ -239,7 +239,6 @@ public class AddOrUpdateFoodDialog {
         RxLogUtils.d("删除食材：" + listBean);
         JsonObject object = new JsonObject();
         object.addProperty("gid", listBean.getGid());
-
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), object.toString());
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeHeatInfo(body))
                 .compose(RxComposeUtils.<String>showDialog(new TipDialog(context)))

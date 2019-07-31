@@ -66,7 +66,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.energy.EnergyActivity;
@@ -393,16 +392,7 @@ public class SlimmingRecordFragment extends BaseAcFragment {
                         initNetData();
                     }
                 });
-        //只有在显示时才会网络请求
-        RxBus.getInstance().register2(NetWorkType.class)
-                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
-                .subscribe(new RxSubscriber<NetWorkType>() {
-                    @Override
-                    protected void _onNext(NetWorkType netWorkType) {
-                        if (netWorkType.isBoolean())
-                            initNetData();
-                    }
-                });
+
 
     }
 

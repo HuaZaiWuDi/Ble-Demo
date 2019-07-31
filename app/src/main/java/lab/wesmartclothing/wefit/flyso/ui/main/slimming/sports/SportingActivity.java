@@ -110,8 +110,6 @@ public class SportingActivity extends BaseSportActivity implements SportInterfac
                             mTvAvHeartRate.setText("--");
                             return;
                         }
-                        if (sportsDataTab.getHeartLists().size() < 3)
-                            return;
                         //配速
                         int stepSpeed = sportsDataTab.getStepSpeed();
 

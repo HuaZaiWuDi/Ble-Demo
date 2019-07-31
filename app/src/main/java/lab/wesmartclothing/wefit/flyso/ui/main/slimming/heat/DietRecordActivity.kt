@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.alibaba.fastjson.JSON
@@ -9,6 +10,7 @@ import com.vondear.rxtools.utils.RxUtils
 import com.vondear.rxtools.utils.StatusBarUtils
 import com.vondear.rxtools.utils.dateUtils.RxFormat
 import com.vondear.rxtools.view.RxToast
+import com.wesmarclothing.mylibrary.net.RxBus
 import com.zchu.rxcache.RxCache
 import com.zchu.rxcache.data.CacheResult
 import com.zchu.rxcache.stategy.CacheStrategy
@@ -19,6 +21,7 @@ import lab.wesmartclothing.wefit.flyso.entity.DataListBean
 import lab.wesmartclothing.wefit.flyso.entity.GroupDataListBean
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber
+import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming
 import lab.wesmartclothing.wefit.flyso.tools.GroupType
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils
 import lab.wesmartclothing.wefit.flyso.view.line.LineBean
@@ -67,6 +70,17 @@ class DietRecordActivity : BaseActivity() {
             pageNum = 1
             initData()
         }
+    }
+
+    @SuppressLint("CheckResult")
+    override fun initRxBus2() {
+        super.initRxBus2()
+        RxBus.getInstance().register2(RefreshSlimming::class.java)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe {
+                    pageNum = 1
+                    initData()
+                }
     }
 
     override fun initNetData() {

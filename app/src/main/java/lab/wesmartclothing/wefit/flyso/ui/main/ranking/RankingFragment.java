@@ -221,7 +221,7 @@ public class RankingFragment extends BaseAcFragment {
         adapter.setNewData(rankingBean);
 
         RankingBean no1Bean = rankingBean.get(1);
-        GlideImageLoader.getInstance().displayImage(mActivity, no1Bean.getAvatar(), R.mipmap.userimg, mImgNo1);
+        GlideImageLoader.INSTANCE.displayImage(mActivity, no1Bean.getAvatar(), R.mipmap.userimg, mImgNo1);
 
         String nickname = no1Bean.getUserName().length() > 4 ? no1Bean.getUserName().substring(no1Bean.getUserName().length() - 4) : no1Bean.getUserName();
         String phone = no1Bean.getPhone();

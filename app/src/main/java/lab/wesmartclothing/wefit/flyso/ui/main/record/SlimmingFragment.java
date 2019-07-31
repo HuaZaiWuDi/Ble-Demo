@@ -2,6 +2,7 @@ package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.kongzue.dialog.listener.DialogLifeCycleListener;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
@@ -70,7 +72,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
@@ -263,7 +264,8 @@ public class SlimmingFragment extends BaseAcFragment {
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
     private int lastKcal = 0;
-    private RxDialog firsrUsedDialog;
+    private boolean isFold = false;//是否折叠
+    private static boolean firstShowDialog = true;
 
     public static SlimmingFragment newInstance() {
         Bundle args = new Bundle();
@@ -282,15 +284,11 @@ public class SlimmingFragment extends BaseAcFragment {
     protected void initNetData() {
         super.initNetData();
         UserInfo info = MyAPP.getgUserInfo();
-        if (info != null) {
-            mTvUserName.setText(info.getUserName());
-            MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
-        }
+        mTvUserName.setText(info.getUserName());
+        MyAPP.getImageLoader().displayImage(mActivity, info.getImgUrl(), R.mipmap.userimg, mIvUserImg);
         getData();
     }
 
-
-    boolean isFold = false;//是否折叠
 
     @Override
     protected void initViews() {
@@ -353,16 +351,6 @@ public class SlimmingFragment extends BaseAcFragment {
                         initNetData();
                     }
                 });
-        //只有在显示时才会网络请求
-        RxBus.getInstance().register2(NetWorkType.class)
-                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
-                .subscribe(new RxSubscriber<NetWorkType>() {
-                    @Override
-                    protected void _onNext(NetWorkType netWorkType) {
-                        if (netWorkType.isBoolean())
-                            initNetData();
-                    }
-                });
 
         //消息通知
         RxBus.getInstance().register2(MessageChangeBus.class)
@@ -418,7 +406,6 @@ public class SlimmingFragment extends BaseAcFragment {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-//                       bean=MyAPP.getGson().fromJson(s,PlanBean.class);
                         bean = JSON.parseObject(s, PlanBean.class);
                         updateUI();
                     }
@@ -498,7 +485,6 @@ public class SlimmingFragment extends BaseAcFragment {
                             realLists.add(HeartRateUtil.reversePace(bean.getPace()));
                         }
                         lineChartUtils.setRealTimeData(realLists);
-                        mLineChart.animateX(1000);
                     }
 
                     @Override
@@ -584,8 +570,6 @@ public class SlimmingFragment extends BaseAcFragment {
         boolean hasInitialWeight = bean.getWeightChangeVO().isHasInitialWeight();
         double maxNormalWeight = RxFormatValue.format4S5R(bean.getMaxNormalWeight(), 1);
         double minNormalWeight = RxFormatValue.format4S5R(bean.getMinNormalWeight(), 1);
-
-        SPUtils.put(SPKey.SP_realWeight, (float) weight);
 
         if (weight > minNormalWeight && weight <= maxNormalWeight) {
             mTvWeightStatus.setText(R.string.normal);
@@ -788,17 +772,13 @@ public class SlimmingFragment extends BaseAcFragment {
             mImgRecipes.setVisibility(View.GONE);
             firstUsedTip();
         } else if (planState == 3) {
-            if (firsrUsedDialog != null && firsrUsedDialog.isShowing()) {
-                firsrUsedDialog.dismiss();
-            }
+
             mImgPlanMark.setVisibility(View.GONE);
             mImgRecipes.setVisibility(View.VISIBLE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
             mLayoutSlimmingTarget.setVisibility(View.VISIBLE);
         } else {
-            if (firsrUsedDialog != null && firsrUsedDialog.isShowing()) {
-                firsrUsedDialog.dismiss();
-            }
+
             mLayoutSlimmingTarget.setVisibility(View.GONE);
             mImgPlanMark.setVisibility(View.GONE);
             mImgSeeRecord.setVisibility(View.VISIBLE);
@@ -839,10 +819,13 @@ public class SlimmingFragment extends BaseAcFragment {
     }
 
     private void firstUsedTip() {
-        firsrUsedDialog = new RxDialog(mContext);
+        if (firstShowDialog) {
+            firstShowDialog = false;
+        } else
+            return;
+        RxDialog firsrUsedDialog = new RxDialog(mContext);
         View view = View.inflate(mContext, R.layout.dialog_first_tip, null);
         firsrUsedDialog.setContentView(view);
-        if (firsrUsedDialog.isShowing()) firsrUsedDialog.dismiss();
         firsrUsedDialog.show();
         view.<TextView>findViewById(R.id.tv_tip).setText(getString(R.string.tv_firstTip, getString(R.string.appName)));
         view.findViewById(R.id.tv_start)
@@ -905,24 +888,16 @@ public class SlimmingFragment extends BaseAcFragment {
                 RxActivityUtils.skipActivity(mContext, RecipesActivity.class);
                 break;
             case R.id.layout_breakfast:
-                bundle = new Bundle();
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_BREAKFAST);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPE_BREAKFAST, System.currentTimeMillis(), true);
                 break;
             case R.id.layout_lunch:
-                bundle = new Bundle();
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_LUNCH);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPE_LUNCH, System.currentTimeMillis(), true);
                 break;
             case R.id.layout_dinner:
-                bundle = new Bundle();
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_DINNER);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPE_DINNER, System.currentTimeMillis(), true);
                 break;
             case R.id.layout_meal:
-                bundle = new Bundle();
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPED_MEAL);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPED_MEAL, System.currentTimeMillis(), true);
                 break;
             case R.id.reWeigh:
                 if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
@@ -971,13 +946,9 @@ public class SlimmingFragment extends BaseAcFragment {
                         .show();
                 break;
             case R.id.layout_foodRecord:
-                RxActivityUtils.skipActivity(mContext, FoodRecommend.class);
+                FoodRecommend.start(mContext, System.currentTimeMillis());
                 break;
             case R.id.tv_resetTarget:
-//                bundle.putDouble(Key.BUNDLE_TARGET_WEIGHT, bean.getTargetInfo().getTargetWeight());
-//                bundle.putDouble(Key.BUNDLE_INITIAL_WEIGHT, bean.getWeightChangeVO().getWeight().getWeight());
-//                RxActivityUtils.skipActivity(mContext, SettingTargetFragment.class, bundle);
-
                 //2019-3-26更改，重置目标计划，重走健康报告流程
                 RxActivityUtils.skipActivity(mActivity, RecordInfoActivity.class);
 
@@ -997,17 +968,30 @@ public class SlimmingFragment extends BaseAcFragment {
             tipDialog.show(getString(R.string.connecting), 3000);
             MyBleManager.Companion.getInstance().scanMacAddress();
             if (tipDialog.getTipDialog() != null) {
-                tipDialog.getTipDialog().setOnDismissListener(dialogInterface -> {
-                    if (MyBleManager.Companion.getInstance().isConnect()) {
-                        if (isPlan) {
-                            if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
-                                PlanSportingActivity.start(mContext, bean, key);
+                tipDialog.getTipDialog().setDialogLifeCycleListener(new DialogLifeCycleListener() {
+                    @Override
+                    public void onCreate(Dialog alertDialog) {
+
+                    }
+
+                    @Override
+                    public void onShow(Dialog alertDialog) {
+
+                    }
+
+                    @Override
+                    public void onDismiss() {
+                        if (MyBleManager.Companion.getInstance().isConnect()) {
+                            if (isPlan) {
+                                if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
+                                    PlanSportingActivity.start(mContext, bean, key);
+                                } else {
+                                    showFreeSportDialog();
+                                }
                             } else {
-                                showFreeSportDialog();
+                                //进入实时运动界面，没有定制课程
+                                SportingActivity.start(mContext, key);
                             }
-                        } else {
-                            //进入实时运动界面，没有定制课程
-                            SportingActivity.start(mContext, key);
                         }
                     }
                 });

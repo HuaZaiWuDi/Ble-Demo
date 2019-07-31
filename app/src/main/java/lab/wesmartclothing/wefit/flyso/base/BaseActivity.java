@@ -64,9 +64,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             initViews();
             if (getIntent().getExtras() != null)
                 initBundle(getIntent().getExtras());
-            initRxBus2();
             initNetData();
         }
+        initRxBus2();
     }
 
 

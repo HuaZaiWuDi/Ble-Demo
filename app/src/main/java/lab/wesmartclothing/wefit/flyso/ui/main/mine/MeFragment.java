@@ -37,7 +37,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
-import lab.wesmartclothing.wefit.flyso.rxbus.NetWorkType;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -146,16 +145,6 @@ public class MeFragment extends BaseAcFragment {
                     }
                 });
 
-        //只有在显示时才会网络请求
-        RxBus.getInstance().register2(NetWorkType.class)
-                .compose(RxComposeUtils.<NetWorkType>bindLifeResume(lifecycleSubject))
-                .subscribe(new RxSubscriber<NetWorkType>() {
-                    @Override
-                    protected void _onNext(NetWorkType netWorkType) {
-                        if (netWorkType.isBoolean())
-                            initMineData();
-                    }
-                });
 
         //消息通知
         RxBus.getInstance().register2(MessageChangeBus.class)

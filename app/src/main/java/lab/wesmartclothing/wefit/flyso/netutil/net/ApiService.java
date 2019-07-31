@@ -4,6 +4,8 @@ package lab.wesmartclothing.wefit.flyso.netutil.net;
 import java.util.List;
 
 import io.reactivex.Observable;
+import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
+import lab.wesmartclothing.wefit.flyso.netutil.utils.HttpResult;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -287,6 +289,13 @@ public interface ApiService {
 
     @POST("user/saveUserInfo")
     Observable<String> saveUserInfo(@Body RequestBody body);
+
+    @POST("user/saveUserInfo")
+    Observable<HttpResult<String>> saveUserInfo(@Body UserInfo body);
+
+    @POST("https://api.wesmartclothing.com/notify/sms/send")
+    Observable<HttpResult<String>> sendSms(@Query("phone") String phone);
+
 
     @POST("user/addBindDevice")
     Observable<String> addBindDevice(@Body RequestBody body);

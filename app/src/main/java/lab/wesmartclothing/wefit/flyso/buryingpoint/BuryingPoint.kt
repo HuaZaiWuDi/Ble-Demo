@@ -21,7 +21,7 @@ object BuryingPoint {
     var myApplication: Application? = null
 
     init {
-        userId = MyAPP.getgUserInfo().phone
+        userId = MyAPP.getgUserInfo()?.phone ?: ""
         RxLogUtils.d("用户ID：$userId")
 
         myApplication = MyAPP.sMyAPP

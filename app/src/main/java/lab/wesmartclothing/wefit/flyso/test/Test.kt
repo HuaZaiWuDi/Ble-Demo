@@ -1,9 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.test
 
 import android.app.Activity
-import android.os.Handler
-import com.hyphenate.chat.ChatClient
-import lab.wesmartclothing.wefit.flyso.chat.ChatManager
+import lab.wesmartclothing.wefit.flyso.netutil.repository.UserRepository
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.test
@@ -21,13 +19,16 @@ object Test {
     fun main(activity: Activity) {
 
 
-        ChatManager.register()
+//        ChatManager.register()
+//
+//
+//        Handler().postDelayed({
+//            if (ChatClient.getInstance().isLoggedInBefore)
+//                ChatManager.joinService()
+//        }, 4000)
 
 
-        Handler().postDelayed({
-            if (ChatClient.getInstance().isLoggedInBefore)
-                ChatManager.joinService()
-        }, 4000)
+        UserRepository.sendSms()
 
     }
 

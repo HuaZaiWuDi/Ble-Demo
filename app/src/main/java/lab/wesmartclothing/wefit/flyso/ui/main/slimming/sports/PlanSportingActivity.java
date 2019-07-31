@@ -44,6 +44,7 @@ public class PlanSportingActivity extends BaseSportActivity implements SportInte
 
 
     public static void start(Context context, PlanBean bean, String key) {
+        if (bean == null) return;
         Bundle bundle = new Bundle();
         bundle.putString(Key.BUNDLE_SPORTING_PLAN, JSON.toJSONString(bean));
         bundle.putString(Key.BUNDLE_SPORTING_LAST_DATA, key);
@@ -123,7 +124,6 @@ public class PlanSportingActivity extends BaseSportActivity implements SportInte
                 speakAdd(getString(R.string.speech_sportSlow));
             }
         });
-
     }
 
     @Override
@@ -131,6 +131,11 @@ public class PlanSportingActivity extends BaseSportActivity implements SportInte
         super.initBundle(bundle);
         RxLogUtils.e("计划：" + bundle.getString(Key.BUNDLE_SPORTING_PLAN));
         PlanBean planBean = JSON.parseObject(bundle.getString(Key.BUNDLE_SPORTING_PLAN), PlanBean.class);
+        //某些情况这里可能为空，为null退出返回
+        if (planBean == null || planBean.getAthlPlanList() == null) {
+            finish();
+            return;
+        }
         planList = planBean.getAthlPlanList();
         int sunTime = 0;
         for (AthlPlanListBean bean : planList) {
@@ -168,9 +173,6 @@ public class PlanSportingActivity extends BaseSportActivity implements SportInte
                         if (pause) return;
                         SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.heartRateData);
                         if (sportsDataTab == null) return;
-                        if (sportsDataTab.getHeartLists().size() < 3) {
-                            return;
-                        }
                         //配速
                         stepSpeed = sportsDataTab.getStepSpeed();
 

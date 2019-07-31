@@ -43,6 +43,7 @@ public class WelcomeActivity extends BaseActivity {
     @BindView(R.id.tv_tip)
     TextView mTvTip;
 
+    private HealthyInfoBean mHealthyInfoBean;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -77,6 +78,7 @@ public class WelcomeActivity extends BaseActivity {
                 .subscribe(new RxSubscriber<HealthyInfoBean>() {
                     @Override
                     protected void _onNext(HealthyInfoBean weightBean) {
+                        mHealthyInfoBean = weightBean;
                         if (weightBean != null) {
                             mTvWeightInfo.setVisibility(View.VISIBLE);
                             boolean isQualified = weightBean.getBmr() != 0;
@@ -147,7 +149,7 @@ public class WelcomeActivity extends BaseActivity {
         } else if (getString(R.string.goWeigh).equals(text) || getString(R.string.resetWeigh).equals(text)) {
             RxActivityUtils.skipActivity(mActivity, WeightAddFragment.class);
         } else if (getString(R.string.nextWay).equals(text)) {
-            RxActivityUtils.skipActivity(mActivity, SettingTargetFragment.class);
+            SettingTargetFragment.start(mContext, mHealthyInfoBean.getWeight());
         }
     }
 

@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -9,7 +11,6 @@ import android.widget.TextView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.vondear.rxtools.utils.RxFormatValue;
 import com.vondear.rxtools.utils.RxTextUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.layout.RxTextView;
 import com.vondear.rxtools.view.wheelhorizontal.utils.DrawUtil;
@@ -23,7 +24,6 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 
 /**
  * Created by jk on 2018/7/26.
@@ -48,7 +48,14 @@ public class SettingTargetFragment extends BaseActivity {
     Unbinder unbinder;
 
 
-    private float maxWeight, minWeight, targetWeight, initWeight = SPUtils.getFloat(SPKey.SP_realWeight), stillNeed;
+    private double maxWeight, minWeight, targetWeight, initWeight, stillNeed;
+
+
+    public static void start(Context context, double initWeight) {
+        Intent starter = new Intent(context, SettingTargetFragment.class);
+        starter.putExtra(Key.BUNDLE_INITIAL_WEIGHT, initWeight);
+        context.startActivity(starter);
+    }
 
     @Override
     protected int statusBarColor() {
@@ -76,8 +83,7 @@ public class SettingTargetFragment extends BaseActivity {
     protected void initBundle(Bundle bundle) {
         super.initBundle(bundle);
 
-        targetWeight = (float) bundle.getDouble(Key.BUNDLE_TARGET_WEIGHT);
-        //最新的体重
+        //初始体重
         initWeight = (float) bundle.getDouble(Key.BUNDLE_INITIAL_WEIGHT);
         bestWeight();
     }
@@ -94,57 +100,55 @@ public class SettingTargetFragment extends BaseActivity {
         } else {
             standardWeight = (userInfo.getHeight() - 70) * 0.6f;
         }
-        if (targetWeight == 0)
-            targetWeight = standardWeight;
-        initRuler(targetWeight);
+        targetWeight = standardWeight;
         minWeight = standardWeight * 0.9f;
         maxWeight = standardWeight * 1.1f;
+        initRuler(targetWeight);
 
         stillNeed = initWeight - targetWeight;
+        //减重周期少于0
         if (stillNeed < 0) {
-            //TODO 当前体重小于目标体重着
             tipDialog.showInfo(getString(R.string.currentWeightLessTargetWeight), 2000);
         }
+        updateUi(targetWeight);
 
-        String tips = (stillNeed < 0 ? getString(R.string.WeightGain) : getString(R.string.WeightReduction)) + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
-        SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
-                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
-                .setProportion(1.4f)
-                .setLength(4, tips.length() - 3);
-
-        mTvTips.setText(builder);
         tvBestWeight.setText(getString(R.string.bestWeight,
                 RxFormatValue.fromat4S5R(minWeight, 1), RxFormatValue.fromat4S5R(maxWeight, 1)));
     }
 
-    private void initRuler(float weight) {
-        mTvTargetWeight.setText(RxFormatValue.fromat4S5R(weight, 1) + "");
+    private void initRuler(double weight) {
+
         mWeightRulerView.setTextLabel("kg");
         mWeightRulerView.setColor(getResources().getColor(R.color.GrayWrite),
                 getResources().getColor(R.color.GrayWrite), getResources().getColor(R.color.orange_FF7200));
         mWeightRulerView.setParam(DrawUtil.dip2px(10), DrawUtil.dip2px(60), DrawUtil.dip2px(40),
                 DrawUtil.dip2px(25), DrawUtil.dip2px(1), DrawUtil.dip2px(12));
-        mWeightRulerView.initViewParam(weight, 35.0f, 90.0f, 1);
+        mWeightRulerView.initViewParam((float) weight, 35.0f, 90.0f, 1);
         mWeightRulerView.setValueChangeListener(value -> {
             targetWeight = value;
-            mTvTargetWeight.setText(RxFormatValue.fromat4S5R(value, 1));
-
-            stillNeed = initWeight - targetWeight;
-            String tips = (stillNeed < 0 ? getString(R.string.WeightGain) : getString(R.string.WeightReduction)) + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
-            SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
-                    .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
-                    .setProportion(1.4f)
-                    .setLength(4, tips.length() - 3);
-            mTvTips.setText(builder);
-
             tv_targetDays.setCompoundDrawables(null, null, null, null);
 
+            updateUi(targetWeight);
+
+            //目标不在范围内
             if (targetWeight > maxWeight) {
                 RxToast.normal(getString(R.string.targetHigh));
             } else if (targetWeight < minWeight) {
                 RxToast.normal(getString(R.string.targetLow));
             }
         });
+    }
+
+    private void updateUi(double targetWeight) {
+        mTvTargetWeight.setText(RxFormatValue.fromat4S5R(targetWeight, 1));
+
+        stillNeed = initWeight - targetWeight;
+        String tips = (stillNeed < 0 ? getString(R.string.WeightGain) : getString(R.string.WeightReduction)) + RxFormatValue.fromat4S5R(Math.abs(stillNeed), 1) + " kg";
+        SpannableStringBuilder builder = RxTextUtils.getBuilder(tips)
+                .setForegroundColor(getResources().getColor(R.color.orange_FF7200))
+                .setProportion(1.4f)
+                .setLength(4, tips.length() - 3);
+        mTvTips.setText(builder);
     }
 
 

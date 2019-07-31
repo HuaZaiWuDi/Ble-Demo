@@ -16,7 +16,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.JsonObject;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 import com.vondear.rxtools.utils.RxTextUtils;
 import com.vondear.rxtools.utils.dateUtils.RxFormat;
@@ -141,7 +140,6 @@ public class FoodRecommend extends BaseActivity {
 
         dialog.setLifecycleSubject(lifecycleSubject);
         dialog.setDeleteFoodListener(listBean -> {
-            foodRecord(currentTime);
             RxBus.getInstance().post(new RefreshSlimming());
         });
         dialog.setAddOrUpdateFoodListener(listBean -> {
@@ -210,16 +208,11 @@ public class FoodRecommend extends BaseActivity {
                 .subscribe(new RxSubscriber<RefreshSlimming>() {
                     @Override
                     protected void _onNext(RefreshSlimming refreshSlimming) {
-                        initNetData();
+                        foodRecord(currentTime);
                     }
                 });
     }
 
-    @Override
-    protected void initNetData() {
-        super.initNetData();
-        foodRecord(currentTime);
-    }
 
     @Override
     protected void initBundle(Bundle bundle) {
@@ -233,11 +226,11 @@ public class FoodRecommend extends BaseActivity {
         object.addProperty("heatDate", currentTime);
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService()
                 .fetchOneDayHeatInfo(NetManager.fetchRequest(object.toString())))
-                .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-                .compose(RxComposeUtils.<String>showDialog(tipDialog))
-                .compose(RxCache.getDefault().<String>transformObservable("getAthleticsInfo" + currentTime,
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.showDialog(tipDialog))
+                .compose(RxCache.getDefault().transformObservable("getAthleticsInfo" + currentTime,
                         String.class, CacheStrategy.firstRemote()))
-                .map(new CacheResult.MapFunc<String>())
+                .map(new CacheResult.MapFunc<>())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
@@ -302,25 +295,18 @@ public class FoodRecommend extends BaseActivity {
 
     @OnClick({R.id.layout_breakfast, R.id.layout_lunch, R.id.layout_dinner, R.id.layout_meal})
     public void onViewClicked(View view) {
-        Bundle bundle = new Bundle();
-        bundle.putLong(Key.ADD_FOOD_DATE, currentTime);
-        bundle.putBoolean(Key.ADD_FOOD_NAME, false);//是否是主页跳转的
         switch (view.getId()) {
             case R.id.layout_breakfast:
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_BREAKFAST);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPE_BREAKFAST, currentTime, false);
                 break;
             case R.id.layout_lunch:
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_LUNCH);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPE_LUNCH, currentTime, false);
                 break;
             case R.id.layout_dinner:
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPE_DINNER);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPE_DINNER, currentTime, false);
                 break;
             case R.id.layout_meal:
-                bundle.putInt(Key.ADD_FOOD_TYPE, Key.TYPED_MEAL);
-                RxActivityUtils.skipActivity(mActivity, FoodDetailsFragment.class, bundle);
+                FoodDetailsFragment.start(mContext, Key.TYPED_MEAL, currentTime, false);
                 break;
         }
     }
@@ -354,26 +340,20 @@ public class FoodRecommend extends BaseActivity {
         });
 
         //长按删除
-        adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(final BaseQuickAdapter adapter, View view, final int position) {
-                //显示删除
-                RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
-                        .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
-                        .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
-                        .setContent(getString(R.string.deleteRecord))
-                        .setSureListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                RxLogUtils.d("今日食品类型：" + eatType);
-                                FoodListBean item = (FoodListBean) adapter.getItem(position);
-                                item.setEatType(eatType);
-                                dialog.deleteData(mContext, item);
-                            }
-                        });
-                rxDialog.show();
-                return true;
-            }
+        adapter.setOnItemLongClickListener((adapter1, view, position) -> {
+            //显示删除
+            RxDialogSureCancel rxDialog = new RxDialogSureCancel(mContext)
+                    .setCancelBgColor(ContextCompat.getColor(mContext, R.color.GrayWrite))
+                    .setSureBgColor(ContextCompat.getColor(mContext, R.color.green_61D97F))
+                    .setContent(getString(R.string.deleteRecord))
+                    .setSureListener(v -> {
+                        RxLogUtils.d("今日食品类型：" + eatType);
+                        FoodListBean item = (FoodListBean) adapter1.getItem(position);
+                        item.setEatType(eatType);
+                        dialog.deleteData(mContext, item);
+                    });
+            rxDialog.show();
+            return true;
         });
     }
 
@@ -407,7 +387,6 @@ public class FoodRecommend extends BaseActivity {
                     @Override
                     protected void _onNext(String s) {
                         RxLogUtils.d("修改食物成功");
-                        foodRecord(currentTime);
                         RxBus.getInstance().post(new RefreshSlimming());
                     }
 
