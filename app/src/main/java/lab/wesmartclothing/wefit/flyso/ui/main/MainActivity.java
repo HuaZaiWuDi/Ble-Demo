@@ -56,6 +56,7 @@ import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
+import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.ranking.RankingFragment;
@@ -210,9 +211,17 @@ public class MainActivity extends BaseALocationActivity {
         pageList.add(new BottomTabItem(R.mipmap.icon_record_unselect, R.mipmap.icon_record,
                 getString(R.string.nav_record),
                 RecordFragment.Companion.newInstance()));
-        pageList.add(new BottomTabItem(R.mipmap.ic_ranking_select, R.mipmap.ic_ranking_unselect,
-                getString(R.string.nav_ranking),
-                RankingFragment.getInstance()));
+
+        if (BuildConfig.Wesmart) {
+            pageList.add(new BottomTabItem(R.mipmap.icon_find_select, R.mipmap.icon_find_unselect,
+                    getString(R.string.nav_find),
+                    FindFragment.getInstance()));
+        } else {
+            pageList.add(new BottomTabItem(R.mipmap.ic_ranking_select, R.mipmap.ic_ranking_unselect,
+                    getString(R.string.nav_ranking),
+                    RankingFragment.getInstance()));
+        }
+
         pageList.add(new BottomTabItem(R.mipmap.icon_mine_select, R.mipmap.icon_mine_unselect,
                 getString(R.string.nav_my),
                 MeFragment.getInstance()));
