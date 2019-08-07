@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
+import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.antishake.AntiShake;
 import com.vondear.rxtools.utils.StatusBarUtils;
@@ -147,12 +148,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        MobclickAgent.onPause(this);
         lifecycleSubject.onNext(LifeCycleEvent.PAUSE);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        MobclickAgent.onResume(this);
         isVisibility = true;
         lifecycleSubject.onNext(LifeCycleEvent.RESUME);
         super.onResume();

@@ -227,7 +227,7 @@ public class MyAPP extends Application {
         PlatformConfig.setWeixin(Key.WX_KEY, Key.WX_SECRET);
         PlatformConfig.setQQZone(Key.QQ_KEY, Key.QQ_SECRET);
         PlatformConfig.setSinaWeibo(Key.SINA_KEY, Key.SINA_SECRET, "https://sns.whalecloud.com/sina2/callback");
-        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
     }
 
 

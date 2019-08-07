@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
@@ -53,10 +54,10 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
+import lab.wesmartclothing.wefit.flyso.rxbus.UnreadStateBus;
 import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
-import lab.wesmartclothing.wefit.flyso.ui.main.find.FindFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.ranking.RankingFragment;
@@ -148,6 +149,21 @@ public class MainActivity extends BaseALocationActivity {
                                 }
                             });
                 });
+
+        RxBus.getInstance().registerSticky(UnreadStateBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadStateBus -> {
+                    int unreadMsgCount = unreadStateBus.getUnreadMsgCount();
+                    //故意超出范围，直接设置到最后一个
+                    if (unreadMsgCount > 0)
+                        mCommonTabLayout.showMsg(5, 0);
+                    else {
+                        mCommonTabLayout.hideMsg(5);
+                    }
+
+                }, e -> {
+                });
     }
 
     /**
@@ -213,9 +229,9 @@ public class MainActivity extends BaseALocationActivity {
                 RecordFragment.Companion.newInstance()));
 
         if (BuildConfig.Wesmart) {
-            pageList.add(new BottomTabItem(R.mipmap.icon_find_select, R.mipmap.icon_find_unselect,
-                    getString(R.string.nav_find),
-                    FindFragment.getInstance()));
+//            pageList.add(new BottomTabItem(R.mipmap.icon_find_select, R.mipmap.icon_find_unselect,
+//                    getString(R.string.nav_find),
+//                    FindFragment.getInstance()));
         } else {
             pageList.add(new BottomTabItem(R.mipmap.ic_ranking_select, R.mipmap.ic_ranking_unselect,
                     getString(R.string.nav_ranking),
@@ -280,7 +296,6 @@ public class MainActivity extends BaseALocationActivity {
         mCommonTabLayout.setTextSelectColor(getResources().getColor(R.color.Gray));
         mCommonTabLayout.setTextUnselectColor(getResources().getColor(R.color.GrayWrite));
         mCommonTabLayout.setTabData(mBottomTabItems);
-
         mCommonTabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {

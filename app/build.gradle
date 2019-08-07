@@ -37,7 +37,7 @@ android {
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
-        versionName parent.ext.versionName
+        versionName "1.0.8"
         multiDexEnabled true
         flavorDimensions "default"
 //        // 取消掉系统对.9图片的检查
@@ -120,6 +120,7 @@ android {
         flavors_lightness {
             dimension = "default"
             applicationId "com.lightness.wisenfit"
+            versionName "1.0.6"
             signingConfig signingConfigs.release
             manifestPlaceholders = [AMAP_KEY     : "d08d76ae6bd68061111b1bfd697accf1",
                                     JPUSH_PKGNAME: applicationId,
@@ -145,8 +146,9 @@ android {
         //发布版本, 智享瘦
         flavors_wesmart {
             buildConfigField "boolean", "Wesmart", "true"
+            versionName "1.0.8"
             //第三方配置
-            buildConfigField "String", "UM_KEY", '"5a38b2e8b27b0a02a7000026"'
+            buildConfigField "String", "UM_KEY", '"5c662b4cf1f5567e310009e5"'
             buildConfigField "String", "WX_KEY", '"wxaaeb0352e04684de"'
             buildConfigField "String", "WX_SECRET", '"0d23407fe42a2665dabe3ea2a958daf9"'
             buildConfigField "String", "QQ_KEY", '"1106924585"'

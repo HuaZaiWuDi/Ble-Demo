@@ -1,5 +1,6 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
+import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -38,6 +39,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
+import lab.wesmartclothing.wefit.flyso.rxbus.UnreadStateBus;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
 /**
@@ -94,6 +96,8 @@ public class MeFragment extends BaseAcFragment {
     RxRelativeLayout mLayoutAboutUs;
     @BindView(R.id.tv_invitation)
     TextView mTvInvitation;
+    @BindView(R.id.tv_chatKeFuCount)
+    TextView mTvChatKeFuCount;
 
     public static Fragment getInstance() {
         return new MeFragment();
@@ -123,7 +127,6 @@ public class MeFragment extends BaseAcFragment {
             mLayoutChatKefu.setVisibility(View.VISIBLE);
         } else
             mLayoutChatKefu.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -133,6 +136,7 @@ public class MeFragment extends BaseAcFragment {
     }
 
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initRxBus() {
         //后台上传心率数据成功，刷新界面
@@ -155,6 +159,17 @@ public class MeFragment extends BaseAcFragment {
                         mIvNotify.setBackgroundResource(R.mipmap.icon_email_white);
                     }
                 });
+
+        RxBus.getInstance().registerSticky(UnreadStateBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadStateBus -> {
+                    int unreadMsgCount = unreadStateBus.getUnreadMsgCount();
+                    //故意超出范围，直接设置到最后一个
+                    mTvChatKeFuCount.setText(unreadMsgCount > 0 ? "" + unreadMsgCount : "");
+                }, e -> {
+                });
+
     }
 
     private void initTypeface() {

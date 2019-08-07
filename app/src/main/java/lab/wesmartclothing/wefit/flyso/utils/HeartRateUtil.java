@@ -97,8 +97,14 @@ public class HeartRateUtil {
         }
         dataFlag++;
         //前3条数据丢弃
-        if (dataFlag < 3)
+        if (dataFlag < 3) {
             return null;
+        }
+        //TODO 这里如果
+//        //通常情况是步数未清空
+//        if (currentSteps > 200) {
+//
+//        }
 
         int reversePace = reversePace(currentPace);//反转配速，用于显示在图表上
 

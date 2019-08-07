@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtools.utils.RxKeyboardUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
 
@@ -220,6 +221,7 @@ public abstract class BaseAcFragment extends Fragment {
 
     @Override
     public void onResume() {
+        MobclickAgent.onResume(mActivity);
         RxLogUtils.i(TGA + "：onResume");
         lifecycleSubject.onNext(LifeCycleEvent.RESUME);
         super.onResume();
@@ -227,6 +229,7 @@ public abstract class BaseAcFragment extends Fragment {
 
     @Override
     public void onPause() {
+        MobclickAgent.onPause(mActivity);
         RxLogUtils.i(TGA + "：onPause");
         lifecycleSubject.onNext(LifeCycleEvent.STOP);
         super.onPause();

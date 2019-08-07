@@ -478,6 +478,17 @@
                     android:textSize="15sp"
                     />
 
+                <TextView
+                    android:id="@+id/tv_chatKeFuCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="30dp"
+                    android:textColor="@color/GrayWrite"
+                    android:textSize="13sp"
+                    tools:text="2"/>
+
 
                 <ImageView
                     android:layout_width="wrap_content"
