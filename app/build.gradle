@@ -37,7 +37,7 @@ android {
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
-        versionName "1.0.8"
+        versionName "1.0.6"
         multiDexEnabled true
         flavorDimensions "default"
 //        // 取消掉系统对.9图片的检查
