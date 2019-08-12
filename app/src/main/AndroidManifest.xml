@@ -204,6 +204,8 @@
             android:exported="true"/> <!-- 友盟社会SDK -->
         <!-- 友盟 -->
         <!-- 友盟社会分享登录 -->
+
+
         <activity
             android:name="lab.wesmartclothing.wefit.flyso.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

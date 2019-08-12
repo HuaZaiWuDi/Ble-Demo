@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
@@ -26,6 +27,7 @@ import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxDeviceUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
+import com.vondear.rxtools.utils.RxMetaDataUtils;
 import com.vondear.rxtools.utils.RxThreadPoolUtils;
 import com.vondear.rxtools.utils.RxUtils;
 import com.vondear.rxtools.utils.SPUtils;
@@ -222,12 +224,14 @@ public class MyAPP extends Application {
 
 
     private void initUM() {
+        String channel = RxMetaDataUtils.getMetaDataInApp("UMENG_CHANNEL");
+        Log.d("channel", channel);
         UMConfigure.setLogEnabled(true);
-        UMConfigure.init(MyAPP.this, Key.UM_KEY, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
+        UMConfigure.init(MyAPP.this, Key.UM_KEY, channel, UMConfigure.DEVICE_TYPE_PHONE, "");
         PlatformConfig.setWeixin(Key.WX_KEY, Key.WX_SECRET);
         PlatformConfig.setQQZone(Key.QQ_KEY, Key.QQ_SECRET);
         PlatformConfig.setSinaWeibo(Key.SINA_KEY, Key.SINA_SECRET, "https://sns.whalecloud.com/sina2/callback");
-        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
     }
 
 

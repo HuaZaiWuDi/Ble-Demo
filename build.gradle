@@ -33,6 +33,9 @@ buildscript {
 //        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
         classpath 'com.jakewharton:butterknife-gradle-plugin:9.0.0'
         classpath "com.tencent.bugly:tinker-support:1.1.5"
+
+        //360加固插件
+        classpath 'com.s.android.plugin:jiaguplugin:latest.release'
     }
 }
 

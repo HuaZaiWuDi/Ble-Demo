@@ -93,29 +93,32 @@
 
             <ImageView
                 android:id="@+id/img_wexin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginRight="@dimen/dimen_40"
                 android:layout_toLeftOf="@+id/img_qq"
-                android:background="@mipmap/icon_login_wechat"/>
+                android:padding="10dp"
+                android:src="@mipmap/icon_login_wechat"/>
 
             <ImageView
                 android:id="@+id/img_qq"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
-                android:background="@mipmap/icon_login_qq"
-                android:visibility="visible"/>
+                android:padding="10dp"
+                android:src="@mipmap/icon_login_qq"
+                />
 
             <ImageView
                 android:id="@+id/img_weibo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="@dimen/dimen_40"
                 android:layout_toRightOf="@+id/img_qq"
-                android:background="@mipmap/icon_login_weibo"
-                android:visibility="gone"/>
+                android:padding="10dp"
+                android:src="@mipmap/icon_login_weibo"
+                />
 
 
         </RelativeLayout>

@@ -172,8 +172,28 @@ android {
         flavors_zouyun {
             applicationId "com.zouyun.wisenfit"
             buildConfigField "String", "COMPANY_KEY", '"Zouyun"'
+            buildConfigField "boolean", "Wesmart", "false"
 
             signingConfig signingConfigs.release
+
+            manifestPlaceholders = [AMAP_KEY     : "d08d76ae6bd68061111b1bfd697accf1",
+                                    JPUSH_PKGNAME: applicationId,
+                                    JPUSH_APPKEY : "312a083f2aa786ea41bc8bfd", //JPush上注册的包名对应的appkey.
+                                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+                                    qqappid      : '1108606528',//QQ分享
+            ]
+
+            //第三方配置
+            buildConfigField "String", "UM_KEY", '"5c662b4cf1f5567e310009e5"'
+            buildConfigField "String", "WX_KEY", '"wxaaeb0352e04684de"'
+            buildConfigField "String", "WX_SECRET", '"0d23407fe42a2665dabe3ea2a958daf9"'
+            buildConfigField "String", "QQ_KEY", '"1106924585"'
+            buildConfigField "String", "QQ_SECRET", '"RGcOhc7q8qZMrhxz"'
+            buildConfigField "String", "SINA_KEY", '"3322261844"'
+            buildConfigField "String", "SINA_SECRET", '"60eabde1de49af086f53aa5fb230f7ed"'
+            buildConfigField "String", "BUGLY_KEY", '"11c87579c7"'
+            buildConfigField "String", "URL_RELEASE", '"https://api.wesmartclothing.com/mix/"'
+
         }
 
     }
@@ -276,3 +296,18 @@ dependencies {
 //        exclude group: 'com.github.bumptech.glide'
     }
 }
+
+//https://github.com/keepLove/JiaguPlugin
+//360加固   只需要执行 assemble${variantName} 就可以了
+//插件会在执行assemble${variantName}前生成sJiaGu${variantName}方法
+//插件会在Release编译打包的时候自动加固，测试模式时Debug编译打包也会执行
+apply plugin: 'jiagu'
+
+jiagu {
+    jiaGuDir = "E:\\360Downloads\\360jiagu\\jiagu"
+    username = "15323754617"
+    password = "zskj123456"
+    enable = false
+    debug = false
+}
+
