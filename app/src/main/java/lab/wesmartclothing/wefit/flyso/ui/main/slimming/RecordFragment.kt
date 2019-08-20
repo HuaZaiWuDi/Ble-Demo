@@ -38,6 +38,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming
+import lab.wesmartclothing.wefit.flyso.ui.ems.EmsDialogFragment
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.energy.EnergyActivity
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.DietRecordActivity
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.plan.PlanWebActivity
@@ -84,6 +85,9 @@ class RecordFragment : BaseAcFragment() {
         initChart(mLineChart)
         initShare()
         initClick()
+
+
+
     }
 
     private fun initWareView() {
@@ -790,7 +794,7 @@ class RecordFragment : BaseAcFragment() {
             R.id.layout_HealthReport -> {
                 //判断是否审核通过
                 val userInfo = MyAPP.getgUserInfo()
-                if (userInfo!!.planState == 3) {
+                if (userInfo.planState == 3) {
                     val url = ServiceAPI.SHARE_INFORM_URL + userInfo.informId + "&sign=true"
                     PlanWebActivity.startActivity(mContext, url)
                 }

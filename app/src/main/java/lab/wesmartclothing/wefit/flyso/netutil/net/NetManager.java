@@ -45,7 +45,7 @@ public class NetManager {
     }
 
 
-    public NetManager() {
+    private NetManager() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -98,6 +98,12 @@ public class NetManager {
         mSystemService = retrofit.create(SystemService.class);
 
     }
+
+    public static void refreshRetrofit() {
+        mSystemService = null;
+        mApiService = null;
+    }
+
 
     public static SystemService getSystemService() {
         if (mSystemService == null) {

@@ -1,13 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.record;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
@@ -22,7 +19,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.kongzue.dialog.listener.DialogLifeCycleListener;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxDataUtils;
@@ -58,7 +54,10 @@ import lab.wesmartclothing.wefit.flyso.BuildConfig;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseAcFragment;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.EMSManager;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.ScannerManager;
 import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.entity.AthlPlanListBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
@@ -73,9 +72,9 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.MessageChangeBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.ui.ems.EmsDialogFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MessageFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.UserInfofragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.heat.FoodDetailsFragment;
@@ -160,8 +159,6 @@ public class SlimmingFragment extends BaseAcFragment {
     CardView mLayoutMeal;
     @BindView(R.id.layout_heat)
     LinearLayout mLayoutHeat;
-    @BindView(R.id.layout_sportTitle)
-    LinearLayout mLayoutSportTitle;
     @BindView(R.id.lineChart)
     LineChart mLineChart;
     @BindView(R.id.tv_sportingTime)
@@ -240,10 +237,6 @@ public class SlimmingFragment extends BaseAcFragment {
     TextView mTvBodybuilding;
     @BindView(R.id.layout_gotoPlanSporting)
     RelativeLayout mLayoutGotoPlanSporting;
-    @BindView(R.id.img_weight_tip)
-    ImageView mImgWeightTip;
-    @BindView(R.id.img_sporting_tip)
-    ImageView mImgSportingTip;
     @BindView(R.id.layout_targetTitle)
     RelativeLayout mLayoutTargetTitle;
     @BindView(R.id.layout_targetContent)
@@ -260,6 +253,8 @@ public class SlimmingFragment extends BaseAcFragment {
     ImageView ImgWeightFlag;
     @BindView(R.id.iv_kefu)
     ImageView mIvKefu;
+    @BindView(R.id.iv_ems_control)
+    ImageView mIvEmsControl;
 
     private PlanBean bean;
     private HeartLineChartUtils lineChartUtils;
@@ -293,7 +288,6 @@ public class SlimmingFragment extends BaseAcFragment {
     @Override
     protected void initViews() {
         super.initViews();
-        initPermissions();
 
         mTvCurrentWeight.setTypeface(MyAPP.typeface);
         mTvInitWeight.setTypeface(MyAPP.typeface);
@@ -315,6 +309,11 @@ public class SlimmingFragment extends BaseAcFragment {
         } else {
             mIvKefu.setVisibility(View.GONE);
         }
+
+        int id = RxUtils.getResIdByName(mContext, "ic_ems_control", "drawable");
+        if (id != 0)
+            mIvEmsControl.setImageResource(id);
+
 
         mScroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
             if (scrollY <= RxUtils.dp2px(32) && isFold) {
@@ -365,28 +364,25 @@ public class SlimmingFragment extends BaseAcFragment {
 
         //设备连接
         RxBus.getInstance().register2(HeartRateChangeBus.class)
-                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.bindLifeResume(this))
                 .subscribe(new RxSubscriber<HeartRateChangeBus>() {
                     @SuppressLint("CheckResult")
                     @Override
                     protected void _onNext(HeartRateChangeBus sportsDataTab) {
-                        if (BleService.clothingFinish && isVisibled()) {
-                            BleService.clothingFinish = false;
-
-                            String key = HeartRateUtil.getTodayData();
-                            if (!RxDataUtils.isNullString(key)) {
-                                RxCache.getDefault().<HeartRateBean>load(key, HeartRateBean.class)
-                                        .map(new CacheResult.MapFunc<>())
-                                        .subscribe(bean -> {
-                                            int planFlag = bean.getPlanFlag();
-                                            showSkipSportAcDialog(key, planFlag == 1);
-                                        }, e -> {
-                                            RxLogUtils.e("上一次的运动数据", e);
-                                            showSkipSportAcDialog("", bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
-                                        });
-                            } else {
-                                showSkipSportAcDialog("", bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
-                            }
+                        String key = HeartRateUtil.getTodayData();
+                        if (!RxDataUtils.isNullString(key)) {
+                            RxCache.getDefault().<HeartRateBean>load(key, HeartRateBean.class)
+                                    .map(new CacheResult.MapFunc<>())
+                                    .subscribe(bean -> {
+                                        int planFlag = bean.getPlanFlag();
+                                        showSkipSportAcDialog(key, planFlag == 1);
+                                    }, e -> {
+                                        new HeartRateUtil().clearData(key);
+                                        RxLogUtils.e("上一次的运动数据", e);
+                                        showSkipSportAcDialog("", bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
+                                    });
+                        } else {
+                            showSkipSportAcDialog("", bean != null && !RxDataUtils.isEmpty(bean.getAthlPlanList()));
                         }
                     }
                 });
@@ -555,7 +551,7 @@ public class SlimmingFragment extends BaseAcFragment {
         heat.add(todayHeatVO.getPlanIntake());
         heat.add(todayHeatVO.getRealIntake());
 
-        return Collections.max(heat) == 0 ? 1 : Collections.max(heat);
+        return Math.max(Collections.max(heat), 1);
     }
 
     /**
@@ -785,7 +781,7 @@ public class SlimmingFragment extends BaseAcFragment {
         }
 
         //瘦身衣状态
-        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
+        if (!MyBleManager.Companion.getInstance().isBinded() && !EMSManager.Companion.getInstance().isBinded()) {
             mLayoutClothingDefault.setVisibility(View.VISIBLE);
             mCardFreeSporting.setVisibility(View.GONE);
             mCardCurriculumSporting.setVisibility(View.GONE);
@@ -805,7 +801,7 @@ public class SlimmingFragment extends BaseAcFragment {
         }
 
         //体脂称状态
-        if (!BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
+        if (!QNBleManager.getInstance().isBinded()) {
             mLayoutScaleDefault.setVisibility(View.VISIBLE);
             mBtnGoBindScale.setText(R.string.goBind);
             mTvWeightTip.setText(R.string.bindScale);
@@ -857,6 +853,7 @@ public class SlimmingFragment extends BaseAcFragment {
             R.id.img_Recipes,
             R.id.tv_resetTarget,
             R.id.layout_foodRecord,
+            R.id.iv_ems_control,
             R.id.iv_kefu
     })
     public void onViewClicked(View view) {
@@ -900,14 +897,14 @@ public class SlimmingFragment extends BaseAcFragment {
                 FoodDetailsFragment.start(mContext, Key.TYPED_MEAL, System.currentTimeMillis(), true);
                 break;
             case R.id.reWeigh:
-                if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
+                if (!ScannerManager.INSTANCE.isBLEEnabled()) {
                     showOpenBlueTooth();
                 } else {
                     RxActivityUtils.skipActivity(mContext, WeightAddFragment.class);
                 }
                 break;
             case R.id.btn_goBind_scale:
-                if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
+                if (!ScannerManager.INSTANCE.isBLEEnabled()) {
                     showOpenBlueTooth();
                 } else {
                     if (getString(R.string.goBind).equals(mBtnGoBindScale.getText().toString())) {
@@ -956,17 +953,25 @@ public class SlimmingFragment extends BaseAcFragment {
             case R.id.iv_kefu:
                 ChatManager.INSTANCE.register();
                 break;
+            case R.id.iv_ems_control:
+                if (EMSManager.Companion.getInstance().isConnect()) {
+                    EmsDialogFragment dialogFragment = EmsDialogFragment.Companion.newInstance();
+                    dialogFragment.show(getChildFragmentManager(), "EmsDialogFragment");
+                }
+                break;
         }
     }
 
     //跳转运动界面钱的判断
     private void skipSportAc(boolean isPlan, String key) {
+
         //进入实时运动界面，定制课程
-        if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
+        if (!ScannerManager.INSTANCE.isBLEEnabled()) {
             showOpenBlueTooth();
-        } else if (!MyBleManager.Companion.getInstance().isConnect()) {
+        } else if (!MyBleManager.Companion.getInstance().isConnect()
+                && !EMSManager.Companion.getInstance().isConnect()) {
             tipDialog.show(getString(R.string.connecting), 3000);
-            MyBleManager.Companion.getInstance().scanMacAddress();
+            ScannerManager.INSTANCE.startScan();
             if (tipDialog.getTipDialog() != null) {
                 tipDialog.getTipDialog().setDialogLifeCycleListener(new DialogLifeCycleListener() {
                     @Override
@@ -981,7 +986,8 @@ public class SlimmingFragment extends BaseAcFragment {
 
                     @Override
                     public void onDismiss() {
-                        if (MyBleManager.Companion.getInstance().isConnect()) {
+                        if (MyBleManager.Companion.getInstance().isConnect()
+                                || EMSManager.Companion.getInstance().isConnect()) {
                             if (isPlan) {
                                 if (!RxDataUtils.isEmpty(bean.getAthlPlanList())) {
                                     PlanSportingActivity.start(mContext, bean, key);
@@ -1077,34 +1083,10 @@ public class SlimmingFragment extends BaseAcFragment {
                 .setSureListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MyBleManager.Companion.getInstance().enableBLE();
+                        ScannerManager.INSTANCE.enableBLE();
                     }
                 });
         rxDialog.show();
-    }
-
-
-    private void initPermissions() {
-        new RxPermissions((FragmentActivity) mActivity)
-                .request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                .compose(RxComposeUtils.<Boolean>bindLife(lifecycleSubject))
-                .subscribe(new RxSubscriber<Boolean>() {
-                    @Override
-                    protected void _onNext(Boolean aBoolean) {
-                        if (!aBoolean) {
-                            new RxDialogSureCancel(mContext)
-                                    .setTitle(getString(R.string.tip))
-                                    .setContent(getString(R.string.open_loaction))
-                                    .setSure(getString(R.string.open))
-                                    .setSureListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            initPermissions();
-                                        }
-                                    }).show();
-                        }
-                    }
-                });
     }
 
 

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
 
 /**
  * 项目名称：MyProject
@@ -30,6 +31,7 @@ public abstract class RxNetSubscriber<T> implements Observer<T> {
         _onError(new RxHttpsException().handleResponseError(e),
                 e instanceof ExplainException ? ((ExplainException) e).getCode() : -1);
 
+        BuryingPoint.INSTANCE.netErrorMessage(new RxHttpsException().handleResponseError(e), e.toString());
     }
 
     @Override

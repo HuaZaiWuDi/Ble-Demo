@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.charts.LineChart;
 import com.qmuiteam.qmui.widget.QMUITopBar;
+import com.today.step.lib.TodayStepManager;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.model.timer.MyTimer;
 import com.vondear.rxtools.utils.RxConstUtils;
@@ -54,7 +55,9 @@ import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
+import lab.wesmartclothing.wefit.flyso.ble.EMSManager;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.ScannerManager;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateBean;
 import lab.wesmartclothing.wefit.flyso.entity.HeartRateItemBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -62,9 +65,9 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.EMSConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.HeartLineChartUtils;
@@ -158,6 +161,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
     @Override
     protected void initViews() {
         super.initViews();
+        initStepService();
         BleAPI.clearStep();
         initTopBar();
         initSwitch();
@@ -166,6 +170,12 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         weightWarn();
         sportTip();
         lineChartUtils = new HeartLineChartUtils(mChartHeartRate);
+    }
+
+    private void initStepService() {
+        if (EMSManager.Companion.getInstance().isConnect())
+            //初始化计步模块
+            TodayStepManager.startTodayStepService(this.getApplication());
     }
 
     /**
@@ -336,7 +346,8 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         btn_Connect.setTextColor(Color.WHITE);
         btn_Connect.setTextSize(13);
         btn_Connect.setOnClickListener(view -> {
-            if (!MyBleManager.Companion.getInstance().isConnect()) {
+            if (!MyBleManager.Companion.getInstance().isConnect()
+                    && !EMSManager.Companion.getInstance().isConnect()) {
                 RxToast.normal(getString(R.string.connecting), 2000);
             }
         });
@@ -397,7 +408,6 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
                     protected void _onNext(String s) {
                         mHeartRateUtil.clearData(SportKey);
 
-                        BleService.clothingFinish = true;
                         //这里因为是后台上传数据，并不是跳转，使用RxBus方式
                         RxBus.getInstance().post(new RefreshSlimming());
 
@@ -453,9 +463,22 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
         super.initRxBus2();
 
         RxBus.getInstance().registerSticky(ClothingConnectBus.class)
-                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .compose(RxComposeUtils.bindLife(this))
                 .subscribe(clothingConnect -> {
                     boolean state = clothingConnect.isConnect();
+                    btn_Connect.setText(state ? R.string.connected : R.string.connecting);
+                    if (state) {
+                        dismissAllDialog();
+                    } else
+                        trySporting();
+                    pause = !state;
+                    startOrPauseSport();
+                });
+
+        RxBus.getInstance().registerSticky(EMSConnectBus.class)
+                .compose(RxComposeUtils.bindLife(this))
+                .subscribe(connected -> {
+                    boolean state = connected.isConnect();
                     btn_Connect.setText(state ? R.string.connected : R.string.connecting);
                     if (state) {
                         dismissAllDialog();
@@ -477,7 +500,8 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
      * 尝试继续运动，继续运动：提示开启蓝牙，并重连10秒,结束运动：直接结束
      */
     private void trySporting() {
-        if (MyBleManager.Companion.getInstance().isConnect()) {
+        if (MyBleManager.Companion.getInstance().isConnect()
+                || EMSManager.Companion.getInstance().isConnect()) {
             pause = !pause;
             startOrPauseSport();
             speakAdd(pause ? getString(R.string.speech_sportPause) : getString(R.string.speech_sportPlay));
@@ -489,8 +513,7 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
                     .setContent(getString(R.string.bleDeviceDisconnected))
                     .setCancel(getString(R.string.continueRun))
                     .setCancelListener(view -> {
-                        if (!MyBleManager.Companion.getInstance().isBLEEnabled())
-                            MyBleManager.Companion.getInstance().enableBLE();
+                        ScannerManager.INSTANCE.enableBLE();
                     })
                     .setSure(getString(R.string.finishRun))
                     .setSureListener(v -> sportFinish());
@@ -555,8 +578,6 @@ public abstract class BaseSportActivity extends BaseActivity implements SportInt
                             mTvMaxHeartRate.setText(RxFormatValue.fromat4S5R(bean.getKilometers(), 2));
                             mTvSportsTime.setText(RxFormat.setSec2MS(currentTime));
                             mTvCurrentTime.setText(RxFormat.setSec2MS(currentTime));
-
-//                            mHeartRateUtil.saveSportKey(SportKey);
                         },
                         e -> {
                             RxLogUtils.e("上一次的运动数据", e);

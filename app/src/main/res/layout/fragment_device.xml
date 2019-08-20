@@ -176,6 +176,7 @@
                 android:background="@drawable/selector_ripple_bg_">
 
                 <ImageView
+                    android:id="@+id/iv_clothingIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -183,6 +184,7 @@
                     android:src="@mipmap/icon_clothing_view"/>
 
                 <TextView
+                    android:id="@+id/tv_clothingName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -256,11 +258,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="22dp"
-                        android:text="--"
+                        android:text="-\t-"
                         android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        tools:text="99"/>
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -294,11 +296,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="22dp"
-                        android:text="--"
+                        android:text="-\t-"
                         android:textColor="@color/Gray"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        tools:text="99"/>
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -339,7 +341,8 @@
             android:layout_margin="16dp"
             android:text="暂无设备，请添加设备"
             android:textColor="@color/GrayWrite"
-            android:textSize="10sp"/>
+            android:textSize="10sp"
+            android:visibility="gone"/>
 
 
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout

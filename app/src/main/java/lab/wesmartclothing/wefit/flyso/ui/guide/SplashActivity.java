@@ -30,6 +30,7 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.ServiceAPI;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
+import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.test.Test;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
@@ -76,7 +77,8 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-
+        HeartSectionUtil.initMaxHeart();
+        startService(new Intent(this, BleService.class));
         JPushUtils.init(getApplication());
         registerReceiver(APPReplacedReceiver, new IntentFilter(Intent.ACTION_MY_PACKAGE_REPLACED));
     }
@@ -90,9 +92,9 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
-
         initData();
         initUserInfo();
+
     }
 
     private void initUserInfo() {
@@ -104,7 +106,6 @@ public class SplashActivity extends BaseActivity {
         }
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().userInfo())
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
-//                .timeout(3, TimeUnit.SECONDS)
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
@@ -126,12 +127,9 @@ public class SplashActivity extends BaseActivity {
 
         if (userInfo != null) {
             int sex = userInfo.getSex();
-            SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
-            SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
             isSaveUserInfo = sex == 0;
             hasInviteCode = userInfo.isHasInviteCode();
 
-            HeartSectionUtil.initMaxHeart(userInfo);
             RxLogUtils.d("跳转:" + userInfo.toString());
         }
 
@@ -156,7 +154,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void goError(int code) {
-        if (code == -99 || code == 6 || code == 9001) {//token验证失败
+        if (code == -99 || code == 6 || code == 9001 || code == -1) {//token验证失败
             RxActivityUtils.skipActivityAndFinish(mActivity, LoginRegisterActivity.class);
         } else {
             gotoMain(SPUtils.getString(SPKey.SP_UserInfo));
@@ -169,7 +167,6 @@ public class SplashActivity extends BaseActivity {
         unregisterReceiver(APPReplacedReceiver);
         super.onDestroy();
     }
-
 
     /**
      * 重传在无网络情况下未上传的数据

@@ -12,7 +12,6 @@ import com.vondear.rxtools.utils.RxLogUtils;
  * @FileName ActivityLifecycleImpl
  * @Date 2018/12/14 14:02
  * @Author JACK
- * @Describe TODO
  * @Project Android_WeFit_2.0
  */
 public class ActivityLifecycleImpl implements Application.ActivityLifecycleCallbacks {

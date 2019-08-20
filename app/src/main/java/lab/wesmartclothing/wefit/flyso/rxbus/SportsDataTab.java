@@ -236,7 +236,7 @@ public class SportsDataTab {
     @Override
     public String toString() {
         return "SportsDataTab{" +
-                ", steps=" + steps +
+                " steps=" + steps +
                 ", kilometre=" + kilometre +
                 ", stepSpeed=" + stepSpeed +
                 ", reversePace=" + reversePace +
@@ -244,17 +244,17 @@ public class SportsDataTab {
                 ", minPace=" + minPace +
                 ", avPace=" + avPace +
                 ", cadence=" + cadence +
-                ", duration=" + duration +
+//                ", duration=" + duration +
                 ", kcal=" + kcal +
-                ", maxHeart=" + maxHeart +
-                ", minHeart=" + minHeart +
+//                ", maxHeart=" + maxHeart +
+//                ", minHeart=" + minHeart +
                 ", curHeart=" + curHeart +
-                ", isPower=" + getPower() +
-                ", lightColor=" + getLightColor() +
-                ", temp=" + temp +
-                ", voltage=" + voltage +
+//                ", isPower=" + getPower() +
+//                ", lightColor=" + getLightColor() +
+//                ", temp=" + temp +
+//                ", voltage=" + voltage +
                 ", date=" + RxFormat.setFormatDate(date, RxFormat.Date_Date) +
-                ", score=" + score +
+//                ", score=" + score +
                 '}';
     }
 }

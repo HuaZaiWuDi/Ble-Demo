@@ -10,6 +10,7 @@ public interface BleKey {
     //    String Smart_Clothing = "W";
 //    String Smart_Clothing = "WeSm";
     String Smart_Clothing = "WeSma";
+    String EMS_Clothing = "LPS7809397";
 //    String Smart_Clothing = "WeSmartCloth";
 
     /**
@@ -34,6 +35,7 @@ public interface BleKey {
      */
     String TYPE_SCALE = "ZS-TZC-0001";
     String TYPE_CLOTHING = "ZS-SSY-0001";
+    String TYPE_EMS = "ZS-EMS-0001";
 
 
     ///////////////////////////////////////////////////////////////////////////

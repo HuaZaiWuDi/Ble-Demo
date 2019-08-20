@@ -1,8 +1,9 @@
-package com.wesmarclothing.kotlintools.kotlin.utils
+package lab.wesmartclothing.wefit.flyso.utils.utils
 
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import com.wesmarclothing.kotlintools.kotlin.utils.toBundle
 
 /**
  * Description: Fragment相关扩展

@@ -2,8 +2,6 @@ package lab.wesmartclothing.wefit.flyso.ui.userinfo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -26,7 +24,6 @@ import com.vondear.rxtools.model.timer.MyTimerListener;
 import com.vondear.rxtools.utils.RxAnimationUtils;
 import com.vondear.rxtools.utils.RxLocationUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.utils.StatusBarUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogGPSCheck;
@@ -44,9 +41,10 @@ import butterknife.OnClick;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.EMSManager;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
-import lab.wesmartclothing.wefit.flyso.buryingpoint.BuryingPoint;
+import lab.wesmartclothing.wefit.flyso.ble.ScannerManager;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceBean;
 import lab.wesmartclothing.wefit.flyso.entity.BindDeviceItem;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
@@ -56,10 +54,8 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.BleStateChangedBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.main.MainActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -113,20 +109,21 @@ public class AddDeviceActivity extends BaseActivity {
             forceBind = getIntent().getExtras().getBoolean(Key.BUNDLE_FORCE_BIND);
         }
 
-        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
+
         initView();
         initRxBus();
         startScan();
     }
 
     private void startScan() {
-        if (!MyBleManager.Companion.getInstance().isBLEEnabled()) {
-            MyBleManager.Companion.getInstance().enableBLE();
+        ScannerManager.INSTANCE.enableBLE();
+        if (!ScannerManager.INSTANCE.isBLEEnabled()) {
             switchStatus(STATUS_NO_DEVICE);
             mTvDetails.setText(R.string.checkUnenableBluetooth);
             return;
         }
 
+        ScannerManager.INSTANCE.startScan();
         switchStatus(STATUS_SCAN_DEVICE);
 
         mDeviceLists.clear();
@@ -208,7 +205,18 @@ public class AddDeviceActivity extends BaseActivity {
         adapter = new BaseQuickAdapter<BindDeviceBean, BaseViewHolder>(R.layout.item_bind_device) {
             @Override
             protected void convert(BaseViewHolder helper, BindDeviceBean item) {
-                helper.setImageResource(R.id.img_weight, BleKey.TYPE_SCALE.equals(item.getDeivceType()) ? R.mipmap.icon_scale_view : R.mipmap.icon_clothing_view);
+                switch (item.getDeivceType()) {
+                    case BleKey.TYPE_SCALE:
+                        helper.setImageResource(R.id.img_weight, R.mipmap.icon_scale_view);
+                        break;
+                    case BleKey.TYPE_CLOTHING:
+                        helper.setImageResource(R.id.img_weight, R.mipmap.icon_clothing_view);
+                        break;
+                    case BleKey.TYPE_EMS:
+                        helper.setImageResource(R.id.img_weight, R.mipmap.ic_ems_m);
+                        break;
+                }
+
                 if (item.isBind()) {
                     helper.getView(R.id.tv_Bind).setVisibility(View.GONE);
                     helper.setVisible(R.id.tv_bindings, true);
@@ -226,31 +234,32 @@ public class AddDeviceActivity extends BaseActivity {
                 helper.addOnClickListener(R.id.tv_Bind);
             }
         };
-        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (view.getId() == R.id.tv_Bind) {
-                    RxLogUtils.d("点击了绑定");
+        adapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if (view.getId() == R.id.tv_Bind) {
+                RxLogUtils.d("点击了绑定");
 
-                    final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
-                    if (BleKey.TYPE_SCALE.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC))) {
-                        RxToast.normal(getString(R.string.bindedScale));
-                        return;
-                    }
-                    if (BleKey.TYPE_CLOTHING.equals(item.getDeivceType()) && BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC))) {
-                        RxToast.normal(getString(R.string.bindedClothing));
-                        return;
-                    }
-                    List<BindDeviceBean> data = adapter.getData();
-                    for (int i = 0; i < data.size(); i++) {
-                        if (data.get(i).getDeivceType() == item.getDeivceType()) {
-                            data.get(i).setBind(false);
-                        }
-                    }
-                    item.setBind(true);
-                    adapter.notifyDataSetChanged();
-                    switchStatus(STATUS_BIND_DEVICE);
+                final BindDeviceBean item = (BindDeviceBean) adapter.getItem(position);
+                if (BleKey.TYPE_SCALE.equals(item.getDeivceType()) && QNBleManager.getInstance().isBinded()) {
+                    RxToast.normal(getString(R.string.bindedScale));
+                    return;
                 }
+                if (BleKey.TYPE_CLOTHING.equals(item.getDeivceType()) && MyBleManager.Companion.getInstance().isBinded()) {
+                    RxToast.normal(getString(R.string.bindedClothing));
+                    return;
+                }
+                if (BleKey.TYPE_EMS.equals(item.getDeivceType()) && EMSManager.Companion.getInstance().isBinded()) {
+                    RxToast.normal(getString(R.string.bindedEMSClothing));
+                    return;
+                }
+                List<BindDeviceBean> data = adapter.getData();
+                for (int i = 0; i < data.size(); i++) {
+                    if (data.get(i).getDeivceType() == item.getDeivceType()) {
+                        data.get(i).setBind(false);
+                    }
+                }
+                item.setBind(true);
+                adapter.notifyDataSetChanged();
+                switchStatus(STATUS_BIND_DEVICE);
             }
         });
         adapter.bindToRecyclerView(mMRecyclerView);
@@ -285,18 +294,16 @@ public class AddDeviceActivity extends BaseActivity {
 
                         for (BindDeviceBean bean : beans) {
                             if (bean.isBind())
-                                if (BleKey.TYPE_SCALE.equals(bean.getDeivceType())) {
-                                    SPUtils.put(SPKey.SP_scaleMAC, bean.getDeviceMac());
-                                    BuryingPoint.INSTANCE.clothingState(bean.getDeviceMac(), "绑定设备：");
-                                    if (bean.getQNBleDevice() != null)
-                                        QNBleManager.getInstance().connectDevice(bean.getQNBleDevice());
-                                } else {
-                                    if (bean.getBluetoothDevice() != null) {
-                                        MyBleManager.Companion.getInstance().disConnect();
-                                        MyBleManager.Companion.getInstance().doConnect(bean.getBluetoothDevice());
-                                    }
-                                    BuryingPoint.INSTANCE.scaleState(bean.getDeviceMac(), "绑定设备：");
-                                    SPUtils.put(SPKey.SP_clothingMAC, bean.getDeviceMac());
+                                switch (bean.getDeivceType()) {
+                                    case BleKey.TYPE_SCALE:
+                                        QNBleManager.getInstance().bind(bean.getQNBleDevice());
+                                        break;
+                                    case BleKey.TYPE_CLOTHING:
+                                        MyBleManager.Companion.getInstance().bind(bean.getBluetoothDevice());
+                                        break;
+                                    case BleKey.TYPE_EMS:
+                                        EMSManager.Companion.getInstance().bind(bean.getBluetoothDevice());
+                                        break;
                                 }
                         }
 
@@ -323,8 +330,9 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
     private void isBind(final BindDeviceBean bean) {
-        if (bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_scaleMAC)) ||
-                bean.getDeviceMac().equals(SPUtils.getString(SPKey.SP_clothingMAC))) {
+        if (bean.getDeviceMac().equals(MyAPP.getgUserInfo().getScalesMacAddr()) ||
+                bean.getDeviceMac().equals(MyAPP.getgUserInfo().getClothesMacAddr()) ||
+                bean.getDeviceMac().equals(MyAPP.getgUserInfo().getEmsMacAddr())) {
             return;
         }
         if (scanDevice.containsKey(bean.getDeviceMac())) {
@@ -346,13 +354,11 @@ public class AddDeviceActivity extends BaseActivity {
                     protected void _onNext(String s) {
                         RxLogUtils.d("结束：" + s);
                         bean.setBind("true".equals(s));
-//                        adapter.addData(bean);
                         sortList(bean);
                     }
 
                     @Override
                     protected void _onError(String error, int code) {
-//                        adapter.addData(bean);
                         sortList(bean);
                     }
 

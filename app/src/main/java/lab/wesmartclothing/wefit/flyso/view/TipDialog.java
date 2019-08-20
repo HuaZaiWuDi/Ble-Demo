@@ -12,7 +12,7 @@ import lab.wesmartclothing.wefit.flyso.R;
  * Created icon_hide_password jk on 2018/5/28.
  */
 public class TipDialog {
-    private final long defaultTimeout = 5 * 1000;
+    private final long defaultTimeout = 15 * 1000;
     private WaitDialog dialog;
     private Context mContext;
     private Handler timeoutHandler = new Handler();

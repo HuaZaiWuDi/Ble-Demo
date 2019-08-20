@@ -20,6 +20,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.SportInterface;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.PhoneStepBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.SportsDataTab;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 import lab.wesmartclothing.wefit.flyso.utils.Number2Chinese;
@@ -110,48 +111,63 @@ public class SportingActivity extends BaseSportActivity implements SportInterfac
                             mTvAvHeartRate.setText("--");
                             return;
                         }
-                        //配速
-                        int stepSpeed = sportsDataTab.getStepSpeed();
+                        handleData(sportsDataTab);
 
-                        if (stepSpeed == 0) {
+                    }
+                });
+
+        RxBus.getInstance().register2(PhoneStepBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(new RxSubscriber<PhoneStepBus>() {
+                    @Override
+                    protected void _onNext(PhoneStepBus heartRateData) {
+                        SportsDataTab sportsDataTab = mHeartRateUtil.addRealTimeData(heartRateData.getStep());
+                        if (pause) return;
+                        if (sportsDataTab == null) {
                             mTvAvHeartRate.setText("--");
                             return;
                         }
-
-                        currentKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
-
-                        mTvAvHeartRate.setText(RxFormat.setSec2MS(stepSpeed));
-                        double kilometre = sportsDataTab.getKilometre();
-                        mTvMaxHeartRate.setText(RxFormatValue.fromat4S5R(kilometre, 2));
-                        RxTextUtils.getBuilder(currentKcal + "")
-                                .append("\tkcal").setProportion(0.3f)
-                                .into(mTvKcal);
-
-                        //每km播报一次
-                        if (kilometreFlag != (int) kilometre) {
-                            kilometreFlag = (int) kilometre;
-                            speakAdd(getString(R.string.Speech_eachKm,
-                                    Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(kilometre, 2)),
-                                    Number2Chinese.number2Chinese((int) currentKcal + ""),
-                                    Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
-                                            + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
-                                    Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
-                                            (currentTime % 60 == 0 ? "" : Number2Chinese.number2Chinese(currentTime % 60 + "") + "秒")
-                            ));
-                        }
-
-                        lineChartUtils.setRealTimeData(sportsDataTab.getReversePace());
-                        freeTextSpeak(sportsDataTab.getReversePace());
-                        guideLineMove();
-                        saveData(sportsDataTab);
-
-                        //撤销最大显示范围，让一屏显示所有数据
-                        if (mChartHeartRate.getData().getEntryCount() > 90) {
-                            XAxis xAxis = mChartHeartRate.getXAxis();
-                            xAxis.resetAxisMaximum();
-                        }
+                        handleData(sportsDataTab);
                     }
                 });
+    }
+
+    private void handleData(SportsDataTab sportsDataTab) {
+        //配速
+        int stepSpeed = sportsDataTab.getStepSpeed();
+
+        currentKcal = RxFormatValue.format4S5R(sportsDataTab.getKcal(), 1);
+
+        mTvAvHeartRate.setText(RxFormat.setSec2MS(stepSpeed));
+        double kilometre = sportsDataTab.getKilometre();
+        mTvMaxHeartRate.setText(RxFormatValue.fromat4S5R(kilometre, 2));
+        RxTextUtils.getBuilder(currentKcal + "")
+                .append("\tkcal").setProportion(0.3f)
+                .into(mTvKcal);
+
+        //每km播报一次
+        if (kilometreFlag != (int) kilometre) {
+            kilometreFlag = (int) kilometre;
+            speakAdd(getString(R.string.Speech_eachKm,
+                    Number2Chinese.number2Chinese(RxFormatValue.fromat4S5R(kilometre, 2)),
+                    Number2Chinese.number2Chinese((int) currentKcal + ""),
+                    Number2Chinese.number2Chinese(stepSpeed / 60 + "") + "分钟"
+                            + Number2Chinese.number2Chinese(stepSpeed % 60 + "") + "秒",
+                    Number2Chinese.number2Chinese(currentTime / 60 + "") + "分钟" +
+                            (currentTime % 60 == 0 ? "" : Number2Chinese.number2Chinese(currentTime % 60 + "") + "秒")
+            ));
+        }
+
+        lineChartUtils.setRealTimeData(sportsDataTab.getReversePace());
+        freeTextSpeak(sportsDataTab.getReversePace());
+        guideLineMove();
+        saveData(sportsDataTab);
+
+        //撤销最大显示范围，让一屏显示所有数据
+        if (mChartHeartRate.getData().getEntryCount() > 90) {
+            XAxis xAxis = mChartHeartRate.getXAxis();
+            xAxis.resetAxisMaximum();
+        }
     }
 
     /**

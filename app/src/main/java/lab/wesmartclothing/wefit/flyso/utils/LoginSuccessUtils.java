@@ -56,10 +56,7 @@ public class LoginSuccessUtils {
                         UserInfo userInfo = MyAPP.gUserInfo = JSON.parseObject(s, UserInfo.class);
 
                         int sex = userInfo.getSex();
-                        SPUtils.put(SPKey.SP_scaleMAC, userInfo.getScalesMacAddr());
-                        SPUtils.put(SPKey.SP_clothingMAC, userInfo.getClothesMacAddr());
 
-                        HeartSectionUtil.initMaxHeart(userInfo);
 
                         JPushUtils.setAliasOrTags("");
 

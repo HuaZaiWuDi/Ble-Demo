@@ -1,10 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.ui.main.mine;
 
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -13,22 +13,20 @@ import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundLinearLayout;
 import com.vondear.rxtools.activity.RxActivityUtils;
+import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxFormatValue;
-import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.wesmarclothing.mylibrary.net.RxBus;
 
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
+import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.ble.BleAPI;
-import lab.wesmartclothing.wefit.flyso.tools.BleKey;
+import lab.wesmartclothing.wefit.flyso.ble.EMSManager;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceListbean;
@@ -37,10 +35,11 @@ import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.ClothingConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
+import lab.wesmartclothing.wefit.flyso.rxbus.EMSConnectBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshMe;
 import lab.wesmartclothing.wefit.flyso.rxbus.RefreshSlimming;
 import lab.wesmartclothing.wefit.flyso.rxbus.ScaleConnectBus;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
+import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.ui.userinfo.AddDeviceActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
 
@@ -77,25 +76,30 @@ public class DeviceFragment extends BaseActivity {
     TextView mTvNoDeviceTip;
     @BindView(R.id.btn_bind)
     QMUIRoundLinearLayout mBtnBind;
-    Unbinder unbinder;
+    @BindView(R.id.iv_clothingIcon)
+    ImageView mIvClothingIcon;
+    @BindView(R.id.tv_clothingName)
+    TextView mTvClothingName;
 
 
-    private List<DeviceListbean.ListBean> beanList;
+    private String clothingType = "";
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_device);
-        unbinder = ButterKnife.bind(this);
-        initView();
-
-
     }
 
+    @Override
+    protected int layoutId() {
+        return R.layout.fragment_device;
+    }
 
-    private void initView() {
+    @Override
+    public void initViews() {
         initTopBar();
+        initRxBus();
+        BleAPI.getVoltage();
     }
 
 
@@ -103,9 +107,7 @@ public class DeviceFragment extends BaseActivity {
     public void onStart() {
         super.onStart();
         initData();
-        notifyData();
-        initRxBus();
-        BleAPI.getVoltage();
+
     }
 
 
@@ -114,27 +116,27 @@ public class DeviceFragment extends BaseActivity {
         RxBus.getInstance().registerSticky(DeviceVoltageBus.class)
                 .compose(RxComposeUtils.<DeviceVoltageBus>bindLife(lifecycleSubject))
                 .subscribe(deviceVoltageBus -> {
-                    mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
-                    mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
+                    if (BleKey.TYPE_CLOTHING.equals(clothingType)) {
+                        mTvClothingUseTime.setText(deviceVoltageBus.getCapacity() + "");
+                        mTvClothingStandbyTime.setText(RxFormatValue.fromat4S5R(deviceVoltageBus.getTime() / 24, 1));
+                    }
                 });
 
         RxBus.getInstance().registerSticky(ScaleConnectBus.class)
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .subscribe(scaleConnectBus -> {
-                    mTvConnectStateScale.setText(scaleConnectBus.isConnect() ? R.string.connected : R.string.disConnected);
-                });
+                .subscribe(scaleConnectBus ->
+                        mTvConnectStateScale.setText(scaleConnectBus.isConnect() ? R.string.connected : R.string.disConnected));
 
         RxBus.getInstance().registerSticky(ClothingConnectBus.class)
                 .compose(RxComposeUtils.bindLife(lifecycleSubject))
-                .subscribe(cloting -> {
-                    mTvConnectStateClothing.setText(cloting.isConnect() ? R.string.connected : R.string.disConnected);
-                });
+                .subscribe(cloting ->
+                        mTvConnectStateClothing.setText(cloting.isConnect() ? R.string.connected : R.string.disConnected));
+        RxBus.getInstance().registerSticky(EMSConnectBus.class)
+                .compose(RxComposeUtils.bindLife(lifecycleSubject))
+                .subscribe(cloting ->
+                        mTvConnectStateClothing.setText(cloting.isConnect() ? R.string.connected : R.string.disConnected));
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 
     private void initTopBar() {
         mQMUIAppBarLayout.addLeftBackImageButton().setOnClickListener(v -> onBackPressed());
@@ -146,10 +148,10 @@ public class DeviceFragment extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_unbind_scale:
-                deleteDeviceById(BleKey.TYPE_SCALE);
+                deleteDeviceById(true);
                 break;
             case R.id.btn_unbind_clothing:
-                deleteDeviceById(BleKey.TYPE_CLOTHING);
+                deleteDeviceById(false);
                 break;
             case R.id.btn_bind:
                 RxActivityUtils.skipActivity(mActivity, AddDeviceActivity.class);
@@ -163,17 +165,11 @@ public class DeviceFragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
-
                         DeviceListbean deviceListbean = JSON.parseObject(s, DeviceListbean.class);
-                        beanList = deviceListbean.getList();
-                        for (int i = 0; i < beanList.size(); i++) {
-                            DeviceListbean.ListBean device = beanList.get(i);
-                            if (BleKey.TYPE_SCALE.equals(device.getDeviceNo())) {
-                                int hour = device.getOnlineDuration() / 3600;
-                                mTvScaleUseTime.setText((hour <= 0 ? 1 : hour) + "");
-                            }
-                        }
+                        List<DeviceListbean.ListBean> beanList = deviceListbean.getList();
+                        if (beanList != null)
+                            updateUI(beanList);
+
                     }
 
                     @Override
@@ -183,63 +179,71 @@ public class DeviceFragment extends BaseActivity {
                 });
     }
 
-    private void notifyData() {
-        boolean clothingIsBind = BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_clothingMAC));
-        boolean scaleIsBind = BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC));
-
-        mTvNoDeviceTip.setVisibility(clothingIsBind || scaleIsBind ? View.GONE : View.VISIBLE);
-        mBtnBind.setVisibility(clothingIsBind && scaleIsBind ? View.GONE : View.VISIBLE);
+    private void updateUI(List<DeviceListbean.ListBean> beanList) {
+        mTvNoDeviceTip.setVisibility(!RxDataUtils.isEmpty(beanList) ? View.GONE : View.VISIBLE);
+        mBtnBind.setVisibility(beanList.size() == 2 ? View.GONE : View.VISIBLE);
         mLayoutScale.setVisibility(View.GONE);
         mLayoutClothing.setVisibility(View.GONE);
 
-        if (scaleIsBind) {
-            mLayoutScale.setVisibility(View.VISIBLE);
-            mTvScaleId.setText(SPUtils.getString(SPKey.SP_scaleMAC));
+        for (int i = 0; i < beanList.size(); i++) {
+            DeviceListbean.ListBean device = beanList.get(i);
+            switch (device.getDeviceNo()) {
+                case BleKey.TYPE_SCALE:
+                    mLayoutScale.setVisibility(View.VISIBLE);
+                    mLayoutScale.setTag(device.getGid());
+                    mTvScaleId.setText(device.getMacAddr());
+                    int hour = device.getOnlineDuration() / 3600;
+                    mTvScaleUseTime.setText(Math.max(1, hour) + "");
+                    break;
+                case BleKey.TYPE_CLOTHING:
+                    clothingType = BleKey.TYPE_CLOTHING;
+                    mLayoutClothing.setVisibility(View.VISIBLE);
+                    mTvClothingId.setText(device.getMacAddr());
+                    mIvClothingIcon.setImageResource(R.mipmap.icon_clothing_view);
+                    mTvClothingName.setText(R.string.clothing);
+                    mLayoutClothing.setTag(device.getGid());
+                    break;
+                case BleKey.TYPE_EMS:
+                    clothingType = BleKey.TYPE_EMS;
+                    mTvClothingName.setText(R.string.EMS_clothing);
+                    mIvClothingIcon.setImageResource(R.mipmap.ic_ems_s);
+                    mLayoutClothing.setVisibility(View.VISIBLE);
+                    mTvClothingId.setText(device.getMacAddr());
+                    mLayoutClothing.setTag(device.getGid());
+                    break;
+                default:
 
-        }
-        if (clothingIsBind) {
-            mLayoutClothing.setVisibility(View.VISIBLE);
-            mTvClothingId.setText(SPUtils.getString(SPKey.SP_clothingMAC));
+                    break;
+            }
         }
     }
 
 
-    private void deleteDeviceById(final String position) {
-        String gid = "";
-        if (beanList != null)
-            for (int i = 0; i < beanList.size(); i++) {
-                DeviceListbean.ListBean device = beanList.get(i);
-                if (position.equals(device.getDeviceNo())) {
-                    gid = device.getGid();
-                }
-            }
+    private void deleteDeviceById(final boolean isScale) {
+        String gid = (String) (isScale ? mLayoutScale.getTag() : mLayoutClothing.getTag());
         RxManager.getInstance().doNetSubscribe(NetManager.getApiService().removeBind(gid))
                 .compose(RxComposeUtils.<String>bindLife(lifecycleSubject))
                 .compose(RxComposeUtils.<String>showDialog(tipDialog))
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        RxLogUtils.d("结束" + s);
-                        //添加绑定设备，这里实在不会
-                        if (BleKey.TYPE_SCALE.equals(position)) {
+                        if (isScale) {
                             //删除绑定
-                            QNBleManager.getInstance().disConnectDevice();
-                            SPUtils.remove(SPKey.SP_scaleMAC);
-                        } else if (BleKey.TYPE_CLOTHING.equals(position)) {
-                            SPUtils.remove(SPKey.SP_clothingMAC);
-                            MyBleManager.Companion.getInstance().disConnect();
+                            QNBleManager.getInstance().unBind();
+                        } else if (BleKey.TYPE_CLOTHING.equals(clothingType)) {
+                            MyBleManager.Companion.getInstance().unBind();
+                        } else {
+                            EMSManager.Companion.getInstance().unBind();
                         }
-                        notifyData();
+                        initData();
                         RxBus.getInstance().post(new RefreshMe());
                         RxBus.getInstance().post(new RefreshSlimming());
                     }
 
                     @Override
                     protected void _onError(String error, int code) {
-                        RxToast.error(getString(R.string.deleteFail));
+                        RxToast.error(error);
                     }
-
-
                 });
     }
 }

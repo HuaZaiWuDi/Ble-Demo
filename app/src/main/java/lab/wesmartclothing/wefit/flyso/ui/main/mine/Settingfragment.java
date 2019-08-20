@@ -11,7 +11,6 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.vondear.rxtools.activity.RxActivityUtils;
 import com.vondear.rxtools.utils.RxFileUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogSureCancel;
 import com.zchu.rxcache.RxCache;
@@ -24,17 +23,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
-import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
-import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
-import lab.wesmartclothing.wefit.flyso.chat.ChatManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.login.LoginRegisterActivity;
 import lab.wesmartclothing.wefit.flyso.ui.login.VerificationPhoneActivity;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.UserLifecycleManager;
 
 /**
  * Created by jk on 2018/8/9.
@@ -157,21 +152,7 @@ public class Settingfragment extends BaseActivity {
                 .subscribe(new RxNetSubscriber<String>() {
                     @Override
                     protected void _onNext(String s) {
-                        ChatManager.INSTANCE.logout();
-                        String baseUrl = SPUtils.getString(SPKey.SP_BSER_URL);
-                        boolean SP_GUIDE = SPUtils.getBoolean(SPKey.SP_GUIDE);
-                        MyAPP.aMapLocation = null;
-                        SPUtils.clear();
-                        SPUtils.put(SPKey.SP_BSER_URL, baseUrl);
-                        SPUtils.put(SPKey.SP_GUIDE, SP_GUIDE);
-
-                        MyBleManager.Companion.getInstance().disConnect();
-                        QNBleManager.getInstance().disConnectDevice();
-                        try {
-                            RxCache.getDefault().clear2();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        UserLifecycleManager.INSTANCE.logout();
                         RxActivityUtils.skipActivityAndFinishAll(mActivity, LoginRegisterActivity.class);
 
                     }

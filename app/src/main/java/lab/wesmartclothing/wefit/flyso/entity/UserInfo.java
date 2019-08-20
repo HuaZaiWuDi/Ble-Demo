@@ -26,9 +26,10 @@ public class UserInfo implements Serializable {
 
     private long birthday;
     private String clothesMacAddr;
+    private String scalesMacAddr;
+    private String emsMacAddr;
     private int height;
     private String phone;
-    private String scalesMacAddr;
     private int sex;//1男2女0未知（未录入）
     private String signature;
     private String imgUrl;
@@ -45,6 +46,14 @@ public class UserInfo implements Serializable {
     private int baselHeat;
     private String informId;
     private String hmac;
+
+    public String getEmsMacAddr() {
+        return emsMacAddr;
+    }
+
+    public void setEmsMacAddr(String emsMacAddr) {
+        this.emsMacAddr = emsMacAddr;
+    }
 
     public String getHmac() {
         return hmac;

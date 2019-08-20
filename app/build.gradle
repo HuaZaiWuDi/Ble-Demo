@@ -24,11 +24,6 @@ android {
             storePassword '123456'
         }
     }
-    //Debug时不进行拆分包和png图片压缩
-    splits.abi.enable = false
-    splits.density.enable = false
-    aaptOptions.cruncherEnabled = false
-
 
     compileSdkVersion parent.ext.compileSdkVersion
     buildToolsVersion parent.ext.buildToolsVersion
@@ -40,6 +35,7 @@ android {
         versionName "1.0.6"
         multiDexEnabled true
         flavorDimensions "default"
+        resConfigs("zh", "xxhdpi")
 //        // 取消掉系统对.9图片的检查
 //        aaptOptions.cruncherEnabled = false
 //        aaptOptions.useNewCruncher = false
@@ -76,6 +72,7 @@ android {
         }
         debug {
             crunchPngs false //关闭crunchPng优化, 以加快构建
+            aaptOptions.cruncherEnabled = false
             ext.enableCrashlytics = false
             ext.alwatsUpdateBuildId = false
             buildConfigField "boolean", "LeakCanary", "false"
@@ -295,6 +292,10 @@ dependencies {
     implementation('com.hyphenate:kefu-easeui-android:1.1.9') {
 //        exclude group: 'com.github.bumptech.glide'
     }
+
+    flavors_wesmartImplementation 'com.jackUtil:todayStep:1.0.5'
+    testImplementation 'junit:junit:4.12'
+
 }
 
 //https://github.com/keepLove/JiaguPlugin

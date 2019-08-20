@@ -30,7 +30,7 @@ public class ServiceAPI {
     public static final String BASE_RELEASE = Key.URL_RELEASE;
     //            "https://api.wesmartclothing.com/mix/" : //瘦身衣线上版本
 //            "https://ltns.wesmartclothing.com/mix/";//莱特妮丝线上版本
-    public static final String BASE_DEBUG = "https://dev.wesmartclothing.com/mix/";//测试版本
+    public static final String BASE_DEBUG = "https://api-dev.wesmartclothing.com/mix/";//测试版本
 
     public static String BASE_URL = BASE_RELEASE;
 

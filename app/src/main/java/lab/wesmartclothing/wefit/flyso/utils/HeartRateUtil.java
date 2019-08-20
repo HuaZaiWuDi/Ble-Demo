@@ -42,20 +42,26 @@ import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 public class HeartRateUtil {
     private int maxHeart = 0;//最大心率
     private int minHeart = 10000;//最小心率
-    private int maxPace = Key.HRART_SECTION[6];//最大配速
+    private int maxPace;//最大配速
     private int minPace = 0;//最小配速
-    private int avPace = 0;//平均配速
-    private double kcalTotal = 0;//总卡路里
     private long lastTime = 0;//历史记录上一条时间
     private int packageCounts = 0;//历史数据包序号
     private List<HeartRateItemBean> heartLists;
-    private UserInfo userInfo;
+    private int userHeight = 175;
+    private double userWeight = 60;
+    private SportsDataTab mSportsDataTab;
     private int initSteps = 0;
     private int dataFlag = 0;//数据标记，前3条有效数据丢弃
+    private FixSizeLinkedList<Double> mLinkedList = new FixSizeLinkedList<>(5);
+    private int firstSteps = -1;
 
     public HeartRateUtil() {
+        maxPace = Key.HRART_SECTION[6];
         heartLists = new ArrayList<>();
-        userInfo = MyAPP.getgUserInfo();
+        mSportsDataTab = new SportsDataTab();
+        UserInfo userInfo = MyAPP.getgUserInfo();
+        if (userInfo != null) userHeight = userInfo.getHeight();
+        userWeight = SPUtils.getFloat(SPKey.SP_realWeight, 60);
     }
 
 
@@ -65,6 +71,67 @@ public class HeartRateUtil {
         this.heartLists = mHeartRateBean.getHeartList();
         this.maxPace = mHeartRateBean.getMaxPace();
         this.minPace = mHeartRateBean.getMinPace();
+    }
+
+
+    /**
+     * EMS取手机步数进行计算
+     * 配速公式：单位时间的距离差
+     */
+    public SportsDataTab addRealTimeData(int step) {
+        if (firstSteps <= 0) {
+            firstSteps = step;
+        }
+        int currentSteps = step + initSteps - firstSteps;
+        if (currentSteps == 0) {
+            return null;
+        }
+        double kilometre = CalorieManager.getKilometre(userHeight, currentSteps);
+        double calorie = CalorieManager.run2Calorie(userWeight, kilometre);
+
+        mLinkedList.add(kilometre);
+        //配速
+        //TODO 通过步数计算配速
+        if (!mLinkedList.isSaturated()) return null;
+        int currentPace = (int) (10f / Math.abs(mLinkedList.getLast() - mLinkedList.getFirst()));
+
+        if (currentPace <= 0 || currentPace > 1_0000) {
+            return null;
+        }
+
+        //最大最小配速(配速值越大，表示越小)
+        maxPace = Math.min(maxPace, currentPace);
+        minPace = Math.max(minPace, currentPace);
+
+        mSportsDataTab.setSteps(Math.abs(currentSteps));
+        mSportsDataTab.setDate(System.currentTimeMillis());
+        mSportsDataTab.setHeartLists(heartLists);
+        mSportsDataTab.setKcal(calorie);//统一使用卡为基本热量单位
+        mSportsDataTab.setKilometre(kilometre);
+        mSportsDataTab.setStepSpeed(currentPace);
+        mSportsDataTab.setReversePace(reversePace(currentPace));//反转配速，用于显示在图表上
+        mSportsDataTab.setMaxPace(maxPace);
+        mSportsDataTab.setMinPace(minPace);
+
+        HeartRateItemBean heartRateTab = new HeartRateItemBean();
+        //没有心率数据
+        heartRateTab.setHeartRate(0);
+        heartRateTab.setHeartTime(mSportsDataTab.getDate());
+        heartRateTab.setStepTime(2);
+        heartRateTab.step = currentSteps;
+        heartRateTab.pace = currentPace;
+        heartLists.add(heartRateTab);
+
+        int sum = 0;
+        for (HeartRateItemBean bean : heartLists) {
+            sum += bean.pace;
+        }
+        double asDouble = sum * 1f / heartLists.size();
+        mSportsDataTab.setAvPace(asDouble);
+
+        RxLogUtils.i("瘦身衣心率数据：" + mSportsDataTab.toString());
+
+        return mSportsDataTab;
     }
 
     /**
@@ -85,10 +152,8 @@ public class HeartRateUtil {
 
         currentSteps += initSteps;
 
-        float Weight = SPUtils.getFloat(SPKey.SP_realWeight, 0);
-        double kilometre = CalorieManager.getKilometre(userInfo.getHeight(), currentSteps);
-        double calorie = CalorieManager.run2Calorie(Weight, kilometre);
-
+        double kilometre = CalorieManager.getKilometre(userHeight, currentSteps);
+        double calorie = CalorieManager.run2Calorie(userWeight, kilometre);
         int currentPace = ByteUtil.bytesToIntLittle2(new byte[]{bytes[18], bytes[19]});
 
         //步数为0或者数据个数少于10或者步数没变（静止）
@@ -100,21 +165,12 @@ public class HeartRateUtil {
         if (dataFlag < 3) {
             return null;
         }
-        //TODO 这里如果
-//        //通常情况是步数未清空
-//        if (currentSteps > 200) {
-//
-//        }
+        //TODO 这里如果步数情况命令失败，导致步数异常
 
-        int reversePace = reversePace(currentPace);//反转配速，用于显示在图表上
-
-        RxLogUtils.d("当前配速：" + currentPace);
-        RxLogUtils.d("反转配速：" + reversePace);
         //最大最小配速(配速值越大，表示越小)
         maxPace = Math.min(maxPace, currentPace);
         minPace = Math.max(minPace, currentPace);
 
-        SportsDataTab mSportsDataTab = new SportsDataTab();
         mSportsDataTab.setCurHeart(heartRate);
         mSportsDataTab.setMaxHeart(maxHeart);
         mSportsDataTab.setMinHeart(minHeart);
@@ -129,7 +185,7 @@ public class HeartRateUtil {
         mSportsDataTab.setKcal(calorie);//统一使用卡为基本热量单位
         mSportsDataTab.setKilometre(kilometre);
         mSportsDataTab.setStepSpeed(currentPace);
-        mSportsDataTab.setReversePace(reversePace);
+        mSportsDataTab.setReversePace(reversePace(currentPace));//反转配速，用于显示在图表上
         mSportsDataTab.setMaxPace(maxPace);
         mSportsDataTab.setMinPace(minPace);
 
@@ -141,16 +197,11 @@ public class HeartRateUtil {
         heartRateTab.pace = currentPace;
         heartLists.add(heartRateTab);
 
-        double asDouble = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            asDouble = heartLists.stream().mapToInt(HeartRateItemBean::getPace).average().getAsDouble();
-        } else {
-            int sum = 0;
-            for (HeartRateItemBean bean : heartLists) {
-                sum += bean.pace;
-            }
-            asDouble = sum * 1f / heartLists.size();
+        int sum = 0;
+        for (HeartRateItemBean bean : heartLists) {
+            sum += bean.pace;
         }
+        double asDouble = sum * 1f / heartLists.size();
         mSportsDataTab.setAvPace(asDouble);
 
         RxLogUtils.i("瘦身衣心率数据：" + mSportsDataTab.toString());

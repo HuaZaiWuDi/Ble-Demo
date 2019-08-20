@@ -135,6 +135,6 @@ public interface Key {
      * 6.极限
      * 7.最大心率
      */
-    int[] HRART_SECTION = new int[]{(byte) 80, (byte) 100, (byte) 120, (byte) 140, (byte) 160, (byte) 180, (byte) 200};
+    int[] HRART_SECTION = new int[7];
 
 }

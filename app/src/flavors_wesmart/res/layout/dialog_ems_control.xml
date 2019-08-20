@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="328dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_round_white"
+    android:orientation="vertical"
+    >
+
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="end"
+        android:padding="13dp"
+        android:src="@mipmap/icon_close"
+        android:tint="@color/GrayWrite"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="EMS设备控制"
+        android:textColor="@color/black_312C35"
+        android:textSize="17sp"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        >
+
+
+        <TextView
+            android:id="@+id/mbtn_ranzhi"
+            android:layout_width="134dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/Gray"
+            android:gravity="center"
+            android:text="燃脂｜训练"
+            android:textColor="@color/GrayWrite"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/mbtn_zengji"
+            android:layout_width="134dp"
+            android:layout_height="38dp"
+            android:layout_alignParentRight="true"
+            android:background="@color/Gray_ECEBF0"
+            android:gravity="center"
+            android:text="增肌｜塑性"
+            android:textColor="@color/GrayWrite"
+            android:textSize="14sp"/>
+
+
+        <TextView
+            android:id="@+id/mbtn_jingmai"
+            android:layout_width="134dp"
+            android:layout_height="38dp"
+            android:layout_below="@+id/mbtn_ranzhi"
+            android:background="@color/Gray_ECEBF0"
+            android:gravity="center"
+            android:text="经脉｜疏通"
+            android:textColor="@color/GrayWrite"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/mbtn_huifu"
+            android:layout_width="134dp"
+            android:layout_height="38dp"
+            android:layout_below="@+id/mbtn_ranzhi"
+            android:layout_alignParentRight="true"
+            android:background="@color/Gray_ECEBF0"
+            android:gravity="center"
+            android:text="恢复｜理疗"
+            android:textColor="@color/GrayWrite"
+            android:textSize="14sp"/>
+
+    </RelativeLayout>
+
+    <com.vondear.rxtools.view.layout.RxRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:background_normal="@color/Gray_ECEBF0"
+        app:corner_radius="2dp">
+
+
+        <ImageView
+            android:id="@+id/iv_mode_reduce"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:padding="13dp"
+            android:src="@mipmap/ic_reduce"/>
+
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_mode"
+            android:layout_width="173dp"
+            android:layout_height="35dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="0 档"
+            android:textColor="@color/Gray"
+            android:textSize="23dp"
+            app:background_normal="@color/white"/>
+
+
+        <ImageView
+            android:id="@+id/iv_mode_add"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="13dp"
+            android:src="@mipmap/icon_add_green"/>
+
+
+    </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+    <com.vondear.rxtools.view.layout.RxRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        app:background_normal="@color/Gray_ECEBF0"
+        app:corner_radius="2dp">
+
+
+        <ImageView
+            android:id="@+id/iv_min_reduce"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:padding="13dp"
+            android:src="@mipmap/ic_reduce"/>
+
+
+        <com.vondear.rxtools.view.layout.RxTextView
+            android:id="@+id/tv_min"
+            android:layout_width="173dp"
+            android:layout_height="35dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="0 分"
+            android:textColor="@color/Gray"
+            android:textSize="23dp"
+            app:background_normal="@color/white"/>
+
+
+        <ImageView
+            android:id="@+id/iv_min_add"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="13dp"
+            android:src="@mipmap/icon_add_green"/>
+
+
+    </com.vondear.rxtools.view.layout.RxRelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        >
+
+        <ImageView
+            android:id="@+id/iv_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/btn_pause"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/iv_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/iv_pause"
+            android:src="@mipmap/btn_end"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/iv_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/btn_save"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

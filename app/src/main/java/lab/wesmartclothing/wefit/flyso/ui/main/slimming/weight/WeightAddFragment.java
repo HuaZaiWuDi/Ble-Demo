@@ -30,8 +30,8 @@ import butterknife.Unbinder;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
-import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
+import lab.wesmartclothing.wefit.flyso.ble.ScannerManager;
 import lab.wesmartclothing.wefit.flyso.entity.HealthyInfoBean;
 import lab.wesmartclothing.wefit.flyso.netutil.net.NetManager;
 import lab.wesmartclothing.wefit.flyso.netutil.net.RxManager;
@@ -92,11 +92,10 @@ public class WeightAddFragment extends BaseActivity {
         mTvTitle.setText(R.string.scaleWeight);
 
 
-        if (!MyBleManager.Companion.getInstance().isBLEEnabled())
-            MyBleManager.Companion.getInstance().enableBLE();
+        ScannerManager.INSTANCE.enableBLE();
 
         if (!QNBleManager.getInstance().isConnect()) {
-            MyBleManager.Companion.getInstance().scanMacAddress();
+            ScannerManager.INSTANCE.startScan();
         }
     }
 

@@ -137,17 +137,14 @@
                     android:padding="15dp"
                     tools:alpha="0.3">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:src="@mipmap/icon_location_point"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="40dp"
+                        android:drawableLeft="@mipmap/icon_location_point"
+                        android:drawablePadding="12dp"
+                        android:gravity="center_vertical"
                         android:text="瘦身目标"
                         android:textColor="@color/Gray"
                         android:textSize="14sp"/>
@@ -689,39 +686,34 @@
             <RelativeLayout
                 android:id="@+id/layout_sporting"
                 android:layout_width="match_parent"
-                android:layout_height="361dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 >
 
-                <LinearLayout
-                    android:id="@+id/layout_sportTitle"
+                <TextView
+                    android:id="@+id/tv_sportTitle"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
+                    android:layout_marginLeft="15dp"
+                    android:drawableLeft="@mipmap/icon_sports"
+                    android:drawablePadding="12dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="15dp">
+                    android:text="今日运动"
+                    android:textColor="@color/Gray"
+                    android:textSize="14sp"/>
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:src="@mipmap/icon_sports"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="12dp"
-                        android:text="今日运动"
-                        android:textColor="@color/Gray"
-                        android:textSize="14sp"/>
-
-                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/tv_sportTitle"
+                    android:background="@color/line"/>
 
 
                 <LinearLayout
+                    android:id="@+id/layout_chart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/layout_sportTitle"
+                    android:layout_below="@+id/tv_sportTitle"
                     android:orientation="vertical"
                     android:padding="15dp">
 
@@ -835,7 +827,7 @@
                     android:id="@+id/card_freeSporting"
                     android:layout_width="154dp"
                     android:layout_height="87dp"
-                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/layout_chart"
                     android:layout_marginLeft="15dp"
                     android:layout_marginBottom="24dp"
                     android:visibility="gone"
@@ -859,8 +851,8 @@
                     android:id="@+id/card_curriculumSporting"
                     android:layout_width="154dp"
                     android:layout_height="87dp"
+                    android:layout_below="@+id/layout_chart"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="15dp"
                     android:layout_marginBottom="24dp"
                     android:background="@drawable/selector_ripple_bg_"
@@ -881,12 +873,22 @@
 
                 </android.support.v7.widget.CardView>
 
+
+                <ImageView
+                    android:id="@+id/iv_ems_control"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/card_curriculumSporting"
+                    android:layout_centerHorizontal="true"
+                    />
+
+
                 <!--未绑定瘦身衣的界面-->
                 <LinearLayout
                     android:id="@+id/layout_clothing_default"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/layout_sportTitle"
+                    android:layout_below="@+id/tv_sportTitle"
                     android:background="@color/white"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
@@ -925,12 +927,6 @@
                 </LinearLayout>
 
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/layout_sportTitle"
-                    android:background="@color/line"/>
-
             </RelativeLayout>
 
             <!--今日体重-->
@@ -949,25 +945,18 @@
                     android:orientation="horizontal"
                     android:padding="15dp">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/icon_weight"/>
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="12dp"
-                        android:text="今日体重"
-                        android:textColor="@color/Gray"
-                        android:textSize="14sp"/>
-
-                    <ImageView
                         android:id="@+id/img_weight_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:src="@mipmap/icon_green_problem"/>
+                        android:drawableLeft="@mipmap/icon_weight"
+                        android:drawableRight="@mipmap/icon_green_problem"
+                        android:drawablePadding="12dp"
+                        android:gravity="center_vertical"
+                        android:text="今日体重"
+                        android:textColor="@color/Gray"
+                        android:textSize="14sp"/>
 
 
                 </LinearLayout>
@@ -1132,25 +1121,19 @@
                     android:orientation="horizontal"
                     android:padding="15dp">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/icon_energy"/>
 
                     <TextView
+                        android:id="@+id/img_sporting_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="12dp"
+                        android:drawableLeft="@mipmap/icon_energy"
+                        android:drawableRight="@mipmap/icon_green_problem"
+                        android:drawablePadding="12dp"
+                        android:gravity="center_vertical"
                         android:text="今日能量"
                         android:textColor="@color/Gray"
                         android:textSize="14sp"/>
 
-                    <ImageView
-                        android:id="@+id/img_sporting_tip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:src="@mipmap/icon_green_problem"/>
 
                 </LinearLayout>
 

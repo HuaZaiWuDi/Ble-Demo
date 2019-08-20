@@ -13,10 +13,6 @@ public interface SPKey {
 
     String SP_VoiceTip = "SP_VoiceTip";
 
-    String SP_scaleMAC = "SP_scaleMAC";
-
-    String SP_clothingMAC = "SP_clothingMAC";
-
     //真实体重(最近的一次称重的体重)
     String SP_realWeight = "SP_realWeight";
 

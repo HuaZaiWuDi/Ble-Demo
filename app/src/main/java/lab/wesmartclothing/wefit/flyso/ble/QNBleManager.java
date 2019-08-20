@@ -45,27 +45,35 @@ import lab.wesmartclothing.wefit.flyso.ui.main.slimming.weight.WeightAddFragment
  * Created icon_hide_password jk on 2018/5/16.
  */
 
-public class QNBleManager {
+public class QNBleManager implements BleInterface<QNBleDevice> {
 
 
     public static final int QN_CONNECTING = 0;//正在连接
     public static final int QN_CONNECED = 1;//连接完成，发现服务
     public static final int QN_DISCONNECED = 2;//断开连接
     public static final int QN_DISCONNECTING = 3;//连接失败
-    private static QNBleManager mQNBleTools;
     private static QNBleApi QNapi;
     private static QNBleDevice device;
+    private static QNBleManager instance;
+
 
     public static QNBleManager getInstance() {
-        if (mQNBleTools == null) {
-            mQNBleTools = new QNBleManager();
+        if (instance == null) {
+            synchronized (QNBleManager.class) {
+                if (instance == null) {
+                    instance = new QNBleManager();
+                }
+            }
         }
-        return mQNBleTools;
+        return instance;
     }
 
+
     private QNBleManager() {
+        //no instance
         initCallback();
     }
+
 
     public static void init(Application application) {
         QNapi = QNBleApi.getInstance(application);
@@ -88,6 +96,16 @@ public class QNBleManager {
 
     public int getConnectState() {
         return connectState;
+    }
+
+    @Override
+    public void doConnect(QNBleDevice bleDevice) {
+        connectDevice(bleDevice);
+    }
+
+    @Override
+    public void disConnect() {
+        disConnectDevice(device);
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -169,9 +187,6 @@ public class QNBleManager {
         });
     }
 
-    public void disConnectDevice() {
-        disConnectDevice(device);
-    }
 
     private void disConnectDevice(QNBleDevice device) {
         QNapi.disconnectDevice(device, new QNResultCallback() {
@@ -191,12 +206,30 @@ public class QNBleManager {
         });
     }
 
+    @Override
     public boolean isConnect() {
         return connectState == QN_CONNECED;
     }
 
-    public boolean isBind() {
-        return BluetoothAdapter.checkBluetoothAddress(SPUtils.getString(SPKey.SP_scaleMAC));
+    @Override
+    public boolean isBinded() {
+        return BluetoothAdapter.checkBluetoothAddress(MyAPP.getgUserInfo().getScalesMacAddr());
+    }
+
+
+    @Override
+    public void bind(QNBleDevice bleDevice) {
+        MyAPP.getgUserInfo().setScalesMacAddr(bleDevice.getMac());
+        BuryingPoint.INSTANCE.clothingState(bleDevice.getMac(), "绑定设备：");
+        disConnect();
+        doConnect(bleDevice);
+    }
+
+    @Override
+    public void unBind() {
+        //删除绑定
+        disConnect();
+        MyAPP.getgUserInfo().setScalesMacAddr("");
     }
 
     private void initCallback() {
@@ -308,7 +341,7 @@ public class QNBleManager {
                 RxBus.getInstance().postSticky(new ScaleConnectBus(true));
 
                 DeviceLink deviceLink = new DeviceLink();
-                deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_scaleMAC));
+                deviceLink.setMacAddr(qnBleDevice.getMac());
                 deviceLink.setDeviceNo(BleKey.TYPE_SCALE);
                 deviceLink.deviceLink(deviceLink);
                 BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "发现服务");
@@ -336,7 +369,7 @@ public class QNBleManager {
             public void onConnectError(QNBleDevice qnBleDevice, int i) {
                 setConnectState(QNBleManager.QN_DISCONNECED);
                 RxLogUtils.d("连接异常：" + i);
-                disConnectDevice();
+                disConnect();
                 RxBus.getInstance().postSticky(new ScaleConnectBus(false));
                 BuryingPoint.INSTANCE.scaleState(qnBleDevice.getMac(), "连接异常");
 

@@ -1,7 +1,10 @@
 package lab.wesmartclothing.wefit.flyso.test
 
-import android.app.Activity
-import lab.wesmartclothing.wefit.flyso.netutil.repository.UserRepository
+import android.support.v7.app.AppCompatActivity
+import com.wesmarclothing.kotlintools.kotlin.utils.d
+import com.wesmarclothing.mylibrary.net.RxBus
+import lab.wesmartclothing.wefit.flyso.ui.main.slimming.sports.SportingActivity
+import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils
 
 /**
  * @Package lab.wesmartclothing.wefit.flyso.test
@@ -16,7 +19,7 @@ object Test {
     const val testEnable = false
 
 
-    fun main(activity: Activity) {
+    fun main(activity: AppCompatActivity) {
 
 
 //        ChatManager.register()
@@ -27,8 +30,18 @@ object Test {
 //                ChatManager.joinService()
 //        }, 4000)
 
+//        TodayStepManager.startTodayStepService(activity.application)
 
-        UserRepository.sendSms()
+        SportingActivity.start(activity, "")
+
+        RxBus.getInstance().register2(String::class.java)
+                .compose(RxComposeUtils.bindLifeResume(activity))
+                .subscribe {
+                    it.d()
+                }
+
+        RxBus.getInstance().post("onCreate")
+
 
     }
 

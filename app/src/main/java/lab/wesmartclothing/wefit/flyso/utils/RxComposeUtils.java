@@ -1,5 +1,7 @@
 package lab.wesmartclothing.wefit.flyso.utils;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
@@ -193,8 +195,41 @@ public class RxComposeUtils {
     public static <T> ObservableTransformer<T, T> bindLife(final BehaviorSubject<LifeCycleEvent> subject) {
         return upstream ->
                 upstream.takeUntil(subject.skipWhile(activityLifeCycleEvent ->
-                        activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH));
+                        activityLifeCycleEvent != LifeCycleEvent.DESTROY
+                                && activityLifeCycleEvent != LifeCycleEvent.DETACH));
     }
+
+    /**
+     * 绑定生命周期，在AC和Fragment在销毁时结束网络请求
+     *
+     * @param <T> 指定的泛型类型
+     * @return Observable
+     * <p>
+     * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
+     */
+    public static <T> ObservableTransformer<T, T> bindLife(final LifecycleOwner owner) {
+        return upstream ->
+                upstream.filter((Predicate<T>) t ->
+                        owner.getLifecycle().getCurrentState() != Lifecycle.State.DESTROYED &&
+                                owner.getLifecycle().getCurrentState() != Lifecycle.State.INITIALIZED
+                );
+    }
+
+    /**
+     * 绑定生命周期，在AC和Fragment在销毁时结束网络请求
+     *
+     * @param <T> 指定的泛型类型
+     * @return Observable
+     * <p>
+     * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
+     */
+    public static <T> ObservableTransformer<T, T> bindLifeResume(final LifecycleOwner owner) {
+        return upstream ->
+                upstream.filter((Predicate<T>) t ->
+                        owner.getLifecycle().getCurrentState() == Lifecycle.State.RESUMED
+                );
+    }
+
 
     /**
      * 绑定生命周期，在AC和Fragment在显示后才加载
@@ -205,18 +240,9 @@ public class RxComposeUtils {
      * takeUtil，很显然，observable.takeUtil(condition)，当condition == true时终止，且包含临界条件的item
      */
     public static <T> ObservableTransformer<T, T> bindLifeResume(final BehaviorSubject<LifeCycleEvent> subject) {
-        return new ObservableTransformer<T, T>() {
-            @Override
-            public ObservableSource<T> apply(Observable<T> upstream) {
-                return upstream.takeUntil(subject.skipWhile(new Predicate<LifeCycleEvent>() {
-                    @Override
-                    public boolean test(LifeCycleEvent activityLifeCycleEvent) throws Exception {
-                        return activityLifeCycleEvent != LifeCycleEvent.DESTROY && activityLifeCycleEvent != LifeCycleEvent.DETACH
-                                && activityLifeCycleEvent != LifeCycleEvent.CREATE && activityLifeCycleEvent != LifeCycleEvent.ATTACH;
-                    }
-                }));
-            }
-        };
+        return upstream ->
+                upstream.takeUntil(subject.skipWhile(activityLifeCycleEvent ->
+                        activityLifeCycleEvent == LifeCycleEvent.RESUME));
     }
 
 

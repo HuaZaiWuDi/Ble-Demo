@@ -44,6 +44,7 @@ import cn.qqtheme.framework.picker.NumberPicker;
 import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
+import lab.wesmartclothing.wefit.flyso.ble.EMSManager;
 import lab.wesmartclothing.wefit.flyso.ble.MyBleManager;
 import lab.wesmartclothing.wefit.flyso.ble.QNBleManager;
 import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
@@ -317,8 +318,9 @@ public class UserInfofragment extends BaseActivity {
                         SPUtils.put(SPKey.SP_UserInfo, gson);
                         MyAPP.gUserInfo = info;
                         RxActivityUtils.finishActivity();
-                        QNBleManager.getInstance().disConnectDevice();
+                        QNBleManager.getInstance().disConnect();
                         MyBleManager.Companion.getInstance().disConnect();
+                        EMSManager.Companion.getInstance().disConnect();
                         //刷新数据
                         RxBus.getInstance().post(new RefreshMe());
                         RxBus.getInstance().post(new RefreshSlimming());

@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -23,7 +22,6 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;
 import com.vondear.rxtools.activity.RxActivityUtils;
@@ -44,6 +42,7 @@ import lab.wesmartclothing.wefit.flyso.R;
 import lab.wesmartclothing.wefit.flyso.base.BaseALocationActivity;
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
 import lab.wesmartclothing.wefit.flyso.base.WebTitleActivity;
+import lab.wesmartclothing.wefit.flyso.ble.ScannerManager;
 import lab.wesmartclothing.wefit.flyso.entity.BottomTabItem;
 import lab.wesmartclothing.wefit.flyso.entity.DeviceVersionBean;
 import lab.wesmartclothing.wefit.flyso.entity.FirmwareVersionUpdate;
@@ -55,7 +54,6 @@ import lab.wesmartclothing.wefit.flyso.netutil.utils.RxNetSubscriber;
 import lab.wesmartclothing.wefit.flyso.netutil.utils.RxSubscriber;
 import lab.wesmartclothing.wefit.flyso.rxbus.GoToMainPage;
 import lab.wesmartclothing.wefit.flyso.rxbus.UnreadStateBus;
-import lab.wesmartclothing.wefit.flyso.service.BleService;
 import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.ui.guide.SplashActivity;
 import lab.wesmartclothing.wefit.flyso.ui.main.mine.MeFragment;
@@ -64,6 +62,7 @@ import lab.wesmartclothing.wefit.flyso.ui.main.ranking.RankingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.record.SlimmingFragment;
 import lab.wesmartclothing.wefit.flyso.ui.main.slimming.RecordFragment;
 import lab.wesmartclothing.wefit.flyso.utils.RxComposeUtils;
+import lab.wesmartclothing.wefit.flyso.utils.UserLifecycleManager;
 import lab.wesmartclothing.wefit.flyso.utils.jpush.MyJpushReceiver;
 import lab.wesmartclothing.wefit.flyso.view.AboutUpdateDialog;
 
@@ -215,7 +214,7 @@ public class MainActivity extends BaseALocationActivity {
         mBottomTab.setOnClickListener(v -> {
 
         });
-        ContextCompat.startForegroundService(mContext, new Intent(mContext, BleService.class));
+        ScannerManager.INSTANCE.startScan();
     }
 
     private void initData() {
@@ -246,18 +245,21 @@ public class MainActivity extends BaseALocationActivity {
         initMyViewPager(pageList);
         initBottomTab(pageList);
 
+
     }
 
     private void initSystemConfig() {
         //判断是否有权限
         new RxPermissions((FragmentActivity) mActivity)
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new RxSubscriber<Permission>() {
+                .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new RxSubscriber<Boolean>() {
                     @Override
-                    protected void _onNext(Permission aBoolean) {
+                    protected void _onNext(Boolean aBoolean) {
                         RxLogUtils.e("是否开启了权限：" + aBoolean.toString());
                     }
                 });
+
 
         //判断是否关闭了通知栏权限
         RxLogUtils.e("通知栏权限：" + NotificationManagerCompat.from(mContext).areNotificationsEnabled());
@@ -319,6 +321,8 @@ public class MainActivity extends BaseALocationActivity {
                                 dialog.dismiss();
                                 SPUtils.put(SPKey.SP_BSER_URL, tag);
                                 ServiceAPI.switchURL(tag);
+                                NetManager.refreshRetrofit();
+                                UserLifecycleManager.INSTANCE.logout();
                             })
                             .build()
                             .show();

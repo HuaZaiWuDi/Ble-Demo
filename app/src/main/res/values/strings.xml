@@ -54,6 +54,7 @@
     <string name="web_load_error">出错啦！点击空白处刷新</string>
     <string name="scale">体脂称</string>
     <string name="clothing">瘦身衣</string>
+    <string name="EMS_clothing">EMS瘦身衣</string>
     <string name="tv_loading">正在加载</string>
     <string name="open_loaction">未给予定位权限，无法搜索到蓝牙设备</string>
     <string name="open_BLE">未开启蓝牙，无法搜索到蓝牙设备</string>
@@ -392,6 +393,7 @@
     <string name="checkUnenableBluetooth">监测到未开启蓝牙，请打开蓝牙重新扫描</string>
     <string name="bindedScale">已绑定体脂称</string>
     <string name="bindedClothing">已绑定瘦身衣</string>
+    <string name="bindedEMSClothing">已绑定EMS瘦身衣</string>
     <string name="scanDeviceFail">扫描设备失败</string>
     <string name="nearbyDevice">附近的设备</string>
     <string name="scanDevice">扫描搜索设备</string>

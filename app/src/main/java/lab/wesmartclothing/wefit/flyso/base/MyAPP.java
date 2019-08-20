@@ -126,6 +126,8 @@ public class MyAPP extends Application {
             AdaptationOppo();
         });
         initHyphenate();
+
+
     }
 
     /**

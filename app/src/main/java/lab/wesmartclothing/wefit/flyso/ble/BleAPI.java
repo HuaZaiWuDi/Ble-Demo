@@ -5,7 +5,6 @@ import android.util.Log;
 import com.clj.fastble.utils.HexUtil;
 import com.vondear.rxtools.utils.RxDataUtils;
 import com.vondear.rxtools.utils.RxLogUtils;
-import com.vondear.rxtools.utils.SPUtils;
 import com.wesmarclothing.mylibrary.net.RxBus;
 
 import lab.wesmartclothing.wefit.flyso.base.MyAPP;
@@ -17,7 +16,6 @@ import lab.wesmartclothing.wefit.flyso.rxbus.DeviceVoltageBus;
 import lab.wesmartclothing.wefit.flyso.rxbus.HeartRateChangeBus;
 import lab.wesmartclothing.wefit.flyso.tools.BleKey;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
-import lab.wesmartclothing.wefit.flyso.tools.SPKey;
 import lab.wesmartclothing.wefit.flyso.utils.VoltageToPower;
 
 /**
@@ -294,7 +292,7 @@ public class BleAPI {
         RxLogUtils.d("当前版本：" + versionBean.toString());
         //设备统计
         DeviceLink deviceLink = new DeviceLink();
-        deviceLink.setMacAddr(SPUtils.getString(SPKey.SP_clothingMAC));
+        deviceLink.setMacAddr(MyAPP.getgUserInfo().getClothesMacAddr());
         deviceLink.setFirmwareVersion(firmwareVersion);
         deviceLink.setDeviceNo(BleKey.TYPE_CLOTHING);
         deviceLink.deviceLink(deviceLink);

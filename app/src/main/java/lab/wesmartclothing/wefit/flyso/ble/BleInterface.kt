@@ -10,13 +10,6 @@ package lab.wesmartclothing.wefit.flyso.ble
  */
 interface BleInterface<B> {
 
-    var device: B
-
-    fun write(bytes: ByteArray)
-
-    fun scanMacAddress(macAddress: String)
-
-    fun stopScan()
 
     fun doConnect(bleDevice: B)
 
@@ -24,11 +17,11 @@ interface BleInterface<B> {
 
     fun isConnect(): Boolean
 
-    fun isScaning(): Boolean
+    fun getDevice(): B?
 
-    fun connected(bleDevice: B)
+    fun isBinded(): Boolean
 
-    fun disconnected(bleDevice: B)
+    fun bind(bleDevice: B)
 
-
+    fun unBind()
 }

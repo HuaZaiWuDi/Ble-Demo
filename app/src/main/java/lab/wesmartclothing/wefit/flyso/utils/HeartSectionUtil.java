@@ -5,7 +5,6 @@ import android.content.Context;
 import com.vondear.rxtools.utils.RxLogUtils;
 
 import lab.wesmartclothing.wefit.flyso.R;
-import lab.wesmartclothing.wefit.flyso.entity.UserInfo;
 import lab.wesmartclothing.wefit.flyso.tools.Key;
 
 /**
@@ -38,7 +37,7 @@ public class HeartSectionUtil {
      * 最大心率
      * //最大心率计算公式改为“最大心率=208-0.7*年龄”,请知悉！
      */
-    public static void initMaxHeart(UserInfo info) {
+    public static void initMaxHeart() {
 
 
         Key.HRART_SECTION[0] = (int) (6 * 60);//慢走
@@ -99,7 +98,7 @@ public class HeartSectionUtil {
 
 
     public static void main(String[] args) {
-        initMaxHeart(null);
+        initMaxHeart();
     }
 
 }

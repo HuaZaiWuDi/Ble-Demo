@@ -32,8 +32,8 @@ object BuryingPoint {
      */
     fun clothingState(macAddr: String, state: String) {
         val message = "${RxTimeUtils.getCurrentDateTime("MM-dd HH:mm:ss")}-$state"
-        MobclickAgent.onEvent(myApplication, "Clo-$userId-$macAddr", message)
-        RxLogUtils.d("Clo-$userId-$macAddr", message)
+        MobclickAgent.onEvent(myApplication, userId, "Clo-$macAddr-$message")
+        RxLogUtils.d(userId, "Clo-$macAddr-$message")
     }
 
     /**
@@ -41,8 +41,17 @@ object BuryingPoint {
      */
     fun scaleState(macAddr: String, state: String) {
         val message = "${RxTimeUtils.getCurrentDateTime("MM-dd HH:mm:ss")}-$state"
-        MobclickAgent.onEvent(myApplication, "Scale-$userId-$macAddr", message)
-        RxLogUtils.d("Scale-$userId-$macAddr", message)
+        MobclickAgent.onEvent(myApplication, userId, "Scale-$macAddr-$message")
+        RxLogUtils.d(userId, "Scale-$macAddr-$message")
+    }
+
+    /**
+     * 体脂称连接状态
+     */
+    fun emsState(macAddr: String, state: String) {
+        val message = "${RxTimeUtils.getCurrentDateTime("MM-dd HH:mm:ss")}-$state"
+        MobclickAgent.onEvent(myApplication, userId, "ems-$macAddr-$message")
+        RxLogUtils.d(userId, "ems-$macAddr-$message")
     }
 
     /**
@@ -59,8 +68,8 @@ object BuryingPoint {
     fun netErrorMessage(interfaceName: String, errorMessage: String) {
         val message = "${RxTimeUtils.getCurrentDateTime("MM-dd HH:mm:ss")}-" +
                 "net:${RxNetUtils.isConnected(MyAPP.sMyAPP)}-$errorMessage"
-        MobclickAgent.onEvent(myApplication, "Net-$userId", message)
-        RxLogUtils.d("Net-$userId-$interfaceName", message)
+        MobclickAgent.onEvent(myApplication, userId, "net-$message-$interfaceName")
+        RxLogUtils.d(userId, "net-$message-$interfaceName")
     }
 
 
